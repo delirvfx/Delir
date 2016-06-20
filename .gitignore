@@ -1,0 +1,13 @@
+.DS_Store
+.idea
+nbpproject
+Thumbs.db
+
+/src/package.json
+/src/node_modules
+
+/node_modules
+/bower_components
+/publish
+/build
+/cache
