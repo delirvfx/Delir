@@ -2,30 +2,30 @@ const g = require("gulp");
 const $ = require("gulp-load-plugins")();
 const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
+const packager = require("electron-packager");
 
 const fs = require("fs-promise");
 const {join} = require("path");
-const {spawn, fork} = require("child_process");
-
-console.log(Object.keys($));
+const {spawn} = require("child_process");
 
 const paths = {
     src         : {
-        root        : "./src/",
-        browser     : "./src/browser/",
-        renderer    : "./src/renderer/"
+        root        : join(__dirname, "./src/"),
+        browser     : join(__dirname, "./src/browser/"),
+        renderer    : join(__dirname, "./src/renderer/"),
     },
     compiled    : {
-        root        : "./prepublish/",
-        browser     : "./prepublish/browser/",
-        renderer    : "./prepublish/renderer/"
+        root        : join(__dirname, "./prepublish/"),
+        browser     : join(__dirname, "./prepublish/browser/"),
+        renderer    : join(__dirname, "./prepublish/renderer/"),
     },
-    build   : "./prepublish/",
-    binary  : "./release/",
+    build   : join(__dirname, "./prepublish/"),
+    binary  : join(__dirname, "./release/"),
 };
 
 export function buildBrowserJs() {
-    return g.src([join(paths.src.browser)])
+    return g.src([join(paths.src.browser, "**/*.js")])
+        .pipe($.plumber())
         .pipe($.changed(paths.compiled.browser))
         .pipe($.babel())
         .pipe(g.dest(paths.compiled.browser));
@@ -38,44 +38,64 @@ export async function copyPackageJSON(done) {
     const newJson = JSON.stringify(json, null, "  ");
 
     try { await fs.mkdir(paths.compiled.root); } catch (e) {}
-    try { await fs.writeFile(path.join(paths.src.root, "package.json"), newJson, {encoding: "utf8"}); } catch (e) {}
-    try { await fs.writeFile(path.join(paths.compiled.root, "package.json"), newJson, {encoding: "utf8"}); } catch (undefined) {}
+    try { await fs.writeFile(join(paths.compiled.root, "package.json"), newJson, {encoding: "utf8"}); } catch (e) {}
 
     done();
 }
 
-export function copyDependencies() {
-    return g.src($.npmFiles(/* devDependencies */ false, ))
-        .pipe(g.dest(".prepublish"));
-}
+export async function symlinkDependencies(done) {
+    const checkdep = (packageName, depList = []) => {
+        try {
+            let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies;
+            let deps = Object.keys(dep);
 
-export function compileStyles() {
-    return g.src(join(paths.src.renderer, "**/[^_]*.styl"))
-        .pipe($.stylus({
-            use : [require("nib")]
-        }))
-        .pipe(g.dest(paths.compiled,renderer));
+            for (let dep of deps) {
+                if (depList.indexOf(dep) === -1) {
+                    console.log("dep: %s", dep);
+                    depList.push(dep);
+                    checkdep(dep, depList);
+                }
+            }
+        } catch (e) {}
+    };
+
+    try { await fs.mkdir(paths.bulid, "node_modules"); } catch (e) {};
+
+    const packageJson = require(join(paths.compiled.root, "package.json"));
+    const dependencies = Object.keys(packageJson.dependencies);
+    dependencies.push("amdefine");
+    for (let [dep, version] of dependencies) {
+        checkdep(dep, dependencies);
+    }
+
+    for (let dep of dependencies) {
+        try {
+            await fs.symlink(
+                join(__dirname, "node_modules/", dep),
+                join(paths.compiled, "node_modules/", dep),
+                "dir"
+            );
+        } catch (e) {}
+    }
+
+    done();
 }
 
 export function compileRendererJs(done) {
     webpack({
-        target: "web",
+        target: "electron",
         entry: {
             main: "main"
         },
         output: {
             filename: "[name].js",
             sourceMapFilename: "map/[file].map",
-            path: join(paths.compiled, "js/"),
+            path: join(paths.compiled.renderer, "scripts/"),
         },
         devtool: "#source-map",
         resolve: {
-            root: [path.join(__dirname, "static/js/")],
+            root: [join(paths.src.renderer, "scripts/")],
             modulesDirectories: ["bower_components", "node_modules"]
-        },
-        externals: {
-            "window": "window",
-            "document": "document",
         },
         module: {
             loaders: [
@@ -102,25 +122,85 @@ export function compileRendererJs(done) {
     });
 }
 
+export function compileStyles() {
+    return g.src(join(paths.src.renderer, "**/[^_]*.styl"))
+        .pipe($.plumber())
+        .pipe($.stylus({
+            use : [require("nib")()]
+        }))
+        .pipe(g.dest(paths.compiled.renderer));
+}
+
+export function copyFonts() {
+    return g.src(join(paths.src.renderer, "fonts/*"))
+        .pipe(g.dest(join(paths.compiled.renderer, "fonts")));
+}
+
+export function copyImage() {
+    return g.src(join(paths.src.renderer, "images/**.{png}"))
+        .pipe(g.dest(join(paths.compiled.renderer, "images")));
+}
+
+export function pack(done) {
+    const pjson = require("./package.json");
+    packager({
+        "dir"       : paths.compiled.root,
+        "name"      : pjson.name,
+        "platform"  : ["win32", "darwin"],
+        "arch"      : "x64",
+        "version"   : "1.2.5",
+
+        "out"       : paths.binary,
+        "icon"      : null,
+        "app-bundle-id"     : null,
+        "app-version"       : pjson.version,
+        "helper-bundle-id"  : null,
+        ignore      : null,
+        prune       : true,
+        overwrite   : true,
+        asar        : true,
+        "sign"      : null,
+
+        "version-string": {
+            CompanyName         : pjson.author,
+            LegalCopyright      : null,
+            FileDescription     : null,
+            OriginalFilename    : null,
+            FileVersion         : pjson.version,
+            ProductVersion      : pjson.version,
+            ProductName         : pjson.productName,
+            InternalName        : null,
+        }
+    }, done);
+}
+
+export async function clean(done) {
+    await rimraf(paths.compiled.root)
+
+    if (fs.existsSync(join(paths.compiled.root, "node_modules"))) {
+        try { await fs.unlink(join(paths.compiled.root, "node_modules")); } catch (e) {}
+    }
+
+    done();
+}
+
+export function run(done) {
+    console.log(require("electron-prebuilt"));
+    const electron = spawn(require("electron-prebuilt"), [paths.compiled.root]);
+    electron.on("close", (code) => { code === 0 && run(() => {}); });
+    done();
+}
+
 export function watch() {
     g.watch(paths.src.browser, buildBrowserJs);
     g.watch(paths.src.renderer, buildRenderer)
 }
 
-export async function clean(done) {
-    await rimraf(paths.compiled.src);
-    done();
-}
+const buildRenderer = g.parallel(compileRendererJs, compileStyles, copyFonts, copyImage);
+const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
+const build = g.series(buildRenderer, buildBrowser);
+const buildAndWatch = g.parallel(build, run, watch);
+const publish = g.series(clean, build, pack);
 
-const build = g.parallel(buildBrowserJs, copyPackageJSON);
-const buildAndWatch = g.parallel(buildBrowserJs, watch);
-const publish = g.series(clean, build);
-
+export {publish, build};
 export default buildAndWatch;
-
-// export default function () {
-//     // g.task("build", ["webpack", "stylus", "jade", "images", "copy-browser-files", "package-json", "assets"]);
-//     // g.task("publish", ["production"]);
-//     // g.task("dev", ["build", "watch"]);
-//     // g.task("default", ["self-watch", "electron-dev"]);
-// }
