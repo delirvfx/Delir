@@ -35,5 +35,7 @@
     "rimraf-promise": "^2.0.0",
     "webpack": "^1.13.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "electron-canvas-to-buffer": "^2.0.0"
+  }
 }
