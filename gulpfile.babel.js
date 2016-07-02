@@ -59,11 +59,10 @@ export async function symlinkDependencies(done) {
         } catch (e) { console.log(e); }
     };
 
-    try { await fs.mkdir(paths.bulid, "node_modules"); } catch (e) {};
+    try { await fs.mkdir(join(paths.compiled.root, "node_modules")); } catch (e) {};
 
     const packageJson = require(join(paths.compiled.root, "package.json"));
     const dependencies = Object.keys(packageJson.dependencies);
-    dependencies.push("amdefine");
     for (let dep of dependencies) {
         checkdep(dep, dependencies);
     }
@@ -72,7 +71,7 @@ export async function symlinkDependencies(done) {
         try {
             await fs.symlink(
                 join(__dirname, "node_modules/", dep),
-                join(paths.compiled, "node_modules/", dep),
+                join(paths.compiled.root, "node_modules/", dep),
                 "dir"
             );
         } catch (e) { console.log(e); }
