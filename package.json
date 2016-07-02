@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.10.4",
+    "babel-loader": "^6.2.4",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-es2015-block-scoped-functions": "^6.8.0",
     "babel-plugin-transform-es2015-block-scoping": "^6.10.1",
