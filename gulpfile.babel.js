@@ -121,6 +121,13 @@ export function compileRendererJs(done) {
     });
 }
 
+export function compilePugTempates() {
+    return g.src(join(paths.src.renderer, "**/[^_]*.pug"))
+        .pipe($.plumber())
+        .pipe($.pug())
+        .pipe(g.dest(paths.compiled.renderer));
+}
+
 export function compileStyles() {
     return g.src(join(paths.src.renderer, "**/[^_]*.styl"))
         .pipe($.plumber())
@@ -195,7 +202,7 @@ export function watch() {
     g.watch(paths.src.renderer, buildRenderer)
 }
 
-const buildRenderer = g.parallel(compileRendererJs, compileStyles, copyFonts, copyImage);
+const buildRenderer = g.parallel(compileRendererJs, compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.parallel(build, run, watch);
