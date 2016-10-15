@@ -2,6 +2,7 @@ const g = require("gulp");
 const $ = require("gulp-load-plugins")();
 const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const packager = require("electron-packager");
 
 const fs = require("fs-promise");
@@ -59,7 +60,16 @@ export async function symlinkDependencies(done) {
         } catch (e) { console.log(e); }
     };
 
-    try { await fs.mkdir(join(paths.compiled.root, "node_modules")); } catch (e) {};
+    try {
+        await rimraf(join(paths.compiled.root, "node_modules"));
+    } catch (e) {
+        console.log(e);
+    };
+    try {
+        await fs.mkdir(join(paths.compiled.root, "node_modules"));
+    } catch (e) {
+        console.log(e);
+    };
 
     const packageJson = require(join(paths.compiled.root, "package.json"));
     const dependencies = Object.keys(packageJson.dependencies);
@@ -81,10 +91,20 @@ export async function symlinkDependencies(done) {
 }
 
 export function compileRendererJs(done) {
+    // return g.src([join(paths.src.renderer, "**/*.{js,jsx}")])
+    //     .pipe($.plumber())
+    //     .pipe($.sourcemaps.init())
+    //     .pipe($.changed(paths.compiled.renderer))
+    //     .pipe($.babel())
+    //     .pipe($.sourcemaps.write(paths.compiled.renderer))
+    //     .pipe(g.dest(paths.compiled.renderer));
+
     webpack({
         target: "electron",
+        watch: true,
+        context: join(paths.src.renderer, "scripts/"),
         entry: {
-            main: "main"
+            main: "./main"
         },
         output: {
             filename: "[name].js",
@@ -92,32 +112,49 @@ export function compileRendererJs(done) {
             path: join(paths.compiled.renderer, "scripts/"),
         },
         devtool: "#source-map",
+        externals: [
+            (ctx, request, callback) => {
+                if (/^(?!\.\/)/.test(request)) {
+                    return callback(null, `require('${request}')`)
+                }
+                callback();
+            },
+        ],
         resolve: {
-            root: [join(paths.src.renderer, "scripts/")],
-            modulesDirectories: ["bower_components", "node_modules"]
+            extensions: ['', '.js', '.jsx'],
+            modulesDirectories: ["bower_components", "node_modules"],
+        },
+        resolveLoader: {
+            alias: {
+                'babel-loader': join(__dirname, 'node_modules/babel-loader'),
+            },
         },
         module: {
             loaders: [
                 {
-                    test: /\.js$/,
+                    test: /\.jsx?$/,
                     loader: "babel-loader",
                     exclude: /(node_modules|bower_components)/,
-                }
+                    query: JSON.parse(fs.readFileSync('./.babelrc')),
+                },
             ]
         },
         plugins: [
+            new CleanWebpackPlugin(['scripts'], {
+                verbose: true,
+                root: join(paths.compiled.renderer),
+            }),
             new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("package.json", ["main"])),
             new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])),
             new webpack.optimize.AggressiveMergingPlugin,
             new webpack.optimize.DedupePlugin,
-            new webpack.optimize.UglifyJsPlugin,
+            // new webpack.optimize.UglifyJsPlugin,
         ]
     },  function(err, stats) {
-        if (err) {
-            console.log(err);
-        }
-
-        done(err);
+        err && console.error(err)
+        stats.compilation.errors.length && stats.compilation.errors.forEach(e => console.error(e.message));
+        console.log('Compiled');
+        done();
     });
 }
 
@@ -190,22 +227,34 @@ export async function clean(done) {
     done();
 }
 
+export async function cleanRendererScripts(done) {
+    await rimraf(join(paths.compiled.renderer, 'scripts'))
+    done();
+}
+
+export async function cleanBrowserScripts(done) {
+    await rimraf(join(paths.compiled.browser, 'scripts'))
+    done();
+}
+
 export function run(done) {
-    console.log(require("electron-prebuilt"));
+    // console.log(require("electron-prebuilt"));
     const electron = spawn(require("electron-prebuilt"), [paths.compiled.root]);
     electron.on("close", (code) => { code === 0 && run(() => {}); });
     done();
 }
 
 export function watch() {
-    g.watch(paths.src.browser, buildBrowserJs);
-    g.watch(paths.src.renderer, buildRenderer)
+    g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
+    g.watch(paths.src.renderer, buildRendererWithoutJs)
+    g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }
 
+const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildRenderer = g.parallel(compileRendererJs, compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
 const build = g.series(buildRenderer, buildBrowser);
-const buildAndWatch = g.parallel(build, run, watch);
+const buildAndWatch = g.series(clean, build, run, watch);
 const publish = g.series(clean, build, pack);
 
 export {publish, build};
