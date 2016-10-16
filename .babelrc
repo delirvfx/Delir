@@ -1,11 +1,13 @@
 {
     "presets": [
-        "stage-3",
+        "stage-1",
         "stage-2",
+        "stage-3",
         "es2017",
         "es2016"
     ],
     "plugins": [
+        "transform-flow-strip-types",
         "transform-es2015-modules-commonjs",
         "transform-class-properties",
         "transform-es2015-block-scoping",
