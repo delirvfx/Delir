@@ -1,0 +1,33 @@
+{
+  "name": "deream",
+  "version": "0.0.2",
+  "description": "Encode Motion JPEG stream to movie with ffmpeg / Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ragg-/deream-stream.git"
+  },
+  "keywords": [
+    "ffmpeg",
+    "movie",
+    "stream"
+  ],
+  "author": "ragg <ragg.devpr@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Ragg-/deream-stream/issues"
+  },
+  "homepage": "https://github.com/Ragg-/deream-stream#readme",
+  "dependencies": {
+    "duplexer3": "^0.1.4"
+  },
+  "devDependencies": {
+    "babel-preset-latest": "^6.14.0",
+    "babel-preset-stage-2": "^6.13.0",
+    "babel-preset-stage-3": "^6.11.0",
+    "canvas": "^1.5.0"
+  }
+}
