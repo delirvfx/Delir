@@ -114,15 +114,23 @@ export function compileRendererJs(done) {
         devtool: "#source-map",
         externals: [
             (ctx, request, callback) => {
-                if (/^(?!\.\/)/.test(request)) {
+                if (request === 'delir-core') {
+                    return callback()
+                }
+
+                if (/^(?!\.\.?\/)/.test(request)) {
                     return callback(null, `require('${request}')`)
                 }
-                callback();
+
+                callback()
             },
         ],
         resolve: {
             extensions: ['', '.js', '.jsx'],
             modulesDirectories: ["bower_components", "node_modules"],
+            alias: {
+                'delir-core': join(__dirname, 'src/delir-core/src/'),
+            }
         },
         resolveLoader: {
             alias: {
@@ -152,7 +160,10 @@ export function compileRendererJs(done) {
         ]
     },  function(err, stats) {
         err && console.error(err)
-        stats.compilation.errors.length && stats.compilation.errors.forEach(e => console.error(e.message));
+        stats.compilation.errors.length && stats.compilation.errors.forEach(e => {
+            console.error(e.message)
+            console.error(e.module.userRequest)
+        });
         console.log('Compiled');
         done();
     });

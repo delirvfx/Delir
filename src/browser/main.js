@@ -47,7 +47,10 @@ const parseCommandLine = () => {
     });
 
     app.on("ready", function() {
-        const window = new BrowserWindow();
+        const window = new BrowserWindow({
+            frame: false,
+            // transparent: true,
+        });
         window.loadURL(`file://${__dirname}/../renderer/index.html`);
         window.show();
     });

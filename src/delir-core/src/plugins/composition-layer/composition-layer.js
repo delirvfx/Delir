@@ -5,8 +5,10 @@ export default class CompositionLayer extends Delir.PluginBase.CustomLayerPlugin
 {
     static pluginDidLoad()
     {
-
+        
     }
+
+
 
     render()
     {

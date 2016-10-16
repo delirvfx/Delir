@@ -1,7 +1,8 @@
 // @flow
 import {BSONPure} from "bson"
 
-export default class Project {
+export default class Project
+{
     // private document : Delir.Document.DocumentObject
 
     constructor(serialized: Object = {})
@@ -9,12 +10,14 @@ export default class Project {
         // this.compositions = []
     }
 
-    toBson() {
+    toBson()
+    {
         const bson = new BSONPure.BSON()
         return bson.serialize(this)
     }
 
-    static deserialize(deserializedBson: Object) {
+    static deserialize(deserializedBson: Object)
+    {
 
     }
 

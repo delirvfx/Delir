@@ -61,6 +61,10 @@ export default class PluginRegistory
             }
         }))
 
+        _.each(packages, (packageInfo, id) => {
+            this._plugins[id] = packageInfo
+        })
+
         return {
             packages: _.cloneDeep(packages),
             failed: failedPackages,

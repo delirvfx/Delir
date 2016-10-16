@@ -4,7 +4,8 @@ export default class Composition {
     layers : Array<Delir.Interfaces.ILayer>;
     config : Delir.Structs.CompositionConfigure;
 
-    constructor() {
+    constructor()
+    {
         // settings = new CompositionSetting();
     }
 

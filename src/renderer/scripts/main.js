@@ -10,15 +10,36 @@ import devtron from 'devtron'
 import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer'
 
 import AppComponent from './components/app'
+import store from './store'
+
+import Delir from 'delir-core'
+import {join} from 'path';
 
 window.addEventListener('DOMContentLoaded', async () => {
     devtron.install()
     await installExtension(REACT_DEVELOPER_TOOLS)
 
+    const plugreg = new Delir.Services.PluginRegistory()
+    let result = await plugreg.loadPackageDir(join(process.cwd(), 'src/delir-core/src/plugins'))
+    console.log(result)
+
+    window.app = {store}
+    store.pluginRegistry = plugreg
+    store.renderer = new Delir.SessionRenderer({
+        pluginRegistory: plugreg,
+    })
+
     ReactDOM.render(
-        React.createElement(AppComponent, {}, []),
+        React.createElement(AppComponent, {store}, []),
         document.querySelector('#root')
     )
+
+    const audioCtx = new AudioContext()
+    const canvas = document.querySelector('canvas')
+
+    store.renderer.setDestinationCanvas(canvas)
+    store.renderer.setDestinationAudioContext(audioCtx)
+    store.renderer.render()
 
     console.log(navcodec)
 

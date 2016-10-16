@@ -1,6 +1,6 @@
 // @flow
 
-import Project from "../project/project"
+import Project from '../project/project'
 
 export default class Renderer {
     // plugins: PluginContainer

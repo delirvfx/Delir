@@ -1,0 +1,11 @@
+[ignore]
+<PROJECT_ROOT>/node_modules/.*
+
+
+[include]
+src/delir-core/src/.*/.*.js
+
+[libs]
+
+
+[options]
