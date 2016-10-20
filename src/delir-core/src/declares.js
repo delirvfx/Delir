@@ -1,3 +1,3 @@
-declare module "bson" {
-  declare var exports: any;
-}
+// declare module "bson" {
+//   declare var exports: any;
+// }

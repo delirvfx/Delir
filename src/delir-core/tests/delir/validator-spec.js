@@ -1,4 +1,4 @@
-import * as Validators from '../../src/application/validators'
+import * as Validators from '../../src/services/validators'
 
 describe('Assert Plugin package.json', () => {
 

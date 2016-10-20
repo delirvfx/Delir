@@ -1,6 +1,6 @@
 import fs from 'fs-promise'
 import {join} from 'path'
-import * as Validators from '../../src/application/validators'
+import * as Validators from '../../src/services/validators'
 
 describe('Standard plugins package.json format check', () => {
     const pluginsRoot = join(__dirname, '../../src/plugins/')

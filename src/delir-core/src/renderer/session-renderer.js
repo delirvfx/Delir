@@ -1,7 +1,10 @@
 // @flow
 
 import Project from "../project/project"
-import type PluginRegistory from '../services/plugin-registory'
+import PluginRegistory from '../services/plugin-registory'
+
+import ProjectInstanceContainer from './project-instance-container'
+import RenderRequest from './render-request'
 
 export default class SessionRenderer {
     // plugins: PluginContainer
@@ -9,24 +12,30 @@ export default class SessionRenderer {
     pluginRegistory : PluginRegistory
     project: Project
 
+    audioDest: ?any // AudioContext.destination
+    imageDest: ?any // Canvas
+
     constructor({
-        pluginRegistory
+        pluginRegistory,
+        project,
     } : {
-        pluginRegistory: PluginRegistory
+        pluginRegistory: PluginRegistory,
+        project: Project,
     }) {
         this.pluginRegistory = pluginRegistory
+        this.project = ProjectInstanceContainer.open(project)
 
-        if (typeof window !== 'undefined') {
-            this.audioCtx = new AudioContext()
-        } else {
-            this.audioCtx = new (require('node-web-audio-api'))
-        }
+        // if (typeof window !== 'undefined') {
+        //     this.audioCtx = new AudioContext()
+        // } else {
+        //     this.audioCtx = new (require('node-web-audio-api'))
+        // }
 
-        this.audioBufferNode = this.audioCtx.createScriptProcessor(4096)
-        this.audioBufferNode.onaudioprocess = (e) => {
-            console.log(inputBuffer);
-            e.outputBuffer = e.inputBuffer
-        }
+        // this.audioBufferNode = this.audioCtx.createScriptProcessor(4096)
+        // this.audioBufferNode.onaudioprocess = (e) => {
+        //     console.log(inputBuffer);
+        //     e.outputBuffer = e.inputBuffer
+        // }
     }
 
     setProject(project: Project)
@@ -65,27 +74,38 @@ export default class SessionRenderer {
         }
     }
 
-    render(doc: Project): Promise<void>
+    async render(req: {
+        frame: number,
+        targetCompositionId: string,
+    })
     {
-        const v = document.createElement('video')
-        v.src = document.querySelector('video').src
-        v.play()
-
-        const s = this.destinationAudioCtx.createMediaElementSource(v)
-        s.connect(this.audioBufferNode)
-        this.audioBufferNode.connect(this.destinationAudioCtx.destination)
-
-        const render = () => {
-            const ctx = this.destinationCanvas.getContext('2d')
-            ctx.fillRect(0, 0, 640, 360)
-            ctx.drawImage(v, 20, 0)
-            requestAnimationFrame(render)
-        }
-
-        requestAnimationFrame(render)
-
-        return new Promise(resolve => {
+        // make render request
+        const renderReq = new RenderRequest({
+            frame: req.frame,
+            canvas: this.imageDest,
+            // audioDest: this.audioDest
 
         })
+
+        // const v = document.createElement('video')
+        // v.src = document.querySelector('video').src
+        // v.play()
+        //
+        // const s = this.destinationAudioCtx.createMediaElementSource(v)
+        // s.connect(this.audioBufferNode)
+        // this.audioBufferNode.connect(this.destinationAudioCtx.destination)
+        //
+        // const render = () => {
+        //     const ctx = this.destinationCanvas.getContext('2d')
+        //     ctx.fillRect(0, 0, 640, 360)
+        //     ctx.drawImage(v, 20, 0)
+        //     requestAnimationFrame(render)
+        // }
+        //
+        // requestAnimationFrame(render)
+        //
+        // return new Promise(resolve => {
+        //
+        // })
     }
 }

@@ -1,16 +1,22 @@
 // @flow
+import Project from './project';
+import Layer from './layer';
 
-export default class Composition {
-    layers : Array<Delir.Interfaces.ILayer>;
-    config : Delir.Structs.CompositionConfigure;
+export default class Composition
+{
+    _id : string
+    layers : Array<Layer> = []
+    // config : Delir.Structs.CompositionConfigure = []
 
-    constructor()
+    get id(): string { return this._id }
+
+    constructor(_id: string)
     {
-        // settings = new CompositionSetting();
+        this._id = string
     }
 
-    render(param: RenderingContext): Promise<void>
+    toJSON()
     {
-        return new Promise<void>(resolve => resolve());
+
     }
 }
