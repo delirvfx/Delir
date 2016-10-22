@@ -13,6 +13,8 @@ export default class Layer
         return layer
     }
 
+    _id: string
+
     config: {
         renderer: ?string,
         rendererOptions: ?Object,
@@ -24,6 +26,8 @@ export default class Layer
 
         placedTime: null
     }
+
+    get id(): string { return this._id }
 
     constructor()
     {

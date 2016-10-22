@@ -28,8 +28,10 @@ export default class Composition
     static deserialize(compJson: Object)
     {
         const composition = new Composition
-        const permitConfigKeys = _.keys(composition.config)
-        Object.assign(composition.config, _.pick(compJson, permitConfigKeys))
+        composition._id = compJson._id
+
+        const permitConfigKeys = _.keys(composition._config)
+        Object.assign(composition._config, _.pick(compJson.config, permitConfigKeys))
 
         const timelanes = compJson.timelanes.map(lane => TimeLane.deserialize(lane))
         composition.timelanes = new ProxySet(timelanes, Composition._timelanesProxySetHandler(composition))
@@ -42,12 +44,14 @@ export default class Composition
 
     timelanes : ProxySet<TimeLane> = new ProxySet([], Composition._timelanesProxySetHandler(this))
 
-    config : {
+    _config : {
+        name: ?string,
         width: ?number,
         height: ?number,
         framerate: ?number,
         // duration: number,
     } = {
+        name: null,
         width: null,
         height: null,
         framerate: null,
@@ -55,18 +59,33 @@ export default class Composition
 
     get id(): string { return this._id }
 
+    get name(): string { return this._config.name }
+    set name(name: string) { this._config.name = name }
+
+    get width(): number { return this._config.width }
+    set width(width: number) { this._config.width = width }
+
+    get height(): number { return this._config.height }
+    set height(height: number) { this._config.height = height }
+
+    get framerate(): number { return this._config.framerate }
+    set framerate(framerate: number) { this._config.framerate = framerate }
 
     toPreBSON(): Object
     {
         return {
-            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON())
+            _id: this.id,
+            config: Object.assign(this._config),
+            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON()),
         }
     }
 
     toJSON(): Object
     {
         return {
-            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON())
+            _id: this.id,
+            config: Object.assign(this._config),
+            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON()),
         }
     }
 }

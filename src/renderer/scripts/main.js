@@ -10,27 +10,59 @@ import devtron from 'devtron'
 import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer'
 
 import AppComponent from './views/app'
-import store from './store'
+
+import dispatcher from './dispatcher'
+import AppStore from './stores/app-store'
+import ProjectStore from './stores/project-store'
 
 import Delir from 'delir-core'
 import {join} from 'path';
 
 window.addEventListener('DOMContentLoaded', async () => {
+    // install devtools
     devtron.install()
     await installExtension(REACT_DEVELOPER_TOOLS)
 
-    const plugreg = new Delir.Services.PluginRegistory()
-    let result = await plugreg.loadPackageDir(join(process.cwd(), 'src/delir-core/src/plugins'))
-    console.log(result)
+    // initialize app
+    // console.log(Delir);
 
-    window.app = {store}
-    store.pluginRegistry = plugreg
-    store.renderer = new Delir.SessionRenderer({
-        pluginRegistory: plugreg,
+    window.app = {
+        stores: {ProjectStore, AppStore}
+    }
+
+    const pluginRegistry = app.pluginRegistry = new Delir.Services.PluginRegistory()
+    console.log(
+        await pluginRegistry.loadPackageDir(join(process.cwd(), 'src/delir-core/src/plugins'))
+    )
+
+    const renderer = app.sessionRenderer = new Delir.SessionRenderer({
+        pluginRegistory: pluginRegistry,
     })
 
+    const p = app.project = new Delir.Project.Project()
+    const a = new Delir.Project.Asset
+    const c = new Delir.Project.Composition
+    const t = new Delir.Project.TimeLane
+    const t2 = new Delir.Project.TimeLane
+    const l = new Delir.Project.Layer
+
+    a.name = ' ✋( ͡° ͜ʖ ͡°) アッセンテ'
+    c.name = 'Master Composition'
+
+    p.assets.add(a)
+    p.compositions.add(c)
+    c.timelanes.add(t)
+    c.timelanes.add(t2)
+    t.layers.add(l)
+
+    app.project = p
+
+    dispatcher.dispatch({type: 'app-set-plugin-registry', payload: pluginRegistry})
+    dispatcher.dispatch({type: 'app-set-session-renderer', payload: renderer})
+    dispatcher.dispatch({type: 'project-init', payload: p})
+
     ReactDOM.render(
-        React.createElement(AppComponent, {store}, []),
+        React.createElement(AppComponent, {}, []),
         document.querySelector('#root')
     )
 

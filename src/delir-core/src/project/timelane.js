@@ -36,6 +36,15 @@ export default class TimeLane
         // TODO: delete, clear
     })
 
+    _config: {
+        name: string,
+    }
+
+    get id(): string { return this._id }
+
+    get name(): string { return this._config.name }
+    set name(name: string) { this._config.name = name }
+
     toPreBSON(): Object
     {
         return {
