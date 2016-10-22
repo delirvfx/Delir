@@ -1,7 +1,7 @@
 import fs from 'fs'
 import {spawn} from 'child_process'
 import canvasToBuffer from 'electron-canvas-to-buffer'
-import navcodec from 'navcodec'
+// import navcodec from 'navcodec'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -34,52 +34,88 @@ window.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('#root')
     )
 
-    const audioCtx = new AudioContext()
-    const canvas = document.querySelector('canvas')
+    //
+    // delir-core rendering test
+    //
 
-    store.renderer.setDestinationCanvas(canvas)
-    store.renderer.setDestinationAudioContext(audioCtx)
-    store.renderer.render()
+    // const audioCtx = new AudioContext()
+    // const canvas = document.querySelector('canvas')
+    //
+    // store.renderer.setDestinationCanvas(canvas)
+    // store.renderer.setDestinationAudioContext(audioCtx)
+    // store.renderer.render()
+    //
+    // console.log(navcodec)
 
-    console.log(navcodec)
 
+
+    //
+    // navcodec rendering test
+    //
     // const stream = await navcodec.openStream('navcodec.mp4')
-    // const buffer = await stream.next()
     // const mediaInfo = await navcodec.open('navcodec.mp4')
+    //
+    // const canvas = document.querySelector('canvas')
+    // console.log(canvas);
+    // const ctx = canvas.getContext('2d')
+    // // document.body.appendChild(canvas)
     //
     // canvas.width = mediaInfo.width
     // canvas.height = mediaInfo.height
-
-    console.time('in')
-
-    // let encount4 = 0
-    // console.info(mediaInfo.width * mediaInfo.height * 4, view.length);
-    // for (let idx = 0, len = mediaInfo.width * mediaInfo.height * 4; idx < len; idx++) {
-    //     // if (idx % 4 === 3) {
-    //     //     imageData.data[idx] = 255;
-    //     //     encount4++;
-    //     //     // console.info('encount');
-    //     //     continue;
-    //     // }
     //
-    //     imageData.data[idx] = srcView[idx];
+    // console.time('in')
+    //
+    // // let frame = 0
+    // // let lastUpdate = Date.now()
+    // const render = async () => {
+    //     console.time('in')
+    //     let buffer = await stream.next()
+    //     let srcView = new Uint8ClampedArray(buffer[0])
+    //     // console.log(srcView);
+    //     let imageData = ctx.createImageData(mediaInfo.width, mediaInfo.height)
+    //     // console.dir(imageData);
+    //
+    //     // let encount4 = 0
+    //     // console.info(mediaInfo.width * mediaInfo.height * 4, srcView.length);
+    //     for (let idx = 0, len = Math.min(srcView.length, imageData.data.length); idx < len; idx++) {
+    //         // if (idx % 4 === 3) {
+    //         //     imageData.data[idx] = 255;
+    //         //     encount4++;
+    //         //     // console.info('encount');
+    //         //     continue;
+    //         // }
+    //
+    //         imageData.data[idx] = srcView[idx];
+    //     }
+    //
+    //     ctx.putImageData(imageData, 0, 0)
+    //     imageData = null
+    //     srcView = null
+    //     buffer = null
+    //     console.timeEnd('in')
+    //     // await new Promise(resolve => setTimeout(resolve, 1000))
+    //     setTimeout(render, 1000/40)
     // }
-
+    //
+    // requestAnimationFrame(render)
 
     // imageData.data.set(buf)
+    // console.log(srcView);
     // ctx.putImageData(imageData, 0, 0)
     // console.info(imageData, mediaInfo.width, mediaInfo.height)
     // console.info(new ImageData(view, mediaInfo.width, mediaInfo.height));
     // ctx.putImageData(new ImageData(view, mediaInfo.width, mediaInfo.height), 0, 0, 0, 0, mediaInfo.width, mediaInfo.height);
-    console.timeEnd('in')
+    // console.timeEnd('in')
 
-    return ;
 
-    // // Out to render
-    // const srcView = new Uint8ClampedArray(buffer)
+
+    //
+    // deream export rendering test
+    //
+
     // const buf = new ArrayBuffer(mediaInfo.width * mediaInfo.height * 4)
     // const view = new Uint8ClampedArray(buf)
-    // const imageData = ctx.createImageData(mediaInfo.width, mediaInfo.height)
+    //
     //
     //
     // const VIDEO_DURATION_SEC = 1
