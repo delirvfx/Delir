@@ -3,14 +3,63 @@ import _ from 'lodash'
 import uuid from 'uuid'
 import {BSONPure} from 'bson'
 
+import ProxySet from './_proxy-set'
 import Asset from './asset'
 import Composition from './composition'
 
 export default class Project
 {
-    _symbolIds: Array<string>
-    _assets: Array<Asset>
-    _compositions: Array<Composition>
+    static _assetsProxySetHandler = project => ({
+        add: (add, assets, [value: Assets]): any => {
+            if (! value instanceof Asset) {
+                throw new TypeError('project.assets only add to Asset object')
+            }
+
+            value._id = project._generateAndReserveSymbolId()
+            value._project = project
+
+            return add.call(assets, value)
+        },
+        // TODO: delete, clear
+    })
+
+    static _compositionsProxySetHandler = project => ({
+        add: (add, compositions, [value: Composition]): any => {
+            if (! value instanceof Composition) {
+                throw new TypeError('project.compositions only add to Composition object')
+            }
+
+            value._id = project._generateAndReserveSymbolId()
+            value._project = project
+
+            return add.call(compositions, value)
+        },
+        // TODO: delete, clear
+    })
+
+    static deserialize(projectBson: Buffer)
+    {
+        const projectJson = (new BSONPure.BSON()).deserialize(projectBson)
+
+        const project = new Project()
+        const symbolIds = projectJson.symbolIds
+        const assets = projectJson.assets.map(assetJson => Asset.deserialize(assetJson))
+        const compositions = projectJson.compositions.map(compJson => Composition.deserialize(compJson))
+
+        project._symbolIds = new Set(symbolIds)
+        project.assets = new ProxySet(assets, Project._assetsProxySetHandler(this))
+        project.compositions = new ProxySet(compositions, Project._compositionsProxySetHandler(this))
+
+        return project
+    }
+
+    _symbolIds: Set<string> = new Set()
+
+    assets: ProxySet<Asset> = new ProxySet([], Project._assetsProxySetHandler(this))
+
+    compositions: ProxySet<Composition> = new ProxySet([], Project._compositionsProxySetHandler(this))
+
+    // _commandHistory: []
 
     // static deserialize(deserializedBson: Object)
     // {
@@ -21,39 +70,55 @@ export default class Project
     //     const bson = new BSONPure.BSON()
     //     return new Document()
     // }
-
-    constructor()
+    _generateAndReserveSymbolId(): string
     {
-        this._symbolIds = []
-        this._assets = []
-        this._compositions = []
-    }
+        let id
 
-    _generateAndRegisterSymbolId(): string
-    {
-        let id;
         do {
             id = uuid.v4()
-        } while (this._symbolIds.includes(id))
+        } while (this._symbolIds.has(id))
 
-        this._symbolIds.push(id)
+        this._symbolIds.add(id)
         return id
     }
 
-    newComposition(): string
+    toJSON()
     {
-        const _id = this._generateAndRegisterSymbolId()
-        const comp = new Composition(_id)
+        return {
+            symbolIds: Array.from(this._symbolIds),
+            assets: Array.from(this.assets.values()).map(asset => asset.toJSON()),
+            compositions: Array.from(this.compositions.values()).map(comp => comp.toJSON()),
+        }
     }
 
-    findComposition(_id: string)
+    serialize()
     {
-        return _.find(this._compositions, {_id})
-    }
-
-    toBson()
-    {
-        const bson = new BSONPure.BSON()
-        return bson.serialize(this)
+        return (new BSONPure.BSON()).serialize({
+            symbolIds: Array.from(this._symbolIds),
+            assets: Array.from(this.assets.values()).map(asset => asset.toJSON()),
+            compositions: Array.from(this.compositions.values()).map(comp => comp.toJSON()),
+        })
     }
 }
+
+// export class ActionInvoker
+// {
+//     static ADD_NEW_COMPOSITION = (project: Project, request) => {
+//         const _id = project._generateAndRegisterSymbolId();
+//
+//         project._commandHistory.push({
+//             undo: () => {
+//                 _.pullAt(_.findIndex(project.compositions, {id: _id}))
+//             },
+//             invoke: () => {
+//                 const comp = new Composition(_id)
+//                 project.compositions[_id] = comp._id
+//             },
+//             redo: () => {
+//
+//             }
+//         })
+//
+//
+//     }
+// }
