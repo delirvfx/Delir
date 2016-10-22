@@ -21,6 +21,11 @@ export default class Asset
         data: {}
     }
 
+    toPreBSON(): Object
+    {
+        return this.toJSON()
+    }
+
     toJSON()
     {
         return Object.assign({}, this.config);

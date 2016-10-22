@@ -56,10 +56,17 @@ export default class Composition
     get id(): string { return this._id }
 
 
-    toJSON()
+    toPreBSON(): Object
     {
         return {
-            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toJSON())
+            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON())
+        }
+    }
+
+    toJSON(): Object
+    {
+        return {
+            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON())
         }
     }
 }

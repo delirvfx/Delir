@@ -1,6 +1,8 @@
 // @flow
 import _ from 'lodash'
 
+import Time from './time'
+
 export default class Layer
 {
     static deserialize(layerJson: Object)
@@ -13,10 +15,14 @@ export default class Layer
 
     config: {
         renderer: ?string,
-        rendererOptions: ?Object
+        rendererOptions: ?Object,
+
+        placedTime: ?Time,
     } = {
         renderer: null,
         rendererOptions: null,
+
+        placedTime: null
     }
 
     constructor()
@@ -24,8 +30,13 @@ export default class Layer
 
     }
 
-    toJson()
+    toPreBSON(): Object
     {
-        return this.config
+        return this.toJSON()
+    }
+
+    toJSON(): Object
+    {
+        return Object.assign({}, this.config)
     }
 }

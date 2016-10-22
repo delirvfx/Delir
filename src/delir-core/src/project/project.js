@@ -82,6 +82,15 @@ export default class Project
         return id
     }
 
+    toPreBSON()
+    {
+        return {
+            symbolIds: Array.from(this._symbolIds),
+            assets: Array.from(this.assets.values()).map(asset => asset.toPreBSON()),
+            compositions: Array.from(this.compositions.values()).map(comp => comp.toPreBSON()),
+        }
+    }
+
     toJSON()
     {
         return {
@@ -93,11 +102,7 @@ export default class Project
 
     serialize()
     {
-        return (new BSONPure.BSON()).serialize({
-            symbolIds: Array.from(this._symbolIds),
-            assets: Array.from(this.assets.values()).map(asset => asset.toJSON()),
-            compositions: Array.from(this.compositions.values()).map(comp => comp.toJSON()),
-        })
+        return (new BSONPure.BSON()).serialize(this.toPreBSON())
     }
 }
 

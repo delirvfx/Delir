@@ -36,6 +36,13 @@ export default class TimeLane
         // TODO: delete, clear
     })
 
+    toPreBSON(): Object
+    {
+        return {
+            layers: Array.from(this.layers).map(layer => layer.toPreBSON()),
+        }
+    }
+
     toJSON(): Object
     {
         return {
