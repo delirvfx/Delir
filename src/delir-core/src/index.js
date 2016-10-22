@@ -11,7 +11,7 @@
 //     }
 // }
 
-import Project from './project/project'
+import * as Project from './project/index'
 import Renderer from './renderer/renderer'
 import SessionRenderer from './renderer/session-renderer'
 import {PluginBase} from './plugin/index'
