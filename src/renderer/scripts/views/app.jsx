@@ -111,18 +111,18 @@ class PreviewView extends React.Component
 {
     componentDidMount()
     {
-        const ctx = this.refs.canvas.getContext('2d')
-
-        const cRand = () => ((Math.random() * 256) | 0).toString(16)
-        const render = () => {
-            ctx.fillStyle = '#000'
-            ctx.fillRect(0, 0, 640, 360)
-            ctx.drawImage(this.refs.video, 0, 0)
-
-            requestAnimationFrame(render)
-        }
-
-        requestAnimationFrame(render)
+        // const ctx = this.refs.canvas.getContext('2d')
+        //
+        // const cRand = () => ((Math.random() * 256) | 0).toString(16)
+        // const render = () => {
+        //     ctx.fillStyle = '#000'
+        //     ctx.fillRect(0, 0, 640, 360)
+        //     ctx.drawImage(this.refs.video, 0, 0)
+        //
+        //     requestAnimationFrame(render)
+        // }
+        //
+        // requestAnimationFrame(render)
     }
 
     render()

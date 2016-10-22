@@ -9,7 +9,7 @@ import ReactDOM from 'react-dom'
 import devtron from 'devtron'
 import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer'
 
-import AppComponent from './components/app'
+import AppComponent from './views/app'
 import store from './store'
 
 import Delir from 'delir-core'
