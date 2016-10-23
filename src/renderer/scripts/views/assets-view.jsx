@@ -6,6 +6,8 @@ import AppStore from '../stores/app-store'
 import ProjectStore from '../stores/project-store'
 
 import Pane from './components/pane'
+import LabelInput from './components/label-input'
+import {ContextMenu, MenuItem} from '../electron/context-menu'
 
 export default class AssetsView extends React.Component
 {
@@ -33,6 +35,12 @@ export default class AssetsView extends React.Component
         Actions.changeActiveComposition(compId)
     }
 
+    modifyCompName(compId, newName)
+    {
+        // console.log(compId, newName);
+        Actions.modifyCompositionName(compId, newName)
+    }
+
     render()
     {
         const {app, project: {project}} = this.state
@@ -51,9 +59,22 @@ export default class AssetsView extends React.Component
                     <tbody>
                         {assets.map(asset => (
                             <tr key={asset.id}>
-                                {console.log(asset)}
+                                <ContextMenu>
+                                    <MenuItem type='separator' />
+                                    <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
+                                    <MenuItem label='Reload' onClick={() => {}} />
+                                    <MenuItem label='Remove it' onClick={() => {}}/>
+                                    <MenuItem type='separator' />
+                                </ContextMenu>
+
                                 <td></td>
-                                <td><input type='text' defaultValue={asset.name} /></td>
+                                <td>
+                                    <LabelInput
+                                        ref={`asset_name_input#${asset.id}`}
+                                        defaultValue={asset.name}
+                                        placeholder='Unnamed Asset'
+                                    />
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -68,8 +89,23 @@ export default class AssetsView extends React.Component
                     <tbody>
                         {compositions.map(comp => (
                             <tr key={comp.id} onDoubleClick={this.changeComposition.bind(this, comp.id)}>
+                                <ContextMenu>
+                                    <MenuItem type='separator' />
+                                    <MenuItem label='Rename' onClick={() => { this.refs[`comp_name_input#${comp.id}`].enableAndFocus()}} />
+                                    <MenuItem label='Remove it' onClick={() => {}}/>
+                                    <MenuItem label='Composition setting' onClick={() => {}}/>
+                                    <MenuItem type='separator' />
+                                </ContextMenu>
+
                                 <td>🎬</td>
-                                <td><input type='text' defaultValue={comp.name} /></td>
+                                <td>
+                                    <LabelInput
+                                        ref={`comp_name_input#${comp.id}`}
+                                        defaultValue={comp.name}
+                                        placeholder='Unnamed Coposition'
+                                        onChange={this.modifyCompName.bind(this, comp.id)}
+                                    />
+                                </td>
                             </tr>
                         ))}
                     </tbody>

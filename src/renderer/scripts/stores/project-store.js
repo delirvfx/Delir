@@ -42,7 +42,6 @@ class ProjectStore extends ReduceStore<Object>
             }
 
             let targetLayer = DelirHelper.findLayerById(action.payload)
-
             return Object.assign({}, state, {activeLayer: layer})
 
         case 'move-layer-to-timelane': return (() => {
@@ -54,11 +53,24 @@ class ProjectStore extends ReduceStore<Object>
 
             // console.log(sourceLane.layers.has(targetLayer))
             // console.log(sourceLane.layers.delete(targetLayer))
+
+            sourceLane.layers.delete(targetLayer)
             destLane.layers.add(targetLayer)
 
-            console.log('moved', sourceLane, destLane)
-            return Object.assign({}, state, {fuck: '💩'})
+            return Object.assign({}, state)
         })()
+
+        case 'mod-composition-name': return (() => {
+            if (! state.project) {
+                return
+            }
+
+            const targetComp = DelirHelper.findCompositionById(state.project, action.payload.compId)
+            console.log(targetComp);
+            targetComp.name = action.payload.newName
+            return Object.assign({}, state)
+        })()
+
         }
 
         return state

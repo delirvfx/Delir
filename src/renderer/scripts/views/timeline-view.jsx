@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import classnames from 'classnames'
 import React, {PropTypes} from 'react'
 
 import Actions from '../actions'
@@ -7,6 +8,9 @@ import ProjectStore from '../stores/project-store'
 
 import Workspace from './components/workspace'
 import Pane from './components/pane'
+import LabelInput from './components/label-input'
+
+import {ContextMenu, MenuItem} from '../electron/context-menu'
 
 const dragSession = new WeakMap()
 
@@ -41,8 +45,6 @@ class TimelineLaneLayer extends React.Component
 
     dragStart(e)
     {
-        // e.preventDefault()
-
         this.setState({
             dragStartPosition: {
                 clientX: e.clientX,
@@ -50,42 +52,26 @@ class TimelineLaneLayer extends React.Component
             }
         })
 
-        // console.log('layer - dragstart');
-
-        dragSession.set(this, {
+        e.dataTransfer.setData('application/json', JSON.stringify({
             type: 'delir/drag-layer',
             layerId: this.props.layer.id,
-        })
-
-        this.props.dragStart(this)
-
-        // e.dataTransfer.setData('application/json', JSON.stringify({
-        //     type: 'delir/drag-layer',
-        //     layerId: this.props.layer.id,
-        // }))
+        }))
     }
 
     drag(e)
     {
-        // console.log(Object.assign({}, e));
-
         const movedX = e.clientX - this.state.dragStartPosition.clientX
         const movedY = e.clientY - this.state.dragStartPosition.clientY
 
-        // console.log('layer - drag');
-
         this.setState({
             dragStyle: {
-                transform: `translateX(${movedX}px) translateY(${movedY}px)`
+                transform: `translateX(${movedX}px)`
             }
         })
     }
 
     dragEnd(e)
     {
-        // console.log('DragEnd', Object.assign({}, e));
-        // console.log('layer - dragend');
-
         this.setState({
             dragStyle: {
                 transform: 'translateX(0)'
@@ -96,8 +82,6 @@ class TimelineLaneLayer extends React.Component
 
     render()
     {
-        // console.log({left: 30, ...this.state.dragStyle});
-
         return (
             <div className='timerange-bar'
                 style={{left: 30, ...this.state.dragStyle}}
@@ -106,7 +90,13 @@ class TimelineLaneLayer extends React.Component
                 onDragStart={this.dragStart.bind(this)}
                 onDrag={this.drag.bind(this)}
                 onDragEnd={this.dragEnd.bind(this)}
-            />
+            >
+                <ContextMenu>
+                    <MenuItem type='separator' />
+                    <MenuItem label='Remote it' onClick={() => {}} />
+                    <MenuItem type='separator' />
+                </ContextMenu>
+            </div>
         )
     }
 }
@@ -117,52 +107,38 @@ class TimelineLane extends React.Component
         timelane: PropTypes.object.isRequired,
     }
 
-    draggingLayer = null
+    state = {
+        dragovered: false
+    }
 
     onDrop(e)
     {
-        // e.preventDefault()
-        // e.stopPropagation()
+        e.preventDefault()
+        e.stopPropagation()
 
-        console.log('lane - drop', this.props.timelane.id)
+        this.setState({dragovered: false})
+
         const data = JSON.parse(e.dataTransfer.getData('application/json'))
-        // console.log(data);
+        const {layerId} = data
+        let isChildLayer = !! _.find(Array.from(this.props.timelane.layers.values()), {id: layerId})
 
-        if (data.type !== 'delir/drag-layer') {
+        if (data.type !== 'delir/drag-layer' || isChildLayer) {
             return
         }
 
-        // Actions.moveLayerToTimelane(data.layerId, this.props.timelane.id)
+        Actions.moveLayerToTimelane(data.layerId, this.props.timelane.id)
     }
 
-    // onDragEnd(e)
-    // {
-    //     console.log('lane - dragend', this.props.timelane.id);
-    // }
+    onDragLeave(e)
+    {
+        this.setState({dragovered: false})
+    }
 
     onDragOver(e)
     {
-        console.log('lane - dragover', this.props.timelane.id);
-
-        // console.log(e.dataTransfer.getData('application/json'));
-        // const {layerId} = JSON.parse(e.dataTransfer.getData('application/json'))
-        // console.log(_.find(Array.from(timelane.layers.values()), {id: layerId}))
-
-        const {layerId} = dragSession.get(this.draggingLayer)
-        let hasChild = _.find(Array.from(this.props.timelane.layers.values()), {id: layerId})
-
-        // console.log(hasChild);
-        if (! hasChild) {
-            e.preventDefault()
-        }
-
-        // console.log('over');
-        // e.stopPropagation()
-    }
-
-    layerDragStart(c)
-    {
-        this.draggingLayer = c
+        e.preventDefault()
+        e.stopPropagation()
+        this.setState({dragovered: true})
     }
 
     render()
@@ -171,15 +147,40 @@ class TimelineLane extends React.Component
 
         return (
             <li
-                className='timeline-lane'
+                className={classnames('timeline-lane', {
+                    dragover: this.state.dragovered,
+                })}
                 data-lane-id={timelane.id}
                 onDragOver={this.onDragOver.bind(this)}
+                onDragLeave={this.onDragLeave.bind(this)}
                 onDrop={this.onDrop.bind(this)}
             >
+                <ContextMenu>
+                    <MenuItem type='separator' />
+                    <MenuItem label='Add new Layer' onClick={() => {}} />
+                    <MenuItem type='separator' />
+                </ContextMenu>
+
                 {Array.from(timelane.layers.values()).map(layer => (
-                    <TimelineLaneLayer key={layer.id} layer={layer} dragStart={this.layerDragStart.bind(this)}/>
+                    <TimelineLaneLayer key={layer.id} layer={layer} />
                 ))}
             </li>
+        )
+    }
+}
+
+class TimelineGradations extends React.Component
+{
+    static propTypes = {
+        cursorHeight: PropTypes.number.isRequired,
+    }
+
+    render()
+    {
+        return (
+            <div className='timeline-gradations'>
+                <div className='timeline-playingCursor' style={{height:this.props.cursorHeight}}></div>
+            </div>
         )
     }
 }
@@ -194,6 +195,7 @@ export default class TimelineView extends React.Component
             project: ProjectStore.getState(),
             timelineScrollTop: 0,
             cursorHeight: 0,
+            selectedLaneId: null,
         }
 
         ProjectStore.addListener(() => {
@@ -219,6 +221,11 @@ export default class TimelineView extends React.Component
         this.refs.timelineLabels.scrollTop = this.refs.timelineLanes.scrollTop = this.state.timelineScrollTop
     }
 
+    laneSelected = laneId =>
+    {
+        this.setState({selectedLaneId: laneId})
+    }
+
     render()
     {
         const {project} = this.state
@@ -230,36 +237,54 @@ export default class TimelineView extends React.Component
                 <Workspace direction="horizontal">
                     <Pane className='timeline-labels-container'>
                         <div className='timeline-labels-header'>
-                            <span>Label</span>
-                            <span>Label</span>
-                            <span>Label</span>
+                            <div className='--col-name'>Lanes</div>
+                            {/*
+                                <div className='--col-visibility'>Label</div>
+                                <div className='--col-lock'>Label</div>
+                            */}
                         </div>
 
                         <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
-                            {timelineLanes.map((lane, idx) => (
-                                <ul key={idx} className='timeline-labels-label'>
-                                    <li className='timeline-labels-label-item'>
-                                        Lane1 {idx}
-                                    </li>
-                                    <li className='timeline-labels-label-item'>
-                                        🙈
-                                    </li>
-                                    <li className='timeline-labels-label-item'>
-                                        🙆
-                                    </li>
-                                    <li className='timeline-labels-label-item'>
-                                        <input type='checkbox' />
-                                    </li>
-                                </ul>
-                            ))}
+                            <ContextMenu>
+                                <MenuItem type='separator' />
+                                <MenuItem label='Add new timelane' onClick={() => {}} />
+                                <MenuItem type='separator' />
+                            </ContextMenu>
+                            {timelineLanes.map(lane => {
+                                return (
+                                    <ul key={lane.id} className='timeline-labels-label'>
+                                        <ContextMenu>
+                                            <MenuItem type='separator' />
+                                            <MenuItem label='複製' onClick={() => {}} />
+                                            <MenuItem label='削除' onClick={() => {}} />
+                                            <MenuItem type='separator' />
+                                        </ContextMenu>
+
+                                        <li className='timeline-labels-label-item --col-name' onClick={this.laneSelected.bind(this, lane.id)}>
+                                            {/* {this.state.selectedLaneId === lane.id && '*'} */}
+                                            {console.log(lane)}
+                                            <LabelInput defaultValue={lane.name} placeholder='TimeLane' />
+                                        </li>
+                                        <li className='timeline-labels-label-item --col-visibility'>
+                                            🙈
+                                        </li>
+                                        <li className='timeline-labels-label-item --col-lock'>
+                                            🙆
+                                        </li>
+                                    </ul>
+                                )
+                            })}
                         </div>
                     </Pane>
                     <Pane className='timeline-container'>
-                        <div className='timeline-gradations'>
-                            <div className='timeline-playingCursor' style={{height:this.state.cursorHeight}}></div>
-                        </div>
+                        <TimelineGradations cursorHeight={this.state.cursorHeight}/>
 
                         <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
+                            <ContextMenu>
+                                <MenuItem type='separator' />
+                                <MenuItem label='Add new timelane' onClick={() => {}} />
+                                <MenuItem type='separator' />
+                            </ContextMenu>
                             {timelineLanes.map(lane => (
                                 <TimelineLane key={lane.id} timelane={lane} />
                             ))}

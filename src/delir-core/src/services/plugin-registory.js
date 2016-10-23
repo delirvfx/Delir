@@ -1,24 +1,26 @@
 // @flow
-import type {DelirPluginPackageJson} from './types';
+import type {DelirPluginPackageJson} from './types'
 
 import fs from 'fs-promise'
 import path from 'path'
 import _ from 'lodash'
 
-import * as Validators from './validators';
-import {PluginLoadFailException} from '../exceptions/';
+import * as Validators from './validators'
+import {PluginLoadFailException} from '../exceptions/'
 
 export default class PluginRegistory
 {
     static PluginFeatures = Object.freeze({
         Effect: 'Effect',
         CustomLayer: 'CustomLayer',
+        // CustomLayer: 'CustomLayer',
         ExpressionExtension: 'ExpressionExtension',
     })
 
     _plugins: {
         [packageName: string]: {
             package: Object,
+            class: Class<*>,
             packageRoot: string,
             entryPath: string,
         }
@@ -63,6 +65,7 @@ export default class PluginRegistory
 
         _.each(packages, (packageInfo, id) => {
             this._plugins[id] = packageInfo
+            this.requireById(id)
         })
 
         return {
@@ -71,17 +74,32 @@ export default class PluginRegistory
         }
     }
 
-    requireById(packageId: string)
+    requireById(packageId: string): ?Class<*>
     {
         const pluginInfo = this._plugins[packageId]
+
         if (! pluginInfo) {
             return
         }
 
+        if (pluginInfo.class != null) {
+            return pluginInfo.class
+        }
+
         try {
-            return require(pluginInfo.entry)
+            // avoid webpack module resolving
+            const _class = global.require(pluginInfo.entryPath)
+
+            // resolve babel's module exposing
+            if (_class.__esModule && _class.default) {
+                pluginInfo.class = _class.default
+            } else {
+                pluginInfo.class = _class
+            }
+
+            pluginInfo.class.pluginDidLoad()
         } catch (e) {
-            throw new PluginLoadFailException(`Failed to requiring plugin ${packageId}. ${e.message}`);
+            throw new PluginLoadFailException(`Failed to requiring plugin \`${packageId}\`. ${e.message}`)
         }
     }
 

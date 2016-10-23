@@ -15,6 +15,8 @@ $pane-background = linear-gradient(to bottom, hsl(0, 0%, 10%), hsl(0, 0%, 9%))
     --active-pane-border rgba(#6900a8, .5)
     --text-color #fff
     --caption-row-background #3a3340
+
+    --accent-color #9300ed
 }
 
 html, body
@@ -100,6 +102,22 @@ html, body
 ._workspace-pane-handle
     display none
     background-color var(--pane-border-color)
+
+._label-input
+    background-color transparent
+    color inherit
+    font-family inherit
+    outline none
+
+    border none
+    border-bottom 1px solid var(--accent-color)
+
+    transition border-bottom-color .1s
+
+    &[readonly]
+        border-bottom 1px solid transparent
+        user-select none
+
 
 // Views
 .body-pane
@@ -209,6 +227,7 @@ html, body
 
         .canvas
             display block
+            box-shadow 0 0 5px rgba(0,0,0,.5)
 
 .view-assets
     width 300px
@@ -240,6 +259,21 @@ html, body
     flex none
     font-size 12px
 
+    .--col-name
+        display inline-flex
+        align-items center
+        flex 1
+        overflow hidden
+        white-space normal
+        text-overflow ellipsis
+
+    .--col-visibility
+    .--col-lock
+        display inline-flex
+        align-items center
+        width 16px
+
+
     .timeline-labels-container
         display flex
         flex-direction column
@@ -248,7 +282,7 @@ html, body
         background-color hsl(0, 0%, 10%)
 
     .timeline-labels-header
-        display block
+        display flex
         width 100%
         height 30px
         background var(--caption-row-background)
@@ -262,7 +296,7 @@ html, body
         padding-bottom 20px
 
     .timeline-labels-label
-        display block
+        display flex
         height 24px
         padding 2px
         padding-left 4px
@@ -270,8 +304,22 @@ html, body
         line-height 1.6
         vertical-align middle
 
+
+
     .timeline-labels-label-item
-        display table-cell
+        // display table-cell
+        display inline-block
+
+        &.--col-name
+            // width 100px
+            flex 1
+            overflow hidden
+            white-space normal
+            text-overflow ellipsis
+
+        &.--col-visibility
+        &.--col-lock
+            width 16px
 
     .timeline-container
         display flex
@@ -313,7 +361,11 @@ html, body
         height 24px
         padding 1px 0
         padding-left 4px
+        overflow hidden
         border-bottom 1px solid rgba(#fff, .1)
+
+        &.dragover
+            background-color rgba(#fff, .2)
 
     .timerange-bar
         position relative

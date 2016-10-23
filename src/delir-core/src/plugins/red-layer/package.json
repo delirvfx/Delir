@@ -1,8 +1,8 @@
 {
-    "name": "composition-layer",
+    "name": "red-layer",
     "version": "0.0.1",
     "author": "Ragg <ragg.devpr@gmail.com>",
-    "main": "composition-layer.js",
+    "main": "index.js",
     "engines": {
         "delir": "0.0.x"
     },

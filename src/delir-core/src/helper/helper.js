@@ -1,8 +1,40 @@
 // @flow
 import type Project from '../project/project'
+import type Asset from '../project/asset'
+import type Composition from '../project/composition'
+import type Timelane from '../project/timelane'
+import type Layer from '../project/layer'
 
-export function findTimelaneById(project: Project, timelaneId: string) {
-    let targetTimelane
+export function findAssetById(project: Project, assetId: string): ?Asset {
+    let targetAsset: ?Asset = null
+
+    compSearch:
+        for (let asset of project.assets.values()) {
+            if (asset.id === assetId) {
+                targetAsset = asset
+                break compSearch
+            }
+        }
+
+    return targetAsset
+}
+
+export function findCompositionById(project: Project, compositionId: string): ?Composition {
+    let targetComp: ?Composition = null
+
+    compSearch:
+        for (let comp of project.compositions.values()) {
+            if (comp.id === compositionId) {
+                targetComp = comp
+                break compSearch
+            }
+        }
+
+    return targetComp
+}
+
+export function findTimelaneById(project: Project, timelaneId: string): ?Timelane {
+    let targetTimelane: ?Timelane = null
 
     timelaneSearch:
         for (let comp of project.compositions.values()) {
@@ -17,8 +49,8 @@ export function findTimelaneById(project: Project, timelaneId: string) {
     return targetTimelane
 }
 
-export function findParentTimelaneByLayerId(project: Project, layerId: string) {
-    let targetTimelane
+export function findParentTimelaneByLayerId(project: Project, layerId: string): ?Timelane {
+    let targetTimelane: ?Timelane = null
 
     timelaneSearch:
         for (let comp of project.compositions.values()) {
@@ -35,8 +67,8 @@ export function findParentTimelaneByLayerId(project: Project, layerId: string) {
     return targetTimelane
 }
 
-export function findLayerById(project: Project, layerId: string) {
-    let targetLayer
+export function findLayerById(project: Project, layerId: string): ?Layer {
+    let targetLayer: ?Layer = null
 
     layerSearch:
         for (let comp of project.compositions.values()) {

@@ -1,4 +1,7 @@
 // @flow
+import type RenderRequest from '../../renderer/render-request'
+import type ParameterTypeDescripter from '../parameter-types'
+
 import PluginBase from './plugin-base.js'
 import {
     InvalidPluginLoadedException
@@ -19,8 +22,7 @@ export default class CustomLayerPluginBase extends PluginBase
         super()
     }
 
-    // MEMO: キャッシュが必要な（例えば音声ファイルなど）パラメータの変更を検知するためのAPI
-    onDidParameterChanged(newParam, oldParam)
+    async beforeRender(preRenderReq: Object)
     {
 
     }
@@ -30,7 +32,24 @@ export default class CustomLayerPluginBase extends PluginBase
     // 変形やエフェクト・マスク処理のパラメータや、キーフレームやエクスプレッションなどは上位レイヤーで考慮すべき
     // 先フレーム予測などが必要なら別途APIを用意する
     // （パフォーマンスはよろしくないけど）
-    render(options)
+    async render(options: RenderRequest): Promise<void>
+    {
+
+    }
+
+    //
+    // Editor handling methods
+    //
+
+    provideParameter(): {
+        [paramId: string]: ParameterTypeDescripter
+    }
+    {
+        return {}
+    }
+
+    // MEMO: キャッシュが必要な（例えば音声ファイルなど）パラメータの変更を検知するためのAPI
+    onDidParameterChanged(newParam, oldParam)
     {
 
     }

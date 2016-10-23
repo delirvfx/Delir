@@ -44,11 +44,11 @@ export default class Project
         const project = new Project()
         const symbolIds = projectJson.symbolIds
         const assets = projectJson.assets.map(assetJson => Asset.deserialize(assetJson))
-        const compositions = projectJson.compositions.map(compJson => Composition.deserialize(compJson))
+        const compositions = projectJson.compositions.map(compJson => Composition.deserialize(compJson, project))
 
         project._symbolIds = new Set(symbolIds)
-        project.assets = new ProxySet(assets, Project._assetsProxySetHandler(this))
-        project.compositions = new ProxySet(compositions, Project._compositionsProxySetHandler(this))
+        project.assets = new ProxySet(assets, Project._assetsProxySetHandler(project))
+        project.compositions = new ProxySet(compositions, Project._compositionsProxySetHandler(project))
 
         return project
     }
@@ -85,6 +85,7 @@ export default class Project
     toPreBSON()
     {
         return {
+            formatVersion: 0,
             symbolIds: Array.from(this._symbolIds),
             assets: Array.from(this.assets.values()).map(asset => asset.toPreBSON()),
             compositions: Array.from(this.compositions.values()).map(comp => comp.toPreBSON()),

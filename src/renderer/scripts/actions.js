@@ -24,5 +24,22 @@ export default {
             type: 'move-layer-to-timelane',
             payload: {layerId, timelaneId},
         })
+    },
+
+    // Modify Project
+    modifyCompositionName(compId: string, newName: string)
+    {
+        dispatcher.dispatch({
+            type: 'mod-composition-name',
+            payload: {compId, newName}
+        })
+    },
+
+    previewPlay()
+    {
+        dispatcher.dispatch({
+            type: 'preview-play',
+            // payload: {layerId, timelaneId},
+        })
     }
 }

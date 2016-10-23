@@ -9,7 +9,8 @@ export type ParameterType =
     'NUMBER' |
     'FLOAT' |
     'LAYER' |
-    'NONE'
+    'NONE' |
+    'ASSET'
 
 export type ParameterTypeDetail = {
     enabled: true,
@@ -43,4 +44,5 @@ Object.assign(makeTypeDescriptor, {
     number: 'NUMBER',
     float: 'FLOAT',
     layer: 'LAYER',
+    asset: 'ASSET'
 })
