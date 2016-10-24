@@ -39,7 +39,8 @@ const parseCommandLine = () => {
 
 (() => {
     var args;
-    args = parseCommandLine();
+    args = parseCommandLine()
+
     app.on("window-all-closed", function() {
         if (process.platform !== "darwin") {
             app.quit();
@@ -48,9 +49,15 @@ const parseCommandLine = () => {
 
     app.on("ready", function() {
         const window = new BrowserWindow({
-            frame: false,
+            // frame: false,
             // transparent: true,
+            webPreferences: {
+                webgl: true,
+                experimentalFeatures: true,
+                experimentalCanvasFeatures: true,
+            }
         });
+
         window.loadURL(`file://${__dirname}/../renderer/index.html`);
         window.show();
     });

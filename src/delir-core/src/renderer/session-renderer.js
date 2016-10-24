@@ -31,6 +31,7 @@ export default class SessionRenderer {
         baseRequest: RenderRequest,
         bufferCanvas: HTMLCanvasElement,
         rootComp: CompositionInstanceContainer,
+        durationFrames: number,
         renderedFrames: number,
         animationFrameId: ?number,
     }
@@ -101,6 +102,7 @@ export default class SessionRenderer {
     })
     {
         const rootComp = Helper.findCompositionById(this.project, req.targetCompositionId)
+
         if (rootComp == null) { return }
         const compWrap = new CompositionInstanceContainer(rootComp)
 
@@ -119,15 +121,35 @@ export default class SessionRenderer {
             playing: true,
             baseRequest: new RenderRequest({
                 frame: req.frame,
+
+                width: compWrap.width,
+                height: compWrap.height,
+                framerate: compWrap.framerate,
+
                 destCanvas: bufferCanvas,
-                // audioDest: this.audioDest
+                // audioDestNode: this.audioDest
+
                 resolver: resolver,
             }),
             bufferCanvas,
             rootComp: compWrap,
             renderedFrames: 0,
+            durationFrames: rootComp.durationFrame,
             animationFrameId: null,
         }
+
+        console.log(new RenderRequest({
+            frame: req.frame,
+
+            width: compWrap.width,
+            height: compWrap.height,
+            framerate: compWrap.framerate,
+
+            destCanvas: bufferCanvas,
+            // audioDestNode: this.audioDest
+
+            resolver: resolver,
+        }));
     }
 
     async render(req: {
@@ -135,7 +157,7 @@ export default class SessionRenderer {
         targetCompositionId: string,
     }) : Promise<void>
     {
-        // console.log('start render');
+        console.log('start render');
 
         // const v = document.createElement('video')
         // v.src = document.querySelector('video').src
@@ -157,22 +179,32 @@ export default class SessionRenderer {
         const resolver = this._playingSession.baseRequest.resolver
         const {bufferCanvas} = this._playingSession
         const bufferCanvasCtx = bufferCanvas.getContext('2d')
-        if (bufferCanvasCtx == null) return
+        const {baseRequest} = this._playingSession
+        if (bufferCanvasCtx == null) throw new Error('Failed create Canvas2D context')
 
         const destCanvas = this.destinationCanvas
         const destCanvasCtx = this.destinationCanvas.getContext('2d')
-        if (destCanvasCtx == null) return
+        if (destCanvasCtx == null) throw new Error('Failed create Canvas2D context')
 
         //
         // Rendering
         //
-        await rootCompWrap.beforeRender(new PreRenderingRequest({
-            resolver,
-        }))
+        try {
+            console.log(baseRequest);
+            await rootCompWrap.beforeRender(new PreRenderingRequest({
+                width: baseRequest.width,
+                height: baseRequest.height,
+                framerate: baseRequest.framerate,
+                rootComposition: baseRequest.rootComposition,
+                resolver,
+            }))
 
+        } catch (e) {
+            throw new Error(e.stack)
+        }
+
+        console.log('render', bufferCanvas);
         const render = async (): any => {
-            const {baseRequest} = this._playingSession
-
             // ctx.fillStyle = '#fff'
             bufferCanvasCtx.clearRect(0, 0, 640, 360)
 
@@ -182,7 +214,7 @@ export default class SessionRenderer {
             })
 
             // console.group(`frame ${this._playingSession.renderedFrames}`)
-            console.log('requesting...', _renderReq);
+            // console.log('requesting...', _renderReq);
             await rootCompWrap.render(_renderReq)
             // console.groupEnd(`frame ${this._playingSession.renderedFrames}`)
 
@@ -193,21 +225,36 @@ export default class SessionRenderer {
                 0, 0, bufferCanvas.width, bufferCanvas.height,
                 0, 0, destCanvas.width, destCanvas.height
             )
+
             this._playingSession.renderedFrames++
+
+            // if (this._playingSession.renderedFrames >= this._playingSession.durationFrames) {
+            //     this._playingSession = null
+            //     return
+            // }
+
             this._playingSession.animationFrameId = requestAnimationFrame(render)
         }
 
         this._playingSession.animationFrameId = requestAnimationFrame(render)
     }
 
+    isPlaying()
+    {
+        return this._playingSession && this._playingSession.playing
+    }
+
     pause()
     {
+        if (this._playingSession.animationFrameId === null) return
+        cancelAnimationFrame(this._playingSession.animationFrameId)
         this._playingSession.playing = false
-        cancelAnimationFrame(this._animationFrameId)
     }
 
     stop()
     {
+        if (this._playingSession.animationFrameId === null) return
+        cancelAnimationFrame(this._playingSession.animationFrameId)
         this._playingSession = null
     }
 

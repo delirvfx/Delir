@@ -18,11 +18,17 @@ export default class RenderRequest
 
         'destCanvas',
 
+        'width',
+        'height',
+        'framerate',
+
         // 'rootComposition', // not permitted
         'parentComposition',
 
         'compositionScope',
         'layerScope',
+
+        'parameters',
     ]
 
     static _permitOnlyInitializeKey = [
@@ -30,15 +36,20 @@ export default class RenderRequest
         'resolver',
     ]
 
-    time : number
+    time: number
     timeOnComposition: number
     timeOnLayer: number
 
-    frame : number
-    frameOnComposition : number
+    frame: number
+    frameOnComposition: number
     frameOnLayer: number
 
+    width: number
+    height: number
+    framerate: number
+
     destCanvas: HTMLCanvasElement
+    // audioDestNode
 
     rootComposition: Composition
     parentComposition: Composition
@@ -64,7 +75,7 @@ export default class RenderRequest
         Object.freeze(this);
     }
 
-    set(patch: Object) : RenderRequest
+    set(patch: Object): RenderRequest
     {
         const permitPatch = _.pick(patch, RenderRequest._permitKeys)
         return new RenderRequest(Object.assign({}, this, permitPatch))

@@ -6,6 +6,7 @@ import type PreRenderingRequest from './pre-rendering-request'
 import type RenderRequest from './render-request'
 
 import {RenderingFailedException} from '../exceptions'
+import PluginPreRenderingRequest from './plugin-pre-rendering-request'
 
 export default class LayerInstanceContainer
 {
@@ -43,19 +44,25 @@ export default class LayerInstanceContainer
     //     return {}
     // }
 
-    async beforeRender(preRenderReq: PreRenderingRequest)
+    async beforeRender(req: PreRenderingRequest)
     {
-        // initialize renderer
-        const Renderer = preRenderReq.resolver.resolvePlugin(this._layer.renderer)
+        const _req = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
+            layerScope: this._variableScope,
+            parameters: Object.assign({}, this._layer.rendererOptions),
+        })
 
+        // initialize renderer
+        const Renderer = req.resolver.resolvePlugin(this._layer.renderer)
         if (Renderer == null) {
             throw new RenderingFailedException(`Failed to load Renderer plugin \`${this._layer.renderer}\``)
         }
 
         this._rendererInstance = new Renderer
-        await this._rendererInstance.beforeRender(Object.assign({}, preRenderReq, {
-            parameters: Object.assign({}, this._layer.rendererOptions)
-        }))
+        try {
+            await this._rendererInstance.beforeRender(_req)
+        } catch (e) {
+            throw new RenderingFailedException(`Failed to before rendering process for \`${Renderer.name}\` (${e.message})`, {before: e})
+        }
 
         // Sort key frames
         this._keyframes = Array.from(this._layer.keyframes.values())

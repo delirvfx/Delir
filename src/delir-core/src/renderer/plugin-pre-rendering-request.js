@@ -1,20 +1,19 @@
 // @flow
 import type CompositionInstanceContainer from './composition-instance-container'
+import type PreRenderingRequest from './pre-rendering-request'
 import type EntityResolver from './entity-resolver'
 
 import _ from 'lodash'
 
-export default class PreRenderingRequest
+export default class PluginPreRenderingRequest
 {
     static _permitKeys = [
-        'parentComposition',
-
-        'compositionScope',
-        'layerScope',
-
         'width',
         'height',
         'framerate',
+
+        'compositionScope',
+        'layerScope',
 
         'parameters',
     ]
@@ -24,12 +23,14 @@ export default class PreRenderingRequest
         'resolver',
     ]
 
+    static fromPreRenderingRequest(preRenderingRequest: PreRenderingRequest)
+    {
+        return new PluginPreRenderingRequest(preRenderingRequest)
+    }
+
     width: number
     height: number
     framerate: number
-
-    rootComposition: CompositionInstanceContainer
-    parentComposition: CompositionInstanceContainer
 
     compositionScope: Object
     layerScope: Object
@@ -42,18 +43,16 @@ export default class PreRenderingRequest
     {
         const props = _.pick(
             properties,
-            PreRenderingRequest._permitKeys.concat(PreRenderingRequest._permitOnlyInitializeKey)
+            PluginPreRenderingRequest._permitKeys.concat(PluginPreRenderingRequest._permitOnlyInitializeKey)
         )
-
-        console.log(properties, props);
 
         Object.assign(this, props);
         Object.freeze(this);
     }
 
-    set(patch: Object) : PreRenderingRequest
+    set(patch: Object) : PluginPreRenderingRequest
     {
-        const permitPatch = _.pick(patch, PreRenderingRequest._permitKeys)
-        return new PreRenderingRequest(Object.assign({}, this, permitPatch))
+        const permitPatch = _.pick(patch, PluginPreRenderingRequest._permitKeys)
+        return new PluginPreRenderingRequest(Object.assign({}, this, permitPatch))
     }
 }

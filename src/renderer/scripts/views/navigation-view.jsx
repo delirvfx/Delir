@@ -11,11 +11,9 @@ export default class NavigationView extends React.Component
         console.log('hi');
     }
 
-    onClickNav(action)
+    onClickPlay = (action) =>
     {
-        if (Actions[action]) {
-            Actions[action]()
-        }
+        Actions.previewPlay()
     }
 
     render()
@@ -30,7 +28,7 @@ export default class NavigationView extends React.Component
                 <ul className='navigation-items'>
                     <li>✨</li>
                     <li>💪</li>
-                    <li onClick={this.onClickNav.bind(this, 'previewPlay')}>⚡</li>
+                    <li onClick={this.onClickPlay}>⚡</li>
                 </ul>
             </Pane>
         )

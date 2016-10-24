@@ -255,7 +255,7 @@ export async function cleanBrowserScripts(done) {
 
 export function run(done) {
     // console.log(require("electron-prebuilt"));
-    const electron = spawn(require("electron-prebuilt"), [paths.compiled.root], {stdio:'inherit'});
+    const electron = spawn(require("electron"), [paths.compiled.root], {stdio:'inherit'});
     electron.on("close", (code) => { code === 0 && run(() => {}); });
     done();
 }

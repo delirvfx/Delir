@@ -78,6 +78,9 @@ export default class Composition
     get framerate(): number { return this.config.framerate }
     set framerate(framerate: number) { this.config.framerate = framerate }
 
+    get durationFrame(): number { return this.config.durationFrame }
+    set durationFrame(durationFrame: number) { this.config.durationFrame = durationFrame }
+
     toPreBSON(): Object
     {
         return {

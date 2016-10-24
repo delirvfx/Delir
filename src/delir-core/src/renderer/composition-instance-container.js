@@ -17,18 +17,22 @@ export default class CompositionInstanceContainer
     get framerate(): number { return this._composition.framerate }
     get width(): number { return this._composition.width }
     get height(): number { return this._composition.height }
+    get durationFrame(): number { return this._composition.durationFrame }
 
     constructor(composition: Composition)
     {
         this._composition = composition
     }
 
-    async beforeRender(preRenderReq: PreRenderingRequest)
+    async beforeRender(req: PreRenderingRequest)
     {
         this._timelanes = await Promise.all(
             Array.from(this._composition.timelanes.values()).map(async timelane => {
                 const laneWrap = new TimelaneInstanceContainer(timelane)
-                laneWrap.beforeRender(preRenderReq)
+                laneWrap.beforeRender(req.set({
+                    parentComposition: req.rootComposition == this ? null : this,
+                    compositionScope: this._variableScope,
+                }))
                 return laneWrap
             })
         )
@@ -49,8 +53,6 @@ export default class CompositionInstanceContainer
             const destCanvas = new Canvas()
             destCanvas.width = _req.destCanvas.width
             destCanvas.height = _req.destCanvas.height
-            const ctx = destCanvas.getContext('2d')
-            ctx.clearRect(0, 0, destCanvas.width, destCanvas.height)
 
             const __req = _req.set({destCanvas: destCanvas})
             await layer.render(__req)

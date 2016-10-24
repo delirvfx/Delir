@@ -179,9 +179,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     const c2 = new Delir.Project.Composition
     const c1_t1 = new Delir.Project.TimeLane
     const c1_t2 = new Delir.Project.TimeLane
+    const c1_t3 = new Delir.Project.TimeLane
     const c2_t1 = new Delir.Project.TimeLane
     const c1_t1_l1 = new Delir.Project.Layer
     const c1_t2_l1 = new Delir.Project.Layer
+    const c1_t3_l1 = new Delir.Project.Layer
     const c2_t1_l1 = new Delir.Project.Layer
     const c2_t1_l2 = new Delir.Project.Layer
     const c2_t1_l3 = new Delir.Project.Layer
@@ -194,23 +196,30 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.durationFrame = 30 * 2
 
     c1_t1.name = 'NYAN = ^ . ^ = CHENCAT'
-    c1_t2.name = 'video'
+    c1_t2.name = '🔥 FIRE 🔥'
+    c1_t3.name = 'video'
 
     c1_t1_l1.renderer = 'red-layer'
     c1_t1_l1.placedFrame = 0
 
-    c1_t2_l1.renderer = 'html5-video-layer'
+    // c1_t2_l1.renderer = 'html5-video-layer'
+    c1_t2_l1.renderer = 'proton-layer'
     c1_t2_l1.placedFrame = 0
-    c1_t2_l1.rendererOptions.source = 'file:///Users/ragg/workspace/delir/navcodec.mp4'
+
+    c1_t3_l1.renderer = 'html5-video-layer'
+    c1_t3_l1.rendererOptions.source = 'file:///Users/ragg/workspace/delir/sample.mp4'
+    c1_t2_l1.placedFrame = 0
 
     p.assets.add(a)
     p.compositions.add(c1)
 
     c1.timelanes.add(c1_t1)
     c1.timelanes.add(c1_t2)
+    c1.timelanes.add(c1_t3)
 
     c1_t1.layers.add(c1_t1_l1)
     c1_t2.layers.add(c1_t2_l1)
+    c1_t3.layers.add(c1_t3_l1)
 
     c2.name = 'Sub Composition'
     p.compositions.add(c2)
@@ -239,7 +248,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 renderer.render({
                     frame: 0,
                     targetCompositionId: activeComp.id,
-                })
+                }).catch(e => console.error(e.stack))
             }
             return;
         }
