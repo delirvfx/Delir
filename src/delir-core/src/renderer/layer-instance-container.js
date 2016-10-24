@@ -2,6 +2,7 @@
 import type CustomLayerPluginBase from '../plugin/base/custom-layer-plugin-base'
 import type Layer from '../project/layer'
 import type Keyframe from '../project/keyframe'
+import type PreRenderingRequest from './pre-rendering-request'
 import type RenderRequest from './render-request'
 
 import {RenderingFailedException} from '../exceptions'
@@ -42,7 +43,7 @@ export default class LayerInstanceContainer
     //     return {}
     // }
 
-    async beforeRender(preRenderReq: Object)
+    async beforeRender(preRenderReq: PreRenderingRequest)
     {
         // initialize renderer
         const Renderer = preRenderReq.resolver.resolvePlugin(this._layer.renderer)

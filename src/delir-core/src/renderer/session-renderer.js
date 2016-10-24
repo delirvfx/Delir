@@ -7,6 +7,7 @@ import PluginRegistory from '../services/plugin-registory'
 import ProjectInstanceContainer from './project-instance-container'
 import CompositionInstanceContainer from './composition-instance-container'
 import EntityResolver from './entity-resolver'
+import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 
 import * as Helper from '../helper/helper'
@@ -165,7 +166,9 @@ export default class SessionRenderer {
         //
         // Rendering
         //
-        await rootCompWrap.beforeRender({resolver})
+        await rootCompWrap.beforeRender(new PreRenderingRequest({
+            resolver,
+        }))
 
         const render = async (): any => {
             const {baseRequest} = this._playingSession

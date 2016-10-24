@@ -1,5 +1,6 @@
 // @flow
 import type Composition from '../project/composition'
+import type PreRenderingRequest from './pre-rendering-request'
 import type RenderRequest from './render-request'
 import type LayerInstanceContainer from './layer-instance-container'
 
@@ -22,7 +23,7 @@ export default class CompositionInstanceContainer
         this._composition = composition
     }
 
-    async beforeRender(preRenderReq: Object)
+    async beforeRender(preRenderReq: PreRenderingRequest)
     {
         this._timelanes = await Promise.all(
             Array.from(this._composition.timelanes.values()).map(async timelane => {

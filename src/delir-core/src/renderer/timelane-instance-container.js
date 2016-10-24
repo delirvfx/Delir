@@ -1,6 +1,7 @@
 // @flow
 import type Timelane from '../project/timelane'
 import type Layer from '../project/layer'
+import type PreRenderingRequest from './pre-rendering-request'
 import type RenderRequest from './render-request'
 import LayerInstanceContainer from './layer-instance-container'
 
@@ -15,7 +16,7 @@ export default class TimelaneInstanceContainer
         this._timelane = timelane
     }
 
-    async beforeRender(preRenderReq: Object)
+    async beforeRender(preRenderReq: PreRenderingRequest)
     {
         this._layers = Array.from(this._timelane.layers.values())
             .map(layer => new LayerInstanceContainer(layer))
