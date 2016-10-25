@@ -16,6 +16,10 @@ export default class NavigationView extends React.Component
         Actions.previewPlay()
     }
 
+    onClickDest = action => {
+        Actions.destinate()
+    }
+
     render()
     {
         return (
@@ -29,6 +33,7 @@ export default class NavigationView extends React.Component
                     <li>✨</li>
                     <li>💪</li>
                     <li onClick={this.onClickPlay}>⚡</li>
+                    <li onClick={this.onClickDest}>✨</li>
                 </ul>
             </Pane>
         )

@@ -49,7 +49,7 @@ const parseCommandLine = () => {
 
     app.on("ready", function() {
         const window = new BrowserWindow({
-            // frame: false,
+            frame: false,
             // transparent: true,
             webPreferences: {
                 webgl: true,

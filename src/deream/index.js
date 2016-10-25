@@ -6,7 +6,7 @@ const hasKey = (target, property) => ({}).hasOwnProperty.call(target, property);
 const entries = object => Object.keys(object).map(key => [key, object[key]]);
 
 const parseArgs = args => {
-    const ignoreKeys = ['y'];
+    // const ignoreKeys = ['y'];
 
     if (typeof args === 'string') {
         return args.split(' ');
@@ -15,9 +15,9 @@ const parseArgs = args => {
         const _args = [];
 
         for (const [key, value] of entries(args)) {
-            if (ignoreKeys.indexOf(key) !== -1) {
-                continue;
-            }
+            // if (ignoreKeys.indexOf(key) !== -1) {
+                // continue;
+            // }
 
             _args.push(`-${key}`);
             value !== '' && _args.push(value);
@@ -39,6 +39,8 @@ const parseArgs = args => {
 module.exports = function deream(options = {}) {
     const _options = Object.assign({
         args: null,
+        inputFrames: null,
+        // destinationFrames: null
         dest: null,
     }, options);
 
@@ -51,12 +53,15 @@ module.exports = function deream(options = {}) {
     }
 
     const specificArgs = parseArgs(_options.args);
-    const args = ['-i', 'pipe:0', '-c:v', 'png_pipe', ...specificArgs, options.dest ? options.dest : 'pipe:1'];
-
-    if (hasKey(_options.args, 'y')) {
-        args.unshift('-y');
-    }
-
+    const args = [
+        ...(options.inputFrames ? ['-r', options.inputFrames] : []),
+        '-i', 'pipe:0',
+        '-f', 'image2pipe',
+        '-c:v', 'png_pipe',
+        ...specificArgs,
+        '-y',
+        options.dest ? options.dest : 'pipe:1'
+    ];
     console.log(args.join` `);
 
     const ffmpeg = spawn('ffmpeg', args);

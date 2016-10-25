@@ -193,7 +193,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.width = 640
     c1.height = 360
     c1.framerate = 30
-    c1.durationFrame = 30 * 2
+    c1.durationFrame = 30 * 5
 
     c1_t1.name = 'NYAN = ^ . ^ = CHENCAT'
     c1_t2.name = '🔥 FIRE 🔥'
@@ -251,6 +251,30 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }).catch(e => console.error(e.stack))
             }
             return;
+        case 'destinate': return (() => {
+            let file = remote.dialog.showSaveDialog(({
+                title: 'Destinate',
+                buttonLabel: 'Render',
+                filters: [
+                    {
+                        name: 'mp4',
+                        extensions: ['mp4']
+                    }
+                ],
+            }))
+
+            if (! file) return;
+
+            let activeComp = ProjectStore.getState().activeComp
+            if (activeComp) {
+                console.log(file);
+
+                console.log(renderer.export({
+                    exportPath: file,
+                    targetCompositionId: activeComp.id,
+                })); // .catch(e => console.error(e.stack))
+            }
+        })()
         }
     })
 
@@ -344,8 +368,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // const buf = new ArrayBuffer(mediaInfo.width * mediaInfo.height * 4)
     // const view = new Uint8ClampedArray(buf)
-    //
-    //
     //
     // const VIDEO_DURATION_SEC = 1
     // const OUTPUT_FRAMES = VIDEO_DURATION_SEC * 30

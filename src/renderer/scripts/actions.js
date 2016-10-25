@@ -41,5 +41,13 @@ export default {
             type: 'preview-play',
             // payload: {layerId, timelaneId},
         })
+    },
+
+    destinate()
+    {
+        dispatcher.dispatch({
+            type: 'destinate',
+            // payload: {layerId, timelaneId},
+        })
     }
 }

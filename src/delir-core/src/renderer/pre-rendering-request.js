@@ -15,6 +15,7 @@ export default class PreRenderingRequest
         'width',
         'height',
         'framerate',
+        'durationFrames',
 
         'parameters',
     ]
@@ -27,6 +28,7 @@ export default class PreRenderingRequest
     width: number
     height: number
     framerate: number
+    durationFrames: number
 
     rootComposition: CompositionInstanceContainer
     parentComposition: CompositionInstanceContainer

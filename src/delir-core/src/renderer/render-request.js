@@ -21,6 +21,7 @@ export default class RenderRequest
         'width',
         'height',
         'framerate',
+        'durationFrames',
 
         // 'rootComposition', // not permitted
         'parentComposition',
@@ -47,6 +48,7 @@ export default class RenderRequest
     width: number
     height: number
     framerate: number
+    durationFrames: number
 
     destCanvas: HTMLCanvasElement
     // audioDestNode

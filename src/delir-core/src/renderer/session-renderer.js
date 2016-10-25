@@ -1,8 +1,15 @@
 // @flow
-import Canvas from '../abstraction/canvas'
+import type Composition from '../project/composition'
 
-import Project from "../project/project"
+import Deream from '../../../deream'
+
+import Canvas from '../abstraction/canvas'
+import NodeCanvas from 'canvas'
+import canvasToBuffer from 'electron-canvas-to-buffer'
+
+import Project from '../project/project'
 import PluginRegistory from '../services/plugin-registory'
+import Renderer from './renderer'
 
 import ProjectInstanceContainer from './project-instance-container'
 import CompositionInstanceContainer from './composition-instance-container'
@@ -11,6 +18,7 @@ import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 
 import * as Helper from '../helper/helper'
+import ProgressPromise from '../helper/progress-promise'
 
 export default class SessionRenderer {
     // plugins: PluginContainer
@@ -125,7 +133,7 @@ export default class SessionRenderer {
                 width: compWrap.width,
                 height: compWrap.height,
                 framerate: compWrap.framerate,
-
+                durationFrames: rootComp.durationFrames,
                 destCanvas: bufferCanvas,
                 // audioDestNode: this.audioDest
 
@@ -137,25 +145,12 @@ export default class SessionRenderer {
             durationFrames: rootComp.durationFrame,
             animationFrameId: null,
         }
-
-        console.log(new RenderRequest({
-            frame: req.frame,
-
-            width: compWrap.width,
-            height: compWrap.height,
-            framerate: compWrap.framerate,
-
-            destCanvas: bufferCanvas,
-            // audioDestNode: this.audioDest
-
-            resolver: resolver,
-        }));
     }
 
     async render(req: {
         frame: number,
         targetCompositionId: string,
-    }) : Promise<void>
+    }) : ProgressPromise
     {
         console.log('start render');
 
@@ -190,11 +185,11 @@ export default class SessionRenderer {
         // Rendering
         //
         try {
-            console.log(baseRequest);
             await rootCompWrap.beforeRender(new PreRenderingRequest({
                 width: baseRequest.width,
                 height: baseRequest.height,
                 framerate: baseRequest.framerate,
+                durationFrames: baseRequest.durationFrames,
                 rootComposition: baseRequest.rootComposition,
                 resolver,
             }))
@@ -203,7 +198,11 @@ export default class SessionRenderer {
             throw new Error(e.stack)
         }
 
-        console.log('render', bufferCanvas);
+        if (this._playingSession == null) {
+            // Already aborted
+            return
+        }
+
         const render = async (): any => {
             // ctx.fillStyle = '#fff'
             bufferCanvasCtx.clearRect(0, 0, 640, 360)
@@ -228,10 +227,10 @@ export default class SessionRenderer {
 
             this._playingSession.renderedFrames++
 
-            // if (this._playingSession.renderedFrames >= this._playingSession.durationFrames) {
-            //     this._playingSession = null
-            //     return
-            // }
+            if (this._playingSession.renderedFrames >= this._playingSession.durationFrames) {
+                this._playingSession = null
+                return
+            }
 
             this._playingSession.animationFrameId = requestAnimationFrame(render)
         }
@@ -258,8 +257,89 @@ export default class SessionRenderer {
         this._playingSession = null
     }
 
-    export(exportPath: stirng)
+    async export(req: {
+        exportPath: stirng,
+        targetCompositionId: string,
+    })
     {
+        //
+        // export via deream
+        //
+        const rootComp: Compositon = Helper.findCompositionById(this.project, req.targetCompositionId)
+        const durationFrames = rootComp.durationFrame
 
+        // const canvas = new NodeCanvas(rootComp.width, rootComp.height)
+        const canvas = document.createElement('canvas')
+        canvas.width = rootComp.width
+        canvas.height = rootComp.height
+
+        const ctx = canvas.getContext('2d')
+        const deream = Deream({
+            args: {
+                'c:v': 'libx264',
+                'b:v': '1024k',
+                'r': rootComp.framerate,
+                'an': ''
+            },
+            inputFrames: rootComp.framerate,
+            dest: req.exportPath,
+        })
+
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        console.log('run');
+
+        // const encoder = spawn('ffmpeg', `-i pipe:0 -r ${durationFrames} -c:v mjpeg -c:v libx264 -r ${durationFrames} -s 640x360 test.mp4`.split(' '))
+        // encoder.stderr.on('data', data => console.log(data.toString()))
+
+        const progPromise = Renderer.render({
+            project: this.project,
+            pluginRegistry: this.pluginRegistory,
+            rootCompId: req.targetCompositionId,
+            beginFrame: 0,
+            destinationCanvas: canvas,
+            // destinationNode: ?AudioNode,
+            requestAnimationFrame: window.requestAnimationFrame.bind(window),
+        })
+
+        progPromise.progress(progress => {
+            console.log(progress);
+
+            if (progress.state === 'render-frame') {
+                // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
+                // console.log(imageData);
+                // let buffer = new Buffer(imageData)
+                deream.write(canvasToBuffer(canvas, 'image/png'))
+            }
+
+            if (progress.finished === 100) {
+                deream.end()
+                window.alert('complete')
+            }
+        })
+
+        return progPromise
+
+
+
+        // const buf = new ArrayBuffer(mediaInfo.width * mediaInfo.height * 4)
+        // const view = new Uint8ClampedArray(buf)
+
+        // const VIDEO_DURATION_SEC = 1
+
+
+
+        // try { fs.unlinkSync('test.mp4') } catch (e) {}
+
+
+
+        // for (let i = 0; i < OUTPUT_FRAMES; i++) {
+        //     // ctx.fillStyle = '#' + [cRand(), cRand(), cRand()].join('')
+        //     // ctx.fillRect(0, 0, 640, 360)
+        //
+        //     let buffer = canvasToBuffer(canvas, 'image/jpeg')
+        //     encoder.stdin.write(buffer)
+        // }
+
+        // encoder.stdin.end()
     }
 }

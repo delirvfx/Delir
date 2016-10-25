@@ -63,7 +63,7 @@ export default class CompositionInstanceContainer
 
         // composite
         // Top is over
-        const context = _req.destCanvas.getContext('2d')
+        const context = req.destCanvas.getContext('2d')
         if (context == null) return
         renderOrderedDests.forEach(([layer, destCanvas]) => {
             context.drawImage(destCanvas, 0, 0)
