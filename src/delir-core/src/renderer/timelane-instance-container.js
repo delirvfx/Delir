@@ -22,18 +22,18 @@ export default class TimelaneInstanceContainer
             .map(layer => new LayerInstanceContainer(layer))
 
         // sort layers
-        this._timeOrderLayers = this._layers
+        this._timeOrderLayers = this._layers.slice(0)
             .sort((layerA, layerB) => layerA._layer.placedFrame - layerB._layer.placedFrame)
-
         await Promise.all(this._layers.map(layer => layer.beforeRender(preRenderReq)))
     }
 
     async render(req: RenderRequest)
     {
-        // const targets = this._timeOrderLayers.filter(layer => layer.placedFrame >= req.frameOnComposition)
-        const targets = this._timeOrderLayers
+        const targets = this._timeOrderLayers.filter(layer => {
+            return layer.placedFrame <= req.frameOnComposition
+                && layer.placedFrame + layer.durationFrame >= req.frameOnComposition
+        })
 
-        // console.log(targets)
         await Promise.all(targets.map(async layer =>{
             await layer.render(req)
         }))

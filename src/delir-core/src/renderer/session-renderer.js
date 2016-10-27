@@ -1,6 +1,8 @@
 // @flow
 import type Composition from '../project/composition'
 
+import _ from 'lodash'
+
 import Deream from '../../../deream'
 
 import Canvas from '../abstraction/canvas'
@@ -40,8 +42,23 @@ export default class SessionRenderer {
         bufferCanvas: HTMLCanvasElement,
         rootComp: CompositionInstanceContainer,
         durationFrames: number,
+        currentFrame: number,
         renderedFrames: number,
+        lastRenderedFrame: number,
         animationFrameId: ?number,
+    }
+
+    get session(): Object
+    {
+        return Object.assign(
+            {playing: false},
+            _.pick(this._playingSession, [
+                'playing',
+                'durationFrames',
+                'renderedFrames',
+                'lastRenderedFrame',
+            ])
+        )
     }
 
     constructor(options: {
@@ -105,7 +122,7 @@ export default class SessionRenderer {
     // }
 
     initializePlayingSession(req: {
-        frame: number,
+        beginFrame: number,
         targetCompositionId: string,
     })
     {
@@ -128,12 +145,12 @@ export default class SessionRenderer {
         this._playingSession = {
             playing: true,
             baseRequest: new RenderRequest({
-                frame: req.frame,
+                frame: req.beginFrame,
 
                 width: compWrap.width,
                 height: compWrap.height,
                 framerate: compWrap.framerate,
-                durationFrames: rootComp.durationFrames,
+                durationFrames: rootComp.durationFrame,
                 destCanvas: bufferCanvas,
                 // audioDestNode: this.audioDest
 
@@ -142,15 +159,16 @@ export default class SessionRenderer {
             bufferCanvas,
             rootComp: compWrap,
             renderedFrames: 0,
+            lastRenderedFrame: 0,
             durationFrames: rootComp.durationFrame,
             animationFrameId: null,
         }
     }
 
     async render(req: {
-        frame: number,
+        beginFrame: number,
         targetCompositionId: string,
-    }) : ProgressPromise
+    }) : Promise
     {
         console.log('start render');
 
@@ -203,6 +221,7 @@ export default class SessionRenderer {
             return
         }
 
+        // TODO: "Real time" based time calculation
         const render = async (): any => {
             // ctx.fillStyle = '#fff'
             bufferCanvasCtx.clearRect(0, 0, 640, 360)
@@ -226,6 +245,7 @@ export default class SessionRenderer {
             )
 
             this._playingSession.renderedFrames++
+            this._playingSession.lastRenderedFrame = req.beginFrame + this._playingSession.renderedFrames
 
             if (this._playingSession.renderedFrames >= this._playingSession.durationFrames) {
                 this._playingSession = null

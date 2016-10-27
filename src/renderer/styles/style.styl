@@ -118,6 +118,10 @@ html, body
         border-bottom 1px solid transparent
         user-select none
 
+._select-list
+    .select-list-item.selected
+        background-color rgba(#fff, .2)
+
 
 // Views
 .body-pane
@@ -336,6 +340,7 @@ html, body
     .timeline-playingCursor
         position absolute
         top 100%
+        z-index 10
 
         border-left 1px solid #fff
         opacity .4
@@ -358,6 +363,7 @@ html, body
         overflow auto
 
     .timeline-lane
+        position relative
         height 24px
         padding 1px 0
         padding-left 4px
@@ -368,9 +374,10 @@ html, body
             background-color rgba(#fff, .2)
 
     .timerange-bar
-        position relative
+        position absolute
         display inline-block
         width 300px
         height 21px
         background-color #4d1eb0
         bottom 1px solid #3d157d
+        box-shadow 0 0 3px rgba(0, 0, 0, .8)

@@ -6,16 +6,26 @@ import Actions from '../actions'
 import AppStore from '../stores/app-store'
 import ProjectStore from '../stores/project-store'
 
+import TimelaneHelper from '../helpers/timelane-helper'
+
 import Workspace from './components/workspace'
 import Pane from './components/pane'
 import LabelInput from './components/label-input'
 
 import {ContextMenu, MenuItem} from '../electron/context-menu'
+import SelectList from './components/select-list'
 
 const dragSession = new WeakMap()
 
 class TimelineLaneLayer extends React.Component
 {
+    static propTypes = {
+        layer: PropTypes.object.isRequired,
+        left: PropTypes.number.isRequired,
+        width: PropTypes.number.isRequired,
+        onChangePlace: PropTypes.func.isRequired,
+    }
+
     removers = []
 
     constructor()
@@ -24,6 +34,7 @@ class TimelineLaneLayer extends React.Component
 
         this.state = {
             project: ProjectStore.getState(),
+            draggedPxX: 0,
             dragStartPosition: null,
             dragStyle: {transform: 'translateX(0)'},
         }
@@ -64,6 +75,7 @@ class TimelineLaneLayer extends React.Component
         const movedY = e.clientY - this.state.dragStartPosition.clientY
 
         this.setState({
+            draggedPxX: movedX,
             dragStyle: {
                 transform: `translateX(${movedX}px)`
             }
@@ -72,7 +84,10 @@ class TimelineLaneLayer extends React.Component
 
     dragEnd(e)
     {
+        this.props.onChangePlace(this.state.draggedPxX)
+
         this.setState({
+            draggedPxX: 0,
             dragStyle: {
                 transform: 'translateX(0)'
             }
@@ -84,7 +99,11 @@ class TimelineLaneLayer extends React.Component
     {
         return (
             <div className='timerange-bar'
-                style={{left: 30, ...this.state.dragStyle}}
+                style={{
+                    left: this.props.left,
+                    width: this.props.width,
+                    ...this.state.dragStyle,
+                }}
                 draggable={true}
                 onClick={this.selectLayer.bind(this)}
                 onDragStart={this.dragStart.bind(this)}
@@ -105,10 +124,13 @@ class TimelineLane extends React.Component
 {
     static propTypes = {
         timelane: PropTypes.object.isRequired,
+        framerate: PropTypes.number.isRequired,
+        scale: PropTypes.number.isRequired,
     }
 
     state = {
-        dragovered: false
+        dragovered: false,
+        pxPerSec: 30,
     }
 
     onDrop(e)
@@ -141,6 +163,19 @@ class TimelineLane extends React.Component
         this.setState({dragovered: true})
     }
 
+    changeLayerPlace(layer, movedX)
+    {
+        const movedFrames = TimelaneHelper.pixelToFrames({
+            pxPerSec: this.state.pxPerSec,
+            framerate: this.props.framerate,
+            pixel: movedX,
+            scale: this.props.scale,
+        })
+
+        layer.placedFrame = layer.placedFrame + movedFrames
+        this.setState({a: Math.random()})
+    }
+
     render()
     {
         const {timelane} = this.props
@@ -161,9 +196,31 @@ class TimelineLane extends React.Component
                     <MenuItem type='separator' />
                 </ContextMenu>
 
-                {Array.from(timelane.layers.values()).map(layer => (
-                    <TimelineLaneLayer key={layer.id} layer={layer} />
-                ))}
+                {Array.from(timelane.layers.values()).map(layer => {
+                    const opt = {
+                        pxPerSec: this.state.pxPerSec,
+                        framerate: this.props.framerate,
+                        scale: this.props.scale,
+                    };
+                    const width = TimelaneHelper.framesToPixel({
+                        durationFrame: layer.durationFrame,
+                        ...opt,
+                    })
+                    const left = TimelaneHelper.framesToPixel({
+                        durationFrame: layer.placedFrame,
+                        ...opt,
+                    })
+
+                    return (
+                        <TimelineLaneLayer
+                            key={layer.id}
+                            layer={layer}
+                            width={width}
+                            left={left}
+                            onChangePlace={this.changeLayerPlace.bind(this, layer)}
+                        />
+                    )
+                })}
             </li>
         )
     }
@@ -175,11 +232,38 @@ class TimelineGradations extends React.Component
         cursorHeight: PropTypes.number.isRequired,
     }
 
+    state = {
+        left: 0,
+    }
+
+    componentDidMount()
+    {
+        setInterval(() => {
+            const project = ProjectStore.getState().project
+            if (! project) return
+
+            const renderer = AppStore.getState().renderer
+            if (! renderer.isPlaying()) return
+
+            this.setState({
+                left: TimelaneHelper.framesToPixel({
+                    pxPerSec: 30,
+                    framerate: this.props.framerate,
+                    durationFrame: renderer.session.lastRenderedFrame,
+                    scale: this.props.scale,
+                }),
+            })
+        }, 1)
+    }
+
     render()
     {
         return (
             <div className='timeline-gradations'>
-                <div className='timeline-playingCursor' style={{height:this.props.cursorHeight}}></div>
+                <div className='timeline-playingCursor' style={{
+                    left: this.state.left,
+                    height: this.props.cursorHeight
+                }} />
             </div>
         )
     }
@@ -195,6 +279,7 @@ export default class TimelineView extends React.Component
             project: ProjectStore.getState(),
             timelineScrollTop: 0,
             cursorHeight: 0,
+            scale: 1,
             selectedLaneId: null,
         }
 
@@ -226,11 +311,15 @@ export default class TimelineView extends React.Component
         this.setState({selectedLaneId: laneId})
     }
 
+    scaleChanged = scale => {
+        this.setState({scale: scale})
+    }
+
     render()
     {
         const {project} = this.state
+        const {id: compId, framerate} = project.activeComp ? project.activeComp : {id: '', framerate: 30}
         const timelineLanes = project.activeComp ? Array.from(project.activeComp.timelanes.values()) : []
-        // console.log(timelineLanes);
 
         return (
             <Pane className='view-timeline' allowFocus>
@@ -238,6 +327,12 @@ export default class TimelineView extends React.Component
                     <Pane className='timeline-labels-container'>
                         <div className='timeline-labels-header'>
                             <div className='--col-name'>Lanes</div>
+                            <LabelInput
+                                style={{float:'right'}}
+                                onChange={this.scaleChanged}
+                                defaultValue="1"
+                                doubleClickToEdit
+                            />
                             {/*
                                 <div className='--col-visibility'>Label</div>
                                 <div className='--col-lock'>Label</div>
@@ -250,34 +345,39 @@ export default class TimelineView extends React.Component
                                 <MenuItem label='Add new timelane' onClick={() => {}} />
                                 <MenuItem type='separator' />
                             </ContextMenu>
-                            {timelineLanes.map(lane => {
-                                return (
-                                    <ul key={lane.id} className='timeline-labels-label'>
-                                        <ContextMenu>
-                                            <MenuItem type='separator' />
-                                            <MenuItem label='複製' onClick={() => {}} />
-                                            <MenuItem label='削除' onClick={() => {}} />
-                                            <MenuItem type='separator' />
-                                        </ContextMenu>
+                            <SelectList key={compId}>
+                                {timelineLanes.map(lane => {
+                                    return (
+                                        <ul key={lane.id} className='timeline-labels-label'>
+                                            <ContextMenu>
+                                                <MenuItem type='separator' />
+                                                <MenuItem label='複製' onClick={() => {}} />
+                                                <MenuItem label='削除' onClick={() => {}} />
+                                                <MenuItem type='separator' />
+                                            </ContextMenu>
 
-                                        <li className='timeline-labels-label-item --col-name' onClick={this.laneSelected.bind(this, lane.id)}>
-                                            {/* {this.state.selectedLaneId === lane.id && '*'} */}
-                                            {console.log(lane)}
-                                            <LabelInput defaultValue={lane.name} placeholder='TimeLane' />
-                                        </li>
-                                        <li className='timeline-labels-label-item --col-visibility'>
-                                            🙈
-                                        </li>
-                                        <li className='timeline-labels-label-item --col-lock'>
-                                            🙆
-                                        </li>
-                                    </ul>
-                                )
-                            })}
+                                            <li className='timeline-labels-label-item --col-name' onClick={this.laneSelected.bind(this, lane.id)}>
+                                                {/* {this.state.selectedLaneId === lane.id && '*'} */}
+                                                <LabelInput defaultValue={lane.name} placeholder='TimeLane' />
+                                            </li>
+                                            <li className='timeline-labels-label-item --col-visibility'>
+                                                🙈
+                                            </li>
+                                            <li className='timeline-labels-label-item --col-lock'>
+                                                🙆
+                                            </li>
+                                        </ul>
+                                    )
+                                })}
+                            </SelectList>
                         </div>
                     </Pane>
                     <Pane className='timeline-container'>
-                        <TimelineGradations cursorHeight={this.state.cursorHeight}/>
+                        <TimelineGradations
+                            cursorHeight={this.state.cursorHeight}
+                            framerate={framerate}
+                            scale={this.state.scale}
+                        />
 
                         <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
                             <ContextMenu>
@@ -286,7 +386,7 @@ export default class TimelineView extends React.Component
                                 <MenuItem type='separator' />
                             </ContextMenu>
                             {timelineLanes.map(lane => (
-                                <TimelineLane key={lane.id} timelane={lane} />
+                                <TimelineLane key={lane.id} timelane={lane} framerate={framerate} scale={this.state.scale}/>
                             ))}
                         </ul>
                     </Pane>

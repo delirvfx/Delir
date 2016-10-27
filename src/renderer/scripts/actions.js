@@ -1,6 +1,23 @@
 import dispatcher from './dispatcher'
 
 export default {
+    //
+    // App services
+    //
+    previewProgressed(currentFrame: number)
+    {
+        dispatcher.dispatch({
+            type: 'preview-progressed',
+            payload: {
+                currentFrame,
+            }
+        })
+    },
+
+
+    //
+    // Change active element
+    //
     changeActiveComposition(compId: string)
     {
         dispatcher.dispatch({
@@ -16,6 +33,10 @@ export default {
             payload: layerId,
         })
     },
+
+    //
+    // Modify project
+    //
 
     // TODO: frame position
     moveLayerToTimelane(layerId: string, timelaneId: string)

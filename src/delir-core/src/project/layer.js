@@ -49,7 +49,10 @@ export default class Layer
     set rendererOptions(rendererOptions: Object) { this.config.rendererOptions = rendererOptions }
 
     get placedFrame(): number { return this.config.placedFrame }
-    set placedFrame(frame: number) { this.config.placedFrame = frame }
+    set placedFrame(placedFrame: number) { this.config.placedFrame = placedFrame }
+
+    get durationFrame(): number { return this.config.durationFrame }
+    set durationFrame(durationFrame: number) { this.config.durationFrame = durationFrame }
 
     toPreBSON(): Object
     {

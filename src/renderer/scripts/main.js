@@ -193,7 +193,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.width = 640
     c1.height = 360
     c1.framerate = 30
-    c1.durationFrame = 30 * 5
+    c1.durationFrame = 30 * 10
 
     c1_t1.name = 'NYAN = ^ . ^ = CHENCAT'
     c1_t2.name = '🔥 FIRE 🔥'
@@ -201,14 +201,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     c1_t1_l1.renderer = 'red-layer'
     c1_t1_l1.placedFrame = 0
+    c1_t1_l1.durationFrame = 60
 
     // c1_t2_l1.renderer = 'html5-video-layer'
     c1_t2_l1.renderer = 'proton-layer'
-    c1_t2_l1.placedFrame = 0
+    c1_t2_l1.placedFrame = 30
+    c1_t2_l1.durationFrame = 90
 
     c1_t3_l1.renderer = 'html5-video-layer'
     c1_t3_l1.rendererOptions.source = 'file:///Users/ragg/workspace/delir/sample.mp4'
-    c1_t2_l1.placedFrame = 0
+    c1_t3_l1.placedFrame = 0
+    c1_t3_l1.durationFrame = 120
 
     p.assets.add(a)
     p.compositions.add(c1)
@@ -242,39 +245,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     dispatcher.register(action => {
         switch (action.type) {
-        case 'preview-play':
-            let activeComp = ProjectStore.getState().activeComp
-            if (activeComp) {
-                renderer.render({
-                    frame: 0,
-                    targetCompositionId: activeComp.id,
-                }).catch(e => console.error(e.stack))
-            }
-            return;
-        case 'destinate': return (() => {
-            let file = remote.dialog.showSaveDialog(({
-                title: 'Destinate',
-                buttonLabel: 'Render',
-                filters: [
-                    {
-                        name: 'mp4',
-                        extensions: ['mp4']
-                    }
-                ],
-            }))
 
-            if (! file) return;
-
-            let activeComp = ProjectStore.getState().activeComp
-            if (activeComp) {
-                console.log(file);
-
-                console.log(renderer.export({
-                    exportPath: file,
-                    targetCompositionId: activeComp.id,
-                })); // .catch(e => console.error(e.stack))
-            }
-        })()
         }
     })
 

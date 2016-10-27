@@ -22,6 +22,7 @@ export default class LayerInstanceContainer
     // parameters : {[propertyId: string]: Object}
 
     get placedFrame(): number { return this._layer.placedFrame }
+    get durationFrame(): number { return this._layer.durationFrame }
 
     constructor(layer : Layer)
     {

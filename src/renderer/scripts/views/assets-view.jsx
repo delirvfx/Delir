@@ -7,6 +7,7 @@ import ProjectStore from '../stores/project-store'
 
 import Pane from './components/pane'
 import LabelInput from './components/label-input'
+import SelectList from './components/select-list'
 import {ContextMenu, MenuItem} from '../electron/context-menu'
 
 export default class AssetsView extends React.Component
@@ -57,6 +58,7 @@ export default class AssetsView extends React.Component
                         </tr>
                     </thead>
                     <tbody>
+                        <SelectList>
                         {assets.map(asset => (
                             <tr key={asset.id}>
                                 <ContextMenu>
@@ -77,6 +79,7 @@ export default class AssetsView extends React.Component
                                 </td>
                             </tr>
                         ))}
+                        </SelectList>
                     </tbody>
                 </table>
                 <table className='composition-list'>

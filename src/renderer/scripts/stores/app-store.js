@@ -6,7 +6,10 @@ class AppStore extends ReduceStore<Object>
 {
     getInitialState(): Object
     {
-        return {}
+        return {
+            pluginRegistry: null,
+            renderer: null,
+        }
     }
 
     reduce(state: Object, action: Object)

@@ -5,6 +5,7 @@ import Delir from 'delir-core'
 const {Helper: DelirHelper} = Delir
 
 import dispatcher from '../dispatcher'
+import AppStore from './app-store'
 
 class ProjectStore extends ReduceStore<Object>
 {
@@ -23,6 +24,39 @@ class ProjectStore extends ReduceStore<Object>
         switch (action.type) {
         case 'project-init':
             return Object.assign({}, state, {project: action.payload})
+
+        case 'preview-play':
+            let activeComp = state.activeComp
+            if (activeComp) {
+                let promise = AppStore.getState().renderer.render({
+                    beginFrame: 0,
+                    targetCompositionId: activeComp.id,
+                }).catch(e => console.error(e.stack))
+            }
+
+            return state
+        case 'destinate': return (() => {
+            let file = remote.dialog.showSaveDialog(({
+                title: 'Destinate',
+                buttonLabel: 'Render',
+                filters: [
+                    {
+                        name: 'mp4',
+                        extensions: ['mp4']
+                    }
+                ],
+            }))
+
+            if (! file) return;
+
+            let activeComp = ProjectStore.getState().activeComp
+            if (activeComp) {
+                renderer.export({
+                    exportPath: file,
+                    targetCompositionId: activeComp.id,
+                }); // .catch(e => console.error(e.stack))
+            }
+        })()
 
         case 'change-active-composition':
             if (! state.project) {
