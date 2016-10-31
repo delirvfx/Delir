@@ -2,7 +2,8 @@ import _ from 'lodash';
 import classnames from 'classnames'
 import React, {PropTypes} from 'react'
 
-import Actions from '../actions'
+import EditorStateActions from '../actions/editor-state-actions'
+import ProjectModifyActions from '../actions/project-modify-actions'
 import AppStore from '../stores/app-store'
 import ProjectStore from '../stores/project-store'
 import RendererService from '../services/renderer'
@@ -52,7 +53,7 @@ class TimelineLaneLayer extends React.Component
 
     selectLayer(e)
     {
-        Actions.changeActiveLayer(this.props.layer.id)
+        EditorStateActions.changeActiveLayer(this.props.layer.id)
     }
 
     dragStart(e)
@@ -149,7 +150,7 @@ class TimelineLane extends React.Component
             return
         }
 
-        Actions.moveLayerToTimelane(data.layerId, this.props.timelane.id)
+        ProjectModifyActions.moveLayerToTimelane(data.layerId, this.props.timelane.id)
     }
 
     onDragLeave(e)

@@ -48,6 +48,8 @@ export default class LabelInput extends React.Component
     }
 
     onBlur = (e) => {
+        if (this.state.readOnly) return
+
         this.props.onChange && this.props.onChange(this.refs.input.value)
         this.setState({readOnly: true})
     }

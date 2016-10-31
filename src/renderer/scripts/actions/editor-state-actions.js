@@ -1,4 +1,4 @@
-import dispatcher from './dispatcher'
+import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
 
 export default {

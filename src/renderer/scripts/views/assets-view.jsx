@@ -41,7 +41,7 @@ export default class AssetsView extends React.Component
     modifyCompName(compId, newName)
     {
         // console.log(compId, newName);
-        ProjectModifyActions.modifyCompositionName(compId, newName)
+        ProjectModifyActions.changeCompositionName(compId, newName)
     }
 
     render()

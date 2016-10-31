@@ -23,6 +23,9 @@ const handlers = {
     [ActionTypes.TOGGLE_PREVIEW]({compositionId})
     {
         if (! state.project) return
+        if (renderer.isPlaying()) {
+            renderer.stop()
+        }
 
         const targetComposition = DelirHelper.findCompositionById(state.project, compositionId)
 
@@ -59,7 +62,7 @@ const handlers = {
         }
     }
 }
-setActiveProject
+
 export default {
     initialize: async () => {
         const userDir = remote.app.getPath('appData')

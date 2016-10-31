@@ -10,4 +10,7 @@ export default keyMirror({
     DESTINATE_PROJECT: null,
 
     // ProjectModifyActions
+    HISTORY_PUSH: null, // {undo: Function, redo: Funcion}
+    HISTORY_UNDO: null,
+    HISTORY_REDO: null,
 })
