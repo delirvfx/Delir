@@ -298,10 +298,11 @@ export default class SessionRenderer {
             args: {
                 'c:v': 'libx264',
                 'b:v': '1024k',
-                'r': rootComp.framerate,
-                'an': ''
+                'pix_fmt': 'yuv420p',
+                // 'r': rootComp.framerate,
+                // 'an': ''
             },
-            inputFrames: rootComp.framerate,
+            inputFramerate: rootComp.framerate,
             dest: req.exportPath,
         })
 

@@ -1,3 +1,5 @@
+import {remote} from 'electron'
+
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
 
@@ -59,10 +61,10 @@ export default {
         })
     },
 
-    destinate(compositionId)
+    renderDestinate(compositionId)
     {
         dispatcher.dispatch({
-            type: 'destinate',
+            type: ActionTypes.RENDER_DESTINATE,
             payload: {compositionId},
         })
     }

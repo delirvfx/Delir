@@ -38,7 +38,7 @@ const handlers = {
         }).catch(e => console.error(e.stack))
     },
 
-    [ActionTypes.DESTINATE_PROJECT]({compositionId})
+    [ActionTypes.RENDER_DESTINATE]({compositionId})
     {
         const file = remote.dialog.showSaveDialog(({
             title: 'Destinate',
@@ -53,12 +53,12 @@ const handlers = {
 
         if (! file) return
 
-        const activeComp = ProjectStore.getState().activeComp
+        const activeComp = DelirHelper.findCompositionById(state.project, compositionId)
         if (activeComp) {
             renderer.export({
                 exportPath: file,
                 targetCompositionId: activeComp.id,
-            }); // .catch(e => console.error(e.stack))
+            }) // .catch(e => console.error(e.stack))
         }
     }
 }

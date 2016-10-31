@@ -1,0 +1,35 @@
+doctype html
+html
+    head
+        meta(charset="UTF-8")
+        title Delir
+
+        link(rel="stylesheet", href="styles/modal-common.css")
+        script.
+            (() => {
+                const {remote} = require('electron')
+                const bw = remote.getCurrentWindow()
+                const $ = query => document.querySelector(query)
+                window.addEventListener('DOMContentLoaded', () => {
+                    !bw.isClosable() && ($('.window-nav--close').disabled = true)
+                    !bw.isMinimizable() && ($('.window-nav--minimize').remove())
+                    !bw.isMaximizable() && ($('.window-nav--maximize').remove())
+
+                    $('.window-nav--close').addEventListener('click', e => bw.hide())
+                    $('.window-nav--minimize').addEventListener('click', e => bw.minimize())
+                    $('.window-nav--maximize').addEventListener('click', e => bw.isMaximized() ? bw.unmaximize() : bw.maximize())
+
+                    document.body.addEventListener('submit', e => {
+                        e.preventDefault()
+                    })
+                })
+            })()
+    body
+        .view-navigation
+            ul.window-nav
+                li.window-nav-item.window-nav--close
+                li.window-nav-item.window-nav--minimize
+                li.window-nav-item.window-nav--maximize
+
+        .content
+            block content

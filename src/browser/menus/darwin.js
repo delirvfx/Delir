@@ -30,6 +30,7 @@ export default [
                 click(item, focusedWindow) {
                 }
             },
+            {type: 'separator'},
             {
                 label: 'Save',
                 accelerator: 'CmdOrCtrl+S',
@@ -42,7 +43,7 @@ export default [
                 click(item, focusedWindow) {
                     const path = dialog.showSaveDialog({
                         title: 'Save as ...',
-                        defaultPath: '/Users/ragg/',
+                        // defaultPath: '/Users/ragg/',
                         buttonLabel: 'Save',
                         filters: [
                             {
@@ -55,6 +56,31 @@ export default [
                     if (!path) return
                     focusedWindow.webContents.send('action', {
                         type: 'project:save',
+                        payload: {
+                            path: path
+                        }
+                    })
+                }
+            },
+            {
+                label: 'Rendering',
+                accelerator: 'CmdOrCtrl+Shift+R',
+                click(item, focusedWindow) {
+                    const path = dialog.showSaveDialog({
+                        title: 'Save as ...',
+                        // defaultPath: '/Users/ragg/',
+                        buttonLabel: 'Render',
+                        filters: [
+                            {
+                                name: 'Movie',
+                                extensions: ['mp4']
+                            }
+                        ],
+                    })
+
+                    if (!path) return
+                    focusedWindow.webContents.send('action', {
+                        type: 'RENDER_DESTINATE',
                         payload: {
                             path: path
                         }

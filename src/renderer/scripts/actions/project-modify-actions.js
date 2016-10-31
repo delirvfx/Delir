@@ -1,8 +1,5 @@
-import Delir, {Helper as DelirHelper} from 'delir-core'
-// const {Helper: DelirHelper} = Delir
-
-console.log(DelirHelper);
-
+import Delir from 'delir-core'
+const {Helper: DelirHelper} = Delir
 
 export default {
     //

@@ -28,7 +28,7 @@ export default class REDLAYER extends Delir.PluginBase.CustomLayerPluginBase
 
     async beforeRender(req: PluginPreRenderRequest)
     {
-        const canvas =this.buffer = document.createElement('canvas')
+        const canvas = this.buffer = document.createElement('canvas')
         canvas.width = req.width
         canvas.height = req.height
 

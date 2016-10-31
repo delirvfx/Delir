@@ -39,13 +39,18 @@ const parseArgs = args => {
 module.exports = function deream(options = {}) {
     const _options = Object.assign({
         args: null,
-        inputFrames: null,
+        inputFramerate: null,
         // destinationFrames: null
         dest: null,
+        ffmpegBin: 'ffmpeg',
     }, options);
 
     if (options.args === null) {
         throw new Error('options.args must be specified');
+    }
+
+    if (options.inputFramerate === null) {
+        throw new Error('options.inputFramerate must be specified');
     }
 
     if (options.dest === null) {
@@ -54,17 +59,16 @@ module.exports = function deream(options = {}) {
 
     const specificArgs = parseArgs(_options.args);
     const args = [
-        ...(options.inputFrames ? ['-r', options.inputFrames] : []),
+        ...(_options.inputFramerate ? ['-framerate', _options.inputFramerate] : []),
         '-i', 'pipe:0',
-        '-f', 'image2pipe',
         '-c:v', 'png_pipe',
         ...specificArgs,
         '-y',
-        options.dest ? options.dest : 'pipe:1'
+        _options.dest ? _options.dest : 'pipe:1'
     ];
-    console.log(args.join` `);
 
-    const ffmpeg = spawn('ffmpeg', args);
-    ffmpeg.stderr.on('data', chunk => console.log(chunk.toString()));
+    const ffmpeg = spawn(_options.ffmpegBin, args);
+    // ffmpeg.stderr.on('data', chunk => console.log(chunk.toString()));
+
     return duplexer(ffmpeg.stdin, ffmpeg.stdout);
 };

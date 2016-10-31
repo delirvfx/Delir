@@ -1,0 +1,83 @@
+@import 'nib'
+
+global-reset()
+
+body {
+    --background #3c3e42
+    --pane-background linear-gradient(to bottom, #0c070f, 30% #0c070f, 50% #111)
+    --pane-border-color rgba(#000, .9)
+    --active-pane-border rgba(#6900a8, .5)
+    --text-color #fff
+    --caption-row-background #3a3340
+
+    --accent-color #9310c8
+}
+
+*
+    box-sizing border-box
+
+html, body
+    width 100%
+    height 100%
+    margin 0
+    user-select none
+    cursor default
+
+    font-family 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, 'YuGothic', '游ゴシック Medium', 'Hiragino Kaku Gothic ProN', meiryo, sans-serif
+    font-size 14px
+
+    background var(--background)
+    color var(--text-color)
+
+.view-navigation
+    flex none
+    display flex
+    flex-direction column
+    border-bottom 2px solid #000
+
+    .window-nav
+        display flex
+        width 100%
+        height 21px
+        padding 4px 8px
+
+        align-items center
+
+        // border-bottom 1px solid #333
+        -webkit-app-region drag
+
+    .window-nav-item
+        display inline-flex
+        width 12px
+        height 12px
+        margin-right 6px
+        border-radius 8px
+
+        align-items center
+        justify-content center
+
+        font-size 10px
+        text-align center
+        line-height 12px
+        vertical-align middle
+
+        color rgba(#fff, .2)
+        transition all .1s
+        background-color transparent
+        border 1px solid rgba(#fff, .5)
+
+        &:hover
+            border-color var(--active-pane-border)
+
+        &.window-nav--close:hover
+            background-color #820000
+
+        &.window-nav--minimize:hover
+            background-color #827900
+
+        &.window-nav--maximize:hover
+            background-color #008234
+
+.content
+    display block
+    padding 8px

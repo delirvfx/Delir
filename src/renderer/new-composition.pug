@@ -1,0 +1,13 @@
+extends ./_layouts/window-base.pug
+block content
+    | ✋( ͡° ͜ʖ ͡°) hi.
+    form
+        label Composition name
+        input(name='compositionName' type='text')
+
+        label Composition size
+        input(name='compositionWidth' type='number' min=1)
+        input(name='compositionHeight' type='number' min=1)
+
+        button(type='button') Cancel
+        button(type='submit') Create

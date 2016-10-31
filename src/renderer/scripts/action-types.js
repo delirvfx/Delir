@@ -7,7 +7,7 @@ export default keyMirror({
     CHANGE_ACTIVE_LAYER: null,
 
     TOGGLE_PREVIEW: null,
-    DESTINATE_PROJECT: null,
+    RENDER_DESTINATE: null,
 
     // ProjectModifyActions
     HISTORY_PUSH: null, // {undo: Function, redo: Funcion}

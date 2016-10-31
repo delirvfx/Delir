@@ -11,6 +11,7 @@ import Pane from './components/pane'
 import LabelInput from './components/label-input'
 import SelectList from './components/select-list'
 import {ContextMenu, MenuItem} from '../electron/context-menu'
+import ModalWindow from '../electron/modal-window'
 
 export default class AssetsView extends React.Component
 {
@@ -21,6 +22,7 @@ export default class AssetsView extends React.Component
         this.state = {
             app: AppStore.getState(),
             project: EditorStateStore.getState(),
+            newCompositionWindowOpened: false,
             selectedItem: null
         }
 
@@ -52,6 +54,12 @@ export default class AssetsView extends React.Component
 
         return (
             <Pane className='view-assets' allowFocus>
+                <ModalWindow
+                    show={this.state.newCompositionWindowOpened}
+                    url='new-composition.html'
+                    width={400}
+                    height={300}
+                />
                 <table className='asset-list'>
                     <thead>
                         <tr>
@@ -92,6 +100,11 @@ export default class AssetsView extends React.Component
                         </tr>
                     </thead>
                     <tbody>
+                        <ContextMenu>
+                            <MenuItem type='separator' />
+                            <MenuItem label='New Compositon' onClick={() => { this.setState({newCompositionWindowOpened: true})}} />
+                            <MenuItem type='separator' />
+                        </ContextMenu>
                         {compositions.map(comp => (
                             <tr key={comp.id} onDoubleClick={this.changeComposition.bind(this, comp.id)}>
                                 <ContextMenu>

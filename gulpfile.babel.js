@@ -185,6 +185,7 @@ export function compileStyles() {
     return g.src(join(paths.src.renderer, "**/[^_]*.styl"))
         .pipe($.plumber())
         .pipe($.stylus({
+            'include css': true,
             use : [require("nib")()]
         }))
         .pipe(g.dest(paths.compiled.renderer));
