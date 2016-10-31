@@ -23,14 +23,14 @@ class EditorStateStore extends ReduceStore<Object>
     }
 
     reducers = {
-        // ["project:init"](state, action)
-        // {
-        //     return Object.assign({}, state, {project: action.payload})
-        // },
+        [ActionTypes.SET_ACTIVE_PROJECT](state, {project})
+        {
+            return Object.assign({}, state, {project})
+        },
 
-        // ["project:save"](state, action)
+        // ["project:save"](state, {})
         // {
-        //     fs.writeFileSync(action.payload.path, state.project.serialize())
+        //     fs.writeFileSync(payload.path, state.project.serialize())
         //     return state
         // },
 
@@ -59,27 +59,27 @@ class EditorStateStore extends ReduceStore<Object>
         },
 
 
-        ["mod-composition-name"](state, action)
-        {
-            if (! state.project) {
-                return
-            }
-
-            const targetComp = DelirHelper.findCompositionById(state.project, action.payload.compId)
-            console.log(targetComp);
-            targetComp.name = action.payload.newName
-            return Object.assign({}, state)
-        },
+        // ["mod-composition-name"](state, {})
+        // {
+        //     if (! state.project) {
+        //         return
+        //     }
+        //
+        //     const targetComp = DelirHelper.findCompositionById(state.project, payload.compId)
+        //     console.log(targetComp);
+        //     targetComp.name = payload.newName
+        //     return Object.assign({}, state)
+        // },
     }
 
-    reduce(state: Object, action: Object)
+    reduce(state: Object, {type, payload}: Object)
     {
-        if (this.reducers[action.type]) {
-            return this.reducers[action.type](state, action.payload)
+        if (this.reducers[type]) {
+            return this.reducers[type](state, payload)
         }
 
         return state
     }
 }
 
-export default new ProjectStore(dispatcher)
+export default new EditorStateStore(dispatcher)

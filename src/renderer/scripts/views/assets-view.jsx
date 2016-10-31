@@ -5,7 +5,7 @@ import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
 
 import AppStore from '../stores/app-store'
-import ProjectStore from '../stores/project-store'
+import EditorStateStore from '../stores/editor-state-store'
 
 import Pane from './components/pane'
 import LabelInput from './components/label-input'
@@ -20,7 +20,7 @@ export default class AssetsView extends React.Component
 
         this.state = {
             app: AppStore.getState(),
-            project: ProjectStore.getState(),
+            project: EditorStateStore.getState(),
             selectedItem: null
         }
 
@@ -28,8 +28,8 @@ export default class AssetsView extends React.Component
             this.setState({app: AppStore.getState()})
         })
 
-        ProjectStore.addListener(() => {
-            this.setState({project: ProjectStore.getState()})
+        EditorStateStore.addListener(() => {
+            this.setState({project: EditorStateStore.getState()})
         })
     }
 
@@ -47,8 +47,8 @@ export default class AssetsView extends React.Component
     render()
     {
         const {app, project: {project}} = this.state
-        const assets = Array.from(project.assets.values())
-        const compositions = Array.from(project.compositions.values())
+        const assets = project ? Array.from(project.assets.values()) : []
+        const compositions = project ? Array.from(project.compositions.values()) : []
 
         return (
             <Pane className='view-assets' allowFocus>

@@ -5,7 +5,7 @@ import React, {PropTypes} from 'react'
 import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
 import AppStore from '../stores/app-store'
-import ProjectStore from '../stores/project-store'
+import EditorStateStore from '../stores/editor-state-store'
 import RendererService from '../services/renderer'
 
 import TimelaneHelper from '../helpers/timelane-helper'
@@ -35,14 +35,14 @@ class TimelineLaneLayer extends React.Component
         super()
 
         this.state = {
-            project: ProjectStore.getState(),
+            project: EditorStateStore.getState(),
             draggedPxX: 0,
             dragStartPosition: null,
             dragStyle: {transform: 'translateX(0)'},
         }
 
-        this.removers.push(ProjectStore.addListener(() => {
-            this.setState({project: ProjectStore.getState()})
+        this.removers.push(EditorStateStore.addListener(() => {
+            this.setState({project: EditorStateStore.getState()})
         }))
     }
 
@@ -243,7 +243,7 @@ class TimelineGradations extends React.Component
     componentDidMount()
     {
         this.intervalId = setInterval(() => {
-            const project = ProjectStore.getState().project
+            const project = EditorStateStore.getState()
             if (! project) return
 
             const renderer = RendererService.renderer
@@ -285,15 +285,15 @@ export default class TimelineView extends React.Component
         super()
 
         this.state = {
-            project: ProjectStore.getState(),
+            project: EditorStateStore.getState(),
             timelineScrollTop: 0,
             cursorHeight: 0,
             scale: 1,
             selectedLaneId: null,
         }
 
-        ProjectStore.addListener(() => {
-            this.setState({project: ProjectStore.getState()})
+        EditorStateStore.addListener(() => {
+            this.setState({project: EditorStateStore.getState()})
         })
     }
 
@@ -327,8 +327,8 @@ export default class TimelineView extends React.Component
     render()
     {
         const {project} = this.state
-        const {id: compId, framerate} = project.activeComp ? project.activeComp : {id: '', framerate: 30}
-        const timelineLanes = project.activeComp ? Array.from(project.activeComp.timelanes.values()) : []
+        const {id: compId, framerate} = (project && project.activeComp) ? project.activeComp : {id: '', framerate: 30}
+        const timelineLanes = (project && project.activeComp) ? Array.from(project.activeComp.timelanes.values()) : []
 
         return (
             <Pane className='view-timeline' allowFocus>

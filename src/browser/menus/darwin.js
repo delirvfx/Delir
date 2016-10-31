@@ -1,6 +1,6 @@
 import {app, dialog} from 'electron'
 
-export default const export = [
+export default [
     {
         label: app.getName(),
         submenu: [

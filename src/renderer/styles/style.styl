@@ -25,6 +25,23 @@ html, body
     user-select none
     cursor default
 
+    font-family 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, 'YuGothic', '游ゴシック Medium', 'Hiragino Kaku Gothic ProN', meiryo, sans-serif
+    font-size 14px
+
+#loading
+    position fixed
+    top 0
+    left 0
+
+    display flex
+    align-items center
+    justify-content center
+    width 100%
+    height 100%
+
+    color #fff
+    font-size 18px
+
 #root, ._container
     display flex
     width 100%
@@ -117,6 +134,7 @@ html, body
     &[readonly]
         border-bottom 1px solid transparent
         user-select none
+        cursor default
 
 ._select-list
     .select-list-item.selected

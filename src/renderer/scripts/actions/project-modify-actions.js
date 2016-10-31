@@ -1,3 +1,8 @@
+import Delir, {Helper as DelirHelper} from 'delir-core'
+// const {Helper: DelirHelper} = Delir
+
+console.log(DelirHelper);
+
 
 export default {
     //
@@ -7,11 +12,9 @@ export default {
     // TODO: frame position
     moveLayerToTimelane(layerId: string, targetTimelaneId: string)
     {
-        const {layerId, timelaneId} = action.payload
-
         const targetLayer = DelirHelper.findLayerById(state.project, layerId)
         const sourceLane = DelirHelper.findParentTimelaneByLayerId(state.project, layerId)
-        const destLane = DelirHelper.findTimelaneById(state.project, timelaneId)
+        const destLane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
 
         // console.log(sourceLane.layers.has(targetLayer))
         // console.log(sourceLane.layers.delete(targetLayer))

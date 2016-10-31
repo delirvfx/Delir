@@ -13,8 +13,9 @@ import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-install
 import AppComponent from './views/app'
 
 import dispatcher from './dispatcher'
+import EditorStateActions from './actions/editor-state-actions'
 import AppStore from './stores/app-store'
-import ProjectStore from './stores/project-store'
+import EditorStateStore from './stores/editor-state-store'
 
 import Delir from 'delir-core'
 import {join} from 'path';
@@ -37,7 +38,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     await RendererService.initialize()
 
     window.app = {
-        stores: {ProjectStore, AppStore}
+        stores: {EditorStateStore, AppStore}
     }
 
     // const file = remote.dialog.showOpenDialog({
@@ -122,15 +123,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     c2_t1_l3.placedFrame = 100
 
     c1_t1_l1.keyframes.add(new Delir.Project.Keyframe)
-    dispatcher.dispatch({type: 'project:init', payload: p})
 
     ReactDOM.render(
         React.createElement(AppComponent, {}, []),
         document.querySelector('#root')
     )
 
-    console.log(document.querySelector('canvas'));
-    RendererService.renderer.setProject(p)
+    EditorStateActions.setActiveProject(p)
     RendererService.renderer.setDestinationCanvas(document.querySelector('canvas'))
 
     //

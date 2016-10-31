@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react'
 
 import AppStore from '../stores/app-store'
-import ProjectStore from '../stores/project-store'
+import EditorStateStore from '../stores/editor-state-store'
 
 import Pane from './components/pane'
 
@@ -12,12 +12,12 @@ export default class PreviewView extends React.Component
         super()
 
         this.state = {
-            project: ProjectStore.getState()
+            project: EditorStateStore.getState()
         }
 
-        ProjectStore.addListener(() => {
+        EditorStateStore.addListener(() => {
             console.log('change');
-            this.setState({project: ProjectStore.getState()})
+            this.setState({project: EditorStateStore.getState()})
         })
     }
 

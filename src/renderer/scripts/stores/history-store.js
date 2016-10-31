@@ -20,34 +20,39 @@ class HistoryStore extends ReduceStore<Object>
     reducers = {
         [ActionTypes.HISTORY_PUSH](state, payload)
         {
-            return Object.assign({}, {
+            return {
                 historyStack: [...state.historyStack, payload],
                 redoStack: [],
-            })
+            }
         },
+
         [ActionTypes.HISTORY_UNDO](state, payload)
         {
-
+            const history = state.historyState.pop()
+            return {
+                historyStack: [...state.historyStack],
+                redoStack: [...state.redoStack, history],
+            }
         },
+
         [ActionTypes.HISTORY_REDO](state, payload)
         {
-
+            const history = state.redoStack.pop()
+            return {
+                historyStack: [...state.historyStack, history],
+                redoStack: [...state.redoStack],
+            }
         },
     }
 
-    reduce(state: Object, action: Object)
+    reduce(state: Object, {type, payload}: Object)
     {
-        switch (action.type) {
-        case 'pane-resize': {
-            return Object.assign({}, state, {
-                panes: Object.assign(state.panes, {
-                    [action.payload.paneId]: action.payloadSize,
-                })
-            })
+        if (this.reducers[type]) {
+            return this.reducers[type](payload)
         }
-        }
+
         return state
     }
 }
 
-export default new WindowStore(dispatcher)
+export default new HistoryStore(dispatcher)
