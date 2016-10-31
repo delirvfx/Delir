@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 
-import Actions from '../actions'
+import EditorStateActions from '../actions/editor-state-actions'
 
 import Pane from './components/pane'
 
@@ -13,11 +13,11 @@ export default class NavigationView extends React.Component
 
     onClickPlay = (action) =>
     {
-        Actions.previewPlay()
+        EditorStateActions.togglePlay()
     }
 
     onClickDest = action => {
-        Actions.destinate()
+        EditorStateActions.destinate()
     }
 
     render()

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import {spawn} from 'child_process'
 import canvasToBuffer from 'electron-canvas-to-buffer'
-import {remote} from 'electron'
+// import {remote} from 'electron'
 // import navcodec from 'navcodec'
 
 import React from 'react'
@@ -19,6 +19,10 @@ import ProjectStore from './stores/project-store'
 import Delir from 'delir-core'
 import {join} from 'path';
 
+import RendererService from './services/renderer'
+import BrowserProcessProxy from './services/browser-process-proxy'
+
+
 if (typeof global !== 'undefined') {
     global.require('babel-register')
 }
@@ -28,133 +32,13 @@ window.addEventListener('DOMContentLoaded', async () => {
     devtron.install()
     await installExtension(REACT_DEVELOPER_TOOLS)
 
-    const menu = remote.Menu.buildFromTemplate([
-        {
-            label: remote.app.getName(),
-            submenu: [
-                {
-                    label: 'About Delir',
-                    role: 'about',
-                },
-                {
-                    label: 'Quit Delir',
-                    accelerator: 'CmdOrCtrl+Q',
-                    role: 'quit',
-                }
-            ],
-        },
-        {
-            label: 'File',
-            submenu: [
-                {
-                    label: 'Open',
-                    accelerator: 'CmdOrCtrl+O',
-                    click(item, focusedWindow) {
-                    }
-                },
-                {
-                    label: 'New Project',
-                    click(item, focusedWindow) {
-                    }
-                },
-                {
-                    label: 'Save',
-                    accelerator: 'CmdOrCtrl+S',
-                    click(item, focusedWindow) {
-                    }
-                },
-                {
-                    label: 'Save as ...',
-                    accelerator: 'CmdOrCtrl+Shift+S',
-                    click(item, focusedWindow) {
-                        const path = remote.dialog.showSaveDialog({
-                            title: 'Save as ...',
-                            defaultPath: '/Users/ragg/',
-                            buttonLabel: 'Save',
-                            filters: [
-                                {
-                                    name: 'Delir Project File',
-                                    extensions: ['delir']
-                                }
-                            ],
-                        })
-
-                        fs.writeFileSync(path, ProjectStore.getState().project.serialize())
-                    }
-                },
-                {
-                    label: 'Toggle DevToolds',
-                    accelerator: 'CmdOrCtrl+Alt+I',
-                    click(item, focusedWindow) {
-                        if (focusedWindow) focusedWindow.webContents.toggleDevTools()
-                    },
-                }
-            ]
-        },
-        {
-            label: 'Edit',
-            submenu: [
-                {
-                    role: 'undo'
-                },
-                {
-                    role: 'redo'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    role: 'cut'
-                },
-                {
-                    role: 'copy'
-                },
-                {
-                    role: 'paste'
-                },
-                {
-                    role: 'selectall'
-                },
-            ],
-        },
-        {
-            label: 'Develop',
-            submenu: [
-                {
-                    label: 'Reload',
-                    accelerator: 'CmdOrCtrl+R',
-                    click(item, focusedWindow) {
-                        if (focusedWindow) focusedWindow.reload()
-                    }
-                },
-                {
-                    label: 'Toggle DevToolds',
-                    accelerator: 'CmdOrCtrl+Shift+I',
-                    click(item, focusedWindow) {
-                        if (focusedWindow) focusedWindow.webContents.toggleDevTools()
-                    },
-                }
-            ]
-        }
-    ])
-    remote.Menu.setApplicationMenu(menu)
-
-
     // initialize app
-    // console.log(Delir);
+    BrowserProcessProxy.initialize()
+    await RendererService.initialize()
 
     window.app = {
         stores: {ProjectStore, AppStore}
     }
-
-    const pluginRegistry = app.pluginRegistry = new Delir.Services.PluginRegistory()
-    console.log(
-        await pluginRegistry.loadPackageDir(join(process.cwd(), 'src/delir-core/src/plugins'))
-    )
-
-    const renderer = app.sessionRenderer = new Delir.SessionRenderer({
-        pluginRegistory: pluginRegistry,
-    })
 
     // const file = remote.dialog.showOpenDialog({
     //     title: 'Save as ...',
@@ -238,16 +122,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c2_t1_l3.placedFrame = 100
 
     c1_t1_l1.keyframes.add(new Delir.Project.Keyframe)
-
-    dispatcher.dispatch({type: 'app-set-plugin-registry', payload: pluginRegistry})
-    dispatcher.dispatch({type: 'app-set-session-renderer', payload: renderer})
-    dispatcher.dispatch({type: 'project-init', payload: p})
-
-    dispatcher.register(action => {
-        switch (action.type) {
-
-        }
-    })
+    dispatcher.dispatch({type: 'project:init', payload: p})
 
     ReactDOM.render(
         React.createElement(AppComponent, {}, []),
@@ -255,8 +130,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     )
 
     console.log(document.querySelector('canvas'));
-    renderer.setProject(p)
-    renderer.setDestinationCanvas(document.querySelector('canvas'))
+    RendererService.renderer.setProject(p)
+    RendererService.renderer.setDestinationCanvas(document.querySelector('canvas'))
 
     //
     // delir-core rendering test

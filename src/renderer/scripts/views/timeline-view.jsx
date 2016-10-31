@@ -5,6 +5,7 @@ import React, {PropTypes} from 'react'
 import Actions from '../actions'
 import AppStore from '../stores/app-store'
 import ProjectStore from '../stores/project-store'
+import RendererService from '../services/renderer'
 
 import TimelaneHelper from '../helpers/timelane-helper'
 
@@ -232,17 +233,19 @@ class TimelineGradations extends React.Component
         cursorHeight: PropTypes.number.isRequired,
     }
 
+    intervalId = null
+
     state = {
         left: 0,
     }
 
     componentDidMount()
     {
-        setInterval(() => {
+        this.intervalId = setInterval(() => {
             const project = ProjectStore.getState().project
             if (! project) return
 
-            const renderer = AppStore.getState().renderer
+            const renderer = RendererService.renderer
             if (! renderer.isPlaying()) return
 
             this.setState({
@@ -254,6 +257,11 @@ class TimelineGradations extends React.Component
                 }),
             })
         }, 1)
+    }
+
+    componentWillUnmount()
+    {
+        clearInterval(this.intervalId)
     }
 
     render()

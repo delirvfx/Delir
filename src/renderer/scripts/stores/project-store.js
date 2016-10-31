@@ -7,6 +7,8 @@ const {Helper: DelirHelper} = Delir
 import dispatcher from '../dispatcher'
 import AppStore from './app-store'
 
+import fs from 'fs'
+
 class ProjectStore extends ReduceStore<Object>
 {
     getInitialState(): Object
@@ -19,54 +21,30 @@ class ProjectStore extends ReduceStore<Object>
         }
     }
 
-    reduce(state: Object, action: Object)
-    {
-        switch (action.type) {
-        case 'project-init':
+    reducers = {
+        ["project:init"](state, action)
+        {
             return Object.assign({}, state, {project: action.payload})
+        },
 
-        case 'preview-play':
-            let activeComp = state.activeComp
-            if (activeComp) {
-                let promise = AppStore.getState().renderer.render({
-                    beginFrame: 0,
-                    targetCompositionId: activeComp.id,
-                }).catch(e => console.error(e.stack))
-            }
-
+        ["project:save"](state, action)
+        {
+            fs.writeFileSync(action.payload.path, state.project.serialize())
             return state
-        case 'destinate': return (() => {
-            let file = remote.dialog.showSaveDialog(({
-                title: 'Destinate',
-                buttonLabel: 'Render',
-                filters: [
-                    {
-                        name: 'mp4',
-                        extensions: ['mp4']
-                    }
-                ],
-            }))
+        },
 
-            if (! file) return;
-
-            let activeComp = ProjectStore.getState().activeComp
-            if (activeComp) {
-                renderer.export({
-                    exportPath: file,
-                    targetCompositionId: activeComp.id,
-                }); // .catch(e => console.error(e.stack))
-            }
-        })()
-
-        case 'change-active-composition':
+        ["change-active-composition"](state, action)
+        {
             if (! state.project) {
                 return state
             }
 
             let targetComp = _.find(Array.from(state.project.compositions.values()), {id: action.payload})
             return Object.assign({}, state, {activeComp: targetComp})
+        },
 
-        case 'change-active-layer':
+        ["change-active-layer"](state, action)
+        {
             if (! state.project) {
                 return state
             }
@@ -77,8 +55,10 @@ class ProjectStore extends ReduceStore<Object>
 
             let targetLayer = DelirHelper.findLayerById(action.payload)
             return Object.assign({}, state, {activeLayer: layer})
+        },
 
-        case 'move-layer-to-timelane': return (() => {
+        ["move-layer-to-timelane"](state, action)
+        {
             const {layerId, timelaneId} = action.payload
 
             const targetLayer = DelirHelper.findLayerById(state.project, layerId)
@@ -92,9 +72,10 @@ class ProjectStore extends ReduceStore<Object>
             destLane.layers.add(targetLayer)
 
             return Object.assign({}, state)
-        })()
+        },
 
-        case 'mod-composition-name': return (() => {
+        ["mod-composition-name"](state, action)
+        {
             if (! state.project) {
                 return
             }
@@ -103,8 +84,13 @@ class ProjectStore extends ReduceStore<Object>
             console.log(targetComp);
             targetComp.name = action.payload.newName
             return Object.assign({}, state)
-        })()
+        },
+    }
 
+    reduce(state: Object, action: Object)
+    {
+        if (this.reducers[action.type]) {
+            return this.reducers[action.type](state, action)
         }
 
         return state

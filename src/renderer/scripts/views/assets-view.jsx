@@ -1,7 +1,9 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 
-import Actions from '../actions'
+import EditorStateActions from '../actions/editor-state-actions'
+import ProjectModifyActions from '../actions/project-modify-actions'
+
 import AppStore from '../stores/app-store'
 import ProjectStore from '../stores/project-store'
 
@@ -33,13 +35,13 @@ export default class AssetsView extends React.Component
 
     changeComposition(compId, e)
     {
-        Actions.changeActiveComposition(compId)
+        EditorStateActions.changeActiveComposition(compId)
     }
 
     modifyCompName(compId, newName)
     {
         // console.log(compId, newName);
-        Actions.modifyCompositionName(compId, newName)
+        ProjectModifyActions.modifyCompositionName(compId, newName)
     }
 
     render()
