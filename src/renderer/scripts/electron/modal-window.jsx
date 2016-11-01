@@ -57,7 +57,7 @@ export default class WindowComponent extends React.Component
 
     render() {
         this.props.show ? this.window.show() : this.window.hide()
-        this.props.url !== this.window.webContents.getURL() && this.window.loadURL(buildUrl(this.props.url))
+        // this.props.url !== this.window.webContents.getURL() && this.window.loadURL(buildUrl(this.props.url))
         return null
     }
 }

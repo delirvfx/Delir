@@ -24,16 +24,42 @@ html, body
     cursor default
 
     font-family 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, 'YuGothic', '游ゴシック Medium', 'Hiragino Kaku Gothic ProN', meiryo, sans-serif
-    font-size 14px
+    font-size 12px
 
     background var(--background)
     color var(--text-color)
+
+#root
+    display flex
+    flex-direction column
+    width 100%
+    height 100%
+
+.header
+    height auto
+    padding 8px
+    // margin-top -24px
+    border-bottom 1px solid #343434
+    text-align center
+
+.content
+    display block
+    flex 1
+    padding 8px
+
+.footer
+    display flex
+    align-items center
+    justify-content flex-end
+    padding 8px
+
+    border-top 1px solid #aaa
 
 .view-navigation
     flex none
     display flex
     flex-direction column
-    border-bottom 2px solid #000
+    // border-bottom 1px solid #333s
 
     .window-nav
         display flex
@@ -78,6 +104,79 @@ html, body
         &.window-nav--maximize:hover
             background-color #008234
 
-.content
-    display block
-    padding 8px
+        &[disabled]
+            background-color transparent !important
+            border 1px solid rgba(#fff, .5) !important
+
+//
+// Components
+//
+.form-horizontal
+    margin-top 8px
+
+    .form-groups
+        display table
+
+    .form-group
+        // display table-row
+        margin-bottom 4px
+
+        .label
+            display table-cell
+            padding-right 8px
+
+        .input, .inputs
+            display table-cell
+
+    .form-group + .form-group
+        padding-top .5rem
+
+.form-control + .form-control
+    margin-left .5rem
+
+.form-control
+    display inline-block
+    padding 4px
+
+    background-color transparent
+    color inherit
+    font-family inherit
+    outline none
+
+    border none
+    border-bottom 1px solid #aaa
+
+    transition border-bottom-color .1s
+
+    &:active, &:focus
+        border-bottom-color var(--accent-color)
+
+    &[readonly]
+        border-bottom 1px solid transparent
+        user-select none
+        cursor default
+
+    & + .unit
+        display inline-block
+        margin-left .5rem
+
+.button
+    padding 4px 16px
+    font-size 12px
+    background-color #eeeeee
+    border none
+    outline none
+    cursor default
+
+    &.primary
+        color #fff
+        background-color #0081eb
+
+    & + &
+        margin-left 8px
+
+.content--new-composition
+    .form-group
+        label
+            width 10rem
+            text-align right

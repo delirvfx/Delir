@@ -7,29 +7,40 @@ html
         link(rel="stylesheet", href="styles/modal-common.css")
         script.
             (() => {
+                const $ = window.$ = query => document.querySelector(query)
                 const {remote} = require('electron')
-                const bw = remote.getCurrentWindow()
-                const $ = query => document.querySelector(query)
+                const bw = window.browserWindow = remote.getCurrentWindow()
                 window.addEventListener('DOMContentLoaded', () => {
-                    !bw.isClosable() && ($('.window-nav--close').disabled = true)
-                    !bw.isMinimizable() && ($('.window-nav--minimize').remove())
-                    !bw.isMaximizable() && ($('.window-nav--maximize').remove())
+                    if (bw.isModal()) {
+                        $('.view-navigation').remove()
+                    } else {
+                        !bw.isClosable() && ($('.window-nav--close').setAttribute('disabled', ''))
+                        !bw.isMinimizable() && ($('.window-nav--minimize').setAttribute('disabled', ''))
+                        !bw.isMaximizable() && ($('.window-nav--maximize').setAttribute('disabled', ''))
 
-                    $('.window-nav--close').addEventListener('click', e => bw.hide())
-                    $('.window-nav--minimize').addEventListener('click', e => bw.minimize())
-                    $('.window-nav--maximize').addEventListener('click', e => bw.isMaximized() ? bw.unmaximize() : bw.maximize())
+                        $('.window-nav--close').addEventListener('click', e => bw.hide())
+                        $('.window-nav--minimize').addEventListener('click', e => bw.minimize())
+                        $('.window-nav--maximize').addEventListener('click', e => bw.isMaximized() ? bw.unmaximize() : bw.maximize())
+                    }
 
                     document.body.addEventListener('submit', e => {
                         e.preventDefault()
                     })
                 })
             })()
-    body
-        .view-navigation
-            ul.window-nav
-                li.window-nav-item.window-nav--close
-                li.window-nav-item.window-nav--minimize
-                li.window-nav-item.window-nav--maximize
 
-        .content
+        block script
+    body
+        #root
+            block shell
+                .view-navigation
+                    ul.window-nav
+                        li.window-nav-item.window-nav--close
+                        li.window-nav-item.window-nav--minimize
+                        li.window-nav-item.window-nav--maximize
+
+            block header
+
             block content
+
+            block footer

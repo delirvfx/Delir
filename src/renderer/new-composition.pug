@@ -1,13 +1,30 @@
 extends ./_layouts/window-base.pug
+block header
+    .header
+        h1 New Composition
+
 block content
-    | ✋( ͡° ͜ʖ ͡°) hi.
-    form
-        label Composition name
-        input(name='compositionName' type='text')
+    .content.content--new-composition
+        form.form-horizontal
+            .form-group
+                label.label Composition name:
+                .input
+                    input.form-control(name='compositionName' type='text')
 
-        label Composition size
-        input(name='compositionWidth' type='number' min=1)
-        input(name='compositionHeight' type='number' min=1)
+            .form-group
+                label.label Composition size:
+                .inputs
+                    input.form-control(name='compositionWidth' type='number' min=1 style="width:5rem")
+                    | x
+                    input.form-control(name='compositionHeight' type='number' min=1 style="width:5rem")
 
-        button(type='button') Cancel
-        button(type='submit') Create
+            .form-group
+                label.label framerate:
+                .inputs
+                    input.form-control(name='compositionWidth' type='number' min=1 style="width:5rem")
+                    span.unit fps
+
+block footer
+    .footer
+        button.button(type='button') Cancel
+        button.button.primary(type='submit') Create
