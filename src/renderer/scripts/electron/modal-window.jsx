@@ -1,5 +1,7 @@
 import React, {PropTypes} from 'react'
 import path from 'path'
+import URL from 'url'
+import qs from 'querystring'
 import {remote} from 'electron'
 
 const appPath = remote.app.getAppPath()
@@ -13,6 +15,8 @@ export default class WindowComponent extends React.Component
         url: PropTypes.string.isRequired,
         width: PropTypes.number,
         height: PropTypes.number,
+        onHide: PropTypes.func,
+        onResposnse: PropTypes.func,
     }
 
     static defaultProps = {
@@ -25,22 +29,26 @@ export default class WindowComponent extends React.Component
         super(...args)
 
         this.window = new remote.BrowserWindow({
-            // parent: remote.getCurrentWindow(),
+            parent: remote.getCurrentWindow(),
             modal: true,
             show: this.props.show,
-            frame: false,
-            minimizable: false,
-            maximizable: false,
+            frame: true,
+            // minimizable: false,
+            // maximizable: false,
             resizable: false,
             // useContentSize: true,
             width: this.props.width,
             height: this.props.height,
         })
 
-        this.window.on('close', e => {
+        this.window.on('hide', e => {
+            this.props.onHide()
+        })
+
+        this.window.webContents.on('will-navigate', (e, url) => {
+            const res = qs.parse(URL.parse(url).query)
+            this.props.onResponse && this.props.onResponse(res)
             e.preventDefault()
-            console.log('close', e);
-            // this.window.hide()
         })
 
         this.window.loadURL(buildUrl(this.props.url))

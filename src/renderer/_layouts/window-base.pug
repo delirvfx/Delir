@@ -4,12 +4,16 @@ html
         meta(charset="UTF-8")
         title Delir
 
-        link(rel="stylesheet", href="styles/modal-common.css")
+        link(rel="stylesheet" type="text/css" href="styles/modal-common.css")
         script.
             (() => {
                 const $ = window.$ = query => document.querySelector(query)
+                const $$ = window.$$ = query => document.querySelectorAll(query)
                 const {remote} = require('electron')
-                const bw = window.browserWindow = remote.getCurrentWindow()
+                const bw = window.thisWindow = remote.getCurrentWindow()
+
+                bw.on('hide', e => bw.reload())
+
                 window.addEventListener('DOMContentLoaded', () => {
                     if (bw.isModal()) {
                         $('.view-navigation').remove()
@@ -23,15 +27,41 @@ html
                         $('.window-nav--maximize').addEventListener('click', e => bw.isMaximized() ? bw.unmaximize() : bw.maximize())
                     }
 
-                    document.body.addEventListener('submit', e => {
-                        e.preventDefault()
+                    window.addEventListener('submit', e => {
+                        bw.hide()
+                        setTimeout(() => bw.reload(), 1000)
+                    })
+
+                    $('.form-control input').addEventListener('focus', e => e.target.select())
+
+                    $('form :-webkit-any(button:not([type]),[type="submit"])').addEventListener('click', e => {
+                        let alerted = false;
+
+                        for (const el of e.target.form.elements) {
+                            const closest = el.closest('.form-control');
+
+                            if (! el.matches('input,textarea,select')) {
+                                continue;
+                            }
+
+                            if (el.checkValidity()) {
+                                closest.classList.remove('invalid');
+                                closest.classList.remove('alert');
+                                closest.dataset.message = null
+                            } else {
+                                closest.classList.add('invalid');
+                                !alerted && (closest.dataset.message = el.validationMessage);
+                                !alerted && closest.classList.add('alert');
+                                alerted = true;
+                            }
+                        }
                     })
                 })
             })()
 
         block script
     body
-        #root
+        form#root
             block shell
                 .view-navigation
                     ul.window-nav

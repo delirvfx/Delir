@@ -4,8 +4,10 @@ import React, {PropTypes} from 'react'
 
 import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
+
 import AppStore from '../stores/app-store'
 import EditorStateStore from '../stores/editor-state-store'
+import ProjectModifyStore from '../stores/project-modify-store'
 import RendererService from '../services/renderer'
 
 import TimelaneHelper from '../helpers/timelane-helper'
@@ -285,15 +287,19 @@ export default class TimelineView extends React.Component
         super()
 
         this.state = {
-            project: EditorStateStore.getState(),
             timelineScrollTop: 0,
             cursorHeight: 0,
             scale: 1,
             selectedLaneId: null,
+            ..._.pick(EditorStateStore.getState(), ['project', 'activeComp']),
         }
 
         EditorStateStore.addListener(() => {
-            this.setState({project: EditorStateStore.getState()})
+            this.setState(_.pick(EditorStateStore.getState(), ['project', 'activeComp']))
+        })
+
+        ProjectModifyStore.addListener(() => {
+            this.setState({})
         })
     }
 
@@ -320,15 +326,22 @@ export default class TimelineView extends React.Component
         this.setState({selectedLaneId: laneId})
     }
 
-    scaleChanged = scale => {
+    scaleChanged = scale =>
+    {
         this.setState({scale: scale})
+    }
+
+    addNewTimelane = () =>
+    {
+        if (!this.state.activeComp) return
+        ProjectModifyActions.createTimelane(this.state.activeComp.id)
     }
 
     render()
     {
-        const {project} = this.state
-        const {id: compId, framerate} = (project && project.activeComp) ? project.activeComp : {id: '', framerate: 30}
-        const timelineLanes = (project && project.activeComp) ? Array.from(project.activeComp.timelanes.values()) : []
+        const {project, activeComp} = this.state
+        const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
+        const timelineLanes = activeComp ? Array.from(activeComp.timelanes.values()) : []
 
         return (
             <Pane className='view-timeline' allowFocus>
@@ -351,7 +364,7 @@ export default class TimelineView extends React.Component
                         <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
                             <ContextMenu>
                                 <MenuItem type='separator' />
-                                <MenuItem label='Add new timelane' onClick={() => {}} />
+                                <MenuItem label='Add new timelane' onClick={this.addNewTimelane} />
                                 <MenuItem type='separator' />
                             </ContextMenu>
                             <SelectList key={compId}>
@@ -391,7 +404,7 @@ export default class TimelineView extends React.Component
                         <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
                             <ContextMenu>
                                 <MenuItem type='separator' />
-                                <MenuItem label='Add new timelane' onClick={() => {}} />
+                                <MenuItem label='Add new timelane' onClick={this.addNewTimelane} />
                                 <MenuItem type='separator' />
                             </ContextMenu>
                             {timelineLanes.map(lane => (

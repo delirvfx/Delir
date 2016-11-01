@@ -6,6 +6,7 @@ import ProjectModifyActions from '../actions/project-modify-actions'
 
 import AppStore from '../stores/app-store'
 import EditorStateStore from '../stores/editor-state-store'
+import ProjectModifyStore from '../stores/project-modify-store'
 
 import Pane from './components/pane'
 import LabelInput from './components/label-input'
@@ -33,17 +34,33 @@ export default class AssetsView extends React.Component
         EditorStateStore.addListener(() => {
             this.setState({project: EditorStateStore.getState()})
         })
+
+        ProjectModifyStore.addListener(() => {
+            this.setState({})
+        })
     }
 
-    changeComposition(compId, e)
+    changeComposition = (compId, e) =>
     {
         EditorStateActions.changeActiveComposition(compId)
     }
 
-    modifyCompName(compId, newName)
+    modifyCompName = (compId, newName) =>
     {
         // console.log(compId, newName);
         ProjectModifyActions.changeCompositionName(compId, newName)
+    }
+
+    makeNewComposition = (req: {name: string, width: string, height: string, framerate: string}) =>
+    {
+        if (req == null) return
+
+        // `newCompositionWindowOpened` must be `false` before create Action.
+        // this state is not synced to real window show/hide state.
+        // if other state changing fired early to set `false`,
+        // component updated and open modal window once again by current state.
+        this.setState({newCompositionWindowOpened: false})
+        ProjectModifyActions.createComposition(req)
     }
 
     render()
@@ -59,6 +76,8 @@ export default class AssetsView extends React.Component
                     url='new-composition.html'
                     width={400}
                     height={300}
+                    onHide={this.makeNewComposition}
+                    onResponse={this.makeNewComposition}
                 />
                 <table className='asset-list'>
                     <thead>

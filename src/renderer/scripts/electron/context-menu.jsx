@@ -30,8 +30,7 @@ class ContextMenuManager
 
                 const menu = new Menu
                 strippedMenus.forEach(item => menu.append(item))
-                Menu.buildFromTemplate(strippedMenus).popup()
-                // menu.popup(remote.getCurrentWindow())
+                Menu.buildFromTemplate(strippedMenus).popup(remote.getCurrentWindow())
             })
         })
     }

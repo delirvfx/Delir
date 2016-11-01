@@ -10,6 +10,13 @@ export default keyMirror({
     RENDER_DESTINATE: null,
 
     // ProjectModifyActions
+    MOVE_LAYER_TO_TIMELINE: null,
+    CREATE_COMPOSTION: null,
+    CREATE_TIMELANE: null,
+
+    // ProjectModifyStore
+    CREATE_COMPOSTION: null,
+
     HISTORY_PUSH: null, // {undo: Function, redo: Funcion}
     HISTORY_UNDO: null,
     HISTORY_REDO: null,

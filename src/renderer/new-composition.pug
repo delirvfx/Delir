@@ -1,30 +1,47 @@
 extends ./_layouts/window-base.pug
+block script
+    script.
+        window.addEventListener('DOMContentLoaded', () => {
+            window.addEventListener('keyup', e => {
+                e.code === 'Escape' && thisWindow.hide()
+            })
+
+            $('#cancel').addEventListener('click', e => {
+                thisWindow.hide()
+            })
+        })
+
 block header
     .header
         h1 New Composition
 
 block content
     .content.content--new-composition
-        form.form-horizontal
+        .form-horizontal
             .form-group
                 label.label Composition name:
                 .input
-                    input.form-control(name='compositionName' type='text')
+                    .form-control: input(name='name' type='text' value='New Composition' required autofocus)
 
             .form-group
-                label.label Composition size:
+                label.label width:
                 .inputs
-                    input.form-control(name='compositionWidth' type='number' min=1 style="width:5rem")
-                    | x
-                    input.form-control(name='compositionHeight' type='number' min=1 style="width:5rem")
+                    .form-control: input(name='width' type='number' min=1 style='width:5rem' required)
+                    span.unit px
+
+            .form-group
+                label.label width:
+                .inputs
+                    .form-control: input(name='height' type='number' min=1 style='width:5rem' required)
+                    span.unit px
 
             .form-group
                 label.label framerate:
                 .inputs
-                    input.form-control(name='compositionWidth' type='number' min=1 style="width:5rem")
+                    .form-control: input(name='framerate' type='number' min=1 value='30' style='width:5rem' required)
                     span.unit fps
 
 block footer
     .footer
-        button.button(type='button') Cancel
+        button#cancel.button(type='button') Cancel
         button.button.primary(type='submit') Create

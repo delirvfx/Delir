@@ -1,5 +1,8 @@
 import Delir from 'delir-core'
-const {Helper: DelirHelper} = Delir
+const {Helper: DelirHelper, Project} = Delir
+
+import dispatcher from '../dispatcher'
+import ActionTypes from '../action-types'
 
 export default {
     //
@@ -9,20 +12,8 @@ export default {
     // TODO: frame position
     moveLayerToTimelane(layerId: string, targetTimelaneId: string)
     {
-        const targetLayer = DelirHelper.findLayerById(state.project, layerId)
-        const sourceLane = DelirHelper.findParentTimelaneByLayerId(state.project, layerId)
-        const destLane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
-
-        // console.log(sourceLane.layers.has(targetLayer))
-        // console.log(sourceLane.layers.delete(targetLayer))
-
-        sourceLane.layers.delete(targetLayer)
-        destLane.layers.add(targetLayer)
-
-        return Object.assign({}, state)
-
         dispatcher.dispatch({
-            type: 'move-layer-to-timelane',
+            type: ActionTypes.MOVE_LAYER_TO_TIMELINE,
             payload: {layerId, targetTimelaneId},
         })
     },
@@ -34,4 +25,28 @@ export default {
         //     payload: {compId, newName}
         // })
     },
+
+    createComposition({name, width, height, framerate})
+    {
+        const composition = new Project.Composition
+        composition.name = name
+        composition.width = width
+        composition.height = height
+        composition.framerate = framerate
+
+        dispatcher.dispatch({
+            type: ActionTypes.CREATE_COMPOSTION,
+            payload: {composition},
+        })
+    },
+
+    createTimelane(compId: string)
+    {
+        const timelane = new Project.TimeLane
+
+        dispatcher.dispatch({
+            type: ActionTypes.CREATE_TIMELANE,
+            payload: {timelane, targetCompositionId: compId}
+        })
+    }
 }
