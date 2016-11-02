@@ -41,6 +41,12 @@ block content
                     .form-control: input(name='framerate' type='number' min=1 value='30' style='width:5rem' required)
                     span.unit fps
 
+            .form-group
+                label.label duration(sec):
+                .inputs
+                    .form-control: input(name='durationSeconds' type='number' min=1 value='30' style='width:5rem' required)
+                    span.unit s
+
 block footer
     .footer
         button#cancel.button(type='button') Cancel

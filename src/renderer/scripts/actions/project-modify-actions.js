@@ -26,13 +26,14 @@ export default {
         // })
     },
 
-    createComposition({name, width, height, framerate})
+    createComposition({name, width, height, framerate, durationFrame})
     {
         const composition = new Project.Composition
         composition.name = name
         composition.width = width
         composition.height = height
         composition.framerate = framerate
+        composition.durationFrame = durationFrame
 
         dispatcher.dispatch({
             type: ActionTypes.CREATE_COMPOSTION,
@@ -50,9 +51,14 @@ export default {
         })
     },
 
-    createLayer(timelaneId: string, placedFrame = 0, durationFrame = 100)
-    {
+    createLayer(
+        timelaneId: string,
+        layerRendererId: string,
+        placedFrame = 0,
+        durationFrame = 100
+    ) {
         const layer = new Project.Layer
+        layer.renderer = layerRendererId
         layer.placedFrame = placedFrame
         layer.durationFrame = durationFrame
 
@@ -62,6 +68,16 @@ export default {
                 layer,
                 targetTimelaneId: timelaneId,
             },
+        })
+    },
+
+    removeLayer(layerId: string)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.REMOVE_LAYER,
+            payload: {
+                targetLayerId: layerId
+            }
         })
     },
 }

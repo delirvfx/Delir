@@ -105,15 +105,12 @@ export default class REDLAYER extends Delir.PluginBase.CustomLayerPluginBase
             this.proton.addEmitter(subemitter);
         }
 
-
         this.emitter.addEventListener(Proton.PARTICLE_DEAD, function(particle) {
             if (Math.random() < .7)
                 createFirstEmitter(particle);
             else
                 createSecendEmitter(particle);
         });
-
-        document.body.appendChild(this.buffer)
     }
 
     async render(req: RenderRequest)

@@ -14,7 +14,6 @@ import AppComponent from './views/app'
 
 import dispatcher from './dispatcher'
 import EditorStateActions from './actions/editor-state-actions'
-import AppStore from './stores/app-store'
 import EditorStateStore from './stores/editor-state-store'
 
 import Delir from 'delir-core'
@@ -38,7 +37,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     await RendererService.initialize()
 
     window.app = {
-        stores: {EditorStateStore, AppStore}
+        stores: {EditorStateStore}
     }
 
     // const file = remote.dialog.showOpenDialog({
@@ -78,7 +77,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.width = 640
     c1.height = 360
     c1.framerate = 30
-    c1.durationFrame = 30 * 10
+    c1.durationFrame = 30 * 1
 
     c1_t1.name = 'NYAN = ^ . ^ = CHENCAT'
     c1_t2.name = '🔥 FIRE 🔥'

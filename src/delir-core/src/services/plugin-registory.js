@@ -103,7 +103,27 @@ export default class PluginRegistory
         }
     }
 
-    getLoadedPackageByType(type: PluginFeatures) {
-        return _.filter(this._plugins, entry => _.get(entry, 'package.delir.feature').includes(type))
+    getLoadedPluginSummaries(type: ?PluginFeatures)
+    {
+        let plugins
+
+        if (type != null) {
+            plugins = this.getLoadedPluginsByType(type)
+        } else {
+            plugins = this._plugins
+        }
+
+        return _.map(plugins, (plugin, packageName) => {
+            return {
+                packageName,
+                packageId: packageName,
+                packageInfo: _.cloneDeep(plugin.package),
+                packageRoot: plugin.packageRoot,
+            }
+        })
+    }
+
+    getLoadedPluginsByType(type: PluginFeatures) {
+        return _.filter(this._plugins, entry => _.get(entry, 'package.delir.feature') === type)
     }
 }

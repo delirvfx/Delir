@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 
 import EditorStateStore from '../stores/editor-state-store'
+
 import EditorStateActions from '../actions/editor-state-actions'
 
 import Pane from './components/pane'
@@ -14,7 +15,7 @@ export default class NavigationView extends React.Component
 
     onClickPlay = (action) =>
     {
-        EditorStateActions.togglePreview()
+        EditorStateActions.togglePreview(EditorStateStore.getState().activeComp.id)
     }
 
     onClickDest = action => {

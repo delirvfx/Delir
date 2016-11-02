@@ -141,6 +141,28 @@ html, body
     .select-list-item.selected
         background-color rgba(#fff, .2)
 
+._table
+    .table-header
+    .table-body
+    .table-footer
+        display block
+
+    .table-row
+        display flex
+
+    .table-col
+        position relative
+
+        .resizer
+            position absolute
+            top 0
+            bottom 0
+            right 0
+
+            width 1px
+
+            background-color #fff
+            cursor ew-resize
 
 // Views
 .body-pane
@@ -164,6 +186,7 @@ html, body
 
         border-bottom 1px solid #333
         -webkit-app-region drag
+        user-select none
 
     .window-nav-item
         display inline-flex

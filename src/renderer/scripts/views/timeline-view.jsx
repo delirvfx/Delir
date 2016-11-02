@@ -5,10 +5,10 @@ import React, {PropTypes} from 'react'
 import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
 
-import AppStore from '../stores/app-store'
+import RendererService from '../services/renderer'
+
 import EditorStateStore from '../stores/editor-state-store'
 import ProjectModifyStore from '../stores/project-modify-store'
-import RendererService from '../services/renderer'
 
 import TimelaneHelper from '../helpers/timelane-helper'
 
@@ -98,9 +98,16 @@ class TimelineLaneLayer extends React.Component
         })
     }
 
+    removeLayer = layerId =>
+    {
+        ProjectModifyActions.removeLayer(layerId)
+    }
+
 
     render()
     {
+        const {layer} = this.props
+
         return (
             <div className='timerange-bar'
                 style={{
@@ -116,7 +123,7 @@ class TimelineLaneLayer extends React.Component
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label='Remote it' onClick={() => {}} />
+                    <MenuItem label='remove ' onClick={this.removeLayer.bind(null, layer.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
             </div>
@@ -139,7 +146,6 @@ class TimelineLane extends React.Component
         this.state = {
             dragovered: false,
             pxPerSec: 30,
-            app: AppStore.getState(),
         }
     }
 
@@ -187,14 +193,16 @@ class TimelineLane extends React.Component
         this.setState({a: Math.random()})
     }
 
-    addNewLayer = () =>
+    addNewLayer = (layerRendererId) =>
     {
-        ProjectModifyActions.createLayer(this.props.timelane.id)
+        ProjectModifyActions.createLayer(this.props.timelane.id, layerRendererId)
     }
 
     render()
     {
         const {timelane} = this.props
+        const plugins = RendererService.pluginRegistry.getLoadedPluginSummaries()
+
 
         return (
             <li
@@ -209,8 +217,8 @@ class TimelineLane extends React.Component
                 <ContextMenu>
                     <MenuItem type='separator' />
                     <MenuItem label='Add new Layer'>
-                        {_.map(this.state.app.pluginRegistry._plugins, p =>
-                            <MenuItem label={p.package} onClick={this.addNewLayer} />
+                        {_.map(plugins, p =>
+                            <MenuItem label={p.packageName} onClick={this.addNewLayer.bind(null, p.packageId)} />
                         )}
                     </MenuItem>
                     <MenuItem type='separator' />
@@ -315,6 +323,7 @@ export default class TimelineView extends React.Component
         })
 
         ProjectModifyStore.addListener(() => {
+            console.log('csl');
             this.setState({})
         })
     }

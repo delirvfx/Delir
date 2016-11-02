@@ -16,15 +16,17 @@ let state = {
 const handlers = {
     [ActionTypes.SET_ACTIVE_PROJECT]({project})
     {
-        state = Object.assign({project})
         renderer.setProject(project)
+        state = Object.assign({}, state, {project})
     },
 
     [ActionTypes.TOGGLE_PREVIEW]({compositionId})
     {
         if (! state.project) return
+
         if (renderer.isPlaying()) {
             renderer.stop()
+            return
         }
 
         const targetComposition = DelirHelper.findCompositionById(state.project, compositionId)

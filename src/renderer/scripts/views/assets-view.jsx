@@ -11,6 +11,7 @@ import ProjectModifyStore from '../stores/project-modify-store'
 import Pane from './components/pane'
 import LabelInput from './components/label-input'
 import SelectList from './components/select-list'
+import {Table, TableHeader, TableBody, Row, Col} from './components/table'
 import {ContextMenu, MenuItem} from '../electron/context-menu'
 import ModalWindow from '../electron/modal-window'
 
@@ -51,7 +52,7 @@ export default class AssetsView extends React.Component
         ProjectModifyActions.changeCompositionName(compId, newName)
     }
 
-    makeNewComposition = (req: {name: string, width: string, height: string, framerate: string}) =>
+    makeNewComposition = (req: {name: string, width: string, height: string, framerate: string, durationSeconds: string}) =>
     {
         if (req == null) return
 
@@ -65,6 +66,7 @@ export default class AssetsView extends React.Component
             width: req.width | 0,
             height: req.height | 0,
             framerate: req.framerate | 0,
+            durationFrame: (req.framerate | 0) * parseInt(req.durationSeconds, 10)
         })
     }
 
@@ -84,14 +86,14 @@ export default class AssetsView extends React.Component
                     onHide={this.makeNewComposition}
                     onResponse={this.makeNewComposition}
                 />
-                <table className='asset-list'>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>名前</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <Table className='asset-list'>
+                    <TableHeader>
+                        <Row>
+                            <Col></Col>
+                            <Col>名前</Col>
+                        </Row>
+                    </TableHeader>
+                    <TableBody>
                         <SelectList>
                         {assets.map(asset => (
                             <tr key={asset.id}>
@@ -114,8 +116,8 @@ export default class AssetsView extends React.Component
                             </tr>
                         ))}
                         </SelectList>
-                    </tbody>
-                </table>
+                    </TableBody>
+                </Table>
                 <table className='composition-list'>
                     <thead>
                         <tr>

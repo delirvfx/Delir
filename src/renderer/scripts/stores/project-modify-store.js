@@ -60,8 +60,21 @@ class ProjectModifyStore extends ReduceStore<Object>
                 return state
             }
 
-             const targetTimelane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
+            const targetTimelane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
             targetTimelane.layers.add(layer)
+
+            return Object.assign({}, state)
+        },
+
+        [ActionTypes.REMOVE_LAYER](state, {targetLayerId})
+        {
+            if (! state.project) {
+                return state
+            }
+
+            const targetLayer = DelirHelper.findLayerById(state.project, targetLayerId)
+            const layerHolderTimelane = DelirHelper.findParentTimelaneByLayerId(state.project, targetLayerId)
+            layerHolderTimelane.layers.delete(targetLayer)
 
             return Object.assign({}, state)
         },
