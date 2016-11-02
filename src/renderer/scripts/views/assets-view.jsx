@@ -60,7 +60,12 @@ export default class AssetsView extends React.Component
         // if other state changing fired early to set `false`,
         // component updated and open modal window once again by current state.
         this.setState({newCompositionWindowOpened: false})
-        ProjectModifyActions.createComposition(req)
+        ProjectModifyActions.createComposition({
+            name: req.name,
+            width: req.width | 0,
+            height: req.height | 0,
+            framerate: req.framerate | 0,
+        })
     }
 
     render()

@@ -48,5 +48,20 @@ export default {
             type: ActionTypes.CREATE_TIMELANE,
             payload: {timelane, targetCompositionId: compId}
         })
-    }
+    },
+
+    createLayer(timelaneId: string, placedFrame = 0, durationFrame = 100)
+    {
+        const layer = new Project.Layer
+        layer.placedFrame = placedFrame
+        layer.durationFrame = durationFrame
+
+        dispatcher.dispatch({
+            type: ActionTypes.CREATE_LAYER,
+            payload: {
+                layer,
+                targetTimelaneId: timelaneId,
+            },
+        })
+    },
 }

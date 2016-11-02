@@ -132,9 +132,15 @@ class TimelineLane extends React.Component
         scale: PropTypes.number.isRequired,
     }
 
-    state = {
-        dragovered: false,
-        pxPerSec: 30,
+    constructor()
+    {
+        super()
+
+        this.state = {
+            dragovered: false,
+            pxPerSec: 30,
+            app: AppStore.getState(),
+        }
     }
 
     onDrop(e)
@@ -177,7 +183,13 @@ class TimelineLane extends React.Component
         })
 
         layer.placedFrame = layer.placedFrame + movedFrames
+        console.log(layer.placedFrame, movedFrames);
         this.setState({a: Math.random()})
+    }
+
+    addNewLayer = () =>
+    {
+        ProjectModifyActions.createLayer(this.props.timelane.id)
     }
 
     render()
@@ -196,7 +208,11 @@ class TimelineLane extends React.Component
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label='Add new Layer' onClick={() => {}} />
+                    <MenuItem label='Add new Layer'>
+                        {_.map(this.state.app.pluginRegistry._plugins, p =>
+                            <MenuItem label={p.package} onClick={this.addNewLayer} />
+                        )}
+                    </MenuItem>
                     <MenuItem type='separator' />
                 </ContextMenu>
 
@@ -207,11 +223,11 @@ class TimelineLane extends React.Component
                         scale: this.props.scale,
                     };
                     const width = TimelaneHelper.framesToPixel({
-                        durationFrame: layer.durationFrame,
+                        durationFrame: layer.durationFrame|0,
                         ...opt,
                     })
                     const left = TimelaneHelper.framesToPixel({
-                        durationFrame: layer.placedFrame,
+                        durationFrame: layer.placedFrame|0,
                         ...opt,
                     })
 

@@ -13,6 +13,7 @@ export default keyMirror({
     MOVE_LAYER_TO_TIMELINE: null,
     CREATE_COMPOSTION: null,
     CREATE_TIMELANE: null,
+    CREATE_LAYER: null,
 
     // ProjectModifyStore
     CREATE_COMPOSTION: null,

@@ -54,6 +54,18 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
+        [ActionTypes.CREATE_LAYER](state, {layer, targetTimelaneId})
+        {
+            if (! state.project) {
+                return state
+            }
+
+             const targetTimelane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
+            targetTimelane.layers.add(layer)
+
+            return Object.assign({}, state)
+        },
+
         [ActionTypes.MOVE_LAYER_TO_TIMELINE](state, {layerId, targetTimelaneId})
         {
             if (! state.project) {
