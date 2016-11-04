@@ -9,7 +9,7 @@ export function findAssetById(project: Project, assetId: string): ?Asset {
     let targetAsset: ?Asset = null
 
     compSearch:
-        for (let asset of project.assets.values()) {
+        for (const asset of project.assets.values()) {
             if (asset.id === assetId) {
                 targetAsset = asset
                 break compSearch
@@ -23,7 +23,7 @@ export function findCompositionById(project: Project, compositionId: string): ?C
     let targetComp: ?Composition = null
 
     compSearch:
-        for (let comp of project.compositions.values()) {
+        for (const comp of project.compositions.values()) {
             if (comp.id === compositionId) {
                 targetComp = comp
                 break compSearch
@@ -37,29 +37,11 @@ export function findTimelaneById(project: Project, timelaneId: string): ?Timelan
     let targetTimelane: ?Timelane = null
 
     timelaneSearch:
-        for (let comp of project.compositions.values()) {
-            for (let timelane of comp.timelanes.values()) {
+        for (const comp of project.compositions.values()) {
+            for (const timelane of comp.timelanes.values()) {
                 if (timelane.id === timelaneId) {
                     targetTimelane = timelane
                     break timelaneSearch
-                }
-            }
-        }
-
-    return targetTimelane
-}
-
-export function findParentTimelaneByLayerId(project: Project, layerId: string): ?Timelane {
-    let targetTimelane: ?Timelane = null
-
-    timelaneSearch:
-        for (let comp of project.compositions.values()) {
-            for (let timelane of comp.timelanes.values()) {
-                for (let layer of timelane.layers.values()) {
-                    if (layer.id === layerId) {
-                        targetTimelane = timelane
-                        break timelaneSearch
-                    }
                 }
             }
         }
@@ -71,9 +53,9 @@ export function findLayerById(project: Project, layerId: string): ?Layer {
     let targetLayer: ?Layer = null
 
     layerSearch:
-        for (let comp of project.compositions.values()) {
-            for (let timelane of comp.timelanes.values()) {
-                for (let layer of timelane.layers.values()) {
+        for (const comp of project.compositions.values()) {
+            for (const timelane of comp.timelanes.values()) {
+                for (const layer of timelane.layers.values()) {
                     if (layer.id === layerId) {
                         targetLayer = layer
                         break layerSearch
@@ -83,4 +65,38 @@ export function findLayerById(project: Project, layerId: string): ?Layer {
         }
 
     return targetLayer
+}
+
+export function findParentCompositionByTimelaneId(project: Project, timelaneId: string): ?Composition {
+    let targetComp: ?Composition = null
+
+    compositionSearch:
+        for (const comp of project.compositions.values()) {
+            for (const timelane of comp.timelanes.values()) {
+                if (timelane.id === timelaneId) {
+                    targetComp = comp
+                    break compositionSearch
+                }
+            }
+        }
+
+    return targetComp
+}
+
+export function findParentTimelaneByLayerId(project: Project, layerId: string): ?Timelane {
+    let targetTimelane: ?Timelane = null
+
+    timelaneSearch:
+        for (const comp of project.compositions.values()) {
+            for (const timelane of comp.timelanes.values()) {
+                for (const layer of timelane.layers.values()) {
+                    if (layer.id === layerId) {
+                        targetTimelane = timelane
+                        break timelaneSearch
+                    }
+                }
+            }
+        }
+
+    return targetTimelane
 }

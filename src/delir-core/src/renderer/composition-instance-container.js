@@ -17,7 +17,9 @@ export default class CompositionInstanceContainer
     get framerate(): number { return this._composition.framerate }
     get width(): number { return this._composition.width }
     get height(): number { return this._composition.height }
-    get durationFrame(): number { return this._composition.durationFrame }
+    get durationFrames(): number { return this._composition.durationFrames }
+    get samplingRate(): number { return this._composition.samplingRate }
+    get audioChannels(): number { return this._composition.audioChannels }
 
     constructor(composition: Composition)
     {
@@ -29,7 +31,7 @@ export default class CompositionInstanceContainer
         this._timelanes = await Promise.all(
             Array.from(this._composition.timelanes.values()).map(async timelane => {
                 const laneWrap = new TimelaneInstanceContainer(timelane)
-                laneWrap.beforeRender(req.set({
+                await laneWrap.beforeRender(req.set({
                     parentComposition: req.rootComposition == this ? null : this,
                     compositionScope: this._variableScope,
                 }))

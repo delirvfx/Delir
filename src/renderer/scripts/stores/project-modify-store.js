@@ -33,9 +33,7 @@ class ProjectModifyStore extends ReduceStore<Object>
 
         [ActionTypes.CREATE_COMPOSTION](state, {composition})
         {
-            if (! state.project) {
-                return state
-            }
+            if (! state.project) return state
 
             state.project.compositions.add(composition)
 
@@ -44,9 +42,7 @@ class ProjectModifyStore extends ReduceStore<Object>
 
         [ActionTypes.CREATE_TIMELANE](state, {timelane, targetCompositionId})
         {
-            if (! state.project) {
-                return state
-            }
+            if (! state.project) return state
 
              const targetComp = DelirHelper.findCompositionById(state.project, targetCompositionId)
             targetComp.timelanes.add(timelane)
@@ -56,9 +52,7 @@ class ProjectModifyStore extends ReduceStore<Object>
 
         [ActionTypes.CREATE_LAYER](state, {layer, targetTimelaneId})
         {
-            if (! state.project) {
-                return state
-            }
+            if (! state.project) return state
 
             const targetTimelane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
             targetTimelane.layers.add(layer)
@@ -66,11 +60,36 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
+        [ActionTypes.MODIFY_COMPOSITION](state, {targetCompositionId, patch})
+        {
+            if (! state.project) return state
+
+            const _patch = _.pick(patch, ['name', 'width', 'height', 'framerate', 'durationFrame'])
+            _patch.width != null && (_patch.width = _patch.width|0)
+            _patch.height != null && (_patch.height = _patch.height|0)
+            _patch.framerate != null && (_patch.framerate = _patch.framerate|0)
+            _patch.durationFrame != null && (_patch.durationFrame = _patch.durationFrame|0)
+
+            const targetComposition = DelirHelper.findCompositionById(state.project, targetCompositionId)
+            Object.assign(targetComposition, _patch)
+
+            return Object.assign({}, state)
+        },
+
+        [ActionTypes.REMOVE_TIMELANE](state, {targetTimelaneId})
+        {
+            if (! state.project) return state
+
+            const targetTimelane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
+            const timelaneHolderComp = DelirHelper.findParentCompositionByTimelaneId(state.project, targetTimelaneId)
+            timelaneHolderComp.timelanes.delete(targetLayer)
+
+            return Object.assign({}, state)
+        },
+
         [ActionTypes.REMOVE_LAYER](state, {targetLayerId})
         {
-            if (! state.project) {
-                return state
-            }
+            if (! state.project) return state
 
             const targetLayer = DelirHelper.findLayerById(state.project, targetLayerId)
             const layerHolderTimelane = DelirHelper.findParentTimelaneByLayerId(state.project, targetLayerId)
@@ -81,9 +100,7 @@ class ProjectModifyStore extends ReduceStore<Object>
 
         [ActionTypes.MOVE_LAYER_TO_TIMELINE](state, {layerId, targetTimelaneId})
         {
-            if (! state.project) {
-                return state
-            }
+            if (! state.project) return state
 
             const targetLayer = DelirHelper.findLayerById(state.project, layerId)
             const sourceLane = DelirHelper.findParentTimelaneByLayerId(state.project, layerId)
@@ -94,20 +111,6 @@ class ProjectModifyStore extends ReduceStore<Object>
 
             return Object.assign({}, state)
         },
-
-
-
-        // ["mod-composition-name"](state, {})
-        // {
-        //     if (! state.project) {
-        //         return
-        //     }
-        //
-        //     const targetComp = DelirHelper.findCompositionById(state.project, payload.compId)
-        //     console.log(targetComp);
-        //     targetComp.name = payload.newName
-        //     return Object.assign({}, state)
-        // },
     }
 
     reduce(state: Object, {type, payload}: Object)

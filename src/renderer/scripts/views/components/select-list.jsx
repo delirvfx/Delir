@@ -7,6 +7,7 @@ export default class SelectList extends React.Component
     static propTypes = {
         className: PropTypes.string,
         multiple: PropTypes.bool.isRequired,
+        onSelectionChanged: PropTypes.func,
     }
 
     static defaultProps = {
@@ -26,17 +27,12 @@ export default class SelectList extends React.Component
     onClickItem = (idx, e) => {
         if (this.state.lastSelectedIdx === null) {
             return this.setState({lastSelectedIdx: idx, selected: [idx]})
-        }
-
-        if (e.shiftKey) {
-            console.log(idx, [... _.range(this.state.lastSelectedIdx, idx), idx]);
+        } else if (e.shiftKey) {
             return this.setState({
                 // lastSelectedIdx: idx,
                 selected: [... _.range(this.state.lastSelectedIdx, idx), idx]
             })
-        }
-
-        if (e.ctrlKey || e.metaKey) {
+        } else if (e.ctrlKey || e.metaKey) {
             if (this.state.selected.includes(idx)) {
                 return this.setState({
                     lastSelectedIdx: idx,
@@ -48,12 +44,14 @@ export default class SelectList extends React.Component
                     selected: [...this.state.selected, idx]
                 })
             }
+        } else {
+            this.setState({
+                lastSelectedIdx: idx,
+                selected: [idx]
+            })
         }
 
-        this.setState({
-            lastSelectedIdx: idx,
-            selected: [idx]
-        })
+        this.props.onSelectionChanged && this.props.onSelectionChanged(this.state.selected)
     }
 
     render()

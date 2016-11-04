@@ -132,7 +132,6 @@ export default class REDLAYER extends Delir.PluginBase.CustomLayerPluginBase
             this.initFrame = true
         }
 
-
         this.proton.update()
         ctx.drawImage(this.buffer, 0, 0)
     }

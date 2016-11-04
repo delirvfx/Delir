@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
+import Delir from 'delir-core'
+const {Helper: DelirHelper} = Delir
 
 import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
@@ -11,7 +13,7 @@ import ProjectModifyStore from '../stores/project-modify-store'
 import Pane from './components/pane'
 import LabelInput from './components/label-input'
 import SelectList from './components/select-list'
-import {Table, TableHeader, TableBody, Row, Col} from './components/table'
+import {Table, TableHeader, TableBodySelectList, Row, Col} from './components/table'
 import {ContextMenu, MenuItem} from '../electron/context-menu'
 import ModalWindow from '../electron/modal-window'
 
@@ -25,7 +27,9 @@ export default class AssetsView extends React.Component
             app: AppStore.getState(),
             project: EditorStateStore.getState(),
             newCompositionWindowOpened: false,
-            selectedItem: null
+            settingCompositionWindowOpened: false,
+            settingCompositionQuery: null,
+            selectedItem: null,
         }
 
         AppStore.addListener(() => {
@@ -37,7 +41,7 @@ export default class AssetsView extends React.Component
         })
 
         ProjectModifyStore.addListener(() => {
-            this.setState({})
+            this.forceUpdate()
         })
     }
 
@@ -48,8 +52,40 @@ export default class AssetsView extends React.Component
 
     modifyCompName = (compId, newName) =>
     {
-        // console.log(compId, newName);
-        ProjectModifyActions.changeCompositionName(compId, newName)
+        ProjectModifyActions.modifyComposition(compId, {name: newName})
+    }
+
+    openCompositionSettingWindow = compId =>
+    {
+        const targetComposition = DelirHelper.findCompositionById(this.state.project.project, compId)
+
+        this.setState({
+            settingCompositionQuery: {
+                id: targetComposition.id,
+                name: targetComposition.name,
+                width: targetComposition.width,
+                height: targetComposition.height,
+                framerate: targetComposition.framerate,
+                durationFrame: targetComposition.durationFrame,
+            },
+            settingCompositionWindowOpened: true,
+        })
+    }
+
+    settingComoisition = (req: {
+        id:string,
+        name: string,
+        width: string,
+        height: string,
+        framerate: string,
+        durationSeconds: string
+    }) => {
+        this.setState({
+            settingCompositionQuery: null,
+            settingCompositionWindowOpened: false,
+        })
+
+        ProjectModifyActions.modifyComposition(req.id, req)
     }
 
     makeNewComposition = (req: {name: string, width: string, height: string, framerate: string, durationSeconds: string}) =>
@@ -61,6 +97,7 @@ export default class AssetsView extends React.Component
         // if other state changing fired early to set `false`,
         // component updated and open modal window once again by current state.
         this.setState({newCompositionWindowOpened: false})
+
         ProjectModifyActions.createComposition({
             name: req.name,
             width: req.width | 0,
@@ -72,6 +109,7 @@ export default class AssetsView extends React.Component
 
     render()
     {
+        console.log('hi');
         const {app, project: {project}} = this.state
         const assets = project ? Array.from(project.assets.values()) : []
         const compositions = project ? Array.from(project.compositions.values()) : []
@@ -86,17 +124,25 @@ export default class AssetsView extends React.Component
                     onHide={this.makeNewComposition}
                     onResponse={this.makeNewComposition}
                 />
+                <ModalWindow
+                    show={this.state.settingCompositionWindowOpened}
+                    url='setting-composition.html'
+                    width={400}
+                    height={300}
+                    query={this.state.settingCompositionQuery}
+                    onHide={this.makeNewComposition}
+                    onResponse={this.settingComoisition}
+                />
                 <Table className='asset-list'>
                     <TableHeader>
                         <Row>
-                            <Col></Col>
-                            <Col>名前</Col>
+                            <Col resizable={false} defaultWidth='2rem'></Col>
+                            <Col defaultWidth='10rem'>名前</Col>
                         </Row>
                     </TableHeader>
-                    <TableBody>
-                        <SelectList>
+                    <TableBodySelectList>
                         {assets.map(asset => (
-                            <tr key={asset.id}>
+                            <Row key={asset.id}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
@@ -105,55 +151,54 @@ export default class AssetsView extends React.Component
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <td></td>
-                                <td>
+                                <Col></Col>
+                                <Col>
                                     <LabelInput
                                         ref={`asset_name_input#${asset.id}`}
                                         defaultValue={asset.name}
                                         placeholder='Unnamed Asset'
                                     />
-                                </td>
-                            </tr>
+                                </Col>
+                            </Row>
                         ))}
-                        </SelectList>
-                    </TableBody>
+                    </TableBodySelectList>
                 </Table>
-                <table className='composition-list'>
-                    <thead>
-                        <tr>
-                            <th>⛰</th>
-                            <th>名前</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <Table className='composition-list'>
+                    <TableHeader>
+                        <Row>
+                            <Col resizable={false} defaultWidth='2rem'>⛰</Col>
+                            <Col defaultWidth='10rem'>名前</Col>
+                        </Row>
+                    </TableHeader>
+                    <TableBodySelectList onSelectionChanged={() => {}}>
                         <ContextMenu>
                             <MenuItem type='separator' />
-                            <MenuItem label='New Compositon' onClick={() => { this.setState({newCompositionWindowOpened: true})}} />
+                            <MenuItem label='New Compositon' onClick={() => { this.setState({newCompositionWindowOpened: true}) }} />
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
-                            <tr key={comp.id} onDoubleClick={this.changeComposition.bind(this, comp.id)}>
+                            <Row key={comp.id} onDoubleClick={this.changeComposition.bind(this, comp.id)}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => { this.refs[`comp_name_input#${comp.id}`].enableAndFocus()}} />
                                     <MenuItem label='Remove it' onClick={() => {}}/>
-                                    <MenuItem label='Composition setting' onClick={() => {}}/>
+                                    <MenuItem label='Composition setting' onClick={this.openCompositionSettingWindow.bind(null, comp.id)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <td>🎬</td>
-                                <td>
+                                <Col>🎬</Col>
+                                <Col>
                                     <LabelInput
                                         ref={`comp_name_input#${comp.id}`}
                                         defaultValue={comp.name}
                                         placeholder='Unnamed Coposition'
                                         onChange={this.modifyCompName.bind(this, comp.id)}
                                     />
-                                </td>
-                            </tr>
+                                </Col>
+                            </Row>
                         ))}
-                    </tbody>
-                </table>
+                    </TableBodySelectList>
+                </Table>
             </Pane>
         )
     }

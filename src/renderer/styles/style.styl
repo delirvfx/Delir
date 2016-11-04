@@ -142,16 +142,33 @@ html, body
         background-color rgba(#fff, .2)
 
 ._table
+    display flex
+    flex-direction column
+
     .table-header
+        display block
+        border-bottom 1px solid rgba(#666, .3)
+
     .table-body
+    .table-body-selectlist
+        display block
+        flex 1
+
     .table-footer
         display block
 
+    .table-body-selectlist
+        .selected
+            background-color rgba(#fff, .2)
+
     .table-row
         display flex
+        border-bottom 1px solid rgba(#fff, .3)
 
     .table-col
         position relative
+        padding 4px 4px
+        font-size 12px
 
         .resizer
             position absolute
@@ -159,9 +176,7 @@ html, body
             bottom 0
             right 0
 
-            width 1px
-
-            background-color #fff
+            border-right 1px solid rgba(#fff, .3)
             cursor ew-resize
 
 // Views
@@ -276,6 +291,9 @@ html, body
             box-shadow 0 0 5px rgba(0,0,0,.5)
 
 .view-assets
+    display flex
+    flex-direction column
+    align-items flex-start
     width 300px
     flex none
 
@@ -296,8 +314,19 @@ html, body
             padding 4px
             font-size 12px
 
+        ._label-input
+            width 100%
+
+        .table-body
+            overflow auto
+
+        .table-row, .table-col
+            border-right none
+            border-bottom none
+
     .composition-list
         margin-top 16px
+        border-top 1px solid rgba(#fff, .8)
 
 .view-timeline
     display flex

@@ -24,7 +24,7 @@ export default class TimelaneInstanceContainer
         // sort layers
         this._timeOrderLayers = this._layers.slice(0)
             .sort((layerA, layerB) => layerA._layer.placedFrame - layerB._layer.placedFrame)
-        await Promise.all(this._layers.map(layer => layer.beforeRender(preRenderReq)))
+        await Promise.all(this._layers.map(async layer => await layer.beforeRender(preRenderReq)))
     }
 
     async render(req: RenderRequest)

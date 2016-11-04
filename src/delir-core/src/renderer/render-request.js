@@ -17,11 +17,16 @@ export default class RenderRequest
         'frameOnLayer',
 
         'destCanvas',
-
         'width',
         'height',
         'framerate',
         'durationFrames',
+
+        'destAudioBuffer',
+        'audioContext',
+        'samplingRate',
+        'neededSamples',
+        'audioChannels',
 
         // 'rootComposition', // not permitted
         'parentComposition',
@@ -37,6 +42,9 @@ export default class RenderRequest
         'resolver',
     ]
 
+    //
+    // Current frame times
+    //
     time: number
     timeOnComposition: number
     timeOnLayer: number
@@ -45,22 +53,38 @@ export default class RenderRequest
     frameOnComposition: number
     frameOnLayer: number
 
+    //
+    // Composition options
+    //
+    destCanvas: HTMLCanvasElement
     width: number
     height: number
     framerate: number
     durationFrames: number
 
-    destCanvas: HTMLCanvasElement
-    // audioDestNode
+    destAudioBuffer: Array<Float32Array>
+    audioContext: AudioContext
+    samplingRate: number
+    neededSamples: number
+    audioChannels: number
 
+    //
+    // Composition hierarchy
+    //
     rootComposition: Composition
     parentComposition: Composition
 
+    //
+    // Variable store
+    //
     compositionScope: Object
     layerScope: Object
 
     parameters: Object
 
+    //
+    // Resolver
+    //
     resolver: EntityResolver
 
     // alias

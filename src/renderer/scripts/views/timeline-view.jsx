@@ -103,7 +103,6 @@ class TimelineLaneLayer extends React.Component
         ProjectModifyActions.removeLayer(layerId)
     }
 
-
     render()
     {
         const {layer} = this.props
@@ -362,6 +361,12 @@ export default class TimelineView extends React.Component
         ProjectModifyActions.createTimelane(this.state.activeComp.id)
     }
 
+    removeTimelane = timelaneId =>
+    {
+        if (!this.state.activeComp) return
+        ProjectModifyActions.removeTimelane(timelaneId)
+    }
+
     render()
     {
         const {project, activeComp} = this.state
@@ -399,7 +404,7 @@ export default class TimelineView extends React.Component
                                             <ContextMenu>
                                                 <MenuItem type='separator' />
                                                 <MenuItem label='複製' onClick={() => {}} />
-                                                <MenuItem label='削除' onClick={() => {}} />
+                                                <MenuItem label='削除' onClick={this.removeTimelane.bind(null, lane.id)} />
                                                 <MenuItem type='separator' />
                                             </ContextMenu>
 

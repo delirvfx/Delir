@@ -33,7 +33,9 @@ export default class Composition
             'width',
             'height',
             'framerate',
-            'durationFrame',
+            'durationFrames',
+            'samplingRate',
+            'audioChannels',
         ])
 
         const timelanes = compJson.timelanes.map(lane => TimeLane.deserialize(lane))
@@ -55,13 +57,19 @@ export default class Composition
         width: ?number,
         height: ?number,
         framerate: ?number,
-        durationFrame: ?number,
+        durationFrames: ?number,
+
+        samplingRate: ?number,
+        audioChannels: ?number,
     } = {
         name: null,
         width: null,
         height: null,
         framerate: null,
-        durationFrame: null,
+        durationFrames: null,
+
+        samplingRate: null,
+        audioChannels: null,
     }
 
     get id(): string { return this._id }
@@ -78,14 +86,25 @@ export default class Composition
     get framerate(): number { return this.config.framerate }
     set framerate(framerate: number) { this.config.framerate = framerate }
 
-    get durationFrame(): number { return this.config.durationFrame }
-    set durationFrame(durationFrame: number) { this.config.durationFrame = durationFrame }
+    /** @deprecated */
+    get durationFrame(): number { return this.config.durationFrames }
+    /** @deprecated */
+    set durationFrame(durationFrames: number) { this.config.durationFrames = durationFrames }
+
+    get durationFrames(): number { return this.config.durationFrames }
+    set durationFrames(durationFrames: number) { this.config.durationFrames = durationFrames }
+
+    get samplingRate(): number { return this.config.samplingRate }
+    set samplingRate(samplingRate: number) { this.config.samplingRate = samplingRate }
+
+    get audioChannels(): number { return this.config.audioChannels }
+    set audioChannels(audioChannels: number) { console.log(audioChannels);this.config.audioChannels = audioChannels }
 
     toPreBSON(): Object
     {
         return {
             id: this.id,
-            config: Object.assign(this.config),
+            config: Object.assign({}, this.config),
             timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON()),
         }
     }
@@ -94,8 +113,8 @@ export default class Composition
     {
         return {
             id: this.id,
-            config: Object.assign(this.config),
-            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON()),
+            config: Object.assign({}, this.config),
+            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toJSON()),
         }
     }
 }

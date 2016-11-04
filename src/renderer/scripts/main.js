@@ -77,20 +77,24 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.width = 640
     c1.height = 360
     c1.framerate = 30
-    c1.durationFrame = 30 * 1
+    c1.durationFrame = 30 * 300
+    c1.audioChannels = 2
+    c1.samplingRate = 2
 
-    c1_t1.name = 'NYAN = ^ . ^ = CHENCAT'
+    // c1_t1.name = 'NYAN = ^ . ^ = CHENCAT'
+    c1_t1.name = 'Audio'
     c1_t2.name = '🔥 FIRE 🔥'
     c1_t3.name = 'video'
 
-    c1_t1_l1.renderer = 'red-layer'
+    c1_t1_l1.renderer = 'audio-layer'
+    c1_t1_l1.rendererOptions.source = '/Users/ragg/workspace/delir/deream_in.mp3'
     c1_t1_l1.placedFrame = 0
-    c1_t1_l1.durationFrame = 300
+    c1_t1_l1.durationFrame = 30 * 300
 
     // c1_t2_l1.renderer = 'html5-video-layer'
     c1_t2_l1.renderer = 'proton-layer'
     c1_t2_l1.placedFrame = 0
-    c1_t2_l1.durationFrame = 300
+    c1_t2_l1.durationFrame = 30 * 300
 
     c1_t3_l1.renderer = 'html5-video-layer'
     c1_t3_l1.rendererOptions.source = 'file:///Users/ragg/workspace/delir/sample.mp4'
@@ -129,7 +133,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     )
 
     EditorStateActions.setActiveProject(p)
+
+    const audioContext = new AudioContext
     RendererService.renderer.setDestinationCanvas(document.querySelector('canvas'))
+    RendererService.renderer.setDestinationAudioNode(audioContext.destination)
+    RendererService.renderer.setAudioContext(audioContext)
 
     //
     // delir-core rendering test

@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react'
 
 import AppStore from '../stores/app-store'
 import EditorStateStore from '../stores/editor-state-store'
+import ProjectModifyStore from '../stores/project-modify-store'
 
 import Pane from './components/pane'
 
@@ -18,6 +19,10 @@ export default class PreviewView extends React.Component
         EditorStateStore.addListener(() => {
             console.log('change');
             this.setState({project: EditorStateStore.getState()})
+        })
+
+        ProjectModifyStore.addListener(() => {
+            this.forceUpdate()
         })
     }
 

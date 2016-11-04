@@ -7,15 +7,18 @@ import _ from 'lodash'
 export default class PreRenderingRequest
 {
     static _permitKeys = [
-        'parentComposition',
-
-        'compositionScope',
-        'layerScope',
-
         'width',
         'height',
         'framerate',
         'durationFrames',
+
+        'samplingRate',
+        'audioChannels',
+
+        'parentComposition',
+
+        'compositionScope',
+        'layerScope',
 
         'parameters',
     ]
@@ -25,19 +28,36 @@ export default class PreRenderingRequest
         'resolver',
     ]
 
+    //
+    // Composition options
+    //
     width: number
     height: number
     framerate: number
     durationFrames: number
 
+    audioContext: AudioContext
+    samplingRate: number
+    audioBufferSize: number
+    audioChannels: number
+
+    //
+    // Composition hierarchy
+    //
     rootComposition: CompositionInstanceContainer
     parentComposition: CompositionInstanceContainer
 
+    //
+    // Variable store
+    //
     compositionScope: Object
     layerScope: Object
 
     parameters: Object
 
+    //
+    // Resolver
+    //
     resolver: EntityResolver
 
     constructor(properties: Object = {})
@@ -46,8 +66,6 @@ export default class PreRenderingRequest
             properties,
             PreRenderingRequest._permitKeys.concat(PreRenderingRequest._permitOnlyInitializeKey)
         )
-
-        console.log(properties, props);
 
         Object.assign(this, props);
         Object.freeze(this);

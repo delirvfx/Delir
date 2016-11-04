@@ -11,6 +11,15 @@ html
                 const $$ = window.$$ = query => document.querySelectorAll(query)
                 const {remote} = require('electron')
                 const bw = window.thisWindow = remote.getCurrentWindow()
+                const util = window.util = {
+                    restoreValueToForm(obj)
+                    {
+                        const form = document.querySelector('#root')
+                        for (const input of form.elements) {
+                            if (obj[input.name]) input.value = obj[input.name]
+                        }
+                    }
+                };
 
                 bw.on('hide', e => bw.reload())
 

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import path from 'path'
 import URL from 'url'
@@ -5,7 +6,14 @@ import qs from 'querystring'
 import {remote} from 'electron'
 
 const appPath = remote.app.getAppPath()
-const buildUrl = filepath => `file://${path.join(appPath, '/renderer/', filepath)}`
+const buildUrl = (filepath, query) => {
+    return URL.format({
+        protocol: 'file',
+        host: '',
+        pathname: `${path.join(appPath, '/renderer/', filepath)}`,
+        query: query ? {query: JSON.stringify(query)} : null,
+    })
+}
 
 export default class WindowComponent extends React.Component
 {
@@ -15,6 +23,7 @@ export default class WindowComponent extends React.Component
         url: PropTypes.string.isRequired,
         width: PropTypes.number,
         height: PropTypes.number,
+        query: PropTypes.object,
         onHide: PropTypes.func,
         onResposnse: PropTypes.func,
     }
@@ -41,6 +50,10 @@ export default class WindowComponent extends React.Component
             height: this.props.height,
         })
 
+        this.state = {
+            previousQuery: this.props.query,
+        }
+
         this.window.on('hide', e => {
             this.props.onHide()
         })
@@ -51,7 +64,7 @@ export default class WindowComponent extends React.Component
             e.preventDefault()
         })
 
-        this.window.loadURL(buildUrl(this.props.url))
+        this.window.loadURL(buildUrl(this.props.url, this.props.query))
     }
 
     componentDidMount()
@@ -64,6 +77,7 @@ export default class WindowComponent extends React.Component
     }
 
     render() {
+        this.window.loadURL(buildUrl(this.props.url, this.props.query))
         this.props.show ? this.window.show() : this.window.hide()
         // this.props.url !== this.window.webContents.getURL() && this.window.loadURL(buildUrl(this.props.url))
         return null

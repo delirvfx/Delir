@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import Delir from 'delir-core'
 const {Helper: DelirHelper, Project} = Delir
 
@@ -24,6 +25,17 @@ export default {
         //     type: 'change-composition-name',
         //     payload: {compId, newName}
         // })
+    },
+
+    modifyComposition(compId: string, props: Object)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.MODIFY_COMPOSITION,
+            payload: {
+                targetCompositionId: compId,
+                patch: props,
+            }
+        })
     },
 
     createComposition({name, width, height, framerate, durationFrame})
@@ -69,6 +81,11 @@ export default {
                 targetTimelaneId: timelaneId,
             },
         })
+    },
+
+    removeTimelane()
+    {
+
     },
 
     removeLayer(layerId: string)

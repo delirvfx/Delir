@@ -38,29 +38,36 @@ export default class LabelInput extends React.Component
                 this.enableAndFocus()
             } else {
                 this.props.onChange && this.props.onChange(this.refs.input.value)
-                this.setState({readOnly: true})
+                this.setState({readOnly: true, value: this.refs.input.value})
             }
         } else if (e.key === 'Escape') {
             this.refs.input.value = this.props.defaultValue
             this.props.onChange && this.props.onChange(this.refs.input.value)
-            this.setState({readOnly: true})
+            this.setState({readOnly: true, value: this.props.defaultValue})
         }
     }
 
-    onBlur = (e) => {
+    onBlur = (e) =>
+    {
         if (this.state.readOnly) return
 
         this.props.onChange && this.props.onChange(this.refs.input.value)
         this.setState({readOnly: true})
     }
 
-    onDoubleClick = (e) => {
+    onDoubleClick = (e) =>
+    {
         e.preventDefault()
         e.stopPropagation()
 
         this.setState({readOnly: false})
         this.refs.input.focus()
         this.refs.input.select()
+    }
+
+    valueChanged = e =>
+    {
+        this.setState({value: this.refs.input.value})
     }
 
     render()
@@ -71,9 +78,10 @@ export default class LabelInput extends React.Component
                 type='text'
                 tabIndex='-1'
                 className={classnames('_label-input', this.props.className)}
-                defaultValue={this.state.value}
+                value={this.state.value}
                 placeholder={this.props.placeholder}
                 readOnly={this.state.readOnly}
+                onChange={this.valueChanged}
                 onKeyDown={this.onKeyDown}
                 onBlur={this.onBlur}
                 onDoubleClick={this.props.doubleClickToEdit && this.onDoubleClick}

@@ -2,6 +2,8 @@ extends ./_layouts/window-base.pug
 block script
     script.
         window.addEventListener('DOMContentLoaded', () => {
+            const url = require('url')
+
             window.addEventListener('keyup', e => {
                 e.code === 'Escape' && thisWindow.hide()
             })
@@ -9,15 +11,20 @@ block script
             $('#cancel').addEventListener('click', e => {
                 thisWindow.hide()
             })
+
+            const query = JSON.parse(url.parse(location.href, true).query.query)
+            util.restoreValueToForm(query)
         })
 
 block header
     .header
-        h1 New Composition
+        h1 Setting Composition
 
 block content
     .content.content--new-composition
         .form-horizontal
+            input(name='id' type='hidden')
+
             .form-group
                 label.label Composition name:
                 .input
@@ -46,15 +53,6 @@ block content
                 .inputs
                     .form-control: input(name='durationSeconds' type='number' min=1 value='30' style='width:5rem' required)
                     span.unit s
-
-            .form-group
-                label.label Sampling rate:
-                .inputs
-                    .form-control: select(name='durationSeconds' style='width:5rem' required)
-                        option(value='48000' selected) 48000
-                        option(value='41000') 41000
-
-                    span.unit Hz
 
 block footer
     .footer
