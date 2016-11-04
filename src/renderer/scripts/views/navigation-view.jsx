@@ -33,10 +33,8 @@ export default class NavigationView extends React.Component
                     <li className='window-nav-item window-nav--maximize'></li>
                 </ul>
                 <ul className='navigation-items'>
-                    <li>✨</li>
-                    <li>💪</li>
-                    <li onClick={this.onClickPlay}>⚡</li>
-                    <li onClick={this.onClickDest}>✨</li>
+                    <li onClick={this.onClickPlay}><i className='fa fa-play' /></li>
+                    <li onClick={this.onClickDest}><i className='fa fa-film' /></li>
                 </ul>
             </Pane>
         )

@@ -54,6 +54,22 @@ block content
                     .form-control: input(name='durationSeconds' type='number' min=1 value='30' style='width:5rem' required)
                     span.unit s
 
+            .form-group
+                label.label Sampling rate:
+                .inputs
+                    .form-control: select(name='samplingRate' style='width:8rem' required)
+                        option(value='48000' selected) 48000
+                        option(value='41000') 41000
+
+                    span.unit Hz
+
+            .form-group
+                label.label Channels:
+                .inputs
+                    .form-control: select(name='audioChannels' style='width:8rem' required)
+                        option(value='2' selected) Stereo (2ch)
+                        option(value='1') Mono (1ch)
+
 block footer
     .footer
         button#cancel.button(type='button') Cancel

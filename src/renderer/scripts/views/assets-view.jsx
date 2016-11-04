@@ -67,6 +67,8 @@ export default class AssetsView extends React.Component
                 height: targetComposition.height,
                 framerate: targetComposition.framerate,
                 durationFrame: targetComposition.durationFrame,
+                samplingRate: targetComposition.samplingRate,
+                audioChannels: targetComposition.audioChannels,
             },
             settingCompositionWindowOpened: true,
         })
@@ -120,7 +122,7 @@ export default class AssetsView extends React.Component
                     show={this.state.newCompositionWindowOpened}
                     url='new-composition.html'
                     width={400}
-                    height={300}
+                    height={350}
                     onHide={this.makeNewComposition}
                     onResponse={this.makeNewComposition}
                 />
@@ -128,7 +130,7 @@ export default class AssetsView extends React.Component
                     show={this.state.settingCompositionWindowOpened}
                     url='setting-composition.html'
                     width={400}
-                    height={300}
+                    height={350}
                     query={this.state.settingCompositionQuery}
                     onHide={this.makeNewComposition}
                     onResponse={this.settingComoisition}
