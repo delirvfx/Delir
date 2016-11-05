@@ -79,7 +79,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.framerate = 30
     c1.durationFrame = 30 * 4
     c1.audioChannels = 2
-    c1.samplingRate = 2
+    c1.samplingRate = 48000
 
     // c1_t1.name = 'NYAN = ^ . ^ = CHENCAT'
     c1_t1.name = 'Audio'
@@ -134,10 +134,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     EditorStateActions.setActiveProject(p)
 
-    const audioContext = new AudioContext
     RendererService.renderer.setDestinationCanvas(document.querySelector('canvas'))
-    RendererService.renderer.setDestinationAudioNode(audioContext.destination)
-    RendererService.renderer.setAudioContext(audioContext)
+    // RendererService.renderer.setDestinationAudioNode(audioContext.destination)
 
     //
     // delir-core rendering test

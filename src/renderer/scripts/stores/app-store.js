@@ -19,7 +19,7 @@ class AppStore extends ReduceStore<Object>
             return Object.assign({}, state, {
                 pluginRegistry: action.payload
             })
-        case 'app-set-session-renderer':
+        case 'app-set-renderer':
             return Object.assign({}, state, {
                 renderer: action.payload
             })

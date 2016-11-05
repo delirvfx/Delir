@@ -103,7 +103,16 @@ export default class RenderRequest
         Object.freeze(this);
     }
 
+    /**
+     * @deprecated
+     */
     set(patch: Object): RenderRequest
+    {
+        const permitPatch = _.pick(patch, RenderRequest._permitKeys)
+        return new RenderRequest(Object.assign({}, this, permitPatch))
+    }
+
+    clone(patch: Object): RenderRequest
     {
         const permitPatch = _.pick(patch, RenderRequest._permitKeys)
         return new RenderRequest(Object.assign({}, this, permitPatch))

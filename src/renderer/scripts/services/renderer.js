@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {remote} from 'electron'
 import electron from 'electron'
 import {join} from 'path'
@@ -7,7 +8,7 @@ const {Helper: DelirHelper} = Delir
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
 
-let pluginRegistry, renderer
+let pluginRegistry, renderer, audioContext, audioBuffer, audioBufferSource
 
 let state = {
     project: null,
@@ -34,10 +35,38 @@ const handlers = {
         if (! targetComposition) return
         if (! renderer) return
 
+        audioBuffer = audioContext.createBuffer(
+            targetComposition.audioChannels,
+            Delir.Renderer.AUDIO_BUFFER_SIZE,
+            targetComposition.samplingRate,
+        )
+        audioBufferSource = audioContext.createBufferSource()
+        audioBufferSource.buffer = audioBuffer
+        audioBufferSource.loop = true
+        audioBufferSource.connect(audioContext.destination)
+        audioBufferSource.start()
+
+        renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer.getChannelData(idx)))
+
         let promise = renderer.render({
             beginFrame: 0,
             targetCompositionId: compositionId,
-        }).catch(e => console.error(e.stack))
+        })
+
+        promise.progress(progress => {
+            if (progress.isRendering) {
+
+            }
+
+            if (progress.isCompleted) {
+                audioBufferSource.stop()
+                audioBufferSource.disconnect(audioContext.destination)
+                audioBufferSource = null
+                audioBuffer = null
+            }
+        })
+
+        promise.catch(e => console.error(e.stack))
     },
 
     [ActionTypes.RENDER_DESTINATE]({compositionId})
@@ -67,8 +96,10 @@ const handlers = {
 
 export default {
     initialize: async () => {
-        const userDir = remote.app.getPath('appData')
+        audioContext = new AudioContext
+        // scriptProcessor
 
+        const userDir = remote.app.getPath('appData')
         pluginRegistry = new Delir.Services.PluginRegistory()
 
         const loaded = [
@@ -77,9 +108,11 @@ export default {
         ]
 
         console.log('Plugin loaded', loaded);
-        renderer = new Delir.SessionRenderer({
-            pluginRegistory: pluginRegistry,
+        renderer = new Delir.Renderer({
+            pluginRegistry: pluginRegistry,
         })
+
+        renderer.setAudioContext(audioContext)
 
         dispatcher.register(action => {
             if (handlers[action.type]) {
