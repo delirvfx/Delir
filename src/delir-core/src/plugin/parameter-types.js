@@ -9,6 +9,7 @@ export type ParameterType =
     'NUMBER' |
     'FLOAT' |
     'LAYER' |
+    'PULSE'
     'NONE' |
     'ASSET'
 
@@ -20,6 +21,7 @@ export type ParameterTypeDetail = {
 export type ParameterTypeDescriptor = {
     type: ParameterType,
     enabled: boolean,
+    animatable: boolean,
     label: string,
 }
 
@@ -30,6 +32,7 @@ export default function makeTypeDescriptor(
     return Object.assign({}, {
         type: 'NONE',
         enabled: true,
+        animatable: false,
         label: '<<UNNAMED PARAMETER>>',
     }, detail, {type})
 }
@@ -44,5 +47,6 @@ Object.assign(makeTypeDescriptor, {
     number: 'NUMBER',
     float: 'FLOAT',
     layer: 'LAYER',
-    asset: 'ASSET'
+    asset: 'ASSET',
+    pulse: 'PULSE'
 })

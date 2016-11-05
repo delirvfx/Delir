@@ -44,6 +44,13 @@ export default class AudioLayer extends Delir.PluginBase.CustomLayerPluginBase
         this.audio = {}
     }
 
+    provideParameter(): {
+        [paramId: string]: ParameterTypeDescripter
+    }
+    {
+        return {}
+    }
+
     async beforeRender(preRenderReqest: Object)
     {
         console.log(preRenderReqest)
@@ -62,17 +69,21 @@ export default class AudioLayer extends Delir.PluginBase.CustomLayerPluginBase
             }
         }
 
-        console.log('decoded');
+        console.log('decoded', this.audio);
     }
 
     async render(req: RenderRequest)
     {
+        if (!req.isBufferingFrame) return
+
         const destBuffers = req.destAudioBuffer
-        for (const chan = 0, l = req.audioChannels; chan < l; chan++) {
-            const buffer = this.audio.buffer.getChannelData(chan)
+        for (const ch = 0, l = req.audioChannels; ch < l; ch++) {
+            console.log(req.audioChannels, ch)
+            const buffer = this.audio.buffer.getChannelData(ch)
             const begin = (req.seconds *　this.audio.buffer.sampleRate)|0
             const end = begin + req.neededSamples
-            destBuffers[chan].set(buffer.slice(begin, end))
+
+            destBuffers[ch].set(buffer.slice(begin, end))
         }
     }
 }

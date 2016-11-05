@@ -27,6 +27,7 @@ export default class RenderRequest
         'samplingRate',
         'neededSamples',
         'audioChannels',
+        'isBufferingFrame',
 
         // 'rootComposition', // not permitted
         'parentComposition',
@@ -67,6 +68,7 @@ export default class RenderRequest
     samplingRate: number
     neededSamples: number
     audioChannels: number
+    isBufferingFrame: boolean
 
     //
     // Composition hierarchy

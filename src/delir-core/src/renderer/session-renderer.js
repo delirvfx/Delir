@@ -22,6 +22,8 @@ import RenderRequest from './render-request'
 import * as Helper from '../helper/helper'
 import ProgressPromise from '../helper/progress-promise'
 
+export const AUDIO_BUFFER_SIZE = 16384
+
 export default class SessionRenderer {
     // plugins: PluginContainer
 
@@ -129,10 +131,11 @@ export default class SessionRenderer {
 
         if (ctx == null) { return } // for flowtype lint
 
-        const destAudioBuffer = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * 16384)))
-        const bufferNode = this._audioContext.createScriptProcessor(16384, compWrap.audioChannels, 2)
+        const destAudioBuffer = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * AUDIO_BUFFER_SIZE)))
+        const bufferNode = this._audioContext.createScriptProcessor(AUDIO_BUFFER_SIZE, compWrap.audioChannels, 2)
         bufferNode.onaudioprocess = e => {
             for (const ch = 0, l = compWrap.audioChannels; ch < l; ch++) {
+                console.log(destAudioBuffer);
                 e.outputBuffer.getChannelData(ch).set(destAudioBuffer[ch])
             }
         }
@@ -153,7 +156,7 @@ export default class SessionRenderer {
             destAudioBuffer: destAudioBuffer,
             audioContext: this._audioContext,
             samplingRate: compWrap.samplingRate,
-            neededSamples: 16384,
+            neededSamples: AUDIO_BUFFER_SIZE,
             audioChannels: compWrap.audioChannels,
 
             resolver: resolver,
@@ -252,26 +255,33 @@ export default class SessionRenderer {
 
         // TODO: "Real time" based time calculation
         this._playingSession.renderStartTime = Date.now()
+        let lastBufferingTime = -1
+        let bufferingIntervalTime = AUDIO_BUFFER_SIZE / rootCompWrap.samplingRate
         const render = async (): any => {
             const elapsed = (Date.now() - this._playingSession.renderStartTime) / 1000
+            const currentTime = this._playingSession.renderedFrames / rootCompWrap.framerate
+
             const _renderReq = baseRequest.set({
                 // time: elapsed,
                 // frame: elapsed * rootCompWrap.framerate,
-                time: this._playingSession.renderedFrames / rootCompWrap.framerate,
+                time: currentTime,
                 frame: baseRequest.frame + this._playingSession.renderedFrames,
+
+                isBufferingFrame: lastBufferingTime !== Math.ceil(currentTime / bufferingIntervalTime),
             })
 
+            console.log(lastBufferingTime !== Math.ceil(currentTime / bufferingIntervalTime));
+            lastBufferingTime = Math.ceil(_renderReq.time / bufferingIntervalTime),
+
+            // Clear buffer
             bufferCanvasCtx.clearRect(0, 0, compWidth, compHeight)
             for (const ch = 0, l = rootCompWrap.audioChannels; ch < l; ch++) {
                 destAudioBuffer[ch].fill(0)
             }
 
-            // console.group(`frame ${this._playingSession.renderedFrames}`)
-            // console.log('requesting...', _renderReq);
             await rootCompWrap.render(_renderReq)
-            // console.groupEnd(`frame ${this._playingSession.renderedFrames}`)
 
-            // ctx.drawImage(v, 20, 0)
+            // Copy rendered image from buffer
             destCanvasCtx.clearRect(0, 0, destCanvasWidth, destCanvasHeight)
             destCanvasCtx.drawImage(
                 bufferCanvas,
@@ -279,14 +289,15 @@ export default class SessionRenderer {
                 0, 0, destCanvasWidth, destCanvasHeight
             )
 
-            console.log(this._playingSession.renderedFrames = elapsed * rootCompWrap.framerate)
+            // console.log(this._playingSession.renderedFrames = elapsed * rootCompWrap.framerate)
             this._playingSession.lastRenderedFrame = req.beginFrame + this._playingSession.renderedFrames
 
             if (this._playingSession.renderedFrames >= this._playingSession.durationFrames) {
-                this._playingSession = null
+                this.stop()
                 return
             }
 
+            this._playingSession.renderedFrames++
             this._playingSession.animationFrameId = requestAnimationFrame(render)
         }
 
@@ -330,7 +341,10 @@ export default class SessionRenderer {
         canvas.height = rootComp.height
 
         const ctx = canvas.getContext('2d')
-        const deream = Deream({
+        const audioBuffer =　_.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * AUDIO_BUFFER_SIZE)))
+        const pcmAudioData = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * AUDIO_BUFFER_SIZE * Math.ceil(durationFrames / rootComp.framerate))))
+
+        const deream = Deream.video({
             args: {
                 'c:v': 'libx264',
                 'b:v': '1024k',
@@ -354,22 +368,32 @@ export default class SessionRenderer {
             rootCompId: req.targetCompositionId,
             beginFrame: 0,
             destinationCanvas: canvas,
-            // destinationNode: ?AudioNode,
+            destinationAudioBuffer: audioBuffer,
             requestAnimationFrame: window.requestAnimationFrame.bind(window),
         })
 
+        let audioDataOffset = 0
         progPromise.progress(progress => {
             console.log(progress);
 
-            if (progress.state === 'render-frame') {
+            if (progress.isRendering) {
                 // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
                 // console.log(imageData);
                 // let buffer = new Buffer(imageData)
                 deream.write(canvasToBuffer(canvas, 'image/png'))
+
+                if ((progress.renderedFrames / rootComp.framerate) % 1 === 0) {
+                    for (let ch = 0, l = rootComp.audioChannels; ch < l; ch++) {
+                        pcmAudioData[ch].set(audioBuffer[ch], AUDIO_BUFFER_SIZE * audioDataOffset)
+                        audioBuffer[ch].fill(0)
+                    }
+                    audioDataOffset++
+                }
             }
 
             if (progress.finished === 100) {
                 deream.end()
+                console.log(pcmAudioData);
                 window.alert('complete')
             }
         })

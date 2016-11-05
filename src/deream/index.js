@@ -36,7 +36,7 @@ const parseArgs = args => {
  *      (Not set -i option and destination file in args option. it's specified in Deream)
  *      Ignore other all options ignored when args specified.
  */
-module.exports = function deream(options = {}) {
+module.exports.video = function deream(options = {}) {
     const _options = Object.assign({
         args: null,
         inputFramerate: null,
@@ -72,3 +72,5 @@ module.exports = function deream(options = {}) {
 
     return duplexer(ffmpeg.stdin, ffmpeg.stdout);
 };
+
+// module.exports.audio
