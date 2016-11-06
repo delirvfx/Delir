@@ -7,6 +7,7 @@ const {Helper: DelirHelper} = Delir
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
+import EditorStateActions from '../actions/editor-state-actions'
 
 let pluginRegistry, renderer, audioContext, audioBuffer, audioBufferSource
 
@@ -37,8 +38,8 @@ const handlers = {
 
         audioBuffer = audioContext.createBuffer(
             targetComposition.audioChannels,
-            targetComposition.samplingRate,
-            targetComposition.samplingRate,
+            /* length */targetComposition.samplingRate,
+            /* sampleRate */targetComposition.samplingRate,
         )
         audioBufferSource = audioContext.createBufferSource()
         audioBufferSource.buffer = audioBuffer
@@ -57,9 +58,7 @@ const handlers = {
         })
 
         promise.progress(progress => {
-            if (progress.isRendering) {
-                console.log(progress.state);
-            }
+            EditorStateActions.updateProcessingState(`Preview: ${progress.state}`)
 
             if (progress.isAudioBuffered) {
                 audioBufferSource.stop()
@@ -103,7 +102,9 @@ const handlers = {
                 exportPath: file,
                 tmpAudioPath: join(remote.app.getPath('temp'), 'tmp.wav'),
                 targetCompositionId: activeComp.id,
-            }) // .catch(e => console.error(e.stack))
+            })
+            .progress(progress => EditorStateActions.updateProcessingState(`Rendering: ${progress.finished}% ${progress.state}`))
+            .catch(e => console.error(e.stack))
         }
     }
 }

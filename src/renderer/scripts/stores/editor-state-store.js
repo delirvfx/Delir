@@ -19,6 +19,7 @@ class EditorStateStore extends ReduceStore<Object>
             activeComp: null,
             activeLayer: null,
             renderFrame: null,
+            processingState: null,
         }
     }
 
@@ -57,6 +58,11 @@ class EditorStateStore extends ReduceStore<Object>
             const targetLayer = DelirHelper.findLayerById(layerId)
             return Object.assign({}, state, {activeLayer: targetLayer})
         },
+
+        [ActionTypes.UPDATE_PROCESSING_STATE](state, {stateText})
+        {
+            return Object.assign({}, state, {processingState: stateText})
+        }
 
 
         // ["mod-composition-name"](state, {})

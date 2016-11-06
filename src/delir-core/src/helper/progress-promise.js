@@ -48,12 +48,14 @@ export default class ProgressPromise
 
     then(onFulfilled, onFailed)
     {
-        return this._promise.promise.then(onFulfilled, onFailed);
+        this._promise.promise.then(onFulfilled, onFailed);
+        return this
     }
 
     catch(onFailed)
     {
-        return this._promise.promise.catch(onFailed)
+        this._promise.promise.catch(onFailed)
+        return this
     }
 
     abort()
@@ -62,10 +64,12 @@ export default class ProgressPromise
             this._abortCallbacks.forEach(abort => abort())
             this._abortCallbacks = null
         }
+        return this
     }
 
     progress(listener)
     {
         this._progressListeners.push(listener)
+        return this
     }
 }

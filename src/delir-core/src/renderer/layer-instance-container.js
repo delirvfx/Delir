@@ -85,8 +85,8 @@ export default class LayerInstanceContainer
 
         // console.log(_req.frameOnComposition, _req.timeOnComposition);
         // console.log(this, this._rendererInstance);
-        console.time(`Render: ${this._layer.renderer}`)
+        // console.time(`Render: ${this._layer.renderer}`)
         await this._rendererInstance.render(_req)
-        console.timeEnd(`Render: ${this._layer.renderer}`)
+        // console.timeEnd(`Render: ${this._layer.renderer}`)
     }
 }

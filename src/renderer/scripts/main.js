@@ -109,8 +109,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.timelanes.add(c1_t3)
 
     c1_t1.layers.add(c1_t1_l1)
-    c1_t2.layers.add(c1_t2_l1)
-    c1_t3.layers.add(c1_t3_l1)
+    // c1_t2.layers.add(c1_t2_l1)
+    // c1_t3.layers.add(c1_t3_l1)
 
     c2.name = 'Sub Composition'
     p.compositions.add(c2)
@@ -134,6 +134,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     EditorStateActions.setActiveProject(p)
 
+    console.log(document.querySelector('canvas'))
     RendererService.renderer.setDestinationCanvas(document.querySelector('canvas'))
     // RendererService.renderer.setDestinationAudioNode(audioContext.destination)
 

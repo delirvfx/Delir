@@ -7,7 +7,7 @@ import fs from 'fs'
 import Deream from '../../../deream'
 import canvasToBuffer from 'electron-canvas-to-buffer'
 import audioBufferToWave from 'audiobuffer-to-wav'
-import arrayBufferToBuffer from 'arraybuffer-to-buffer';
+import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
 import Canvas from '../abstraction/canvas'
 import NodeCanvas from 'canvas'
@@ -333,7 +333,8 @@ export default class Renderer {
 
                 const elapsed = (Date.now() - session.renderStartTime) / 1000
                 const currentTime = session.renderedFrames / rootCompContainer.framerate
-                const isBufferingNeeded = lastBufferingTime !== Math.ceil(currentTime / bufferingIntervalTime)
+                const isBufferingNeeded = lastBufferingTime !== (currentTime|0) && (session.renderedFrames + 1) <= session.durationFrames
+                // console.log(isBufferingNeeded, lastBufferingTime, currentTime);
 
                 const _renderReq = baseRequest.set({
                     // time: elapsed,
@@ -344,7 +345,7 @@ export default class Renderer {
                     isBufferingFrame: isBufferingNeeded,
                 })
 
-                lastBufferingTime = Math.ceil(_renderReq.time / bufferingIntervalTime)
+                lastBufferingTime = currentTime|0
 
                 //
                 // Clear buffer
@@ -467,6 +468,7 @@ export default class Renderer {
 
         const audioBuffer =　_.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate)))
         const pcmAudioData = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate * Math.ceil(durationFrames / rootComp.framerate))))
+        console.log(pcmAudioData)
 
         const deream = Deream.video({
             args: {
@@ -496,8 +498,6 @@ export default class Renderer {
 
         let audioDataOffset = 0
         progPromise.progress(progress => {
-            console.log(progress);
-
             if (progress.isRendering) {
                 // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
                 // console.log(imageData);
@@ -507,7 +507,7 @@ export default class Renderer {
 
             if (progress.isAudioBuffered) {
                 for (let ch = 0, l = rootComp.audioChannels; ch < l; ch++) {
-                    pcmAudioData[ch].set(audioBuffer[ch], Renderer.AUDIO_BUFFER_SIZE * audioDataOffset)
+                    pcmAudioData[ch].set(audioBuffer[ch], rootComp.samplingRate * audioDataOffset)
                     audioBuffer[ch].fill(0)
                 }
 

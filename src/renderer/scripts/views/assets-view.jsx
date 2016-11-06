@@ -111,7 +111,6 @@ export default class AssetsView extends React.Component
 
     render()
     {
-        console.log('hi');
         const {app, project: {project}} = this.state
         const assets = project ? Array.from(project.assets.values()) : []
         const compositions = project ? Array.from(project.compositions.values()) : []

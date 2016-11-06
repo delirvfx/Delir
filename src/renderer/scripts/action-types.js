@@ -8,6 +8,7 @@ export default keyMirror({
 
     TOGGLE_PREVIEW: null,
     RENDER_DESTINATE: null,
+    UPDATE_PROCESSING_STATE: null, // {state: string}
 
     // ProjectModifyActions
     MOVE_LAYER_TO_TIMELINE: null,

@@ -17,7 +17,6 @@ export default class PreviewView extends React.Component
         }
 
         EditorStateStore.addListener(() => {
-            console.log('change');
             this.setState({project: EditorStateStore.getState()})
         })
 

@@ -10,6 +10,7 @@ import AssetsView from './assets-view'
 import PreviewView from './preview-view'
 import TimelineView from './timeline-view'
 import NavigationView from './navigation-view'
+import StatusView from './status-view'
 
 export default class AppView extends React.Component
 {
@@ -36,6 +37,7 @@ export default class AppView extends React.Component
                     </Pane>
                     <TimelineView />
                 </Workspace>
+                <StatusView />
             </div>
         )
     }

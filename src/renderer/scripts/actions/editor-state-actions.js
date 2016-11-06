@@ -67,5 +67,13 @@ export default {
             type: ActionTypes.RENDER_DESTINATE,
             payload: {compositionId},
         })
-    }
+    },
+
+    updateProcessingState(stateText)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.UPDATE_PROCESSING_STATE,
+            payload: {stateText},
+        })
+    },
 }
