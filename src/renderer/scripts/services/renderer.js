@@ -26,7 +26,7 @@ const handlers = {
         if (! state.project) return
 
         if (renderer.isPlaying()) {
-            renderer.stop()
+            renderer.pause()
             return
         }
 
@@ -37,16 +37,19 @@ const handlers = {
 
         audioBuffer = audioContext.createBuffer(
             targetComposition.audioChannels,
-            Delir.Renderer.AUDIO_BUFFER_SIZE,
+            targetComposition.samplingRate,
             targetComposition.samplingRate,
         )
         audioBufferSource = audioContext.createBufferSource()
         audioBufferSource.buffer = audioBuffer
-        audioBufferSource.loop = true
         audioBufferSource.connect(audioContext.destination)
-        audioBufferSource.start()
+        audioBufferSource.start(0)
 
         renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer.getChannelData(idx)))
+
+        if (renderer.isPlaying()) {
+            renderer.pause()
+        }
 
         let promise = renderer.render({
             beginFrame: 0,
@@ -55,7 +58,17 @@ const handlers = {
 
         promise.progress(progress => {
             if (progress.isRendering) {
+                console.log(progress.state);
+            }
 
+            if (progress.isAudioBuffered) {
+                audioBufferSource.stop()
+                audioBufferSource.disconnect(audioContext.destination)
+
+                audioBufferSource = audioContext.createBufferSource()
+                audioBufferSource.buffer = audioBuffer
+                audioBufferSource.connect(audioContext.destination)
+                audioBufferSource.start(0)
             }
 
             if (progress.isCompleted) {
@@ -88,6 +101,7 @@ const handlers = {
         if (activeComp) {
             renderer.export({
                 exportPath: file,
+                tmpAudioPath: join(remote.app.getPath('temp'), 'tmp.wav'),
                 targetCompositionId: activeComp.id,
             }) // .catch(e => console.error(e.stack))
         }

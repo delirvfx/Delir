@@ -2,12 +2,15 @@
 import type Composition from '../project/composition'
 
 import _ from 'lodash'
+import fs from 'fs'
 
 import Deream from '../../../deream'
+import canvasToBuffer from 'electron-canvas-to-buffer'
+import audioBufferToWave from 'audiobuffer-to-wav'
+import arrayBufferToBuffer from 'arraybuffer-to-buffer';
 
 import Canvas from '../abstraction/canvas'
 import NodeCanvas from 'canvas'
-import canvasToBuffer from 'electron-canvas-to-buffer'
 
 import Project from '../project/project'
 import PluginRegistory from '../services/plugin-registory'
@@ -49,9 +52,9 @@ export default class Renderer {
         })
 
         renderer.setDestinationCanvas(req.destinationCanvas)
-        renderer.setDestinationAudioNode(node)
+        renderer.setDestinationAudioBuffer(req.destinationAudioBuffer)
 
-        renderer.render({
+        return renderer.render({
             beginFrame: req.beginFrame,
             targetCompositionId: req.rootCompId,
         })
@@ -175,7 +178,7 @@ export default class Renderer {
 
         if (ctx == null) { return } // for flowtype lint
 
-        const bufferAudioBuffer = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * Renderer.AUDIO_BUFFER_SIZE)))
+        const bufferAudioBuffer = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootCompWrap.samplingRate)))
 
         //
         // Resolver
@@ -197,7 +200,7 @@ export default class Renderer {
             destAudioBuffer: bufferAudioBuffer,
             audioContext: this._audioContext,
             samplingRate: rootCompWrap.samplingRate,
-            neededSamples: Renderer.AUDIO_BUFFER_SIZE,
+            neededSamples: rootCompWrap.samplingRate,
             audioChannels: rootCompWrap.audioChannels,
 
             resolver: resolver,
@@ -223,8 +226,8 @@ export default class Renderer {
 
     render(req: {
         beginFrame: number,
-        // TODO: endFrame: number,
-        // TODO: loop: boolean,
+        endFrame: number,
+        loop: boolean,
         targetCompositionId: string,
     }) : Promise
     {
@@ -238,37 +241,20 @@ export default class Renderer {
             onAbort(() => aborted = true)
             notifier({state: 'Assertion', finished: 0})
 
-            console.log(this)
-            if (this._project == null) throw new RenderingFailedException(`option.project must be specified.`)
-            if (this._pluginRegistry == null) throw new RenderingFailedException(`option.pluginRegistry must be specified.`)
-            if (this._destinationCanvas == null) throw new RenderingFailedException(`option.destinationCanvas must be specified.`)
-            if (this._destinationAudioBuffer == null) throw new RenderingFailedException(`option.destinationAudioBuffer must be specified.`)
-            if (req.targetCompositionId == null) throw new RenderingFailedException(`option.rootCompId must be specified.`)
+            if (this._project == null) throw new RenderingFailedException(`project must be set before rendering.`)
+            if (this._pluginRegistry == null) throw new RenderingFailedException(`pluginRegistry must be set before rendering`)
+            if (this._destinationCanvas == null) throw new RenderingFailedException(`destinationCanvas must be set before rendering`)
+            if (this._destinationAudioBuffer == null) throw new RenderingFailedException(`destinationAudioBuffer must be set before rendering`)
+            if (req.targetCompositionId == null) throw new RenderingFailedException(`rootCompId must be specified.`)
 
             //
             // Initializing
             //
-            console.log('start render');
-
-            // const v = document.createElement('video')
-            // v.src = document.querySelector('video').src
-            // v.play()
-            //
-            // const s = this.destinationAudioCtx.createMediaElementSource(v)
-            // s.connect(this.audioBufferNode)
-            // this.audioBufferNode.connect(this.destinationAudioCtx.destination)
-
-            if (this._destinationCanvas == null) {
-                throw new Error('set destination canvas before rendering')
-            }
-
-            if (this._audioContext == null) {
-                throw new Error('set AudioContext before rendering')
-            }
-
             if (this._playingSession == null) {
                 this.initializePlayingSession(req)
             }
+
+            this._playingSession.playing = true
 
             notifier({state: 'Initialize renderers', finished: 0})
 
@@ -331,13 +317,23 @@ export default class Renderer {
 
             // TODO: "Real time" based time calculation
             session.renderStartTime = Date.now()
+
+            let lastCountTime = Date.now()
+            let rendererd = 0
             let lastBufferingTime = -1
-            let bufferingIntervalTime = Renderer.AUDIO_BUFFER_SIZE / rootCompContainer.samplingRate
+            let bufferingIntervalTime = 1
 
             notifier({state: 'Rendering started', finished: 0})
             const render = async (): any => {
+                if (Date.now() - lastCountTime > 1000) {
+                    console.log(`%d / 60fps`, rendererd)
+                    rendererd = 0
+                    lastCountTime = Date.now()
+                }
+
                 const elapsed = (Date.now() - session.renderStartTime) / 1000
                 const currentTime = session.renderedFrames / rootCompContainer.framerate
+                const isBufferingNeeded = lastBufferingTime !== Math.ceil(currentTime / bufferingIntervalTime)
 
                 const _renderReq = baseRequest.set({
                     // time: elapsed,
@@ -345,18 +341,17 @@ export default class Renderer {
                     time: currentTime,
                     frame: baseRequest.frame + session.renderedFrames,
 
-                    isBufferingFrame: true, //lastBufferingTime !== Math.ceil(currentTime / bufferingIntervalTime),
+                    isBufferingFrame: isBufferingNeeded,
                 })
 
-                console.log(lastBufferingTime !== Math.ceil(currentTime / bufferingIntervalTime));
-                lastBufferingTime = Math.ceil(_renderReq.time / bufferingIntervalTime),
+                lastBufferingTime = Math.ceil(_renderReq.time / bufferingIntervalTime)
 
                 //
                 // Clear buffer
                 //
                 bufferCanvasCtx.clearRect(0, 0, compWidth, compHeight)
                 for (const ch = 0, l = rootCompContainer.audioChannels; ch < l; ch++) {
-                    destAudioBuffer[ch].fill(0)
+                    // destAudioBuffer[ch].fill(0)
                 }
 
                 //
@@ -365,6 +360,12 @@ export default class Renderer {
                 if (aborted) return notifier({state: 'aborted'})
                 await rootCompContainer.render(_renderReq)
                 if (aborted) return notifier({state: 'aborted'})
+
+                // if (isBufferingNeeded) {
+                //     console.log(bufferAudioBuffer === _renderReq.destAudioBuffer);
+                //     console.log(bufferAudioBuffer[0])
+                //     return
+                // }
 
                 //
                 // Copy rendered image from buffer
@@ -376,38 +377,52 @@ export default class Renderer {
                     0, 0, destCanvasWidth, destCanvasHeight
                 )
 
-                for (let ch = 0, l = rootCompContainer.audioChannels; ch < l; ch++) {
-                    destAudioBuffer[ch].set(bufferAudioBuffer[ch])
+                if (isBufferingNeeded) {
+                    for (let ch = 0, l = rootCompContainer.audioChannels; ch < l; ch++) {
+                        destAudioBuffer[ch].set(bufferAudioBuffer[ch])
+                    }
                 }
 
                 // console.log(session.renderedFrames = elapsed * rootCompWrap.framerate)
                 // session.lastRenderedFrame = req.beginFrame + session.renderedFrames
 
-                if (session.renderedFrames >= session.durationFrames) {
+                if (!req.loop && session.renderedFrames >= session.durationFrames) {
                     notifier({
                         state: `Rendering... ${session.renderedFrames} / ${session.durationFrames}`,
                         isRendering: true,
+                        isAudioBuffered: isBufferingNeeded,
                         renderedFrame: session.renderedFrames,
                         finished: 100
                     })
+
                     notifier({
                         state: `Completed`,
                         isCompleted: true,
                         finished: 100
                     })
-                    this.stop()
+
+                    session.renderedFrames = 0
+                    session.playing = false
+
                     resolve()
                     return
+                }
+
+                if (req.loop && req.endFrame != null && (req.beginFrame + session.rendererdFrame) >= req.endFrame) {
+                    session.renderedFrames = 0
                 }
 
                 notifier({
                     state: `Rendering... ${session.renderedFrames} / ${session.durationFrames}`,
                     isRendering: true,
+                    isAudioBuffered: isBufferingNeeded,
                     renderedFrame: session.renderedFrames,
-                    finished: 100
+                    finished: session.renderedFrames / session.durationFrames,
                 })
 
+                rendererd++
                 session.renderedFrames++
+                if (! this._playingSession.playing) return
                 session.animationFrameId = requestAnimationFrame(render)
             }
 
@@ -424,19 +439,16 @@ export default class Renderer {
     {
         if (this._playingSession.animationFrameId === null) return
         cancelAnimationFrame(this._playingSession.animationFrameId)
-        this._playingSession.playing = false
-    }
 
-    stop()
-    {
-        if (this._playingSession.animationFrameId === null) return
-
-        cancelAnimationFrame(this._playingSession.animationFrameId)
-        this._playingSession = null
+        if (this._playingSession) {
+            this._playingSession.renderedFrames = 0
+            this._playingSession.playing = false
+        }
     }
 
     async export(req: {
         exportPath: stirng,
+        tmpAudioPath: string,
         targetCompositionId: string,
     })
     {
@@ -452,8 +464,9 @@ export default class Renderer {
         canvas.height = rootComp.height
 
         const ctx = canvas.getContext('2d')
-        const audioBuffer =　_.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * Renderer.AUDIO_BUFFER_SIZE)))
-        const pcmAudioData = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * Renderer.AUDIO_BUFFER_SIZE * Math.ceil(durationFrames / rootComp.framerate))))
+
+        const audioBuffer =　_.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate)))
+        const pcmAudioData = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate * Math.ceil(durationFrames / rootComp.framerate))))
 
         const deream = Deream.video({
             args: {
@@ -468,8 +481,6 @@ export default class Renderer {
         })
 
         await new Promise(resolve => setTimeout(resolve, 2000))
-        console.log('run');
-
         // const encoder = spawn('ffmpeg', `-i pipe:0 -r ${durationFrames} -c:v mjpeg -c:v libx264 -r ${durationFrames} -s 640x360 test.mp4`.split(' '))
         // encoder.stderr.on('data', data => console.log(data.toString()))
 
@@ -492,19 +503,29 @@ export default class Renderer {
                 // console.log(imageData);
                 // let buffer = new Buffer(imageData)
                 deream.write(canvasToBuffer(canvas, 'image/png'))
-
-                if ((progress.renderedFrames / rootComp.framerate) % 1 === 0) {
-                    for (let ch = 0, l = rootComp.audioChannels; ch < l; ch++) {
-                        pcmAudioData[ch].set(audioBuffer[ch], Renderer.AUDIO_BUFFER_SIZE * audioDataOffset)
-                        audioBuffer[ch].fill(0)
-                    }
-                    audioDataOffset++
-                }
             }
 
-            if (progress.finished === 100) {
+            if (progress.isAudioBuffered) {
+                for (let ch = 0, l = rootComp.audioChannels; ch < l; ch++) {
+                    pcmAudioData[ch].set(audioBuffer[ch], Renderer.AUDIO_BUFFER_SIZE * audioDataOffset)
+                    audioBuffer[ch].fill(0)
+                }
+
+                audioDataOffset++
+            }
+
+            if (progress.isCompleted) {
                 deream.end()
-                console.log(pcmAudioData);
+
+                const wav = audioBufferToWave({
+                    sampleRate: rootComp.samplingRate,
+                    numberOfChannels: pcmAudioData.length,
+                    getChannelData: ch => pcmAudioData[ch]
+                }, {float32: true})
+
+                console.log(req, wav, wav.buffer)
+                fs.writeFileSync(req.tmpAudioPath, arrayBufferToBuffer(wav))
+
                 window.alert('complete')
             }
         })

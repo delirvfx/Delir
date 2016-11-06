@@ -78,11 +78,9 @@ export default class AudioLayer extends Delir.PluginBase.CustomLayerPluginBase
 
         const destBuffers = req.destAudioBuffer
         for (const ch = 0, l = req.audioChannels; ch < l; ch++) {
-            console.log(req.audioChannels, ch)
             const buffer = this.audio.buffer.getChannelData(ch)
-            const begin = (req.seconds *　this.audio.buffer.sampleRate)|0
+            const begin = (req.seconds|0) *　this.audio.buffer.sampleRate
             const end = begin + req.neededSamples
-
             destBuffers[ch].set(buffer.slice(begin, end))
         }
     }

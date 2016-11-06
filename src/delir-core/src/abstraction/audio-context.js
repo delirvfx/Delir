@@ -6,5 +6,4 @@ if (typeof window !== 'undefined') {
     AudioContext = require('web-audio-api').AudioContext
 }
 
-console.log(AudioContext);
 export default AudioContext
