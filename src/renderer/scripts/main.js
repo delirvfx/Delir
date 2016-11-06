@@ -64,10 +64,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     const c1_t1 = new Delir.Project.TimeLane
     const c1_t2 = new Delir.Project.TimeLane
     const c1_t3 = new Delir.Project.TimeLane
+    const c1_t4 = new Delir.Project.TimeLane
     const c2_t1 = new Delir.Project.TimeLane
     const c1_t1_l1 = new Delir.Project.Layer
     const c1_t2_l1 = new Delir.Project.Layer
     const c1_t3_l1 = new Delir.Project.Layer
+    const c1_t4_l1 = new Delir.Project.Layer
     const c2_t1_l1 = new Delir.Project.Layer
     const c2_t1_l2 = new Delir.Project.Layer
     const c2_t1_l3 = new Delir.Project.Layer
@@ -81,25 +83,29 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.audioChannels = 2
     c1.samplingRate = 48000
 
-    // c1_t1.name = 'NYAN = ^ . ^ = CHENCAT'
     c1_t1.name = 'Audio'
     c1_t2.name = '🔥 FIRE 🔥'
-    c1_t3.name = 'video'
+    c1_t3.name = 'NYAN = ^ . ^ = CHENCAT'
+    c1_t4.name = 'video'
 
     c1_t1_l1.renderer = 'audio-layer'
     c1_t1_l1.rendererOptions.source = '/Users/ragg/workspace/delir/deream_in.mp3'
     c1_t1_l1.placedFrame = 0
-    c1_t1_l1.durationFrame = 30 * 300
+    c1_t1_l1.durationFrame = 30 * 10
 
     // c1_t2_l1.renderer = 'html5-video-layer'
     c1_t2_l1.renderer = 'proton-layer'
     c1_t2_l1.placedFrame = 0
-    c1_t2_l1.durationFrame = 30 * 300
+    c1_t2_l1.durationFrame = 30 * 10
 
-    c1_t3_l1.renderer = 'html5-video-layer'
-    c1_t3_l1.rendererOptions.source = 'file:///Users/ragg/workspace/delir/sample.mp4'
+    c1_t3_l1.renderer = 'red-layer'
     c1_t3_l1.placedFrame = 0
-    c1_t3_l1.durationFrame = 120
+    c1_t3_l1.durationFrame = 30 * 10
+
+    c1_t4_l1.renderer = 'html5-video-layer'
+    c1_t4_l1.rendererOptions.source = 'file:///Users/ragg/workspace/delir/sample.mp4'
+    c1_t4_l1.placedFrame = 0
+    c1_t4_l1.durationFrame = 30 * 10
 
     p.assets.add(a)
     p.compositions.add(c1)
@@ -107,10 +113,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.timelanes.add(c1_t1)
     c1.timelanes.add(c1_t2)
     c1.timelanes.add(c1_t3)
+    c1.timelanes.add(c1_t4)
 
     c1_t1.layers.add(c1_t1_l1)
-    // c1_t2.layers.add(c1_t2_l1)
-    // c1_t3.layers.add(c1_t3_l1)
+    c1_t2.layers.add(c1_t2_l1)
+    c1_t3.layers.add(c1_t3_l1)
+    c1_t3.layers.add(c1_t4_l1)
 
     c2.name = 'Sub Composition'
     p.compositions.add(c2)

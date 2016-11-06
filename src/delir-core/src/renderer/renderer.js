@@ -3,6 +3,7 @@ import type Composition from '../project/composition'
 
 import _ from 'lodash'
 import fs from 'fs'
+import path from 'path'
 
 import Deream from '../../../deream'
 import canvasToBuffer from 'electron-canvas-to-buffer'
@@ -25,6 +26,9 @@ import * as Helper from '../helper/helper'
 import ProgressPromise from '../helper/progress-promise'
 
 import {RenderingFailedException} from '../exceptions/'
+
+// TODO: Split audio concat process
+import {spawn} from 'child_process'
 
 export default class Renderer {
     static AUDIO_BUFFER_SIZE = 16384
@@ -447,112 +451,156 @@ export default class Renderer {
         }
     }
 
-    async export(req: {
+    export(req: {
         exportPath: stirng,
-        tmpAudioPath: string,
+        tmpDir: string,
         targetCompositionId: string,
     })
     {
-        //
-        // export via deream
-        //
-        const rootComp: Compositon = Helper.findCompositionById(this._project, req.targetCompositionId)
-        const durationFrames = rootComp.durationFrames
+        return new ProgressPromise(async (
+            resolve: Function,
+            reject: Function,
+            onAbort: Function,
+            notifier: Function,
+        ) => {
+            //
+            // export via deream
+            //
+            const rootComp: Compositon = Helper.findCompositionById(this._project, req.targetCompositionId)
+            const durationFrames = rootComp.durationFrames
 
-        // const canvas = new NodeCanvas(rootComp.width, rootComp.height)
-        const canvas = document.createElement('canvas')
-        canvas.width = rootComp.width
-        canvas.height = rootComp.height
+            // const canvas = new NodeCanvas(rootComp.width, rootComp.height)
+            const canvas = document.createElement('canvas')
+            canvas.width = rootComp.width
+            canvas.height = rootComp.height
 
-        const ctx = canvas.getContext('2d')
+            const ctx = canvas.getContext('2d')
 
-        const audioBuffer =　_.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate)))
-        const pcmAudioData = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate * Math.ceil(durationFrames / rootComp.framerate))))
-        console.log(pcmAudioData)
+            const audioBuffer =　_.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate)))
+            const pcmAudioData = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate * Math.ceil(durationFrames / rootComp.framerate))))
+            console.log(pcmAudioData)
 
-        const deream = Deream.video({
-            args: {
-                'c:v': 'libx264',
-                'b:v': '1024k',
-                'pix_fmt': 'yuv420p',
-                // 'r': rootComp.framerate,
-                // 'an': ''
-            },
-            inputFramerate: rootComp.framerate,
-            dest: req.exportPath,
-        })
+            const deream = Deream.video({
+                args: {
+                    'c:v': 'libx264',
+                    'b:v': '1024k',
+                    'pix_fmt': 'yuv420p',
+                    // 'r': rootComp.framerate,
+                    // 'an': ''
+                    // 'f': 'mp4',
+                },
+                inputFramerate: rootComp.framerate,
+                dest: path.join(req.tmpDir,'delir-working.mp4'),
+            })
 
-        await new Promise(resolve => setTimeout(resolve, 2000))
-        // const encoder = spawn('ffmpeg', `-i pipe:0 -r ${durationFrames} -c:v mjpeg -c:v libx264 -r ${durationFrames} -s 640x360 test.mp4`.split(' '))
-        // encoder.stderr.on('data', data => console.log(data.toString()))
+            await new Promise(resolve => setTimeout(resolve, 2000))
+            // const encoder = spawn('ffmpeg', `-i pipe:0 -r ${durationFrames} -c:v mjpeg -c:v libx264 -r ${durationFrames} -s 640x360 test.mp4`.split(' '))
+            // encoder.stderr.on('data', data => console.log(data.toString()))
 
-        const progPromise = Renderer.render({
-            project: this._project,
-            pluginRegistry: this._pluginRegistry,
-            rootCompId: req.targetCompositionId,
-            beginFrame: 0,
-            destinationCanvas: canvas,
-            destinationAudioBuffer: audioBuffer,
-            requestAnimationFrame: window.requestAnimationFrame.bind(window),
-        })
+            const progPromise = Renderer.render({
+                project: this._project,
+                pluginRegistry: this._pluginRegistry,
+                rootCompId: req.targetCompositionId,
+                beginFrame: 0,
+                destinationCanvas: canvas,
+                destinationAudioBuffer: audioBuffer,
+                requestAnimationFrame: window.requestAnimationFrame.bind(window),
+            })
 
-        let audioDataOffset = 0
-        progPromise.progress(progress => {
-            if (progress.isRendering) {
-                // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
-                // console.log(imageData);
-                // let buffer = new Buffer(imageData)
-                deream.write(canvasToBuffer(canvas, 'image/png'))
-            }
+            onAbort(() => progPromise.abort())
 
-            if (progress.isAudioBuffered) {
-                for (let ch = 0, l = rootComp.audioChannels; ch < l; ch++) {
-                    pcmAudioData[ch].set(audioBuffer[ch], rootComp.samplingRate * audioDataOffset)
-                    audioBuffer[ch].fill(0)
+            let audioDataOffset = 0
+            await progPromise.progress(progress => {
+                notifier(progress)
+
+                if (progress.isRendering) {
+                    // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
+                    // console.log(imageData);
+                    // let buffer = new Buffer(imageData)
+                    deream.write(canvasToBuffer(canvas, 'image/png'))
                 }
 
-                audioDataOffset++
-            }
+                if (progress.isAudioBuffered) {
+                    for (let ch = 0, l = rootComp.audioChannels; ch < l; ch++) {
+                        pcmAudioData[ch].set(audioBuffer[ch], rootComp.samplingRate * audioDataOffset)
+                        audioBuffer[ch].fill(0)
+                    }
 
-            if (progress.isCompleted) {
-                deream.end()
+                    audioDataOffset++
+                }
 
-                const wav = audioBufferToWave({
-                    sampleRate: rootComp.samplingRate,
-                    numberOfChannels: pcmAudioData.length,
-                    getChannelData: ch => pcmAudioData[ch]
-                }, {float32: true})
+                if (progress.isCompleted) {
+                    deream.end()
+                }
+            })
 
-                console.log(req, wav, wav.buffer)
-                fs.writeFileSync(req.tmpAudioPath, arrayBufferToBuffer(wav))
+            notifier({state: 'Encoding video/audio'})
 
-                window.alert('complete')
-            }
+            await Promise.all([
+                (async resolve => {
+                    const wav = audioBufferToWave({
+                        sampleRate: rootComp.samplingRate,
+                        numberOfChannels: pcmAudioData.length,
+                        getChannelData: ch => pcmAudioData[ch]
+                    }, {float32: true})
+
+                    fs.writeFileSync(path.join(req.tmpDir,'delir-working.wav'), arrayBufferToBuffer(wav))
+                })(),
+                (async resolve => {
+                    await new Promise(resolve => deream.ffmpeg.on('exit', resolve))
+                })(),
+            ])
+
+            notifier({state: 'Concat and encoding...'})
+            await new Promise(resolve => {
+                const ffmpeg = spawn('ffmpeg', [
+                    '-y',
+                    '-f',
+                    'mp4',
+                    '-i',
+                    path.join(req.tmpDir,'delir-working.mp4'),
+                    // '-vcodec',
+                    // 'copy',
+                    '-i',
+                    path.join(req.tmpDir,'delir-working.wav'),
+                    // '-c:a',
+                    // 'pcm_f32be',
+                    // '-c:a',
+                    // 'libfaac',
+                    // '-b:a',
+                    // '320k',
+                    req.exportPath,
+                ])
+
+                ffmpeg.stdout.on('data', buffer => console.log(buffer.toString()))
+                ffmpeg.stderr.on('data', buffer => console.error(buffer.toString()))
+
+                ffmpeg.on('exit', resolve)
+            })
+
+
+            notifier({state: 'Rendering completed'})
+
+            // const buf = new ArrayBuffer(mediaInfo.width * mediaInfo.height * 4)
+            // const view = new Uint8ClampedArray(buf)
+
+            // const VIDEO_DURATION_SEC = 1
+
+
+
+            // try { fs.unlinkSync('test.mp4') } catch (e) {}
+
+
+
+            // for (let i = 0; i < OUTPUT_FRAMES; i++) {
+            //     // ctx.fillStyle = '#' + [cRand(), cRand(), cRand()].join('')
+            //     // ctx.fillRect(0, 0, 640, 360)
+            //
+            //     let buffer = canvasToBuffer(canvas, 'image/jpeg')
+            //     encoder.stdin.write(buffer)
+            // }
+
+            // encoder.stdin.end()
         })
-
-        return progPromise
-
-
-
-        // const buf = new ArrayBuffer(mediaInfo.width * mediaInfo.height * 4)
-        // const view = new Uint8ClampedArray(buf)
-
-        // const VIDEO_DURATION_SEC = 1
-
-
-
-        // try { fs.unlinkSync('test.mp4') } catch (e) {}
-
-
-
-        // for (let i = 0; i < OUTPUT_FRAMES; i++) {
-        //     // ctx.fillStyle = '#' + [cRand(), cRand(), cRand()].join('')
-        //     // ctx.fillRect(0, 0, 640, 360)
-        //
-        //     let buffer = canvasToBuffer(canvas, 'image/jpeg')
-        //     encoder.stdin.write(buffer)
-        // }
-
-        // encoder.stdin.end()
     }
 }

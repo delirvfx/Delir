@@ -97,13 +97,21 @@ const handlers = {
         if (! file) return
 
         const activeComp = DelirHelper.findCompositionById(state.project, compositionId)
-        if (activeComp) {
+        if (! activeComp) {
+            EditorStateActions.updateProcessingState(`Rendering: Composition not selected`)
+        } else {
             renderer.export({
                 exportPath: file,
-                tmpAudioPath: join(remote.app.getPath('temp'), 'tmp.wav'),
+                tmpDir: remote.app.getPath('temp'),
                 targetCompositionId: activeComp.id,
             })
-            .progress(progress => EditorStateActions.updateProcessingState(`Rendering: ${progress.finished}% ${progress.state}`))
+            .progress(progress => {
+                if (progress.isRendering) {
+                    EditorStateActions.updateProcessingState(`Rendering: ${Math.floor(progress.finished * 100)}% ${progress.state}`)
+                } else {
+                    EditorStateActions.updateProcessingState(`Rendering: ${progress.state}`)
+                }
+            })
             .catch(e => console.error(e.stack))
         }
     }

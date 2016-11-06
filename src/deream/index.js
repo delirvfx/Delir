@@ -68,9 +68,12 @@ module.exports.video = function deream(options = {}) {
     ];
 
     const ffmpeg = spawn(_options.ffmpegBin, args);
-    // ffmpeg.stderr.on('data', chunk => console.log(chunk.toString()));
+    ffmpeg.stderr.on('data', chunk => console.log(chunk.toString()));
 
-    return duplexer(ffmpeg.stdin, ffmpeg.stdout);
+    const ret = duplexer(ffmpeg.stdin, ffmpeg.stdout)
+    ret.ffmpeg = ffmpeg
+
+    return ret
 };
 
 // module.exports.audio
