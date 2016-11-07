@@ -2,11 +2,11 @@
 import type RenderRequest from '../../renderer/render-request'
 
 import _ from 'lodash'
-import Delir from '../../index'
-import T from '../../plugin/parameter-types'
+import {Type, LayerPluginBase} from '../../index'
+import T from '../../plugin/type-descriptor'
 import {Exceptions} from '../../exceptions/index'
 
-export default class HTML5VideoLayer extends Delir.PluginBase.CustomLayerPluginBase
+export default class HTML5VideoLayer extends LayerPluginBase
 {
     static async pluginDidLoad()
     {
@@ -14,6 +14,19 @@ export default class HTML5VideoLayer extends Delir.PluginBase.CustomLayerPluginB
         if (typeof window === 'undefined') {
             throw new Exceptions.PluginLoadFailException('this plugin only running on Electron')
         }
+    }
+
+    static provideParameters(): TypeDescriptor
+    {
+        return Type
+            .asset('source', {
+                label: 'Movie file',
+                mimeTypes: ['movie/mp4'],
+            })
+            .bool('loop', {
+                label: 'Loop',
+                animatable: false,
+            })
     }
 
     video: HTMLVideoElement
@@ -37,10 +50,11 @@ export default class HTML5VideoLayer extends Delir.PluginBase.CustomLayerPluginB
         }
     }
 
-    async beforeRender(preRenderReqest: Object)
+    async beforeRender(preRenderRequest: Object)
     {
-        console.log(preRenderReqest.parameters.source)
-        this.video.src = preRenderReqest.parameters.source
+        const {parameters} = preRenderRequest
+        this.video.src = `file://${parameters.source.path}`
+        this.video.loop = parameters.loop
         this.video.load()
         this.video.currentTime = -1
 
@@ -86,16 +100,6 @@ export default class HTML5VideoLayer extends Delir.PluginBase.CustomLayerPluginB
     //
     // Editor handling methods
     //
-
-    provideParameter(): Object
-    {
-        return {
-            'sourceFile': T(T.asset, {
-                enabled: true,
-                label: 'Source',
-            })
-        }
-    }
 
     // MEMO: キャッシュが必要な（例えば音声ファイルなど）パラメータの変更を検知するためのAPI
     // onDidParameterChanged(newParam, oldParam)

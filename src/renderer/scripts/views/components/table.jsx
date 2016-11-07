@@ -40,9 +40,10 @@ export class Table extends React.Component
 
     render()
     {
+        const {className, children, ...props} = this.props
         return (
-            <div className={classnames('_table', this.props.className)}>
-                {Children.map(this.props.children, child => {
+            <div className={classnames('_table', className)} {...props}>
+                {Children.map(children, child => {
                     if (child.type === TableHeader) {
                         return React.cloneElement(child, {
                             _notifyCellResizing: this.handleCellResizing,

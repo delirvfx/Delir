@@ -14,15 +14,15 @@ export default class Asset
     _id: string
 
     _config: {
-        type: ?'FILE' | 'BYNARY' | 'EXTENDED',
-        handler: string,
+        mimeType: string,
         name: string,
-        data: Object
+        path: string,
+        data: Buffer,
     } = {
-        type: '',
-        handler: 'default',
+        mimeType: '',
         name: '',
-        data: {}
+        path: null,
+        data: null,
     }
 
     get id(): string { return this._id }

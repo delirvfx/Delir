@@ -1,8 +1,9 @@
 // @flow
 import type RenderRequest from '../../renderer/render-request'
-import type ParameterTypeDescripter from '../parameter-types'
 
 import PluginBase from './plugin-base.js'
+import {TypeDescriptor} from '../type-descriptor'
+
 import {
     InvalidPluginLoadedException
 } from '../../exceptions/index'
@@ -15,6 +16,12 @@ export default class CustomLayerPluginBase extends PluginBase
         throw new InvalidPluginLoadedException(`CustomLayer plugin class \`${subClassName}\` not implement \`static pluginDidLoad\` method`, {
             class: this,
         })
+    }
+
+    static provideParameters(): TypeDescriptor
+    {
+        // None
+        return new TypeDescriptor
     }
 
     constructor()
@@ -40,13 +47,6 @@ export default class CustomLayerPluginBase extends PluginBase
     //
     // Editor handling methods
     //
-
-    provideParameter(): {
-        [paramId: string]: ParameterTypeDescripter
-    }
-    {
-        return {}
-    }
 
     // MEMO: キャッシュが必要な（例えば音声ファイルなど）パラメータの変更を検知するためのAPI
     onDidParameterChanged(newParam, oldParam)

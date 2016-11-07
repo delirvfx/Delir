@@ -31,6 +31,14 @@ class ProjectModifyStore extends ReduceStore<Object>
         //     return state
         // },
 
+        [ActionTypes.ADD_ASSET](state, {asset})
+        {
+            if (! state.project) return state
+
+            state.project.assets.add(asset)
+            return Object.assign({}, state)
+        },
+
         [ActionTypes.CREATE_COMPOSTION](state, {composition})
         {
             if (! state.project) return state

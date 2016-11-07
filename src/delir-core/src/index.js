@@ -1,23 +1,21 @@
 // @flow
-// import Renderer from "./renderer/renderer";
-// import Project from "./project/project";
-
-// class Delir {
-//     /**
-//      * @param {Delir.Project}
-//      */
-//     static async render(document) {
-//
-//     }
-// }
-
 import * as Project from './project/index'
 import Renderer from './renderer/renderer'
-import * as Abstraction from './abstraction/index';
-import {PluginBase} from './plugin/index'
+import * as Abstraction from './abstraction/index'
+import * as Services from './services'
+import LayerPluginBase from './plugin/base/custom-layer-plugin-base'
+import Type from './plugin/type-descriptor'
 import * as Helper from './helper/helper'
 import * as Exception from './exceptions/index'
-import * as Services from './services'
+
+export * as Project from './project/index'
+export Renderer from './renderer/renderer'
+export * as Abstraction from './abstraction/index'
+export * as Services from './services'
+export LayerPluginBase from './plugin/base/custom-layer-plugin-base'
+export Type from './plugin/type-descriptor'
+export * as Helper from './helper/helper'
+export * as Exception from './exceptions/index'
 
 export default {
     Project,
@@ -25,6 +23,7 @@ export default {
     Abstraction,
     Services,
     Exception,
-    PluginBase,
+    LayerPluginBase,
+    Type,
     Helper,
 }

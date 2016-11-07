@@ -1,5 +1,6 @@
 // @flow
 import type {DelirPluginPackageJson} from './types'
+import type {TypeDescriptor} from '../plugin/type-descriptor'
 
 import fs from 'fs-promise'
 import path from 'path'
@@ -21,15 +22,11 @@ export default class PluginRegistory
         [packageName: string]: {
             package: Object,
             class: Class<*>,
+            parameters: TypeDescriptor,
             packageRoot: string,
             entryPath: string,
         }
     } = {}
-
-    constructor()
-    {
-
-    }
 
     /**
      * Load packages from packages directory
@@ -65,7 +62,23 @@ export default class PluginRegistory
 
         _.each(packages, (packageInfo, id) => {
             this._plugins[id] = packageInfo
-            this.requireById(id)
+
+            try {
+                // avoid webpack module resolving
+                const _class = global.require(packageInfo.entryPath)
+
+                // resolve babel's module exposing
+                if (_class.__esModule && _class.default) {
+                    packageInfo.class = _class.default
+                } else {
+                    packageInfo.class = _class
+                }
+
+                packageInfo.class.pluginDidLoad()
+                packageInfo.parameters = packageInfo.class.provideParameters()
+            } catch (e) {
+                throw new PluginLoadFailException(`Failed to requiring plugin \`${id}\`. ${e.message}`)
+            }
         })
 
         return {
@@ -77,30 +90,13 @@ export default class PluginRegistory
     requireById(packageId: string): ?Class<*>
     {
         const pluginInfo = this._plugins[packageId]
+        return pluginInfo ? pluginInfo.class : null
+    }
 
-        if (! pluginInfo) {
-            return
-        }
-
-        if (pluginInfo.class != null) {
-            return pluginInfo.class
-        }
-
-        try {
-            // avoid webpack module resolving
-            const _class = global.require(pluginInfo.entryPath)
-
-            // resolve babel's module exposing
-            if (_class.__esModule && _class.default) {
-                pluginInfo.class = _class.default
-            } else {
-                pluginInfo.class = _class
-            }
-
-            pluginInfo.class.pluginDidLoad()
-        } catch (e) {
-            throw new PluginLoadFailException(`Failed to requiring plugin \`${packageId}\`. ${e.message}`)
-        }
+    getPluginParametersById(packageId: string)
+    {
+        const pluginInfo = this._plugins[packageId]
+        return pluginInfo ? pluginInfo.parameters.properties : null
     }
 
     getLoadedPluginSummaries(type: ?PluginFeatures)

@@ -5,6 +5,7 @@ import type Keyframe from '../project/keyframe'
 import type PreRenderingRequest from './pre-rendering-request'
 import type RenderRequest from './render-request'
 
+import _ from 'lodash'
 import {RenderingFailedException} from '../exceptions'
 import PluginPreRenderingRequest from './plugin-pre-rendering-request'
 
@@ -47,16 +48,23 @@ export default class LayerInstanceContainer
 
     async beforeRender(req: PreRenderingRequest)
     {
-        const _req = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
-            layerScope: this._variableScope,
-            parameters: Object.assign({}, this._layer.rendererOptions),
-        })
-
         // initialize renderer
         const Renderer = req.resolver.resolvePlugin(this._layer.renderer)
         if (Renderer == null) {
             throw new RenderingFailedException(`Failed to load Renderer plugin \`${this._layer.renderer}\``)
         }
+
+        const options = this._layer.rendererOptions
+        const paramKeys = Renderer.provideParameters().properties
+
+        const params = {}
+        paramKeys.forEach(desc => params[desc.keyName] = options[desc.keyName] ? Object.assign({}, options[desc.keyName]) : null)
+        Object.freeze(params)
+
+        const _req = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
+            layerScope: this._variableScope,
+            parameters: params,
+        })
 
         this._rendererInstance = new Renderer
         try {

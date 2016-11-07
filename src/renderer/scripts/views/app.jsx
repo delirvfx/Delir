@@ -23,10 +23,20 @@ export default class AppView extends React.Component
         super()
     }
 
+    componentDidMount()
+    {
+        window.addEventListener('dragenter', this.prevent, false)
+        window.addEventListener('dragover', this.prevent, false)
+    }
+
+    prevent = e => {
+        e.preventDefault()
+    }
+
     render()
     {
         return (
-            <div className='_container'>
+            <div className='_container' onDrop={this.prevent}>
                 <NavigationView />
                 <Workspace className='app-body' direction='vertical'>
                     <Pane className='body-pane'>

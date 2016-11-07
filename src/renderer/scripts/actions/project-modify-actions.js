@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Delir from 'delir-core'
+console.log(Delir);
 const {Helper: DelirHelper, Project} = Delir
 
 import dispatcher from '../dispatcher'
@@ -35,6 +36,19 @@ export default {
                 targetCompositionId: compId,
                 patch: props,
             }
+        })
+    },
+
+    addAsset({name, mimeType, path})
+    {
+        const asset = new Project.Asset()
+        asset.name = name
+        asset.mimeType = mimeType
+        asset.path = path
+
+        dispatcher.dispatch({
+            type: ActionTypes.ADD_ASSET,
+            payload: {asset},
         })
     },
 

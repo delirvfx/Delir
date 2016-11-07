@@ -125,6 +125,9 @@ class TimelineLaneLayer extends React.Component
                     <MenuItem label='remove ' onClick={this.removeLayer.bind(null, layer.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
+                <ul>
+                    {RendererService.pluginRegistry.getPluginParametersById(this.props.layer.renderer).map(param => <li>{param.label}</li>)}
+                </ul>
             </div>
         )
     }

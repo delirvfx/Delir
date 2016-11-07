@@ -1,11 +1,12 @@
 // @flow
-import Delir from '../../index';
+import {LayerPluginBase} from '../../index'
 
-export default class CompositionLayer extends Delir.PluginBase.CustomLayerPluginBase
+console.log(LayerPluginBase);
+export default class CompositionLayer extends LayerPluginBase
 {
     static pluginDidLoad()
     {
-        
+
     }
 
 

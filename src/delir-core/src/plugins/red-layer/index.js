@@ -1,8 +1,8 @@
 // @flow
-import Delir from '../../index'
+import {LayerPluginBase} from '../../index'
 import type RenderRequest from '../../renderer/render-request'
 
-export default class REDLAYER extends Delir.PluginBase.CustomLayerPluginBase
+export default class REDLAYER extends LayerPluginBase
 {
     static pluginDidLoad()
     {

@@ -1,13 +1,14 @@
 // @flow
 import type RenderRequest from '../../renderer/render-request'
+import type {TypeDescriptor} from '../../plugin/type-descriptor'
 
-import Delir from '../../index'
+import {Type, LayerPluginBase} from '../../index'
 import fs from 'fs'
 import av from 'av'
 import Speaker from 'speaker'
 import {AudioContext} from 'web-audio-api'
 
-export default class AudioLayer extends Delir.PluginBase.CustomLayerPluginBase
+export default class AudioLayer extends LayerPluginBase
 {
     static async pluginDidLoad()
     {
@@ -15,28 +16,17 @@ export default class AudioLayer extends Delir.PluginBase.CustomLayerPluginBase
         if (typeof window === 'undefined') {
             throw new Exceptions.PluginLoadFailException('this plugin only running on Electron')
         }
-
-        // const o = {}
-        // o.context = new AudioContext
-        // o.context.outStream = new Speaker({
-        //     channels: o.context.format.numberOfChannels,
-        //     bitDepth: o.context.format.bitDepth,
-        //     sampleRate: 48000,
-        // })
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        // bufferSource.connect(o.context.destination)
-        // bufferSource.start(0)
     }
 
-    audio: HTMLAudioElement
+    static provideParameters(): TypeDescriptor
+    {
+        return Type.asset('source', {
+            label: 'Audio file',
+            mimeTypes: ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav'],
+        })
+    }
+
+    audio: any = {}
 
     constructor()
     {
@@ -44,17 +34,8 @@ export default class AudioLayer extends Delir.PluginBase.CustomLayerPluginBase
         this.audio = {}
     }
 
-    provideParameter(): {
-        [paramId: string]: ParameterTypeDescripter
-    }
-    {
-        return {}
-    }
-
     async beforeRender(preRenderReqest: Object)
     {
-        console.log(preRenderReqest)
-
         this.context = new AudioContext()
         if (this.audio.source !== preRenderReqest.parameters.source) {
             const buffer = await new Promise((resolve, reject) => this.context.decodeAudioData(
@@ -68,8 +49,6 @@ export default class AudioLayer extends Delir.PluginBase.CustomLayerPluginBase
                 buffer: buffer,
             }
         }
-
-        console.log('decoded', this.audio);
     }
 
     async render(req: RenderRequest)

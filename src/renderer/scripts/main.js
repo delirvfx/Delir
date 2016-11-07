@@ -17,7 +17,8 @@ import EditorStateActions from './actions/editor-state-actions'
 import EditorStateStore from './stores/editor-state-store'
 
 import Delir from 'delir-core'
-import {join} from 'path';
+console.log(Delir);
+import {join} from 'path'
 
 import RendererService from './services/renderer'
 import BrowserProcessProxy from './services/browser-process-proxy'
@@ -74,12 +75,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     const c2_t1_l2 = new Delir.Project.Layer
     const c2_t1_l3 = new Delir.Project.Layer
 
-    a.name = ' ✋( ͡° ͜ʖ ͡°) アッセンテ'
+    a.name = 'シャロちゃん'
+    a.mimeType = 'video/mp4'
+    a.path = '/Users/ragg/Downloads/Cv-26hmVYAEBV0p.mp4'
+
     c1.name = 'Master Composition'
     c1.width = 640
     c1.height = 360
     c1.framerate = 30
-    c1.durationFrame = 30 * 1
+    c1.durationFrame = 30 * 10
     c1.audioChannels = 2
     c1.samplingRate = 48000
 
@@ -88,10 +92,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t3.name = 'NYAN = ^ . ^ = CHENCAT'
     c1_t4.name = 'video'
 
-    c1_t1_l1.renderer = 'audio-layer'
-    c1_t1_l1.rendererOptions.source = '/Users/ragg/workspace/delir/deream_in.mp3'
+    // c1_t1_l1.renderer = 'audio-layer'
+    c1_t1_l1.renderer = 'html5-video-layer'
+    c1_t1_l1.rendererOptions.source = a
+    c1_t1_l1.rendererOptions.loop = true
     c1_t1_l1.placedFrame = 0
-    c1_t1_l1.durationFrame = 30 * 3
+    c1_t1_l1.durationFrame = 30 * 10
 
     // c1_t2_l1.renderer = 'html5-video-layer'
     c1_t2_l1.renderer = 'proton-layer'

@@ -45,6 +45,20 @@ export default class AssetsView extends React.Component
         })
     }
 
+    addAsset = e => {
+        console.log(e.dataTransfer, e.dataTransfer.files[0], e.dataTransfer.items[0]);
+
+        _.each(e.dataTransfer.files, (file, idx) => {
+            if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
+
+            ProjectModifyActions.addAsset({
+                name: file.name,
+                mimeType: file.type,
+                path: file.path,
+            })
+        })
+    }
+
     changeComposition = (compId, e) =>
     {
         EditorStateActions.changeActiveComposition(compId)
@@ -134,7 +148,7 @@ export default class AssetsView extends React.Component
                     onHide={this.makeNewComposition}
                     onResponse={this.settingComoisition}
                 />
-                <Table className='asset-list'>
+                <Table className='asset-list' onDrop={this.addAsset}>
                     <TableHeader>
                         <Row>
                             <Col resizable={false} defaultWidth='2rem'></Col>
