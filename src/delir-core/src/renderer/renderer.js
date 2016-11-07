@@ -322,17 +322,18 @@ export default class Renderer {
             // TODO: "Real time" based time calculation
             session.renderStartTime = Date.now()
 
-            let lastCountTime = Date.now()
-            let rendererd = 0
+            let fpsLastCountTime = Date.now()
+            let fpsCounter = 0
+            let currentFps = 0
+
             let lastBufferingTime = -1
-            let bufferingIntervalTime = 1
 
             notifier({state: 'Rendering started', finished: 0})
             const render = async (): any => {
-                if (Date.now() - lastCountTime > 1000) {
-                    console.log(`%d / 60fps`, rendererd)
-                    rendererd = 0
-                    lastCountTime = Date.now()
+                if (Date.now() - fpsLastCountTime > 1000) {
+                    currentFps = fpsCounter
+                    fpsCounter = 0
+                    fpsLastCountTime = Date.now()
                 }
 
                 const elapsed = (Date.now() - session.renderStartTime) / 1000
@@ -356,7 +357,7 @@ export default class Renderer {
                 //
                 bufferCanvasCtx.clearRect(0, 0, compWidth, compHeight)
                 for (const ch = 0, l = rootCompContainer.audioChannels; ch < l; ch++) {
-                    // destAudioBuffer[ch].fill(0)
+                    destAudioBuffer[ch].fill(0)
                 }
 
                 //
@@ -393,7 +394,7 @@ export default class Renderer {
 
                 if (!req.loop && session.renderedFrames >= session.durationFrames) {
                     notifier({
-                        state: `Rendering... ${session.renderedFrames} / ${session.durationFrames}`,
+                        state: `Render... ${session.renderedFrames} / ${session.durationFrames} (${currentFps} fps)`,
                         isRendering: true,
                         isAudioBuffered: isBufferingNeeded,
                         renderedFrame: session.renderedFrames,
@@ -418,14 +419,15 @@ export default class Renderer {
                 }
 
                 notifier({
-                    state: `Rendering... ${session.renderedFrames} / ${session.durationFrames}`,
+                    state: `Render... ${session.renderedFrames} / ${session.durationFrames} (${currentFps} fps)`,
                     isRendering: true,
                     isAudioBuffered: isBufferingNeeded,
                     renderedFrame: session.renderedFrames,
                     finished: session.renderedFrames / session.durationFrames,
                 })
 
-                rendererd++
+                fpsCounter++
+
                 session.renderedFrames++
                 if (! this._playingSession.playing) return
                 session.animationFrameId = requestAnimationFrame(render)
@@ -482,15 +484,15 @@ export default class Renderer {
 
             const deream = Deream.video({
                 args: {
-                    'c:v': 'libx264',
-                    'b:v': '1024k',
-                    'pix_fmt': 'yuv420p',
+                    'c:v': 'utvideo',
+                    // 'b:v': '1024k',
+                    // 'pix_fmt': 'yuv420p',
                     // 'r': rootComp.framerate,
                     // 'an': ''
                     // 'f': 'mp4',
                 },
                 inputFramerate: rootComp.framerate,
-                dest: path.join(req.tmpDir,'delir-working.mp4'),
+                dest: path.join(req.tmpDir,'delir-working.avi'),
             })
 
             await new Promise(resolve => setTimeout(resolve, 2000))
@@ -552,19 +554,29 @@ export default class Renderer {
             ])
 
             notifier({state: 'Concat and encoding...'})
-            await new Promise(resolve => {
+            await new Promise((resolve, reject) => {
                 const ffmpeg = spawn('ffmpeg', [
                     '-y',
-                    '-f',
-                    'mp4',
+                    // '-f',
+                    // 'utvideo',
                     '-i',
-                    path.join(req.tmpDir,'delir-working.mp4'),
-                    // '-vcodec',
-                    // 'copy',
+                    path.join(req.tmpDir,'delir-working.avi'),
                     '-i',
                     path.join(req.tmpDir,'delir-working.wav'),
                     // '-c:a',
                     // 'pcm_f32be',
+                    '-c:v',
+                    'libx264',
+                    '-pix_fmt',
+                    'yuv420p',
+                    // '-profile:v',
+                    // 'baseline',
+                    // '-level:v',
+                    // '3.1',
+                    '-b:v',
+                    '1024k',
+                    '-profile:a',
+                    'aac_low',
                     // '-c:a',
                     // 'libfaac',
                     // '-b:a',
@@ -572,35 +584,15 @@ export default class Renderer {
                     req.exportPath,
                 ])
 
-                ffmpeg.stdout.on('data', buffer => console.log(buffer.toString()))
-                ffmpeg.stderr.on('data', buffer => console.error(buffer.toString()))
-
-                ffmpeg.on('exit', resolve)
+                let lastMessage
+                ffmpeg.stderr.on('data', buffer => { lastMessage = buffer.toString(); console.log(buffer.toString()) })
+                ffmpeg.on('exit', code => code === 0 ? resolve() : reject(new Error(`Failed to mixing (Reason: ${lastMessage})`)))
             })
-
 
             notifier({state: 'Rendering completed'})
 
-            // const buf = new ArrayBuffer(mediaInfo.width * mediaInfo.height * 4)
-            // const view = new Uint8ClampedArray(buf)
-
-            // const VIDEO_DURATION_SEC = 1
-
-
-
-            // try { fs.unlinkSync('test.mp4') } catch (e) {}
-
-
-
-            // for (let i = 0; i < OUTPUT_FRAMES; i++) {
-            //     // ctx.fillStyle = '#' + [cRand(), cRand(), cRand()].join('')
-            //     // ctx.fillRect(0, 0, 640, 360)
-            //
-            //     let buffer = canvasToBuffer(canvas, 'image/jpeg')
-            //     encoder.stdin.write(buffer)
-            // }
-
-            // encoder.stdin.end()
+            try { fs.unlinkSync(path.join(req.tmpDir,'delir-working.mp4')) } catch (e) {}
+            try { fs.unlinkSync(path.join(req.tmpDir,'delir-working.wav')) } catch (e) {}
         })
     }
 }

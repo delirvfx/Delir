@@ -96,9 +96,11 @@ const handlers = {
 
         if (! file) return
 
+        setTimeout(() => EditorStateActions.updateProcessingState(`Rendering: Initializing`), 0)
+
         const activeComp = DelirHelper.findCompositionById(state.project, compositionId)
         if (! activeComp) {
-            EditorStateActions.updateProcessingState(`Rendering: Composition not selected`)
+            setTimeout(() => EditorStateActions.updateProcessingState(`Rendering: Composition not selected`), 0)
         } else {
             renderer.export({
                 exportPath: file,
