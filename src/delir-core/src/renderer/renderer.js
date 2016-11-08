@@ -11,7 +11,6 @@ import audioBufferToWave from 'audiobuffer-to-wav'
 import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
 import Canvas from '../abstraction/canvas'
-import NodeCanvas from 'canvas'
 
 import Project from '../project/project'
 import PluginRegistory from '../services/plugin-registory'

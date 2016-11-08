@@ -27,6 +27,14 @@ export default class HTML5VideoLayer extends LayerPluginBase
                 label: 'Loop',
                 animatable: false,
             })
+            .number('x', {
+                label: 'Position X',
+                animatable: true,
+            })
+            .number('y', {
+                label: 'Position Y',
+                animatable: true,
+            })
     }
 
     video: HTMLVideoElement
@@ -43,12 +51,12 @@ export default class HTML5VideoLayer extends LayerPluginBase
         // })
     }
 
-    onParameterChanged(newParam: Object, oldParam: Object)
-    {
-        if (newParam.sourceFile !== oldParam.sourceFile) {
-            this.video.src = newParam.sourceFile.path
-        }
-    }
+    // onParameterChanged(newParam: Object, oldParam: Object)
+    // {
+    //     if (newParam.sourceFile !== oldParam.sourceFile) {
+    //         this.video.src = newParam.sourceFile.path
+    //     }
+    // }
 
     async beforeRender(preRenderRequest: Object)
     {
@@ -94,7 +102,8 @@ export default class HTML5VideoLayer extends LayerPluginBase
         // console.log('seeked');
 
         if (ctx == null) { return }
-        ctx.drawImage(this.video, 0, 0)
+        console.log(req.parameters);
+        ctx.drawImage(this.video, req.parameters.x, req.parameters.y)
     }
 
     //

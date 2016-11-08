@@ -1,11 +1,11 @@
 // @flow
 import _ from 'lodash'
 
-export default class KeyFrame
+export default class Keyframe
 {
     static deserialize(keyframeJson: Object)
     {
-        const keyframe = new KeyFrame()
+        const keyframe = new Keyframe()
         const config = _.pick(keyframeJson.config, [
             'key',
             'value',
@@ -23,17 +23,22 @@ export default class KeyFrame
     _id: string
 
     config: {
-        key: string,
+        // propName: string,
         value: any,
         frameOnLayer: number,
-        easeInParam: Array<number>,
-        easeOutParam: Array<number>,
+        easeInParam: [number, number],
+        easeOutParam: [number, number],
+    } = {
+        value: null,
+        frameOnLayer: null,
+        easeInParam: [0, 0],
+        easeOutParam: [1, 1],
     }
 
     get id(): string { return this._id }
 
-    get key(): string { return this.config.key }
-    set key(key: string) { this.config.key = key }
+    // get propName(): string { return this.config.propName }
+    // set propName(propName: string) { this.config.propName = propName }
 
     get value(): any { return this.config.value }
     set value(value: any) { this.config.value = value }

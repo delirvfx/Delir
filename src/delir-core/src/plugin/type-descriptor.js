@@ -10,18 +10,18 @@ export type ParameterType =
     'COLOR_RGBA'    |
     'BOOL'          |
     'STRING'        |
-    'ENUM'          |
     'NUMBER'        |
     'FLOAT'         |
+    'ENUM'          |
     'LAYER'         |
     'PULSE'         |
+    'ASSET'         |
     'ARRAY'         |
-    'STRUCTURE'     |
-    'ASSET'
+    'STRUCTURE'
 
 export type ParameterTypeDescriptor = {
     type: ParameterType,
-    keyName: string,
+    propName: string,
     label: string,
     enabled: boolean,
     mimeTypes?: Array<string>,
@@ -33,108 +33,115 @@ export type ParameterTypeDescriptor = {
 export class TypeDescriptor {
     properties: Array<ParameterTypeDescriptor> = []
 
-    point2d(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    point2d(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'POINT_2D', keyName, label, enabled, animatable})
+        this.properties.push({type: 'POINT_2D', propName, label, enabled, animatable})
         return this
     }
 
-    point3d(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    point3d(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'POINT_3D', keyName, label, enabled, animatable})
+        this.properties.push({type: 'POINT_3D', propName, label, enabled, animatable})
         return this
     }
 
-    size2d(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    size2d(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'SIZE_2D', keyName, label, enabled, animatable})
+        this.properties.push({type: 'SIZE_2D', propName, label, enabled, animatable})
         return this
     }
 
-    size3d(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    size3d(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'SIZE_3D', keyName, label, enabled, animatable})
+        this.properties.push({type: 'SIZE_3D', propName, label, enabled, animatable})
         return this
     }
 
-    colorRgb(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    colorRgb(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'COLOR_RGB', keyName, label, enabled, animatable})
+        this.properties.push({type: 'COLOR_RGB', propName, label, enabled, animatable})
         return this
     }
 
-    colorRgba(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    colorRgba(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'COLOR_RGBA', keyName, label, enabled, animatable})
+        this.properties.push({type: 'COLOR_RGBA', propName, label, enabled, animatable})
         return this
     }
 
-    bool(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    bool(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'BOOL', keyName, label, enabled, animatable})
+        this.properties.push({type: 'BOOL', propName, label, enabled, animatable})
         return this
     }
 
-    string(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    string(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'STRING', keyName, label, enabled, animatable})
+        this.properties.push({type: 'STRING', propName, label, enabled, animatable})
         return this
     }
 
-    number(keyName: string, {label, enabled, animatable, mimeTypes}: {label: string, enabled: boolean, animatable: boolean})
+    number(propName: string, {label, enabled, animatable, mimeTypes}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'NUMBER', keyName, label, enabled, animatable})
+        this.properties.push({type: 'NUMBER', propName, label, enabled, animatable})
         return this
     }
 
-    enum(keyName: string, {label, enabled, selection}: {label: string, enabled: boolean, selection: Array<any>})
+    float(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'ENUM', keyName, label, enabled, selection, animatable: false})
+        this.properties.push({type: 'FLOAT', propName, label, enabled, animatable})
         return this
     }
 
-    float(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    pulse(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'FLOAT', keyName, label, enabled, animatable})
+        this.properties.push({type: 'PULSE', propName, label, enabled, animatable: false})
         return this
     }
 
-    layer(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
+    enum(propName: string, {label, enabled, selection}: {label: string, enabled: boolean, selection: Array<any>})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'LAYER', keyName, label, enabled, animatable})
+        this.properties.push({type: 'ENUM', propName, label, enabled, selection, animatable: false})
         return this
     }
 
-    asset(keyName: string, {label, enabled, mimeTypes}: {label: string, enabled: boolean, mimeTypes: Array<string>})
+    layer(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'ASSET', keyName, label, enabled, animatable: false, mimeTypes})
+        this.properties.push({type: 'LAYER', propName, label, enabled, animatable})
         return this
     }
 
-    pulse(keyName: string, {label, enabled, animatable}: {label: string, enabled: boolean})
+    asset(propName: string, {label, enabled, mimeTypes}: {label: string, enabled: boolean, mimeTypes: Array<string>})
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'PULSE', keyName, label, enabled, animatable: false})
+        this.properties.push({type: 'ASSET', propName, label, enabled, animatable: false, mimeTypes})
         return this
     }
 
-    arrayOf(keyName: string, {label, enabled}: {label: string, enabled: boolean}, type: TypeDescriptor)
+    arrayOf(propName: string, {label, enabled}: {label: string, enabled: boolean}, type: TypeDescriptor)
     {
         enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'ARRAY', keyName, subType: type, label, enabled, animatable: false})
+        this.properties.push({type: 'ARRAY', propName, subType: type, label, enabled, animatable: false})
+        return this
+    }
+
+    structure(propName: string, {label, enabled}: {label: string, enabled: boolean}, type: TypeDescriptor)
+    {
+        enabled = enabled == null ? true : enabled
+        this.properties.push({type: 'STRUCTURE', propName, subType: type, label, enabled, animatable: false})
         return this
     }
 }
@@ -146,79 +153,79 @@ export default class Type
         throw new TypeError('Type is can not constructing')
     }
 
-    static point2d(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static point2d(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).point2d(keyName, option)
+        return (new TypeDescriptor()).point2d(propName, option)
     }
 
-    static point3d(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static point3d(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).point3d(keyName, option)
+        return (new TypeDescriptor()).point3d(propName, option)
     }
 
-    static size2d(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static size2d(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).size2d(keyName, option)
+        return (new TypeDescriptor()).size2d(propName, option)
     }
 
-    static size3d(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static size3d(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).size3d(keyName, option)
+        return (new TypeDescriptor()).size3d(propName, option)
     }
 
-    static colorRgb(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static colorRgb(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).colorRgb(keyName, option)
+        return (new TypeDescriptor()).colorRgb(propName, option)
     }
 
-    static colorRgba(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static colorRgba(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).colorRgba(keyName, option)
+        return (new TypeDescriptor()).colorRgba(propName, option)
     }
 
-    static bool(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static bool(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).bool(keyName, option)
+        return (new TypeDescriptor()).bool(propName, option)
     }
 
-    static string(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static string(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).string(keyName, option)
+        return (new TypeDescriptor()).string(propName, option)
     }
 
-    static number(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static number(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).number(keyName, option)
+        return (new TypeDescriptor()).number(propName, option)
     }
 
-    static enum(keyName: string, option: {label: string, enabled: boolean, selection: Array<any>})
+    static float(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).enum(keyName, option)
+        return (new TypeDescriptor()).float(propName, option)
     }
 
-    static float(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static pulse(propName: string, option: {label: string, enabled: boolean})
     {
-        return (new TypeDescriptor()).float(keyName, option)
+        return (new TypeDescriptor()).pulse(propName, option)
     }
 
-    static layer(keyName: string, option: {label: string, enabled: boolean, animatable: boolean})
+    static enum(propName: string, option: {label: string, enabled: boolean, selection: Array<any>})
     {
-        return (new TypeDescriptor()).layer(keyName, option)
+        return (new TypeDescriptor()).enum(propName, option)
     }
 
-    static asset(keyName: string, option: {label: string, enabled: boolean, mimeTypes: Array<string>})
+    static layer(propName: string, option: {label: string, enabled: boolean, animatable: boolean})
     {
-        return (new TypeDescriptor()).asset(keyName, option)
+        return (new TypeDescriptor()).layer(propName, option)
     }
 
-    static pulse(keyName: string, option: {label: string, enabled: boolean})
+    static asset(propName: string, option: {label: string, enabled: boolean, mimeTypes: Array<string>})
     {
-        return (new TypeDescriptor()).pulse(keyName, option)
+        return (new TypeDescriptor()).asset(propName, option)
     }
 
-    static arrayOf(keyName: string, option: {label: string, enabled: boolean}, type: TypeDescriptor)
+    static arrayOf(propName: string, option: {label: string, enabled: boolean}, type: TypeDescriptor)
     {
-        return (new TypeDescriptor()).arrayOf(keyName, option, type)
+        return (new TypeDescriptor()).arrayOf(propName, option, type)
     }
 }
 
@@ -232,8 +239,8 @@ keyMirror({
     'BOOL'          : null,
     'STRING'        : null,
     'NUMBER'        : null,
-    'ENUM'          : null,
     'FLOAT'         : null,
+    'ENUM'          : null,
     'LAYER'         : null,
     'ASSET'         : null,
     'PULSE'         : null,

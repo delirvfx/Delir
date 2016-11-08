@@ -6,6 +6,7 @@ import type PreRenderingRequest from './pre-rendering-request'
 import type RenderRequest from './render-request'
 
 import _ from 'lodash'
+import KeyframeHelper from '../helper/keyframe-helper'
 import {RenderingFailedException} from '../exceptions'
 import PluginPreRenderingRequest from './plugin-pre-rendering-request'
 
@@ -17,6 +18,7 @@ export default class LayerInstanceContainer
 
     _keyframes: Array<Keyframe>
     _timeOrderKeyframes: Array<Keyframe>
+    _preCalcTable: {[propName: string]: KeyFrameSequence}
 
     _rendererInstance: Object
 
@@ -36,11 +38,6 @@ export default class LayerInstanceContainer
         // }
     }
 
-    setParameter(patch: Object)
-    {
-
-    }
-
     // getPresentParameters(): Object
     // {
     //     return {}
@@ -55,10 +52,10 @@ export default class LayerInstanceContainer
         }
 
         const options = this._layer.rendererOptions
-        const paramKeys = Renderer.provideParameters().properties
+        const paramTypes = Renderer.provideParameters()
 
         const params = {}
-        paramKeys.forEach(desc => params[desc.keyName] = options[desc.keyName] ? Object.assign({}, options[desc.keyName]) : null)
+        paramTypes.properties.forEach(desc => params[desc.propName] = options[desc.propName] ? Object.assign({}, options[desc.propName]) : null)
         Object.freeze(params)
 
         const _req = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
@@ -73,10 +70,10 @@ export default class LayerInstanceContainer
             throw new RenderingFailedException(`Failed to before rendering process for \`${Renderer.name}\` (${e.message})`, {before: e})
         }
 
-        // Sort key frames
-        this._keyframes = Array.from(this._layer.keyframes.values())
-        this._timeOrderKeyframes = this._keyframes
-            .sort((kfA, kfB) => kfA.frameOnLayer - kfB.frameOnLayer)
+        // Pre calculate keyframes
+        const keyframes = Object.assign({}, this._layer.keyframes)
+        _.each(paramTypes.properties, ({propName}) => keyframes[propName] = keyframes[propName] ? keyframes[propName] : [])
+        this._preCalcTable = KeyframeHelper.calcKeyFrames(paramTypes, keyframes, 0, req.durationFrames)
     }
 
     async render(req: RenderRequest)
@@ -84,11 +81,13 @@ export default class LayerInstanceContainer
         const closestComposition = req.parentComposition || req.rootComposition
         const placedTime = this._layer.placedFrame / closestComposition.framerate
 
+        const keyframes = _.mapValues(this._preCalcTable, propTable => propTable[req.frame])
+
         const _req = req.set({
             timeOnLayer: req.timeOnComposition - placedTime,
             frameOnLayer: req.frameOnComposition - this._layer.placedFrame,
             layerScope: this._variableScope,
-            parameters: Object.assign({}, this._layer.rendererOptions)
+            parameters: Object.assign({}, this._layer.rendererOptions, keyframes)
         })
 
         // console.log(_req.frameOnComposition, _req.timeOnComposition);

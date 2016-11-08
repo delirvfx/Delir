@@ -1,12 +1,9 @@
-[ignore]
-<PROJECT_ROOT>/node_modules/.*
-
-
 [include]
 src/delir-core/src/.*/.*.js
 
 [libs]
-
+<PROJECT_ROOT>/node_modules/
 
 [options]
+module.system.node.resolve_dirname=node_modules
 unsafe.enable_getters_and_setters=true

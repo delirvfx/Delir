@@ -38,7 +38,7 @@ export default class Layer
     }
 
     // TODO: assign ids to keyframes
-    keyframes: Set<KeyFrame> = new Set
+    keyframes: {[keyName:string]: Array<KeyFrame>} = {}
 
     get id(): string { return this._id }
 
