@@ -65,6 +65,7 @@ export default class HTML5VideoLayer extends LayerPluginBase
         this.video.loop = parameters.loop
         this.video.load()
         this.video.currentTime = -1
+        console.dir(this.video);
 
         // console.log(this.video);
         await new Promise(resolve => {
@@ -74,7 +75,7 @@ export default class HTML5VideoLayer extends LayerPluginBase
 
     async render(req: RenderRequest)
     {
-        // req.frame
+        const {parameters: param} = req
         const ctx = req.destCanvas.getContext('2d')
 
         // frame to time mapping
@@ -96,14 +97,19 @@ export default class HTML5VideoLayer extends LayerPluginBase
 
             this.video.addEventListener('seeked', waiter)
             // this.video.addEventListener('loadeddata', )
-            this.video.currentTime = req.timeOnLayer
+
+            if (param.loop) {
+                this.video.currentTime = req.timeOnLayer % this.video.duration
+            } else {
+                this.video.currentTime = req.timeOnLayer
+            }
+
             setTimeout(waiter, 1000)
         })
-        // console.log('seeked');
 
         if (ctx == null) { return }
-        console.log(req.parameters);
-        ctx.drawImage(this.video, req.parameters.x, req.parameters.y)
+        console.log(param);
+        ctx.drawImage(this.video, param.x, param.y)
     }
 
     //

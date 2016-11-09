@@ -13,7 +13,8 @@ export default class PreviewView extends React.Component
         super()
 
         this.state = {
-            project: EditorStateStore.getState()
+            project: EditorStateStore.getState(),
+            scale: 1,
         }
 
         EditorStateStore.addListener(() => {
@@ -41,6 +42,14 @@ export default class PreviewView extends React.Component
         // requestAnimationFrame(render)
     }
 
+    onWheel = e => {
+        if (!e.altKey) return
+
+        this.setState({
+            scale: Math.max(.1, Math.min(this.state.scale + (-e.deltaY / 20), 3))
+        })
+    }
+
     render()
     {
         const {project} = this.state
@@ -50,9 +59,17 @@ export default class PreviewView extends React.Component
             <Pane className='view-preview' allowFocus>
                 <div className='inner'>
                     <div className='header'>{project.activeComp && project.activeComp.name}</div>
-                    <div className='view'>
-                        <canvas ref='canvas' className='canvas' width='640' height='360' />
+                    <div className='view' onWheel={this.onWheel}>
+                        <canvas ref='canvas' className='canvas' width='640' height='360' style={{transform:`scale(${this.state.scale})`}}/>
                         <video ref='video' src='../../navcodec.mp4' style={{display:'none'}} controls loop />
+                    </div>
+                    <div className='footer'>
+                        <label>Scale</label>
+                        <select>
+                            <option value="50">50%</option>
+                            <option value="100">100%</option>
+                            <option value="120">120%</option>
+                        </select>
                     </div>
                 </div>
             </Pane>

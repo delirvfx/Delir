@@ -98,6 +98,10 @@ class TimelineLaneLayer extends React.Component
         })
     }
 
+    makeAlias = layerId =>
+    {
+    }
+
     removeLayer = layerId =>
     {
         ProjectModifyActions.removeLayer(layerId)
@@ -122,12 +126,11 @@ class TimelineLaneLayer extends React.Component
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
+                    <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, layer.id)} />
                     <MenuItem label='remove ' onClick={this.removeLayer.bind(null, layer.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
-                <ul>
-                    {RendererService.pluginRegistry.getPluginParametersById(this.props.layer.renderer).map(param => <li>{param.label}</li>)}
-                </ul>
+                <span>#{layer.id.substring(0, 4)}</span>
             </div>
         )
     }

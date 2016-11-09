@@ -106,6 +106,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t1_l1.keyframes.y = [
         Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: -300}),
     ]
+    c1_t1_l1.keyframes.loop = [
+        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: true}),
+    ]
 
     // c1_t2_l1.renderer = 'html5-video-layer'
     c1_t2_l1.renderer = 'proton-layer'
