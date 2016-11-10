@@ -25,6 +25,9 @@ export default class SelectList extends React.Component
     }
 
     onClickItem = (idx, e) => {
+        e.preventDefault()
+        e.stopPropagation()
+
         if (this.state.lastSelectedIdx === null) {
             return this.setState({lastSelectedIdx: idx, selected: [idx]})
         } else if (e.shiftKey) {

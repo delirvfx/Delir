@@ -51,11 +51,7 @@ class EditorStateStore extends ReduceStore<Object>
                 return state
             }
 
-            if (layer == null) {
-                return Object.assign({}, state, {activeLayer: null})
-            }
-
-            const targetLayer = DelirHelper.findLayerById(layerId)
+            const targetLayer = DelirHelper.findLayerById(state.project, layerId)
             return Object.assign({}, state, {activeLayer: targetLayer})
         },
 

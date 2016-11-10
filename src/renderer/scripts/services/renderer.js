@@ -26,15 +26,14 @@ const handlers = {
     {
         if (! state.project) return
 
-        if (renderer.isPlaying()) {
-            renderer.pause()
-            return
-        }
-
         const targetComposition = DelirHelper.findCompositionById(state.project, compositionId)
 
         if (! targetComposition) return
         if (! renderer) return
+        if (renderer.isPlaying) {
+            renderer.pause()
+            return
+        }
 
         audioBuffer = audioContext.createBuffer(
             targetComposition.audioChannels,
@@ -48,9 +47,6 @@ const handlers = {
 
         renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer.getChannelData(idx)))
 
-        if (renderer.isPlaying()) {
-            renderer.pause()
-        }
 
         let promise = renderer.render({
             beginFrame: 0,

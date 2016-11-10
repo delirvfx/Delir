@@ -18,7 +18,7 @@ const buildUrl = (filepath, query) => {
 export default class WindowComponent extends React.Component
 {
     static propTypes = {
-        children: PropTypes.element.isRequired,
+        // children: PropTypes.element.isRequired,
         show: PropTypes.bool.isRequired,
         url: PropTypes.string.isRequired,
         width: PropTypes.number,

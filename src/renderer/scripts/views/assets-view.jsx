@@ -14,8 +14,11 @@ import Pane from './components/pane'
 import LabelInput from './components/label-input'
 import SelectList from './components/select-list'
 import {Table, TableHeader, TableBodySelectList, Row, Col} from './components/table'
-import {ContextMenu, MenuItem} from '../electron/context-menu'
-import ModalWindow from '../electron/modal-window'
+import {ContextMenu, MenuItem} from './electron/context-menu'
+import ModalWindow from './electron/modal-window'
+
+import NewCompositionWindow from './modal-windows/new-composition-window'
+import SettingCompositionWindow from './modal-windows/setting-composition-window'
 
 export default class AssetsView extends React.Component
 {
@@ -131,17 +134,15 @@ export default class AssetsView extends React.Component
 
         return (
             <Pane className='view-assets' allowFocus>
-                <ModalWindow
+                <NewCompositionWindow
                     show={this.state.newCompositionWindowOpened}
-                    url='new-composition.html'
                     width={400}
                     height={350}
-                    onHide={this.makeNewComposition}
-                    onResponse={this.makeNewComposition}
+                    onHide={this.props.makeNewComposition}
+                    onResponse={this.props.makeNewComposition}
                 />
-                <ModalWindow
+                <SettingCompositionWindow
                     show={this.state.settingCompositionWindowOpened}
-                    url='setting-composition.html'
                     width={400}
                     height={350}
                     query={this.state.settingCompositionQuery}

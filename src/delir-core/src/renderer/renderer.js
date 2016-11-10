@@ -115,18 +115,22 @@ export default class Renderer {
     }) {
         options.pluginRegistry && (this._pluginRegistry = options.pluginRegistry)
         options.project && (this._project = options.project)
+    }
 
-        // if (typeof window !== 'undefined') {
-        //     this.audioCtx = new AudioContext()
-        // } else {
-        //     this.audioCtx = new (require('node-web-audio-api'))
-        // }
+    get isPlaying()
+    {
+        return !!(this._playingSession && this._playingSession.playing)
+    }
 
-        // this.audioBufferNode = this.audioCtx.createScriptProcessor(4096)
-        // this.audioBufferNode.onaudioprocess = (e) => {
-        //     console.log(inputBuffer);
-        //     e.outputBuffer = e.inputBuffer
-        // }
+    pause()
+    {
+        if (this._playingSession.animationFrameId === null) return
+        cancelAnimationFrame(this._playingSession.animationFrameId)
+
+        if (this._playingSession) {
+            this._playingSession.renderedFrames = 0
+            this._playingSession.playing = false
+        }
     }
 
     setProject(project: Project)
@@ -388,8 +392,7 @@ export default class Renderer {
                     }
                 }
 
-                // console.log(session.renderedFrames = elapsed * rootCompWrap.framerate)
-                // session.lastRenderedFrame = req.beginFrame + session.renderedFrames
+                session.lastRenderedFrame = req.beginFrame + session.renderedFrames
 
                 if (!req.loop && session.renderedFrames >= session.durationFrames) {
                     notifier({
@@ -434,22 +437,6 @@ export default class Renderer {
 
             session.animationFrameId = requestAnimationFrame(render)
         })
-    }
-
-    isPlaying()
-    {
-        return this._playingSession && this._playingSession.playing
-    }
-
-    pause()
-    {
-        if (this._playingSession.animationFrameId === null) return
-        cancelAnimationFrame(this._playingSession.animationFrameId)
-
-        if (this._playingSession) {
-            this._playingSession.renderedFrames = 0
-            this._playingSession.playing = false
-        }
     }
 
     export(req: {

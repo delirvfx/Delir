@@ -1,7 +1,5 @@
 import _ from 'lodash'
-import Delir from 'delir-core'
-console.log(Delir);
-const {Helper: DelirHelper, Project} = Delir
+import Delir, {Helper as DelirHelper, Project} from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'

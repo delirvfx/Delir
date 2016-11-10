@@ -150,6 +150,11 @@ export function compileRendererJs(done) {
                     exclude: /(node_modules|bower_components)/,
                     query: JSON.parse(fs.readFileSync('./.babelrc')),
                 },
+                {
+                    test: /\.styl?$/,
+                    loaders: ['stylus', 'css?modules'],
+                    exclude: /(node_modules|bower_components)/,
+                },
             ]
         },
         plugins: [
@@ -197,7 +202,7 @@ export function copyFonts() {
 }
 
 export function copyImage() {
-    return g.src(join(paths.src.renderer, "images/**.{png}"))
+    return g.src(join(paths.src.renderer, "images/*"))
         .pipe(g.dest(join(paths.compiled.renderer, "images")));
 }
 

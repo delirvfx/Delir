@@ -65,7 +65,6 @@ export default class HTML5VideoLayer extends LayerPluginBase
         this.video.loop = parameters.loop
         this.video.load()
         this.video.currentTime = -1
-        console.dir(this.video);
 
         // console.log(this.video);
         await new Promise(resolve => {
@@ -90,13 +89,8 @@ export default class HTML5VideoLayer extends LayerPluginBase
         // this.video.pause()
 
         await new Promise((resolve, reject) => {
-            const waiter = e => {
-                resolve()
-                this.video.removeEventListener('seeked', waiter)
-            }
-
-            this.video.addEventListener('seeked', waiter)
-            // this.video.addEventListener('loadeddata', )
+            const waiter = e => resolve()
+            this.video.addEventListener('seeked', waiter, {once: true})
 
             if (param.loop) {
                 this.video.currentTime = req.timeOnLayer % this.video.duration
@@ -108,7 +102,6 @@ export default class HTML5VideoLayer extends LayerPluginBase
         })
 
         if (ctx == null) { return }
-        console.log(param);
         ctx.drawImage(this.video, param.x, param.y)
     }
 
