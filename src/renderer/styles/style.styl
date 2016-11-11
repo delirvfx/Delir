@@ -127,9 +127,13 @@ html, body
 ._input
 ._label-input
 ._drag-number-input
+    display inline-block
+    min-width 1rem
+    min-height 1em
+
+    font-family inherit
     background-color transparent
     color inherit
-    font-family inherit
     outline none
 
     border none
@@ -142,8 +146,20 @@ html, body
         user-select none
         cursor default
 
+[type='checkbox']
+    width 1em
+    height 1em
+
+    border none
+    background-color #fff
+
+    -webkit-appearance none
+
+    &:checked
+        background-color #007dff
+
 ._drag-number-input
-    // text-align right
+    text-align right
 
     color #ff7a00
     border-bottom 1px dotted #ff7a00

@@ -93,7 +93,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t4.name = 'video'
 
     // c1_t1_l1.renderer = 'audio-layer'
-    c1_t1_l1.renderer = 'html5-video-layer'
+    // c1_t1_l1.renderer = 'html5-video-layer'
+    c1_t1_l1.renderer = 'plane'
     c1_t1_l1.rendererOptions.source = a
     c1_t1_l1.rendererOptions.loop = true
     c1_t1_l1.placedFrame = 0
@@ -115,7 +116,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t2_l1.placedFrame = 0
     c1_t2_l1.durationFrame = 30 * 10
 
-    c1_t3_l1.renderer = 'red-layer'
+    c1_t3_l1.renderer = 'plane'
     c1_t3_l1.placedFrame = 0
     c1_t3_l1.durationFrame = 30 * 10
 

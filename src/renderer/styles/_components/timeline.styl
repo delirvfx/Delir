@@ -23,7 +23,7 @@
     .timeline-labels-container
         display flex
         flex-direction column
-        width 180px
+        width 220px
         flex none
         background-color hsl(0, 0%, 10%)
 
@@ -46,8 +46,8 @@
             flex-wrap wrap
             width 100%
             height 24px
-            padding 2px
-            padding-left 4px
+            // padding 2px
+            // padding-left 4px
             border-bottom 1px solid rgba(#fff, .1)
             line-height 1.6
             vertical-align middle
@@ -61,15 +61,32 @@
 
             .timeline_lane-prop
                 display flex
+                height 24px
                 justify-content space-between
                 text-indent 1rem
 
-                // .timeline_lane-prop_label
-                // .timeline_lane-prop_inputs
+                .timeline_lane-prop_label
+                    width 40%
+                    text-overflow ellipsis
+                    white-space nowrap
+
+                .timeline_lane-prop_inputs
+                    flex 1
+
+                    ._drag-number-input
+                        width 4rem
+                    .separator
+                        width 1rem
 
         .timeline_lane-label_col
             // display table-cell
             display inline-block
+            padding 2px 0
+
+            &:first-child
+                padding-left 2px
+            &:last-child
+                padding-right 2px
 
             &.--col-name
                 // width 100px

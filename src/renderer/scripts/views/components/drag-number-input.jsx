@@ -115,13 +115,11 @@ export default class DragNumberInput extends React.Component
     render()
     {
         return (
-            <input
+            <span
                 ref='input'
                 type='text'
                 tabIndex='-1'
                 className={classnames('_drag-number-input', this.props.className)}
-                name={this.props.name}
-                value={this.state.value}
                 placeholder={this.props.placeholder}
                 readOnly={this.state.readOnly}
                 onMouseDown={this.onMouseDown}
@@ -129,7 +127,9 @@ export default class DragNumberInput extends React.Component
                 onMouseUp={this.onMouseUp}
                 onChange={this.valueChanged}
                 onKeyDown={this.onKeyDown}
-            />
+            >
+                {this.state.value}
+            </span>
         )
     }
 }

@@ -142,7 +142,7 @@ class TimelineLaneLayer extends React.Component
 class TimelineLane extends React.Component
 {
     static propTypes = {
-        lane: PropTypes.object.isRequired,
+        timelane: PropTypes.object.isRequired,
         framerate: PropTypes.number.isRequired,
         scale: PropTypes.number.isRequired,
     }
@@ -180,13 +180,13 @@ class TimelineLane extends React.Component
 
         const data = JSON.parse(e.dataTransfer.getData('application/json'))
         const {layerId} = data
-        let isChildLayer = !! _.find(Array.from(this.props.lane.layers.values()), {id: layerId})
+        let isChildLayer = !! _.find(Array.from(this.props.timelane.layers.values()), {id: layerId})
 
         if (data.type !== 'delir/drag-layer' || isChildLayer) {
             return
         }
 
-        ProjectModifyActions.moveLayerToTimelane(data.layerId, this.props.lane.id)
+        ProjectModifyActions.moveLayerToTimelane(data.layerId, this.props.timelane.id)
     }
 
     onDragLeave(e)
@@ -222,9 +222,9 @@ class TimelineLane extends React.Component
 
     render()
     {
-        const {lane} = this.props
+        const {timelane} = this.props
         const {activeLayer} = this.state.editorState
-        const layers = Array.from(lane.layers.values())
+        const layers = Array.from(timelane.layers.values())
         const plugins = this._plugins
 
         return (
@@ -233,7 +233,7 @@ class TimelineLane extends React.Component
                     dragover: this.state.dragovered,
                     '--expand': layers.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1,
                 })}
-                data-lane-id={lane.id}
+                data-lane-id={timelane.id}
                 onDragOver={this.onDragOver.bind(this)}
                 onDragLeave={this.onDragLeave.bind(this)}
                 onDrop={this.onDrop.bind(this)}
@@ -453,8 +453,13 @@ export default class TimelineView extends React.Component
                                 <MenuItem label='Add new timelane' onClick={this.addNewTimelane} />
                                 <MenuItem type='separator' />
                             </ContextMenu>
-                            {timelineLanes.map(lane => (
-                                <TimelineLane key={lane.id} lane={lane} framerate={framerate} scale={this.state.scale} />
+                            {timelineLanes.map(timelane => (
+                                <TimelineLane
+                                    key={timelane.id}
+                                    timelane={timelane}
+                                    framerate={framerate}
+                                    scale={this.state.scale}
+                                />
                             ))}
                         </ul>
                     </Pane>

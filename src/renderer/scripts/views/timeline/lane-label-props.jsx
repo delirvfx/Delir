@@ -17,7 +17,7 @@ export default class LaneLabelProps extends React.Component
             <ul className='timeline_lane-props'>
                 {descriptor.map((prop, idx) => (
                     <li key={idx} className='timeline_lane-prop'>
-                        <span>{prop.label}</span>
+                        <div className='timeline_lane-prop_label'>{prop.label}</div>
                         <PropInput type={prop.type} />
                     </li>
                 ))}
@@ -47,13 +47,13 @@ class PropInput extends React.Component
     {
         let inputs
         switch (this.props.type) {
-            case 'POINT_2D': inputs = [<DragNumberInput />, ',', <DragNumberInput />]; break;
-            case 'POINT_3D': inputs = [<DragNumberInput />, ',', <DragNumberInput />, ',', <DragNumberInput />]; break;
-            case 'SIZE_2D': inputs = [<DragNumberInput />, 'x', <DragNumberInput />]; break;
-            case 'SIZE_3D': inputs = [<DragNumberInput />, 'x', <DragNumberInput />, 'x', <DragNumberInput />]; break;
-            case 'COLOR_RGB': inputs = [<LabelInput />] ; break;
-            case 'COLOR_RGBA': inputs = [<input type='color' />]  ; break;
-            case 'BOOL': inputs = [<input type='checkbox' />]; break;
+            case 'POINT_2D': inputs = [<DragNumberInput />, <span className='separator'>,</span>, <DragNumberInput />]; break;
+            case 'POINT_3D': inputs = [<DragNumberInput />, <span className='separator'>,</span>, <DragNumberInput />, <span className='separator'>,</span>, <DragNumberInput />]; break;
+            case 'SIZE_2D': inputs = [<DragNumberInput />, <span className='separator'>x</span>, <DragNumberInput />]; break;
+            case 'SIZE_3D': inputs = [<DragNumberInput />, <span className='separator'>x</span>, <DragNumberInput />, <span className='separator'>x</span>, <DragNumberInput />]; break;
+            case 'COLOR_RGB': inputs = [<input type='color' defaultValue='' />] ; break;
+            case 'COLOR_RGBA': inputs = [<input type='color' defaultValue='' />]  ; break;
+            case 'BOOL': inputs = [<input type='checkbox' defaultValue=''/>]; break;
             case 'STRING': inputs = [<textarea />] ; break;
             case 'NUMBER': inputs =  [<DragNumberInput defaultValue={0} />] ; break;
             // case 'FLOAT': inputs =  ; break;
@@ -65,8 +65,8 @@ class PropInput extends React.Component
         }
 
         return (
-            <div>
-                {Children.map(inputs, el => el)}
+            <div className='timeline_lane-prop_inputs'>
+                {inputs}
             </div>
         )
     }
