@@ -71,6 +71,12 @@ export default class WindowComponent extends React.Component
     {
     }
 
+    shouldComponentUpdate(nextProps, nextState)
+    {
+        if (this.props.url !== nextProps.url || this.props.query !== nextProps.query) return true
+        return false
+    }
+
     componentWillUnmount()
     {
         this.window.destroy()

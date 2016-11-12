@@ -22,7 +22,7 @@ export default class AudioLayer extends LayerPluginBase
     {
         return Type.asset('source', {
             label: 'Audio file',
-            mimeTypes: ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav'],
+            mimeTypes: ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/mp3'],
         })
     }
 
@@ -34,18 +34,19 @@ export default class AudioLayer extends LayerPluginBase
         this.audio = {}
     }
 
-    async beforeRender(preRenderReqest: Object)
+    async beforeRender(preRenderRequest: Object)
     {
         this.context = new AudioContext()
-        if (this.audio.source !== preRenderReqest.parameters.source) {
+
+        if (this.audio.source !== preRenderRequest.parameters.source.path) {
             const buffer = await new Promise((resolve, reject) => this.context.decodeAudioData(
-                fs.readFileSync(preRenderReqest.parameters.source),
+                fs.readFileSync(preRenderRequest.parameters.source.path),
                 resolve,
                 reject,
             ));
 
             this.audio = {
-                source: preRenderReqest.parameters.source,
+                source: preRenderRequest.parameters.source.path,
                 buffer: buffer,
             }
         }
@@ -53,15 +54,18 @@ export default class AudioLayer extends LayerPluginBase
 
     async render(req: RenderRequest)
     {
+        return await this.renderAudio(req)
+    }
+
+    async renderAudio(req: RenderRequest)
+    {
         if (!req.isBufferingFrame) return
 
         console.info('put buffer');
         const destBuffers = req.destAudioBuffer
         const begin = (req.seconds|0) * req.samplingRate
         const end = begin + req.neededSamples
-        console.log(begin, end);
-
-        for (const ch = 0, l = req.audioChannels; ch < l; ch++) {
+        for (let ch = 0, l = req.audioChannels; ch < l; ch++) {
             const buffer = this.audio.buffer.getChannelData(ch)
             destBuffers[ch].set(buffer.slice(begin, end))
         }

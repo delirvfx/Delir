@@ -60,6 +60,7 @@ export default class Renderer {
         return renderer.render({
             beginFrame: req.beginFrame,
             targetCompositionId: req.rootCompId,
+            throttle: false,
         })
     }
 
@@ -235,6 +236,7 @@ export default class Renderer {
         beginFrame: number,
         endFrame: number,
         loop: boolean,
+        throttle: boolean,
         targetCompositionId: string,
     }) : Promise
     {
@@ -244,9 +246,12 @@ export default class Renderer {
             onAbort: Function,
             notifier: Function,
         ) => {
+            const waitNotify = () => new Promise(resolve => setTimeout(resolve))
             let aborted = false
             onAbort(() => aborted = true)
+
             notifier({state: 'Assertion', finished: 0})
+            await waitNotify()
 
             if (this._project == null) throw new RenderingFailedException(`project must be set before rendering.`)
             if (this._pluginRegistry == null) throw new RenderingFailedException(`pluginRegistry must be set before rendering`)
@@ -264,6 +269,7 @@ export default class Renderer {
             this._playingSession.playing = true
 
             notifier({state: 'Initialize renderers', finished: 0})
+            await waitNotify()
 
             //
             // Caching
@@ -293,6 +299,9 @@ export default class Renderer {
             // Before rendering
             //
             try {
+                notifier({state: 'Initialize plugins', finished: 0})
+                await waitNotify()
+
                 await rootCompContainer.beforeRender(new PreRenderingRequest({
                     width: baseRequest.width,
                     height: baseRequest.height,
@@ -310,7 +319,7 @@ export default class Renderer {
 
                 console.log('end before render');
             } catch (e) {
-                throw new Error(e.stack)
+                throw e
             }
 
             if (session == null) {
@@ -332,7 +341,11 @@ export default class Renderer {
             let lastBufferingTime = -1
 
             notifier({state: 'Rendering started', finished: 0})
-            const render = async (): any => {
+            await waitNotify()
+
+            // throttle時にframerate以上のfpsが出てしまうのでMath.ceilで小数点切り上げ分実行間隔を広げる
+            const throttleTimeMs = req.throttle ? Math.ceil(1000 / baseRequest.framerate) : 0
+            const render = _.throttle(async (): any => {
                 if (Date.now() - fpsLastCountTime > 1000) {
                     currentFps = fpsCounter
                     fpsCounter = 0
@@ -341,6 +354,7 @@ export default class Renderer {
 
                 const elapsed = (Date.now() - session.renderStartTime) / 1000
                 const currentTime = session.renderedFrames / rootCompContainer.framerate
+                const currentTimeForNotify = (Math.round(currentTime * 10) / 10).toFixed(1)
                 const isBufferingNeeded = lastBufferingTime !== (currentTime|0) && (session.renderedFrames + 1) <= session.durationFrames
                 // console.log(isBufferingNeeded, lastBufferingTime, currentTime);
 
@@ -396,7 +410,7 @@ export default class Renderer {
 
                 if (!req.loop && session.renderedFrames >= session.durationFrames) {
                     notifier({
-                        state: `Render... ${session.renderedFrames} / ${session.durationFrames} (${currentFps} fps)`,
+                        state: `Render... time: ${currentTimeForNotify} frames: ${session.renderedFrames} / ${session.durationFrames} (${currentFps} fps${req.throttle ? ' / throttled' : ''})`,
                         isRendering: true,
                         isAudioBuffered: isBufferingNeeded,
                         renderedFrame: session.renderedFrames,
@@ -421,7 +435,7 @@ export default class Renderer {
                 }
 
                 notifier({
-                    state: `Render... ${session.renderedFrames} / ${session.durationFrames} (${currentFps} fps)`,
+                    state: `Render... time: ${currentTimeForNotify} frames: ${session.renderedFrames} / ${session.durationFrames} (${currentFps} fps${req.throttle ? ' / throttled' : ''})`,
                     isRendering: true,
                     isAudioBuffered: isBufferingNeeded,
                     renderedFrame: session.renderedFrames,
@@ -433,7 +447,7 @@ export default class Renderer {
                 session.renderedFrames++
                 if (! this._playingSession.playing) return
                 session.animationFrameId = requestAnimationFrame(render)
-            }
+            }, throttleTimeMs)
 
             session.animationFrameId = requestAnimationFrame(render)
         })

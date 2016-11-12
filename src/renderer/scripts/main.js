@@ -58,8 +58,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     //
     // const p = app.project = Delir.Project.Project.deserialize(fs.readFileSync(file))
 
+    const durationFrames = 30 * 10
     const p = app.project = new Delir.Project.Project()
     const a = new Delir.Project.Asset
+    const a2 = new Delir.Project.Asset
     const c1 = new Delir.Project.Composition
     const c2 = new Delir.Project.Composition
     const c1_t1 = new Delir.Project.TimeLane
@@ -77,13 +79,18 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     a.name = 'シャロちゃん'
     a.mimeType = 'video/mp4'
-    a.path = '/Users/ragg/Downloads/Cv-26hmVYAEBV0p.mp4'
+    // a.path = '/Users/ragg/Downloads/Cv-26hmVYAEBV0p.mp4'
+    a.path = '/Users/ragg/workspace/delir/navcodec.mp4'
+
+    a2.name = 'Audio'
+    a2.mimeType = 'audio/mp3'
+    a2.path = '/Users/ragg/workspace/delir/_deream_in.mp3'
 
     c1.name = 'Master Composition'
     c1.width = 640
     c1.height = 360
     c1.framerate = 30
-    c1.durationFrame = 30 * 2
+    c1.durationFrame = durationFrames
     c1.audioChannels = 2
     c1.samplingRate = 48000
 
@@ -93,12 +100,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t4.name = 'video'
 
     // c1_t1_l1.renderer = 'audio-layer'
-    // c1_t1_l1.renderer = 'html5-video-layer'
-    c1_t1_l1.renderer = 'plane'
+    c1_t1_l1.renderer = 'html5-video-layer'
+    // c1_t1_l1.renderer = 'plane'
     c1_t1_l1.rendererOptions.source = a
     c1_t1_l1.rendererOptions.loop = true
     c1_t1_l1.placedFrame = 0
-    c1_t1_l1.durationFrame = 30 * 10
+    c1_t1_l1.durationFrame = durationFrames
 
     c1_t1_l1.keyframes.x = [
         Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: 0}),
@@ -112,9 +119,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     ]
 
     // c1_t2_l1.renderer = 'html5-video-layer'
-    c1_t2_l1.renderer = 'proton-layer'
+    c1_t2_l1.renderer = 'audio-layer'
+    // c1_t2_l1.renderer = 'proton-layer'
+    c1_t2_l1.rendererOptions.source = a2
     c1_t2_l1.placedFrame = 0
-    c1_t2_l1.durationFrame = 30 * 10
+    c1_t2_l1.durationFrame = durationFrames
 
     c1_t3_l1.renderer = 'plane'
     c1_t3_l1.placedFrame = 0
@@ -126,6 +135,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t4_l1.durationFrame = 30 * 10
 
     p.assets.add(a)
+    p.assets.add(a2)
     p.compositions.add(c1)
 
     c1.timelanes.add(c1_t1)
@@ -134,7 +144,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.timelanes.add(c1_t4)
 
     c1_t1.layers.add(c1_t1_l1)
-    // c1_t2.layers.add(c1_t2_l1)
+    c1_t2.layers.add(c1_t2_l1)
     // c1_t3.layers.add(c1_t3_l1)
     // c1_t3.layers.add(c1_t4_l1)
 
@@ -142,14 +152,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     p.compositions.add(c2)
 
     c2.timelanes.add(c2_t1)
-    c2_t1.layers.add(c2_t1_l1)
-    c2_t1_l1.placedFrame = 20
+    // c2_t1.layers.add(c2_t1_l1)
+    // c2_t1_l1.placedFrame = 20
 
     c2_t1.layers.add(c2_t1_l2)
     c2_t1_l2.placedFrame = 40
 
-    c2_t1.layers.add(c2_t1_l3)
-    c2_t1_l3.placedFrame = 100
+    // c2_t1.layers.add(c2_t1_l3)
+    // c2_t1_l3.placedFrame = 100
 
     // c1_t1_l1.keyframes.add(new Delir.Project.Keyframe)
 

@@ -154,6 +154,7 @@ export default class AssetsView extends React.Component
                         <Row>
                             <Col resizable={false} defaultWidth='2rem'></Col>
                             <Col defaultWidth='10rem'>名前</Col>
+                            <Col defaultWidth='5rem'>種類</Col>
                         </Row>
                     </TableHeader>
                     <TableBodySelectList>
@@ -175,6 +176,7 @@ export default class AssetsView extends React.Component
                                         placeholder='Unnamed Asset'
                                     />
                                 </Col>
+                                <Col>{asset.mimeType}</Col>
                             </Row>
                         ))}
                     </TableBodySelectList>

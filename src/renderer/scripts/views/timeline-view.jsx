@@ -145,6 +145,7 @@ class TimelineLane extends React.Component
         timelane: PropTypes.object.isRequired,
         framerate: PropTypes.number.isRequired,
         scale: PropTypes.number.isRequired,
+        activeLayer: PropTypes.object.isRequired,
     }
 
     removers = []
@@ -158,12 +159,12 @@ class TimelineLane extends React.Component
         this.state = {
             dragovered: false,
             pxPerSec: 30,
-            editorState: EditorStateStore.getState(),
+            // editorState: EditorStateStore.getState(),
         }
 
-        this.removers.push(EditorStateStore.addListener(() => {
-            this.setState({editorState: EditorStateStore.getState()})
-        }))
+        // this.removers.push(EditorStateStore.addListener(() => {
+        //     this.setState({editorState: EditorStateStore.getState()})
+        // }))
     }
 
     componentWillUnmount()
@@ -222,8 +223,7 @@ class TimelineLane extends React.Component
 
     render()
     {
-        const {timelane} = this.props
-        const {activeLayer} = this.state.editorState
+        const {timelane, activeLayer} = this.props
         const layers = Array.from(timelane.layers.values())
         const plugins = this._plugins
 
@@ -286,6 +286,7 @@ class TimelineLane extends React.Component
 class TimelineGradations extends React.Component
 {
     static propTypes = {
+        activeProject: PropTypes.object.isRequired,
         cursorHeight: PropTypes.number.isRequired,
     }
 
@@ -307,10 +308,9 @@ class TimelineGradations extends React.Component
 
     updateCursor = () =>
     {
-        const {project} = EditorStateStore.getState()
         const renderer = RendererService.renderer
 
-        if (project && renderer.isPlaying) {
+        if (this.props.activeProject && renderer.isPlaying) {
             this.setState({
                 left: TimelaneHelper.framesToPixel({
                     pxPerSec: 30,
@@ -348,11 +348,11 @@ export default class TimelineView extends React.Component
             cursorHeight: 0,
             scale: 1,
             selectedLaneId: null,
-            ..._.pick(EditorStateStore.getState(), ['project', 'activeComp']),
+            ..._.pick(EditorStateStore.getState(), ['project', 'activeComp', 'activeLayer']),
         }
 
         EditorStateStore.addListener(() => {
-            this.setState(_.pick(EditorStateStore.getState(), ['project', 'activeComp']))
+            this.setState(_.pick(EditorStateStore.getState(), ['project', 'activeComp', 'activeLayer']))
         })
 
         ProjectModifyStore.addListener(() => {
@@ -410,7 +410,7 @@ export default class TimelineView extends React.Component
 
     render()
     {
-        const {project, activeComp, scale} = this.state
+        const {project, activeComp, scale, activeLayer} = this.state
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.timelanes.values()) : []
 
@@ -445,6 +445,7 @@ export default class TimelineView extends React.Component
                             cursorHeight={this.state.cursorHeight}
                             framerate={framerate}
                             scale={this.state.scale}
+                            activeProject={project}
                         />
 
                         <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
@@ -459,6 +460,7 @@ export default class TimelineView extends React.Component
                                     timelane={timelane}
                                     framerate={framerate}
                                     scale={this.state.scale}
+                                    activeLayer={activeLayer}
                                 />
                             ))}
                         </ul>

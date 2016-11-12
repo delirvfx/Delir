@@ -26,6 +26,7 @@ const handlers = {
     {
         if (! state.project) return
 
+        console.log('accept');
         const targetComposition = DelirHelper.findCompositionById(state.project, compositionId)
 
         if (! targetComposition) return
@@ -47,13 +48,15 @@ const handlers = {
 
         renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer.getChannelData(idx)))
 
-
+        console.log('begin render');
         let promise = renderer.render({
             beginFrame: 0,
             targetCompositionId: compositionId,
+            throttle: true,
         })
 
         promise.progress(progress => {
+            console.info(progress.state);
             EditorStateActions.updateProcessingState(`Preview: ${progress.state}`)
 
             if (progress.isAudioBuffered) {

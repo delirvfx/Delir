@@ -99,8 +99,8 @@ export default class RenderRequest
             RenderRequest._permitKeys.concat(RenderRequest._permitOnlyInitializeKey)
         )
 
-        Object.assign(this, props);
-        Object.freeze(this);
+        Object.assign(this, props)
+        Object.freeze(this)
     }
 
     /**
