@@ -106,7 +106,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t1_l1.rendererOptions.source = a
     c1_t1_l1.rendererOptions.loop = true
     c1_t1_l1.placedFrame = 0
-    c1_t1_l1.durationFrame = durationFrames
+    c1_t1_l1.durationFrames = durationFrames
 
     c1_t1_l1.keyframes.x = [
         Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: 0, easeOutParam: [1, -0.03]}),
@@ -125,16 +125,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     // c1_t2_l1.renderer = 'proton-layer'
     c1_t2_l1.rendererOptions.source = a2
     c1_t2_l1.placedFrame = 0
-    c1_t2_l1.durationFrame = durationFrames
+    c1_t2_l1.durationFrames = durationFrames
 
     c1_t3_l1.renderer = 'plane'
     c1_t3_l1.placedFrame = 0
-    c1_t3_l1.durationFrame = 30 * 10
+    c1_t3_l1.durationFrames = 30 * 10
 
     c1_t4_l1.renderer = 'html5-video-layer'
     c1_t4_l1.rendererOptions.source = 'file:///Users/ragg/workspace/delir/sample.mp4'
     c1_t4_l1.placedFrame = 0
-    c1_t4_l1.durationFrame = 30 * 10
+    c1_t4_l1.durationFrames = 30 * 10
 
     p.assets.add(a)
     p.assets.add(a2)

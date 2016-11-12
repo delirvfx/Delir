@@ -248,11 +248,11 @@ class TimelineLane extends React.Component
                             scale: this.props.scale,
                         };
                         const width = TimelaneHelper.framesToPixel({
-                            durationFrame: layer.durationFrame|0,
+                            durationFrames: layer.durationFrames|0,
                             ...opt,
                         })
                         const left = TimelaneHelper.framesToPixel({
-                            durationFrame: layer.placedFrame|0,
+                            durationFrames: layer.placedFrames|0,
                             ...opt,
                         })
 
@@ -305,7 +305,7 @@ class TimelineGradations extends React.Component
                 left: TimelaneHelper.framesToPixel({
                     pxPerSec: 30,
                     framerate: this.props.framerate,
-                    durationFrame: renderer.session.lastRenderedFrame,
+                    durationFrames: renderer.session.lastRenderedFrame,
                     scale: this.props.scale,
                 }),
             })

@@ -11,7 +11,7 @@ export default class Layer
             'renderer',
             'rendererOptions',
             'placedFrame',
-            'durationFrame',
+            'durationFrames',
             'keyframeInterpolationMethod',
         ])
 
@@ -31,13 +31,13 @@ export default class Layer
         renderer: ?string,
         rendererOptions: ?Object,
         placedFrame: ?number,
-        durationFrame: ?number,
+        durationFrames: ?number,
         keyframeInterpolationMethod: string,
     } = {
         renderer: null,
         rendererOptions: {},
         placedFrame: null,
-        durationFrame: null,
+        durationFrames: null,
         keyframeInterpolationMethod: 'linear',
     }
 
@@ -55,8 +55,11 @@ export default class Layer
     get placedFrame(): number { return this.config.placedFrame }
     set placedFrame(placedFrame: number) { this.config.placedFrame = placedFrame }
 
-    get durationFrame(): number { return this.config.durationFrame }
-    set durationFrame(durationFrame: number) { this.config.durationFrame = durationFrame }
+    get durationFrame(): number { throw new Error('layer.durationFrame is discontinuance.') }
+    set durationFrame(durationFrames: number) { throw new Error('layer.durationFrame is discontinuance.') }
+
+    get durationFrames(): number { return this.config.durationFrames }
+    set durationFrames(durationFrames: number) { this.config.durationFrames = durationFrames }
 
     get keyframeInterpolationMethod(): string { return this.config.keyframeInterpolationMethod }
     set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { this.config.keyframeInterpolationMethod = keyframeInterpolationMethod }

@@ -8,15 +8,15 @@ export default class TimelaneHelper
     static framesToPixel({
         pxPerSec,
         framerate,
-        durationFrame,
+        durationFrames,
         scale,
     }: {
         pxPerSec: number,
         framerate: number,
-        durationFrame: number,
+        durationFrames: number,
         scale: number,
     }) {
-        return (durationFrame / framerate) * pxPerSec * (scale || 1)
+        return (durationFrames / framerate) * pxPerSec * (scale || 1)
     }
 
     /**

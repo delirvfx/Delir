@@ -24,7 +24,7 @@ export default class LayerInstanceContainer
     _rendererInstance: Object
 
     get placedFrame(): number { return this._layer.placedFrame }
-    get durationFrame(): number { return this._layer.durationFrame }
+    get durationFrames(): number { return this._layer.durationFrames }
 
     constructor(layer : Layer)
     {
