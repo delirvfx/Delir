@@ -85,7 +85,7 @@ export default class Project
     toPreBSON()
     {
         return {
-            formatVersion: 0,
+            formatVersion: 'v0.0.0',
             symbolIds: Array.from(this._symbolIds),
             assets: Array.from(this.assets.values()).map(asset => asset.toPreBSON()),
             compositions: Array.from(this.compositions.values()).map(comp => comp.toPreBSON()),
@@ -95,6 +95,7 @@ export default class Project
     toJSON()
     {
         return {
+            formatVersion: 'v0.0.0',
             symbolIds: Array.from(this._symbolIds),
             assets: Array.from(this.assets.values()).map(asset => asset.toJSON()),
             compositions: Array.from(this.compositions.values()).map(comp => comp.toJSON()),

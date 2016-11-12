@@ -5,6 +5,8 @@ import type {
     ParameterTypeDescriptor
 } from '../plugin/type-descriptor'
 
+import bezierEasing from 'bezier-easing'
+
 type KeyFrameLink = {
     previous: ?KeyFrame,
     active: KeyFrame,
@@ -84,7 +86,7 @@ export default class KeyframeHelper
         keyFrameSequense: Array<KeyFrame>,
         beginFrame: number,
         calcFrames: number,
-        calculater: (rate: number, frame: number, keyFrameLink: KeyFrameLink) => any
+        transformer: (rate: number, frame: number, keyFrameLink: KeyFrameLink) => any
     ): KeyFrameSequence
     {
         const orderedSequense: Array<KeyFrame> = keyFrameSequense.slice(0).sort((kfA, kfB) => kfA.frameOnLayer - kfB.frameOnLayer)
@@ -111,8 +113,14 @@ export default class KeyframeHelper
                 continue
             }
 
+            const currentKeyEaseOut = activeKeyFrame.active.easeOutParam ? activeKeyFrame.active.easeOutParam : [0, 1]
+            const nextKeyEaseIn = activeKeyFrame.next.easeInParam ? activeKeyFrame.next.easeInParam : [1, 0]
+            // TODO: Cache Bezier instance between change active keyframe
+            const bezier = bezierEasing(...currentKeyEaseOut, ...nextKeyEaseIn)
+
             const progressRate = (frame - activeKeyFrame.active.frameOnLayer) / (activeKeyFrame.next.frameOnLayer - activeKeyFrame.active.frameOnLayer)
-            table[frame] = calculater(progressRate, frame, activeKeyFrame)
+            table[frame] = transformer(bezier(progressRate), frame, activeKeyFrame)
+            console.log(bezier(progressRate));
         }
 
         return table

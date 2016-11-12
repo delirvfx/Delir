@@ -51,6 +51,7 @@
   "dependencies": {
     "arraybuffer-to-buffer": "0.0.4",
     "audiobuffer-to-wav": "^1.0.0",
+    "bezier-easing": "^2.0.3",
     "bson": "^0.5.5",
     "canvas": "^1.6.1",
     "duplexer3": "^0.1.4",

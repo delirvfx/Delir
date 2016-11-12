@@ -29,12 +29,14 @@ export default class Layer
         renderer: ?string,
         rendererOptions: ?Object,
         placedFrame: ?number,
-        durationFrame: ?number
+        durationFrame: ?number,
+        keyframeInterpolationMethod: string,
     } = {
         renderer: null,
         rendererOptions: {},
         placedFrame: null,
         durationFrame: null,
+        keyframeInterpolationMethod: 'linear',
     }
 
     // TODO: assign ids to keyframes
@@ -53,6 +55,9 @@ export default class Layer
 
     get durationFrame(): number { return this.config.durationFrame }
     set durationFrame(durationFrame: number) { this.config.durationFrame = durationFrame }
+
+    get keyframeInterpolationMethod(): string { return this.config.keyframeInterpolationMethod }
+    set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { this.config.keyframeInterpolationMethod = keyframeInterpolationMethod }
 
     toPreBSON(): Object
     {

@@ -27,10 +27,13 @@ export default class NavigationView extends React.Component
     {
         return (
             <Pane className='view-navigation' resizable={false}>
-                <ul className='window-nav'>
-                    <li className='window-nav-item window-nav--close'></li>
-                    <li className='window-nav-item window-nav--minimize'></li>
-                    <li className='window-nav-item window-nav--maximize'></li>
+                <ul className='window-nav' style={{textAlign: 'center'}}>
+                    {/*
+                        // TODO: Check support for windows
+                        <li className='window-nav-item window-nav--close'></li>
+                        <li className='window-nav-item window-nav--minimize'></li>
+                        <li className='window-nav-item window-nav--maximize'></li>
+                    */}
                 </ul>
                 <ul className='navigation-items'>
                     <li onClick={this.onClickPlay}><i className='fa fa-play' /></li>

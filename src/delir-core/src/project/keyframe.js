@@ -25,14 +25,14 @@ export default class Keyframe
     config: {
         // propName: string,
         value: any,
-        frameOnLayer: number,
+        frameOnLayer: ?number,
         easeInParam: [number, number],
         easeOutParam: [number, number],
     } = {
         value: null,
         frameOnLayer: null,
-        easeInParam: [0, 0],
-        easeOutParam: [1, 1],
+        easeInParam: [1, 0],
+        easeOutParam: [0, 1],
     }
 
     get id(): string { return this._id }

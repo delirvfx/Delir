@@ -58,7 +58,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     //
     // const p = app.project = Delir.Project.Project.deserialize(fs.readFileSync(file))
 
-    const durationFrames = 30 * 10
+    const durationFrames = 30 * 3
     const p = app.project = new Delir.Project.Project()
     const a = new Delir.Project.Asset
     const a2 = new Delir.Project.Asset
@@ -79,12 +79,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     a.name = 'シャロちゃん'
     a.mimeType = 'video/mp4'
-    // a.path = '/Users/ragg/Downloads/Cv-26hmVYAEBV0p.mp4'
-    a.path = '/Users/ragg/workspace/delir/navcodec.mp4'
+    a.path = '/Users/ragg/Downloads/Cv-26hmVYAEBV0p.mp4'
+    // a.path = '/Users/ragg/workspace/delir/navcodec.mp4'
 
     a2.name = 'Audio'
     a2.mimeType = 'audio/mp3'
-    a2.path = '/Users/ragg/workspace/delir/_deream_in.mp3'
+    // a2.path = '/Users/ragg/workspace/delir/_deream_in.mp3'
+    a2.path = '/Users/ragg/workspace/delir/deream_in.mp3'
 
     c1.name = 'Master Composition'
     c1.width = 640
@@ -108,9 +109,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t1_l1.durationFrame = durationFrames
 
     c1_t1_l1.keyframes.x = [
-        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: 0}),
-        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 60, value: 100}),
+        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: 0, easeOutParam: [1, -0.03]}),
+        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: durationFrames - 10, value: 900, easeInParam: [1, .09]}),
     ]
+
     c1_t1_l1.keyframes.y = [
         Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: -300}),
     ]
@@ -167,6 +169,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         React.createElement(AppComponent, {}, []),
         document.querySelector('#root')
     )
+
+    document.querySelector('#loading').style.display = 'none'
 
     EditorStateActions.setActiveProject(p)
 

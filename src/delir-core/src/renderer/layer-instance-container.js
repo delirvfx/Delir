@@ -20,9 +20,8 @@ export default class LayerInstanceContainer
     _timeOrderKeyframes: Array<Keyframe>
     _preCalcTable: {[propName: string]: KeyFrameSequence}
 
+    _rendererClass: Class<CustomLayerPluginBase>
     _rendererInstance: Object
-
-    // parameters : {[propertyId: string]: Object}
 
     get placedFrame(): number { return this._layer.placedFrame }
     get durationFrame(): number { return this._layer.durationFrame }
@@ -30,12 +29,6 @@ export default class LayerInstanceContainer
     constructor(layer : Layer)
     {
         this._layer = layer
-        // this._baseClass = contain
-
-        // this.parameters = Object.create(null)
-        // this.parameters.transform = {
-        //     dimention: ''
-        // }
     }
 
     // getPresentParameters(): Object
@@ -45,35 +38,43 @@ export default class LayerInstanceContainer
 
     async beforeRender(req: PreRenderingRequest)
     {
-        // initialize renderer
-        const Renderer = req.resolver.resolvePlugin(this._layer.renderer)
-        if (Renderer == null) {
-            throw new RenderingFailedException(`Failed to load Renderer plugin \`${this._layer.renderer}\``)
+        // Resolve renderers
+        if (! this._rendererInstance) {
+            const Renderer = req.resolver.resolvePlugin(this._layer.renderer)
+
+            if (Renderer == null) {
+                throw new RenderingFailedException(`Failed to load Renderer plugin \`${this._layer.renderer}\``)
+            }
+
+            this._rendererClass = Renderer
+            this._rendererInstance = new Renderer
         }
 
-        const options = this._layer.rendererOptions
-        const paramTypes = Renderer.provideParameters()
+        // Build renderer initialization requests
+        const receiveOptions = this._layer.rendererOptions
+        const paramTypes = this._rendererClass.provideParameters()
 
         const params = {}
-        paramTypes.properties.forEach(desc => params[desc.propName] = options[desc.propName] ? Object.assign({}, options[desc.propName]) : null)
+        paramTypes.properties.forEach(desc => params[desc.propName] = receiveOptions[desc.propName] ? Object.assign({}, receiveOptions[desc.propName]) : null)
         Object.freeze(params)
 
-        const _req = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
+        const preRenderReq = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
             layerScope: this._variableScope,
             parameters: params,
         })
 
-        this._rendererInstance = new Renderer
+        // initialize
         try {
-            await this._rendererInstance.beforeRender(_req)
+            await this._rendererInstance.beforeRender(preRenderReq)
         } catch (e) {
-            throw new RenderingFailedException(`Failed to before rendering process for \`${Renderer.name}\` (${e.message})`, {before: e})
+            throw new RenderingFailedException(`Failed to before rendering process for \`${this._rendererClass.name}\` (${e.message})`, {before: e})
         }
 
-        // Pre calculate keyframes
+        // Pre calculate keyframe interpolation
         const keyframes = Object.assign({}, this._layer.keyframes)
         _.each(paramTypes.properties, ({propName}) => keyframes[propName] = keyframes[propName] ? keyframes[propName] : [])
         this._preCalcTable = KeyframeHelper.calcKeyFrames(paramTypes, keyframes, 0, req.durationFrames)
+        console.log(this._preCalcTable);
     }
 
     async render(req: RenderRequest)
@@ -90,10 +91,6 @@ export default class LayerInstanceContainer
             parameters: Object.assign({}, this._layer.rendererOptions, keyframes)
         })
 
-        // console.log(_req.frameOnComposition, _req.timeOnComposition);
-        // console.log(this, this._rendererInstance);
-        // console.time(`Render: ${this._layer.renderer}`)
         await this._rendererInstance.render(_req)
-        // console.timeEnd(`Render: ${this._layer.renderer}`)
     }
 }

@@ -73,7 +73,8 @@ const install = async () => {
         )
 
         const window = new BrowserWindow({
-            frame: false,
+            // frame: false,
+            titleBarStyle: 'hidden',
             // transparent: true,
             webPreferences: {
                 webgl: true,
