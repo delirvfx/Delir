@@ -3,28 +3,11 @@ import _ from 'lodash'
 import ProxySet from './_proxy-set'
 
 import Project from './project'
-import TimeLane from './timelane'
+import Timelane from './timelane'
 import Layer from './layer'
 
 export default class Composition
 {
-    static _timelanesProxySetHandler = composition => ({
-        add: (add, timelanes, [value: TimeLane]) => {
-            if (composition._project == null) {
-                throw new Error('TimeLane must be added to Composition after add Project')
-            }
-
-            if (! (value instanceof TimeLane)) {
-                throw new TypeError('composition.timelanes only add to TimeLane object')
-            }
-
-            value._id = composition._project._generateAndReserveSymbolId()
-            value._comp = composition
-
-            return add.call(timelanes, value)
-        }
-    })
-
     static deserialize(compJson: Object, project: Project)
     {
         const comp = new Composition
@@ -38,19 +21,17 @@ export default class Composition
             'audioChannels',
         ])
 
-        const timelanes = compJson.timelanes.map(lane => TimeLane.deserialize(lane))
+        const timelanes = compJson.timelanes.map(lane => Timelane.deserialize(lane))
 
-        comp._id = compJson.id
-        comp._project = project
-        comp.timelanes = new ProxySet(timelanes, Composition._timelanesProxySetHandler(comp))
+        Object.defineProperty(comp, 'id', {value: compJson.id})
+        comp.timelanes = new Set(timelanes)
         Object.assign(comp.config, config)
         return comp
     }
 
-    _id: string
-    _project: ?Project
+    id: string
 
-    timelanes : ProxySet<TimeLane> = new ProxySet([], Composition._timelanesProxySetHandler(this))
+    timelanes : Set<TimeLane> = new Set
 
     config : {
         name: ?string,
@@ -87,9 +68,9 @@ export default class Composition
     set framerate(framerate: number) { this.config.framerate = framerate }
 
     /** @deprecated */
-    get durationFrame(): number { return this.config.durationFrames }
+    get durationFrame(): any { throw new Error('composition.durationFrame is discontinuance.') }
     /** @deprecated */
-    set durationFrame(durationFrames: number) { this.config.durationFrames = durationFrames }
+    set durationFrame(durationFrames: number) { throw new Error('composition.durationFrame is discontinuance.') }
 
     get durationFrames(): number { return this.config.durationFrames }
     set durationFrames(durationFrames: number) { this.config.durationFrames = durationFrames }
@@ -98,7 +79,12 @@ export default class Composition
     set samplingRate(samplingRate: number) { this.config.samplingRate = samplingRate }
 
     get audioChannels(): number { return this.config.audioChannels }
-    set audioChannels(audioChannels: number) { console.log(audioChannels);this.config.audioChannels = audioChannels }
+    set audioChannels(audioChannels: number) { this.config.audioChannels = audioChannels }
+
+    constructor()
+    {
+        Object.seal(this)
+    }
 
     toPreBSON(): Object
     {

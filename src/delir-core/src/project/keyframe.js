@@ -7,20 +7,19 @@ export default class Keyframe
     {
         const keyframe = new Keyframe()
         const config = _.pick(keyframeJson.config, [
-            'key',
             'value',
             'frameOnLayer',
             'easeInParam',
             'easeOutParam',
         ])
 
-        keyframe._id = keyframeJson.id
+        Object.defineProperty(keyframe, 'id', {value: keyframeJson.id})
         keyframe.config = config
 
         return keyframe
     }
 
-    _id: string
+    id: string
 
     config: {
         // propName: string,
@@ -35,7 +34,7 @@ export default class Keyframe
         easeOutParam: [0, 1],
     }
 
-    get id(): string { return this._id }
+    // get id(): string { return this._id }
 
     // get propName(): string { return this.config.propName }
     // set propName(propName: string) { this.config.propName = propName }
@@ -51,6 +50,11 @@ export default class Keyframe
 
     get easeOutParam(): Array<number> { return this.config.easeOutParam }
     set easeOutParam(easeOutParam: Array<number>) { this.config.easeOutParam = easeOutParam }
+
+    constructor()
+    {
+        Object.seal(this)
+    }
 
     toPreBSON(): Object
     {

@@ -9,34 +9,6 @@ import Composition from './composition'
 
 export default class Project
 {
-    static _assetsProxySetHandler = project => ({
-        add: (add, assets, [value: Assets]): any => {
-            if (! value instanceof Asset) {
-                throw new TypeError('project.assets only add to Asset object')
-            }
-
-            value._id = project._generateAndReserveSymbolId()
-            value._project = project
-
-            return add.call(assets, value)
-        },
-        // TODO: delete, clear
-    })
-
-    static _compositionsProxySetHandler = project => ({
-        add: (add, compositions, [value: Composition]): any => {
-            if (! value instanceof Composition) {
-                throw new TypeError('project.compositions only add to Composition object')
-            }
-
-            value._id = project._generateAndReserveSymbolId()
-            value._project = project
-
-            return add.call(compositions, value)
-        },
-        // TODO: delete, clear
-    })
-
     static deserialize(projectBson: Buffer)
     {
         const projectJson = (new BSONPure.BSON()).deserialize(projectBson)
@@ -46,18 +18,18 @@ export default class Project
         const assets = projectJson.assets.map(assetJson => Asset.deserialize(assetJson))
         const compositions = projectJson.compositions.map(compJson => Composition.deserialize(compJson, project))
 
-        project._symbolIds = new Set(symbolIds)
-        project.assets = new ProxySet(assets, Project._assetsProxySetHandler(project))
-        project.compositions = new ProxySet(compositions, Project._compositionsProxySetHandler(project))
+        project.symbolIds = new Set(symbolIds)
+        project.assets = new Set(assets)
+        project.compositions = new Set(compositions)
 
         return project
     }
 
-    _symbolIds: Set<string> = new Set()
+    symbolIds: Array<string> // Set<string> = new Set()
 
-    assets: ProxySet<Asset> = new ProxySet([], Project._assetsProxySetHandler(this))
+    assets: Set<Asset> = new Set
 
-    compositions: ProxySet<Composition> = new ProxySet([], Project._compositionsProxySetHandler(this))
+    compositions: Set<Composition> = new Set
 
     // _commandHistory: []
 
@@ -70,6 +42,9 @@ export default class Project
     //     const bson = new BSONPure.BSON()
     //     return new Document()
     // }
+    /**
+     * @deprecated
+     */
     _generateAndReserveSymbolId(): string
     {
         let id

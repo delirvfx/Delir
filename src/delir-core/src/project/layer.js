@@ -1,6 +1,6 @@
 // @flow
 import _ from 'lodash'
-import KeyFrame from './keyframe'
+import Keyframe from './keyframe'
 
 import Time from './time'
 
@@ -14,16 +14,20 @@ export default class Layer
             'rendererOptions',
             'placedFrame',
             'durationFrame',
+            'keyframeInterpolationMethod',
         ])
-        const keyframes = layerJson.keyframes.map(keyframe => KeyFrame.deserialize(keyframe))
 
-        layer._id = layerJson.id
+        const keyframes = _.map(layerJson.keyframes, keyframes => {
+            return new Set(keyframes.map(keyframe => Keyframe.deserialize(keyframe)))
+        })
+
+        Object.defineProperty(layer, 'id', {value: layerJson.id})
         Object.assign(layer.config, config)
-        layer.keyframes = new Set(keyframes)
+        layer.keyframes = keyframes
         return layer
     }
 
-    _id: string
+    id: string
 
     config: {
         renderer: ?string,
@@ -40,9 +44,9 @@ export default class Layer
     }
 
     // TODO: assign ids to keyframes
-    keyframes: {[keyName:string]: Array<KeyFrame>} = {}
+    keyframes: {[keyName:string]: Set<Keyframe>} = {}
 
-    get id(): string { return this._id }
+    // get id(): string { return this._id }
 
     get renderer(): string { return this.config.renderer }
     set renderer(renderer: string) { this.config.renderer = renderer }
@@ -59,12 +63,17 @@ export default class Layer
     get keyframeInterpolationMethod(): string { return this.config.keyframeInterpolationMethod }
     set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { this.config.keyframeInterpolationMethod = keyframeInterpolationMethod }
 
+    constructor()
+    {
+        Object.seal(this)
+    }
+
     toPreBSON(): Object
     {
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            keyframes: Array.from(this.keyframes.values()).map(keyframe => keyframe.toPreBSON()),
+            keyframes: _.map(this.keyframes, keyframe => keyframe.toPreBSON()),
         }
     }
 
@@ -73,7 +82,7 @@ export default class Layer
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            keyframes: Array.from(this.keyframes.values()).map(keyframe => keyframe.toJSON()),
+            keyframes: _.map(this.keyframes, keyframe => keyframe.toPreBSON()),
         }
     }
 }
