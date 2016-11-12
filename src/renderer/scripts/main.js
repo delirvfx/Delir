@@ -91,7 +91,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.width = 640
     c1.height = 360
     c1.framerate = 30
-    c1.durationFrame = durationFrames
+    c1.durationFrames = durationFrames
     c1.audioChannels = 2
     c1.samplingRate = 48000
 
