@@ -21,7 +21,7 @@ import EntityResolver from './entity-resolver'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 
-import * as Helper from '../helper/helper'
+import * as Helper from '../helper/project-helper'
 import ProgressPromise from '../helper/progress-promise'
 
 import {RenderingFailedException} from '../exceptions/'

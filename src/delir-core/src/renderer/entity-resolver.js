@@ -4,7 +4,7 @@ import type Asset from '../project/asset'
 import type Composition from '../project/composition'
 import type PluginRegistory from '../services/plugin-registory'
 
-import * as Helper from '../helper/helper';
+import * as Helper from '../helper/project-helper'
 
 export default class EntityResolver
 {
