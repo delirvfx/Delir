@@ -2,8 +2,6 @@
 import _ from 'lodash'
 import Keyframe from './keyframe'
 
-import Time from './time'
-
 export default class Layer
 {
     static deserialize(layerJson: Object)
