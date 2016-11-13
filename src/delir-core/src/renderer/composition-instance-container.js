@@ -4,7 +4,6 @@ import type PreRenderingRequest from './pre-rendering-request'
 import type RenderRequest from './render-request'
 import type LayerInstanceContainer from './layer-instance-container'
 
-import Canvas from '../abstraction/canvas'
 import TimelaneInstanceContainer from './timelane-instance-container'
 
 export default class CompositionInstanceContainer
@@ -52,7 +51,7 @@ export default class CompositionInstanceContainer
 
         // Render timelanes
         const dests = await Promise.all(this._timelanes.map(async layer => {
-            const destCanvas = new Canvas()
+            const destCanvas = document.createElement('canvas')
             destCanvas.width = _req.destCanvas.width
             destCanvas.height = _req.destCanvas.height
 

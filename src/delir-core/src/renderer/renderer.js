@@ -10,8 +10,6 @@ import canvasToBuffer from 'electron-canvas-to-buffer'
 import audioBufferToWave from 'audiobuffer-to-wav'
 import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
-import Canvas from '../abstraction/canvas'
-
 import Project from '../project/project'
 import PluginRegistory from '../services/plugin-registory'
 
@@ -178,7 +176,7 @@ export default class Renderer {
         //
         // Destinations
         //
-        const bufferCanvas: HTMLCanvasElement = new Canvas()
+        const bufferCanvas: HTMLCanvasElement = document.createElement('canvas')
         const ctx = bufferCanvas.getContext('2d')
 
         bufferCanvas.width = rootComp.width
