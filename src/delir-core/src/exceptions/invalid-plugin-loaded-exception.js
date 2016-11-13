@@ -1,11 +1,4 @@
 // @flow
-export default class InvalidPluginLoadedException extends Error
-{
-    info : ?Object
+import DelirException from './delir-exception'
 
-    constructor(message: string, info: ?Object)
-    {
-        super(message)
-        this.info = info
-    }
-}
+export default class InvalidPluginLoadedException extends DelirException {}
