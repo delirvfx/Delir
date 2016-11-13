@@ -10,8 +10,6 @@
         "transform-flow-strip-types",
         "transform-es2015-modules-commonjs",
         "transform-class-properties",
-        "transform-es2015-block-scoping",
-        "transform-es2015-block-scoped-functions",
         "transform-es2015-classes",
         "transform-es2015-destructuring",
         "transform-react-jsx",
