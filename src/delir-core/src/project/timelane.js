@@ -21,9 +21,7 @@ export default class TimeLane
         return timelane
     }
 
-    id: string
-    _comp: ?Composition
-
+    id: ?string = null
     layers: Set<Layer> = new Set()
 
     config: {

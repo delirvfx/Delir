@@ -25,7 +25,7 @@ export default class Layer
         return layer
     }
 
-    id: string
+    id: ?string = null
 
     config: {
         renderer: ?string,

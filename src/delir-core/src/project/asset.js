@@ -11,7 +11,7 @@ export default class Asset
         return asset
     }
 
-    _id: string
+    id: string = null
 
     _config: {
         mimeType: string,
@@ -24,8 +24,6 @@ export default class Asset
         path: null,
         data: null,
     }
-
-    get id(): string { return this._id }
 
     get mimeType(): string { return this._config.mimeType }
     set mimeType(mimeType: string) { this._config.mimeType = mimeType }

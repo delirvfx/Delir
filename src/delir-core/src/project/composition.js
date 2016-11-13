@@ -29,7 +29,7 @@ export default class Composition
         return comp
     }
 
-    id: string
+    id: string = null
 
     timelanes : Set<TimeLane> = new Set
 
@@ -52,8 +52,6 @@ export default class Composition
         samplingRate: null,
         audioChannels: null,
     }
-
-    get id(): string { return this._id }
 
     get name(): string { return this.config.name }
     set name(name: string) { this.config.name = name }

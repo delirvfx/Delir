@@ -19,7 +19,7 @@ export default class Keyframe
         return keyframe
     }
 
-    id: string
+    id: ?string = null
 
     config: {
         // propName: string,
