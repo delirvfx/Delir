@@ -74,7 +74,6 @@ export default class LayerInstanceContainer
         const keyframes = Object.assign({}, this._layer.keyframes)
         _.each(paramTypes.properties, ({propName}) => keyframes[propName] = keyframes[propName] ? keyframes[propName] : [])
         this._preCalcTable = KeyframeHelper.calcKeyFrames(paramTypes, keyframes, 0, req.durationFrames)
-        console.log(this._preCalcTable);
     }
 
     async render(req: RenderRequest)
