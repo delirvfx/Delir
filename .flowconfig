@@ -1,5 +1,5 @@
 [include]
-src/delir-core/src/.*/.*.js
+<PROJECT_ROOT>/src/
 
 [libs]
 <PROJECT_ROOT>/node_modules/
@@ -7,3 +7,4 @@ src/delir-core/src/.*/.*.js
 [options]
 module.system.node.resolve_dirname=node_modules
 unsafe.enable_getters_and_setters=true
+module.name_mapper='^delir-core$' -> '<PROJECT_ROOT>/src/delir-core/src/index.js'
