@@ -2,6 +2,7 @@
 Thumbs.db
 npm-debug.log
 
+/src/delir-core/src/plugins/proton-layer
 /node_modules
 /prepublish
 /release
