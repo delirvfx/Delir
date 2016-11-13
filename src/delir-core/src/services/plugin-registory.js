@@ -77,7 +77,7 @@ export default class PluginRegistory
                 packageInfo.class.pluginDidLoad()
                 packageInfo.parameters = packageInfo.class.provideParameters()
             } catch (e) {
-                throw new PluginLoadFailException(`Failed to requiring plugin \`${id}\`. ${e.message}`)
+                throw new PluginLoadFailException(`Failed to requiring plugin \`${id}\`. (${e.message})`, {before: e})
             }
         })
 
