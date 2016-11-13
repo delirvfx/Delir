@@ -1,8 +1,8 @@
+// @flow
 import _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
 
-import Delir from 'delir-core'
-const {Helper: DelirHelper} = Delir
+import Delir, {ProjectHelper} from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
@@ -31,11 +31,11 @@ class ProjectModifyStore extends ReduceStore<Object>
         //     return state
         // },
 
-        [ActionTypes.ADD_ASSET](state, {asset})
+        [ActionTypes.ADD_ASSET](state, {asset}): Object
         {
             if (! state.project) return state
 
-            state.project.assets.add(asset)
+            ProjectHelper.addAsset(state.project, asset)
             return Object.assign({}, state)
         },
 
@@ -43,8 +43,7 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-            state.project.compositions.add(composition)
-
+            ProjectHelper.addComposition(state.project, composition)
             return Object.assign({}, state)
         },
 
@@ -52,7 +51,7 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-             const targetComp = DelirHelper.findCompositionById(state.project, targetCompositionId)
+             const targetComp = ProjectHelper.findCompositionById(state.project, targetCompositionId)
             targetComp.timelanes.add(timelane)
 
             return Object.assign({}, state)
@@ -62,7 +61,7 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-            const targetTimelane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
+            const targetTimelane = ProjectHelper.findTimelaneById(state.project, targetTimelaneId)
             targetTimelane.layers.add(layer)
 
             return Object.assign({}, state)
@@ -78,7 +77,7 @@ class ProjectModifyStore extends ReduceStore<Object>
             _patch.framerate != null && (_patch.framerate = _patch.framerate|0)
             _patch.durationFrame != null && (_patch.durationFrame = _patch.durationFrame|0)
 
-            const targetComposition = DelirHelper.findCompositionById(state.project, targetCompositionId)
+            const targetComposition = ProjectHelper.findCompositionById(state.project, targetCompositionId)
             Object.assign(targetComposition, _patch)
 
             return Object.assign({}, state)
@@ -88,8 +87,8 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-            const targetTimelane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
-            const timelaneHolderComp = DelirHelper.findParentCompositionByTimelaneId(state.project, targetTimelaneId)
+            const targetTimelane = ProjectHelper.findTimelaneById(state.project, targetTimelaneId)
+            const timelaneHolderComp = ProjectHelper.findParentCompositionByTimelaneId(state.project, targetTimelaneId)
             timelaneHolderComp.timelanes.delete(targetLayer)
 
             return Object.assign({}, state)
@@ -99,8 +98,8 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-            const targetLayer = DelirHelper.findLayerById(state.project, targetLayerId)
-            const layerHolderTimelane = DelirHelper.findParentTimelaneByLayerId(state.project, targetLayerId)
+            const targetLayer = ProjectHelper.findLayerById(state.project, targetLayerId)
+            const layerHolderTimelane = ProjectHelper.findParentTimelaneByLayerId(state.project, targetLayerId)
             layerHolderTimelane.layers.delete(targetLayer)
 
             return Object.assign({}, state)
@@ -110,9 +109,9 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-            const targetLayer = DelirHelper.findLayerById(state.project, layerId)
-            const sourceLane = DelirHelper.findParentTimelaneByLayerId(state.project, layerId)
-            const destLane = DelirHelper.findTimelaneById(state.project, targetTimelaneId)
+            const targetLayer = ProjectHelper.findLayerById(state.project, layerId)
+            const sourceLane = ProjectHelper.findParentTimelaneByLayerId(state.project, layerId)
+            const destLane = ProjectHelper.findTimelaneById(state.project, targetTimelaneId)
 
             sourceLane.layers.delete(targetLayer)
             destLane.layers.add(targetLayer)
