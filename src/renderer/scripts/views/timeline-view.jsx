@@ -267,7 +267,12 @@ class TimelineLane extends React.Component
                         )
                     })}
                 </div>
-                <LaneKeyframes keyframes={keyframes && keyframes[tmpKey] ? keyframes[tmpKey] : []} pxPerSec={this.state.pxPerSec} />
+                <LaneKeyframes
+                    height={100}
+                    pxPerSec={this.state.pxPerSec}
+                    framerate={this.props.framerate}
+                    keyframes={keyframes && keyframes[tmpKey] ? keyframes[tmpKey] : []}
+                />
             </li>
         )
     }
