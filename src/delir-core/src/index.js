@@ -5,7 +5,7 @@ import * as Abstraction from './abstraction/index'
 import * as Services from './services'
 import LayerPluginBase from './plugin/base/custom-layer-plugin-base'
 import Type from './plugin/type-descriptor'
-import * as Helper from './helper/project-helper'
+import * as ProjectHelper from './helper/project-helper'
 import * as Exception from './exceptions/index'
 
 export * as Project from './project/index'
@@ -14,7 +14,7 @@ export * as Abstraction from './abstraction/index'
 export * as Services from './services'
 export LayerPluginBase from './plugin/base/custom-layer-plugin-base'
 export Type from './plugin/type-descriptor'
-export * as Helper from './helper/project-helper'
+export * as ProjectHelper from './helper/project-helper'
 export * as Exception from './exceptions/index'
 
 export default {
@@ -25,5 +25,5 @@ export default {
     Exception,
     LayerPluginBase,
     Type,
-    Helper,
+    ProjectHelper,
 }

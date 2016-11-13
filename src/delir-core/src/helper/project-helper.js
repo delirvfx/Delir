@@ -19,15 +19,29 @@ function _generateAndReserveSymbolId(project: Project): string
 
     do {
         id = uuid.v4()
-    } while (project._symbolIds.includes(id))
+    } while (project.symbolIds.includes(id))
 
-    project._symbolIds.add(id)
+    project.symbolIds.add(id)
     return id
 }
 
 //
 // Create
 //
+export function createAddAsset(
+    project: Project,
+    assetProps: Object = {}
+) {
+    const entityId = _generateAndReserveSymbolId(project)
+    const asset = new asset()
+
+    setFreezedProp(asset, 'id', entityId)
+    Object.assign(asset, assetProps)
+    project.assets.add(asset)
+
+    return asset
+}
+
 export function createAddComposition(
     project: Project,
     compositionProps: Object = {}
@@ -110,6 +124,21 @@ export function createAddKeyFrame(
 //
 // Add
 //
+export function addAsset(
+    project: Project,
+    asset: Asset,
+) {
+    if (typeof asset.id !== 'string') {
+        // TODO: Clone instance
+        const entityId = _generateAndReserveSymbolId(project)
+        setFreezedProp(asset, 'id', entityId)
+    }
+
+    project.assets.add(asset)
+
+    return asset
+}
+
 export function addComposition(
     project: Project,
     composition: Composition
@@ -190,9 +219,22 @@ export function addKeyFrame(
     return keyframe
 }
 
+
+
 //
 // Delete
 //
+export function deleteAsset(
+    project: Project,
+    targetAssetId: Asset|string,
+) {
+    const asset = asset instanceof Asset
+        ? asset
+        : findAssetById(project, targetAssetId)
+
+    project.assets.delete(asset)
+}
+
 export function deleteComposition(
     project: Project,
     targetCompositionId: Composition|string,
@@ -236,10 +278,85 @@ export function deleteKeyframe(
 ) {
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId
-        : findKeyframeById(project, targetKeyframeId) // TODO: Implement this function
+        : findKeyframeById(project, targetKeyframeId)
 
     const {layer, propName} = findParentLayerAndPropNameByKeyframeId(project, keyframe.id)
     layer.keyframes[propName].delete(keyframe) // TODO: Implement this function Or change keyframe structure
+}
+
+//
+// Modify
+//
+export function modifyAsset(
+    project: Project,
+    targetAssetId: Asset|string,
+    patch: Object
+) {
+    const asset = targetAssetId instanceof Asset
+        ? targetAssetId
+        : findAssetById(project, targetAssetId)
+
+    Object.assign(asset, patch)
+}
+
+export function modifyComposition(
+    project: Project,
+    targetCompositionId: Composition|string,
+    patch: Object
+) {
+    const composition = targetAssetId instanceof Composition
+        ? targetCompositionId
+        : findCompositionById(project, targetCompositionId)
+
+    Object.assign(composition, patch)
+}
+
+export function modifyTimelane(
+    project: Project,
+    targetTimelaneId: Timelane|string,
+    patch: Object
+) {
+    const timelane = targetTimelaneId instanceof Timelane
+        ? targetTimelaneId
+        : findTimelaneById(project, targetTimelaneId)
+
+    Object.assign(timelane, patch)
+}
+
+export function modifyTimelaneId(
+    project: Project,
+    targetTimelaneId: Timelane|string,
+    patch: Object
+) {
+    const asset = targetTimelaneId instanceof Timelane
+        ? targetTimelaneId
+        : findTimelaneById(project, targetTimelaneId)
+
+    Object.assign(asset, patch)
+}
+
+export function modifyLayer(
+    project: Project,
+    targetLayerId: Layer|string,
+    patch: Object
+) {
+    const layer = targetLayerId instanceof Layer
+        ? targetLayerId
+        : findLayerById(project, targetLayerId)
+
+    Object.assign(layer, patch)
+}
+
+export function modifyKeyframe(
+    project: Project,
+    targetKeyframeId: Keyframe|string,
+    patch: Object,
+) {
+    const keyframe = targetKeyframeId instanceof Keyframe
+        ? targetKeyframeId
+        : findKeyframeById(project, targetKeyframeId)
+
+    Object.assign(keyframe, patch)
 }
 
 //
@@ -339,4 +456,70 @@ export function findParentTimelaneByLayerId(project: Project, layerId: string): 
         }
 
     return targetTimelane
+}
+
+export function findKeyframeFromLayerById(
+    layer: Layer,
+    keyframeId: string
+): ?Keyframe
+{
+    let targetKeyframe: ?Keyframe = null
+
+    keyframeSearch:
+        for (const propName: string of Object.keys(layer.keyframes)) {
+            for (const keyframe: Keyframe of layer.keyframes[propName]) {
+                if (keyframe.id === keyframeId) {
+                    targetKeyframe = keyframe
+                    break keyframeSearch
+                }
+            }
+        }
+
+    return targetKeyframe
+}
+
+export function findKeyframeById(project: Project, keyframeId: string): ?Keyframe
+{
+    let targetKeyframe: ?Keyframe = null
+
+    keyframeSearch:
+        for (const comp: Composition of project.compositions.values()) {
+            for (const timelane: Timelane of comp.timelanes.values()) {
+                for (const layer: Layer of timelane.layers.values()) {
+                    for (const propName: string of Object.keys(layer.keyframes)) {
+                        for (const keyframe: Keyframe of layer.keyframes[propName]) {
+                            if (keyframe.id === keyframeId) {
+                                targetKeyframe = keyframe
+                                break keyframeSearch
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    return targetKeyframe
+}
+
+export function findParentLayerAndPropNameByKeyframeId(project: Project, keyframeId: string): ?Layer
+{
+    let targetLayer: ?Layer = null
+
+    keyframeSearch:
+        for (const comp: Composition of project.compositions.values()) {
+            for (const timelane: Timelane of comp.timelanes.values()) {
+                for (const layer: Layer of timelane.layers.values()) {
+                    for (const propName: string of Object.keys(layer.keyframes)) {
+                        for (const keyframe: Keyframe of layer.keyframes[propName]) {
+                            if (keyframe.id === keyframeId) {
+                                targetLayer = layer
+                                break keyframeSearch
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    return targetLayer
 }

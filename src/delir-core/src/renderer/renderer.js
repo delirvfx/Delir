@@ -21,7 +21,7 @@ import EntityResolver from './entity-resolver'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 
-import * as Helper from '../helper/project-helper'
+import * as ProjectHelper from '../helper/project-helper'
 import ProgressPromise from '../helper/progress-promise'
 
 import {RenderingFailedException} from '../exceptions/'
@@ -170,7 +170,7 @@ export default class Renderer {
         //
         // Composition
         //
-        const rootComp = Helper.findCompositionById(this._project, req.targetCompositionId)
+        const rootComp = ProjectHelper.findCompositionById(this._project, req.targetCompositionId)
         if (rootComp == null) { return }
 
         const rootCompWrap: CompositionInstanceContainer = new CompositionInstanceContainer(rootComp)
@@ -468,7 +468,7 @@ export default class Renderer {
             //
             // export via deream
             //
-            const rootComp: Compositon = Helper.findCompositionById(this._project, req.targetCompositionId)
+            const rootComp: Compositon = ProjectHelper.findCompositionById(this._project, req.targetCompositionId)
             const durationFrames = rootComp.durationFrames
 
             // const canvas = new NodeCanvas(rootComp.width, rootComp.height)

@@ -35,6 +35,10 @@ export default class Asset
 
     get data(): Object { return this._config.data }
 
+    constructor()
+    {
+        Object.seal(this)
+    }
 
     toPreBSON(): Object
     {

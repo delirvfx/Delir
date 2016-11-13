@@ -42,26 +42,12 @@ export default class Project
     //     const bson = new BSONPure.BSON()
     //     return new Document()
     // }
-    /**
-     * @deprecated
-     */
-    _generateAndReserveSymbolId(): string
-    {
-        let id
-
-        do {
-            id = uuid.v4()
-        } while (this._symbolIds.has(id))
-
-        this._symbolIds.add(id)
-        return id
-    }
 
     toPreBSON()
     {
         return {
             formatVersion: 'v0.0.0',
-            symbolIds: Array.from(this._symbolIds),
+            symbolIds: Array.from(this.symbolIds),
             assets: Array.from(this.assets.values()).map(asset => asset.toPreBSON()),
             compositions: Array.from(this.compositions.values()).map(comp => comp.toPreBSON()),
         }
@@ -71,7 +57,7 @@ export default class Project
     {
         return {
             formatVersion: 'v0.0.0',
-            symbolIds: Array.from(this._symbolIds),
+            symbolIds: Array.from(this.symbolIds),
             assets: Array.from(this.assets.values()).map(asset => asset.toJSON()),
             compositions: Array.from(this.compositions.values()).map(comp => comp.toJSON()),
         }
@@ -82,25 +68,3 @@ export default class Project
         return (new BSONPure.BSON()).serialize(this.toPreBSON())
     }
 }
-
-// export class ActionInvoker
-// {
-//     static ADD_NEW_COMPOSITION = (project: Project, request) => {
-//         const _id = project._generateAndRegisterSymbolId();
-//
-//         project._commandHistory.push({
-//             undo: () => {
-//                 _.pullAt(_.findIndex(project.compositions, {id: _id}))
-//             },
-//             invoke: () => {
-//                 const comp = new Composition(_id)
-//                 project.compositions[_id] = comp._id
-//             },
-//             redo: () => {
-//
-//             }
-//         })
-//
-//
-//     }
-// }

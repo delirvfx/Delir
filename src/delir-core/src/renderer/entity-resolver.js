@@ -4,7 +4,7 @@ import type Asset from '../project/asset'
 import type Composition from '../project/composition'
 import type PluginRegistory from '../services/plugin-registory'
 
-import * as Helper from '../helper/project-helper'
+import * as ProjectHelper from '../helper/project-helper'
 
 export default class EntityResolver
 {
@@ -18,11 +18,11 @@ export default class EntityResolver
     }
 
     resolveAsset(assetId: string) {
-        return Helper.findAssetById(this._project, assetId)
+        return ProjectHelper.findAssetById(this._project, assetId)
     }
 
     resolveComp(compId: string) {
-        return Helper.findCompositionById(this._project, compId)
+        return ProjectHelper.findCompositionById(this._project, compId)
     }
 
     resolvePlugin(pluginName: string) {
