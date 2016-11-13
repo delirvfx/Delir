@@ -186,7 +186,7 @@ export function addLayer(
     if (typeof layer.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(composition, 'id', entityId)
+        setFreezedProp(layer, 'id', entityId)
     }
 
     // TODO: Not found behaviour
@@ -207,7 +207,7 @@ export function addKeyFrame(
     if (typeof keyframe.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(composition, 'id', entityId)
+        setFreezedProp(keyframe, 'id', entityId)
     }
 
     // TODO: Not found behaviour
