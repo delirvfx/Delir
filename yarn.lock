@@ -337,7 +337,7 @@ babel-helper-builder-react-jsx@^6.8.0:
     esutils "^2.0.0"
     lodash "^4.2.0"
 
-babel-helper-define-map@^6.8.0:
+babel-helper-define-map@^6.18.0, babel-helper-define-map@^6.8.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babel-helper-define-map/-/babel-helper-define-map-6.18.0.tgz#8d6c85dc7fbb4c19be3de40474d18e97c3676ec2"
   dependencies:
@@ -380,11 +380,29 @@ babel-helper-get-function-arity@^6.18.0:
     babel-runtime "^6.0.0"
     babel-types "^6.18.0"
 
+babel-helper-optimise-call-expression@^6.18.0:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/babel-helper-optimise-call-expression/-/babel-helper-optimise-call-expression-6.18.0.tgz#9261d0299ee1a4f08a6dd28b7b7c777348fd8f0f"
+  dependencies:
+    babel-runtime "^6.0.0"
+    babel-types "^6.18.0"
+
 babel-helper-remap-async-to-generator@^6.16.0, babel-helper-remap-async-to-generator@^6.16.2:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babel-helper-remap-async-to-generator/-/babel-helper-remap-async-to-generator-6.18.0.tgz#336cdf3cab650bb191b02fc16a3708e7be7f9ce5"
   dependencies:
     babel-helper-function-name "^6.18.0"
+    babel-runtime "^6.0.0"
+    babel-template "^6.16.0"
+    babel-traverse "^6.18.0"
+    babel-types "^6.18.0"
+
+babel-helper-replace-supers@^6.18.0:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/babel-helper-replace-supers/-/babel-helper-replace-supers-6.18.0.tgz#28ec69877be4144dbd64f4cc3a337e89f29a924e"
+  dependencies:
+    babel-helper-optimise-call-expression "^6.18.0"
+    babel-messages "^6.8.0"
     babel-runtime "^6.0.0"
     babel-template "^6.16.0"
     babel-traverse "^6.18.0"
@@ -488,7 +506,7 @@ babel-plugin-transform-class-constructor-call@^6.3.13:
     babel-runtime "^6.0.0"
     babel-template "^6.8.0"
 
-babel-plugin-transform-class-properties@^6.16.0, babel-plugin-transform-class-properties@^6.18.0:
+babel-plugin-transform-class-properties, babel-plugin-transform-class-properties@^6.18.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-class-properties/-/babel-plugin-transform-class-properties-6.18.0.tgz#bc1266a39d4c8726e0bd7b15c56235177e6ede57"
   dependencies:
@@ -506,6 +524,26 @@ babel-plugin-transform-decorators@^6.13.0:
     babel-runtime "^6.0.0"
     babel-template "^6.8.0"
     babel-types "^6.13.0"
+
+babel-plugin-transform-es2015-classes:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-es2015-classes/-/babel-plugin-transform-es2015-classes-6.18.0.tgz#ffe7a17321bf83e494dcda0ae3fc72df48ffd1d9"
+  dependencies:
+    babel-helper-define-map "^6.18.0"
+    babel-helper-function-name "^6.18.0"
+    babel-helper-optimise-call-expression "^6.18.0"
+    babel-helper-replace-supers "^6.18.0"
+    babel-messages "^6.8.0"
+    babel-runtime "^6.9.0"
+    babel-template "^6.14.0"
+    babel-traverse "^6.18.0"
+    babel-types "^6.18.0"
+
+babel-plugin-transform-es2015-destructuring:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-es2015-destructuring/-/babel-plugin-transform-es2015-destructuring-6.18.0.tgz#a08fb89415ab82058649558bedb7bf8dafa76ba5"
+  dependencies:
+    babel-runtime "^6.9.0"
 
 babel-plugin-transform-es2015-modules-commonjs:
   version "6.18.0"
@@ -545,7 +583,7 @@ babel-plugin-transform-object-rest-spread@^6.16.0:
     babel-plugin-syntax-object-rest-spread "^6.8.0"
     babel-runtime "^6.0.0"
 
-babel-plugin-transform-react-jsx@^6.8.0:
+babel-plugin-transform-react-jsx:
   version "6.8.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-react-jsx/-/babel-plugin-transform-react-jsx-6.8.0.tgz#94759942f70af18c617189aa7f3593f1644a71ab"
   dependencies:
@@ -633,7 +671,7 @@ babel-runtime@^6.0.0, babel-runtime@^6.11.6, babel-runtime@^6.9.0, babel-runtime
     core-js "^2.4.0"
     regenerator-runtime "^0.9.5"
 
-babel-template@^6.16.0, babel-template@^6.8.0:
+babel-template@^6.14.0, babel-template@^6.16.0, babel-template@^6.8.0:
   version "6.16.0"
   resolved "https://registry.yarnpkg.com/babel-template/-/babel-template-6.16.0.tgz#e149dd1a9f03a35f817ddbc4d0481988e7ebc8ca"
   dependencies:
