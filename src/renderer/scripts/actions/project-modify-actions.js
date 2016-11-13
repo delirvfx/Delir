@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import Delir, {Helper as DelirHelper, Project} from 'delir-core'
+import {Project} from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
@@ -8,47 +8,6 @@ export default {
     //
     // Modify project
     //
-
-    // TODO: frame position
-    moveLayerToTimelane(layerId: string, targetTimelaneId: string)
-    {
-        dispatcher.dispatch({
-            type: ActionTypes.MOVE_LAYER_TO_TIMELINE,
-            payload: {layerId, targetTimelaneId},
-        })
-    },
-
-    changeCompositionName(compId: string, newName: string)
-    {
-        // dispatcher.dispatch({
-        //     type: 'change-composition-name',
-        //     payload: {compId, newName}
-        // })
-    },
-
-    modifyComposition(compId: string, props: Object)
-    {
-        dispatcher.dispatch({
-            type: ActionTypes.MODIFY_COMPOSITION,
-            payload: {
-                targetCompositionId: compId,
-                patch: props,
-            }
-        })
-    },
-
-    addAsset({name, mimeType, path})
-    {
-        const asset = new Project.Asset()
-        asset.name = name
-        asset.mimeType = mimeType
-        asset.path = path
-
-        dispatcher.dispatch({
-            type: ActionTypes.ADD_ASSET,
-            payload: {asset},
-        })
-    },
 
     createComposition({name, width, height, framerate, durationFrame})
     {
@@ -92,6 +51,40 @@ export default {
                 layer,
                 targetTimelaneId: timelaneId,
             },
+        })
+    },
+
+    addAsset({name, mimeType, path})
+    {
+        const asset = new Project.Asset()
+        asset.name = name
+        asset.mimeType = mimeType
+        asset.path = path
+
+        dispatcher.dispatch({
+            type: ActionTypes.ADD_ASSET,
+            payload: {asset},
+        })
+    },
+
+
+    // TODO: frame position
+    moveLayerToTimelane(layerId: string, targetTimelaneId: string)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.MOVE_LAYER_TO_TIMELINE,
+            payload: {layerId, targetTimelaneId},
+        })
+    },
+
+    modifyComposition(compId: string, props: Object)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.MODIFY_COMPOSITION,
+            payload: {
+                targetCompositionId: compId,
+                patch: props,
+            }
         })
     },
 
