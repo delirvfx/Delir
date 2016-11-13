@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
 
-import Delir from 'delir-core'
-const {Helper: DelirHelper} = Delir
+import Delir, {ProjectHelper} from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
@@ -51,7 +50,7 @@ class EditorStateStore extends ReduceStore<Object>
                 return state
             }
 
-            const targetLayer = DelirHelper.findLayerById(state.project, layerId)
+            const targetLayer = ProjectHelper.findLayerById(state.project, layerId)
             return Object.assign({}, state, {activeLayer: targetLayer})
         },
 
@@ -67,7 +66,7 @@ class EditorStateStore extends ReduceStore<Object>
         //         return
         //     }
         //
-        //     const targetComp = DelirHelper.findCompositionById(state.project, payload.compId)
+        //     const targetComp = ProjectHelper.findCompositionById(state.project, payload.compId)
         //     console.log(targetComp);
         //     targetComp.name = payload.newName
         //     return Object.assign({}, state)
