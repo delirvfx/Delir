@@ -55,18 +55,33 @@ export default class LayerInstanceContainer
         const paramTypes = this._rendererClass.provideParameters()
 
         const params = {}
-        paramTypes.properties.forEach(desc => params[desc.propName] = receiveOptions[desc.propName] ? Object.assign({}, receiveOptions[desc.propName]) : null)
+        paramTypes.properties.forEach(desc => {
+            if (receiveOptions[desc.propName]) {
+                if (desc.type === 'ASSET') {
+                    params[desc.propName] = receiveOptions[desc.propName].toJSON()
+                } else {
+                    params[desc.propName] = Object.assign({}, receiveOptions[desc.propName])
+                }
+            } else {
+                params[desc.propName] = null
+            }
+        })
+
         Object.freeze(params)
 
+        console.log(params, receiveOptions['source']);
         const preRenderReq = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
             layerScope: this._variableScope,
             parameters: params,
         })
+        console.log('before render0', this._rendererClass, this._rendererInstance, this._rendererInstance.beforeRender);
 
         // initialize
         try {
+            console.log('before render');
             await this._rendererInstance.beforeRender(preRenderReq)
         } catch (e) {
+            console.error(e);
             throw new RenderingFailedException(`Failed to before rendering process for \`${this._rendererClass.name}\` (${e.message})`, {before: e})
         }
 

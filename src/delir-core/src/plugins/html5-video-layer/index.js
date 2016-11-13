@@ -60,6 +60,7 @@ export default class HTML5VideoLayer extends LayerPluginBase
 
     async beforeRender(preRenderRequest: Object)
     {
+        console.log(preRenderRequest);
         const {parameters} = preRenderRequest
         this.video.src = `file://${parameters.source.path}`
         this.video.loop = parameters.loop

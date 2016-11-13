@@ -135,6 +135,7 @@ export function addAsset(
     }
 
     project.assets.add(asset)
+    console.log(asset);
 
     return asset
 }
