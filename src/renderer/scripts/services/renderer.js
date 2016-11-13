@@ -2,8 +2,7 @@ import _ from 'lodash'
 import {remote} from 'electron'
 import electron from 'electron'
 import {join} from 'path'
-import Delir from 'delir-core'
-const {Helper: DelirHelper} = Delir
+import Delir, {ProjectHelper} from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
@@ -27,7 +26,7 @@ const handlers = {
         if (! state.project) return
 
         console.log('accept');
-        const targetComposition = DelirHelper.findCompositionById(state.project, compositionId)
+        const targetComposition = ProjectHelper.findCompositionById(state.project, compositionId)
 
         if (! targetComposition) return
         if (! renderer) return
@@ -97,7 +96,7 @@ const handlers = {
 
         setTimeout(() => EditorStateActions.updateProcessingState(`Rendering: Initializing`), 0)
 
-        const activeComp = DelirHelper.findCompositionById(state.project, compositionId)
+        const activeComp = ProjectHelper.findCompositionById(state.project, compositionId)
         if (! activeComp) {
             setTimeout(() => EditorStateActions.updateProcessingState(`Rendering: Composition not selected`), 0)
         } else {
