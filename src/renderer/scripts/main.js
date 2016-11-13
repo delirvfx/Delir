@@ -1,3 +1,4 @@
+// @flow
 import fs from 'fs'
 import {spawn} from 'child_process'
 import canvasToBuffer from 'electron-canvas-to-buffer'
@@ -16,8 +17,7 @@ import dispatcher from './dispatcher'
 import EditorStateActions from './actions/editor-state-actions'
 import EditorStateStore from './stores/editor-state-store'
 
-import Delir from 'delir-core'
-console.log(Delir);
+import Delir, {ProjectHelper} from 'delir-core'
 import {join} from 'path'
 
 import RendererService from './services/renderer'
@@ -58,6 +58,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     //
     // const p = app.project = Delir.Project.Project.deserialize(fs.readFileSync(file))
 
+    const app = window.app = {}
     const durationFrames = 30 * 3
     const p = app.project = new Delir.Project.Project()
     const a = new Delir.Project.Asset
@@ -136,34 +137,33 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t4_l1.placedFrame = 0
     c1_t4_l1.durationFrames = 30 * 10
 
-    p.assets.add(a)
-    p.assets.add(a2)
-    p.compositions.add(c1)
-
-    c1.timelanes.add(c1_t1)
-    c1.timelanes.add(c1_t2)
-    c1.timelanes.add(c1_t3)
-    c1.timelanes.add(c1_t4)
-
-    c1_t1.layers.add(c1_t1_l1)
-    c1_t2.layers.add(c1_t2_l1)
-    // c1_t3.layers.add(c1_t3_l1)
-    // c1_t3.layers.add(c1_t4_l1)
-
     c2.name = 'Sub Composition'
-    p.compositions.add(c2)
 
-    c2.timelanes.add(c2_t1)
-    // c2_t1.layers.add(c2_t1_l1)
-    // c2_t1_l1.placedFrame = 20
-
-    c2_t1.layers.add(c2_t1_l2)
+    c2_t1_l1.placedFrame = 20
     c2_t1_l2.placedFrame = 40
-
-    // c2_t1.layers.add(c2_t1_l3)
     // c2_t1_l3.placedFrame = 100
 
-    // c1_t1_l1.keyframes.add(new Delir.Project.Keyframe)
+    ProjectHelper.addAsset(p, a)
+    ProjectHelper.addAsset(p, a2)
+    ProjectHelper.addComposition(p, c1)
+
+    ProjectHelper.addTimelane(p, c1, c1_t1)
+    ProjectHelper.addTimelane(p, c1, c1_t2)
+    ProjectHelper.addTimelane(p, c1, c1_t3)
+    ProjectHelper.addTimelane(p, c1, c1_t4)
+
+    ProjectHelper.addLayer(p, c1_t1, c1_t1_l1)
+    ProjectHelper.addLayer(p, c1_t2, c1_t2_l1)
+    // ProjectHelper.addLayer(p, c1_t3, c1_t3_l1)
+    // ProjectHelper.addLayer(p, c1_t3, c1_t4_l1)
+
+
+    ProjectHelper.addComposition(p, c2)
+    ProjectHelper.addTimelane(p, c2, c2_t1)
+    // ProjectHelper.addLayer(p, c2_t1, c2_t1_l1)
+    ProjectHelper.addLayer(p, c2_t1, c2_t1_l2)
+    // ProjectHelper.addLayer(p, c2_t1, c2_t1_l3)
+    // ProjectHelper.addKeyframe(p, c1_t1_l1, new Delir.Project.Keyframe)
 
     ReactDOM.render(
         React.createElement(AppComponent, {}, []),
