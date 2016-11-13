@@ -1,7 +1,7 @@
+import {remote} from 'electron'
 import React, {PropTypes} from 'react'
 
 import EditorStateStore from '../stores/editor-state-store'
-
 import EditorStateActions from '../actions/editor-state-actions'
 
 import Pane from './components/pane'
@@ -23,11 +23,19 @@ export default class NavigationView extends React.Component
         composition && EditorStateActions.renderDestinate(composition.id)
     }
 
+    titleBarDoubleClicked = e =>
+    {
+        console.log(e);
+        const browserWindow = remote.getCurrentWindow()
+        console.log(browserWindow.isMaximized());
+        browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
+    }
+
     render()
     {
         return (
             <Pane className='view-navigation' resizable={false}>
-                <ul className='window-nav' style={{textAlign: 'center'}}>
+                <ul className='window-nav' style={{textAlign: 'center'}} onDoubleClick={this.titleBarDoubleClicked}>
                     {/*
                         // TODO: Check support for windows
                         <li className='window-nav-item window-nav--close'></li>
