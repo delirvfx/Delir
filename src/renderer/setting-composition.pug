@@ -1,0 +1,76 @@
+extends ./_layouts/window-base.pug
+block script
+    script.
+        window.addEventListener('DOMContentLoaded', () => {
+            const url = require('url')
+
+            window.addEventListener('keyup', e => {
+                e.code === 'Escape' && thisWindow.hide()
+            })
+
+            $('#cancel').addEventListener('click', e => {
+                thisWindow.hide()
+            })
+
+            const query = JSON.parse(url.parse(location.href, true).query.query)
+            util.restoreValueToForm(query)
+        })
+
+block header
+    .header
+        h1 Setting Composition
+
+block content
+    .content.content--new-composition
+        .form-horizontal
+            input(name='id' type='hidden')
+
+            .form-group
+                label.label Composition name:
+                .input
+                    .form-control: input(name='name' type='text' value='New Composition' required autofocus)
+
+            .form-group
+                label.label width:
+                .inputs
+                    .form-control: input(name='width' type='number' min=1 style='width:5rem' required)
+                    span.unit px
+
+            .form-group
+                label.label width:
+                .inputs
+                    .form-control: input(name='height' type='number' min=1 style='width:5rem' required)
+                    span.unit px
+
+            .form-group
+                label.label framerate:
+                .inputs
+                    .form-control: input(name='framerate' type='number' min=1 value='30' style='width:5rem' required)
+                    span.unit fps
+
+            .form-group
+                label.label duration(sec):
+                .inputs
+                    .form-control: input(name='durationSeconds' type='number' min=1 value='30' style='width:5rem' required)
+                    span.unit s
+
+            .form-group
+                label.label Sampling rate:
+                .inputs
+                    .form-control: select(name='samplingRate' style='width:8rem' required)
+                        option(value='48000' selected) 48000
+                        option(value='41000') 41000
+
+                    span.unit Hz
+
+            .form-group
+                label.label Channels:
+                .inputs
+                    .form-control: select(name='audioChannels' style='width:8rem' required)
+                        option(value='2' selected) Stereo (2ch)
+                        option(value='1') Mono (1ch)
+
+block footer
+    .footer
+        button#cancel.button(type='button') Discard change
+        button.button.primary(type='submit') Modify

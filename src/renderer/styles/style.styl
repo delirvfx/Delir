@@ -1,9 +1,372 @@
-@import "nib"
+@import 'nib'
+@import '_mixins'
+@import '_variables'
+@import './font-awesome.min.css'
 global-reset()
 
 *
     box-sizing border-box
 
+
+
+#root.theme--default {
+    --background #2f2f36
+    // --pane-background linear-gradient(to bottom, #24242b, 30% #0c070f, 50% #111)
+    --pane-background transparent
+    --pane-border-color rgba(#000, .9)
+    --active-pane-border rgba(#6900a8, .5)
+
+    --text-color #fff
+    --text-disabled #aaaaaa
+
+    --caption-row-background #3a3340
+
+    --accent-color #9310c8
+}
+
 html, body
     width 100%
     height 100%
+    user-select none
+    cursor default
+
+    font-family 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, 'YuGothic', '游ゴシック Medium', 'Hiragino Kaku Gothic ProN', meiryo, sans-serif
+    font-size 14px
+
+#loading
+    position fixed
+    top 0
+    left 0
+
+    display flex
+    align-items center
+    justify-content center
+    width 100%
+    height 100%
+
+    color #fff
+    font-size 18px
+
+#root, ._container
+    display flex
+    width 100%
+    height 100%
+    overflow hidden
+
+    flex-direction column
+
+    background var(--background)
+    color var(--text-color)
+
+    font-family 'Avenir Next', 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', sans-serif
+    font-size 14px
+
+.app-body
+    flex 1
+
+//-- Workspace
+._workspace
+    display flex
+    width 100%
+    height 100%
+
+._workspace--horizontal
+    flex-direction row
+
+    & > ._workspace-pane + ._workspace-pane
+        padding-left $pane-border-width
+        // & + &
+        //     border-left 1px solid var(--pane-border-color)
+
+        & > ._workspace-pane-handle
+            width $pane-border-width
+            height calc(100% +1px)
+            cursor ew-resize
+
+._workspace--horizontal > ._workspace-pane + ._workspace-pane > ._workspace-pane-handle
+    position absolute
+    top -1px
+    left  0
+    display block
+
+._workspace--vertical
+    flex-direction column
+
+    & > ._workspace-pane + ._workspace-pane
+        padding-top $pane-border-width
+        // & + ._workspace-pane
+        //     border-top 1px solid var(--pane-border-color)
+
+        & > ._workspace-pane-handle
+            width 100%
+            height $pane-border-width
+            cursor ns-resize
+
+._workspace--vertical > ._workspace-pane + ._workspace-pane >._workspace-pane-handle
+    position absolute
+    top 0
+    left 0
+    display block
+
+._workspace-pane
+    position relative
+    flex 1
+    background $pane-background
+    // background var(--pane-background)
+
+    // border 1px solid transparent
+    transition border-color .1s
+
+    &._workspace-pane--allow-focus
+        &:active, &:focus
+            box-shadow 0 0 0 1px var(--active-pane-border)
+
+._workspace-pane-handle
+    display none
+    background-color var(--pane-border-color)
+
+._input
+._label-input
+._drag-number-input
+    display inline-block
+    min-width 1rem
+    min-height 1em
+
+    font-family inherit
+    background-color transparent
+    color inherit
+    outline none
+
+    border none
+    border-bottom 1px solid var(--accent-color)
+
+    transition border-bottom-color .1s
+
+    &[readonly]
+        border-bottom 1px solid transparent
+        user-select none
+        cursor default
+
+[type='checkbox']
+    width 1em
+    height 1em
+
+    border none
+    background-color #fff
+
+    -webkit-appearance none
+
+    &:checked
+        background-color #007dff
+
+._drag-number-input
+    text-align right
+
+    color #ff7a00
+    border-bottom 1px dotted #ff7a00
+    cursor ew-resize
+
+    &[readonly]
+        color var(--text-disabled)
+        cursor default
+
+._select-list
+    .select-list-item.selected
+        background-color rgba(#fff, .2)
+
+._table
+    display flex
+    flex-direction column
+
+    .table-header
+        display block
+        border-bottom 1px solid rgba(#666, .3)
+
+    .table-body
+    .table-body-selectlist
+        display block
+        flex 1
+
+    .table-footer
+        display block
+
+    .table-body-selectlist
+        .selected
+            background-color rgba(#fff, .2)
+
+    .table-row
+        display flex
+        border-bottom 1px solid rgba(#fff, .3)
+
+    .table-col
+        position relative
+        padding 4px 4px
+        font-size 12px
+
+        .resizer
+            position absolute
+            top 0
+            bottom 0
+            right 0
+
+            border-right 1px solid rgba(#fff, .3)
+            cursor ew-resize
+
+// Views
+.body-pane
+    flex 1
+    overflow hidden
+
+.view-navigation
+    flex none
+    display flex
+    height 32px + 24px + 2px
+    flex-direction column
+    border-bottom 2px solid #000
+
+    .window-nav
+        display flex
+        width 100%
+        height 21px
+        padding 4px 8px
+
+        align-items center
+
+        border-bottom 1px solid #333
+        -webkit-app-region drag
+        user-select none
+
+    .window-nav-item
+        display inline-flex
+        width 12px
+        height 12px
+        margin-right 6px
+        border-radius 8px
+
+        align-items center
+        justify-content center
+
+        font-size 10px
+        text-align center
+        line-height 12px
+        vertical-align middle
+
+        color rgba(#fff, .2)
+        transition all .1s
+        background-color transparent
+        border 1px solid rgba(#fff, .5)
+
+        &:hover
+            border-color var(--active-pane-border)
+
+        &.window-nav--close:hover
+            background-color #820000
+
+        &.window-nav--minimize:hover
+            background-color #827900
+
+        &.window-nav--maximize:hover
+            background-color #008234
+
+
+    .navigation-items
+        display flex
+        align-items center
+        flex 1
+        padding 4px 16px
+        vertical-align middle
+
+        li
+            display inline-flex
+            align-items center
+            width 24px
+            height 24px
+            margin-right 8px
+            font-size 22px
+            line-height 1
+            border 1px solid transparent
+            cursor default
+            transition all .2s
+
+            &:hover
+                background-color rgba(#000, .5)
+                border-color #999
+
+.view-preview
+    width 100%
+    height 100%
+
+    .inner
+        display flex
+        width 100%
+        height 100%
+        flex-direction column
+
+    .header
+        display flex
+        height 30px
+        padding 8px
+        align-items center
+        border-bottom 1px solid #333
+
+
+    .view
+        display flex
+        flex-direction column
+        align-items center
+        justify-content center
+        overflow hidden
+
+        flex 1
+
+        .canvas
+            display block
+            box-shadow 0 0 5px rgba(0,0,0,.5)
+
+.view-assets
+    display flex
+    flex-direction column
+    align-items flex-start
+    width 300px
+    flex none
+
+    .asset-list, .composition-list
+        width 100%
+        flex 1
+
+        // tbody, thead, tr, td, th
+        //     display block
+
+        th
+            border-bottom 1px solid rgba(#fff, .3)
+
+        td
+            border-bottom 1px solid rgba(#fff, .2)
+
+        th, td
+            padding 4px
+            font-size 12px
+
+        ._label-input
+            width 100%
+
+        .table-body
+            overflow auto
+
+        .table-row, .table-col
+            border-right none
+            border-bottom none
+
+    .composition-list
+        margin-top 16px
+        border-top 1px solid rgba(#fff, .8)
+
+@import '_components/timeline'
+
+.view-status
+    flex none
+    height 18px
+    padding 4px
+
+    font-size .8rem
+    border-top 1px solid rgba(#fff, .1)
