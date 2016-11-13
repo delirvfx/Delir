@@ -25,7 +25,7 @@ export default class Project
         return project
     }
 
-    symbolIds: Array<string> // Set<string> = new Set()
+    symbolIds: Set<string> = new Set()
 
     assets: Set<Asset> = new Set
 

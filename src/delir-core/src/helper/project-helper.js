@@ -19,7 +19,7 @@ function _generateAndReserveSymbolId(project: Project): string
 
     do {
         id = uuid.v4()
-    } while (project.symbolIds.includes(id))
+    } while (project.symbolIds.has(id))
 
     project.symbolIds.add(id)
     return id
