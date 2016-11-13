@@ -27,11 +27,14 @@ export default class Asset
 
     get id(): string { return this._id }
 
+    get mimeType(): string { return this._config.mimeType }
+    set mimeType(mimeType: string) { this._config.mimeType = mimeType }
+
     get name(): string { return this._config.name }
     set name(name: string) { this._config.name = name }
 
-    get type(): any { return this._config.type }
-    set type(type: string) { return this._config.type = type }
+    get path(): any { return this._config.path }
+    set path(path: string) { return this._config.path = path }
 
     get data(): Object { return this._config.data }
 
