@@ -54,6 +54,7 @@
     "bezier-easing": "^2.0.3",
     "bson": "^0.5.5",
     "canvas": "^1.6.1",
+    "d3": "^4.3.0",
     "duplexer3": "^0.1.4",
     "electron-canvas-to-buffer": "^2.0.0",
     "event-kit": "^2.2.0",
