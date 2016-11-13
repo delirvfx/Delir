@@ -371,7 +371,7 @@ export default class Renderer {
                 // Clear buffer
                 //
                 bufferCanvasCtx.clearRect(0, 0, compWidth, compHeight)
-                for (const ch = 0, l = rootCompContainer.audioChannels; ch < l; ch++) {
+                for (let ch = 0, l = rootCompContainer.audioChannels; ch < l; ch++) {
                     bufferAudioBuffer[ch].fill(0)
                 }
 
