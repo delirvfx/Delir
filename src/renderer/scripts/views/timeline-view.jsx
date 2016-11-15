@@ -217,7 +217,7 @@ class TimelineLane extends React.Component
         const layers = Array.from(timelane.layers.values())
         const plugins = this._plugins
 
-        const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
+        const tmpKey = keyframes ? Object.keys(keyframes)[0] : ''
 
         return (
             <li
