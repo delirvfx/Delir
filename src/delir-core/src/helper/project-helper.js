@@ -95,30 +95,48 @@ export function createAddLayer(
     const timelane = targetTimelaneId instanceof Timelane
         ? targetTimelaneId
         : findTimelaneById(project, targetTimelaneId)
+
     timelane.layers.add(layer)
 
     return layer
 }
 
-export function createAddKeyFrame(
+export function createAddKeyframe(
     project: Project,
     targetLayerId: Layer|string,
-    keyframeProps: Object
-): Keyframe
+    propName: string,
+    keyframeProp: Object|Array<Object>
+): Keyframe|Array<Keyframe>
 {
-    const entityId = _generateAndReserveSymbolId(project)
-    const keyframe = new Keyframe
+    let keyframeProps
+    if (Array.isArray(keyframeProp)) {
+        keyframeProps = keyframeProp
+    } else {
+        keyframeProps = [keyframeProp]
+    }
 
-    setFreezedProp(keyframe, 'id', entityId)
-    Object.assign(keyframe, keyframeProps)
-
+    const createdKeyframes = []
     // TODO: Not found behaviour
-    const layer = targetLayerId instanceof Layer
+    const layer: ?Layer = targetLayerId instanceof Layer
         ? targetLayerId
         : findLayerById(project, targetLayerId)
-    layer.keyframes.add(layer)
 
-    return keyframe
+    for (const _keyframeProp of keyframeProps) {
+        const entityId = _generateAndReserveSymbolId(project)
+        const keyframe = new Keyframe
+
+        setFreezedProp(keyframe, 'id', entityId)
+        Object.assign(keyframe, _keyframeProp)
+
+        if (!layer.keyframes[propName]) {
+            layer.keyframes[propName] = new Set()
+        }
+
+        layer.keyframes[propName].add(keyframe)
+        createdKeyframes.push(keyframe)
+    }
+
+    return Array.isArray(keyframeProps) ? createdKeyframes : createdKeyframes[0]
 }
 
 //
@@ -135,7 +153,6 @@ export function addAsset(
     }
 
     project.assets.add(asset)
-    console.log(asset);
 
     return asset
 }
@@ -194,28 +211,45 @@ export function addLayer(
     const timelane = targetTimelaneId instanceof Timelane
         ? targetTimelaneId
         : findTimelaneById(project, targetTimelaneId)
+
     timelane.layers.add(layer)
 
     return layer
 }
 
-export function addKeyFrame(
+export function addKeyframe(
     project: Project,
     targetLayerId: Layer|string,
-    keyframe: Keyframe
-): Keyframe
+    propName: string,
+    keyframe: Keyframe|Array<Keyframe>
+): Keyframe|Array<Keyframe>
 {
-    if (typeof keyframe.id !== 'string') {
-        // TODO: Clone instance
-        const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(keyframe, 'id', entityId)
+    let keyframes
+    if (Array.isArray(keyframe)) {
+        keyframes = keyframe
+    } else {
+        keyframes = [keyframe]
     }
 
     // TODO: Not found behaviour
-    const layer = targetLayerId instanceof Layer
+    const layer: ?Layer = targetLayerId instanceof Layer
         ? targetLayerId
         : findLayerById(project, targetLayerId)
-    layer.keyframes.add(layer)
+    console.log(layer);
+
+    for (const _keyframe of keyframes) {
+        if (typeof _keyframe.id !== 'string') {
+            // TODO: Clone instance
+            const entityId = _generateAndReserveSymbolId(project)
+            setFreezedProp(_keyframe, 'id', entityId)
+        }
+
+        if (!layer.keyframes[propName]) {
+            layer.keyframes[propName] = new Set()
+        }
+
+        layer.keyframes[propName].add(_keyframe)
+    }
 
     return keyframe
 }
@@ -282,6 +316,7 @@ export function deleteKeyframe(
         : findKeyframeById(project, targetKeyframeId)
 
     const {layer, propName} = findParentLayerAndPropNameByKeyframeId(project, keyframe.id)
+    if (!layer.keyframes[propName]) return
     layer.keyframes[propName].delete(keyframe) // TODO: Implement this function Or change keyframe structure
 }
 
@@ -502,9 +537,9 @@ export function findKeyframeById(project: Project, keyframeId: string): ?Keyfram
     return targetKeyframe
 }
 
-export function findParentLayerAndPropNameByKeyframeId(project: Project, keyframeId: string): ?Layer
+export function findParentLayerAndPropNameByKeyframeId(project: Project, keyframeId: string): ?{layer: Layer, propName: string}
 {
-    let targetLayer: ?Layer = null
+    let target: ?{layer: Layer, propName: string} = null
 
     keyframeSearch:
         for (const comp: Composition of project.compositions.values()) {
@@ -513,7 +548,7 @@ export function findParentLayerAndPropNameByKeyframeId(project: Project, keyfram
                     for (const propName: string of Object.keys(layer.keyframes)) {
                         for (const keyframe: Keyframe of layer.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {
-                                targetLayer = layer
+                                target = {layer, propName}
                                 break keyframeSearch
                             }
                         }
@@ -522,5 +557,5 @@ export function findParentLayerAndPropNameByKeyframeId(project: Project, keyfram
             }
         }
 
-    return targetLayer
+    return target
 }

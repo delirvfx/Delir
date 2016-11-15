@@ -15,7 +15,7 @@ export default class Layer
             'keyframeInterpolationMethod',
         ])
 
-        const keyframes = _.map(layerJson.keyframes, keyframes => {
+        const keyframes = _.mapKeys(layerJson.keyframes, keyframes => {
             return new Set(keyframes.map(keyframe => Keyframe.deserialize(keyframe)))
         })
 
