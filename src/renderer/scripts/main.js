@@ -58,8 +58,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     //
     // const p = app.project = Delir.Project.Project.deserialize(fs.readFileSync(file))
 
+    console.log(ProjectHelper.addLayer)
+
     const app = window.app = {}
-    const durationFrames = 30 * 3
+    const fps = 60
+    const durationFrames = fps * 20
     const p = app.project = new Delir.Project.Project()
     const a = new Delir.Project.Asset
     const a2 = new Delir.Project.Asset
@@ -91,7 +94,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1.name = 'Master Composition'
     c1.width = 640
     c1.height = 360
-    c1.framerate = 30
+    c1.framerate = fps
     c1.durationFrames = durationFrames
     c1.audioChannels = 2
     c1.samplingRate = 48000
@@ -108,18 +111,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     c1_t1_l1.rendererOptions.loop = true
     c1_t1_l1.placedFrame = 0
     c1_t1_l1.durationFrames = durationFrames
-
-    c1_t1_l1.keyframes.x = [
-        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: 0, easeOutParam: [1, -0.03]}),
-        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: durationFrames - 10, value: 900, easeInParam: [1, .09]}),
-    ]
-
-    c1_t1_l1.keyframes.y = [
-        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: -300}),
-    ]
-    c1_t1_l1.keyframes.loop = [
-        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: true}),
-    ]
 
     // c1_t2_l1.renderer = 'html5-video-layer'
     c1_t2_l1.renderer = 'audio-layer'
@@ -148,14 +139,42 @@ window.addEventListener('DOMContentLoaded', async () => {
     ProjectHelper.addComposition(p, c1)
 
     ProjectHelper.addTimelane(p, c1, c1_t1)
-    ProjectHelper.addTimelane(p, c1, c1_t2)
-    ProjectHelper.addTimelane(p, c1, c1_t3)
-    ProjectHelper.addTimelane(p, c1, c1_t4)
+    // ProjectHelper.addTimelane(p, c1, c1_t2)
+    // ProjectHelper.addTimelane(p, c1, c1_t3)
+    // ProjectHelper.addTimelane(p, c1, c1_t4)
 
+    // console.log(ProjectHelper.addLayer())
     ProjectHelper.addLayer(p, c1_t1, c1_t1_l1)
-    ProjectHelper.addLayer(p, c1_t2, c1_t2_l1)
+    // ProjectHelper.addLayer(p, c1_t2, c1_t2_l1)
     // ProjectHelper.addLayer(p, c1_t3, c1_t3_l1)
     // ProjectHelper.addLayer(p, c1_t3, c1_t4_l1)
+
+    ProjectHelper.addKeyframe(p, c1_t1_l1, 'x', [
+        Object.assign(new Delir.Project.Keyframe, {
+            frameOnLayer: 0,
+            value: 0,
+            easeOutParam: [1, -0.03],
+        }),
+        Object.assign(new Delir.Project.Keyframe, {
+            frameOnLayer: fps * 5,
+            value: 900,
+            easeInParam: [1, .09],
+            easeOutParam: [1, -0.03],
+        }),
+        Object.assign(new Delir.Project.Keyframe, {
+            frameOnLayer: durationFrames,
+            value: 0,
+            easeInParam: [1, .09],
+        })
+    ])
+
+    ProjectHelper.addKeyframe(p, c1_t1_l1, 'y', [
+        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: -300})
+    ])
+
+    ProjectHelper.addKeyframe(p, c1_t1_l1, 'loop', [
+        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: true})
+    ])
 
 
     ProjectHelper.addComposition(p, c2)
