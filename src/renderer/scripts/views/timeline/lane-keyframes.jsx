@@ -119,6 +119,7 @@ export default class LaneKeyframes extends React.Component
                             fill='none'
                             strokeWidth='1'
                             d={`M ${kfp.transition.beginX} ${kfp.transition.beginY} C ${kfp.transition.handleEoX} ${kfp.transition.handleEoY} ${kfp.transition.handleEiX} ${kfp.transition.handleEiY} ${kfp.transition.endPointX} ${kfp.transition.endPointY}`}
+                            data-transition-path
                         />
                         <path
                             stroke='#acacac'
@@ -225,28 +226,42 @@ export default class LaneKeyframes extends React.Component
         initialTarget.setAttribute('cx', x)
         initialTarget.setAttribute('cy', y)
         handleElement.setAttribute('d', `M ${attr(handleElement, 'data-baseX')} ${attr(handleElement, 'data-baseY')} L ${x} ${y}`)
-        const easeInPath = e.target.parentElement.querySelector('[data-ease-in-handle-path]')
 
-        console.log(easeInPath, kfp);
+        const easeInPath = e.target.parentElement.querySelector('[data-ease-in-handle-path]')
         easeInPath.setAttribute('d', `M ${x} ${y} L ${kfp.easeInLine.endPointX} ${kfp.easeInLine.endPointY}`)
 
+        console.log(e.target, e.target.parentElement);
+
+        const transitionPath = e.target.parentElement.querySelector('[data-transition-path]')
+        transitionPath.setAttribute('d', `M ${kfp.transition.beginX} ${kfp.transition.beginY} C ${kfp.transition.handleEoX} ${kfp.transition.handleEoY} ${x} ${y} ${kfp.transition.endPointX} ${kfp.transition.endPointY}`)
     }
 
     dragEaseOutHandle = (e: MouseEvent) =>
     {
         const {
-            relateTarget,
+            handleElement,
             initialEvent,
             initialTarget,
             initialPosition,
+            keyframePointIndex,
         } = this._dragState
+
+        const kfp = this.state.keyframePoints[keyframePointIndex|0]
+        const movedX = e.screenX - initialEvent.screenX
+        const movedY = e.screenY - initialEvent.screenY
 
         const x = initialPosition.x + (e.screenX - initialEvent.screenX)
         const y = initialPosition.y + (e.screenY - initialEvent.screenY)
 
         initialTarget.setAttribute('cx', x)
         initialTarget.setAttribute('cy', y)
-        relateTarget.setAttribute('d', `M ${attr(relateTarget, 'data-baseX')} ${attr(relateTarget, 'data-baseY')} L ${x} ${y}`)
+        handleElement.setAttribute('d', `M ${attr(handleElement, 'data-baseX')} ${attr(handleElement, 'data-baseY')} L ${x} ${y}`)
+
+        const easeOutPath = e.target.parentElement.querySelector('[data-ease-out-handle-path]')
+        easeOutPath.setAttribute('d', `M ${x} ${y} L ${kfp.easeOutLine.endPointX} ${kfp.easeOutLine.endPointY}`)
+
+        const transitionPath = e.target.parentElement.querySelector('[data-transition-path]')
+        transitionPath.setAttribute('d', `M ${kfp.transition.beginX} ${kfp.transition.beginY} C ${x} ${y} ${kfp.transition.handleEiX} ${kfp.transition.handleEiY} ${kfp.transition.endPointX} ${kfp.transition.endPointY}`)
     }
 
     _buildKeyframePoints(orderedKeyframes: Array<Keyframe>)
