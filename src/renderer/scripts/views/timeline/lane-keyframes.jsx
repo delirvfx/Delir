@@ -4,11 +4,65 @@ import type Keyframe from '../../../../delir-core/src/project/keyframe'
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import TimelaneHelper from '../../helpers/timelane-helper'
-import * as d3 from 'd3'
 
+import ProjectModifyActions from '../../actions/project-modify-actions'
 import ProjectModifyStore from '../../stores/project-modify-store'
 
 const attr = (el, name) => el.getAttribute(name)
+
+type HandlerDraggingSession = {
+    grabbed: 'ease-handle',
+    grabbedHandle: 'ease-in' | 'ease-out',
+    initialEvent: MouseEvent,
+    initialTarget: Element,
+    group: SVGGElement,
+    keyframePointIndex: number,
+    handleElement: Element,
+    initialPosition: {
+        x: number,
+        y: number,
+    },
+}
+
+type KeyframePoint = {
+    id: ?string,
+    nextId: ?string,
+    value: {
+        beginX: number,
+        beginY: number,
+    },
+    hasNextKeyFrame: boolean,
+    transition: ?{
+        beginX: number,
+        beginY: number,
+        handleEoX: number,
+        handleEoY: number,
+        handleEiX: number,
+        handleEiY: number,
+        endPointX: number,
+        endPointY: number,
+    },
+    easeOutHandle: ?{
+        handleEoX: number,
+        handleEoY: number,
+    },
+    easeOutLine: ?{
+        beginX: number,
+        beginY: number,
+        handleEoX: number,
+        handleEoY: number,
+    },
+    easeInHandle: ?{
+        handleEiX: number,
+        handleEiY: number,
+    },
+    easeInLine: ?{
+        handleEiX: number,
+        handleEiY: number,
+        endPointX: number,
+        endPointY: number,
+    },
+}
 
 export default class LaneKeyframes extends React.Component
 {
@@ -31,54 +85,10 @@ export default class LaneKeyframes extends React.Component
     }
 
     state: {
-        keyframePoints: Array<{
-            id: ?string,
-            value: {
-                beginX: number,
-                beginY: number,
-            },
-            hasNextKeyFrame: boolean,
-            transition: ?{
-                beginX: number,
-                beginY: number,
-                handleEoX: number,
-                handleEoY: number,
-                handleEiX: number,
-                handleEiY: number,
-                endPointX: number,
-                endPointY: number,
-            },
-            easeOutHandle: ?{
-                handleEoX: number,
-                handleEoY: number,
-            },
-            easeOutLine: ?{
-                beginX: number,
-                beginY: number,
-                handleEoX: number,
-                handleEoY: number,
-            },
-            easeInHandle: ?{
-                handleEiX: number,
-                handleEiY: number,
-            },
-            easeInLine: ?{
-                handleEiX: number,
-                handleEiY: number,
-                endPointX: number,
-                endPointY: number,
-            },
-        }>
+        keyframePoints: Array<KeyframePoint>
     }
 
-    _dragState: ?{
-        dragging: boolean,
-        grabbed: 'ease-handle',
-        initialEvent: ?MouseEvent,
-        relateTarget: ?Element,
-        initialTarget: Element,
-        initialPosition: {x: number, y: number}
-    } = null
+    _dragState: ?HandlerDraggingSession = null
 
     constructor(...args)
     {
@@ -97,6 +107,141 @@ export default class LaneKeyframes extends React.Component
         const orderedKeyframes = Array.from(nextProps.keyframes).slice(0).sort((kfA, kfB) => kfA.frameOnLayer - kfB.frameOnLayer)
         this.setState({
             keyframePoints: this._buildKeyframePoints(orderedKeyframes)
+        })
+    }
+
+    onMouseDown = ({nativeEvent: e}) =>
+    {
+        if (e.target.matches('[data-ease-in-handle],[data-ease-out-handle]')) {
+            console.log(e.target, e.target.parentElement);
+            const isEaseInGrabbed = e.target.matches('[data-ease-in-handle]')
+            this._dragState = {
+                grabbed: 'ease-handle',
+                grabbedHandle: isEaseInGrabbed ? 'ease-in' : 'ease-out',
+                initialEvent: e,
+                initialTarget: e.target,
+                group: e.target.parentElement,
+                keyframePointIndex: attr(e.target.parentElement, 'data-index')|0,
+                handleElement: e.target.parentElement.querySelector(isEaseInGrabbed ? '[data-ease-in-handle-path]' : '[data-ease-out-handle-path]'),
+                initialPosition: {
+                    x: e.target.getAttribute('cx')|0,
+                    y: e.target.getAttribute('cy')|0,
+                }
+            }
+        }
+    }
+
+    onMouseUp = () =>
+    {
+        if (!this._dragState) return
+
+        if (this._dragState.grabbed === 'ease-handle') {
+            switch (true) {
+                case this._dragState.grabbedHandle === 'ease-in':
+                    this.onReleaseEaseInHandle()
+                    break
+                case this._dragState.grabbedHandle === 'ease-out':
+                    // this.onReleaseEaseOutHandle(e)
+                    break
+            }
+        }
+
+        this._dragState = null
+    }
+
+    onMouseMove = ({nativeEvent: e}: {nativeEvent: MouseEvent}) =>
+    {
+        if (!this._dragState || e.which !== 1) return // not mouse left clicked
+
+        if (this._dragState.grabbed === 'ease-handle') {
+            switch (true) {
+                case this._dragState.grabbedHandle === 'ease-in':
+                    this.dragEaseInHandle(e)
+                    break
+                case this._dragState.grabbedHandle === 'ease-out':
+                    this.dragEaseOutHandle(e)
+                    break
+            }
+        }
+    }
+
+    dragEaseInHandle = (e: MouseEvent) =>
+    {
+        const {
+            initialEvent,
+            initialTarget,
+            initialPosition,
+            handleElement,
+            group,
+            keyframePointIndex,
+        } = (this._dragState: HandlerDraggingSession)
+
+        const kfp = this.state.keyframePoints[keyframePointIndex|0]
+        const movedX = e.screenX - initialEvent.screenX
+        const movedY = e.screenY - initialEvent.screenY
+
+        const x = initialPosition.x + (e.screenX - initialEvent.screenX)
+        const y = initialPosition.y + (e.screenY - initialEvent.screenY)
+
+        initialTarget.setAttribute('cx', x)
+        initialTarget.setAttribute('cy', y)
+        handleElement.setAttribute('d', `M ${attr(handleElement, 'data-baseX')} ${attr(handleElement, 'data-baseY')} L ${x} ${y}`)
+
+        const easeInPath = group.querySelector('[data-ease-in-handle-path]')
+        easeInPath.setAttribute('d', `M ${x} ${y} L ${kfp.easeInLine.endPointX} ${kfp.easeInLine.endPointY}`)
+
+        const transitionPath = group.querySelector('[data-transition-path]')
+        transitionPath.setAttribute('d', `M ${kfp.transition.beginX} ${kfp.transition.beginY} C ${kfp.transition.handleEoX} ${kfp.transition.handleEoY} ${x} ${y} ${kfp.transition.endPointX} ${kfp.transition.endPointY}`)
+    }
+
+    dragEaseOutHandle = (e: MouseEvent) =>
+    {
+        const {
+            initialEvent,
+            initialTarget,
+            initialPosition,
+            handleElement,
+            group,
+            keyframePointIndex,
+        } = (this._dragState: HandlerDraggingSession)
+
+        const kfp = this.state.keyframePoints[keyframePointIndex|0]
+        const movedX = e.screenX - initialEvent.screenX
+        const movedY = e.screenY - initialEvent.screenY
+
+        const x = initialPosition.x + (e.screenX - initialEvent.screenX)
+        const y = initialPosition.y + (e.screenY - initialEvent.screenY)
+
+        initialTarget.setAttribute('cx', x)
+        initialTarget.setAttribute('cy', y)
+        handleElement.setAttribute('d', `M ${attr(handleElement, 'data-baseX')} ${attr(handleElement, 'data-baseY')} L ${x} ${y}`)
+
+        const easeOutPath = group.querySelector('[data-ease-out-handle-path]')
+        easeOutPath.setAttribute('d', `M ${kfp.easeOutLine.beginX} ${kfp.easeOutLine.beginY} L ${x} ${y}`)
+
+        const transitionPath = group.querySelector('[data-transition-path]')
+        transitionPath.setAttribute('d', `M ${kfp.transition.beginX} ${kfp.transition.beginY} C ${x} ${y} ${kfp.transition.handleEiX} ${kfp.transition.handleEiY} ${kfp.transition.endPointX} ${kfp.transition.endPointY}`)
+    }
+
+    onReleaseEaseInHandle()
+    {
+        if (! this._dragState) return
+
+        const {
+            handleElement,
+            initialPosition,
+            group,
+        } = (this._dragState: HandlerDraggingSession)
+
+        const keyframePoint = this.state.keyframePoints[this._dragState.keyframePointIndex]
+        const handle = group.querySelector('[data-ease-in-handle]')
+        const groupBounding = group.getBBox()
+        const x: number = ((attr(handle, 'cx')|0) - groupBounding.x) / groupBounding.width
+        const y: number = ((attr(handle, 'cy')|0) - groupBounding.y) / groupBounding.height
+
+        console.log(this._dragState);
+        ProjectModifyActions.modifyKeyFrame(keyframePoint.nextId, {
+            easeInParam: [x, y]
         })
     }
 
@@ -167,103 +312,6 @@ export default class LaneKeyframes extends React.Component
         )
     }
 
-    onMouseDown = ({nativeEvent: e}) =>
-    {
-        if (e.target.matches('[data-ease-in-handle],[data-ease-out-handle]')) {
-            this._dragState = {
-                dragging: true,
-                grabbed: 'ease-handle',
-                initialEvent: e,
-                initialTarget: e.target,
-                keyframePointIndex: attr(e.target.parentElement, 'data-index'),
-                handleElement: e.target.parentElement.querySelector(e.target.matches('[data-ease-in-handle]') ? '[data-ease-in-handle-path]' : '[data-ease-out-handle-path]'),
-                initialPosition: {
-                    x: e.target.getAttribute('cx')|0,
-                    y: e.target.getAttribute('cy')|0,
-                }
-            }
-        }
-    }
-
-    onMouseUp = () =>
-    {
-        this._dragState = null
-    }
-
-    onMouseMove = ({nativeEvent: e}: {nativeEvent: MouseEvent}) =>
-    {
-        if (!this._dragState || e.which !== 1) return // not mouse left clicked
-
-        if (this._dragState.grabbed === 'ease-handle') {
-            switch (true) {
-                case this._dragState.initialTarget.matches('[data-ease-in-handle]'):
-                    this.dragEaseInHandle(e)
-                    break
-                case this._dragState.initialTarget.matches('[data-ease-out-handle]'):
-                    this.dragEaseOutHandle(e)
-                    break
-            }
-        }
-    }
-
-    dragEaseInHandle = (e: MouseEvent) =>
-    {
-        const {
-            handleElement,
-            initialEvent,
-            initialTarget,
-            initialPosition,
-            keyframePointIndex,
-        } = this._dragState
-
-        const kfp = this.state.keyframePoints[keyframePointIndex|0]
-        const movedX = e.screenX - initialEvent.screenX
-        const movedY = e.screenY - initialEvent.screenY
-
-        const x = initialPosition.x + (e.screenX - initialEvent.screenX)
-        const y = initialPosition.y + (e.screenY - initialEvent.screenY)
-
-        initialTarget.setAttribute('cx', x)
-        initialTarget.setAttribute('cy', y)
-        handleElement.setAttribute('d', `M ${attr(handleElement, 'data-baseX')} ${attr(handleElement, 'data-baseY')} L ${x} ${y}`)
-
-        const easeInPath = e.target.parentElement.querySelector('[data-ease-in-handle-path]')
-        easeInPath.setAttribute('d', `M ${x} ${y} L ${kfp.easeInLine.endPointX} ${kfp.easeInLine.endPointY}`)
-
-        console.log(e.target, e.target.parentElement);
-
-        const transitionPath = e.target.parentElement.querySelector('[data-transition-path]')
-        transitionPath.setAttribute('d', `M ${kfp.transition.beginX} ${kfp.transition.beginY} C ${kfp.transition.handleEoX} ${kfp.transition.handleEoY} ${x} ${y} ${kfp.transition.endPointX} ${kfp.transition.endPointY}`)
-    }
-
-    dragEaseOutHandle = (e: MouseEvent) =>
-    {
-        const {
-            handleElement,
-            initialEvent,
-            initialTarget,
-            initialPosition,
-            keyframePointIndex,
-        } = this._dragState
-
-        const kfp = this.state.keyframePoints[keyframePointIndex|0]
-        const movedX = e.screenX - initialEvent.screenX
-        const movedY = e.screenY - initialEvent.screenY
-
-        const x = initialPosition.x + (e.screenX - initialEvent.screenX)
-        const y = initialPosition.y + (e.screenY - initialEvent.screenY)
-
-        initialTarget.setAttribute('cx', x)
-        initialTarget.setAttribute('cy', y)
-        handleElement.setAttribute('d', `M ${attr(handleElement, 'data-baseX')} ${attr(handleElement, 'data-baseY')} L ${x} ${y}`)
-
-        const easeOutPath = e.target.parentElement.querySelector('[data-ease-out-handle-path]')
-        easeOutPath.setAttribute('d', `M ${x} ${y} L ${kfp.easeOutLine.endPointX} ${kfp.easeOutLine.endPointY}`)
-
-        const transitionPath = e.target.parentElement.querySelector('[data-transition-path]')
-        transitionPath.setAttribute('d', `M ${kfp.transition.beginX} ${kfp.transition.beginY} C ${x} ${y} ${kfp.transition.handleEiX} ${kfp.transition.handleEiY} ${kfp.transition.endPointX} ${kfp.transition.endPointY}`)
-    }
-
     _buildKeyframePoints(orderedKeyframes: Array<Keyframe>)
     {
         const frameToPx = (frame: number) => TimelaneHelper.framesToPixel({
@@ -298,8 +346,6 @@ export default class LaneKeyframes extends React.Component
 
             const beginX = frameToPx(keyframe.frameOnLayer)
             const beginY = this.props.height - this.props.height * ((keyframe.value + minValue) / minMaxRange)
-            // valueElement = <g transform={`translate(${beginX - 2.5} ${beginY - 2.5})`}><rect transform='rotate(45)' width='5' height='5' /></g>
-            // valueElement = <g transform={`translate(${beginX - 2.5} ${beginY - 2.5})`}><rect transform='rotate(45)' width='5' height='5' /></g>
 
             if (nextKeyframe) {
                 endPointX = frameToPx(nextKeyframe.frameOnLayer)
@@ -310,57 +356,11 @@ export default class LaneKeyframes extends React.Component
 
                 handleEiX = (endPointX - beginX) * nextKeyframe.easeInParam[0]
                 handleEiY = this.props.height * nextKeyframe.easeOutParam[1]
-
-                // pathElement = <path
-                //     stroke='#fff'
-                //     fill='none'
-                //     strokeWidth='1'
-                //     d={`M ${beginX} ${beginY} C ${handleEoX} ${handleEoY} ${handleEiX} ${handleEiY} ${endPointX} ${endPointY}`}
-                // />
-                // easeOutHandle = <circle
-                //     cx={handleEoX}
-                //     cy={handleEoY}
-                //     fill='#7100bf'
-                //     r='6'
-                //     data-ease-out-handle
-                // />
-                // easeOutLine = <path
-                //     key={`${kfp.key}-handle-eo-path`}
-                //     stroke='#acacac'
-                //     fill='none'
-                //     strokeWidth='1' d={`M ${handleEoX} ${handleEoY} L ${beginX} ${beginY}`}
-                //     data-baseX={beginX}
-                //     data-baseY={beginY}
-                //     data-ease-out-handle-path
-                // />,
-                // easeInHandle = <circle
-                //     cx={handleEiX}
-                //     cy={handleEiY}
-                //     fill='#7100bf'
-                //     r='6'
-                //     data-ease-in-handle
-                // />
-                // easeInLine = <path
-                //     key={`${kfp.key}-handle-ei-path`}
-                //     stroke='#acacac'
-                //     fill='none'
-                //     strokeWidth='1'
-                //     d={`M ${handleEiX} ${handleEiY} L ${endPointX} ${endPointY}`}
-                //     data-baseX={endPointX}
-                //     data-baseY={endPointY}
-                //     data-ease-in-handle-path
-                // />
-            } else {
-                // pathElement = <path stroke='#fff' fill='none' strokeWidth='1' d={`M ${beginX} ${beginY}`} />
             }
-
-            // M beginPathX beginPathY
-            // C handle1X handle1Y handle2X handle2Y endPointX endPointY
-            // `M ${beginX} ${beginY} C ${handleEoX} ${handleEoY} ${handleEiX} ${handleEiY} ${endPointX} ${endPointY}`,
-            // return <path stroke='#fff' fill='none' strokeWidth='1' d={`M ${beginX} ${beginY} C ${handle1X} ${handle1Y} ${handle2X} ${handle2Y} ${endPointX} ${endPointY}`} />
 
             return {
                 id: keyframe.id,
+                nextId: nextKeyframe ? nextKeyframe.id : null,
                 value: {beginX, beginY},
                 hasNextKeyFrame: !!nextKeyframe,
                 transition: {beginX, beginY, handleEoX, handleEoY, handleEiX, handleEiY, endPointX, endPointY},
@@ -369,17 +369,6 @@ export default class LaneKeyframes extends React.Component
                 easeInHandle: {handleEiX, handleEiY},
                 easeInLine: {handleEiX, handleEiY, endPointX, endPointY},
             }
-
-            // return (
-            //     <g key={keyframe.id}>
-            //         {pathElement}
-            //         {easeInLine}
-            //         {easeOutLine}
-            //         {valueElement}
-            //         {easeInHandle}
-            //         {easeOutHandle}
-            //     </g>
-            // )
         })
     }
 }
