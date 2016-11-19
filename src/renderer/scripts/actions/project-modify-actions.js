@@ -88,6 +88,17 @@ export default {
         })
     },
 
+    modifyKeyFrame(keyframeId: string, props: Object)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.MODIFY_KEYFRAME,
+            payload: {
+                targetKeyframeId: keyframeId,
+                patch: props,
+            },
+        })
+    },
+
     removeTimelane()
     {
 
