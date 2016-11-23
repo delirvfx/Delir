@@ -1,14 +1,14 @@
 // @flow
-import type RenderRequest from '../../renderer/render-request'
+import type RenderRequest from '../renderer/render-request'
 
 import PluginBase from './plugin-base.js'
 import {TypeDescriptor} from '../type-descriptor'
 
 import {
     InvalidPluginLoadedException
-} from '../../exceptions/index'
+} from '../exceptions/index'
 
-export default class CustomLayerPluginBase extends PluginBase
+export default class LayerPluginBase extends PluginBase
 {
     static pluginDidLoad()
     {

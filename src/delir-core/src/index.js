@@ -2,7 +2,7 @@
 import * as Project from './project/index'
 import Renderer from './renderer/renderer'
 import * as Services from './services'
-import LayerPluginBase from './plugin/base/custom-layer-plugin-base'
+import LayerPluginBase from './plugin/layer-plugin-base'
 import Type from './plugin/type-descriptor'
 import * as ProjectHelper from './helper/project-helper'
 import * as Exception from './exceptions/index'
@@ -10,7 +10,7 @@ import * as Exception from './exceptions/index'
 export * as Project from './project/index'
 export Renderer from './renderer/renderer'
 export * as Services from './services'
-export LayerPluginBase from './plugin/base/custom-layer-plugin-base'
+export LayerPluginBase from './plugin/layer-plugin-base'
 export Type from './plugin/type-descriptor'
 export * as ProjectHelper from './helper/project-helper'
 export * as Exception from './exceptions/index'
@@ -20,7 +20,6 @@ export default {
     Renderer,
     Services,
     Exception,
-    LayerPluginBase,
     Type,
     ProjectHelper,
 }
