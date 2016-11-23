@@ -1,7 +1,7 @@
 import {
     PluginAssertionFailedException,
     InvalidPluginLoadedException
-} from '../../exceptions/index'
+} from '../exceptions/index'
 
 export function assertPlugin(PluginClass) {
     const name = PluginClass.name

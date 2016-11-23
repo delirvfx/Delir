@@ -1,5 +1,5 @@
 // @flow
-import type CustomLayerPluginBase from '../plugin/base/custom-layer-plugin-base'
+import type LayerPluginBase from '../plugin/layer-plugin-base'
 import type Layer from '../project/layer'
 import type Keyframe from '../project/keyframe'
 import type PreRenderingRequest from './pre-rendering-request'
@@ -12,7 +12,7 @@ import PluginPreRenderingRequest from './plugin-pre-rendering-request'
 
 export default class LayerInstanceContainer
 {
-    // _baseClass: Class<CustomLayerPluginBase>
+    // _baseClass: Class<LayerPluginBase>
     _layer: Layer
     _variableScope: Object = Object.create(null)
 
@@ -20,7 +20,7 @@ export default class LayerInstanceContainer
     _timeOrderKeyframes: Array<Keyframe>
     _preCalcTable: {[propName: string]: KeyFrameSequence}
 
-    _rendererClass: Class<CustomLayerPluginBase>
+    _rendererClass: Class<LayerPluginBase>
     _rendererInstance: Object
 
     get placedFrame(): number { return this._layer.placedFrame }
