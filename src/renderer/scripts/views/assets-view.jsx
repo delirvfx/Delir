@@ -138,8 +138,8 @@ export default class AssetsView extends React.Component
                     show={this.state.newCompositionWindowOpened}
                     width={400}
                     height={350}
-                    onHide={this.props.makeNewComposition}
-                    onResponse={this.props.makeNewComposition}
+                    onHide={this.makeNewComposition}
+                    onResponse={this.makeNewComposition}
                 />
                 <SettingCompositionWindow
                     show={this.state.settingCompositionWindowOpened}
