@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
-import Delir from 'delir-core'
-const {Helper: DelirHelper} = Delir
+import parseColor from 'parse-color'
+import Delir, {ProjectHelper, ColorRGB} from 'delir-core'
 
 import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
@@ -74,7 +74,7 @@ export default class AssetsView extends React.Component
 
     openCompositionSettingWindow = compId =>
     {
-        const targetComposition = DelirHelper.findCompositionById(this.state.project.project, compId)
+        const targetComposition = ProjectHelper.findCompositionById(this.state.project.project, compId)
 
         this.setState({
             settingCompositionQuery: {
@@ -107,7 +107,7 @@ export default class AssetsView extends React.Component
         ProjectModifyActions.modifyComposition(req.id, req)
     }
 
-    makeNewComposition = (req: {name: string, width: string, height: string, framerate: string, durationSeconds: string}) =>
+    makeNewComposition = (req: {name: string, width: string, height: string, framerate: string, durationSeconds: string, backgroundColor: string}) =>
     {
         if (req == null) return
 
@@ -117,12 +117,15 @@ export default class AssetsView extends React.Component
         // component updated and open modal window once again by current state.
         this.setState({newCompositionWindowOpened: false})
 
+        const bgColor = parseColor(req.backgroundColor)
+
         ProjectModifyActions.createComposition({
             name: req.name,
             width: req.width | 0,
             height: req.height | 0,
             framerate: req.framerate | 0,
-            durationFrame: (req.framerate | 0) * parseInt(req.durationSeconds, 10)
+            durationFrames: (req.framerate | 0) * parseInt(req.durationSeconds, 10),
+            backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
         })
     }
 
@@ -138,8 +141,8 @@ export default class AssetsView extends React.Component
                     show={this.state.newCompositionWindowOpened}
                     width={400}
                     height={350}
-                    onHide={this.props.makeNewComposition}
-                    onResponse={this.props.makeNewComposition}
+                    onHide={this.makeNewComposition}
+                    onResponse={this.makeNewComposition}
                 />
                 <SettingCompositionWindow
                     show={this.state.settingCompositionWindowOpened}

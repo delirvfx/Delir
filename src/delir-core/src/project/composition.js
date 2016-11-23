@@ -2,6 +2,7 @@
 import _ from 'lodash'
 import ProxySet from './_proxy-set'
 
+import ColorRGB from '../struct/color-rgb';
 import Project from './project'
 import Timelane from './timelane'
 import Layer from './layer'
@@ -19,6 +20,7 @@ export default class Composition
             'durationFrames',
             'samplingRate',
             'audioChannels',
+            'backgroundColor',
         ])
 
         const timelanes = compJson.timelanes.map(lane => Timelane.deserialize(lane))
@@ -26,6 +28,9 @@ export default class Composition
         Object.defineProperty(comp, 'id', {value: compJson.id})
         comp.timelanes = new Set(timelanes)
         Object.assign(comp.config, config)
+
+        const color = config.backgroundColor
+        comp.backgroundColor = new ColorRGB(color.red, color.green, color.blue)
         return comp
     }
 
@@ -42,6 +47,8 @@ export default class Composition
 
         samplingRate: ?number,
         audioChannels: ?number,
+
+        backgroundColor: ?ColorRGB,
     } = {
         name: null,
         width: null,
@@ -51,6 +58,8 @@ export default class Composition
 
         samplingRate: null,
         audioChannels: null,
+
+        backgroundColor: new ColorRGB(0, 0, 0),
     }
 
     get name(): string { return this.config.name }
@@ -78,6 +87,9 @@ export default class Composition
 
     get audioChannels(): number { return this.config.audioChannels }
     set audioChannels(audioChannels: number) { this.config.audioChannels = audioChannels }
+
+    get backgroundColor(): ColorRGB { return this.config.backgroundColor }
+    set backgroundColor(backgroundColor: ColorRGB) { this.config.backgroundColor = backgroundColor }
 
     constructor()
     {

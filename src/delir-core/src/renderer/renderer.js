@@ -209,6 +209,8 @@ export default class Renderer {
             neededSamples: rootCompWrap.samplingRate,
             audioChannels: rootCompWrap.audioChannels,
 
+            rootComposition: rootComp,
+
             resolver: resolver,
         })
 
