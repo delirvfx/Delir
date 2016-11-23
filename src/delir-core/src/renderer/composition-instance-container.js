@@ -66,6 +66,12 @@ export default class CompositionInstanceContainer
         // Top is over
         const context = req.destCanvas.getContext('2d')
         if (context == null) return
+
+        if (req.rootComposition === this) {
+            context.fillStyle = this._composition.backgroundColor.toString()
+            context.fillRect(0, 0, this._composition.width, this._composition.height)
+        }
+
         renderOrderedDests.forEach(([layer, destCanvas]) => {
             context.drawImage(destCanvas, 0, 0)
         })
