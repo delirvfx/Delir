@@ -9,14 +9,14 @@ export default {
     // Modify project
     //
 
-    createComposition({name, width, height, framerate, durationFrame})
+    createComposition({name, width, height, framerate, durationFrames})
     {
         const composition = new Project.Composition
         composition.name = name
         composition.width = width
         composition.height = height
         composition.framerate = framerate
-        composition.durationFrame = durationFrame
+        composition.durationFrames = durationFrames
 
         dispatcher.dispatch({
             type: ActionTypes.CREATE_COMPOSTION,

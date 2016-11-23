@@ -122,7 +122,7 @@ export default class AssetsView extends React.Component
             width: req.width | 0,
             height: req.height | 0,
             framerate: req.framerate | 0,
-            durationFrame: (req.framerate | 0) * parseInt(req.durationSeconds, 10)
+            durationFrames: (req.framerate | 0) * parseInt(req.durationSeconds, 10)
         })
     }
 
