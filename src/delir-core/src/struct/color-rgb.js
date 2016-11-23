@@ -1,8 +1,8 @@
 // @flow
 export class ColorRGB {
-    _red : number
-    _green : number
-    _blue : number
+    _red: number
+    _green: number
+    _blue: number
 
     constructor(
         r: number = 0,

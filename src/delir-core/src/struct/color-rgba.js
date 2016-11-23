@@ -1,9 +1,9 @@
 // @flow
 export class ColorRGBA {
-    _red : number
-    _green : number
-    _blue : number
-    _alpha : number
+    _red: number
+    _green: number
+    _blue: number
+    _alpha: number
 
     constructor(
         r: number = 0,
