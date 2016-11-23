@@ -83,6 +83,16 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
+        [ActionTypes.MODIFY_KEYFRAME](state, {targetKeyframeId, patch})
+        {
+            if (! state.project) return state
+
+            console.log(ProjectHelper.findKeyframeById(state.project, targetKeyframeId).easeInParam);
+            ProjectHelper.modifyKeyframe(state.project, targetKeyframeId, patch)
+            console.log(ProjectHelper.findKeyframeById(state.project, targetKeyframeId).easeInParam);
+            return Object.assign({}, state)
+        },
+
         [ActionTypes.REMOVE_TIMELANE](state, {targetTimelaneId})
         {
             if (! state.project) return state

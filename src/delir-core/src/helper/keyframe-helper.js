@@ -120,7 +120,6 @@ export default class KeyframeHelper
 
             const progressRate = (frame - activeKeyFrame.active.frameOnLayer) / (activeKeyFrame.next.frameOnLayer - activeKeyFrame.active.frameOnLayer)
             table[frame] = transformer(bezier(progressRate), frame, activeKeyFrame)
-            console.log(bezier(progressRate));
         }
 
         return table

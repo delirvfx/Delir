@@ -55,7 +55,7 @@ const handlers = {
         })
 
         promise.progress(progress => {
-            console.info(progress.state);
+            // console.info(progress.state);
             EditorStateActions.updateProcessingState(`Preview: ${progress.state}`)
 
             if (progress.isAudioBuffered) {
