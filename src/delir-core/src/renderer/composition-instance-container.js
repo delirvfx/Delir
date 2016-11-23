@@ -67,7 +67,7 @@ export default class CompositionInstanceContainer
         const context = req.destCanvas.getContext('2d')
         if (context == null) return
 
-        if (req.rootComposition === this) {
+        if (req.rootComposition === this._composition) {
             context.fillStyle = this._composition.backgroundColor.toString()
             context.fillRect(0, 0, this._composition.width, this._composition.height)
         }
