@@ -2,7 +2,7 @@
 import type RenderRequest from '../renderer/render-request'
 
 import PluginBase from './plugin-base.js'
-import {TypeDescriptor} from '../type-descriptor'
+import {TypeDescriptor} from './type-descriptor'
 
 import {
     InvalidPluginLoadedException

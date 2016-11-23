@@ -28,10 +28,10 @@ describe('Check exportings', () => {
     })
 
     describe('Delir.PluginBase', () => {
-        it('CustomLayerPluginBase', () => {
-            expect(Delir.PluginBase.CustomLayerPluginBase).to.not.eql(null)
-            expect(Delir.PluginBase.CustomLayerPluginBase).to.be.an('function')
-            expect(Delir.PluginBase.CustomLayerPluginBase).to.not.be.an('object')
+        it('LayerPluginBase', () => {
+            expect(Delir.PluginBase.LayerPluginBase).to.not.eql(null)
+            expect(Delir.PluginBase.LayerPluginBase).to.be.an('function')
+            expect(Delir.PluginBase.LayerPluginBase).to.not.be.an('object')
         })
     })
 
