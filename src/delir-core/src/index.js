@@ -2,7 +2,7 @@
 import * as Project from './project/index'
 import Renderer from './renderer/renderer'
 import * as Services from './services'
-import * as Exception from './exceptions/index'
+import * as Exceptions from './exceptions/index'
 
 import ColorRGB from './struct/color-rgb'
 import ColorRGBA from './struct/color-rgba'
@@ -15,8 +15,7 @@ import LayerPluginBase from './plugin/layer-plugin-base'
 export * as Project from './project/index'
 export Renderer from './renderer/renderer'
 export * as Services from './services'
-export * as Exception from './exceptions/index'
-
+export * as Exceptions from './exceptions/index'
 
 // Structure
 export ColorRGB from './struct/color-rgb'
@@ -32,7 +31,7 @@ export default {
     Project,
     Renderer,
     Services,
-    Exception,
+    Exceptions,
 
     // Structure
     ColorRGB,
