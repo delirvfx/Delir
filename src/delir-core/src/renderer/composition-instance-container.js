@@ -45,7 +45,7 @@ export default class CompositionInstanceContainer
             timeOnComposition: req.time,
             frameOnComposition: req.frame,
 
-            parentComposition: req.rootComposition == this ? null : this,
+            parentComposition: req.rootComposition == this._composition ? null : this._composition,
             compositionScope: this._variableScope,
         })
 
