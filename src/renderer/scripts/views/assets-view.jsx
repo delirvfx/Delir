@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
-import Delir from 'delir-core'
-const {Helper: DelirHelper} = Delir
+import Delir, {ProjectHelper} from 'delir-core'
 
 import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
@@ -74,7 +73,7 @@ export default class AssetsView extends React.Component
 
     openCompositionSettingWindow = compId =>
     {
-        const targetComposition = DelirHelper.findCompositionById(this.state.project.project, compId)
+        const targetComposition = ProjectHelper.findCompositionById(this.state.project.project, compId)
 
         this.setState({
             settingCompositionQuery: {
