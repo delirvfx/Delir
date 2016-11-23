@@ -1,5 +1,5 @@
 // @flow
-export class ColorRGBA {
+export default class ColorRGBA {
     _red: number
     _green: number
     _blue: number

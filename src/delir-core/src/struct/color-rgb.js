@@ -1,5 +1,5 @@
 // @flow
-export class ColorRGB {
+export default class ColorRGB {
     _red: number
     _green: number
     _blue: number
