@@ -25,7 +25,6 @@ const handlers = {
     {
         if (! state.project) return
 
-        console.log('accept');
         const targetComposition = ProjectHelper.findCompositionById(state.project, compositionId)
 
         if (! targetComposition) return
@@ -55,7 +54,6 @@ const handlers = {
         })
 
         promise.progress(progress => {
-            console.info(progress.state);
             EditorStateActions.updateProcessingState(`Preview: ${progress.state}`)
 
             if (progress.isAudioBuffered) {
