@@ -1,4 +1,4 @@
-
+// @flow
 import type RenderRequest from '../../renderer/render-request'
 
 import _ from 'lodash'
@@ -42,7 +42,6 @@ export default class HTML5VideoLayer extends LayerPluginBase
     constructor()
     {
         super()
-        const v = this.video = document.createElement('video')
         // document.body.appendChild(this.video)
         // Object.assign(v.style, {
         //     position: 'fixed',
@@ -61,14 +60,16 @@ export default class HTML5VideoLayer extends LayerPluginBase
     async beforeRender(preRenderRequest: Object)
     {
         const {parameters} = preRenderRequest
+
+        this.video = document.createElement('video')
         this.video.src = `file://${parameters.source.path}`
         this.video.loop = parameters.loop
         this.video.load()
         this.video.currentTime = -1
 
-        // console.log(this.video);
-        await new Promise(resolve => {
-            this.video.addEventListener('loadeddata', () => resolve())
+        await new Promise((resolve, reject) => {
+            this.video.addEventListener('loadeddata', () => resolve(), {once: true})
+            this.video.addEventListener('error', () => reject(new Error('video not found')), {once: true})
         })
     }
 
