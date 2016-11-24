@@ -55,7 +55,7 @@ export default class LayerInstanceContainer
         const paramTypes = this._rendererClass.provideParameters()
 
         const params = {}
-        paramTypes.properties.forEach(desc => params[desc.propName] = receiveOptions[desc.propName] ? Object.assign({}, receiveOptions[desc.propName]) : null)
+        paramTypes.properties.forEach(desc => params[desc.propName] = receiveOptions[desc.propName])
         Object.freeze(params)
 
         const preRenderReq = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
@@ -72,9 +72,8 @@ export default class LayerInstanceContainer
 
         // Pre calculate keyframe interpolation
         const keyframes = Object.assign({}, this._layer.keyframes)
-        _.each(paramTypes.properties, ({propName}) => keyframes[propName] = keyframes[propName] ? keyframes[propName] : [])
+        _.each(paramTypes.properties, ({propName}) => keyframes[propName] = keyframes[propName] ? Array.from(keyframes[propName]) : [])
         this._preCalcTable = KeyframeHelper.calcKeyFrames(paramTypes, keyframes, 0, req.durationFrames)
-        console.log(this._preCalcTable);
     }
 
     async render(req: RenderRequest)
