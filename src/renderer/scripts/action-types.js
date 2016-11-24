@@ -1,6 +1,8 @@
 import keyMirror from 'keymirror'
 
 export default keyMirror({
+    OPEN_PLUGIN_DIR: null,
+
     // EditorStateActions
     SET_ACTIVE_PROJECT: null,
     CHANGE_ACTIVE_COMPOSITION: null,
