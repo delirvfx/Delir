@@ -50,6 +50,10 @@ export default class PluginRegistory
 
                 Validators.delirPackageJson(json)
 
+                if (packages[json.name]) {
+                    throw new PluginLoadFailException(`Duplicate plugin ${json.name}`)
+                }
+
                 packages[json.name] = {
                     package: json,
                     packageRoot,
