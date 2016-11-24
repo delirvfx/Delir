@@ -12,10 +12,12 @@
     "watch-test": "$(npm bin)/mocha --watch --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js"
   },
   "devDependencies": {
-    "babel-core": "^6.17.0",
-    "babel-loader": "^6.2.4",
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-class-properties": "^6.16.0",
+    "babel-plugin-transform-class-properties": "^6.18.0",
+    "babel-plugin-transform-es2015-classes": "^6.18.0",
+    "babel-plugin-transform-es2015-destructuring": "^6.18.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
     "babel-plugin-transform-flow-strip-types": "^6.14.0",
     "babel-plugin-transform-react-jsx": "^6.8.0",
@@ -52,11 +54,6 @@
   "dependencies": {
     "arraybuffer-to-buffer": "0.0.4",
     "audiobuffer-to-wav": "^1.0.0",
-    "babel-plugin-transform-class-properties": "^6.18.0",
-    "babel-plugin-transform-es2015-classes": "^6.18.0",
-    "babel-plugin-transform-es2015-destructuring": "^6.18.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
-    "babel-plugin-transform-react-jsx": "^6.8.0",
     "bezier-easing": "^2.0.3",
     "bson": "^0.5.5",
     "canvas": "^1.6.1",

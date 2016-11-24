@@ -31,7 +31,7 @@ export default class TimelaneInstanceContainer
     {
         const targets = this._timeOrderLayers.filter(layer => {
             return layer.placedFrame <= req.frameOnComposition
-                && layer.placedFrame + layer.durationFrame >= req.frameOnComposition
+                && layer.placedFrame + layer.durationFrames >= req.frameOnComposition
         })
 
         await Promise.all(targets.map(async layer =>{

@@ -276,7 +276,7 @@ babel-code-frame@^6.16.0:
     esutils "^2.0.2"
     js-tokens "^2.0.0"
 
-babel-core@^6.0.2, babel-core@^6.17.0, babel-core@^6.18.0:
+babel-core, babel-core@^6.0.2, babel-core@^6.18.0:
   version "6.18.2"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.18.2.tgz#d8bb14dd6986fa4f3566a26ceda3964fa0e04e5b"
   dependencies:
@@ -415,9 +415,9 @@ babel-helpers@^6.16.0:
     babel-runtime "^6.0.0"
     babel-template "^6.16.0"
 
-babel-loader@^6.2.4:
-  version "6.2.7"
-  resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-6.2.7.tgz#16fdbf64328030dc5a606827d389c8b92a2a8032"
+babel-loader:
+  version "6.2.8"
+  resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-6.2.8.tgz#30d7183aef60afc140b36443676b7acb4c12ac9c"
   dependencies:
     find-cache-dir "^0.1.1"
     loader-utils "^0.2.11"
@@ -1556,6 +1556,13 @@ editor@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/editor/-/editor-1.0.0.tgz#60c7f87bd62bcc6a894fa8ccd6afb7823a24f742"
 
+electron:
+  version "1.4.8"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-1.4.8.tgz#5ac8cfa465f9ff4957a8da9974fa7c460c89d918"
+  dependencies:
+    electron-download "^3.0.1"
+    extract-zip "^1.0.3"
+
 electron-canvas-to-buffer@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/electron-canvas-to-buffer/-/electron-canvas-to-buffer-2.0.0.tgz#da92cd7342e47b3b0dde2a3ae79978e5a0761681"
@@ -1624,13 +1631,6 @@ electron-rebuild@^1.2.1:
     promise "^7.1.1"
     rimraf "^2.5.0"
     yargs "^3.31.0"
-
-electron@^1.4.4:
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-1.4.6.tgz#7e8ea042f03ff3f14f48afa132f7fdecc29b3df5"
-  dependencies:
-    electron-download "^3.0.1"
-    extract-zip "^1.0.3"
 
 emojis-list@^2.0.0:
   version "2.1.0"

@@ -71,11 +71,11 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-            const _patch = _.pick(patch, ['name', 'width', 'height', 'framerate', 'durationFrame'])
+            const _patch = _.pick(patch, ['name', 'width', 'height', 'framerate', 'durationFrames'])
             _patch.width != null && (_patch.width = _patch.width|0)
             _patch.height != null && (_patch.height = _patch.height|0)
             _patch.framerate != null && (_patch.framerate = _patch.framerate|0)
-            _patch.durationFrame != null && (_patch.durationFrame = _patch.durationFrame|0)
+            _patch.durationFrames != null && (_patch.durationFrames = _patch.durationFrames|0)
 
             const targetComposition = ProjectHelper.findCompositionById(state.project, targetCompositionId)
             Object.assign(targetComposition, _patch)

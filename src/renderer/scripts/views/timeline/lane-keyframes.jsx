@@ -50,7 +50,6 @@ export default class LaneKeyframes extends React.Component
     {
         const {svg} = this
 
-        console.log(this.svg, this.line);
         svg.selectAll('path')
             .data(this.props.keyframes, kf => kf.id)
             .enter()
