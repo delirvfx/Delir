@@ -83,7 +83,7 @@ export default class AssetsView extends React.Component
                 width: targetComposition.width,
                 height: targetComposition.height,
                 framerate: targetComposition.framerate,
-                durationFrame: targetComposition.durationFrame,
+                durationFrames: targetComposition.durationFrames,
                 samplingRate: targetComposition.samplingRate,
                 audioChannels: targetComposition.audioChannels,
             },

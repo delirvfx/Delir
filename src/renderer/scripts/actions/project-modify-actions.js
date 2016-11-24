@@ -38,12 +38,12 @@ export default {
         timelaneId: string,
         layerRendererId: string,
         placedFrame = 0,
-        durationFrame = 100
+        durationFrames = 100
     ) {
         const layer = new Project.Layer
         layer.renderer = layerRendererId
         layer.placedFrame = placedFrame
-        layer.durationFrame = durationFrame
+        layer.durationFrames = durationFrames
 
         dispatcher.dispatch({
             type: ActionTypes.CREATE_LAYER,

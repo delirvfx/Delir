@@ -25,13 +25,14 @@ export default class TimelaneInstanceContainer
         this._timeOrderLayers = this._layers.slice(0)
             .sort((layerA, layerB) => layerA._layer.placedFrame - layerB._layer.placedFrame)
         await Promise.all(this._layers.map(async layer => await layer.beforeRender(preRenderReq)))
+        console.log(this._layers)
     }
 
     async render(req: RenderRequest)
     {
         const targets = this._timeOrderLayers.filter(layer => {
             return layer.placedFrame <= req.frameOnComposition
-                && layer.placedFrame + layer.durationFrame >= req.frameOnComposition
+                && layer.placedFrame + layer.durationFrames >= req.frameOnComposition
         })
 
         await Promise.all(targets.map(async layer =>{
