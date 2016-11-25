@@ -103,10 +103,7 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-            const targetTimelane = ProjectHelper.findTimelaneById(state.project, targetTimelaneId)
-            const timelaneHolderComp = ProjectHelper.findParentCompositionByTimelaneId(state.project, targetTimelaneId)
-            timelaneHolderComp.timelanes.delete(targetLayer)
-
+            ProjectHelper.deleteTimelane(state.project, targetTimelaneId)
             return Object.assign({}, state)
         },
 

@@ -109,9 +109,14 @@ export default {
         })
     },
 
-    removeTimelane()
+    removeTimelane(timelaneId: string)
     {
-
+        dispatcher.dispatch({
+            type: ActionTypes.REMOVE_TIMELANE,
+            payload: {
+                targetTimelaneId: timelaneId,
+            },
+        })
     },
 
     removeLayer(layerId: string)
