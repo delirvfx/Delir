@@ -54,6 +54,7 @@ export class MenuItem extends React.Component
     static propTypes = {
         label: PropTypes.string,
         type: PropTypes.string,
+        enabled: PropTypes.bool,
         onClick: PropTypes.func,
         checked: PropTypes.bool,
         submenu: PropTypes.array,
@@ -89,6 +90,7 @@ export class ContextMenu extends React.Component
         const menuItem = {
             label: item.props.label,
             type: item.props.type,
+            enabled: item.props.enabled,
             click: item.props.onClick,
             checked: item.props.checked,
         }
