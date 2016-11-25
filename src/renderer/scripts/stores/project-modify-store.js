@@ -83,6 +83,14 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
+        [ActionTypes.REMOVE_ASSET](state, {targetAssetId})
+        {
+            if (! state.project) return state
+
+            ProjectHelper.deleteAsset(state.project, targetAssetId)
+            return Object.assign({}, state)
+        },
+
         [ActionTypes.REMOVE_TIMELANE](state, {targetTimelaneId})
         {
             if (! state.project) return state

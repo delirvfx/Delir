@@ -1,3 +1,4 @@
+// @flow
 import _ from 'lodash'
 import {Project} from 'delir-core'
 
@@ -85,6 +86,16 @@ export default {
                 targetCompositionId: compId,
                 patch: props,
             }
+        })
+    },
+
+    removeAsset(assetId: string)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.REMOVE_ASSET,
+            payload: {
+                targetAssetId: assetId,
+            },
         })
     },
 

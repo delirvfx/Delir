@@ -62,6 +62,10 @@ export default class AssetsView extends React.Component
         })
     }
 
+    removeAsset = assetId => {
+        ProjectModifyActions.removeAsset(assetId)
+    }
+
     changeComposition = (compId, e) =>
     {
         EditorStateActions.changeActiveComposition(compId)
@@ -165,9 +169,9 @@ export default class AssetsView extends React.Component
                             <Row key={asset.id}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
-                                    <MenuItem label='Reload' onClick={() => {}} />
-                                    <MenuItem label='Remove it' onClick={() => {}}/>
+                                    <MenuItem label='名前を変更' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
+                                    <MenuItem label='再読み込み' onClick={() => {}} />
+                                    <MenuItem label='削除' onClick={this.removeAsset.bind(null, asset.id)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 

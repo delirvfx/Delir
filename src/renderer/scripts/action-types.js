@@ -20,6 +20,7 @@ export default keyMirror({
     CREATE_LAYER: null,
     MODIFY_COMPOSITION: null,
 
+    REMOVE_ASSET: null,
     REMOVE_TIMELANE: null,
     REMOVE_LAYER: null,
 
