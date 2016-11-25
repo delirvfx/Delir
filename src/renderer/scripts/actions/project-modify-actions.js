@@ -99,6 +99,16 @@ export default {
         })
     },
 
+    removeComposition(compositionId: string)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.REMOVE_COMPOSITION,
+            payload: {
+                targetCompositionId: compositionId,
+            },
+        })
+    },
+
     removeTimelane()
     {
 

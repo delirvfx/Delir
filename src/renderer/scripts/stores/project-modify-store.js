@@ -91,6 +91,14 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
+        [ActionTypes.REMOVE_COMPOSITION](state, {targetCompositionId})
+        {
+            if (! state.project) return state
+
+            ProjectHelper.deleteComposition(state.project, targetCompositionId)
+            return Object.assign({}, state)
+        },
+
         [ActionTypes.REMOVE_TIMELANE](state, {targetTimelaneId})
         {
             if (! state.project) return state
