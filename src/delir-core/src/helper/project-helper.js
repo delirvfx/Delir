@@ -33,7 +33,7 @@ export function createAddAsset(
     assetProps: Object = {}
 ) {
     const entityId = _generateAndReserveSymbolId(project)
-    const asset = new asset()
+    const asset = new Asset()
 
     setFreezedProp(asset, 'id', entityId)
     Object.assign(asset, assetProps)
