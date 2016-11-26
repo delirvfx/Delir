@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import Project from '../../src/project/project'
 import Asset from '../../src/project/asset'
 import Composition from '../../src/project/composition'

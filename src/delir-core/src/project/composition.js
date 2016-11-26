@@ -1,6 +1,5 @@
 // @flow
 import _ from 'lodash'
-import ProxySet from './_proxy-set'
 
 import ColorRGB from '../struct/color-rgb';
 import Project from './project'

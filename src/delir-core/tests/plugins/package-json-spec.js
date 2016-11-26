@@ -13,7 +13,15 @@ describe('Standard plugins package.json format check', () => {
         Validators.delirPackageJson(require(join(pluginsRoot, 'composition-layer/package.json')))
     })
 
-    it('scripting-layer', async () => {
-        Validators.delirPackageJson(require(join(pluginsRoot, 'scripting-layer/package.json')))
+    it('html5-video-layer', async () => {
+        Validators.delirPackageJson(require(join(pluginsRoot, 'html5-video-layer/package.json')))
+    })
+
+    it('plane', async () => {
+        Validators.delirPackageJson(require(join(pluginsRoot, 'plane/package.json')))
+    })
+
+    it('test', async () => {
+        Validators.delirPackageJson(require(join(pluginsRoot, 'text/package.json')))
     })
 })

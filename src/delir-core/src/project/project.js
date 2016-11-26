@@ -3,7 +3,6 @@ import _ from 'lodash'
 import uuid from 'uuid'
 import {BSONPure} from 'bson'
 
-import ProxySet from './_proxy-set'
 import Asset from './asset'
 import Composition from './composition'
 

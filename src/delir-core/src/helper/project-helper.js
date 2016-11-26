@@ -10,7 +10,7 @@ import Keyframe from '../project/keyframe'
 
 function setFreezedProp(obj: Object, name: string, value: any)
 {
-    Object.defineProperty(obj, name, {value})
+    Object.defineProperty(obj, name, {value, writable: false})
 }
 
 function _generateAndReserveSymbolId(project: Project): string
@@ -33,7 +33,7 @@ export function createAddAsset(
     assetProps: Object = {}
 ) {
     const entityId = _generateAndReserveSymbolId(project)
-    const asset = new asset()
+    const asset = new Asset()
 
     setFreezedProp(asset, 'id', entityId)
     Object.assign(asset, assetProps)
@@ -106,7 +106,7 @@ export function createAddKeyframe(
     targetLayerId: Layer|string,
     propName: string,
     keyframeProp: Object|Array<Object>
-): Keyframe|Array<Keyframe>
+): Array<Keyframe>
 {
     let keyframeProps
     if (Array.isArray(keyframeProp)) {
@@ -136,7 +136,7 @@ export function createAddKeyframe(
         createdKeyframes.push(keyframe)
     }
 
-    return Array.isArray(keyframeProps) ? createdKeyframes : createdKeyframes[0]
+    return createdKeyframes
 }
 
 //

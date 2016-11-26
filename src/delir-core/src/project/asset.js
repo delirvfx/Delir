@@ -48,6 +48,6 @@ export default class Asset
 
     toJSON()
     {
-        return Object.assign({}, this._config);
+        return Object.assign({}, this._config, {id: this.id});
     }
 }
