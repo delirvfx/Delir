@@ -4,9 +4,12 @@ import type {TypeDescriptor} from '../../plugin/type-descriptor'
 
 import {Type, LayerPluginBase} from '../../index'
 import fs from 'fs'
-import av from 'av'
-import Speaker from 'speaker'
-import {AudioContext} from 'web-audio-api'
+
+import AV from 'av'
+import 'mp3'
+import 'flac'
+import 'alac'
+import 'aac'
 
 export default class AudioLayer extends LayerPluginBase
 {
@@ -36,14 +39,29 @@ export default class AudioLayer extends LayerPluginBase
 
     async beforeRender(preRenderRequest: Object)
     {
-        this.context = new AudioContext()
-
         if (this.audio.source !== preRenderRequest.parameters.source.path) {
-            const buffer = await new Promise((resolve, reject) => this.context.decodeAudioData(
-                fs.readFileSync(preRenderRequest.parameters.source.path),
-                resolve,
-                reject,
-            ));
+            const buffer = await new Promise((resolve, reject) => {
+                const fileBuffer = fs.readFileSync(preRenderRequest.parameters.source.path)
+                const asset = AV.Asset.fromBuffer(fileBuffer)
+                asset.on('error', e => reject(new Error(e)))
+                asset.decodeToBuffer(decoded => {
+                    const numOfChannels: number = asset.format.channelsPerFrame
+                    const length = (decoded.length / numOfChannels)
+                    const buffers = []
+
+                    for (let ch = 0; ch < numOfChannels; ch++) {
+                        const chBuffer = new Float32Array(length)
+
+                        for (let i = 0; i < length; i++) {
+                            chBuffer[i] = decoded[ch + i * numOfChannels]
+                        }
+
+                        buffers.push(chBuffer)
+                    }
+
+                    resolve(buffers)
+                })
+            })
 
             this.audio = {
                 source: preRenderRequest.parameters.source.path,
@@ -66,7 +84,7 @@ export default class AudioLayer extends LayerPluginBase
         const begin = (req.seconds|0) * req.samplingRate
         const end = begin + req.neededSamples
         for (let ch = 0, l = req.audioChannels; ch < l; ch++) {
-            const buffer = this.audio.buffer.getChannelData(ch)
+            const buffer = this.audio.buffer[ch]
             destBuffers[ch].set(buffer.slice(begin, end))
         }
     }

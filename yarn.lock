@@ -4,7 +4,7 @@
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/7zip/-/7zip-0.0.6.tgz#9cafb171af82329490353b4816f03347aa150a30"
 
-aac@0.1.x:
+aac:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/aac/-/aac-0.1.3.tgz#eb56b6b7b073cc8c43b2db027dbad33073e14a48"
 
@@ -53,7 +53,7 @@ acorn@~4.0.2, acorn@4.X:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.3.tgz#1a3e850b428e73ba6b09d1cc527f5aaad4d03ef1"
 
-alac@0.1.x:
+alac:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/alac/-/alac-0.1.0.tgz#da1bf3bd5d0801d019fc389c4caf8cab85bafd13"
 
@@ -195,10 +195,6 @@ assert@^1.1.1:
   dependencies:
     util "0.10.3"
 
-assertion-error@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/assertion-error/-/assertion-error-1.0.0.tgz#c7f85438fdd466bc7ca16ab90c81513797a5d23b"
-
 async-done@^1.2.0, async-done@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/async-done/-/async-done-1.2.2.tgz#ba4280da55a16e15f4bb8bf3a844a91878740e31"
@@ -218,7 +214,7 @@ async-settle@^1.0.0:
   dependencies:
     async-done "^1.2.2"
 
-async@^0.9.0, async@~0.9.0, async@0.9.x:
+async@^0.9.0, async@~0.9.0:
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/async/-/async-0.9.2.tgz#aea74d5e61c1f899613bf64bda66d4c78f2fd17d"
 
@@ -226,7 +222,7 @@ async@^1.3.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@~0.2.6, async@0.2.x:
+async@~0.2.6:
   version "0.2.10"
   resolved "https://registry.yarnpkg.com/async/-/async-0.2.10.tgz#b6bbe0b0674b9d719708ca38de8c237cb526c3d1"
 
@@ -242,13 +238,7 @@ audiobuffer-to-wav@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/audiobuffer-to-wav/-/audiobuffer-to-wav-1.0.0.tgz#d5b432271455e7fee56b111cd0f8d620d7f9e105"
 
-audiobuffer@0.2.x:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/audiobuffer/-/audiobuffer-0.2.0.tgz#7cf2df30701aac184333eaf9e8ee3b01830c861a"
-  dependencies:
-    underscore "1.4.x"
-
-av@0.4.x:
+av:
   version "0.4.9"
   resolved "https://registry.yarnpkg.com/av/-/av-0.4.9.tgz#8c7165f739580a541ec95071423492b3ffdc6e20"
   dependencies:
@@ -895,12 +885,6 @@ center-align@^0.1.1:
   dependencies:
     align-text "^0.1.3"
     lazy-cache "^1.0.3"
-
-chai@1.7.x:
-  version "1.7.2"
-  resolved "https://registry.yarnpkg.com/chai/-/chai-1.7.2.tgz#ba07ebd4e1ac138a296cdf69077ce74b7f4a1317"
-  dependencies:
-    assertion-error "1.0.0"
 
 chainsaw@~0.1.0:
   version "0.1.0"
@@ -1872,7 +1856,7 @@ first-chunk-stream@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/first-chunk-stream/-/first-chunk-stream-1.0.0.tgz#59bfb50cd905f60d7c394cd3d9acaab4e6ad934e"
 
-flac@0.3.x:
+flac:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/flac/-/flac-0.3.0.tgz#e59e410c3b4856ac97ff588a1f54304ac318933c"
   dependencies:
@@ -3350,7 +3334,7 @@ mocha@^3.1.2:
     mkdirp "0.5.1"
     supports-color "3.1.2"
 
-mp3@0.1.x:
+mp3:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/mp3/-/mp3-0.1.0.tgz#e53e4723e34698ee3ffddcdb60bf88356a4910c1"
 
@@ -3832,14 +3816,6 @@ path-type@^2.0.0:
 pbkdf2-compat@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/pbkdf2-compat/-/pbkdf2-compat-2.0.1.tgz#b6e0c8fa99494d94e0511575802a59a5c142f288"
-
-pcm-boilerplate@0.1.x:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/pcm-boilerplate/-/pcm-boilerplate-0.1.1.tgz#cb83b499fe2508c0f6c18338003fce239e150931"
-  dependencies:
-    async "0.2.x"
-    chai "1.7.x"
-    underscore "1.4.x"
 
 pend@~1.2.0:
   version "1.2.0"
@@ -4882,14 +4858,6 @@ unc-path-regex@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
 
-underscore@1.4.x:
-  version "1.4.4"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.4.4.tgz#61a6a32010622afa07963bf325203cf12239d604"
-
-underscore@1.8.x:
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
-
 undertaker-registry@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/undertaker-registry/-/undertaker-registry-1.0.0.tgz#2da716c765999d8c94b9f9ed2c006df4923b052b"
@@ -5063,20 +5031,6 @@ wcwidth@^1.0.0:
   resolved "https://registry.yarnpkg.com/wcwidth/-/wcwidth-1.0.1.tgz#f0b0dcf915bc5ff1528afadb2c0e17b532da2fe8"
   dependencies:
     defaults "^1.0.3"
-
-web-audio-api@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/web-audio-api/-/web-audio-api-0.2.2.tgz#2a5048b5c23d6b79605d4ef24fd7bc30f338de23"
-  dependencies:
-    aac "0.1.x"
-    alac "0.1.x"
-    async "0.9.x"
-    audiobuffer "0.2.x"
-    av "0.4.x"
-    flac "0.3.x"
-    mp3 "0.1.x"
-    pcm-boilerplate "0.1.x"
-    underscore "1.8.x"
 
 webpack-core@~0.6.0:
   version "0.6.8"
