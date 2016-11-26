@@ -13,7 +13,6 @@ import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 import Project from '../project/project'
 import PluginRegistory from '../services/plugin-registory'
 
-import ProjectInstanceContainer from './project-instance-container'
 import CompositionInstanceContainer from './composition-instance-container'
 import EntityResolver from './entity-resolver'
 import PreRenderingRequest from './pre-rendering-request'
@@ -134,8 +133,6 @@ export default class Renderer {
 
     setProject(project: Project)
     {
-        // this._project = ProjectInstanceContainer.open(project)
-        console.log(project);
         this._project = project
     }
 
