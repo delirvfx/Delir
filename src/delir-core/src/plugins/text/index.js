@@ -1,10 +1,11 @@
-
+// @flow
 import type RenderRequest from '../../renderer/render-request'
 
 import _ from 'lodash'
 import {Type, LayerPluginBase} from '../../index'
 import T from '../../plugin/type-descriptor'
 import {Exceptions} from '../../exceptions/index'
+import FontManager from 'font-manager'
 
 export default class HTML5VideoLayer extends LayerPluginBase
 {
@@ -18,14 +19,18 @@ export default class HTML5VideoLayer extends LayerPluginBase
 
     static provideParameters(): TypeDescriptor
     {
+        const fonts = FontManager.getAvailableFontsSync()
+        const families = _(fonts).map(desc => desc.family).unique().value()
+        console.log(families);
+
         return Type
-            .asset('source', {
+            .string('text', {
                 label: 'Movie file',
                 mimeTypes: ['movie/mp4'],
             })
-            .bool('loop', {
-                label: 'Loop',
-                animatable: false,
+            .enum('font', {
+                label: 'Font family',
+                selection: families
             })
             .number('x', {
                 label: 'Position X',
@@ -37,20 +42,6 @@ export default class HTML5VideoLayer extends LayerPluginBase
             })
     }
 
-    video: HTMLVideoElement
-
-    constructor()
-    {
-        super()
-        const v = this.video = document.createElement('video')
-        // document.body.appendChild(this.video)
-        // Object.assign(v.style, {
-        //     position: 'fixed',
-        //     top: '0px',
-        //     left: '0px',
-        // })
-    }
-
     // onParameterChanged(newParam: Object, oldParam: Object)
     // {
     //     if (newParam.sourceFile !== oldParam.sourceFile) {
@@ -60,16 +51,6 @@ export default class HTML5VideoLayer extends LayerPluginBase
 
     async beforeRender(preRenderRequest: Object)
     {
-        const {parameters} = preRenderRequest
-        this.video.src = `file://${parameters.source.path}`
-        this.video.loop = parameters.loop
-        this.video.load()
-        this.video.currentTime = -1
-
-        // console.log(this.video);
-        await new Promise(resolve => {
-            this.video.addEventListener('loadeddata', () => resolve())
-        })
     }
 
     async render(req: RenderRequest)
@@ -77,32 +58,11 @@ export default class HTML5VideoLayer extends LayerPluginBase
         const {parameters: param} = req
         const ctx = req.destCanvas.getContext('2d')
 
-        // frame to time mapping
-        // const sourceFps = 30 // Math.ceil(this.video.webkitDecodedFrameCount / this.video.duration)
-        // const time = req.timeOnLayer * sourceFps
-        //
-        // console.dir(req.timeOnLayer * sourceFps);
-        // console.log(time, req);
-
-        // console.log('wait seek');
-        // this.video.play()
-        // this.video.pause()
-
-        await new Promise((resolve, reject) => {
-            const waiter = e => resolve()
-            this.video.addEventListener('seeked', waiter, {once: true})
-
-            if (param.loop) {
-                this.video.currentTime = req.timeOnLayer % this.video.duration
-            } else {
-                this.video.currentTime = req.timeOnLayer
-            }
-
-            setTimeout(waiter, 1000)
-        })
-
         if (ctx == null) { return }
-        ctx.drawImage(this.video, param.x, param.y)
+        console.log(param);
+        ctx.fillStyle = '#fff'
+        // ctx.font = `16px ${this.font}`
+        ctx.fillText(param.text, param.x, param.y)
     }
 
     //
