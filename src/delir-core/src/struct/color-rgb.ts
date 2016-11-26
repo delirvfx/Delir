@@ -47,6 +47,9 @@ export default class ColorRGB {
 
     toString()
     {
-        return `rgba(${this.r}, ${this.g}, ${this.b}, 1)`
+        const r = ("0" + (this.r).toString(16)).slice(-2)
+        const g = ("0" + (this.g).toString(16)).slice(-2)
+        const b = ("0" + (this.b).toString(16)).slice(-2)
+        return `#${r}${g}${b}`
     }
 }
