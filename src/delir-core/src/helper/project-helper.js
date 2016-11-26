@@ -10,7 +10,7 @@ import Keyframe from '../project/keyframe'
 
 function setFreezedProp(obj: Object, name: string, value: any)
 {
-    Object.defineProperty(obj, name, {value})
+    Object.defineProperty(obj, name, {value, writable: false})
 }
 
 function _generateAndReserveSymbolId(project: Project): string
