@@ -1,6 +1,5 @@
 // @flow
 import _ from 'lodash'
-import ProxySet from './_proxy-set'
 
 import type Project from './project'
 import type Composition from './composition'
