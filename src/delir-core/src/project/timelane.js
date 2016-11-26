@@ -14,7 +14,7 @@ export default class TimeLane
         const config = _.pick(timelaneJson.config, ['name'])
         const layers = timelaneJson.layers.map(layerJson => Layer.deserialize(layerJson))
 
-        Object.defineProperty(timelane, 'id', timelaneJson.id)
+        Object.defineProperty(timelane, 'id', {value: timelaneJson.id})
         timelane.layers = new Set(layers)
         Object.assign(timelane.config, config)
 
