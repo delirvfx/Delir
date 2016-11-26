@@ -90,6 +90,7 @@ export default class AssetsView extends React.Component
                 name: targetComposition.name,
                 width: targetComposition.width,
                 height: targetComposition.height,
+                backgroundColor: targetComposition.backgroundColor.toString(),
                 framerate: targetComposition.framerate,
                 durationFrames: targetComposition.durationFrames,
                 samplingRate: targetComposition.samplingRate,
@@ -99,11 +100,12 @@ export default class AssetsView extends React.Component
         })
     }
 
-    settingComoisition = (req: {
+    settingComoisition = (req: ?{
         id:string,
         name: string,
         width: string,
         height: string,
+        backgroundColor: string,
         framerate: string,
         durationSeconds: string
     }) => {
@@ -112,21 +114,33 @@ export default class AssetsView extends React.Component
             settingCompositionWindowOpened: false,
         })
 
+        if (! req) return
+        const bgColor = parseColor(req.backgroundColor)
+        req.backgroundColor = new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2])
         ProjectModifyActions.modifyComposition(req.id, req)
     }
 
-    makeNewComposition = (req: {name: string, width: string, height: string, framerate: string, durationSeconds: string, backgroundColor: string}) =>
+    openCompositionMakingWindow = () =>
     {
-        if (req == null) return
+        this.setState({newCompositionWindowOpened: true})
+    }
 
+    makeNewComposition = (req: ?{
+        name: string,
+        width: string,
+        height: string,
+        framerate: string,
+        durationSeconds: string,
+        backgroundColor: string
+    }) => {
         // `newCompositionWindowOpened` must be `false` before create Action.
         // this state is not synced to real window show/hide state.
         // if other state changing fired early to set `false`,
         // component updated and open modal window once again by current state.
         this.setState({newCompositionWindowOpened: false})
 
+        if (req == null) return
         const bgColor = parseColor(req.backgroundColor)
-
         ProjectModifyActions.createComposition({
             name: req.name,
             width: req.width | 0,
@@ -148,16 +162,16 @@ export default class AssetsView extends React.Component
                 <NewCompositionWindow
                     show={this.state.newCompositionWindowOpened}
                     width={400}
-                    height={350}
+                    height={380}
                     onHide={this.makeNewComposition}
                     onResponse={this.makeNewComposition}
                 />
                 <SettingCompositionWindow
                     show={this.state.settingCompositionWindowOpened}
                     width={400}
-                    height={350}
+                    height={380}
                     query={this.state.settingCompositionQuery}
-                    onHide={this.makeNewComposition}
+                    onHide={this.settingComoisition}
                     onResponse={this.settingComoisition}
                 />
                 <Table className='asset-list' onDrop={this.addAsset}>
@@ -202,7 +216,7 @@ export default class AssetsView extends React.Component
                     <TableBodySelectList onSelectionChanged={() => {}}>
                         <ContextMenu>
                             <MenuItem type='separator' />
-                            <MenuItem label='New Compositon' onClick={() => { this.setState({newCompositionWindowOpened: true}) }} />
+                            <MenuItem label='新規コンポジション' onClick={this.openCompositionMakingWindow} />
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
