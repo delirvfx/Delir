@@ -106,7 +106,7 @@ export function createAddKeyframe(
     targetLayerId: Layer|string,
     propName: string,
     keyframeProp: Object|Array<Object>
-): Keyframe|Array<Keyframe>
+): Array<Keyframe>
 {
     let keyframeProps
     if (Array.isArray(keyframeProp)) {
@@ -136,7 +136,7 @@ export function createAddKeyframe(
         createdKeyframes.push(keyframe)
     }
 
-    return Array.isArray(keyframeProps) ? createdKeyframes : createdKeyframes[0]
+    return createdKeyframes
 }
 
 //
