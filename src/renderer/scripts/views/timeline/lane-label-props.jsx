@@ -18,7 +18,7 @@ export default class LaneLabelProps extends React.Component
                 {descriptor.map((prop, idx) => (
                     <li key={idx} className='timeline_lane-prop'>
                         <div className='timeline_lane-prop_label'>{prop.label}</div>
-                        <PropInput type={prop.type} />
+                        <PropInput typeDescriptor={prop} />
                     </li>
                 ))}
             </ul>
@@ -34,19 +34,20 @@ export default class LaneLabelProps extends React.Component
 class PropInput extends React.Component
 {
     static propTypes = {
-        type: PropTypes.oneOf([
-            'POINT_2D', 'POINT_3D', 'SIZE_2D', 'SIZE_3D',
-            'COLOR_RGB', 'COLOR_RGBA', 'BOOL', 'STRING',
-            'NUMBER', 'FLOAT', 'ENUM', 'LAYER', 'PULSE',
-            'ASSET', 'ARRAY',
-        ]),
-        value: PropTypes.any,
+        // type: PropTypes.oneOf([
+        //     'POINT_2D', 'POINT_3D', 'SIZE_2D', 'SIZE_3D',
+        //     'COLOR_RGB', 'COLOR_RGBA', 'BOOL', 'STRING',
+        //     'NUMBER', 'FLOAT', 'ENUM', 'LAYER', 'PULSE',
+        //     'ASSET', 'ARRAY',
+        // ]),
+        // value: PropTypes.any,
+        typeDescriptor: PropTypes.object.isRequired,
     }
 
     render()
     {
         let inputs
-        switch (this.props.type) {
+        switch (this.props.typeDescriptor.type) {
             case 'POINT_2D': inputs = [<DragNumberInput />, <span className='separator'>,</span>, <DragNumberInput />]; break;
             case 'POINT_3D': inputs = [<DragNumberInput />, <span className='separator'>,</span>, <DragNumberInput />, <span className='separator'>,</span>, <DragNumberInput />]; break;
             case 'SIZE_2D': inputs = [<DragNumberInput />, <span className='separator'>x</span>, <DragNumberInput />]; break;
@@ -57,7 +58,7 @@ class PropInput extends React.Component
             case 'STRING': inputs = [<textarea />] ; break;
             case 'NUMBER': inputs =  [<DragNumberInput defaultValue={0} />] ; break;
             // case 'FLOAT': inputs =  ; break;
-            // case 'ENUM': inputs =  ; break;
+            case 'ENUM': inputs = [<select>{this.props.typeDescriptor.selection.map(value => <option value={value}>{value}</option>)}</select>] ; break;
             // case 'LAYER': inputs =  ; break;
             // case 'PULSE': inputs =  ; break;
             case 'ASSET': inputs = [<LabelInput />] ; break;
