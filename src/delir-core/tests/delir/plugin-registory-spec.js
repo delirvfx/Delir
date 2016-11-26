@@ -9,6 +9,9 @@ describe('PluginRegistory', () => {
     })
 
     it('loading plugins', async () => {
+        // mock missing method in mocha
+        global.require = require
+
         const r = new PluginRegistory()
         const result = await r.loadPackageDir(path.join(__dirname, '../../src/plugins'))
 
@@ -18,5 +21,7 @@ describe('PluginRegistory', () => {
 
         expect(result.packages).to.be.an('object')
         expect(result.failed).to.be.an(Array)
+
+        delete global.require
     })
 })
