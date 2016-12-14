@@ -117,7 +117,7 @@ export function createAddKeyframe(
 
     const createdKeyframes = []
     // TODO: Not found behaviour
-    const layer: ?Layer = targetLayerId instanceof Layer
+    const layer: Layer|null = targetLayerId instanceof Layer
         ? targetLayerId
         : findLayerById(project, targetLayerId)
 
@@ -232,7 +232,7 @@ export function addKeyframe(
     }
 
     // TODO: Not found behaviour
-    const layer: ?Layer = targetLayerId instanceof Layer
+    const layer: Layer|null = targetLayerId instanceof Layer
         ? targetLayerId
         : findLayerById(project, targetLayerId)
     console.log(layer);
@@ -398,8 +398,9 @@ export function modifyKeyframe(
 //
 // Finders
 //
-export function findAssetById(project: Project, assetId: string): ?Asset {
-    let targetAsset: ?Asset = null
+export function findAssetById(project: Project, assetId: string): Asset|null
+{
+    let targetAsset: Asset|null = null
 
     compSearch:
         for (const asset of project.assets.values()) {
@@ -412,8 +413,9 @@ export function findAssetById(project: Project, assetId: string): ?Asset {
     return targetAsset
 }
 
-export function findCompositionById(project: Project, compositionId: string): ?Composition {
-    let targetComp: ?Composition = null
+export function findCompositionById(project: Project, compositionId: string): Composition|null
+{
+    let targetComp: Composition|null = null
 
     compSearch:
         for (const comp of project.compositions.values()) {
@@ -426,8 +428,9 @@ export function findCompositionById(project: Project, compositionId: string): ?C
     return targetComp
 }
 
-export function findTimelaneById(project: Project, timelaneId: string): ?Timelane {
-    let targetTimelane: ?Timelane = null
+export function findTimelaneById(project: Project, timelaneId: string): Timelane|null
+{
+    let targetTimelane: Timelane|null = null
 
     timelaneSearch:
         for (const comp of project.compositions.values()) {
@@ -442,8 +445,9 @@ export function findTimelaneById(project: Project, timelaneId: string): ?Timelan
     return targetTimelane
 }
 
-export function findLayerById(project: Project, layerId: string): ?Layer {
-    let targetLayer: ?Layer = null
+export function findLayerById(project: Project, layerId: string): Layer|null
+{
+    let targetLayer: Layer|null = null
 
     layerSearch:
         for (const comp of project.compositions.values()) {
@@ -460,8 +464,9 @@ export function findLayerById(project: Project, layerId: string): ?Layer {
     return targetLayer
 }
 
-export function findParentCompositionByTimelaneId(project: Project, timelaneId: string): ?Composition {
-    let targetComp: ?Composition = null
+export function findParentCompositionByTimelaneId(project: Project, timelaneId: string): Composition|null
+{
+    let targetComp: Composition|null = null
 
     compositionSearch:
         for (const comp of project.compositions.values()) {
@@ -476,8 +481,9 @@ export function findParentCompositionByTimelaneId(project: Project, timelaneId: 
     return targetComp
 }
 
-export function findParentTimelaneByLayerId(project: Project, layerId: string): ?Timelane {
-    let targetTimelane: ?Timelane = null
+export function findParentTimelaneByLayerId(project: Project, layerId: string): Timelane|null
+{
+    let targetTimelane: Timelane|null = null
 
     timelaneSearch:
         for (const comp of project.compositions.values()) {
@@ -494,12 +500,9 @@ export function findParentTimelaneByLayerId(project: Project, layerId: string): 
     return targetTimelane
 }
 
-export function findKeyframeFromLayerById(
-    layer: Layer,
-    keyframeId: string
-): ?Keyframe
+export function findKeyframeFromLayerById(layer: Layer, keyframeId: string): Keyframe|null
 {
-    let targetKeyframe: ?Keyframe = null
+    let targetKeyframe: Keyframe|null = null
 
     keyframeSearch:
         for (const propName: string of Object.keys(layer.keyframes)) {
@@ -514,9 +517,9 @@ export function findKeyframeFromLayerById(
     return targetKeyframe
 }
 
-export function findKeyframeById(project: Project, keyframeId: string): ?Keyframe
+export function findKeyframeById(project: Project, keyframeId: string): Keyframe|null
 {
-    let targetKeyframe: ?Keyframe = null
+    let targetKeyframe: Keyframe|null = null
 
     keyframeSearch:
         for (const comp: Composition of project.compositions.values()) {
@@ -537,16 +540,16 @@ export function findKeyframeById(project: Project, keyframeId: string): ?Keyfram
     return targetKeyframe
 }
 
-export function findParentLayerAndPropNameByKeyframeId(project: Project, keyframeId: string): ?{layer: Layer, propName: string}
+export function findParentLayerAndPropNameByKeyframeId(project: Project, keyframeId: string): {layer: Layer, propName: string}|null
 {
-    let target: ?{layer: Layer, propName: string} = null
+    let target: {layer: Layer, propName: string}|null = null
 
     keyframeSearch:
-        for (const comp: Composition of project.compositions.values()) {
-            for (const timelane: Timelane of comp.timelanes.values()) {
-                for (const layer: Layer of timelane.layers.values()) {
-                    for (const propName: string of Object.keys(layer.keyframes)) {
-                        for (const keyframe: Keyframe of layer.keyframes[propName]) {
+        for (const comp of project.compositions.values()) {
+            for (const timelane of comp.timelanes.values()) {
+                for (const layer of timelane.layers.values()) {
+                    for (const propName of Object.keys(layer.keyframes)) {
+                        for (const keyframe of layer.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {
                                 target = {layer, propName}
                                 break keyframeSearch

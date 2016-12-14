@@ -1,6 +1,6 @@
-// @flow
-import type {DelirPluginPackageJson} from './types'
-import type {TypeDescriptor} from '../plugin/type-descriptor'
+import {} from './types'
+import {} from '../plugin/type-descriptor'
+import PluginBase from '../plugin/plugin-base'
 
 import fs from 'fs-promise'
 import path from 'path'
@@ -21,7 +21,7 @@ export default class PluginRegistory
     _plugins: {
         [packageName: string]: {
             package: Object,
-            class: Class<*>,
+            class: typeof PluginBase,
             parameters: TypeDescriptor,
             packageRoot: string,
             entryPath: string,
@@ -91,7 +91,7 @@ export default class PluginRegistory
         }
     }
 
-    requireById(packageId: string): ?Class<*>
+    requireById(packageId: string): typeof PluginBase | null
     {
         const pluginInfo = this._plugins[packageId]
         return pluginInfo ? pluginInfo.class : null
@@ -103,7 +103,7 @@ export default class PluginRegistory
         return pluginInfo ? pluginInfo.parameters.properties : null
     }
 
-    getLoadedPluginSummaries(type: ?PluginFeatures)
+    getLoadedPluginSummaries(type: PluginFeatures | null)
     {
         let plugins
 
@@ -123,7 +123,8 @@ export default class PluginRegistory
         })
     }
 
-    getLoadedPluginsByType(type: PluginFeatures) {
-        return _.filter(this._plugins, entry => _.get(entry, 'package.delir.feature') === type)
-    }
+    // getLoadedPluginsByType(type: PluginFeatures)
+    // {
+    //     return _.filter(this._plugins, entry => _.get(entry, 'package.delir.feature') === type)
+    // }
 }

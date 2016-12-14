@@ -1,2 +1,1 @@
-export PluginRegistory from './plugin-registory'
-export Delir from './delir'
+export {default as PluginRegistry} from './plugin-registory'

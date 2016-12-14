@@ -1,12 +1,12 @@
 // @flow
-import type RenderRequest from '../renderer/render-request'
+import RenderRequest from '../renderer/render-request'
 
 import PluginBase from './plugin-base.js'
 import {TypeDescriptor} from './type-descriptor'
 
 import {
     InvalidPluginLoadedException
-} from '../exceptions/index'
+} from '../exceptions'
 
 export default class LayerPluginBase extends PluginBase
 {
@@ -49,8 +49,8 @@ export default class LayerPluginBase extends PluginBase
     //
 
     // MEMO: キャッシュが必要な（例えば音声ファイルなど）パラメータの変更を検知するためのAPI
-    onDidParameterChanged(newParam, oldParam)
-    {
-
-    }
+    // onDidParameterChanged(newParam, oldParam)
+    // {
+    //
+    // }
 }

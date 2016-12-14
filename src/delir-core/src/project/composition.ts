@@ -6,12 +6,14 @@ import Project from './project'
 import Timelane from './timelane'
 import Layer from './layer'
 
+import {CompositionScheme} from './scheme/composition'
+
 export default class Composition
 {
     static deserialize(compJson: Object, project: Project)
     {
         const comp = new Composition
-        const config = _.pick(compJson.config, [
+        const config: CompositionScheme = _.pick(compJson.config, [
             'name',
             'width',
             'height',
@@ -33,21 +35,21 @@ export default class Composition
         return comp
     }
 
-    id: string = null
+    id: string|null = null
 
-    timelanes : Set<TimeLane> = new Set
+    timelanes : Set<Timelane> = new Set
 
     config : {
-        name: ?string,
-        width: ?number,
-        height: ?number,
-        framerate: ?number,
-        durationFrames: ?number,
+        name: string|null,
+        width: number|null,
+        height: number|null,
+        framerate: number|null,
+        durationFrames: number|null,
 
-        samplingRate: ?number,
-        audioChannels: ?number,
+        samplingRate: number|null,
+        audioChannels: number|null,
 
-        backgroundColor: ?ColorRGB,
+        backgroundColor: ColorRGB|null,
     } = {
         name: null,
         width: null,

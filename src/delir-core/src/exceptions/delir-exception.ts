@@ -1,13 +1,12 @@
-// @flow
 export default class DelirException
 {
     before: Error
     message: string
-    info: ?Object
+    info?: Object
     stack: string
     stackLines: Array<string>
 
-    constructor(message: string, info: Object = {})
+    constructor(message: string, info: any = {})
     {
         const {stack} = (new Error())
 

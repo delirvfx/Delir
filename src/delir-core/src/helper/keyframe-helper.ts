@@ -1,19 +1,20 @@
-// @flow
-import type KeyFrame from '../project/keyframe'
-import type {
+import Asset from '../project/asset'
+import KeyFrame from '../project/keyframe'
+import {
     TypeDescriptor,
-    ParameterTypeDescriptor
 } from '../plugin/type-descriptor'
 
 import bezierEasing from 'bezier-easing'
 
-type KeyFrameLink = {
-    previous: ?KeyFrame,
+interface KeyFrameLink {
+    previous?: KeyFrame,
     active: KeyFrame,
-    next: ?KeyFrame,
+    next?: KeyFrame,
 }
 
-type KeyFrameSequence = {[frame: number]: any}
+interface KeyFrameSequence {
+    [frame: number]: any
+}
 
 export default class KeyframeHelper
 {
@@ -95,7 +96,7 @@ export default class KeyframeHelper
         const table: KeyFrameSequence = {}
 
         for (let frame = beginFrame, end = beginFrame + calcFrames; frame <= end; frame++) {
-            let activeKeyFrame: ?KeyFrameLink = KeyframeHelper._activeKeyFrameOfFrame(linkedSequense, frame)
+            let activeKeyFrame: KeyFrameLink|null = KeyframeHelper._activeKeyFrameOfFrame(linkedSequense, frame)
 
             if (activeKeyFrame == null) {
                 // TODO: default value
@@ -114,11 +115,11 @@ export default class KeyframeHelper
             }
 
             const currentKeyEaseOut = activeKeyFrame.active.easeOutParam ? activeKeyFrame.active.easeOutParam : [0, 1]
-            const nextKeyEaseIn = activeKeyFrame.next.easeInParam ? activeKeyFrame.next.easeInParam : [1, 0]
+            const nextKeyEaseIn = activeKeyFrame.next!.easeInParam ? activeKeyFrame.next!.easeInParam : [1, 0]
             // TODO: Cache Bezier instance between change active keyframe
             const bezier = bezierEasing(...currentKeyEaseOut, ...nextKeyEaseIn)
 
-            const progressRate = (frame - activeKeyFrame.active.frameOnLayer) / (activeKeyFrame.next.frameOnLayer - activeKeyFrame.active.frameOnLayer)
+            const progressRate = (frame - activeKeyFrame.active.frameOnLayer) / (activeKeyFrame.next!.frameOnLayer - activeKeyFrame.active.frameOnLayer)
             table[frame] = transformer(bezier(progressRate), frame, activeKeyFrame)
         }
 
@@ -140,7 +141,7 @@ export default class KeyframeHelper
         return linked
     }
 
-    static _activeKeyFrameOfFrame(linkedKeyFrameSeq: Array<KeyFrameLink>, frame: number): ?KeyFrameLink
+    static _activeKeyFrameOfFrame(linkedKeyFrameSeq: Array<KeyFrameLink>, frame: number): KeyFrameLink|null
     {
         if (linkedKeyFrameSeq.length === 1) {
             return linkedKeyFrameSeq[0]
@@ -163,10 +164,10 @@ export default class KeyframeHelper
     // Typed keyframe calculators
     //
 
-    static calcPoint2dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcPoint2dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {x: number, y:number}
     {
-        const xVector = keyFrameLink.next.value.x - keyFrameLink.active.value.x
-        const yVector = keyFrameLink.next.value.y - keyFrameLink.active.value.y
+        const xVector = keyFrameLink.next!.value.x - keyFrameLink.active.value.x
+        const yVector = keyFrameLink.next!.value.y - keyFrameLink.active.value.y
 
         return {
             x: keyFrameLink.active.value.x + (xVector * rate),
@@ -174,11 +175,11 @@ export default class KeyframeHelper
         }
     }
 
-    static calcPoint3dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcPoint3dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {x: number, y: number, z: number}
     {
-        const xVector = keyFrameLink.next.value.x - keyFrameLink.active.value.x
-        const yVector = keyFrameLink.next.value.y - keyFrameLink.active.value.y
-        const zVector = keyFrameLink.next.value.z - keyFrameLink.active.value.z
+        const xVector = keyFrameLink.next!.value.x - keyFrameLink.active.value.x
+        const yVector = keyFrameLink.next!.value.y - keyFrameLink.active.value.y
+        const zVector = keyFrameLink.next!.value.z - keyFrameLink.active.value.z
 
         return {
             x: keyFrameLink.active.value.x + (xVector * rate),
@@ -187,10 +188,10 @@ export default class KeyframeHelper
         }
     }
 
-    static calcSize2dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcSize2dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {width: number, height: number}
     {
-        const widthVector = keyFrameLink.next.value.width - keyFrameLink.active.value.width
-        const heightVector = keyFrameLink.next.value.height - keyFrameLink.active.value.height
+        const widthVector = keyFrameLink.next!.value.width - keyFrameLink.active.value.width
+        const heightVector = keyFrameLink.next!.value.height - keyFrameLink.active.value.height
 
         return {
             width: keyFrameLink.active.value.width + (widthVector * rate),
@@ -198,11 +199,11 @@ export default class KeyframeHelper
         }
     }
 
-    static calcSize3dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcSize3dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {width: number, height: number, depth: number}
     {
-        const widthVector = keyFrameLink.next.value.width - keyFrameLink.active.value.width
-        const heightVector = keyFrameLink.next.value.height - keyFrameLink.active.value.height
-        const depthVector = keyFrameLink.next.value.depth - keyFrameLink.active.value.depth
+        const widthVector = keyFrameLink.next!.value.width - keyFrameLink.active.value.width
+        const heightVector = keyFrameLink.next!.value.height - keyFrameLink.active.value.height
+        const depthVector = keyFrameLink.next!.value.depth - keyFrameLink.active.value.depth
 
         return {
             width: keyFrameLink.active.value.width + (widthVector * rate),
@@ -211,11 +212,11 @@ export default class KeyframeHelper
         }
     }
 
-    static calcColorRgbKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcColorRgbKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {red: number, green: number, blue: number}
     {
-        const redVector = keyFrameLink.next.value.red - keyFrameLink.active.value.red
-        const greenVector = keyFrameLink.next.value.green - keyFrameLink.active.value.green
-        const blueVector = keyFrameLink.next.value.blue - keyFrameLink.active.value.blue
+        const redVector = keyFrameLink.next!.value.red - keyFrameLink.active.value.red
+        const greenVector = keyFrameLink.next!.value.green - keyFrameLink.active.value.green
+        const blueVector = keyFrameLink.next!.value.blue - keyFrameLink.active.value.blue
 
         return {
             red: keyFrameLink.active.value.red + (redVector * rate),
@@ -224,12 +225,12 @@ export default class KeyframeHelper
         }
     }
 
-    static calcColorRgbaKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcColorRgbaKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {red:number, green: number, blue: number, alpha: number}
     {
-        const redVector = keyFrameLink.next.value.red - keyFrameLink.active.value.red
-        const greenVector = keyFrameLink.next.value.green - keyFrameLink.active.value.green
-        const blueVector = keyFrameLink.next.value.blue - keyFrameLink.active.value.blue
-        const alphaVector = keyFrameLink.next.value.alpha - keyFrameLink.active.value.alpha
+        const redVector = keyFrameLink.next!.value.red - keyFrameLink.active.value.red
+        const greenVector = keyFrameLink.next!.value.green - keyFrameLink.active.value.green
+        const blueVector = keyFrameLink.next!.value.blue - keyFrameLink.active.value.blue
+        const alphaVector = keyFrameLink.next!.value.alpha - keyFrameLink.active.value.alpha
 
         return {
             red: keyFrameLink.active.value.red + (redVector * rate),
@@ -239,55 +240,54 @@ export default class KeyframeHelper
         }
     }
 
-    static calcBoolKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcBoolKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): boolean
     {
-        return keyFrameLink.recent ? !!keyFrameLink.recent.value : !!keyFrameLink.active.value
+        return keyFrameLink.previous ? !!keyFrameLink.previous.value : !!keyFrameLink.active.value
     }
 
-    static calcStringKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcStringKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): string
     {
-        return keyFrameLink.recent ? keyFrameLink.recent.value : keyFrameLink.active.value
+        return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
     }
 
-    static calcNumberKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcNumberKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): number
     {
-        const numVector = keyFrameLink.next.value - keyFrameLink.active.value
+        const numVector = keyFrameLink.next!.value - keyFrameLink.active.value
         return keyFrameLink.active.value + (numVector * rate)
     }
 
-    static calcFloatKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcFloatKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): number
     {
-        const floatVector = keyFrameLink.next.value - keyFrameLink.active.value
+        const floatVector = keyFrameLink.next!.value - keyFrameLink.active.value
         return keyFrameLink.active.value + (floatVector * rate)
     }
 
-    static calcPulseKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcPulseKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): boolean
     {
         return keyFrameLink.active.frameOnLayer === frame ? true : false
     }
 
-    static calcEnumKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcEnumKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): any
     {
-        return keyFrameLink.recent ? keyFrameLink.recent.value : keyFrameLink.active.value
+        return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
     }
 
-    static calcLayerKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcLayerKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): any // TODO: Typing
     {
-        return keyFrameLink.recent ? keyFrameLink.recent.value : keyFrameLink.active.value
+        return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
     }
 
-    static calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): Asset
     {
-        return keyFrameLink.recent ? keyFrameLink.recent.value : keyFrameLink.active.value
+        return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
     }
 
-    static calcNoAnimatable(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcNoAnimatable(rate: number, frame: number, keyFrameLink: KeyFrameLink): any
     {
         return keyFrameLink.active.value
     }
 
-    static calcArrayOfKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink)
+    static calcArrayOfKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): any // TODO: Typing
     {
     }
-
 }
