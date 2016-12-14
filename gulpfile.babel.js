@@ -131,7 +131,7 @@ export function compileRendererJs(done) {
             },
         ],
         resolve: {
-            extensions: ['', '.js', '.jsx'],
+            extensions: ['', '.js', '.jsx', '.ts', '.tsx'],
             modulesDirectories: ["bower_components", "node_modules"],
             alias: {
                 'delir-core': join(__dirname, 'src/delir-core/src/'),
@@ -149,6 +149,15 @@ export function compileRendererJs(done) {
                     loader: "babel-loader",
                     exclude: /(node_modules|bower_components)/,
                     query: JSON.parse(fs.readFileSync('./.babelrc')),
+                },
+                {
+                    test: /\.tsx?$/,
+                    loader: 'awesome-typescript-loader',
+                    exclude: /(node_modules|bower_components)/,
+                    query: {
+                        configFileName: join(__dirname, './tsconfig.json'),
+                        useBabel: true,
+                    }
                 },
                 {
                     test: /\.styl?$/,

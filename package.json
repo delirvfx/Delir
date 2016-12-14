@@ -7,11 +7,14 @@
   "license": "MIT",
   "main": "browser/main.js",
   "scripts": {
-    "start": "./node_modules/.bin/gulp",
+    "dev": "./node_modules/.bin/gulp",
     "test": "$(npm bin)/mocha --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js",
     "watch-test": "$(npm bin)/mocha --watch --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js"
   },
   "devDependencies": {
+    "@types/bezier-easing": "^0.0.29",
+    "@types/lodash": "^4.14.41",
+    "awesome-typescript-loader": "^3.0.0-beta.14",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.8",
     "babel-plugin-add-module-exports": "^0.2.1",
@@ -49,6 +52,7 @@
     "mocha": "^3.1.2",
     "nib": "^1.1.0",
     "rimraf-promise": "^2.0.0",
+    "typescript": "2.2.0-dev.20161212",
     "webpack": "^1.13.1"
   },
   "dependencies": {
