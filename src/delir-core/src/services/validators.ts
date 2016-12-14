@@ -1,26 +1,26 @@
 // @flow
 import T from 'prop-types'
-import semver from 'semver'
+import * as semver from 'semver'
 
-type ValidatorFunction = (props: Object, propName: string, descriptiveName: string) => Error|void
+type ValidatorFunction = (props: Object, propName: string, descriptiveName: string, location: any) => Error|void
 
-type PluginFeatures = 'Effect' | 'CustomLayer' | 'ExpressionExtension'
-type DelirPluginPackageJson = {
-    name: string,
-    version: string,
-    author: string|Array<string>,
-    main?: string,
-    engines: {
-        delir: string,
-    },
-    delir: {
-        feature: PluginFeatures,
-        targetApi: Object,
-    },
-}
+// type PluginFeatures = 'Effect' | 'CustomLayer' | 'ExpressionExtension'
+// type DelirPluginPackageJson = {
+//     name: string,
+//     version: string,
+//     author: string|Array<string>,
+//     main?: string,
+//     engines: {
+//         delir: string,
+//     },
+//     delir: {
+//         feature: PluginFeatures,
+//         targetApi: Object,
+//     },
+// }
 
-const _custom = (validate: ValidatorFunction) : Function => {
-    const checkType = (isRequired, props, propName, descriptiveName: ?string, location) => {
+const _custom = (validate: ValidatorFunction) : {(): any, isRequired: Function} => {
+    const checkType = (isRequired: boolean, props: Object, propName: string, descriptiveName: string|null, location: any) => {
         descriptiveName = descriptiveName || '<<anoanymous>>'
 
         if (props[propName] == null) {
@@ -41,7 +41,8 @@ const _custom = (validate: ValidatorFunction) : Function => {
 
     return chainedCheckType
 }
-const _validate = (displayName: stringm, schema: Object) => (object) => T.validateWithErrors(schema, object, displayName)
+
+const _validate = (displayName: string, schema: Object) => (object: Object) => T.validateWithErrors(schema, object, displayName)
 const customTypes = {
     semver: _custom((props: Object, propName: string, descriptiveName: string) => {
         if (semver.valid(props[propName]) == null) {
@@ -55,8 +56,8 @@ const customTypes = {
         }
     }),
 
-    hasIfShape: shapeTypes => {
-        const validate = (isRequired, props, propName, descriptiveName, location, rootProps = props) => {
+    hasIfShape: (shapeTypes: Object) => {
+        const validate = (isRequired: any, props: any, propName: any, descriptiveName: any, location: any, rootProps: any = props) => {
             if (props[propName] == null) {
                 if (isRequired) {
                     return new Error(`Required ${location} \`${propName}\` was not specified in \`${descriptiveName}\`.`)
@@ -97,10 +98,10 @@ const customTypes = {
         return checkType
     },
 
-    if: condition => {
-        let validator
+    if: (condition: (props: any, propName: string, rootProps: any) => boolean) => {
+        let validator: any
 
-        const checkValidateNeeded = (
+        const checkValidateNeeded: any = (
             props: Object,
             propName: string,
             descriptiveName: string,
@@ -112,7 +113,7 @@ const customTypes = {
             }
         }
 
-        checkValidateNeeded.when = rule => {
+        checkValidateNeeded.when = (rule: ValidatorFunction) => {
             validator = rule
             return checkValidateNeeded
         }

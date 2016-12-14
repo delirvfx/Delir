@@ -25,7 +25,6 @@ export default class KeyframeHelper
         calcFrames: number
     ): {[propName: string]: KeyFrameSequence}
     {
-        const paramDescriptors = paramTypes.properties
         const tables: {[propName: string]: KeyFrameSequence} = {}
 
         for (const propDesc of paramTypes.properties) {
@@ -131,6 +130,7 @@ export default class KeyframeHelper
         const linked = []
         let idx = 0
         for (const keyFrame of orderedKeyFrameSeq) {
+            keyFrame; // for typescript
             linked.push({
                 previous: orderedKeyFrameSeq[idx - 1],
                 active: orderedKeyFrameSeq[idx],

@@ -1,0 +1,22 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "jsx": "preserve",
+        "target": "ES2016",
+        "module": "ES2015",
+        "moduleResolution": "node",
+        "lib": [
+            "dom",
+            "es2017"
+        ],
+        "baseUrl": "."
+    },
+    "files": [
+        "./src/delir-core/src/declarations.d.ts"
+    ]
+}

@@ -1,9 +1,8 @@
 // @flow
-import type Point2D from '../struct/point-2d'
 import Composition from '../project/composition'
-import type EntityResolver from './entity-resolver'
+import EntityResolver from './entity-resolver'
 
-import _ from 'lodash'
+import * as _ from 'lodash'
 
 export default class RenderRequest
 {

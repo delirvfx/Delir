@@ -1,30 +1,29 @@
 // @flow
-import _ from 'lodash'
-
-import type Project from './project'
-import type Composition from './composition'
+import * as _ from 'lodash'
+import Composition from './composition'
 import Layer from './layer'
+import {TimelaneScheme} from './scheme/timelane'
 
 export default class TimeLane
 {
-    static deserialize(timelaneJson: Object, comp: Composition)
+    static deserialize(timelaneJson: TimelaneScheme, comp: Composition)
     {
         const timelane = new TimeLane
-        const config = _.pick(timelaneJson.config, ['name'])
+        const config = _.pick(timelaneJson.config, ['name']) as TimelaneScheme
         const layers = timelaneJson.layers.map(layerJson => Layer.deserialize(layerJson))
 
         Object.defineProperty(timelane, 'id', {value: timelaneJson.id})
-        timelane.layers = new Set(layers)
+        timelane.layers = new Set<Layer>(layers)
         Object.assign(timelane.config, config)
 
         return timelane
     }
 
-    id: ?string = null
+    id: string|null = null
     layers: Set<Layer> = new Set()
 
     config: {
-        name: ?string,
+        name: string|null,
     } = {
         name: null
     }

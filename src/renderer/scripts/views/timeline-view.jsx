@@ -418,19 +418,17 @@ export default class TimelineView extends React.Component
                         </div>
 
                         <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
+                            <ContextMenu>
+                                <MenuItem type='separator' />
+                                <MenuItem label='Add new timelane' onClick={this.addNewTimelane} enabled={!!activeComp} />
+                                <MenuItem type='separator' />
+                            </ContextMenu>
                             {activeComp && (
-                                <div>
-                                    <ContextMenu>
-                                        <MenuItem type='separator' />
-                                        <MenuItem label='Add new timelane' onClick={this.addNewTimelane} />
-                                        <MenuItem type='separator' />
-                                    </ContextMenu>
-                                    <SelectList key={compId}>
-                                        {timelineLanes.map(lane => (
-                                            <LaneLabel key={lane.id} timelane={lane} onSelect={this.laneSelected} onRemove={this.removeTimelane} />)
-                                        )}
-                                    </SelectList>
-                                </div>
+                                <SelectList key={compId}>
+                                    {timelineLanes.map(lane => (
+                                        <LaneLabel key={lane.id} timelane={lane} onSelect={this.laneSelected} onRemove={this.removeTimelane} />)
+                                    )}
+                                </SelectList>
                             )}
                         </div>
                     </Pane>
@@ -442,25 +440,21 @@ export default class TimelineView extends React.Component
                             activeProject={project}
                         />
 
-                            <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
-                                {activeComp && (
-                                    <div>
-                                        <ContextMenu>
-                                            <MenuItem type='separator' />
-                                            <MenuItem label='Add new timelane' onClick={this.addNewTimelane} />
-                                            <MenuItem type='separator' />
-                                        </ContextMenu>
-                                        {timelineLanes.map(timelane => (
-                                            <TimelineLane
-                                                key={timelane.id}
-                                                timelane={timelane}
-                                                framerate={framerate}
-                                                scale={this.state.scale}
-                                                activeLayer={activeLayer}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
+                        <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
+                            <ContextMenu>
+                                <MenuItem type='separator' />
+                                <MenuItem label='Add new timelane' onClick={this.addNewTimelane} enabled={!!activeComp} />
+                                <MenuItem type='separator' />
+                            </ContextMenu>
+                            {activeComp && timelineLanes.map(timelane => (
+                                <TimelineLane
+                                    key={timelane.id}
+                                    timelane={timelane}
+                                    framerate={framerate}
+                                    scale={this.state.scale}
+                                    activeLayer={activeLayer}
+                                />
+                            ))}
                             </ul>
                         )}
                     </Pane>

@@ -1,7 +1,5 @@
 // @flow
-import type Composition from '../project/composition'
-
-import _ from 'lodash'
+import * as _ from 'lodash'
 import fs from 'fs'
 import path from 'path'
 
@@ -11,6 +9,7 @@ import audioBufferToWave from 'audiobuffer-to-wav'
 import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
 import Project from '../project/project'
+import Composition from '../project/composition'
 import PluginRegistory from '../services/plugin-registory'
 
 import CompositionInstanceContainer from './composition-instance-container'
@@ -26,16 +25,32 @@ import {RenderingFailedException} from '../exceptions/'
 // TODO: Split audio concat process
 import {spawn} from 'child_process'
 
+interface RenderingSession {
+    playing: boolean,
+    baseRequest: RenderRequest,
+    bufferCanvas: HTMLCanvasElement,
+
+    bufferAudioBuffer: Array<Float32Array>,
+
+    rootCompContainer: CompositionInstanceContainer,
+    durationFrames: number,
+    currentFrame: number,
+    renderedFrames: number,
+    renderStartTime: number,
+    lastRenderedFrame: number,
+    animationFrameId: number|null,
+}
+
 export default class Renderer {
     static AUDIO_BUFFER_SIZE = 16384
 
     static render(req : {
-        project: ?Project,
-        pluginRegistry: ?PluginRegistory,
-        rootCompId: ?string,
-        beginFrame: ?number,
-        destinationCanvas: ?HTMLCanvasElement,
-        destinationAudioBuffer: ?Array<Float32Array>,
+        project: Project|null,
+        pluginRegistry: PluginRegistory|null,
+        rootCompId: string|null,
+        beginFrame: number|null,
+        destinationCanvas: HTMLCanvasElement|null,
+        destinationAudioBuffer: Array<Float32Array>|null,
         requestAnimationFrame: Function,
     } = {
         project: null,
@@ -76,20 +91,7 @@ export default class Renderer {
     _destinationAudioBuffer: Array<Float32Array>
     _audioContext: AudioContext // AudioContext.destination
 
-    _playingSession: {
-        playing: boolean,
-        baseRequest: RenderRequest,
-        bufferCanvas: HTMLCanvasElement,
-
-        bufferAudioBuffer: Array<Float32Array>,
-
-        rootCompContainer: CompositionInstanceContainer,
-        durationFrames: number,
-        currentFrame: number,
-        renderedFrames: number,
-        lastRenderedFrame: number,
-        animationFrameId: ?number,
-    }
+    _playingSession: RenderingSession
 
     get session(): Object
     {
@@ -105,8 +107,8 @@ export default class Renderer {
     }
 
     constructor(options: {
-        pluginRegistry: ?PluginRegistory,
-        project: ?Project,
+        pluginRegistry: PluginRegistory|null,
+        project: Project|null,
     } = {
         pluginRegistry: null,
         project: null,
@@ -581,9 +583,9 @@ export default class Renderer {
                     req.exportPath,
                 ])
 
-                let lastMessage
-                ffmpeg.stderr.on('data', buffer => { lastMessage = buffer.toString(); console.log(buffer.toString()) })
-                ffmpeg.on('exit', code => code === 0 ? resolve() : reject(new Error(`Failed to mixing (Reason: ${lastMessage})`)))
+                let lastMessage: string
+                ffmpeg.stderr.on('data', (buffer: Buffer) => { lastMessage = buffer.toString(); console.log(buffer.toString()) })
+                ffmpeg.on('exit', (code: number) => code === 0 ? resolve() : reject(new Error(`Failed to mixing (Reason: ${lastMessage})`)))
             })
 
             notifier({state: 'Rendering completed'})

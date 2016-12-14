@@ -1,5 +1,5 @@
 // @flow
-import keyMirror from 'keymirror'
+import * as  keyMirror from 'keymirror'
 
 export type ParameterType =
     'POINT_2D'      |
@@ -89,7 +89,7 @@ export class TypeDescriptor {
         return this
     }
 
-    number(propName: string, {label, enabled, animatable, mimeTypes}: {label: string, enabled: boolean, animatable: boolean})
+    number(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean, animatable: boolean})
     {
         enabled = enabled == null ? true : enabled
         this.properties.push({type: 'NUMBER', propName, label, enabled, animatable})
@@ -103,7 +103,7 @@ export class TypeDescriptor {
         return this
     }
 
-    pulse(propName: string, {label, enabled, animatable}: {label: string, enabled: boolean})
+    pulse(propName: string, {label, enabled}: {label: string, enabled: boolean})
     {
         enabled = enabled == null ? true : enabled
         this.properties.push({type: 'PULSE', propName, label, enabled, animatable: false})

@@ -3,7 +3,7 @@ export default class DelirException
     before: Error
     message: string
     info?: Object
-    stack: string
+    stack?: string
     stackLines: Array<string>
 
     constructor(message: string, info: any = {})
@@ -12,7 +12,7 @@ export default class DelirException
 
         this.message = message
         this.stack = stack
-        this.stackLines = stack.split('\n')
+        this.stackLines = stack ? stack.split('\n') : ['']
         this.before = info.before
         this.info = info
     }

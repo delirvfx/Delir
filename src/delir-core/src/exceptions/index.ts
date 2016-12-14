@@ -1,4 +1,3 @@
-// @flow
 export {default as DelirException} from './delir-exception'
 export {default as PluginLoadFailException} from './plugin-load-fail-exception'
 export {default as PluginAssertionFailedException} from './plugin-assertion-failed-exception'

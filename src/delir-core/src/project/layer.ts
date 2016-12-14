@@ -1,10 +1,10 @@
-// @flow
-import _ from 'lodash'
+import * as _ from 'lodash'
 import Keyframe from './keyframe'
+import {LayerScheme, LayerConfigScheme} from './scheme/layer'
 
 export default class Layer
 {
-    static deserialize(layerJson: Object)
+    static deserialize(layerJson: LayerScheme)
     {
         const layer = new Layer
         const config = _.pick(layerJson.config, [
@@ -13,7 +13,7 @@ export default class Layer
             'placedFrame',
             'durationFrames',
             'keyframeInterpolationMethod',
-        ])
+        ]) as LayerConfigScheme
 
         const keyframes = _.mapKeys(layerJson.keyframes, keyframes => {
             return new Set(keyframes.map(keyframe => Keyframe.deserialize(keyframe)))
@@ -25,13 +25,13 @@ export default class Layer
         return layer
     }
 
-    id: ?string = null
+    id: string|null = null
 
     config: {
-        renderer: ?string,
-        rendererOptions: ?Object,
-        placedFrame: ?number,
-        durationFrames: ?number,
+        renderer: string|null,
+        rendererOptions: Object|null,
+        placedFrame: number|null,
+        durationFrames: number|null,
         keyframeInterpolationMethod: string,
     } = {
         renderer: null,

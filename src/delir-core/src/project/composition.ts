@@ -1,16 +1,14 @@
 // @flow
-import _ from 'lodash'
-
-import ColorRGB from '../struct/color-rgb';
+import * as _ from 'lodash'
+import ColorRGB from '../struct/color-rgb'
 import Project from './project'
 import Timelane from './timelane'
-import Layer from './layer'
 
 import {CompositionScheme} from './scheme/composition'
 
 export default class Composition
 {
-    static deserialize(compJson: Object, project: Project)
+    static deserialize(compJson: CompositionScheme, project: Project)
     {
         const comp = new Composition
         const config: CompositionScheme = _.pick(compJson.config, [
@@ -22,7 +20,7 @@ export default class Composition
             'samplingRate',
             'audioChannels',
             'backgroundColor',
-        ])
+        ]) as CompositionScheme
 
         const timelanes = compJson.timelanes.map(lane => Timelane.deserialize(lane))
 

@@ -1,8 +1,6 @@
 // @flow
-import type Project from '../project/project'
-import type Asset from '../project/asset'
-import type Composition from '../project/composition'
-import type PluginRegistory from '../services/plugin-registory'
+import Project from '../project/project'
+import PluginRegistory from '../services/plugin-registory'
 
 import * as ProjectHelper from '../helper/project-helper'
 

@@ -1,11 +1,11 @@
 // @flow
-import type LayerPluginBase from '../plugin/layer-plugin-base'
-import type Layer from '../project/layer'
-import type Keyframe from '../project/keyframe'
-import type PreRenderingRequest from './pre-rendering-request'
-import type RenderRequest from './render-request'
+import LayerPluginBase from '../plugin/layer-plugin-base'
+import Layer from '../project/layer'
+import Keyframe from '../project/keyframe'
+import PreRenderingRequest from './pre-rendering-request'
+import RenderRequest from './render-request'
 
-import _ from 'lodash'
+import * as _ from 'lodash'
 import KeyframeHelper from '../helper/keyframe-helper'
 import {RenderingFailedException} from '../exceptions'
 import PluginPreRenderingRequest from './plugin-pre-rendering-request'
@@ -20,8 +20,8 @@ export default class LayerInstanceContainer
     _timeOrderKeyframes: Array<Keyframe>
     _preCalcTable: {[propName: string]: KeyFrameSequence}
 
-    _rendererClass: Class<LayerPluginBase>
-    _rendererInstance: Object
+    _rendererClass: typeof LayerPluginBase
+    _rendererInstance: LayerPluginBase
 
     get placedFrame(): number { return this._layer.placedFrame }
     get durationFrames(): number { return this._layer.durationFrames }

@@ -1,5 +1,5 @@
 // @flow
-import _ from 'lodash'
+import * as _ from 'lodash'
 
 export default class Asset
 {
@@ -11,13 +11,13 @@ export default class Asset
         return asset
     }
 
-    id: string = null
+    id: string|null = null
 
     _config: {
         mimeType: string,
         name: string,
-        path: string,
-        data: Buffer,
+        path: string|null,
+        data: Object|null,
     } = {
         mimeType: '',
         name: '',
@@ -31,10 +31,10 @@ export default class Asset
     get name(): string { return this._config.name }
     set name(name: string) { this._config.name = name }
 
-    get path(): any { return this._config.path }
-    set path(path: string) { return this._config.path = path }
+    get path(): string { return this._config.path! }
+    set path(path: string) { this._config.path = path }
 
-    get data(): Object { return this._config.data }
+    get data(): Object { return this._config.data! }
 
     constructor()
     {

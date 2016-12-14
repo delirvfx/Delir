@@ -1,8 +1,7 @@
 // @flow
-import type Timelane from '../project/timelane'
-import type Layer from '../project/layer'
-import type PreRenderingRequest from './pre-rendering-request'
-import type RenderRequest from './render-request'
+import Timelane from '../project/timelane'
+import PreRenderingRequest from './pre-rendering-request'
+import RenderRequest from './render-request'
 import LayerInstanceContainer from './layer-instance-container'
 
 export default class TimelaneInstanceContainer

@@ -1,9 +1,7 @@
 // @flow
-import type Composition from '../project/composition'
-import type PreRenderingRequest from './pre-rendering-request'
-import type RenderRequest from './render-request'
-import type LayerInstanceContainer from './layer-instance-container'
-
+import Composition from '../project/composition'
+import PreRenderingRequest from './pre-rendering-request'
+import RenderRequest from './render-request'
 import TimelaneInstanceContainer from './timelane-instance-container'
 
 export default class CompositionInstanceContainer

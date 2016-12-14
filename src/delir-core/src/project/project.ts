@@ -1,5 +1,5 @@
 // @flow
-import _ from 'lodash'
+import * as _ from 'lodash'
 import uuid from 'uuid'
 import {BSONPure} from 'bson'
 

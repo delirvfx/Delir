@@ -1,9 +1,8 @@
 // @flow
-import type CompositionInstanceContainer from './composition-instance-container'
-import type PreRenderingRequest from './pre-rendering-request'
-import type EntityResolver from './entity-resolver'
+import PreRenderingRequest from './pre-rendering-request'
+import EntityResolver from './entity-resolver'
 
-import _ from 'lodash'
+import * as _ from 'lodash'
 
 export default class PluginPreRenderingRequest
 {

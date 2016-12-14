@@ -1,5 +1,5 @@
 // @flow
-import uuid from 'uuid'
+import * as uuid from 'uuid'
 
 import Project from '../project/project'
 import Asset from '../project/asset'
@@ -73,7 +73,8 @@ export function createAddTimelane(
     // TODO: Not found behaviour
     const composition = targetCompositionId instanceof Composition
         ? targetCompositionId
-        : findCompositionById(project, targetCompositionId)
+        : findCompositionById(project, targetCompositionId)!
+
     composition.timelanes.add(timelane)
 
     return timelane
@@ -94,7 +95,7 @@ export function createAddLayer(
     // TODO: Not found behaviour
     const timelane = targetTimelaneId instanceof Timelane
         ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)
+        : findTimelaneById(project, targetTimelaneId)!
 
     timelane.layers.add(layer)
 
@@ -117,9 +118,9 @@ export function createAddKeyframe(
 
     const createdKeyframes = []
     // TODO: Not found behaviour
-    const layer: Layer|null = targetLayerId instanceof Layer
+    const layer: Layer = targetLayerId instanceof Layer
         ? targetLayerId
-        : findLayerById(project, targetLayerId)
+        : findLayerById(project, targetLayerId)!
 
     for (const _keyframeProp of keyframeProps) {
         const entityId = _generateAndReserveSymbolId(project)
@@ -189,7 +190,8 @@ export function addTimelane(
     // TODO: Not found behaviour
     const composition = targetCompositionId instanceof Composition
         ? targetCompositionId
-        : findCompositionById(project, targetCompositionId)
+        : findCompositionById(project, targetCompositionId)!
+
     composition.timelanes.add(timelane)
 
     return timelane
@@ -210,7 +212,7 @@ export function addLayer(
     // TODO: Not found behaviour
     const timelane = targetTimelaneId instanceof Timelane
         ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)
+        : findTimelaneById(project, targetTimelaneId)!
 
     timelane.layers.add(layer)
 
@@ -234,8 +236,7 @@ export function addKeyframe(
     // TODO: Not found behaviour
     const layer: Layer|null = targetLayerId instanceof Layer
         ? targetLayerId
-        : findLayerById(project, targetLayerId)
-    console.log(layer);
+        : findLayerById(project, targetLayerId)!
 
     for (const _keyframe of keyframes) {
         if (typeof _keyframe.id !== 'string') {
@@ -263,9 +264,9 @@ export function deleteAsset(
     project: Project,
     targetAssetId: Asset|string,
 ) {
-    const asset = asset instanceof Asset
-        ? asset
-        : findAssetById(project, targetAssetId)
+    const asset = targetAssetId instanceof Asset
+        ? targetAssetId
+        : findAssetById(project, targetAssetId)!
 
     project.assets.delete(asset)
 }
@@ -276,7 +277,7 @@ export function deleteComposition(
 ) {
     const composition = targetCompositionId instanceof Composition
         ? targetCompositionId
-        : findCompositionById(project, targetCompositionId)
+        : findCompositionById(project, targetCompositionId)!
 
     // TODO: Not found behaviour
     project.compositions.delete(composition)
@@ -288,11 +289,11 @@ export function deleteTimelane(
 ) {
     const timelane = targetTimelaneId instanceof Timelane
         ? targetTimelaneId
-        : findTimelaneById(project, targetCompositionId)
+        : findTimelaneById(project, targetTimelaneId)!
 
     // TODO: Not found behaviour
-    const composition = findParentCompositionByTimelaneId(project, timelane.id)
-    composition.timelanes.delete(composition)
+    const composition = findParentCompositionByTimelaneId(project, timelane.id!)!
+    composition.timelanes.delete(timelane)
 }
 
 export function deleteLayer(
@@ -301,9 +302,9 @@ export function deleteLayer(
 ) {
     const layer = targetLayerId instanceof Layer
         ? targetLayerId
-        : findLayerById(project, targetLayerId)
+        : findLayerById(project, targetLayerId)!
 
-    const timelane = findParentTimelaneByLayerId(project, layer.id)
+    const timelane = findParentTimelaneByLayerId(project, layer.id!)!
     timelane.layers.delete(layer)
 }
 
@@ -313,9 +314,9 @@ export function deleteKeyframe(
 ) {
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId
-        : findKeyframeById(project, targetKeyframeId)
+        : findKeyframeById(project, targetKeyframeId)!
 
-    const {layer, propName} = findParentLayerAndPropNameByKeyframeId(project, keyframe.id)
+    const {layer, propName} = findParentLayerAndPropNameByKeyframeId(project, keyframe.id!)!
     if (!layer.keyframes[propName]) return
     layer.keyframes[propName].delete(keyframe) // TODO: Implement this function Or change keyframe structure
 }
@@ -340,9 +341,9 @@ export function modifyComposition(
     targetCompositionId: Composition|string,
     patch: Object
 ) {
-    const composition = targetAssetId instanceof Composition
+    const composition = targetCompositionId instanceof Composition
         ? targetCompositionId
-        : findCompositionById(project, targetCompositionId)
+        : findCompositionById(project, targetCompositionId)!
 
     Object.assign(composition, patch)
 }
@@ -354,7 +355,7 @@ export function modifyTimelane(
 ) {
     const timelane = targetTimelaneId instanceof Timelane
         ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)
+        : findTimelaneById(project, targetTimelaneId)!
 
     Object.assign(timelane, patch)
 }
@@ -366,7 +367,7 @@ export function modifyTimelaneId(
 ) {
     const asset = targetTimelaneId instanceof Timelane
         ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)
+        : findTimelaneById(project, targetTimelaneId)!
 
     Object.assign(asset, patch)
 }
@@ -378,7 +379,7 @@ export function modifyLayer(
 ) {
     const layer = targetLayerId instanceof Layer
         ? targetLayerId
-        : findLayerById(project, targetLayerId)
+        : findLayerById(project, targetLayerId)!
 
     Object.assign(layer, patch)
 }
@@ -390,7 +391,7 @@ export function modifyKeyframe(
 ) {
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId
-        : findKeyframeById(project, targetKeyframeId)
+        : findKeyframeById(project, targetKeyframeId)!
 
     Object.assign(keyframe, patch)
 }
@@ -505,8 +506,8 @@ export function findKeyframeFromLayerById(layer: Layer, keyframeId: string): Key
     let targetKeyframe: Keyframe|null = null
 
     keyframeSearch:
-        for (const propName: string of Object.keys(layer.keyframes)) {
-            for (const keyframe: Keyframe of layer.keyframes[propName]) {
+        for (const propName of Object.keys(layer.keyframes)) {
+            for (const keyframe of layer.keyframes[propName]) {
                 if (keyframe.id === keyframeId) {
                     targetKeyframe = keyframe
                     break keyframeSearch
@@ -522,11 +523,11 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     let targetKeyframe: Keyframe|null = null
 
     keyframeSearch:
-        for (const comp: Composition of project.compositions.values()) {
-            for (const timelane: Timelane of comp.timelanes.values()) {
-                for (const layer: Layer of timelane.layers.values()) {
-                    for (const propName: string of Object.keys(layer.keyframes)) {
-                        for (const keyframe: Keyframe of layer.keyframes[propName]) {
+        for (const comp of project.compositions.values()) {
+            for (const timelane of comp.timelanes.values()) {
+                for (const layer of timelane.layers.values()) {
+                    for (const propName of Object.keys(layer.keyframes)) {
+                        for (const keyframe of layer.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {
                                 targetKeyframe = keyframe
                                 break keyframeSearch

@@ -23,10 +23,10 @@ export default class ColorRGBA {
     get a(): number { return this._alpha }
 
     clone(
-        r: ?number = null,
-        g: ?number = null,
-        b: ?number = null,
-        a: ?number = null,
+        r: number|null = null,
+        g: number|null = null,
+        b: number|null = null,
+        a: number|null = null,
     ): ColorRGBA
     {
         return new ColorRGB(

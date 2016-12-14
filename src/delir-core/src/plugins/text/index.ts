@@ -1,7 +1,7 @@
 // @flow
 import type RenderRequest from '../../renderer/render-request'
 
-import _ from 'lodash'
+import * as _ from 'lodash'
 import {Type, LayerPluginBase} from '../../index'
 import T from '../../plugin/type-descriptor'
 import {Exceptions} from '../../exceptions/index'

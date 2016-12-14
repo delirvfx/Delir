@@ -19,9 +19,9 @@ export default class ColorRGB {
     get b(): number { return this._blue }
 
     clone(
-        r: ?number = null,
-        g: ?number = null,
-        b: ?number = null,
+        r: number|null = null,
+        g: number|null = null,
+        b: number|null = null,
     ): ColorRGB
     {
         return new ColorRGB(
