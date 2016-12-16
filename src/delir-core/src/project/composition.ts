@@ -1,4 +1,3 @@
-// @flow
 import * as _ from 'lodash'
 import ColorRGB from '../struct/color-rgb'
 import Project from './project'

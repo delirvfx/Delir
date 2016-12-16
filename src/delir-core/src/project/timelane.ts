@@ -6,7 +6,7 @@ import {TimelaneScheme} from './scheme/timelane'
 
 export default class TimeLane
 {
-    static deserialize(timelaneJson: TimelaneScheme, comp: Composition)
+    static deserialize(timelaneJson: TimelaneScheme)
     {
         const timelane = new TimeLane
         const config = _.pick(timelaneJson.config, ['name']) as TimelaneScheme

@@ -17,6 +17,7 @@
         "baseUrl": "."
     },
     "files": [
+        "./src/delir-core/src/index.ts"
         "./src/delir-core/src/declarations.d.ts"
     ]
 }
