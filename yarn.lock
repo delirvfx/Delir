@@ -6,6 +6,12 @@
   dependencies:
     "@types/node" "*"
 
+"@types/fs-promise":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/fs-promise/-/fs-promise-1.0.0.tgz#084b21ad77c4910a4ddca30ef96b686e4d22959f"
+  dependencies:
+    "@types/node" "*"
+
 "@types/keymirror":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.0.tgz#2a3b8cba76fbde0406d316026020c7c537ebc8c4"
@@ -13,6 +19,12 @@
 "@types/lodash":
   version "4.14.41"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.41.tgz#6f65b0453778d482dc11fc11601c5c7bc98f04d0"
+
+"@types/mz":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@types/mz/-/mz-0.0.30.tgz#58daa9f35811d607037bab1f9cc7d4a23e6aafae"
+  dependencies:
+    "@types/node" "*"
 
 "@types/node@*":
   version "6.0.52"

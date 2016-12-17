@@ -1,13 +1,31 @@
-import {} from './types'
-import {} from '../plugin/type-descriptor'
-import PluginBase from '../plugin/plugin-base'
+import {PluginFeatures, DelirPluginPackageJson} from '../plugin/types'
+import {ParameterTypeDescriptor} from '../plugin/type-descriptor'
 
-import fs from 'fs-promise'
-import path from 'path'
+import PluginBase from '../plugin/plugin-base'
+import LayerPluginBase from '../plugin/layer-plugin-base'
+
+import * as fs from 'fs-promise'
+import * as path from 'path'
 import * as _ from 'lodash'
 
 import * as Validators from './validators'
 import {PluginLoadFailException} from '../exceptions/'
+
+interface PluginEntry {
+    package: DelirPluginPackageJson
+    packageRoot: string
+    entryPath: string
+    class: typeof PluginBase
+    // parameters: TypeDescriptor
+}
+
+interface BeforeLoadEntryFragment {
+    package: DelirPluginPackageJson
+    packageRoot: string
+    entryPath: string
+    class?: typeof PluginBase
+    // parameters?: TypeDescriptor
+}
 
 export default class PluginRegistory
 {
@@ -18,14 +36,8 @@ export default class PluginRegistory
         ExpressionExtension: 'ExpressionExtension',
     })
 
-    _plugins: {
-        [packageName: string]: {
-            package: Object,
-            class: typeof PluginBase,
-            parameters: TypeDescriptor,
-            packageRoot: string,
-            entryPath: string,
-        }
+    private _plugins: {
+        [packageName: string]: PluginEntry
     } = {}
 
     /**
@@ -35,12 +47,12 @@ export default class PluginRegistory
     async loadPackageDir(packageDir: string) {
         const dirs = await fs.readdir(packageDir)
 
-        const packages = {}
-        const failedPackages = []
+        const packages: {[packageName: string]: BeforeLoadEntryFragment} = {}
+        const failedPackages: {package: string, reason: string}[] = []
         await Promise.all(dirs.map(async dir => {
             try {
                 let packageRoot = path.join(packageDir, dir)
-                let content = await fs.readFile(path.join(packageRoot, 'package.json'))
+                let content = (await fs.readFile(path.join(packageRoot, 'package.json'))).toString()
                 let json: DelirPluginPackageJson = JSON.parse(content)
                 let entryPath = path.join(packageRoot, 'index')
 
@@ -65,8 +77,6 @@ export default class PluginRegistory
         }))
 
         _.each(packages, (packageInfo, id) => {
-            this._plugins[id] = packageInfo
-
             try {
                 // avoid webpack module resolving
                 const _class = global.require(packageInfo.entryPath)
@@ -78,8 +88,9 @@ export default class PluginRegistory
                     packageInfo.class = _class
                 }
 
-                packageInfo.class.pluginDidLoad()
-                packageInfo.parameters = packageInfo.class.provideParameters()
+                packageInfo.class!.pluginDidLoad()
+                // packageInfo.parameters = packageInfo.class!.provideParameters()
+                this._plugins[id!] = packageInfo as PluginEntry
             } catch (e) {
                 throw new PluginLoadFailException(`Failed to requiring plugin \`${id}\`. (${e.message})`, {before: e})
             }
@@ -97,10 +108,15 @@ export default class PluginRegistory
         return pluginInfo ? pluginInfo.class : null
     }
 
-    getPluginParametersById(packageId: string): Array<any>
+    getPluginParametersById(packageId: string): ParameterTypeDescriptor[]|null
     {
         const pluginInfo = this._plugins[packageId]
-        return pluginInfo ? pluginInfo.parameters.properties : null
+
+        if (pluginInfo.class.prototype instanceof LayerPluginBase) {
+            return (pluginInfo.class as typeof LayerPluginBase).provideParameters().properties
+        }
+
+        return null
     }
 
     getLoadedPluginSummaries(type: PluginFeatures | null)
@@ -123,8 +139,8 @@ export default class PluginRegistory
         })
     }
 
-    // getLoadedPluginsByType(type: PluginFeatures)
-    // {
-    //     return _.filter(this._plugins, entry => _.get(entry, 'package.delir.feature') === type)
-    // }
+    getLoadedPluginsByType(type: PluginFeatures)
+    {
+        return _.filter(this._plugins, entry => _.get(entry, 'package.delir.feature') === type)
+    }
 }

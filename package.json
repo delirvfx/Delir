@@ -13,8 +13,10 @@
   },
   "devDependencies": {
     "@types/bson": "^0.4.30",
+    "@types/fs-promise": "^1.0.0",
     "@types/keymirror": "^0.1.0",
     "@types/lodash": "^4.14.41",
+    "@types/mz": "^0.0.30",
     "@types/semver": "^5.3.30",
     "@types/uuid": "^2.0.29",
     "awesome-typescript-loader": "^3.0.0-beta.14",
