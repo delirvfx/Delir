@@ -10,7 +10,7 @@ import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
 import Project from '../project/project'
 import Composition from '../project/composition'
-import PluginRegistory from '../services/plugin-registory'
+import PluginRegistry from '../services/plugin-registry'
 
 import CompositionInstanceContainer from './composition-instance-container'
 import EntityResolver from './entity-resolver'
@@ -46,7 +46,7 @@ export default class Renderer {
 
     static render(req : {
         project: Project|null,
-        pluginRegistry: PluginRegistory|null,
+        pluginRegistry: PluginRegistry|null,
         rootCompId: string|null,
         beginFrame?: number|null,
         destinationCanvas: HTMLCanvasElement|null,
@@ -82,7 +82,7 @@ export default class Renderer {
 
     _animationFrameId: number
 
-    _pluginRegistry : PluginRegistory
+    _pluginRegistry : PluginRegistry
     _project: Project
 
     // audioDest: ?any
@@ -108,7 +108,7 @@ export default class Renderer {
     }
 
     constructor(options: {
-        pluginRegistry: PluginRegistory|null,
+        pluginRegistry: PluginRegistry|null,
         project: Project|null,
     } = {
         pluginRegistry: null,

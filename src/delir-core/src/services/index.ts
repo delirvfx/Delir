@@ -1,1 +1,1 @@
-export {default as PluginRegistry} from './plugin-registory'
+export {default as PluginRegistry} from './plugin-registry'

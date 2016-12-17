@@ -1,18 +1,18 @@
 // @flow
 import Project from '../project/project'
-import PluginRegistory from '../services/plugin-registory'
+import PluginRegistry from '../services/plugin-registry'
 
 import * as ProjectHelper from '../helper/project-helper'
 
 export default class EntityResolver
 {
     _project: Project
-    _pluginRegistory: PluginRegistory
+    _pluginRegistry: PluginRegistry
 
-    constructor(project: Project, pluginRegistory: PluginRegistory)
+    constructor(project: Project, pluginRegistry: PluginRegistry)
     {
         this._project = project
-        this._pluginRegistory = pluginRegistory
+        this._pluginRegistry = pluginRegistry
     }
 
     resolveAsset(assetId: string) {
@@ -24,6 +24,6 @@ export default class EntityResolver
     }
 
     resolvePlugin(pluginName: string) {
-        return this._pluginRegistory.requireById(pluginName)
+        return this._pluginRegistry.requireById(pluginName)
     }
 }
