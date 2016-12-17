@@ -12,19 +12,25 @@ import * as ProjectHelper from './helper/project-helper'
 import LayerPluginBase from './plugin/layer-plugin-base'
 
 // Core
-// export * as Project from './project/index';
-// export Renderer from './renderer/renderer'
-// export * as Services from './services'
-// export * as Exceptions from './exceptions/index'
-//
-// // Structure
-// export ColorRGB from './struct/color-rgb'
-// export ColorRGBA from './struct/color-rgba'
-//
-// // import shorthand
-// export Type from './plugin/type-descriptor'
-// export * as ProjectHelper from './helper/project-helper'
-// export LayerPluginBase from './plugin/layer-plugin-base'
+export {
+    Project,
+    Renderer,
+    Services,
+    Exceptions
+}
+
+// Structure
+export {
+    ColorRGB,
+    ColorRGBA
+}
+
+// import shorthand
+export {
+    Type,
+    ProjectHelper,
+    LayerPluginBase
+}
 
 export default {
     // Core
