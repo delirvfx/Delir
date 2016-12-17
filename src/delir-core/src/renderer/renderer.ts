@@ -1,9 +1,9 @@
 // @flow
 import * as _ from 'lodash'
-import fs from 'fs'
-import path from 'path'
+import * as fs from 'fs'
+import * as path from 'path'
 
-import Deream from '../../../deream'
+import * as Deream from '../../../deream'
 import canvasToBuffer from 'electron-canvas-to-buffer'
 import audioBufferToWave from 'audiobuffer-to-wav'
 import arrayBufferToBuffer from 'arraybuffer-to-buffer'
@@ -34,10 +34,10 @@ interface RenderingSession {
 
     rootCompContainer: CompositionInstanceContainer,
     durationFrames: number,
-    currentFrame: number,
+
     renderedFrames: number,
-    renderStartTime: number,
-    lastRenderedFrame: number,
+    renderStartTime: number|null,
+    lastRenderedFrame: number|null,
     animationFrameId: number|null,
 }
 
@@ -48,7 +48,7 @@ export default class Renderer {
         project: Project|null,
         pluginRegistry: PluginRegistory|null,
         rootCompId: string|null,
-        beginFrame: number|null,
+        beginFrame?: number|null,
         destinationCanvas: HTMLCanvasElement|null,
         destinationAudioBuffer: Array<Float32Array>|null,
         requestAnimationFrame: Function,
@@ -60,18 +60,19 @@ export default class Renderer {
         destinationCanvas: null,
         destinationAudioBuffer: null,
         requestAnimationFrame: process.nextTick,
-    }) : ProgressPromise {
+    }) : ProgressPromise<any> {
         const renderer = new Renderer({
             project: req.project,
             pluginRegistry: req.pluginRegistry,
         })
 
-        renderer.setDestinationCanvas(req.destinationCanvas)
-        renderer.setDestinationAudioBuffer(req.destinationAudioBuffer)
+        // TODO: Strict types
+        renderer.setDestinationCanvas(req.destinationCanvas!)
+        renderer.setDestinationAudioBuffer(req.destinationAudioBuffer!)
 
         return renderer.render({
-            beginFrame: req.beginFrame,
-            targetCompositionId: req.rootCompId,
+            beginFrame: req.beginFrame!,
+            targetCompositionId: req.rootCompId!,
             throttle: false,
         })
     }
@@ -233,11 +234,11 @@ export default class Renderer {
 
     render(req: {
         beginFrame: number,
-        endFrame: number,
-        loop: boolean,
-        throttle: boolean,
+        endFrame?: number,
+        loop?: boolean,
+        throttle?: boolean,
         targetCompositionId: string,
-    }) : Promise
+    }) : ProgressPromise<any>
     {
         return new ProgressPromise(async (
             resolve: Function,
@@ -344,14 +345,14 @@ export default class Renderer {
 
             // throttle時にframerate以上のfpsが出てしまうのでMath.ceilで小数点切り上げ分実行間隔を広げる
             const throttleTimeMs = req.throttle ? Math.ceil(1000 / baseRequest.framerate) : 0
-            const render = _.throttle(async (): any => {
+            const render = _.throttle(async (): Promise<any> => {
                 if (Date.now() - fpsLastCountTime > 1000) {
                     currentFps = fpsCounter
                     fpsCounter = 0
                     fpsLastCountTime = Date.now()
                 }
 
-                const elapsed = (Date.now() - session.renderStartTime) / 1000
+                // const elapsed = (Date.now() - session.renderStartTime) / 1000
                 const currentTime = session.renderedFrames / rootCompContainer.framerate
                 const currentTimeForNotify = (Math.round(currentTime * 10) / 10).toFixed(1)
                 const isBufferingNeeded = lastBufferingTime !== (currentTime|0) && (session.renderedFrames + 1) <= session.durationFrames
@@ -429,7 +430,7 @@ export default class Renderer {
                     return
                 }
 
-                if (req.loop && req.endFrame != null && (req.beginFrame + session.rendererdFrame) >= req.endFrame) {
+                if (req.loop && req.endFrame != null && (req.beginFrame + session.renderedFrames) >= req.endFrame) {
                     session.renderedFrames = 0
                 }
 
@@ -453,7 +454,7 @@ export default class Renderer {
     }
 
     export(req: {
-        exportPath: stirng,
+        exportPath: string,
         tmpDir: string,
         targetCompositionId: string,
     })
@@ -467,15 +468,18 @@ export default class Renderer {
             //
             // export via deream
             //
-            const rootComp: Compositon = ProjectHelper.findCompositionById(this._project, req.targetCompositionId)
+            const rootComp: Composition|null = ProjectHelper.findCompositionById(this._project, req.targetCompositionId)
+
+            if (rootComp == null) {
+                throw new RenderingFailedException('Specified composition not in project');
+            }
+
             const durationFrames = rootComp.durationFrames
 
             // const canvas = new NodeCanvas(rootComp.width, rootComp.height)
             const canvas = document.createElement('canvas')
             canvas.width = rootComp.width
             canvas.height = rootComp.height
-
-            const ctx = canvas.getContext('2d')
 
             const audioBuffer =　_.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate)))
             const pcmAudioData = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate * Math.ceil(durationFrames / rootComp.framerate))))
@@ -537,8 +541,8 @@ export default class Renderer {
 
             notifier({state: 'Encoding video/audio'})
 
-            await Promise.all([
-                (async resolve => {
+            await Promise.all<any>([
+                (async () => {
                     const wav = audioBufferToWave({
                         sampleRate: rootComp.samplingRate,
                         numberOfChannels: pcmAudioData.length,
@@ -547,7 +551,7 @@ export default class Renderer {
 
                     fs.writeFileSync(path.join(req.tmpDir,'delir-working.wav'), arrayBufferToBuffer(wav))
                 })(),
-                (async resolve => {
+                (async () => {
                     await new Promise(resolve => deream.ffmpeg.on('exit', resolve))
                 })(),
             ])

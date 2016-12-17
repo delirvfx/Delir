@@ -1,4 +1,9 @@
-// @flow
+export interface ColorRgbJSON {
+    red: number
+    green: number
+    blue: number
+}
+
 export default class ColorRGB {
     _red: number
     _green: number

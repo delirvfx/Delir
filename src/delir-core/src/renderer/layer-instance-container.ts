@@ -6,23 +6,24 @@ import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 
 import * as _ from 'lodash'
-import KeyframeHelper from '../helper/keyframe-helper'
+import KeyframeHelper, {KeyFrameSequence} from '../helper/keyframe-helper'
 import {RenderingFailedException} from '../exceptions'
 import PluginPreRenderingRequest from './plugin-pre-rendering-request'
 
 export default class LayerInstanceContainer
 {
     // _baseClass: Class<LayerPluginBase>
-    _layer: Layer
-    _variableScope: Object = Object.create(null)
+    private _layer: Layer
+    private _variableScope: Object = Object.create(null)
 
-    _keyframes: Array<Keyframe>
-    _timeOrderKeyframes: Array<Keyframe>
-    _preCalcTable: {[propName: string]: KeyFrameSequence}
+    // private _keyframes: Array<Keyframe>
+    // private _timeOrderKeyframes: Array<Keyframe>
+    private _preCalcTable: {[propName: string]: KeyFrameSequence}
 
-    _rendererClass: typeof LayerPluginBase
-    _rendererInstance: LayerPluginBase
+    private _rendererClass: typeof LayerPluginBase
+    private _rendererInstance: LayerPluginBase
 
+    get holdLayer(): Layer { return this._layer }
     get placedFrame(): number { return this._layer.placedFrame }
     get durationFrames(): number { return this._layer.durationFrames }
 
@@ -46,15 +47,15 @@ export default class LayerInstanceContainer
                 throw new RenderingFailedException(`Failed to load Renderer plugin \`${this._layer.renderer}\``)
             }
 
-            this._rendererClass = Renderer
-            this._rendererInstance = new Renderer
+            this._rendererClass = (Renderer as typeof LayerPluginBase)
+            this._rendererInstance = (new Renderer as LayerPluginBase)
         }
 
         // Build renderer initialization requests
-        const receiveOptions = this._layer.rendererOptions
+        const receiveOptions: {[propName: string]: any} = this._layer.rendererOptions
         const paramTypes = this._rendererClass.provideParameters()
 
-        const params = {}
+        const params: {[propName: string]: any} = {}
         paramTypes.properties.forEach(desc => params[desc.propName] = receiveOptions[desc.propName])
         Object.freeze(params)
 
@@ -71,7 +72,7 @@ export default class LayerInstanceContainer
         }
 
         // Pre calculate keyframe interpolation
-        const keyframes = Object.assign({}, this._layer.keyframes)
+        const keyframes: {[propName: string]: Keyframe[]} = Object.assign({}, this._layer.keyframes)
         _.each(paramTypes.properties, ({propName}) => keyframes[propName] = keyframes[propName] ? Array.from(keyframes[propName]) : [])
         this._preCalcTable = KeyframeHelper.calcKeyFrames(paramTypes, keyframes, 0, req.durationFrames)
     }

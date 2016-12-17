@@ -9,6 +9,7 @@ export interface LayerConfigScheme  {
 }
 
 export interface LayerScheme {
+    id: string|null
     config: LayerConfigScheme
-    keyframes: {[keyName:string]: KeyframeScheme}
+    keyframes: {[keyName:string]: KeyframeScheme[]}
 }

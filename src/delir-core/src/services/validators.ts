@@ -20,7 +20,7 @@ type ValidatorFunction = (props: Object, propName: string, descriptiveName: stri
 // }
 
 const _custom = (validate: ValidatorFunction) : {(): any, isRequired: Function} => {
-    const checkType = (isRequired: boolean, props: Object, propName: string, descriptiveName: string|null, location: any) => {
+    const checkType = (isRequired: boolean, props: {[key: string]: any}, propName: string, descriptiveName: string|null, location: any) => {
         descriptiveName = descriptiveName || '<<anoanymous>>'
 
         if (props[propName] == null) {
@@ -44,19 +44,19 @@ const _custom = (validate: ValidatorFunction) : {(): any, isRequired: Function} 
 
 const _validate = (displayName: string, schema: Object) => (object: Object) => T.validateWithErrors(schema, object, displayName)
 const customTypes = {
-    semver: _custom((props: Object, propName: string, descriptiveName: string) => {
+    semver: _custom((props: {[key: string]: any}, propName: string, descriptiveName: string) => {
         if (semver.valid(props[propName]) == null) {
             return new Error(`${propName} is invalid semantic-version`)
         }
     }),
 
-    semverRange: _custom((props: Object, propName: string, descriptiveName: string) => {
+    semverRange: _custom((props: {[key: string]: any}, propName: string, descriptiveName: string) => {
         if (semver.validRange(props[propName]) == null) {
             return new Error(`${propName} is invalid semantic-version range`)
         }
     }),
 
-    hasIfShape: (shapeTypes: Object) => {
+    hasIfShape: (shapeTypes: {[key: string]: any}) => {
         const validate = (isRequired: any, props: any, propName: any, descriptiveName: any, location: any, rootProps: any = props) => {
             if (props[propName] == null) {
                 if (isRequired) {

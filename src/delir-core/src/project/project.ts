@@ -1,6 +1,5 @@
-// @flow
-import * as _ from 'lodash'
-import uuid from 'uuid'
+import {ProjectScheme} from './scheme/project'
+
 import {BSONPure} from 'bson'
 
 import Asset from './asset'
@@ -10,7 +9,7 @@ export default class Project
 {
     static deserialize(projectBson: Buffer)
     {
-        const projectJson = (new BSONPure.BSON()).deserialize(projectBson)
+        const projectJson: ProjectScheme = (new BSONPure.BSON()).deserialize(projectBson) as ProjectScheme
 
         const project = new Project()
         const symbolIds = projectJson.symbolIds
@@ -55,7 +54,7 @@ export default class Project
     toJSON()
     {
         return {
-            formatVersion: 'v0.0.0',
+            formatVersion: '0.0.0',
             symbolIds: Array.from(this.symbolIds),
             assets: Array.from(this.assets.values()).map(asset => asset.toJSON()),
             compositions: Array.from(this.compositions.values()).map(comp => comp.toJSON()),

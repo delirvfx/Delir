@@ -43,14 +43,14 @@ export default class Keyframe
     get value(): any { return this.config.value }
     set value(value: any) { this.config.value = value }
 
-    get frameOnLayer(): number { return this.config.frameOnLayer }
+    get frameOnLayer(): number { return this.config.frameOnLayer as number }
     set frameOnLayer(frameOnLayer: number) { this.config.frameOnLayer = frameOnLayer }
 
-    get easeInParam(): Array<number> { return this.config.easeInParam }
-    set easeInParam(easeInParam: Array<number>) { this.config.easeInParam = easeInParam }
+    get easeInParam(): [number, number] { return this.config.easeInParam }
+    set easeInParam(easeInParam: [number, number]) { this.config.easeInParam = easeInParam }
 
-    get easeOutParam(): Array<number> { return this.config.easeOutParam }
-    set easeOutParam(easeOutParam: Array<number>) { this.config.easeOutParam = easeOutParam }
+    get easeOutParam(): [number, number] { return this.config.easeOutParam }
+    set easeOutParam(easeOutParam: [number, number]) { this.config.easeOutParam = easeOutParam }
 
     constructor()
     {

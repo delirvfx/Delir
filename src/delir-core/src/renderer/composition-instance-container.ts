@@ -48,14 +48,14 @@ export default class CompositionInstanceContainer
         })
 
         // Render timelanes
-        const dests = await Promise.all(this._timelanes.map(async layer => {
+        const dests = await Promise.all<[TimelaneInstanceContainer, HTMLCanvasElement]>(this._timelanes.map(async timelane => {
             const destCanvas = document.createElement('canvas')
             destCanvas.width = _req.destCanvas.width
             destCanvas.height = _req.destCanvas.height
 
             const __req = _req.set({destCanvas: destCanvas})
-            await layer.render(__req)
-            return [layer, destCanvas]
+            await timelane.render(__req)
+            return [timelane, destCanvas]
         }))
 
         const renderOrderedDests = dests.slice().reverse()

@@ -15,8 +15,8 @@ export default class Layer
             'keyframeInterpolationMethod',
         ]) as LayerConfigScheme
 
-        const keyframes = _.mapKeys(layerJson.keyframes, keyframes => {
-            return new Set(keyframes.map(keyframe => Keyframe.deserialize(keyframe)))
+        const keyframes = _.mapValues(layerJson.keyframes, keyframeSet => {
+            return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
         })
 
         Object.defineProperty(layer, 'id', {value: layerJson.id})
@@ -41,27 +41,26 @@ export default class Layer
         keyframeInterpolationMethod: 'linear',
     }
 
-    // TODO: assign ids to keyframes
     keyframes: {[keyName:string]: Set<Keyframe>} = {}
 
     // get id(): string { return this._id }
 
-    get renderer(): string { return this.config.renderer }
+    get renderer(): string { return this.config.renderer as string }
     set renderer(renderer: string) { this.config.renderer = renderer }
 
-    get rendererOptions(): Object { return this.config.rendererOptions }
+    get rendererOptions(): Object { return this.config.rendererOptions as Object }
     set rendererOptions(rendererOptions: Object) { this.config.rendererOptions = rendererOptions }
 
-    get placedFrame(): number { return this.config.placedFrame }
+    get placedFrame(): number { return this.config.placedFrame as number }
     set placedFrame(placedFrame: number) { this.config.placedFrame = placedFrame }
 
     get durationFrame(): number { throw new Error('layer.durationFrame is discontinuance.') }
     set durationFrame(durationFrames: number) { throw new Error('layer.durationFrame is discontinuance.') }
 
-    get durationFrames(): number { return this.config.durationFrames }
+    get durationFrames(): number { return this.config.durationFrames as number }
     set durationFrames(durationFrames: number) { this.config.durationFrames = durationFrames }
 
-    get keyframeInterpolationMethod(): string { return this.config.keyframeInterpolationMethod }
+    get keyframeInterpolationMethod(): string { return this.config.keyframeInterpolationMethod as string }
     set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { this.config.keyframeInterpolationMethod = keyframeInterpolationMethod }
 
     constructor()
@@ -71,11 +70,7 @@ export default class Layer
 
     toPreBSON(): Object
     {
-        return {
-            id: this.id,
-            config: Object.assign({}, this.config),
-            keyframes: _.map(this.keyframes, keyframe => keyframe.toPreBSON()),
-        }
+        return this.toJSON()
     }
 
     toJSON(): Object
@@ -83,7 +78,9 @@ export default class Layer
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            keyframes: _.map(this.keyframes, keyframe => keyframe.toPreBSON()),
+            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
+                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+            }),
         }
     }
 }

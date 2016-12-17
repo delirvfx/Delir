@@ -60,33 +60,33 @@ export default class Composition
         backgroundColor: new ColorRGB(0, 0, 0),
     }
 
-    get name(): string { return this.config.name }
+    get name(): string { return this.config.name as string }
     set name(name: string) { this.config.name = name }
 
-    get width(): number { return this.config.width }
+    get width(): number { return this.config.width as number }
     set width(width: number) { this.config.width = width }
 
-    get height(): number { return this.config.height }
+    get height(): number { return this.config.height as number }
     set height(height: number) { this.config.height = height }
 
-    get framerate(): number { return this.config.framerate }
+    get framerate(): number { return this.config.framerate as number }
     set framerate(framerate: number) { this.config.framerate = framerate }
 
     /** @deprecated */
-    get durationFrame(): any { throw new Error('composition.durationFrame is discontinuance.') }
+    get durationFrame(): number { throw new Error('composition.durationFrame is discontinuance.') }
     /** @deprecated */
     set durationFrame(durationFrames: number) { throw new Error('composition.durationFrame is discontinuance.') }
 
-    get durationFrames(): number { return this.config.durationFrames }
+    get durationFrames(): number { return this.config.durationFrames as number }
     set durationFrames(durationFrames: number) { this.config.durationFrames = durationFrames }
 
-    get samplingRate(): number { return this.config.samplingRate }
+    get samplingRate(): number { return this.config.samplingRate as number }
     set samplingRate(samplingRate: number) { this.config.samplingRate = samplingRate }
 
-    get audioChannels(): number { return this.config.audioChannels }
+    get audioChannels(): number { return this.config.audioChannels as number }
     set audioChannels(audioChannels: number) { this.config.audioChannels = audioChannels }
 
-    get backgroundColor(): ColorRGB { return this.config.backgroundColor }
+    get backgroundColor(): ColorRGB { return this.config.backgroundColor as ColorRGB }
     set backgroundColor(backgroundColor: ColorRGB) { this.config.backgroundColor = backgroundColor }
 
     constructor()

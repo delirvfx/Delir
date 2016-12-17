@@ -12,7 +12,7 @@ interface KeyFrameLink {
     next?: KeyFrame,
 }
 
-interface KeyFrameSequence {
+export interface KeyFrameSequence {
     [frame: number]: any
 }
 

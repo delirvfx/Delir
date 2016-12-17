@@ -1,7 +1,7 @@
 // @flow
 import RenderRequest from '../renderer/render-request'
 
-import PluginBase from './plugin-base.js'
+import PluginBase from './plugin-base'
 import {TypeDescriptor} from './type-descriptor'
 
 import {

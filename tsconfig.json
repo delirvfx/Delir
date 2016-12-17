@@ -6,6 +6,7 @@
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": false,
+        "allowJs": true,
         "jsx": "preserve",
         "target": "ES2016",
         "module": "ES2015",

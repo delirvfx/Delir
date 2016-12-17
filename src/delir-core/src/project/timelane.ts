@@ -1,6 +1,5 @@
 // @flow
 import * as _ from 'lodash'
-import Composition from './composition'
 import Layer from './layer'
 import {TimelaneScheme} from './scheme/timelane'
 
@@ -28,7 +27,7 @@ export default class TimeLane
         name: null
     }
 
-    get name(): string { return this.config.name }
+    get name(): string { return (this.config.name as string) }
     set name(name: string) { this.config.name = name }
 
     constructor()

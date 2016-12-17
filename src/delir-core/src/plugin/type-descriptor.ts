@@ -1,5 +1,5 @@
 // @flow
-import * as  keyMirror from 'keymirror'
+import keyMirror from 'keymirror'
 
 export type ParameterType =
     'POINT_2D'      |

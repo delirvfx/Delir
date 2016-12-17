@@ -1,4 +1,10 @@
-// @flow
+export interface ColorRgbaJSON {
+    red: number
+    green: number
+    blue: number
+    alpha: number
+}
+
 export default class ColorRGBA {
     _red: number
     _green: number
@@ -29,7 +35,7 @@ export default class ColorRGBA {
         a: number|null = null,
     ): ColorRGBA
     {
-        return new ColorRGB(
+        return new ColorRGBA(
             r || this.r,
             g || this.g,
             b || this.b,

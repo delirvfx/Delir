@@ -6,9 +6,9 @@ import LayerInstanceContainer from './layer-instance-container'
 
 export default class TimelaneInstanceContainer
 {
-    _timelane: Timelane
-    _layers: Array<LayerInstanceContainer> = []
-    _timeOrderLayers: Array<LayerInstanceContainer> = []
+    private _timelane: Timelane
+    private _layers: Array<LayerInstanceContainer> = []
+    private _timeOrderLayers: Array<LayerInstanceContainer> = []
 
     constructor(timelane: Timelane)
     {
@@ -22,7 +22,7 @@ export default class TimelaneInstanceContainer
 
         // sort layers
         this._timeOrderLayers = this._layers.slice(0)
-            .sort((layerA, layerB) => layerA._layer.placedFrame - layerB._layer.placedFrame)
+            .sort((layerA, layerB) => layerA.holdLayer.placedFrame - layerB.holdLayer.placedFrame)
         await Promise.all(this._layers.map(async layer => await layer.beforeRender(preRenderReq)))
     }
 
