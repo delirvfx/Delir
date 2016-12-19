@@ -232,7 +232,9 @@ export function pack(done) {
         ignore      : null,
         prune       : true,
         overwrite   : true,
-        asar        : true,
+        asar        : {
+            unpack: 'node_modules/'
+        },
         "sign"      : null,
 
         "version-string": {
