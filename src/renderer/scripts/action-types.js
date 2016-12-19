@@ -1,6 +1,8 @@
 import keyMirror from 'keymirror'
 
 export default keyMirror({
+    OPEN_PLUGIN_DIR: null,
+
     // EditorStateActions
     SET_ACTIVE_PROJECT: null,
     CHANGE_ACTIVE_COMPOSITION: null,
@@ -18,6 +20,7 @@ export default keyMirror({
     CREATE_LAYER: null,
     MODIFY_COMPOSITION: null,
 
+    REMOVE_ASSET: null,
     REMOVE_TIMELANE: null,
     REMOVE_LAYER: null,
 

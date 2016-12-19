@@ -8,6 +8,16 @@ export default [
                 label: 'About Delir',
                 role: 'about',
             },
+            {type: 'separator'},
+            {
+                label: 'Open Plugin directory',
+                click(item, focusedWindow) {
+                    focusedWindow.webContents.send('action', {
+                        type: 'OPEN_PLUGIN_DIR',
+                    })
+                }
+            },
+            {type: 'separator'},
             {
                 label: 'Quit Delir',
                 accelerator: 'CmdOrCtrl+Q',

@@ -54,6 +54,7 @@ export class MenuItem extends React.Component
     static propTypes = {
         label: PropTypes.string,
         type: PropTypes.string,
+        enabled: PropTypes.bool,
         onClick: PropTypes.func,
         checked: PropTypes.bool,
         submenu: PropTypes.array,
@@ -69,8 +70,7 @@ export class ContextMenu extends React.Component
 {
     componentDidMount()
     {
-        const items = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
-        instance.register(this.refs.root.parentElement, items.map(item => this.toMenuItem(item)))
+        this.registerContextMenu()
     }
 
     componentWillUnMount()
@@ -78,6 +78,16 @@ export class ContextMenu extends React.Component
         instance.unregister(this.refs.root)
     }
 
+    componentDidUpdate(nextProps, nextState)
+    {
+        this.registerContextMenu()
+    }
+
+    registerContextMenu()
+    {
+        const items = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
+        instance.register(this.refs.root.parentElement, items.map(item => this.toMenuItem(item)))
+    }
 
     toMenuItem(item)
     {
@@ -89,6 +99,7 @@ export class ContextMenu extends React.Component
         const menuItem = {
             label: item.props.label,
             type: item.props.type,
+            enabled: item.props.enabled,
             click: item.props.onClick,
             checked: item.props.checked,
         }

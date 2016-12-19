@@ -71,11 +71,13 @@ class ProjectModifyStore extends ReduceStore<Object>
         {
             if (! state.project) return state
 
-            const _patch = _.pick(patch, ['name', 'width', 'height', 'framerate', 'durationFrames'])
+            const _patch = _.pick(patch, ['name', 'width', 'height', 'framerate', 'durationFrames', 'backgroundColor', 'samplingRate', 'audioChannels'])
             _patch.width != null && (_patch.width = _patch.width|0)
             _patch.height != null && (_patch.height = _patch.height|0)
             _patch.framerate != null && (_patch.framerate = _patch.framerate|0)
             _patch.durationFrames != null && (_patch.durationFrames = _patch.durationFrames|0)
+            _patch.samplingRate != null && (_patch.samplingRate = _patch.samplingRate|0)
+            _patch.audioChannels != null && (_patch.audioChannels = _patch.audioChannels|0)
 
             const targetComposition = ProjectHelper.findCompositionById(state.project, targetCompositionId)
             Object.assign(targetComposition, _patch)
@@ -83,14 +85,27 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
+        [ActionTypes.REMOVE_ASSET](state, {targetAssetId})
+        {
+            if (! state.project) return state
+
+            ProjectHelper.deleteAsset(state.project, targetAssetId)
+            return Object.assign({}, state)
+        },
+
+        [ActionTypes.REMOVE_COMPOSITION](state, {targetCompositionId})
+        {
+            if (! state.project) return state
+
+            ProjectHelper.deleteComposition(state.project, targetCompositionId)
+            return Object.assign({}, state)
+        },
+
         [ActionTypes.REMOVE_TIMELANE](state, {targetTimelaneId})
         {
             if (! state.project) return state
 
-            const targetTimelane = ProjectHelper.findTimelaneById(state.project, targetTimelaneId)
-            const timelaneHolderComp = ProjectHelper.findParentCompositionByTimelaneId(state.project, targetTimelaneId)
-            timelaneHolderComp.timelanes.delete(targetLayer)
-
+            ProjectHelper.deleteTimelane(state.project, targetTimelaneId)
             return Object.assign({}, state)
         },
 

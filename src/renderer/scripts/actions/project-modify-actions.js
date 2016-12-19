@@ -1,3 +1,4 @@
+// @flow
 import _ from 'lodash'
 import {Project} from 'delir-core'
 
@@ -88,9 +89,34 @@ export default {
         })
     },
 
-    removeTimelane()
+    removeAsset(assetId: string)
     {
+        dispatcher.dispatch({
+            type: ActionTypes.REMOVE_ASSET,
+            payload: {
+                targetAssetId: assetId,
+            },
+        })
+    },
 
+    removeComposition(compositionId: string)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.REMOVE_COMPOSITION,
+            payload: {
+                targetCompositionId: compositionId,
+            },
+        })
+    },
+
+    removeTimelane(timelaneId: string)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.REMOVE_TIMELANE,
+            payload: {
+                targetTimelaneId: timelaneId,
+            },
+        })
     },
 
     removeLayer(layerId: string)

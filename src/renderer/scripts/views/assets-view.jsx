@@ -62,6 +62,14 @@ export default class AssetsView extends React.Component
         })
     }
 
+    removeAsset = assetId => {
+        ProjectModifyActions.removeAsset(assetId)
+    }
+
+    removeComposition = compositionId => {
+        ProjectModifyActions.removeComposition(compositionId)
+    }
+
     changeComposition = (compId, e) =>
     {
         EditorStateActions.changeActiveComposition(compId)
@@ -82,6 +90,7 @@ export default class AssetsView extends React.Component
                 name: targetComposition.name,
                 width: targetComposition.width,
                 height: targetComposition.height,
+                backgroundColor: targetComposition.backgroundColor.toString(),
                 framerate: targetComposition.framerate,
                 durationFrames: targetComposition.durationFrames,
                 samplingRate: targetComposition.samplingRate,
@@ -91,11 +100,12 @@ export default class AssetsView extends React.Component
         })
     }
 
-    settingComoisition = (req: {
+    settingComoisition = (req: ?{
         id:string,
         name: string,
         width: string,
         height: string,
+        backgroundColor: string,
         framerate: string,
         durationSeconds: string
     }) => {
@@ -104,21 +114,33 @@ export default class AssetsView extends React.Component
             settingCompositionWindowOpened: false,
         })
 
+        if (! req) return
+        const bgColor = parseColor(req.backgroundColor)
+        req.backgroundColor = new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2])
         ProjectModifyActions.modifyComposition(req.id, req)
     }
 
-    makeNewComposition = (req: {name: string, width: string, height: string, framerate: string, durationSeconds: string, backgroundColor: string}) =>
+    openCompositionMakingWindow = () =>
     {
-        if (req == null) return
+        this.setState({newCompositionWindowOpened: true})
+    }
 
+    makeNewComposition = (req: ?{
+        name: string,
+        width: string,
+        height: string,
+        framerate: string,
+        durationSeconds: string,
+        backgroundColor: string
+    }) => {
         // `newCompositionWindowOpened` must be `false` before create Action.
         // this state is not synced to real window show/hide state.
         // if other state changing fired early to set `false`,
         // component updated and open modal window once again by current state.
         this.setState({newCompositionWindowOpened: false})
 
+        if (req == null) return
         const bgColor = parseColor(req.backgroundColor)
-
         ProjectModifyActions.createComposition({
             name: req.name,
             width: req.width | 0,
@@ -140,16 +162,16 @@ export default class AssetsView extends React.Component
                 <NewCompositionWindow
                     show={this.state.newCompositionWindowOpened}
                     width={400}
-                    height={350}
+                    height={380}
                     onHide={this.makeNewComposition}
                     onResponse={this.makeNewComposition}
                 />
                 <SettingCompositionWindow
                     show={this.state.settingCompositionWindowOpened}
                     width={400}
-                    height={350}
+                    height={380}
                     query={this.state.settingCompositionQuery}
-                    onHide={this.makeNewComposition}
+                    onHide={this.settingComoisition}
                     onResponse={this.settingComoisition}
                 />
                 <Table className='asset-list' onDrop={this.addAsset}>
@@ -165,9 +187,9 @@ export default class AssetsView extends React.Component
                             <Row key={asset.id}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
-                                    <MenuItem label='Reload' onClick={() => {}} />
-                                    <MenuItem label='Remove it' onClick={() => {}}/>
+                                    <MenuItem label='名前を変更' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
+                                    <MenuItem label='再読み込み' onClick={() => {}} />
+                                    <MenuItem label='削除' onClick={this.removeAsset.bind(null, asset.id)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
@@ -194,16 +216,16 @@ export default class AssetsView extends React.Component
                     <TableBodySelectList onSelectionChanged={() => {}}>
                         <ContextMenu>
                             <MenuItem type='separator' />
-                            <MenuItem label='New Compositon' onClick={() => { this.setState({newCompositionWindowOpened: true}) }} />
+                            <MenuItem label='新規コンポジション' onClick={this.openCompositionMakingWindow} />
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
                             <Row key={comp.id} onDoubleClick={this.changeComposition.bind(this, comp.id)}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label='Rename' onClick={() => { this.refs[`comp_name_input#${comp.id}`].enableAndFocus()}} />
-                                    <MenuItem label='Remove it' onClick={() => {}}/>
-                                    <MenuItem label='Composition setting' onClick={this.openCompositionSettingWindow.bind(null, comp.id)}/>
+                                    <MenuItem label='設定' onClick={this.openCompositionSettingWindow.bind(null, comp.id)}/>
+                                    <MenuItem label='名前を変更' onClick={() => { this.refs[`comp_name_input#${comp.id}`].enableAndFocus()}} />
+                                    <MenuItem label='削除' onClick={this.removeComposition.bind(null, comp.id)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
