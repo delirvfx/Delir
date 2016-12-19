@@ -1,0 +1,30 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "allowJs": true,
+        "jsx": "preserve",
+        "target": "ES2016",
+        "module": "ES2015",
+        "moduleResolution": "node",
+        "lib": [
+            "dom",
+            "es2017"
+        ],
+        "baseUrl": "."
+    },
+    "exclude": [
+        "./src/renderer/**/*.js"
+    ],
+    "files": [
+        "./src/delir-core/src/index.ts",
+        "./src/delir-core/src/declarations.d.ts"
+    ],
+    "awesomeTypescriptLoaderOptions": {
+        "ignoreDiagnostics": [8010, 8011]
+    }
+}

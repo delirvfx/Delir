@@ -1,18 +1,18 @@
 // @flow
 import path from 'path';
-import PluginRegistory from '../../src/services/plugin-registory'
+import PluginRegistry from '../../src/services/plugin-registry'
 
-describe('PluginRegistory', () => {
+describe('PluginRegistry', () => {
     it('exporting: PluginFeatures', () => {
-        expect(PluginRegistory.PluginFeatures).to.not.eql(null)
-        expect(PluginRegistory.PluginFeatures).to.be.an('object')
+        expect(PluginRegistry.PluginFeatures).to.not.eql(null)
+        expect(PluginRegistry.PluginFeatures).to.be.an('object')
     })
 
     it('loading plugins', async () => {
         // mock missing method in mocha
         global.require = require
 
-        const r = new PluginRegistory()
+        const r = new PluginRegistry()
         const result = await r.loadPackageDir(path.join(__dirname, '../../src/plugins'))
 
         expect(result).to.not.empty()

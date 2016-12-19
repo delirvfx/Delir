@@ -121,10 +121,10 @@ export default {
         // scriptProcessor
 
         const userDir = remote.app.getPath('appData')
-        pluginRegistry = new Delir.Services.PluginRegistory()
+        pluginRegistry = new Delir.Services.PluginRegistry()
 
         const loaded = [
-            await pluginRegistry.loadPackageDir(join(process.cwd(), 'src/delir-core/src/plugins')),
+            // await pluginRegistry.loadPackageDir(join(process.cwd(), 'src/delir-core/src/plugins')),
             await pluginRegistry.loadPackageDir(join(userDir, '/delir/plugins')),
         ]
 
