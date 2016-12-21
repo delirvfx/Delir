@@ -52,7 +52,7 @@ export async function symlinkDependencies(done) {
 
     const checkdep = (packageName, depList = []) => {
         try {
-            let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies;
+            let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies || {};
             let deps = Object.keys(dep);
 
             for (let dep of deps) {
