@@ -107,14 +107,19 @@ export function compileRendererJs(done) {
     webpack({
         target: "electron",
         watch: true,
-        context: join(paths.src.renderer, "scripts/"),
+        context: paths.src.root,
         entry: {
-            main: "./main"
+            'renderer/scripts/main': './renderer/scripts/main',
+            'plugins/audio-layer/audio-layer': './plugins/audio-layer/audio-layer.ts',
+            'plugins/composition-layer/composition-layer': './plugins/composition-layer/composition-layer.ts',
+            'plugins/html5-video-layer/index': './plugins/html5-video-layer/index.ts',
+            'plugins/plane/index': './plugins/plane/index.ts',
+            'plugins/text/index': './plugins/text/index.ts',
         },
         output: {
             filename: "[name].js",
             sourceMapFilename: "map/[file].map",
-            path: join(paths.compiled.renderer, "scripts/"),
+            path: paths.compiled.root,
         },
         devtool: "#source-map",
         externals: [
@@ -139,6 +144,7 @@ export function compileRendererJs(done) {
         },
         resolveLoader: {
             alias: {
+                'awesome-typescript-loader': join(__dirname, 'node_modules/awesome-typescript-loader'),
                 'babel-loader': join(__dirname, 'node_modules/babel-loader'),
             },
         },
@@ -167,10 +173,8 @@ export function compileRendererJs(done) {
             ]
         },
         plugins: [
-            new CleanWebpackPlugin(['scripts'], {
-                verbose: true,
-                root: join(paths.compiled.renderer),
-            }),
+            new CleanWebpackPlugin(['scripts'], {verbose: true, root: paths.compiled.renderer}),
+            new CleanWebpackPlugin(['scripts'], {verbose: true, root: join(paths.compiled.renderer, 'plugins')}),
             new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("package.json", ["main"])),
             new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])),
             new webpack.optimize.AggressiveMergingPlugin,
