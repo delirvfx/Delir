@@ -20,9 +20,11 @@
     "exclude": [
         "./src/renderer/**/*.js"
     ],
-    "files": [
+    "filesGlob": [
+        "./src/declarations.d.ts",
         "./src/delir-core/src/index.ts",
-        "./src/delir-core/src/declarations.d.ts"
+        "./src/delir-core/src/declarations.d.ts",
+        "./src/plugins/**/*.ts"
     ],
     "awesomeTypescriptLoaderOptions": {
         "ignoreDiagnostics": [8010, 8011]
