@@ -1,10 +1,8 @@
 // @flow
-import type RenderRequest from '../../renderer/render-request'
+import RenderRequest from '../../delir-core/src/renderer/render-request'
 
-import * as _ from 'lodash'
-import {Type, LayerPluginBase} from '../../index'
-import T from '../../plugin/type-descriptor'
-import {Exceptions} from '../../exceptions/index'
+import {Type, LayerPluginBase} from '../../delir-core/src/index'
+import {Exceptions} from '../../delir-core/src/exceptions/index'
 
 export default class HTML5VideoLayer extends LayerPluginBase
 {
@@ -16,7 +14,7 @@ export default class HTML5VideoLayer extends LayerPluginBase
         }
     }
 
-    static provideParameters(): TypeDescriptor
+    static provideParameters(): Type
     {
         return Type
             .asset('source', {

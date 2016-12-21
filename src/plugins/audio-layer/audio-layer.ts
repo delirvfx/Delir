@@ -1,8 +1,7 @@
-// @flow
-import type RenderRequest from '../../renderer/render-request'
-import type {TypeDescriptor} from '../../plugin/type-descriptor'
+import RenderRequest from '../../delir-core/src/renderer/render-request'
+import {TypeDescriptor} from '../../delir-core/src/plugin/type-descriptor'
 
-import {Type, LayerPluginBase} from '../../index'
+import LayerPluginBase from '../../delir-core/src/plugin/layer-plugin-base'
 import fs from 'fs'
 
 import AV from 'av'

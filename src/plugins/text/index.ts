@@ -1,11 +1,10 @@
-// @flow
-import type RenderRequest from '../../renderer/render-request'
+import RenderRequest from '../../delir-core/src/renderer/render-request'
 
 import * as _ from 'lodash'
-import {Type, LayerPluginBase} from '../../index'
-import T from '../../plugin/type-descriptor'
-import {Exceptions} from '../../exceptions/index'
-import FontManager from 'font-manager'
+import {Type, LayerPluginBase} from '../../delir-core/src/index'
+// import * as T from '../../delir-core/src/plugin/type-descriptor'
+import * as Exceptions from '../../delir-core/src/exceptions/index'
+import * as FontManager from 'font-manager'
 
 export default class HTML5VideoLayer extends LayerPluginBase
 {
@@ -17,16 +16,15 @@ export default class HTML5VideoLayer extends LayerPluginBase
         }
     }
 
-    static provideParameters(): TypeDescriptor
+    static provideParameters(): Type
     {
         const fonts = FontManager.getAvailableFontsSync()
-        const families = _(fonts).map(desc => desc.family).unique().value()
+        const families: string[] = (_(fonts).map(desc => desc.family) as any).unique().value()
         console.log(families);
 
         return Type
             .string('text', {
                 label: 'Movie file',
-                mimeTypes: ['movie/mp4'],
             })
             .enum('font', {
                 label: 'Font family',
@@ -55,11 +53,10 @@ export default class HTML5VideoLayer extends LayerPluginBase
 
     async render(req: RenderRequest)
     {
-        const {parameters: param} = req
+        const param = req.parameters as any
         const ctx = req.destCanvas.getContext('2d')
 
         if (ctx == null) { return }
-        console.log(param);
         ctx.fillStyle = '#fff'
         // ctx.font = `16px ${this.font}`
         ctx.fillText(param.text, param.x, param.y)

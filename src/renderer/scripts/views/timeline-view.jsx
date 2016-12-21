@@ -232,7 +232,7 @@ class TimelineLane extends React.Component
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label='Add new Layer'>
+                    <MenuItem label='Add new Layer' enabled={!!plugins.length}>
                         {_.map(plugins, p =>
                             <MenuItem label={p.packageName} onClick={this.addNewLayer.bind(null, p.packageId)} />
                         )}
