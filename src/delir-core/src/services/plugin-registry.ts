@@ -112,7 +112,7 @@ export default class PluginRegistry
     {
         const pluginInfo = this._plugins[packageId]
 
-        if (pluginInfo.class.prototype instanceof LayerPluginBase) {
+        if (pluginInfo && pluginInfo.class.prototype instanceof LayerPluginBase) {
             return (pluginInfo.class as typeof LayerPluginBase).provideParameters().properties
         }
 
