@@ -181,11 +181,16 @@ export function compileRendererJs(done) {
         err && console.error(err)
         stats.compilation.errors.length && stats.compilation.errors.forEach(e => {
             console.error(e.message)
-            console.error(e.module.userRequest)
+            e.module && console.error(e.module.userRequest)
         });
         console.log('Compiled');
         done();
     });
+}
+
+export function copyPluginsPackageJson() {
+    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: './src/plugins/'})
+        .pipe(g.dest(join(paths.compiled.root, 'plugins')));
 }
 
 export function compilePugTempates() {
@@ -338,14 +343,14 @@ export async function compileNavcodecForElectron() {
 }
 
 export function watch() {
-    g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
+    g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs, copyPluginsPackageJson))
     g.watch(paths.src.renderer, buildRendererWithoutJs)
     g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildRenderer = g.parallel(compileRendererJs, compilePugTempates, compileStyles, copyFonts, copyImage);
+const buildRenderer = g.parallel(compileRendererJs, copyPluginsPackageJson, compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
