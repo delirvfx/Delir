@@ -1,9 +1,13 @@
-import RenderRequest from '../../delir-core/src/renderer/render-request'
-import {TypeDescriptor} from '../../delir-core/src/plugin/type-descriptor'
+import {
+    Type,
+    TypeDescriptor,
+    LayerPluginBase,
+    PluginPreRenderRequest,
+    RenderRequest,
+    Exceptions,
+} from 'delir-core'
 
-import LayerPluginBase from '../../delir-core/src/plugin/layer-plugin-base'
-import fs from 'fs'
-
+import * as fs from 'fs'
 import AV from 'av'
 import 'mp3'
 import 'flac'
@@ -22,11 +26,10 @@ export default class AudioLayer extends LayerPluginBase
 
     static provideParameters(): TypeDescriptor
     {
-        return null
-        // return Type.asset('source', {
-        //     label: 'Audio file',
-        //     mimeTypes: ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/mp3'],
-        // })
+        return Type.asset('source', {
+            label: 'Audio file',
+            mimeTypes: ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/mp3'],
+        })
     }
 
     audio: any = {}
@@ -37,36 +40,40 @@ export default class AudioLayer extends LayerPluginBase
         this.audio = {}
     }
 
-    async beforeRender(preRenderRequest: Object)
+    async beforeRender(preRenderRequest: PluginPreRenderRequest)
     {
-        if (this.audio.source !== preRenderRequest.parameters.source.path) {
-            const buffer = await new Promise((resolve, reject) => {
-                const fileBuffer = fs.readFileSync(preRenderRequest.parameters.source.path)
-                const asset = AV.Asset.fromBuffer(fileBuffer)
-                asset.on('error', e => reject(new Error(e)))
-                asset.decodeToBuffer(decoded => {
-                    const numOfChannels: number = asset.format.channelsPerFrame
-                    const length = (decoded.length / numOfChannels)
-                    const buffers = []
+        const params = preRenderRequest.parameters as any
 
-                    for (let ch = 0; ch < numOfChannels; ch++) {
-                        const chBuffer = new Float32Array(length)
+        if (this.audio.source === params.source.path) {
+            return
+        }
 
-                        for (let i = 0; i < length; i++) {
-                            chBuffer[i] = decoded[ch + i * numOfChannels]
-                        }
+        const buffer = await new Promise((resolve, reject) => {
+            const fileBuffer = fs.readFileSync(params.source.path)
+            const asset = AV.Asset.fromBuffer(fileBuffer)
+            asset.on('error', (e: string) => reject(new Error(e)))
+            asset.decodeToBuffer(decoded => {
+                const numOfChannels: number = asset.format.channelsPerFrame
+                const length = (decoded.length / numOfChannels)
+                const buffers = []
 
-                        buffers.push(chBuffer)
+                for (let ch = 0; ch < numOfChannels; ch++) {
+                    const chBuffer: Float32Array = new Float32Array(length)
+
+                    for (let i = 0; i < length; i++) {
+                        chBuffer[i] = decoded[ch + i * numOfChannels]
                     }
 
-                    resolve(buffers)
-                })
-            })
+                    buffers.push(chBuffer)
+                }
 
-            this.audio = {
-                source: preRenderRequest.parameters.source.path,
-                buffer: buffer,
-            }
+                resolve(buffers)
+            })
+        })
+
+        this.audio = {
+            source: params.source.path,
+            buffer: buffer,
         }
     }
 

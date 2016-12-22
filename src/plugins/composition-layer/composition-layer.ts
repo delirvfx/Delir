@@ -1,5 +1,11 @@
-// @flow
-import {LayerPluginBase} from '../../index'
+import {
+    // Type,
+    // TypeDescriptor,
+    LayerPluginBase,
+    // PluginPreRenderRequest,
+    RenderRequest,
+    // Exceptions
+} from 'delir-core'
 
 export default class CompositionLayer extends LayerPluginBase
 {
@@ -9,8 +15,7 @@ export default class CompositionLayer extends LayerPluginBase
     }
 
 
-
-    render()
+    async render(req: RenderRequest)
     {
 
     }

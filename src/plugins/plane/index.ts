@@ -1,34 +1,18 @@
-// @flow
-import {Type, LayerPluginBase} from '../../index'
-import type PluginPreRenderRequest from '../../renderer/plugin-pre-rendering-request'
-import type RenderRequest from '../../renderer/render-request'
+import {
+    Type,
+    TypeDescriptor,
+    LayerPluginBase,
+    PluginPreRenderRequest,
+    RenderRequest,
+} from 'delir-core'
 
 export default class Plane extends LayerPluginBase
 {
-    static pluginDidLoad()
-    {
-    }
+    static pluginDidLoad() {}
 
-    constructor()
-    {
-        super()
-
-        //use Euler integration calculation is more accurate (default false)
-        // Proton.USE_CLOCK = false or true;
-    }
-
-    static provideParameters()
+    static provideParameters(): TypeDescriptor
     {
         return Type
-            .point2d('position', {
-                label: 'Position (px)',
-            })
-            .size2d('size', {
-                label: 'Size (px)',
-            })
-            .size2d('scale', {
-                label: 'Scale',
-            })
             .colorRgba('color', {
                 label: 'Color',
             })
@@ -36,14 +20,17 @@ export default class Plane extends LayerPluginBase
 
     async beforeRender(req: PluginPreRenderRequest)
     {
-        const canvas = this.buffer = document.createElement('canvas')
+        const canvas = document.createElement('canvas')
         canvas.width = req.width
         canvas.height = req.height
     }
 
     async render(req: RenderRequest)
     {
+        const param = req.parameters as any
         const canvas = req.destCanvas
-        const ctx = canvas.getContext('2d')
+        const ctx = canvas.getContext('2d')!
+        ctx.fillStyle = param.color.toString()
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 }

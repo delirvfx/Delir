@@ -1,8 +1,11 @@
-// @flow
-import RenderRequest from '../../delir-core/src/renderer/render-request'
-
-import {Type, LayerPluginBase} from '../../delir-core/src/index'
-import {Exceptions} from '../../delir-core/src/exceptions/index'
+import {
+    Type,
+    TypeDescriptor,
+    LayerPluginBase,
+    PluginPreRenderRequest,
+    RenderRequest,
+    Exceptions
+} from 'delir-core'
 
 export default class HTML5VideoLayer extends LayerPluginBase
 {
@@ -14,7 +17,7 @@ export default class HTML5VideoLayer extends LayerPluginBase
         }
     }
 
-    static provideParameters(): Type
+    static provideParameters(): TypeDescriptor
     {
         return Type
             .asset('source', {
@@ -55,9 +58,9 @@ export default class HTML5VideoLayer extends LayerPluginBase
     //     }
     // }
 
-    async beforeRender(preRenderRequest: Object)
+    async beforeRender(preRenderRequest: PluginPreRenderRequest)
     {
-        const {parameters} = preRenderRequest
+        const parameters = preRenderRequest.parameters as any
 
         this.video = document.createElement('video')
         this.video.src = `file://${parameters.source.path}`
@@ -66,14 +69,14 @@ export default class HTML5VideoLayer extends LayerPluginBase
         this.video.currentTime = -1
 
         await new Promise((resolve, reject) => {
-            this.video.addEventListener('loadeddata', () => resolve(), {once: true})
-            this.video.addEventListener('error', () => reject(new Error('video not found')), {once: true})
+            this.video.addEventListener('loadeddata', () => resolve(), {once: true} as any)
+            this.video.addEventListener('error', () => reject(new Error('video not found')), {once: true}  as any)
         })
     }
 
     async render(req: RenderRequest)
     {
-        const {parameters: param} = req
+        const param = req.parameters as any
         const ctx = req.destCanvas.getContext('2d')
 
         // frame to time mapping
@@ -88,8 +91,8 @@ export default class HTML5VideoLayer extends LayerPluginBase
         // this.video.pause()
 
         await new Promise((resolve, reject) => {
-            const waiter = e => resolve()
-            this.video.addEventListener('seeked', waiter, {once: true})
+            const waiter = (e: Event) => resolve()
+            this.video.addEventListener('seeked', waiter, {once: true} as any)
 
             if (param.loop) {
                 this.video.currentTime = req.timeOnLayer % this.video.duration
