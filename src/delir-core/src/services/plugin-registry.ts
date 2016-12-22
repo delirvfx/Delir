@@ -108,7 +108,7 @@ export default class PluginRegistry
         return pluginInfo ? pluginInfo.class : null
     }
 
-    getPluginParametersById(packageId: string): ParameterTypeDescriptor[]|null
+    getPluginParametersById(packageId: string): ParameterTypeDescriptor<any>[]|null
     {
         const pluginInfo = this._plugins[packageId]
 
