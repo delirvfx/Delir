@@ -136,8 +136,8 @@ export function compileRendererJs(done) {
             },
         ],
         resolve: {
-            extensions: ['', '.js', '.jsx', '.ts', '.tsx'],
-            modulesDirectories: ["bower_components", "node_modules"],
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
+            modules: ["node_modules"],
             alias: {
                 'delir-core': join(__dirname, 'src/delir-core/src/'),
             }
@@ -149,17 +149,17 @@ export function compileRendererJs(done) {
             },
         },
         module: {
-            loaders: [
+            rules: [
                 {
                     test: /\.jsx?$/,
                     loader: "babel-loader",
-                    exclude: /(node_modules|bower_components)/,
+                    exclude: /node_modules/,
                     query: JSON.parse(fs.readFileSync('./.babelrc')),
                 },
                 {
                     test: /\.tsx?$/,
                     loader: 'awesome-typescript-loader',
-                    exclude: /(node_modules|bower_components)/,
+                    exclude: /node_modules|\.jsx?$/,
                     query: {
                         configFileName: join(__dirname, './tsconfig.json'),
                         useBabel: true,
@@ -174,9 +174,7 @@ export function compileRendererJs(done) {
         },
         plugins: [
             new CleanWebpackPlugin(['scripts'], {verbose: true, root: paths.compiled.renderer}),
-            new CleanWebpackPlugin(['scripts'], {verbose: true, root: join(paths.compiled.renderer, 'plugins')}),
-            new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("package.json", ["main"])),
-            new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])),
+            new CleanWebpackPlugin(['scripts'], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.optimize.AggressiveMergingPlugin,
             new webpack.optimize.DedupePlugin,
             // new webpack.optimize.UglifyJsPlugin,
