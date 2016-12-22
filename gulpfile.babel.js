@@ -96,14 +96,6 @@ export async function symlinkDependencies(done) {
 }
 
 export function compileRendererJs(done) {
-    // return g.src([join(paths.src.renderer, "**/*.{js,jsx}")])
-    //     .pipe($.plumber())
-    //     .pipe($.sourcemaps.init())
-    //     .pipe($.changed(paths.compiled.renderer))
-    //     .pipe($.babel())
-    //     .pipe($.sourcemaps.write(paths.compiled.renderer))
-    //     .pipe(g.dest(paths.compiled.renderer));
-
     webpack({
         target: "electron",
         watch: true,
@@ -159,6 +151,17 @@ export function compileRendererJs(done) {
                 {
                     test: /\.tsx?$/,
                     loader: 'awesome-typescript-loader',
+                    include: [join(__dirname, './src/delir-core/src')],
+                    exclude: /node_modules|\.jsx?$/,
+                    query: {
+                        configFileName: join(__dirname, './src/delir-core/tsconfig.json'),
+                        useBabel: true,
+                    }
+                },
+                {
+                    test: /\.tsx?$/,
+                    loader: 'awesome-typescript-loader',
+                    include: [join(__dirname, './src/plugins')],
                     exclude: /node_modules|\.jsx?$/,
                     query: {
                         configFileName: join(__dirname, './tsconfig.json'),
@@ -185,13 +188,13 @@ export function compileRendererJs(done) {
             console.error(e.message)
             e.module && console.error(e.module.userRequest)
         });
-        console.log('Compiled');
-        done();
+        console.log('Compiled')
+        done()
     });
 }
 
 export function copyPluginsPackageJson() {
-    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: './src/plugins/'})
+    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: join(paths.src.root,　'./src/plugins')})
         .pipe(g.dest(join(paths.compiled.root, 'plugins')));
 }
 
@@ -275,11 +278,10 @@ export async function cleanBrowserScripts(done) {
     done();
 }
 
-export function run(done) {
-    // console.log(require("electron-prebuilt"));
+export function run() {
+    console.log('run');
     const electron = spawn(require("electron"), [paths.compiled.root], {stdio:'inherit'});
     electron.on("close", (code) => { code === 0 && run(() => {}); });
-    done();
 }
 
 export async function compileNavcodec() {

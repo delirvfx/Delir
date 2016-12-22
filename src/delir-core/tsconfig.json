@@ -15,10 +15,6 @@
             "dom",
             "es2017"
         ],
-        "baseUrl": ".",
-        "paths": {
-            "delir-core": ["./src/delir-core/src/index"]
-        }
     },
     "files": [
         "./src/declarations.d.ts",
