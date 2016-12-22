@@ -58,7 +58,7 @@
     "nib": "^1.1.0",
     "rimraf-promise": "^2.0.0",
     "typescript": "2.2.0-dev.20161221",
-    "webpack": "v2.2.0-rc.1"
+    "webpack": "v2.2.0-rc.2"
   },
   "dependencies": {
     "aac": "^0.1.3",

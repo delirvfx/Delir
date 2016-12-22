@@ -5140,9 +5140,18 @@ ua-parser-js@^0.7.9:
   version "0.7.11"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.11.tgz#3741e2dd2fb09251a960f9ef076cd0cc72eaf6a0"
 
-uglify-js@^2.6.1, uglify-js@^2.7.0, uglify-js@~2.7.3:
+uglify-js@^2.6.1, uglify-js@^2.7.0:
   version "2.7.4"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.7.4.tgz#a295a0de12b6a650c031c40deb0dc40b14568bd2"
+  dependencies:
+    async "~0.2.6"
+    source-map "~0.5.1"
+    uglify-to-browserify "~1.0.0"
+    yargs "~3.10.0"
+
+uglify-js@^2.7.5:
+  version "2.7.5"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.7.5.tgz#4612c0c7baaee2ba7c487de4904ae122079f2ca8"
   dependencies:
     async "~0.2.6"
     source-map "~0.5.1"
@@ -5346,9 +5355,9 @@ webpack-sources@^0.1.0:
     source-list-map "~0.1.0"
     source-map "~0.5.3"
 
-webpack@v2.2.0-rc.1:
-  version "2.2.0-rc.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.2.0-rc.1.tgz#5a85e73942b6ecc23ce6bc9e6d0883883e692e29"
+webpack@v2.2.0-rc.2:
+  version "2.2.0-rc.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.2.0-rc.2.tgz#2665115b503ed68a7ec77d17c4e0389a5e386418"
   dependencies:
     acorn "^4.0.3"
     acorn-dynamic-import "^2.0.0"
@@ -5367,7 +5376,7 @@ webpack@v2.2.0-rc.1:
     source-map "^0.5.3"
     supports-color "^3.1.0"
     tapable "~0.2.5"
-    uglify-js "~2.7.3"
+    uglify-js "^2.7.5"
     watchpack "^1.0.0"
     webpack-sources "^0.1.0"
     yargs "^6.0.0"
