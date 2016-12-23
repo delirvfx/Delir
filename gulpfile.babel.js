@@ -102,11 +102,6 @@ export function compileRendererJs(done) {
         context: paths.src.root,
         entry: {
             'renderer/scripts/main': './renderer/scripts/main',
-            'plugins/audio-layer/audio-layer': './plugins/audio-layer/audio-layer.ts',
-            'plugins/composition-layer/composition-layer': './plugins/composition-layer/composition-layer.ts',
-            'plugins/html5-video-layer/index': './plugins/html5-video-layer/index.ts',
-            'plugins/plane/index': './plugins/plane/index.ts',
-            'plugins/text/index': './plugins/text/index.ts',
         },
         output: {
             filename: "[name].js",
@@ -193,8 +188,19 @@ export function compileRendererJs(done) {
     });
 }
 
+export function compilePlugins() {
+    const project = $.typescript.createProject('tsconfig.json')
+    // const result = $.typescript(project)
+
+    return g.src(join(paths.src.root, 'plugins/**/*.ts'), {base: join(paths.src.root,　'src/')})
+        .pipe($.plumber())
+        .pipe(project())
+        .js.pipe(g.dest(join(paths.compiled.root, 'plugins')))
+}
+
 export function copyPluginsPackageJson() {
-    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: join(paths.src.root,　'./src/plugins')})
+    console.log(join(paths.compiled.root, 'plugins'));
+    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: join(paths.src.root,　'src/')})
         .pipe(g.dest(join(paths.compiled.root, 'plugins')));
 }
 
@@ -347,14 +353,15 @@ export async function compileNavcodecForElectron() {
 }
 
 export function watch() {
-    g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs, copyPluginsPackageJson))
+    g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
     g.watch(paths.src.renderer, buildRendererWithoutJs)
+    g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, compilePlugins))
     g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildRenderer = g.parallel(compileRendererJs, copyPluginsPackageJson, compilePugTempates, compileStyles, copyFonts, copyImage);
+const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
