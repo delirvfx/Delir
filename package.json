@@ -7,7 +7,9 @@
   "license": "MIT",
   "main": "browser/main.js",
   "scripts": {
-    "dev": "./node_modules/.bin/gulp",
+    "dev": "DELIR_ENV=dev $(npm bin)/gulp",
+    "build": "DELIR_ENV=productName $(npm bin)/gulp publish",
+    "declare": "$(npm bin)/tsc -p src/delir-core/ -d --declarationDir src/delir-core/declares",
     "test": "$(npm bin)/mocha --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js",
     "watch-test": "$(npm bin)/mocha --watch --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js"
   },
@@ -54,11 +56,12 @@
     "gulp-pug": "^3.0.3",
     "gulp-sourcemaps": "^2.1.1",
     "gulp-stylus": "^2.5.0",
+    "gulp-typescript": "^3.1.3",
     "mocha": "^3.1.2",
     "nib": "^1.1.0",
     "rimraf-promise": "^2.0.0",
-    "typescript": "2.2.0-dev.20161212",
-    "webpack": "^1.13.1"
+    "typescript": "2.2.0-dev.20161221",
+    "webpack": "v2.2.0-rc.2"
   },
   "dependencies": {
     "aac": "^0.1.3",

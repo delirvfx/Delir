@@ -1,6 +1,5 @@
 import _ from 'lodash'
-import {remote} from 'electron'
-import electron from 'electron'
+import electron, {remote} from 'electron'
 import {join} from 'path'
 import Delir, {ProjectHelper} from 'delir-core'
 
@@ -124,7 +123,7 @@ export default {
         pluginRegistry = new Delir.Services.PluginRegistry()
 
         const loaded = [
-            // await pluginRegistry.loadPackageDir(join(process.cwd(), 'src/delir-core/src/plugins')),
+            await pluginRegistry.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
             await pluginRegistry.loadPackageDir(join(userDir, '/delir/plugins')),
         ]
 

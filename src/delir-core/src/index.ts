@@ -7,32 +7,15 @@ import * as Exceptions from './exceptions'
 import ColorRGB from './struct/color-rgb'
 import ColorRGBA from './struct/color-rgba'
 
-import Type from './plugin/type-descriptor'
-import * as ProjectHelper from './helper/project-helper'
+import Type, {TypeDescriptor} from './plugin/type-descriptor'
+import PluginBase from './plugin/plugin-base'
+import RenderRequest from './renderer/render-request'
+import PluginPreRenderRequest from './renderer/plugin-pre-rendering-request'
 import LayerPluginBase from './plugin/layer-plugin-base'
 
-// Core
-export {
-    Project,
-    Renderer,
-    Services,
-    Exceptions
-}
+import * as ProjectHelper from './helper/project-helper'
 
-// Structure
 export {
-    ColorRGB,
-    ColorRGBA
-}
-
-// import shorthand
-export {
-    Type,
-    ProjectHelper,
-    LayerPluginBase
-}
-
-export default {
     // Core
     Project,
     Renderer,
@@ -43,8 +26,16 @@ export default {
     ColorRGB,
     ColorRGBA,
 
-    // import shorthand
+    // Plugins
     Type,
-    ProjectHelper,
+    TypeDescriptor,
+    PluginBase,
     LayerPluginBase,
+    PluginPreRenderRequest,
+    RenderRequest,
+
+    // import shorthand
+    ProjectHelper,
 }
+
+export default exports

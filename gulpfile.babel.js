@@ -24,8 +24,7 @@ const paths = {
     binary  : join(__dirname, "./release/"),
 };
 
-let buildingNpm = false
-let buildingElectron = false
+const DELIR_ENV = process.env.DELIR_ENV
 
 export function buildBrowserJs() {
     return g.src([join(paths.src.browser, "**/*.js")])
@@ -48,11 +47,9 @@ export async function copyPackageJSON(done) {
 }
 
 export async function symlinkDependencies(done) {
-    if (buildingNpm || buildingElectron) return done();
-
     const checkdep = (packageName, depList = []) => {
         try {
-            let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies;
+            let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies || {};
             let deps = Object.keys(dep);
 
             for (let dep of deps) {
@@ -96,25 +93,17 @@ export async function symlinkDependencies(done) {
 }
 
 export function compileRendererJs(done) {
-    // return g.src([join(paths.src.renderer, "**/*.{js,jsx}")])
-    //     .pipe($.plumber())
-    //     .pipe($.sourcemaps.init())
-    //     .pipe($.changed(paths.compiled.renderer))
-    //     .pipe($.babel())
-    //     .pipe($.sourcemaps.write(paths.compiled.renderer))
-    //     .pipe(g.dest(paths.compiled.renderer));
-
     webpack({
         target: "electron",
-        watch: true,
-        context: join(paths.src.renderer, "scripts/"),
+        watch: DELIR_ENV === 'dev',
+        context: paths.src.root,
         entry: {
-            main: "./main"
+            'renderer/scripts/main': './renderer/scripts/main',
         },
         output: {
             filename: "[name].js",
             sourceMapFilename: "map/[file].map",
-            path: join(paths.compiled.renderer, "scripts/"),
+            path: paths.compiled.root,
         },
         devtool: "#source-map",
         externals: [
@@ -131,29 +120,41 @@ export function compileRendererJs(done) {
             },
         ],
         resolve: {
-            extensions: ['', '.js', '.jsx', '.ts', '.tsx'],
-            modulesDirectories: ["bower_components", "node_modules"],
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
+            modules: ["node_modules"],
             alias: {
                 'delir-core': join(__dirname, 'src/delir-core/src/'),
             }
         },
         resolveLoader: {
             alias: {
+                'awesome-typescript-loader': join(__dirname, 'node_modules/awesome-typescript-loader'),
                 'babel-loader': join(__dirname, 'node_modules/babel-loader'),
             },
         },
         module: {
-            loaders: [
+            rules: [
                 {
                     test: /\.jsx?$/,
                     loader: "babel-loader",
-                    exclude: /(node_modules|bower_components)/,
+                    exclude: /node_modules/,
                     query: JSON.parse(fs.readFileSync('./.babelrc')),
                 },
                 {
                     test: /\.tsx?$/,
                     loader: 'awesome-typescript-loader',
-                    exclude: /(node_modules|bower_components)/,
+                    include: [join(__dirname, './src/delir-core/src')],
+                    exclude: /node_modules|\.jsx?$/,
+                    query: {
+                        configFileName: join(__dirname, './src/delir-core/tsconfig.json'),
+                        useBabel: true,
+                    }
+                },
+                {
+                    test: /\.tsx?$/,
+                    loader: 'awesome-typescript-loader',
+                    include: [join(__dirname, './src/plugins')],
+                    exclude: /node_modules|\.jsx?$/,
                     query: {
                         configFileName: join(__dirname, './tsconfig.json'),
                         useBabel: true,
@@ -167,25 +168,41 @@ export function compileRendererJs(done) {
             ]
         },
         plugins: [
-            new CleanWebpackPlugin(['scripts'], {
-                verbose: true,
-                root: join(paths.compiled.renderer),
+            new CleanWebpackPlugin(['scripts'], {verbose: true, root: paths.compiled.renderer}),
+            new CleanWebpackPlugin(['scripts'], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
+            new webpack.DefinePlugin({
+                __DEV__: JSON.stringify(DELIR_ENV === 'dev'),
             }),
-            new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("package.json", ["main"])),
-            new webpack.ResolverPlugin(new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin("bower.json", ["main"])),
             new webpack.optimize.AggressiveMergingPlugin,
             new webpack.optimize.DedupePlugin,
-            // new webpack.optimize.UglifyJsPlugin,
+            ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.UglifyJsPlugin,
+            ])
         ]
     },  function(err, stats) {
         err && console.error(err)
         stats.compilation.errors.length && stats.compilation.errors.forEach(e => {
             console.error(e.message)
-            console.error(e.module.userRequest)
+            e.module && console.error(e.module.userRequest)
         });
-        console.log('Compiled');
-        done();
-    });
+        console.log('Compiled')
+        done()
+    })
+}
+
+export function compilePlugins() {
+    const project = $.typescript.createProject('tsconfig.json')
+
+    return g.src(join(paths.src.root, 'plugins/**/*.ts'), {base: join(paths.src.root,　'src/')})
+        .pipe($.plumber())
+        .pipe(project())
+        .js.pipe(g.dest(join(paths.compiled.root, 'plugins')))
+}
+
+export function copyPluginsPackageJson() {
+    console.log(join(paths.compiled.root, 'plugins'));
+    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: join(paths.src.root,　'src/')})
+        .pipe(g.dest(join(paths.compiled.root, 'plugins')));
 }
 
 export function compilePugTempates() {
@@ -270,20 +287,13 @@ export async function cleanBrowserScripts(done) {
     done();
 }
 
-export function run(done) {
-    // console.log(require("electron-prebuilt"));
+export function run() {
+    console.log('run');
     const electron = spawn(require("electron"), [paths.compiled.root], {stdio:'inherit'});
     electron.on("close", (code) => { code === 0 && run(() => {}); });
-    done();
 }
 
 export async function compileNavcodec() {
-    if (buildingNpm) {
-        return
-    }
-
-    buildingNpm = true
-
     await new Promise(resolve => {
         const compiler = spawn('npm', ['i', '../src/navcodec'], {
             cwd: join(__dirname, 'test'),
@@ -303,7 +313,6 @@ export async function compileNavcodec() {
 
         testRun.on('close', code => {
             console.log('testRun ending with %d', code)
-            buildingNpm = false
             resolve()
         })
     })
@@ -342,12 +351,13 @@ export async function compileNavcodecForElectron() {
 export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
     g.watch(paths.src.renderer, buildRendererWithoutJs)
+    g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, compilePlugins))
     g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildRenderer = g.parallel(compileRendererJs, compilePugTempates, compileStyles, copyFonts, copyImage);
+const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);

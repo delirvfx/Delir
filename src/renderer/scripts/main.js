@@ -28,6 +28,19 @@ if (typeof global !== 'undefined') {
     global.require('babel-register')
 }
 
+// Hook require function for plugins
+(() => {
+    const Module = global.module.constructor
+    const _require = Module.prototype.require
+    Module.prototype.require = function (module) {
+        if (module === 'delir-core') {
+            return Delir
+        }
+
+        return _require.call(this, module)
+    }
+})()
+
 window.addEventListener('DOMContentLoaded', async () => {
     // install devtools
     devtron.install()

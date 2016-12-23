@@ -1,11 +1,14 @@
-// @flow
-import type RenderRequest from '../../renderer/render-request'
+import {
+    Type,
+    TypeDescriptor,
+    LayerPluginBase,
+    PluginPreRenderRequest,
+    RenderRequest,
+    Exceptions,
+} from 'delir-core'
 
 import * as _ from 'lodash'
-import {Type, LayerPluginBase} from '../../index'
-import T from '../../plugin/type-descriptor'
-import {Exceptions} from '../../exceptions/index'
-import FontManager from 'font-manager'
+import * as FontManager from 'font-manager'
 
 export default class HTML5VideoLayer extends LayerPluginBase
 {
@@ -20,17 +23,18 @@ export default class HTML5VideoLayer extends LayerPluginBase
     static provideParameters(): TypeDescriptor
     {
         const fonts = FontManager.getAvailableFontsSync()
-        const families = _(fonts).map(desc => desc.family).unique().value()
-        console.log(families);
-
+        const families: string[] = (_(fonts).map(desc => desc.family) as any).unique().value()
         return Type
             .string('text', {
                 label: 'Movie file',
-                mimeTypes: ['movie/mp4'],
             })
             .enum('font', {
                 label: 'Font family',
                 selection: families
+            })
+            .number('size', {
+                label: 'Font size',
+                animatable: true,
             })
             .number('x', {
                 label: 'Position X',
@@ -49,19 +53,17 @@ export default class HTML5VideoLayer extends LayerPluginBase
     //     }
     // }
 
-    async beforeRender(preRenderRequest: Object)
+    async beforeRender(preRenderRequest: PluginPreRenderRequest)
     {
     }
 
     async render(req: RenderRequest)
     {
-        const {parameters: param} = req
-        const ctx = req.destCanvas.getContext('2d')
+        const param = req.parameters as any
+        const ctx = req.destCanvas.getContext('2d')!
 
-        if (ctx == null) { return }
-        console.log(param);
         ctx.fillStyle = '#fff'
-        // ctx.font = `16px ${this.font}`
+        ctx.font = `${param.fontSize}px ${param.font}`
         ctx.fillText(param.text, param.x, param.y)
     }
 
