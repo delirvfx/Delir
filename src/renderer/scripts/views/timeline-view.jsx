@@ -453,8 +453,7 @@ export default class TimelineView extends React.Component
                                     activeLayer={activeLayer}
                                 />
                             ))}
-                            </ul>
-                        )}
+                        </ul>
                     </Pane>
                 </Workspace>
             </Pane>
