@@ -26,7 +26,7 @@ export default {
 
     createTimelane(compId: string)
     {
-        const timelane = new Project.TimeLane
+        const timelane = new Project.Timelane
 
         dispatcher.dispatch({
             type: ActionTypes.CREATE_TIMELANE,
