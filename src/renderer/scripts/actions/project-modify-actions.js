@@ -88,6 +88,16 @@ export default {
         })
     },
 
+    modifyLayer(layerId: string, props: {[propKey: string]: any}) {
+        dispatcher.dispatch({
+            type: ActionTypes.MODIFY_LAYER,
+            payload: {
+                targetLayerId: layerId,
+                patch: props,
+            }
+        })
+    },
+
     removeTimelane()
     {
 

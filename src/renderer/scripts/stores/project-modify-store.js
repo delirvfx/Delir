@@ -83,6 +83,16 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
+        [ActionTypes.MODIFY_LAYER](state, {targetLayerId, patch})
+        {
+            if (! state.project) return state
+
+            const _patch = _.pick(patch, [/* 'renderer', 'rendererOptions', */ 'placedFrame', 'durationFrames', /* 'keyframeInterpolationMethod' */])
+            ProjectHelper.modifyLayer(state.project, targetLayerId, patch)
+
+            return Object.assign({}, state)
+        },
+
         [ActionTypes.REMOVE_TIMELANE](state, {targetTimelaneId})
         {
             if (! state.project) return state
