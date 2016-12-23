@@ -4,10 +4,10 @@ import {
     LayerPluginBase,
     PluginPreRenderRequest,
     RenderRequest,
+    Exceptions,
 } from 'delir-core'
 
 import * as _ from 'lodash'
-import * as Exceptions from '../../delir-core/src/exceptions/index'
 import * as FontManager from 'font-manager'
 
 export default class HTML5VideoLayer extends LayerPluginBase
