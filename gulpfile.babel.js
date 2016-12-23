@@ -192,7 +192,6 @@ export function compileRendererJs(done) {
 
 export function compilePlugins() {
     const project = $.typescript.createProject('tsconfig.json')
-    // const result = $.typescript(project)
 
     return g.src(join(paths.src.root, 'plugins/**/*.ts'), {base: join(paths.src.root,　'src/')})
         .pipe($.plumber())
