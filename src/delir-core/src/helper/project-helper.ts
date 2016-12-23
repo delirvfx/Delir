@@ -360,18 +360,6 @@ export function modifyTimelane(
     Object.assign(timelane, patch)
 }
 
-export function modifyTimelaneId(
-    project: Project,
-    targetTimelaneId: Timelane|string,
-    patch: Object
-) {
-    const asset = targetTimelaneId instanceof Timelane
-        ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)!
-
-    Object.assign(asset, patch)
-}
-
 export function modifyLayer(
     project: Project,
     targetLayerId: Layer|string,
