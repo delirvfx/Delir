@@ -24,8 +24,7 @@ const paths = {
     binary  : join(__dirname, "./release/"),
 };
 
-let buildingNpm = false
-let buildingElectron = false
+const DELIR_ENV = process.env.DELIR_ENV
 
 export function buildBrowserJs() {
     return g.src([join(paths.src.browser, "**/*.js")])
@@ -48,8 +47,6 @@ export async function copyPackageJSON(done) {
 }
 
 export async function symlinkDependencies(done) {
-    if (buildingNpm || buildingElectron) return done();
-
     const checkdep = (packageName, depList = []) => {
         try {
             let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies || {};
@@ -98,7 +95,7 @@ export async function symlinkDependencies(done) {
 export function compileRendererJs(done) {
     webpack({
         target: "electron",
-        watch: true,
+        watch: DELIR_ENV === 'dev',
         context: paths.src.root,
         entry: {
             'renderer/scripts/main': './renderer/scripts/main',
@@ -173,9 +170,14 @@ export function compileRendererJs(done) {
         plugins: [
             new CleanWebpackPlugin(['scripts'], {verbose: true, root: paths.compiled.renderer}),
             new CleanWebpackPlugin(['scripts'], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
+            new webpack.DefinePlugin({
+                __DEV__: JSON.stringify(DELIR_ENV === 'dev'),
+            }),
             new webpack.optimize.AggressiveMergingPlugin,
             new webpack.optimize.DedupePlugin,
-            // new webpack.optimize.UglifyJsPlugin,
+            ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.UglifyJsPlugin,
+            ])
         ]
     },  function(err, stats) {
         err && console.error(err)
@@ -185,7 +187,7 @@ export function compileRendererJs(done) {
         });
         console.log('Compiled')
         done()
-    });
+    })
 }
 
 export function compilePlugins() {
@@ -291,12 +293,6 @@ export function run() {
 }
 
 export async function compileNavcodec() {
-    if (buildingNpm) {
-        return
-    }
-
-    buildingNpm = true
-
     await new Promise(resolve => {
         const compiler = spawn('npm', ['i', '../src/navcodec'], {
             cwd: join(__dirname, 'test'),
@@ -316,7 +312,6 @@ export async function compileNavcodec() {
 
         testRun.on('close', code => {
             console.log('testRun ending with %d', code)
-            buildingNpm = false
             resolve()
         })
     })
