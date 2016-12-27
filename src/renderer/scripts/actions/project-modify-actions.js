@@ -40,15 +40,14 @@ export default {
         placedFrame = 0,
         durationFrames = 100
     ) {
-        const layer = new Project.Layer
-        layer.renderer = layerRendererId
-        layer.placedFrame = placedFrame
-        layer.durationFrames = durationFrames
-
         dispatcher.dispatch({
             type: ActionTypes.CREATE_LAYER,
             payload: {
-                layer,
+                props: {
+                    renderer: layerRendererId,
+                    placedFrame: placedFrame,
+                    durationFrames: durationFrames,
+                },
                 targetTimelaneId: timelaneId,
             },
         })

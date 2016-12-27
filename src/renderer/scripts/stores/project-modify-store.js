@@ -57,13 +57,10 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
-        [ActionTypes.CREATE_LAYER](state, {layer, targetTimelaneId})
+        [ActionTypes.CREATE_LAYER](state, {targetTimelaneId, props})
         {
             if (! state.project) return state
-
-            const targetTimelane = ProjectHelper.findTimelaneById(state.project, targetTimelaneId)
-            targetTimelane.layers.add(layer)
-
+            ProjectHelper.createAddLayer(state.project, targetTimelaneId, props)
             return Object.assign({}, state)
         },
 

@@ -206,7 +206,7 @@ class TimelineLane extends React.Component
 
     addNewLayer = (layerRendererId) =>
     {
-        ProjectModifyActions.createLayer(this.props.timelane.id, layerRendererId)
+        ProjectModifyActions.createLayer(this.props.timelane.id, {renderer: layerRendererId})
     }
 
     render()
