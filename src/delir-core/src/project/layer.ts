@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import Keyframe from './keyframe'
+import Effect from './effect'
 import {LayerScheme, LayerConfigScheme} from './scheme/layer'
 
 export default class Layer
@@ -42,6 +43,7 @@ export default class Layer
     }
 
     keyframes: {[keyName:string]: Set<Keyframe>} = {}
+    effects: Effect[] = []
 
     // get id(): string { return this._id }
 
