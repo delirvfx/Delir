@@ -80,6 +80,7 @@
     "font-manager": "^0.2.2",
     "fs-promise": "^0.5.0",
     "keymirror": "^0.1.1",
+    "lodash": "^4.17.3",
     "mp3": "^0.1.0",
     "parse-color": "^1.0.0",
     "prop-types": "^0.2.0",
