@@ -57,13 +57,10 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
-        [ActionTypes.CREATE_LAYER](state, {layer, targetTimelaneId})
+        [ActionTypes.CREATE_LAYER](state, {targetTimelaneId, props})
         {
             if (! state.project) return state
-
-            const targetTimelane = ProjectHelper.findTimelaneById(state.project, targetTimelaneId)
-            targetTimelane.layers.add(layer)
-
+            ProjectHelper.createAddLayer(state.project, targetTimelaneId, props)
             return Object.assign({}, state)
         },
 
@@ -79,6 +76,16 @@ class ProjectModifyStore extends ReduceStore<Object>
 
             const targetComposition = ProjectHelper.findCompositionById(state.project, targetCompositionId)
             Object.assign(targetComposition, _patch)
+
+            return Object.assign({}, state)
+        },
+
+        [ActionTypes.MODIFY_LAYER](state, {targetLayerId, patch})
+        {
+            if (! state.project) return state
+
+            const _patch = _.pick(patch, [/* 'renderer', 'rendererOptions', */ 'placedFrame', 'durationFrames', /* 'keyframeInterpolationMethod' */])
+            ProjectHelper.modifyLayer(state.project, targetLayerId, patch)
 
             return Object.assign({}, state)
         },

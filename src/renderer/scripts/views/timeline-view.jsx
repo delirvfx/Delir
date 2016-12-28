@@ -201,13 +201,12 @@ class TimelineLane extends React.Component
             scale: this.props.scale,
         })
 
-        layer.placedFrame = layer.placedFrame + movedFrames
-        this.setState({a: Math.random()})
+        ProjectModifyActions.modifyLayer(layer.id, {placedFrame: layer.placedFrame + movedFrames})
     }
 
     addNewLayer = (layerRendererId) =>
     {
-        ProjectModifyActions.createLayer(this.props.timelane.id, layerRendererId)
+        ProjectModifyActions.createLayer(this.props.timelane.id, {renderer: layerRendererId})
     }
 
     render()
@@ -252,7 +251,7 @@ class TimelineLane extends React.Component
                             ...opt,
                         })
                         const left = TimelaneHelper.framesToPixel({
-                            durationFrames: layer.placedFrames|0,
+                            durationFrames: layer.placedFrame|0,
                             ...opt,
                         })
 
@@ -346,7 +345,6 @@ export default class TimelineView extends React.Component
         })
 
         ProjectModifyStore.addListener(() => {
-            console.log('csl');
             this.setState({})
         })
     }
@@ -455,8 +453,7 @@ export default class TimelineView extends React.Component
                                     activeLayer={activeLayer}
                                 />
                             ))}
-                            </ul>
-                        )}
+                        </ul>
                     </Pane>
                 </Workspace>
             </Pane>

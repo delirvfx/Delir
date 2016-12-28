@@ -17,6 +17,7 @@ export default keyMirror({
     CREATE_TIMELANE: null,
     CREATE_LAYER: null,
     MODIFY_COMPOSITION: null,
+    MODIFY_LAYER: null,
 
     REMOVE_TIMELANE: null,
     REMOVE_LAYER: null,

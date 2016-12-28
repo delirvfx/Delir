@@ -26,7 +26,7 @@ export default {
 
     createTimelane(compId: string)
     {
-        const timelane = new Project.TimeLane
+        const timelane = new Project.Timelane
 
         dispatcher.dispatch({
             type: ActionTypes.CREATE_TIMELANE,
@@ -40,15 +40,14 @@ export default {
         placedFrame = 0,
         durationFrames = 100
     ) {
-        const layer = new Project.Layer
-        layer.renderer = layerRendererId
-        layer.placedFrame = placedFrame
-        layer.durationFrames = durationFrames
-
         dispatcher.dispatch({
             type: ActionTypes.CREATE_LAYER,
             payload: {
-                layer,
+                props: {
+                    renderer: layerRendererId,
+                    placedFrame: placedFrame,
+                    durationFrames: durationFrames,
+                },
                 targetTimelaneId: timelaneId,
             },
         })
@@ -83,6 +82,16 @@ export default {
             type: ActionTypes.MODIFY_COMPOSITION,
             payload: {
                 targetCompositionId: compId,
+                patch: props,
+            }
+        })
+    },
+
+    modifyLayer(layerId: string, props: {[propKey: string]: any}) {
+        dispatcher.dispatch({
+            type: ActionTypes.MODIFY_LAYER,
+            payload: {
+                targetLayerId: layerId,
                 patch: props,
             }
         })
