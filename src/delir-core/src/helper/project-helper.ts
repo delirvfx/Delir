@@ -1,5 +1,6 @@
 // @flow
 import * as uuid from 'uuid'
+import * as _ from 'lodash'
 
 import Project from '../project/project'
 import Asset from '../project/asset'
@@ -69,13 +70,7 @@ export function createAddTimelane(
 
     setFreezedProp(timelane, 'id', entityId)
     Object.assign(timelane, timelaneProps)
-
-    // TODO: Not found behaviour
-    const composition = targetCompositionId instanceof Composition
-        ? targetCompositionId
-        : findCompositionById(project, targetCompositionId)!
-
-    composition.timelanes.add(timelane)
+    addTimelane(project, targetCompositionId, timelane);
 
     return timelane
 }
@@ -192,7 +187,7 @@ export function addTimelane(
         ? targetCompositionId
         : findCompositionById(project, targetCompositionId)!
 
-    composition.timelanes.add(timelane)
+    composition.timelanes = _.uniqBy([timelane, ...composition.timelanes], 'id')
 
     return timelane
 }

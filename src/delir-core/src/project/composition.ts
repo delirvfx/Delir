@@ -24,7 +24,7 @@ export default class Composition
         const timelanes = compJson.timelanes.map(lane => Timelane.deserialize(lane))
 
         Object.defineProperty(comp, 'id', {value: compJson.id})
-        comp.timelanes = new Set(timelanes)
+        comp.timelanes = timelanes
         Object.assign(comp.config, config)
 
         const color = config.backgroundColor
@@ -34,7 +34,7 @@ export default class Composition
 
     id: string|null = null
 
-    timelanes : Set<Timelane> = new Set
+    timelanes : Timelane[] = []
 
     config : {
         name: string|null,
@@ -99,7 +99,7 @@ export default class Composition
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toPreBSON()),
+            timelanes: this.timelanes.map(timelane => timelane.toPreBSON()),
         }
     }
 
@@ -108,7 +108,7 @@ export default class Composition
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            timelanes: Array.from(this.timelanes.values()).map(timelane => timelane.toJSON()),
+            timelanes: this.timelanes.map(timelane => timelane.toJSON()),
         }
     }
 }
