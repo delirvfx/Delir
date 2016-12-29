@@ -1,6 +1,19 @@
 import * as _ from 'lodash'
+
+import {KeyframeScheme} from './scheme/keyframe'
 import Keyframe from './keyframe'
-import {EffectScheme, EffectConfigScheme} from './scheme/layer'
+
+export interface EffectOptionScheme {
+    name: string|null
+    processor: string|null
+    keyframeInterpolationMethod: string
+}
+
+export interface EffectScheme {
+    id: string|null
+    options: EffectOptionScheme
+    keyframes: {[keyName:string]: KeyframeScheme[]}
+}
 
 export default class Effect
 {
@@ -10,7 +23,7 @@ export default class Effect
         const options = _.pick(layerJson.options, [
             'processor',
             'keyframeInterpolationMethod',
-        ]) as EffectConfigScheme
+        ]) as EffectOptionScheme
 
         const keyframes = _.mapValues(layerJson.keyframes, keyframeSet => {
             return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
@@ -24,10 +37,8 @@ export default class Effect
 
     id: string|null = null
 
-    private options: {
-        processor: string|null,
-        keyframeInterpolationMethod: string,
-    } = {
+    private options: EffectOptionScheme = {
+        name: null,
         processor: null,
         keyframeInterpolationMethod: 'linear',
     }
