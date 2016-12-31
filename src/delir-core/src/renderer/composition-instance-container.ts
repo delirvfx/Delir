@@ -26,7 +26,7 @@ export default class CompositionInstanceContainer
     async beforeRender(req: PreRenderingRequest)
     {
         this._timelanes = await Promise.all(
-            Array.from(this._composition.timelanes.values()).map(async timelane => {
+            Array.from(this._composition.timelanes).map(async timelane => {
                 const laneWrap = new TimelaneInstanceContainer(timelane)
                 await laneWrap.beforeRender(req.set({
                     parentComposition: req.rootComposition == this ? null : this,
