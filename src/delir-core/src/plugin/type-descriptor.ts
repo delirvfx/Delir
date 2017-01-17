@@ -279,6 +279,11 @@ export default class Type
     {
         return (new TypeDescriptor()).arrayOf(propName, option, type)
     }
+
+    static none()
+    {
+      return new TypeDescriptor()
+    }
 }
 
 export const POINT_2D = 'POINT_2D'
