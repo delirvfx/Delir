@@ -39,7 +39,7 @@
     "classnames": "^2.2.5",
     "clean-webpack-plugin": "^0.1.13",
     "devtron": "^1.4.0",
-    "electron": "^1.4.4",
+    "electron": "^1.4.13",
     "electron-devtools-installer": "^2.0.1",
     "electron-packager": "^8.1.0",
     "electron-rebuild": "^1.2.1",
@@ -72,7 +72,6 @@
     "bezier-easing": "^2.0.3",
     "bson": "^0.5.5",
     "canvas": "^1.6.1",
-    "d3": "^4.3.0",
     "duplexer3": "^0.1.4",
     "electron-canvas-to-buffer": "^2.0.0",
     "event-kit": "^2.2.0",
@@ -87,6 +86,7 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "semver": "^5.3.0",
+    "tooloud": "^1.0.0",
     "uuid": "^2.0.3"
   }
 }
