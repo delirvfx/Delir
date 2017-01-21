@@ -1,5 +1,7 @@
 // @flow
 import LayerPluginBase from '../plugin/layer-plugin-base'
+import EffectPluginBase from '../plugin/effect-plugin-base'
+
 import Layer from '../project/layer'
 import Keyframe from '../project/keyframe'
 import PreRenderingRequest from './pre-rendering-request'
@@ -22,6 +24,8 @@ export default class LayerInstanceContainer
 
     private _rendererClass: typeof LayerPluginBase
     private _rendererInstance: LayerPluginBase
+
+    private effectInstances: Array<EffectPluginBase>
 
     get holdLayer(): Layer { return this._layer }
     get placedFrame(): number { return this._layer.placedFrame }
@@ -51,6 +55,21 @@ export default class LayerInstanceContainer
             this._rendererInstance = (new Renderer as LayerPluginBase)
         }
 
+        // Resolve effects
+        if (! this.effectInstances) {
+            this.effectInstances = []
+
+            for (const effect of this._layer.effects) {
+                const Effector = req.resolver.resolvePlugin(effect.processor)
+
+                if (Effector == null || ! (Effector.prototype instanceof EffectPluginBase)) {
+                    throw new RenderingFailedException(`Failed to resolve Effect plugin \`${effect.processor}\``)
+                }
+
+                this.effectInstances.push(new Effector as EffectPluginBase)
+            }
+        }
+
         // Build renderer initialization requests
         const receiveOptions: {[propName: string]: any} = this._layer.rendererOptions
         const paramTypes = this._rendererClass.provideParameters()
@@ -69,6 +88,17 @@ export default class LayerInstanceContainer
             await this._rendererInstance.beforeRender(preRenderReq)
         } catch (e) {
             throw new RenderingFailedException(`Failed to before rendering process for \`${this._rendererClass.name}\` (${e.message})`, {before: e})
+        }
+
+        let effect
+
+        try {
+            for (const effector of this.effectInstances) {
+                effect = effector.constructor.name
+                await effector.beforeRender(preRenderReq)
+            }
+        } catch (e) {
+            throw new RenderingFailedException(`Failed to before renderering process for \`${effect}\``)
         }
 
         // Pre calculate keyframe interpolation
@@ -92,5 +122,10 @@ export default class LayerInstanceContainer
         })
 
         await this._rendererInstance.render(_req)
+
+        // Apply effects
+        for (const effect of this.effectInstances) {
+            effect.render(_req)
+        }
     }
 }
