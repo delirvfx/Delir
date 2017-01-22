@@ -125,7 +125,7 @@ export default class LayerInstanceContainer
 
         // Apply effects
         for (const effect of this.effectInstances) {
-            effect.render(_req)
+            await effect.render(_req)
         }
     }
 }
