@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import Keyframe from './keyframe'
+import Effect from './effect'
 import {LayerScheme, LayerConfigScheme} from './scheme/layer'
 
 export default class Layer
@@ -42,6 +43,7 @@ export default class Layer
     }
 
     keyframes: {[keyName:string]: Set<Keyframe>} = {}
+    effects: Effect[] = []
 
     // get id(): string { return this._id }
 
@@ -70,7 +72,14 @@ export default class Layer
 
     toPreBSON(): Object
     {
-        return this.toJSON()
+        return {
+            id: this.id,
+            config: Object.assign({}, this.config),
+            effects: this.effects.slice(0),
+            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
+                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+            }),
+        }
     }
 
     toJSON(): Object
@@ -78,8 +87,9 @@ export default class Layer
         return {
             id: this.id,
             config: Object.assign({}, this.config),
+            effects: this.effects.slice(0),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+                return Array.from(keyframe).map(keyframe => keyframe.toJSON())
             }),
         }
     }

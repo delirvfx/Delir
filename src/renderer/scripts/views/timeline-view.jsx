@@ -400,7 +400,7 @@ export default class TimelineView extends React.Component
     {
         const {project, activeComp, scale, activeLayer} = this.state
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
-        const timelineLanes = activeComp ? Array.from(activeComp.timelanes.values()) : []
+        const timelineLanes = activeComp ? Array.from(activeComp.timelanes) : []
 
         return (
             <Pane className='view-timeline' allowFocus>

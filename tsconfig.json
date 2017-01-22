@@ -12,8 +12,10 @@
         "module": "ES2015",
         "moduleResolution": "node",
         "lib": [
-            "dom",
-            "es2017"
+            "DOM",
+            "ES2015",
+            "ES2016",
+            "ES2017"
         ],
         "baseUrl": ".",
         "paths": {
@@ -22,9 +24,11 @@
     },
     "files": [
         "./src/declarations.d.ts",
-        "./src/delir-core/src/index.ts",
         "./src/delir-core/src/declarations.d.ts"
     ],
+    "paths": {
+        "delir-core": "src/delir-core/src/index"
+    },
     "awesomeTypescriptLoaderOptions": {
         "ignoreDiagnostics": [8010, 8011]
     }

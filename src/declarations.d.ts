@@ -20,3 +20,8 @@ declare module 'font-manager' {
 
     export {getAvailableFontsSync}
 }
+
+declare module 'tooloud' {
+    const _ :any
+    export default _
+}

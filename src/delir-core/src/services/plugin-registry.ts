@@ -1,4 +1,8 @@
-import {PluginFeatures, DelirPluginPackageJson} from '../plugin/types'
+import {
+    PluginFeatures,
+    DelirPluginPackageJson,
+    PackageJSONDelirSection,
+} from '../plugin/types'
 import {ParameterTypeDescriptor} from '../plugin/type-descriptor'
 
 import PluginBase from '../plugin/plugin-base'
@@ -13,6 +17,7 @@ import {PluginLoadFailException} from '../exceptions/'
 
 interface PluginEntry {
     package: DelirPluginPackageJson
+    pluginInfo: PackageJSONDelirSection
     packageRoot: string
     entryPath: string
     class: typeof PluginBase
@@ -21,6 +26,7 @@ interface PluginEntry {
 
 interface BeforeLoadEntryFragment {
     package: DelirPluginPackageJson
+    pluginInfo: PackageJSONDelirSection
     packageRoot: string
     entryPath: string
     class?: typeof PluginBase
@@ -68,6 +74,7 @@ export default class PluginRegistry
 
                 packages[json.name] = {
                     package: json,
+                    pluginInfo: json.delir,
                     packageRoot,
                     entryPath,
                 }

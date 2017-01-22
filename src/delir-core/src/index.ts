@@ -12,6 +12,7 @@ import PluginBase from './plugin/plugin-base'
 import RenderRequest from './renderer/render-request'
 import PluginPreRenderRequest from './renderer/plugin-pre-rendering-request'
 import LayerPluginBase from './plugin/layer-plugin-base'
+import EffectPluginBase from './plugin/effect-plugin-base'
 
 import * as ProjectHelper from './helper/project-helper'
 
@@ -31,6 +32,7 @@ export {
     TypeDescriptor,
     PluginBase,
     LayerPluginBase,
+    EffectPluginBase,
     PluginPreRenderRequest,
     RenderRequest,
 
