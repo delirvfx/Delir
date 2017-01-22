@@ -1,7 +1,6 @@
 // @flow
 import React, {PropTypes} from 'react'
 import TimelaneHelper from '../../helpers/timelane-helper'
-import * as d3 from 'd3'
 
 export default class LaneKeyframes extends React.Component
 {
@@ -15,8 +14,6 @@ export default class LaneKeyframes extends React.Component
         super(...args)
 
         this.svgElement = document.createElement('svg')
-        this.svg = d3.select(this.svgElement)
-        this.svgElement.height = 300
     }
 
     componentDidMount()
@@ -26,7 +23,7 @@ export default class LaneKeyframes extends React.Component
 
     render()
     {
-        this.renderKeyframeBody()
+        // this.renderKeyframeBody()
 
         return (
             <div ref='container' className='timeline-lane-keyframes'>
@@ -44,17 +41,5 @@ export default class LaneKeyframes extends React.Component
                 }) */}
             </div>
         )
-    }
-
-    renderKeyframeBody()
-    {
-        const {svg} = this
-
-        svg.selectAll('path')
-            .data(this.props.keyframes, kf => kf.id)
-            .enter()
-            .append('circle')
-            .attr('d', keyframe => {
-            })
     }
 }
