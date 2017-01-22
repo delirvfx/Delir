@@ -72,7 +72,14 @@ export default class Layer
 
     toPreBSON(): Object
     {
-        return this.toJSON()
+        return {
+            id: this.id,
+            config: Object.assign({}, this.config),
+            effects: this.effects.slice(0),
+            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
+                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+            }),
+        }
     }
 
     toJSON(): Object
@@ -80,8 +87,9 @@ export default class Layer
         return {
             id: this.id,
             config: Object.assign({}, this.config),
+            effects: this.effects.slice(0),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+                return Array.from(keyframe).map(keyframe => keyframe.toJSON())
             }),
         }
     }

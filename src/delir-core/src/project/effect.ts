@@ -60,7 +60,13 @@ export default class Effect
 
     toPreBSON(): Object
     {
-        return this.toJSON()
+        return {
+            id: this.id,
+            options: Object.assign({}, this.options),
+            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
+                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+            }),
+        }
     }
 
     toJSON(): Object
@@ -69,7 +75,7 @@ export default class Effect
             id: this.id,
             options: Object.assign({}, this.options),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+                return Array.from(keyframe).map(keyframe => keyframe.toJSON())
             }),
         }
     }
