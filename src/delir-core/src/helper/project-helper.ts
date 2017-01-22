@@ -105,6 +105,8 @@ export function createAddEffect(
 ): Effect
 {
     const effect = new Effect
+    Object.assign(effect, effectProps)
+
     addEffect(project, targetLayerId, effect)
     return effect
 }
