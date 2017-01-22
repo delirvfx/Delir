@@ -1,7 +1,7 @@
 import {
     Type,
     TypeDescriptor,
-    LayerPluginBase,
+    EffectPluginBase,
     PluginPreRenderRequest,
     RenderRequest,
     Exceptions
@@ -11,7 +11,7 @@ import * as Tooloud from 'tooloud'
 
 console.log(Tooloud)
 
-export default class NoiseEffectPlugin extends LayerPluginBase
+export default class NoiseEffectPlugin extends EffectPluginBase
 {
     static async pluginDidLoad()
     {
