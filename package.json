@@ -60,7 +60,7 @@
     "mocha": "^3.1.2",
     "nib": "^1.1.0",
     "rimraf-promise": "^2.0.0",
-    "typescript": "2.2.0-dev.20161221",
+    "typescript": "2.2.0-dev.20170122",
     "webpack": "2.2.0"
   },
   "dependencies": {
