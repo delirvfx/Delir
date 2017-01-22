@@ -2,7 +2,11 @@
 
 export type PluginFeatures = 'Effect' | 'CustomLayer' | 'ExpressionExtension'
 
-export type DelirPluginPackageJson = {
+export interface PackageJSONDelirSection {
+    feature: PluginFeatures
+}
+
+export interface DelirPluginPackageJson {
     name: string,
     version: string,
     author: string|Array<string>,
@@ -10,7 +14,5 @@ export type DelirPluginPackageJson = {
     engines: {
         delir: string,
     },
-    delir: {
-        feature: Array<PluginFeatures>,
-    },
+    delir: PackageJSONDelirSection,
 }
