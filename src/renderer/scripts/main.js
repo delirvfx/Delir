@@ -194,6 +194,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     ProjectHelper.addTimelane(p, c2, c2_t1)
     // ProjectHelper.addLayer(p, c2_t1, c2_t1_l1)
     ProjectHelper.addLayer(p, c2_t1, c2_t1_l2)
+    ProjectHelper.createAddEffect(p, c1_t1_l1, {
+      processor: 'noise',
+    })
     // ProjectHelper.addLayer(p, c2_t1, c2_t1_l3)
     // ProjectHelper.addKeyframe(p, c1_t1_l1, new Delir.Project.Keyframe)
 
