@@ -9,8 +9,6 @@ import {
 
 import * as Tooloud from 'tooloud'
 
-console.log(Tooloud)
-
 export default class NoiseEffectPlugin extends EffectPluginBase
 {
     static async pluginDidLoad()
@@ -31,27 +29,29 @@ export default class NoiseEffectPlugin extends EffectPluginBase
         super()
     }
 
-    async beforeRender(preRenderRequest: PluginPreRenderRequest)
-    {
-        const parameters = preRenderRequest.parameters as any
-    }
+    async beforeRender(preRenderRequest: PluginPreRenderRequest) {}
 
     async render(req: RenderRequest)
     {
-        const param = req.parameters as any
+        const canvas = req.destCanvas
         const ctx = req.destCanvas.getContext('2d')
 
         if (ctx == null) { return }
-        const data = ctx.getImageData(0, 0, req.destCanvas.width, req.destCanvas.height)
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        const data: any = ctx.getImageData(0, 0, req.destCanvas.width, req.destCanvas.height)
 
         for (let x = 0; x < req.destCanvas.width; x++) {
           for (let y = 0; y < req.destCanvas.height; y++) {
+            const head = (canvas.width * y * 4) + x
             const value = Tooloud.Worley.Euclidean(x, y, 0)
-            data[x + 0] = value
-            data[x + 1] = value
-            data[x + 2] = value
-            data[x + 3] = 255
+            data[head + 0] = (value[0] * 255) | 0
+            data[head + 1] = (value[1] * 255) | 0
+            data[head + 2] = (value[2] * 255) | 0
+            data[head + 3] = 255
           }
         }
+
+        ctx.putImageData(data, 0, 0)
     }
 }
