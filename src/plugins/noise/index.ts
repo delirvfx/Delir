@@ -39,7 +39,8 @@ export default class NoiseEffectPlugin extends EffectPluginBase
         if (ctx == null) { return }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height)
-        const data: any = ctx.getImageData(0, 0, req.destCanvas.width, req.destCanvas.height)
+        const imageData: ImageData = ctx.getImageData(0, 0, req.destCanvas.width, req.destCanvas.height)
+        const data: Uint8ClampedArray = imageData.data
 
         for (let x = 0; x < req.destCanvas.width; x++) {
           for (let y = 0; y < req.destCanvas.height; y++) {
@@ -52,6 +53,6 @@ export default class NoiseEffectPlugin extends EffectPluginBase
           }
         }
 
-        ctx.putImageData(data, 0, 0)
+        ctx.putImageData(imageData, 0, 0)
     }
 }
