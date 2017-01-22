@@ -7,6 +7,7 @@ import Asset from '../project/asset'
 import Composition from '../project/composition'
 import Timelane from '../project/timelane'
 import Layer from '../project/layer'
+import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
 
 function setFreezedProp(obj: Object, name: string, value: any)
@@ -95,6 +96,17 @@ export function createAddLayer(
     timelane.layers.add(layer)
 
     return layer
+}
+
+export function createAddEffect(
+  project: Project,
+  targetLayerId: Layer|string,
+  effectProps: Object
+): Effect
+{
+    const effect = new Effect
+    addEffect(project, targetLayerId, effect)
+    return effect
 }
 
 export function createAddKeyframe(
@@ -214,6 +226,26 @@ export function addLayer(
     return layer
 }
 
+export function addEffect(
+  project: Project,
+  targetLayerId: Layer|string,
+  effect: Effect
+): Effect
+{
+    if (typeof effect.id !== 'string') {
+        const entityId = _generateAndReserveSymbolId(project)
+        setFreezedProp(effect, 'id', entityId)
+    }
+
+    const layer = targetLayerId instanceof Layer
+      ? targetLayerId
+      : findLayerById(project, targetLayerId)!
+
+    layer.effects.push(effect)
+
+    return effect
+}
+
 export function addKeyframe(
     project: Project,
     targetLayerId: Layer|string,
@@ -303,6 +335,22 @@ export function deleteLayer(
     timelane.layers.delete(layer)
 }
 
+export function deleteEffectFromLayer(
+    project: Project,
+    parentLayerId: Layer|string,
+    targetEffectId: Effect|string,
+) {
+    const layer = parentLayerId instanceof Layer
+        ? parentLayerId
+        : findLayerById(project, parentLayerId)!
+
+    const effect = targetEffectId instanceof Effect
+        ? targetEffectId
+        : findEffectFromLayerById(layer, targetEffectId)
+
+    _.remove(layer.effects, effect)
+}
+
 export function deleteKeyframe(
     project: Project,
     targetKeyframeId: Keyframe|string,
@@ -365,6 +413,23 @@ export function modifyLayer(
         : findLayerById(project, targetLayerId)!
 
     Object.assign(layer, patch)
+}
+
+export function modifyEffect(
+    project: Project,
+    parentLayerId: Layer|string,
+    targetEffectId: Effect|string,
+    patch: Object
+) {
+    const layer = parentLayerId instanceof Layer
+        ? parentLayerId
+        : findLayerById(project, parentLayerId)!
+
+    const effect = targetEffectId instanceof Effect
+        ? targetEffectId
+        : findEffectFromLayerById(layer, targetEffectId)
+
+    Object.assign(effect, patch)
 }
 
 export function modifyKeyframe(
@@ -446,6 +511,17 @@ export function findLayerById(project: Project, layerId: string): Layer|null
         }
 
     return targetLayer
+}
+
+export function findEffectFromLayerById(layer: Layer, effectId: string): Effect|null
+{
+    for (const effect of layer.effects) {
+        if (effect.id === effectId) {
+            return effect
+        }
+    }
+
+    return null
 }
 
 export function findParentCompositionByTimelaneId(project: Project, timelaneId: string): Composition|null
