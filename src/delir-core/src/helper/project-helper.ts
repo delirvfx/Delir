@@ -320,7 +320,7 @@ export function deleteTimelane(
 
     // TODO: Not found behaviour
     const composition = findParentCompositionByTimelaneId(project, timelane.id!)!
-    composition.timelanes.delete(timelane)
+    _.remove(composition.timelanes, timelane)
 }
 
 export function deleteLayer(
