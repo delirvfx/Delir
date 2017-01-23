@@ -14,10 +14,10 @@
     "watch-test": "$(npm bin)/mocha --watch --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js"
   },
   "devDependencies": {
-    "@types/bson": "^0.4.30",
-    "@types/fs-promise": "^1.0.0",
-    "@types/keymirror": "^0.1.0",
-    "@types/lodash": "^4.14.41",
+    "@types/bson": "^1.0.0",
+    "@types/fs-promise": "^1.0.1",
+    "@types/keymirror": "^0.1.1",
+    "@types/lodash": "^4.14.50",
     "@types/mz": "^0.0.30",
     "@types/semver": "^5.3.30",
     "@types/uuid": "^2.0.29",

@@ -6,27 +6,28 @@
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/7zip/-/7zip-0.0.6.tgz#9cafb171af82329490353b4816f03347aa150a30"
 
-"@types/bson":
-  version "0.4.30"
-  resolved "https://registry.yarnpkg.com/@types/bson/-/bson-0.4.30.tgz#d6299c4a3e801699ca7269b5c471b20363f8ac48"
-  dependencies:
-    "@types/node" "*"
-
-"@types/fs-promise":
+"@types/bson@^1.0.0":
   version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@types/fs-promise/-/fs-promise-1.0.0.tgz#084b21ad77c4910a4ddca30ef96b686e4d22959f"
+  resolved "https://registry.yarnpkg.com/@types/bson/-/bson-1.0.0.tgz#943921cb96b0f62e7d92dc8cea3f9bae8969c1e6"
   dependencies:
     "@types/node" "*"
 
-"@types/keymirror":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.0.tgz#2a3b8cba76fbde0406d316026020c7c537ebc8c4"
+"@types/fs-promise@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/fs-promise/-/fs-promise-1.0.1.tgz#a77e18c055d7757d44a34c1ed7e8bb505992f783"
+  dependencies:
+    "@types/mz" "*"
+    "@types/node" "*"
 
-"@types/lodash":
-  version "4.14.41"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.41.tgz#6f65b0453778d482dc11fc11601c5c7bc98f04d0"
+"@types/keymirror@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.1.tgz#1fe48e6e5e2a969cafecf0f24485ae23c72abd30"
 
-"@types/mz":
+"@types/lodash@^4.14.50":
+  version "4.14.50"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.50.tgz#2227da4d65fafe249bccd59c7b9396e27674c8f7"
+
+"@types/mz", "@types/mz@*":
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/@types/mz/-/mz-0.0.30.tgz#58daa9f35811d607037bab1f9cc7d4a23e6aafae"
   dependencies:
