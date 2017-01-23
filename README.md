@@ -1,4 +1,6 @@
 # delir
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Ragg-/Delir.svg)](https://greenkeeper.io/)
 Video production with JavaScript
 
 ## Run
