@@ -1816,9 +1816,9 @@ flow-typed@^2.0.0:
     which "^1.2.11"
     yargs "^4.2.0"
 
-flux@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/flux/-/flux-3.1.0.tgz#c3445ed6309a645a6d484e7cb5cba66028d581f1"
+flux@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/flux/-/flux-3.1.2.tgz#8c170addf95b8cb2febb3ddd640aa3e24505762f"
   dependencies:
     fbemitter "^2.0.0"
     fbjs "^0.8.0"
