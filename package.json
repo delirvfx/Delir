@@ -71,7 +71,6 @@
     "av": "^0.4.9",
     "bezier-easing": "^2.0.3",
     "bson": "^0.5.5",
-    "canvas": "^1.6.1",
     "duplexer3": "^0.1.4",
     "electron-canvas-to-buffer": "^2.0.0",
     "event-kit": "^2.2.0",
