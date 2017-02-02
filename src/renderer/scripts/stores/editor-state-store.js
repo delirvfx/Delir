@@ -18,6 +18,7 @@ class EditorStateStore extends ReduceStore<Object>
             activeComp: null,
             activeLayer: null,
             renderFrame: null,
+            dragEntity: null,
             processingState: null,
         }
     }
@@ -33,6 +34,16 @@ class EditorStateStore extends ReduceStore<Object>
         //     fs.writeFileSync(payload.path, state.project.serialize())
         //     return state
         // },
+
+        [ActionTypes.SET_DRAG_ENTITY](state, entity: {type: string, entity: any})
+        {
+            return Object.assign({}, state, {dragEntity: entity})
+        },
+
+        [ActionTypes.CLEAR_DRAG_ENTITY](state, entity: {type: string, entity: any})
+        {
+            return Object.assign({}, state, {dragEntity: null})
+        },
 
         [ActionTypes.CHANGE_ACTIVE_COMPOSITION](state, {compositionId})
         {

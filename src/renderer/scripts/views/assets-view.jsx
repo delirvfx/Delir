@@ -49,8 +49,6 @@ export default class AssetsView extends React.Component
     }
 
     addAsset = e => {
-        console.log(e.dataTransfer, e.dataTransfer.files[0], e.dataTransfer.items[0]);
-
         _.each(e.dataTransfer.files, (file, idx) => {
             if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
 

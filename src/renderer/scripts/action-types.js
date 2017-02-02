@@ -3,6 +3,8 @@ import keyMirror from 'keymirror'
 export default keyMirror({
     // EditorStateActions
     SET_ACTIVE_PROJECT: null,
+    SET_DRAG_ENTITY: null,
+    CLEAR_DRAG_ENTITY: null,
     CHANGE_ACTIVE_COMPOSITION: null,
     CHANGE_ACTIVE_LAYER: null,
 
