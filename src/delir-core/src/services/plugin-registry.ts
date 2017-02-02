@@ -16,6 +16,7 @@ import * as Validators from './validators'
 import {PluginLoadFailException} from '../exceptions/'
 
 interface PluginEntry {
+    id: string
     package: DelirPluginPackageJson
     pluginInfo: PackageJSONDelirSection
     packageRoot: string
@@ -25,6 +26,7 @@ interface PluginEntry {
 }
 
 interface BeforeLoadEntryFragment {
+    id: string
     package: DelirPluginPackageJson
     pluginInfo: PackageJSONDelirSection
     packageRoot: string
@@ -73,6 +75,7 @@ export default class PluginRegistry
                 }
 
                 packages[json.name] = {
+                    id: json.name,
                     package: json,
                     pluginInfo: json.delir,
                     packageRoot,
