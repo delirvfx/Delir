@@ -485,7 +485,7 @@ export function findTimelaneById(project: Project, timelaneId: string): Timelane
 
     timelaneSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes.values()) {
+            for (const timelane of comp.timelanes) {
                 if (timelane.id === timelaneId) {
                     targetTimelane = timelane
                     break timelaneSearch
@@ -502,7 +502,7 @@ export function findLayerById(project: Project, layerId: string): Layer|null
 
     layerSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes.values()) {
+            for (const timelane of comp.timelanes) {
                 for (const layer of timelane.layers.values()) {
                     if (layer.id === layerId) {
                         targetLayer = layer
@@ -532,7 +532,7 @@ export function findParentCompositionByTimelaneId(project: Project, timelaneId: 
 
     compositionSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes.values()) {
+            for (const timelane of comp.timelanes) {
                 if (timelane.id === timelaneId) {
                     targetComp = comp
                     break compositionSearch
@@ -549,7 +549,7 @@ export function findParentTimelaneByLayerId(project: Project, layerId: string): 
 
     timelaneSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes.values()) {
+            for (const timelane of comp.timelanes) {
                 for (const layer of timelane.layers.values()) {
                     if (layer.id === layerId) {
                         targetTimelane = timelane
@@ -585,7 +585,7 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
 
     keyframeSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes.values()) {
+            for (const timelane of comp.timelanes) {
                 for (const layer of timelane.layers.values()) {
                     for (const propName of Object.keys(layer.keyframes)) {
                         for (const keyframe of layer.keyframes[propName]) {
@@ -608,7 +608,7 @@ export function findParentLayerAndPropNameByKeyframeId(project: Project, keyfram
 
     keyframeSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes.values()) {
+            for (const timelane of comp.timelanes) {
                 for (const layer of timelane.layers.values()) {
                     for (const propName of Object.keys(layer.keyframes)) {
                         for (const keyframe of layer.keyframes[propName]) {
