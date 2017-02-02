@@ -3,7 +3,8 @@
 export type PluginFeatures = 'Effect' | 'CustomLayer' | 'ExpressionExtension'
 
 export interface PackageJSONDelirSection {
-    feature: PluginFeatures
+    feature: PluginFeatures,
+    acceptFileTypes: string[],
 }
 
 export interface DelirPluginPackageJson {

@@ -10,6 +10,9 @@
         "feature": "CustomLayer",
         "targetApi": {
             "renderer": "0.0.x"
-        }
+        },
+        "acceptFileTypes": [
+            "video/mp4"
+        ]
     }
 }
