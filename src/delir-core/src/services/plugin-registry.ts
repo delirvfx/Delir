@@ -153,4 +153,12 @@ export default class PluginRegistry
     {
         return _.filter(this._plugins, entry => _.get(entry, 'package.delir.feature') === type)
     }
+
+    getPluginsByAcceptFileType(type: string): typeof PluginBase[]
+    {
+        return _.filter(this._plugins, entry => {
+            entry.pluginInfo.acceptFileTypes && console.log(entry, type)
+            return entry.pluginInfo.acceptFileTypes && entry.pluginInfo.acceptFileTypes.includes(type)
+        })
+    }
 }
