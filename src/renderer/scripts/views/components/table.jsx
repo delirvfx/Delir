@@ -270,10 +270,11 @@ export class Row extends React.Component
     render()
     {
         const {_widths} = this.props
+        const childProps = _.omit(this.props, ['_inHeader', '_widths', '_notifyCellResizing', '_widths'])
         let colIdx = 0
 
         return (
-            <div {...this.props} className={classnames('table-row', this.props.className)}>
+            <div {...childProps} className={classnames('table-row', this.props.className)}>
                 {Children.map(this.props.children, (child, idx) => {
                     if (child.type === Col) {
                         let _colIdx = colIdx++

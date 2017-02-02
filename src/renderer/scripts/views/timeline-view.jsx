@@ -8,6 +8,7 @@ import ProjectModifyActions from '../actions/project-modify-actions'
 
 import RendererService from '../services/renderer'
 
+import AppStore from '../stores/app-store'
 import EditorStateStore from '../stores/editor-state-store'
 import ProjectModifyStore from '../stores/project-modify-store'
 
@@ -337,11 +338,11 @@ export default class TimelineView extends React.Component
             cursorHeight: 0,
             scale: 1,
             selectedLaneId: null,
-            ..._.pick(EditorStateStore.getState(), ['project', 'activeComp', 'activeLayer']),
+            ..._.pick(EditorStateStore.getState(), ['project', 'activeComp', 'activeLayer', 'dragEntity']),
         }
 
         EditorStateStore.addListener(() => {
-            this.setState(_.pick(EditorStateStore.getState(), ['project', 'activeComp', 'activeLayer']))
+            this.setState(_.pick(EditorStateStore.getState(), ['project', 'activeComp', 'activeLayer',  'dragEntity']))
         })
 
         ProjectModifyStore.addListener(() => {
@@ -396,6 +397,23 @@ export default class TimelineView extends React.Component
         }
     }
 
+    dropAsset = e =>
+    {
+        if (this.state.dragEntity.type !== 'asset') return
+        const {entity: asset} = this.state.dragEntity
+        const processablePlugins = RendererService.pluginRegistry.getPluginsByAcceptFileType(asset.mimeType)
+
+        // TODO: Support selection
+        if (processablePlugins.length) {
+            ProjectModifyActions.createLayer(
+                this.state.activeComp.timelanes[0].id,
+                processablePlugins[0].id,
+                0,
+                100,
+            )
+        }
+    }
+
     render()
     {
         const {project, activeComp, scale, activeLayer} = this.state
@@ -404,7 +422,7 @@ export default class TimelineView extends React.Component
 
         return (
             <Pane className='view-timeline' allowFocus>
-                <Workspace direction="horizontal">
+                <Workspace direction="horizontal" onDrop={this.dropAsset}>
                     <Pane className='timeline-labels-container'>
                         <div className='timeline-labels-header'>
                             <div className='--col-name'>Lanes</div>

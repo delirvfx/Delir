@@ -127,6 +127,15 @@ export default class AssetsView extends React.Component
         })
     }
 
+    onAssetsDragStart = ({target}) => {
+        const {project: {project}} = this.state
+        EditorStateActions.setDragEntity('asset', ProjectHelper.findAssetById(project, target.dataset.assetId))
+    }
+
+    onAssetDragEnd = e => {
+        EditorStateActions.clearDragEntity()
+    }
+
     render()
     {
         const {app, project: {project}} = this.state
@@ -150,17 +159,17 @@ export default class AssetsView extends React.Component
                     onHide={this.makeNewComposition}
                     onResponse={this.settingComoisition}
                 />
-                <Table className='asset-list' onDrop={this.addAsset}>
+                <Table className='asset-list' onDrop={this.addAsset} onDragEnd={this.onAssetDragEnd}>
                     <TableHeader>
                         <Row>
-                            <Col resizable={false} defaultWidth='2rem'></Col>
+                            {/* <Col resizable={false} defaultWidth='2rem'></Col> */}
                             <Col defaultWidth='10rem'>名前</Col>
                             <Col defaultWidth='5rem'>種類</Col>
                         </Row>
                     </TableHeader>
                     <TableBodySelectList>
                         {assets.map(asset => (
-                            <Row key={asset.id}>
+                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
