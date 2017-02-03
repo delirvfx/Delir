@@ -1,5 +1,5 @@
 // @flow
-import T from 'prop-types'
+import * as T from 'prop-types'
 import * as semver from 'semver'
 
 type ValidatorFunction = (props: Object, propName: string, descriptiveName: string, location: any) => Error|void
