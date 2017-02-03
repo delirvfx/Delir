@@ -8,14 +8,14 @@
         "noUnusedParameters": false,
         "allowJs": true,
         "jsx": "preserve",
-        "target": "es2015",
-        "module": "es2015",
+        "target": "ES2016",
+        "module": "ES2015",
         "moduleResolution": "node",
         "lib": [
-            "dom",
-            "es2015",
-            "es2016",
-            "es2017"
+            "DOM",
+            "ES2015",
+            "ES2016",
+            "ES2017"
         ],
         "baseUrl": ".",
         "paths": {
