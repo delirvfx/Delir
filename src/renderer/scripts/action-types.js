@@ -3,6 +3,8 @@ import keyMirror from 'keymirror'
 export default keyMirror({
     // EditorStateActions
     SET_ACTIVE_PROJECT: null,
+    SET_DRAG_ENTITY: null,
+    CLEAR_DRAG_ENTITY: null,
     CHANGE_ACTIVE_COMPOSITION: null,
     CHANGE_ACTIVE_LAYER: null,
 
@@ -13,6 +15,7 @@ export default keyMirror({
     // ProjectModifyActions
     MOVE_LAYER_TO_TIMELINE: null,
     ADD_ASSET: null,
+    ADD_TIMELANE: null,
     CREATE_COMPOSTION: null,
     CREATE_TIMELANE: null,
     CREATE_LAYER: null,

@@ -47,13 +47,10 @@ class ProjectModifyStore extends ReduceStore<Object>
             return Object.assign({}, state)
         },
 
-        [ActionTypes.CREATE_TIMELANE](state, {timelane, targetCompositionId})
+        [ActionTypes.ADD_TIMELANE](state, {targetComposition, timelane})
         {
             if (! state.project) return state
-
-             const targetComp = ProjectHelper.findCompositionById(state.project, targetCompositionId)
-            targetComp.timelanes.add(timelane)
-
+            ProjectHelper.addTimelane(state.project, targetComposition, timelane)
             return Object.assign({}, state)
         },
 

@@ -1,4 +1,6 @@
+// @flow
 import {remote} from 'electron'
+import type Delir from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
@@ -22,11 +24,27 @@ export default {
     //
     // Editor Store
     //
-    setActiveProject(project: Delir.Project)
+    setActiveProject(project: Delir.Project.Project)
     {
         dispatcher.dispatch({
             type: ActionTypes.SET_ACTIVE_PROJECT,
             payload: {project},
+        })
+    },
+
+    setDragEntity(type: string, entity: Delir.Project.Asset)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.SET_DRAG_ENTITY,
+            payload: {type, entity},
+        })
+    },
+
+    clearDragEntity(type: string, entity: Delir.Project.Asset)
+    {
+        dispatcher.dispatch({
+            type: ActionTypes.CLEAR_DRAG_ENTITY,
+            payload: {},
         })
     },
 
