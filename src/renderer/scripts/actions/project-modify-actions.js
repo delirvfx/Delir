@@ -4,6 +4,8 @@ import {Project} from 'delir-core'
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
 
+import deprecated from '../utils/deprecated'
+
 export default {
     //
     // Modify project
@@ -24,6 +26,7 @@ export default {
         })
     },
 
+    @deprecated
     createTimelane(compId: string)
     {
         const timelane = new Project.Timelane
@@ -31,6 +34,19 @@ export default {
         dispatcher.dispatch({
             type: ActionTypes.CREATE_TIMELANE,
             payload: {timelane, targetCompositionId: compId}
+        })
+    },
+
+    addTimelane(
+        targetComposition: Delir.Project.Composition,
+        timelane: Delir.Project.Timelane
+    ) {
+        dispatcher.dispatch({
+            type: ActionTypes.ADD_TIMELANE,
+            payload: {
+                targetComposition,
+                timelane,
+            },
         })
     },
 

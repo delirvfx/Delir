@@ -15,6 +15,7 @@ export default keyMirror({
     // ProjectModifyActions
     MOVE_LAYER_TO_TIMELINE: null,
     ADD_ASSET: null,
+    ADD_TIMELANE: null,
     CREATE_COMPOSTION: null,
     CREATE_TIMELANE: null,
     CREATE_LAYER: null,
