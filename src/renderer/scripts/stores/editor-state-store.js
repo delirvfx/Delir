@@ -5,7 +5,6 @@ import Delir, {ProjectHelper} from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
-import AppStore from './app-store'
 
 import fs from 'fs'
 
