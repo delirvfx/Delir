@@ -1,7 +1,9 @@
 import _ from 'lodash'
+import * as uuid from 'uuid'
 import classnames from 'classnames'
 import React, {PropTypes} from 'react'
 import {Disposable} from 'event-kit'
+import Delir from 'delir-core'
 import connectToStores from '../utils/connectToStores'
 
 import EditorStateActions from '../actions/editor-state-actions'
