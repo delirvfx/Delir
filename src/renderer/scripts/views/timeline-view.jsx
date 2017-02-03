@@ -2,6 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames'
 import React, {PropTypes} from 'react'
 import {Disposable} from 'event-kit'
+import connectToStores from '../utils/connectToStores'
 
 import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
@@ -35,27 +36,15 @@ class TimelineLaneLayer extends React.Component
         onChangePlace: PropTypes.func.isRequired,
     }
 
-    removers = []
-
     constructor()
     {
         super()
 
         this.state = {
-            project: EditorStateStore.getState(),
             draggedPxX: 0,
             dragStartPosition: null,
             dragStyle: {transform: 'translateX(0)'},
         }
-
-        this.removers.push(EditorStateStore.addListener(() => {
-            this.setState({project: EditorStateStore.getState()})
-        }))
-    }
-
-    componentWillUnmount()
-    {
-        this.removers.forEach(remover => remover.remove())
     }
 
     selectLayer(e)
@@ -212,7 +201,8 @@ class TimelineLane extends React.Component
 
     render()
     {
-        const {timelane, activeLayer} = this.props
+        const {timelane, activeLayer, framerate, scale} = this.props
+        const {pxPerSec} = this.state
         const {keyframes} = activeLayer ? activeLayer : {}
         const layers = Array.from(timelane.layers.values())
         const plugins = this._plugins
@@ -243,9 +233,9 @@ class TimelineLane extends React.Component
                 <div className='timeline-lane-layers'>
                     {layers.map(layer => {
                         const opt = {
-                            pxPerSec: this.state.pxPerSec,
-                            framerate: this.props.framerate,
-                            scale: this.props.scale,
+                            pxPerSec: pxPerSec,
+                            framerate: framerate,
+                            scale: scale,
                         };
                         const width = TimelaneHelper.framesToPixel({
                             durationFrames: layer.durationFrames|0,
@@ -267,7 +257,7 @@ class TimelineLane extends React.Component
                         )
                     })}
                 </div>
-                <LaneKeyframes keyframes={keyframes && keyframes[tmpKey] ? keyframes[tmpKey] : []} pxPerSec={this.state.pxPerSec} />
+                <LaneKeyframes keyframes={keyframes && keyframes[tmpKey] ? keyframes[tmpKey] : []} pxPerSec={pxPerSec} />
             </li>
         )
     }
@@ -327,6 +317,9 @@ class TimelineGradations extends React.Component
     }
 }
 
+@connectToStores([EditorStateStore, ProjectModifyStore], context => ({
+    editor: EditorStateStore.getState(),
+}))
 export default class TimelineView extends React.Component
 {
     constructor()
@@ -338,16 +331,7 @@ export default class TimelineView extends React.Component
             cursorHeight: 0,
             scale: 1,
             selectedLaneId: null,
-            ..._.pick(EditorStateStore.getState(), ['project', 'activeComp', 'activeLayer', 'dragEntity']),
         }
-
-        EditorStateStore.addListener(() => {
-            this.setState(_.pick(EditorStateStore.getState(), ['project', 'activeComp', 'activeLayer',  'dragEntity']))
-        })
-
-        ProjectModifyStore.addListener(() => {
-            this.setState({})
-        })
     }
 
     scrollSync(event)
@@ -380,13 +364,17 @@ export default class TimelineView extends React.Component
 
     addNewTimelane = () =>
     {
-        if (!this.state.activeComp) return
-        ProjectModifyActions.createTimelane(this.state.activeComp.id)
+        if (!this.props.editor.activeComp) return
+
+        ProjectModifyActions.addTimelane(
+            this.props.editor.activeComp,
+            new Delir.Project.Timelane
+        )
     }
 
     removeTimelane = timelaneId =>
     {
-        if (!this.state.activeComp) return
+        if (!this.props.editor.activeComp) return
         ProjectModifyActions.removeTimelane(timelaneId)
     }
 
@@ -399,24 +387,34 @@ export default class TimelineView extends React.Component
 
     dropAsset = e =>
     {
-        if (this.state.dragEntity.type !== 'asset') return
-        const {entity: asset} = this.state.dragEntity
+        const {dragEntity, activeComp} = this.props.editor
+
+        if (dragEntity.type !== 'asset') return
+        const {entity: asset} = dragEntity
         const processablePlugins = RendererService.pluginRegistry.getPluginsByAcceptFileType(asset.mimeType)
 
         // TODO: Support selection
         if (processablePlugins.length) {
-            ProjectModifyActions.createLayer(
-                this.state.activeComp.timelanes[0].id,
-                processablePlugins[0].id,
-                0,
-                100,
-            )
+            const timelane = new Delir.Project.Timelane
+            timelane.id = uuid.v4()
+
+            const layer = new Delir.Project.Layer
+            Object.assign(layer, {
+                id: uuid.v4(),
+                renderer: processablePlugins[0].id,
+                placedFrame: 0,
+                durationFrames: 1,
+            })
+
+            timelane.layers.add(layer)
+            ProjectModifyActions.addTimelane(activeComp, timelane)
         }
     }
 
     render()
     {
-        const {project, activeComp, scale, activeLayer} = this.state
+        const {scale} = this.state
+        const {project, activeComp, activeLayer} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.timelanes) : []
 
