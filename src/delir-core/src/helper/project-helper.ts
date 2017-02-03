@@ -454,7 +454,7 @@ export function findAssetById(project: Project, assetId: string): Asset|null
     let targetAsset: Asset|null = null
 
     compSearch:
-        for (const asset of project.assets.values()) {
+        for (const asset of Array.from(project.assets)) {
             if (asset.id === assetId) {
                 targetAsset = asset
                 break compSearch
@@ -469,7 +469,7 @@ export function findCompositionById(project: Project, compositionId: string): Co
     let targetComp: Composition|null = null
 
     compSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of Array.from(project.compositions)) {
             if (comp.id === compositionId) {
                 targetComp = comp
                 break compSearch
