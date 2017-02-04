@@ -37,6 +37,10 @@ declare module 'electron-devtools-installer' {
     export default function installExtension(extension: Extensions): Promise<void>
 }
 
+declare module 'keymirror' {
+    export default function keyMirror<K>(keys: K): {[P in keyof K]: P}
+}
+
 declare module 'parse-color' {
     export default function parseColor(colorCode: string): {
         rgb: [number, number, number],
