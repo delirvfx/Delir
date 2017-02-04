@@ -1,12 +1,13 @@
-import _ from 'lodash'
-import React, {PropTypes} from 'react'
-import path from 'path'
-import URL from 'url'
-import qs from 'querystring'
+import * as _ from 'lodash'
+import * as React from 'react'
+import {PropTypes} from 'react'
+import * as path from 'path'
+import * as URL from 'url'
+import * as qs from 'querystring'
 import {remote} from 'electron'
 
 const appPath = remote.app.getAppPath()
-const buildUrl = (filepath, query) => {
+const buildUrl = (filepath: string, query: Object) => {
     return URL.format({
         protocol: 'file',
         host: '',
@@ -15,7 +16,17 @@ const buildUrl = (filepath, query) => {
     })
 }
 
-export default class WindowComponent extends React.Component
+export interface ModalWindowProps {
+    show?: boolean,
+    url?: string,
+    width?: number,
+    height?: number,
+    query?: {[name: string]: string|number},
+    onHide?: () => any,
+    onResponse?: (param: {[name: string]: string|number}) => any,
+}
+
+export default class WindowComponent extends React.Component<ModalWindowProps, any>
 {
     static propTypes = {
         // children: PropTypes.element.isRequired,
@@ -25,7 +36,7 @@ export default class WindowComponent extends React.Component
         height: PropTypes.number,
         query: PropTypes.object,
         onHide: PropTypes.func,
-        onResposnse: PropTypes.func,
+        onResponse: PropTypes.func,
     }
 
     static defaultProps = {
@@ -33,9 +44,11 @@ export default class WindowComponent extends React.Component
         url: 'about:blank',
     }
 
-    constructor(...args)
+    window: Electron.BrowserWindow
+
+    constructor(props: ModalWindowProps, context: any)
     {
-        super(...args)
+        super(props, context)
 
         this.window = new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
@@ -54,13 +67,13 @@ export default class WindowComponent extends React.Component
             previousQuery: this.props.query,
         }
 
-        this.window.on('hide', e => {
-            this.props.onHide()
+        this.window.on('hide', () => {
+            this.props && this.props.onHide!()
         })
 
         this.window.webContents.on('will-navigate', (e, url) => {
             const res = qs.parse(URL.parse(url).query)
-            this.props.onResponse && this.props.onResponse(res)
+            this.props.onResponse && this.props.onResponse!(res)
             e.preventDefault()
         })
 
@@ -71,14 +84,14 @@ export default class WindowComponent extends React.Component
     {
     }
 
-    shouldComponentUpdate(nextProps, nextState)
+    shouldComponentUpdate(nextProps: ModalWindowProps, nextState: any)
     {
         return this.props.url !== nextProps.url
             || this.props.query !== nextProps.query
             || this.props.show !== nextProps.show
     }
 
-    componentWillUpdate(nextProps, nextState)
+    componentWillUpdate(nextProps: ModalWindowProps, nextState: any)
     {
         if (this.props.show !== nextProps.show) {
             nextProps.show ? this.window.show() : this.window.hide()
@@ -91,7 +104,7 @@ export default class WindowComponent extends React.Component
     }
 
     render() {
-        this.window.loadURL(buildUrl(this.props.url, this.props.query))
+        this.window.loadURL(buildUrl(this.props.url || "", this.props.query))
         this.props.show ? this.window.show() : this.window.hide()
         // this.props.url !== this.window.webContents.getURL() && this.window.loadURL(buildUrl(this.props.url))
         return null
