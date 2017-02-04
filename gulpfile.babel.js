@@ -143,7 +143,6 @@ export function compileRendererJs(done) {
                 {
                     test: /\.tsx?$/,
                     loader: 'awesome-typescript-loader',
-                    include: [join(__dirname, './src/delir-core/src')],
                     exclude: /node_modules|\.jsx?$/,
                     query: {
                         configFileName: join(__dirname, './src/delir-core/tsconfig.json'),
