@@ -1,13 +1,23 @@
-import React, {PropTypes} from 'react'
+import * as React from 'react'
+import {PropTypes} from 'react'
 import ModalWindow from '../electron/modal-window'
 
-export default class NewCompositionWindow extends React.Component
+export interface SettingCompositionWindowProps {
+    show: boolean,
+    width: number,
+    height: number,
+    query: {[name: string]: string|number},
+    onHide: () => any,
+    onResponse: (param: {[name: string]: string|number}) => any,
+}
+
+export default class SettingCompositionWindow extends React.Component<SettingCompositionWindowProps, any>
 {
     static propTypes = {
         show: PropTypes.bool.isRequired,
         width: PropTypes.number.isRequired,
         height: PropTypes.number.isRequired,
-        query: PropTypes.string.isRequired,
+        query: PropTypes.object.isRequired,
         onHide: PropTypes.func.isRequired,
         onResponse: PropTypes.func.isRequired,
     }
