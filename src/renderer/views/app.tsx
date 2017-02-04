@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react'
+import React, {Component, PropTypes} from 'react'
 import cn from 'classnames'
 
 import _ from 'lodash'
@@ -12,17 +12,8 @@ import TimelineView from './timeline-view'
 import NavigationView from './navigation-view'
 import StatusView from './status-view'
 
-export default class AppView extends React.Component
+export default class AppView extends Component<null, null>
 {
-    // static propTypes = {
-    //     store: PropTypes.object.isRequired
-    // }
-
-    constructor()
-    {
-        super()
-    }
-
     componentDidMount()
     {
         window.addEventListener('dragenter', this.prevent, false)
