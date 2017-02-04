@@ -16,8 +16,8 @@
   "devDependencies": {
     "@types/bson": "^1.0.0",
     "@types/classnames": "^0.0.32",
+    "@types/electron": "^1.4.31",
     "@types/fs-promise": "^1.0.1",
-    "@types/keymirror": "^0.1.1",
     "@types/lodash": "^4.14.50",
     "@types/mz": "^0.0.30",
     "@types/react": "^15.0.6",

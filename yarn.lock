@@ -16,16 +16,18 @@
   version "0.0.32"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-0.0.32.tgz#449abcd9a826807811ef101e58df9f83cfc61713"
 
+"@types/electron@^1.4.31":
+  version "1.4.31"
+  resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.4.31.tgz#6ef658e97152a4d3c9cda44f56bd3f917149bb33"
+  dependencies:
+    "@types/node" "*"
+
 "@types/fs-promise@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/fs-promise/-/fs-promise-1.0.1.tgz#a77e18c055d7757d44a34c1ed7e8bb505992f783"
   dependencies:
     "@types/mz" "*"
     "@types/node" "*"
-
-"@types/keymirror@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.1.tgz#1fe48e6e5e2a969cafecf0f24485ae23c72abd30"
 
 "@types/lodash@^4.14.50":
   version "4.14.50"
