@@ -1,0 +1,27 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "allowJs": false,
+        "declaration": true,
+        "jsx": "preserve",
+        "target": "es6",
+        "module": "es2015",
+        "moduleResolution": "node",
+        "lib": [
+            "dom",
+            "es2015",
+            "es2016",
+            "es2017"
+        ],
+        "rootDir": "./src/"
+    },
+    "files": [
+        "./src/index",
+        "./src/declarations.d.ts"
+    ]
+}
