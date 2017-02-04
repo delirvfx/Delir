@@ -1,3 +1,4 @@
+import * as React from 'react'
 import {Component, PropTypes, Children} from 'react'
 import * as classnames from 'classnames'
 

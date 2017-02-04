@@ -1,4 +1,5 @@
 import * as _ from 'lodash'
+import * as React from 'react'
 import {Component, PropTypes} from 'react'
 import * as classnames from 'classnames'
 
