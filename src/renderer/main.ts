@@ -25,7 +25,7 @@ if (typeof global !== 'undefined') {
 (() => {
     const Module = (global as any).module.constructor
     const _require = Module.prototype.require
-    Module.prototype.require = function (module) {
+    Module.prototype.require = function (this: any, module: string) {
         if (module === 'delir-core') {
             return Delir
         }

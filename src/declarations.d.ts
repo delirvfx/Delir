@@ -27,6 +27,16 @@ declare module 'tooloud' {
 }
 
 // Delir frontend deps
+declare module 'devtron' {
+    export function install(): void
+}
+
+declare module 'electron-devtools-installer' {
+    type Extensions = 'REACT_DEVELOPER_TOOLS'
+    export const REACT_DEVELOPER_TOOLS = 'REACT_DEVELOPER_TOOLS'
+    export default function installExtension(extension: Extensions): Promise<void>
+}
+
 declare module 'parse-color' {
     export default function parseColor(colorCode: string): {
         rgb: [number, number, number],
