@@ -1,13 +1,14 @@
 // @see https://github.com/yahoo/fluxible/blob/master/packages/fluxible-addons-react/connectToStores.js
-import React from 'react'
+import * as React from 'react'
+import {ReduceStore} from 'flux/utils'
 
-export default function connectToStores(stores: Array<ReduceStore>, getStateFromStores) {
-    console.log(stores, getStateFromStores);
-    return Component =>
-        class StoreConnector extends React.Component {
-            disposers: Array<{dispose: Function}>
+export default function connectToStores(stores: ReduceStore<any, any>[], getStateFromStores: (contest: any, props: any) => {[key: string]: any}) {
+    return (Component: typeof React.Component) => (
+        class StoreConnector extends React.Component<any, any> {
+            _isMounted: boolean
+            disposers: Array<{remove: () => void}>
 
-            constructor(props, context) {
+            constructor(props: any, context: any) {
                 super(props, context)
                 this._isMounted = false
                 this.state = this.getStateFromStores()
@@ -16,13 +17,13 @@ export default function connectToStores(stores: Array<ReduceStore>, getStateFrom
             componentDidMount = () =>
             {
                 this._isMounted = true
-                this.disposers = stores.map(Store => Store.addListener(this.storeStateUpdated))
+                this.disposers = stores.map((Store: ReduceStore<any, any>) => Store.addListener(this.storeStateUpdated))
             }
 
             componentWillUnmount = () =>
             {
                 this._isMounted = false
-                this.disposers.forEach(disposer => disposer.dispose())
+                this.disposers.forEach(subscription => subscription.remove())
             }
 
             getStateFromStores = () => {
@@ -36,8 +37,10 @@ export default function connectToStores(stores: Array<ReduceStore>, getStateFrom
                 }
             }
 
-            render = () => {
+            render()
+            {
                 return <Component {...this.props} {...this.state} />
             }
         }
+    )
 }
