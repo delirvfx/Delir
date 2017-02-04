@@ -1,8 +1,15 @@
-import _ from 'lodash'
-import React, {PropTypes} from 'react'
-import classnames from 'classnames'
+import * as _ from 'lodash'
+import {Component, PropTypes} from 'react'
+import * as classnames from 'classnames'
 
-export default class Workspace extends React.Component
+export interface WorkspaceProps {
+    children: React.ComponentElement<any, any>,
+    className: string,
+    acceptPaneDragin: boolean,
+    direction: 'vertical'|'horizontal'
+}
+
+export default class Workspace extends Component<WorkspaceProps, any>
 {
     static propTypes = {
         children: PropTypes.oneOfType([
@@ -18,13 +25,8 @@ export default class Workspace extends React.Component
         acceptPaneDragIn: false,
     }
 
-    state = {
-        width: null
-    }
-
     render()
     {
-        const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children];
         const props = _.omit(this.props, ['children', 'className', 'acceptPaneDragIn', 'direction'])
 
         return (
