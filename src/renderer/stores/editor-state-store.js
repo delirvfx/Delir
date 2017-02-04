@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
 
-import Delir, {ProjectHelper} from 'delir-core'
+import * as Delir from 'delir-core'
+import {ProjectHelper} from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
