@@ -12,6 +12,10 @@
   dependencies:
     "@types/node" "*"
 
+"@types/classnames@^0.0.32":
+  version "0.0.32"
+  resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-0.0.32.tgz#449abcd9a826807811ef101e58df9f83cfc61713"
+
 "@types/fs-promise@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/fs-promise/-/fs-promise-1.0.1.tgz#a77e18c055d7757d44a34c1ed7e8bb505992f783"
