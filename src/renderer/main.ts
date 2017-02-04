@@ -10,7 +10,7 @@ import dispatcher from './dispatcher'
 import EditorStateActions from './actions/editor-state-actions'
 import EditorStateStore from './stores/editor-state-store'
 
-import Delir, {ProjectHelper} from '../../delir-core/src/index'
+import Delir, {ProjectHelper} from 'delir-core'
 import {join} from 'path'
 
 import RendererService from './services/renderer'
