@@ -25,3 +25,14 @@ declare module 'tooloud' {
     const _ :any
     export default _
 }
+
+
+declare interface Window {
+    app: {
+        stores: {[storeName: string]: any}
+    }
+}
+
+declare var app: {
+    stores: {[storeName: string]: any}
+}

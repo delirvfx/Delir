@@ -1,14 +1,13 @@
-// @flow
 import fs from 'fs'
 import {spawn} from 'child_process'
 import canvasToBuffer from 'electron-canvas-to-buffer'
 // import {remote} from 'electron'
 // import navcodec from 'navcodec'
 
-import React from 'react'
-import ReactDOM from 'react-dom'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
 
-import devtron from 'devtron'
+import * as devtron from 'devtron'
 import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer'
 
 import AppComponent from './views/app'
@@ -17,7 +16,7 @@ import dispatcher from './dispatcher'
 import EditorStateActions from './actions/editor-state-actions'
 import EditorStateStore from './stores/editor-state-store'
 
-import Delir, {ProjectHelper} from 'delir-core'
+import Delir, {ProjectHelper} from '../../delir-core/src/index'
 import {join} from 'path'
 
 import RendererService from './services/renderer'
@@ -25,12 +24,12 @@ import BrowserProcessProxy from './services/browser-process-proxy'
 
 
 if (typeof global !== 'undefined') {
-    global.require('babel-register')
+    (global as any).require('babel-register')
 }
 
 // Hook require function for plugins
 (() => {
-    const Module = global.module.constructor
+    const Module = (global as any).module.constructor
     const _require = Module.prototype.require
     Module.prototype.require = function (module) {
         if (module === 'delir-core') {
@@ -50,7 +49,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     BrowserProcessProxy.initialize()
     await RendererService.initialize()
 
-    window.app = {
+    ;(window as any).app = {
         stores: {EditorStateStore}
     }
 
@@ -73,10 +72,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     console.log(ProjectHelper.addLayer)
 
-    const app = window.app = {}
     const fps = 60
     const durationFrames = fps * 20
-    const p = app.project = new Delir.Project.Project()
+    const p = (window as any).app.project = new Delir.Project.Project()
     const a = new Delir.Project.Asset
     const a2 = new Delir.Project.Asset
     const c1 = new Delir.Project.Composition
@@ -96,7 +94,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     a.name = 'シャロちゃん'
     a.mimeType = 'video/mp4'
-    a.path = '/Users/ragg/Downloads/Cv-26hmVYAEBV0p.mp4'
+    a.path = '/Users/ragg/workspace/delir/sample.mp4'
     // a.path = '/Users/ragg/workspace/delir/navcodec.mp4'
 
     a2.name = 'Audio'
@@ -162,32 +160,32 @@ window.addEventListener('DOMContentLoaded', async () => {
     // ProjectHelper.addLayer(p, c1_t3, c1_t3_l1)
     // ProjectHelper.addLayer(p, c1_t3, c1_t4_l1)
 
-    ProjectHelper.addKeyframe(p, c1_t1_l1, 'x', [
-        Object.assign(new Delir.Project.Keyframe, {
-            frameOnLayer: 0,
-            value: 0,
-            easeOutParam: [1, -0.03],
-        }),
-        Object.assign(new Delir.Project.Keyframe, {
-            frameOnLayer: fps * 5,
-            value: 900,
-            easeInParam: [1, .09],
-            easeOutParam: [1, -0.03],
-        }),
-        Object.assign(new Delir.Project.Keyframe, {
-            frameOnLayer: durationFrames,
-            value: 0,
-            easeInParam: [1, .09],
-        })
-    ])
-
-    ProjectHelper.addKeyframe(p, c1_t1_l1, 'y', [
-        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: -300})
-    ])
-
-    ProjectHelper.addKeyframe(p, c1_t1_l1, 'loop', [
-        Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: true})
-    ])
+    // ProjectHelper.addKeyframe(p, c1_t1_l1, 'x', [
+    //     Object.assign(new Delir.Project.Keyframe, {
+    //         frameOnLayer: 0,
+    //         value: 0,
+    //         easeOutParam: [1, -0.03],
+    //     }),
+    //     Object.assign(new Delir.Project.Keyframe, {
+    //         frameOnLayer: fps * 5,
+    //         value: 900,
+    //         easeInParam: [1, .09],
+    //         easeOutParam: [1, -0.03],
+    //     }),
+    //     Object.assign(new Delir.Project.Keyframe, {
+    //         frameOnLayer: durationFrames,
+    //         value: 0,
+    //         easeInParam: [1, .09],
+    //     })
+    // ])
+    //
+    // ProjectHelper.addKeyframe(p, c1_t1_l1, 'y', [
+    //     Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: -300})
+    // ])
+    //
+    // ProjectHelper.addKeyframe(p, c1_t1_l1, 'loop', [
+    //     Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: true})
+    // ])
 
 
     ProjectHelper.addComposition(p, c2)
@@ -200,12 +198,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     // ProjectHelper.addLayer(p, c2_t1, c2_t1_l3)
     // ProjectHelper.addKeyframe(p, c1_t1_l1, new Delir.Project.Keyframe)
 
+    console.log(ProjectHelper.createAddEffect, p)
+
     ReactDOM.render(
-        React.createElement(AppComponent, {}, []),
+        React.createElement(AppComponent as any, {}, []),
         document.querySelector('#root')
     )
 
-    document.querySelector('#loading').style.display = 'none'
+    ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
 
     EditorStateActions.setActiveProject(p)
 
