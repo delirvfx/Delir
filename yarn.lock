@@ -22,6 +22,17 @@
   dependencies:
     "@types/node" "*"
 
+"@types/fbemitter@*":
+  version "2.0.32"
+  resolved "https://registry.yarnpkg.com/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
+
+"@types/flux@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.0.1.tgz#690a1a67a5a0549c2a2dc3c2343f4505caad5143"
+  dependencies:
+    "@types/fbemitter" "*"
+    "@types/react" "*"
+
 "@types/fs-promise@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/fs-promise/-/fs-promise-1.0.1.tgz#a77e18c055d7757d44a34c1ed7e8bb505992f783"
@@ -2601,6 +2612,10 @@ icss-replace-symbols@^1.0.2:
 ieee754@^1.1.4:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
+
+immutable@^3.8.1:
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-3.8.1.tgz#200807f11ab0f72710ea485542de088075f68cd2"
 
 indent-string@^2.1.0:
   version "2.1.0"
