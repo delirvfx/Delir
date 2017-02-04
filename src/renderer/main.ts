@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom'
 import * as devtron from 'devtron'
 import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer'
 
-import AppComponent from './views/app'
+import AppComponent from './views/AppView'
 
 import dispatcher from './dispatcher'
 import EditorStateActions from './actions/editor-state-actions'
