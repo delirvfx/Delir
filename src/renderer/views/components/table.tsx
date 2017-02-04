@@ -1,26 +1,30 @@
-import _ from 'lodash'
-import React, {PropTypes, Children} from 'react'
-import classnames from 'classnames'
+import * as _ from 'lodash'
+import * as React from 'react'
+import {PropTypes, Children} from 'react'
+import * as classnames from 'classnames'
 
-export class Table extends React.Component
+interface TableProps {
+    className?: string
+}
+export class Table extends React.Component<TableProps, any>
 {
     static propTypes = {
         className: PropTypes.string,
     }
 
-    constructor(...args)
+    constructor(props: TableProps, context: any)
     {
-        super(...args)
+        super(props, context)
 
-        const columnWidths = []
-        Children.toArray(this.props.children).forEach(child => {
-            if (child.type !== TableHeader) return
+        const columnWidths: number[] = []
+        Children.toArray(this.props.children).forEach((child: React.ReactElement<any>) => {
+            if ((child.type as any) !== TableHeader) return
 
-            Children.toArray(child.props.children).forEach(maybeRowChild => {
-                if (maybeRowChild.type !== Row) return
+            Children.toArray(child.props.children).forEach((maybeRowChild: React.ReactElement<any>) => {
+                if ((maybeRowChild.type as any) !== Row) return
 
-                Children.toArray(maybeRowChild.props.children).forEach(maybeColChild => {
-                    if (maybeColChild.type !== Col) return
+                Children.toArray(maybeRowChild.props.children).forEach((maybeColChild: React.ReactElement<any>) => {
+                    if ((maybeColChild.type as any) !== Col) return
 
                     columnWidths.push(maybeColChild.props.defaultWidth)
                 })
@@ -32,7 +36,7 @@ export class Table extends React.Component
         }
     }
 
-    handleCellResizing = (cellIdx, width) => {
+    handleCellResizing = (cellIdx: number, width: number) => {
         const _widths = this.state.columnWidths.slice(0)
         _widths[cellIdx] = width
         this.setState({columnWidths: _widths})
@@ -43,14 +47,14 @@ export class Table extends React.Component
         const {className, children, ...props} = this.props
         return (
             <div className={classnames('_table', className)} {...props}>
-                {Children.map(children, child => {
-                    if (child.type === TableHeader) {
+                {Children.map(children, (child: React.ReactElement<any>) => {
+                    if ((child.type as any) === TableHeader) {
                         return React.cloneElement(child, {
                             _notifyCellResizing: this.handleCellResizing,
                         })
                     } else if (
-                        child.type === TableBody
-                        || child.type === TableBodySelectList
+                        (child.type as any) === TableBody
+                        || (child.type as any) === TableBodySelectList
                     ) {
                         return React.cloneElement(child, {
                             _widths: this.state.columnWidths,
@@ -64,24 +68,23 @@ export class Table extends React.Component
     }
 }
 
-export class TableHeader extends React.Component
+interface TableHeaderProps {
+    _notifyCellResizing: Function,
+    className?: string,
+}
+export class TableHeader extends React.Component<TableHeaderProps, any>
 {
     static propTypes = {
         _notifyCellResizing: PropTypes.func,
         className: PropTypes.string,
     }
 
-    constructor(...args)
-    {
-        super(...args)
-    }
-
     render()
     {
         return (
             <div className={classnames('table-header', this.props.className)}>
-                {Children.map(this.props.children, (child, idx) => {
-                    if (child.type === Row) {
+                {Children.map(this.props.children, (child: React.ReactElement<any>, idx) => {
+                    if ((child.type as any) === Row) {
                         return React.cloneElement(child, {
                             _inHeader: true,
                             _notifyCellResizing: this.props._notifyCellResizing,
@@ -95,7 +98,11 @@ export class TableHeader extends React.Component
     }
 }
 
-export class TableBody extends React.Component
+interface TableBodyProps {
+    _widths: number[]|string[],
+    className?: string,
+}
+export class TableBody extends React.Component<TableBodyProps, any>
 {
     static propTypes = {
         _widths: PropTypes.arrayOf(
@@ -107,17 +114,12 @@ export class TableBody extends React.Component
         className: PropTypes.string,
     }
 
-    constructor(...args)
-    {
-        super(...args)
-    }
-
     render()
     {
         return (
             <div className={classnames('table-body', this.props.className)}>
-                {Children.map(this.props.children, (child, idx) => {
-                    if (child.type === Row) {
+                {Children.map(this.props.children, (child: React.ReactElement<any>, idx) => {
+                    if ((child.type as any) === Row) {
                         return React.cloneElement(child, {
                             _widths: this.props._widths,
                         })
@@ -130,7 +132,17 @@ export class TableBody extends React.Component
     }
 }
 
-export class TableBodySelectList extends React.Component
+interface TableBodySelectListProps {
+    _widths: number[]|string[],
+    className: string,
+    multiple?: boolean,
+    onSelectionChanged: (selection: number[]) => any,
+}
+interface TableBodySelectListState {
+    lastSelectedIdx: number,
+    selected: number[],
+}
+export class TableBodySelectList extends React.Component<TableBodySelectListProps, TableBodySelectListState>
 {
     static propTypes = {
         _widths: PropTypes.arrayOf(
@@ -158,24 +170,26 @@ export class TableBodySelectList extends React.Component
 
     }
 
-    onClickItem = (idx, e) => {
-        if (this.state.lastSelectedIdx === null) {
+    onClickItem = (idx: number, e: MouseEvent) => {
+        const {lastSelectedIdx, selected} = this.state
+
+        if (lastSelectedIdx == null) {
             return this.setState({lastSelectedIdx: idx, selected: [idx]})
         } else if (e.shiftKey) {
             return this.setState({
                 // lastSelectedIdx: idx,
-                selected: [... _.range(this.state.lastSelectedIdx, idx), idx]
+                selected: [... _.range(lastSelectedIdx, idx), idx]
             })
         } else if (e.ctrlKey || e.metaKey) {
-            if (this.state.selected.includes(idx)) {
+            if (selected.includes(idx)) {
                 return this.setState({
                     lastSelectedIdx: idx,
-                    selected: _.without(this.state.selected, idx)
+                    selected: _.without(selected, idx)
                 })
             } else {
                 return this.setState({
                     lastSelectedIdx: idx,
-                    selected: [...this.state.selected, idx]
+                    selected: [...selected, idx]
                 })
             }
         } else {
@@ -228,11 +242,6 @@ export class TableFooter extends React.Component
         className: PropTypes.string,
     }
 
-    constructor(...args)
-    {
-        super(...args)
-    }
-
     render()
     {
         return (
@@ -247,7 +256,6 @@ export class Row extends React.Component
 {
     static propTypes = {
         _inHeader: PropTypes.bool,
-        _widths: PropTypes.array,
         _notifyCellResizing: PropTypes.func,
         _widths: PropTypes.arrayOf(
             PropTypes.oneOfType([
@@ -300,7 +308,7 @@ export class Row extends React.Component
     }
 }
 
-export class Col extends React.Component
+export class Col extends React.Component<any, any>
 {
     static propTypes = {
         _inHeader: PropTypes.bool,
@@ -318,9 +326,9 @@ export class Col extends React.Component
         resizable: true,
     }
 
-    constructor(...args)
+    constructor(props: any, context: any)
     {
-        super(...args)
+        super(props, context)
 
         this.state = {
             width: this.props._inHeader ? this.props.defaultWidth : this.props._width,
@@ -336,7 +344,7 @@ export class Col extends React.Component
     render()
     {
         const {width} = this.state
-        const {minWidth, maxWidth, resizable, _notifyCellResizing} = this.props
+        const {resizable, _notifyCellResizing} = this.props
 
         const style = (width === 0) ? {flex: 1} : {width}
         Object.assign(style, {minWidth: this.props.minWidth, maxWidth: this.props.maxWidth})
