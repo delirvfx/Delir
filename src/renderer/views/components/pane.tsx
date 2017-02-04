@@ -3,9 +3,9 @@ import {Component, PropTypes, Children} from 'react'
 import * as classnames from 'classnames'
 
 export interface PaneProps {
-    resizable: boolean,
-    allowFocus: boolean,
-    className: string,
+    resizable?: boolean,
+    allowFocus?: boolean,
+    className?: string,
 }
 
 export default class Pane extends Component<PaneProps, any>
