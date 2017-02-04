@@ -1,10 +1,16 @@
-import React, {PropTypes, Children} from 'react'
-import classnames from 'classnames'
+import {Component, PropTypes, Children} from 'react'
+import * as classnames from 'classnames'
 
-export default class Pane extends React.Component
+export interface PaneProps {
+    resizable: boolean,
+    allowFocus: boolean,
+    className: string,
+}
+
+export default class Pane extends Component<PaneProps, any>
 {
     static propTypes = {
-        // children: PropTypes.element,
+        children: PropTypes.element,
         resizable: PropTypes.bool,
         allowFocus: PropTypes.bool,
     }
@@ -30,7 +36,7 @@ export default class Pane extends React.Component
                 className={classnames('_workspace-pane', className, {
                     '_workspace-pane--allow-focus': allowFocus,
                 })}
-                tabIndex={allowFocus ? '-1' : null}
+                tabIndex={allowFocus ? -1 : void 0}
                 {...props}
             >
                 {(() => resizable ? <div className='_workspace-pane-handle' /> : null)()}
