@@ -1,9 +1,6 @@
 import _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
 
-import Delir from 'delir-core'
-const {Helper: DelirHelper} = Delir
-
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
 

@@ -10,7 +10,8 @@ import dispatcher from './dispatcher'
 import EditorStateActions from './actions/editor-state-actions'
 import EditorStateStore from './stores/editor-state-store'
 
-import Delir, {ProjectHelper} from 'delir-core'
+import * as Delir from 'delir-core'
+import {ProjectHelper} from 'delir-core'
 import {join} from 'path'
 
 import RendererService from './services/renderer'
@@ -63,8 +64,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     // console.log(file);
     //
     // const p = app.project = Delir.Project.Project.deserialize(fs.readFileSync(file))
-
-    console.log(ProjectHelper.addLayer)
 
     const fps = 60
     const durationFrames = fps * 20

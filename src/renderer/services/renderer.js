@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import electron, {remote} from 'electron'
 import {join} from 'path'
-import Delir, {ProjectHelper} from 'delir-core'
+import * as Delir from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import ActionTypes from '../action-types'
@@ -24,7 +24,7 @@ const handlers = {
     {
         if (! state.project) return
 
-        const targetComposition = ProjectHelper.findCompositionById(state.project, compositionId)
+        const targetComposition = Delir.ProjectHelper.findCompositionById(state.project, compositionId)
 
         if (! targetComposition) return
         if (! renderer) return
