@@ -3,20 +3,20 @@ import * as React from 'react'
 import parseColor from 'parse-color'
 import {ProjectHelper, ColorRGB} from 'delir-core'
 
-import EditorStateActions from '../actions/editor-state-actions'
-import ProjectModifyActions from '../actions/project-modify-actions'
+import EditorStateActions from '../../actions/editor-state-actions'
+import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import AppStore from '../stores/app-store'
-import EditorStateStore from '../stores/editor-state-store'
-import ProjectModifyStore from '../stores/project-modify-store'
+import AppStore from '../../stores/app-store'
+import EditorStateStore from '../../stores/editor-state-store'
+import ProjectModifyStore from '../../stores/project-modify-store'
 
-import Pane from './components/pane'
-import LabelInput from './components/label-input'
-import {Table, TableHeader, TableBodySelectList, Row, Col} from './components/table'
-import {ContextMenu, MenuItem} from './electron/context-menu'
+import Pane from '../components/pane'
+import LabelInput from '../components/label-input'
+import {Table, TableHeader, TableBodySelectList, Row, Col} from '../components/table'
+import {ContextMenu, MenuItem} from '../electron/context-menu'
 
-import NewCompositionWindow from './modal-windows/new-composition-window'
-import SettingCompositionWindow from './modal-windows/setting-composition-window'
+import NewCompositionWindow from '../modal-windows/new-composition-window'
+import SettingCompositionWindow from '../modal-windows/setting-composition-window'
 
 export interface AssetsViewProps {}
 

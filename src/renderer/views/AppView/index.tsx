@@ -3,7 +3,7 @@ import * as React from 'react'
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 
-import AssetsView from '../assets-view'
+import AssetsView from '../AssetsView'
 import PreviewView from '../preview-view'
 import TimelineView from '../timeline-view'
 import NavigationView from '../navigation-view'
