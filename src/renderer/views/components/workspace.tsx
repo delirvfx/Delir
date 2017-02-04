@@ -5,8 +5,8 @@ import * as classnames from 'classnames'
 
 export interface WorkspaceProps {
     children: React.ComponentElement<any, any>,
-    className: string,
-    acceptPaneDragin: boolean,
+    className?: string,
+    acceptPaneDragIn?: boolean,
     direction: 'vertical'|'horizontal'
 }
 
