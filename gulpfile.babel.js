@@ -127,12 +127,6 @@ export function compileRendererJs(done) {
                 'delir-core': join(__dirname, 'src/delir-core/src/'),
             }
         },
-        resolveLoader: {
-            alias: {
-                'awesome-typescript-loader': join(__dirname, 'node_modules/awesome-typescript-loader'),
-                'babel-loader': join(__dirname, 'node_modules/babel-loader'),
-            },
-        },
         module: {
             rules: [
                 {
@@ -157,7 +151,7 @@ export function compileRendererJs(done) {
                     exclude: /node_modules|\.jsx?$/,
                     query: {
                         configFileName: join(__dirname, './tsconfig.json'),
-                        // useBabel: true,
+                        useBabel: true,
                     },
                 },
                 {
