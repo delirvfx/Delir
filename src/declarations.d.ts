@@ -26,6 +26,12 @@ declare module 'tooloud' {
     export default _
 }
 
+// Delir frontend deps
+declare module 'parse-color' {
+    export default function parseColor(colorCode: string): {
+        rgb: [number, number, number],
+    }
+}
 
 declare interface Window {
     app: {

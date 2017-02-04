@@ -1,7 +1,7 @@
-import _ from 'lodash'
-import React, {PropTypes} from 'react'
+import * as _ from 'lodash'
+import * as React from 'react'
 import parseColor from 'parse-color'
-import Delir, {ProjectHelper, ColorRGB} from 'delir-core'
+import {ProjectHelper, ColorRGB} from 'delir-core'
 
 import EditorStateActions from '../actions/editor-state-actions'
 import ProjectModifyActions from '../actions/project-modify-actions'
@@ -12,15 +12,23 @@ import ProjectModifyStore from '../stores/project-modify-store'
 
 import Pane from './components/pane'
 import LabelInput from './components/label-input'
-import SelectList from './components/select-list'
 import {Table, TableHeader, TableBodySelectList, Row, Col} from './components/table'
 import {ContextMenu, MenuItem} from './electron/context-menu'
-import ModalWindow from './electron/modal-window'
 
 import NewCompositionWindow from './modal-windows/new-composition-window'
 import SettingCompositionWindow from './modal-windows/setting-composition-window'
 
-export default class AssetsView extends React.Component
+export interface AssetsViewProps {}
+
+export interface AssetsViewState {
+    app: any,
+    project: any,
+    newCompositionWindowOpened: boolean,
+    settingCompositionWindowOpened: boolean,
+    settingCompositionQuery: {[name: string]: any} | null,
+}
+
+export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
 {
     constructor()
     {
@@ -32,7 +40,6 @@ export default class AssetsView extends React.Component
             newCompositionWindowOpened: false,
             settingCompositionWindowOpened: false,
             settingCompositionQuery: null,
-            selectedItem: null,
         }
 
         AppStore.addListener(() => {
@@ -119,20 +126,20 @@ export default class AssetsView extends React.Component
 
         ProjectModifyActions.createComposition({
             name: req.name,
-            width: req.width | 0,
-            height: req.height | 0,
-            framerate: req.framerate | 0,
-            durationFrames: (req.framerate | 0) * parseInt(req.durationSeconds, 10),
+            width: +req.width,
+            height: +req.height,
+            framerate: +req.framerate,
+            durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
             backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
         })
     }
 
-    onAssetsDragStart = ({target}) => {
+    onAssetsDragStart = ({target: HTMLElement}: any) => {
         const {project: {project}} = this.state
         EditorStateActions.setDragEntity('asset', ProjectHelper.findAssetById(project, target.dataset.assetId))
     }
 
-    onAssetDragEnd = e => {
+    onAssetDragEnd = () => {
         EditorStateActions.clearDragEntity()
     }
 
