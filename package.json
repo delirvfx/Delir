@@ -41,6 +41,7 @@
     "babel-preset-stage-3": "^6.22.0",
     "classnames": "^2.2.5",
     "clean-webpack-plugin": "^0.1.15",
+    "css-loader": "^0.26.1",
     "devtron": "^1.4.0",
     "electron": "^1.4.15",
     "electron-devtools-installer": "^2.0.1",
@@ -61,6 +62,9 @@
     "mocha": "^3.2.0",
     "nib": "^1.1.0",
     "rimraf-promise": "^2.0.0",
+    "style-loader": "^0.13.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^2.4.0",
     "typescript": "2.2.0-dev.20170122",
     "webpack": "2.2.0"
   },

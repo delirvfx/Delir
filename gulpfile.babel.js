@@ -4,6 +4,7 @@ const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const packager = require("electron-packager");
+const nib = require('nib')
 
 const fs = require("fs-promise");
 const {join} = require("path");
@@ -160,8 +161,12 @@ export function compileRendererJs(done) {
                     }
                 },
                 {
-                    test: /\.styl?$/,
-                    loaders: ['stylus', 'css?modules'],
+                    test: /\.styl$/,
+                    loaders: [
+                        {loader: 'style'},
+                        {loader: 'css', options: {modules: true, localIdentName: DELIR_ENV === 'dev' ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]'}},
+                        {loader: 'stylus'}
+                    ],
                     exclude: /(node_modules|bower_components)/,
                 },
             ]
@@ -169,8 +174,14 @@ export function compileRendererJs(done) {
         plugins: [
             new CleanWebpackPlugin(['scripts'], {verbose: true, root: paths.compiled.renderer}),
             new CleanWebpackPlugin(['scripts'], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
-            new webpack.DefinePlugin({
-                __DEV__: JSON.stringify(DELIR_ENV === 'dev'),
+            new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
+            new webpack.LoaderOptionsPlugin({
+                test: /\.styl$/,
+                stylus: {
+                    default: {
+                        use: [nib()],
+                    }
+                }
             }),
             new webpack.optimize.AggressiveMergingPlugin,
             new webpack.optimize.DedupePlugin,
