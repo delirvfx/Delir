@@ -99,7 +99,7 @@ export function compileRendererJs(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.root,
         entry: {
-            'renderer/scripts/main': './renderer/scripts/main',
+            'renderer/main': './renderer/main',
         },
         output: {
             filename: "[name].js",
@@ -157,23 +157,28 @@ export function compileRendererJs(done) {
                     exclude: /node_modules|\.jsx?$/,
                     query: {
                         configFileName: join(__dirname, './tsconfig.json'),
-                        useBabel: true,
-                    }
+                        // useBabel: true,
+                    },
                 },
                 {
                     test: /\.styl$/,
-                    loaders: [
-                        {loader: 'style'},
-                        {loader: 'css', options: {modules: true, localIdentName: DELIR_ENV === 'dev' ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]'}},
-                        {loader: 'stylus'}
+                    exclude: /node_modules/,
+                    use: [
+                        {loader: 'style-loader'},
+                        {loader: 'css-loader', options: {
+                            modules: true,
+                            localIdentName: DELIR_ENV === 'dev' 
+                                ? '[path][name]__[local]--[emoji:4]' 
+                                : '[local]--[hash:base64:5]',
+                        }},
+                        {loader: 'stylus-loader'},
                     ],
-                    exclude: /(node_modules|bower_components)/,
                 },
             ]
         },
         plugins: [
-            new CleanWebpackPlugin(['scripts'], {verbose: true, root: paths.compiled.renderer}),
-            new CleanWebpackPlugin(['scripts'], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
+            new CleanWebpackPlugin([''], {verbose: true, root: paths.compiled.renderer}),
+            new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
             new webpack.LoaderOptionsPlugin({
                 test: /\.styl$/,
