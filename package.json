@@ -66,6 +66,7 @@
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.4.0",
+    "ts-loader": "^2.0.0",
     "typescript": "2.2.0-dev.20170203",
     "webpack": "2.2.0"
   },
