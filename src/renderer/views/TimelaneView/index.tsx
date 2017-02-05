@@ -102,7 +102,7 @@ class TimelineLane extends React.Component
         const {timelane, activeLayer, framerate, scale} = this.props
         const {pxPerSec} = this.state
         const {keyframes} = activeLayer ? activeLayer : {}
-        const layers = Array.from(timelane.layers.values())
+        const layers = Array.from<Delir.Project.Layer>(timelane.layers.values())
         const plugins = this._plugins
 
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
@@ -145,8 +145,8 @@ class TimelineLane extends React.Component
                         })
 
                         return (
-                            <TimelineLaneLayer
-                                key={layer.id}
+                            <TimelaneLayer
+                                key={layer.id!}
                                 layer={layer}
                                 width={width}
                                 left={left}
