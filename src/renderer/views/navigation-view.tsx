@@ -1,5 +1,6 @@
 import {remote} from 'electron'
-import React, {PropTypes} from 'react'
+import React from 'react'
+import {PropTypes} from 'react'
 
 import EditorStateStore from '../stores/editor-state-store'
 import EditorStateActions from '../actions/editor-state-actions'
@@ -10,10 +11,9 @@ export default class NavigationView extends React.Component
 {
     onTitleDoubleClicked()
     {
-        console.log('hi');
     }
 
-    onClickPlay = (action) =>
+    onClickPlay = action =>
     {
         EditorStateActions.togglePreview(EditorStateStore.getState().activeComp.id)
     }
@@ -25,9 +25,7 @@ export default class NavigationView extends React.Component
 
     titleBarDoubleClicked = e =>
     {
-        console.log(e);
         const browserWindow = remote.getCurrentWindow()
-        console.log(browserWindow.isMaximized());
         browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
     }
 
