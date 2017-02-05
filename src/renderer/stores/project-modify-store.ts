@@ -13,6 +13,7 @@ import {DispatchTypes as ProjectModifyDispatchTypes} from '../actions/project-mo
 type StateRecord = Record<ProjectModifyState, keyof ProjectModifyState>
 export interface ProjectModifyState {
     project: Delir.Project.Project|null,
+    lastChangeTime: number,
 }
 
 class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
@@ -87,9 +88,13 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
             case ProjectModifyDispatchTypes.RemoveLayer:
                 ProjectHelper.deleteLayer(project!, payload.entity.targetLayerId)
                 break
+
+            default:
+                return state
         }
 
-        return state
+        // Projectの変更は検知できないし、構造が大きくなる可能性があるので今のところImmutableにもしたくない
+        return state.set('lastChangeTime', Date.now())
     }
 }
 
