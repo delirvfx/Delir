@@ -57,7 +57,7 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.SetDragEntity, entity))
     },
 
-    clearDragEntity(type: string, entity: Delir.Project.Asset)
+    clearDragEntity()
     {
         dispatcher.dispatch(new Payload(DispatchTypes.ClearDragEntity, {}))
     },
