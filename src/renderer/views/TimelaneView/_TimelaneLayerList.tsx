@@ -13,19 +13,19 @@ import TimelaneHelper from '../../helpers/timelane-helper'
 import TimelaneLayer from './_TimelaneLayer'
 import LaneKeyframes from '../timeline/lane-keyframes'
 
-interface TimelaneLaneProps {
+interface TimelaneLayerListProps {
     timelane: Delir.Project.Timelane,
     activeLayer: Delir.Project.Layer,
     framerate: number,
     scale: number,
 }
 
-interface TimelaneLaneState {
+interface TimelaneLayerListState {
     dragovered: boolean,
     pxPerSec: number,
 }
 
-export default class TimelineLane extends React.Component<TimelaneLaneProps, TimelaneLaneState>
+export default class TimelaneLayerList extends React.Component<TimelaneLayerListProps, TimelaneLayerListState>
 {
     static propTypes = {
         timelane: PropTypes.object.isRequired,
