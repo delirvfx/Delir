@@ -25,7 +25,7 @@ export interface AssetsViewState {
     project: any,
     newCompositionWindowOpened: boolean,
     settingCompositionWindowOpened: boolean,
-    settingCompositionQuery: {[name: string]: any} | null,
+    settingCompositionQuery: {[name: string]: string|number} | null,
 }
 
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
@@ -112,7 +112,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         ProjectModifyActions.modifyComposition(req.id, req)
     }
 
-    makeNewComposition = (req: {name: string, width: string, height: string, framerate: string, durationSeconds: string, backgroundColor: string}) =>
+    makeNewComposition = (req?: {name: string, width: string, height: string, framerate: string, durationSeconds: string, backgroundColor: string}) =>
     {
         if (req == null) return
 
@@ -162,7 +162,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     show={this.state.settingCompositionWindowOpened}
                     width={400}
                     height={350}
-                    query={this.state.settingCompositionQuery}
+                    query={this.state.settingCompositionQuery!}
                     onHide={this.makeNewComposition}
                     onResponse={this.settingComoisition}
                 />
