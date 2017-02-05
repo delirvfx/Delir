@@ -2,8 +2,11 @@
 import * as React from 'react'
 import {ReduceStore} from 'flux/utils'
 
-export default function connectToStores(stores: ReduceStore<any, any>[], getStateFromStores: (context: any, props: any) => {[key: string]: any}) {
-    return (Component: typeof React.Component) => (
+export default function connectToStores(
+    stores: ReduceStore<any, any>[],
+    getStateFromStores: (context: any, props: any) => {[key: string]: any}
+) {
+    return <T extends React.ComponentClass<any>>(Component: T) => (
         class StoreConnector extends React.Component<any, any> {
             _isMounted: boolean
             disposers: Array<{remove: () => void}>
