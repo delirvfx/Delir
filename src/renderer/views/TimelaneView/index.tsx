@@ -11,8 +11,8 @@ import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import RendererService from '../../services/renderer'
 
-import EditorStateStore from '../../stores/editor-state-store'
-import ProjectModifyStore from '../../stores/project-modify-store'
+import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
 
 import TimelaneHelper from '../../helpers/timelane-helper'
 
@@ -81,10 +81,22 @@ class TimelineGradations extends React.Component
     }
 }
 
+interface TimelineViewProps {
+    editor: EditorState,
+    project: ProjectModifyState,
+}
+
+interface TimelineViewState {
+    timelineScrollTop: number,
+    cursorHeight: number,
+    scale: number,
+    selectedLaneId: number|null,
+}
+
 @connectToStores([EditorStateStore, ProjectModifyStore], context => ({
     editor: EditorStateStore.getState(),
 }))
-export default class TimelineView extends React.Component
+export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>
 {
     constructor()
     {
@@ -228,7 +240,7 @@ export default class TimelineView extends React.Component
                             </ContextMenu>
                             {activeComp && timelineLanes.map(timelane => (
                                 <TimelaneLayerList
-                                    key={timelane.id}
+                                    key={timelane.id!}
                                     timelane={timelane}
                                     framerate={framerate}
                                     scale={this.state.scale}

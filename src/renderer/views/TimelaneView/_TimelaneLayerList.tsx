@@ -92,7 +92,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
 
     addNewLayer = (layerRendererId) =>
     {
-        ProjectModifyActions.createLayer(this.props.timelane.id, layerRendererId, 0, 100)
+        ProjectModifyActions.createLayer(this.props.timelane.id!, layerRendererId, 0, 100)
     }
 
     render()
