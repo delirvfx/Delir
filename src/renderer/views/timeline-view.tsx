@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import * as uuid from 'uuid'
-import classnames from 'classnames'
-import React, {PropTypes} from 'react'
-import {Disposable} from 'event-kit'
+import * as classnames from 'classnames'
+import * as React from 'react'
+import {PropTypes} from 'react'
 import * as Delir from 'delir-core'
 import connectToStores from '../utils/connectToStores'
 
@@ -11,7 +11,6 @@ import ProjectModifyActions from '../actions/project-modify-actions'
 
 import RendererService from '../services/renderer'
 
-import AppStore from '../stores/app-store'
 import EditorStateStore from '../stores/editor-state-store'
 import ProjectModifyStore from '../stores/project-modify-store'
 
@@ -19,7 +18,6 @@ import TimelaneHelper from '../helpers/timelane-helper'
 
 import Workspace from './components/workspace'
 import Pane from './components/pane'
-import LabelInput from './components/label-input'
 
 import {ContextMenu, MenuItem} from './electron/context-menu'
 import SelectList from './components/select-list'
@@ -27,7 +25,6 @@ import SelectList from './components/select-list'
 import LaneLabel from './timeline/lane-label'
 import LaneKeyframes from './timeline/lane-keyframes'
 
-const dragSession = new WeakMap()
 
 class TimelineLaneLayer extends React.Component
 {
