@@ -6,10 +6,9 @@
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": false,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "allowJs": true,
-        "jsx": "react",
+        "allowJs": false,
+        "declaration": true,
+        "jsx": "preserve",
         "target": "es6",
         "module": "es2015",
         "moduleResolution": "node",
@@ -19,16 +18,10 @@
             "es2016",
             "es2017"
         ],
-        "baseUrl": ".",
-        "paths": {
-            "delir-core": ["src/delir-core"]
-        }
+        "rootDir": "./src/"
     },
     "files": [
-        "./src/declarations.d.ts",
-        "./src/renderer/main.ts"
-    ],
-    "awesomeTypescriptLoaderOptions": {
-        "ignoreDiagnostics": [8010, 8011]
-    }
+        "./src/index",
+        "./src/declarations.d.ts"
+    ]
 }

@@ -4,6 +4,7 @@ const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const packager = require("electron-packager");
+const nib = require('nib')
 
 const fs = require("fs-promise");
 const {join} = require("path");
@@ -98,7 +99,7 @@ export function compileRendererJs(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.root,
         entry: {
-            'renderer/scripts/main': './renderer/scripts/main',
+            'renderer/main': './renderer/main',
         },
         output: {
             filename: "[name].js",
@@ -126,12 +127,6 @@ export function compileRendererJs(done) {
                 'delir-core': join(__dirname, 'src/delir-core/src/'),
             }
         },
-        resolveLoader: {
-            alias: {
-                'awesome-typescript-loader': join(__dirname, 'node_modules/awesome-typescript-loader'),
-                'babel-loader': join(__dirname, 'node_modules/babel-loader'),
-            },
-        },
         module: {
             rules: [
                 {
@@ -142,15 +137,16 @@ export function compileRendererJs(done) {
                 },
                 {
                     test: /\.tsx?$/,
-                    loader: 'awesome-typescript-loader',
-                    include: [join(__dirname, './src/delir-core/src')],
                     exclude: /node_modules|\.jsx?$/,
-                    query: {
-                        configFileName: join(__dirname, './src/delir-core/tsconfig.json'),
-                        useBabel: true,
-                    }
+                    use: [
+                        {loader: 'ts-loader', options: {
+                            useBabel: true,
+                            configFileName: join(__dirname, './tsconfig.json'),
+                        }},
+                    ]
                 },
                 {
+                    // loader for Delir plugins
                     test: /\.tsx?$/,
                     loader: 'awesome-typescript-loader',
                     include: [join(__dirname, './src/plugins')],
@@ -158,20 +154,35 @@ export function compileRendererJs(done) {
                     query: {
                         configFileName: join(__dirname, './tsconfig.json'),
                         useBabel: true,
-                    }
+                    },
                 },
                 {
-                    test: /\.styl?$/,
-                    loaders: ['stylus', 'css?modules'],
-                    exclude: /(node_modules|bower_components)/,
+                    test: /\.styl$/,
+                    exclude: /node_modules/,
+                    use: [
+                        {loader: 'style-loader'},
+                        {loader: 'css-loader', options: {
+                            modules: true,
+                            localIdentName: DELIR_ENV === 'dev' 
+                                ? '[path][name]__[local]--[emoji:4]' 
+                                : '[local]--[hash:base64:5]',
+                        }},
+                        {loader: 'stylus-loader'},
+                    ],
                 },
             ]
         },
         plugins: [
-            new CleanWebpackPlugin(['scripts'], {verbose: true, root: paths.compiled.renderer}),
-            new CleanWebpackPlugin(['scripts'], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
-            new webpack.DefinePlugin({
-                __DEV__: JSON.stringify(DELIR_ENV === 'dev'),
+            new CleanWebpackPlugin([''], {verbose: true, root: paths.compiled.renderer}),
+            new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
+            new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
+            new webpack.LoaderOptionsPlugin({
+                test: /\.styl$/,
+                stylus: {
+                    default: {
+                        use: [nib()],
+                    }
+                }
             }),
             new webpack.optimize.AggressiveMergingPlugin,
             new webpack.optimize.DedupePlugin,
@@ -351,6 +362,7 @@ export async function compileNavcodecForElectron() {
 export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
     g.watch(paths.src.renderer, buildRendererWithoutJs)
+    g.watch(join(paths.src.renderer, 'styles'), compileStyles)
     g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, compilePlugins))
     g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)

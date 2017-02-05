@@ -39,5 +39,3 @@ export {
     // import shorthand
     ProjectHelper,
 }
-
-export default exports
