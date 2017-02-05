@@ -21,7 +21,15 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
     {
         return new Record({
             project: null,
+            lastChangeTime: 0,
         })
+    }
+
+    areEqual(a: StateRecord, b: StateRecord): boolean
+    {
+        const changed = a.get('lastChangeTime') !== b.get('lastChangeTime')
+        __DEV__ && changed && console.log('📷 Project updated')
+        return changed
     }
 
     reduce(state: StateRecord, payload: KnownPayload)
@@ -30,17 +38,17 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
         if (payload.type !== EditorStateDispatchTypes.SetActiveProject && project == null) return state
 
         switch (payload.type) {
-            case EditorStateDispatchTypes.SetActiveProject: 
+            case EditorStateDispatchTypes.SetActiveProject:
                 return state.set('project', payload.entity.project)
-                
+
             case ProjectModifyDispatchTypes.CreateComposition:
                 ProjectHelper.addComposition(project!, payload.entity.composition)
                 break
-            
+
             case ProjectModifyDispatchTypes.CreateTimelane:
                 ProjectHelper.addTimelane(project!, payload.entity.targetCompositionId, payload.entity.timelane)
                 break
-            
+
             case ProjectModifyDispatchTypes.CreateLayer:
                 ProjectHelper.addLayer(project!, payload.entity.targetTimelaneId, payload.entity.props as any)
                 break
@@ -48,7 +56,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
             case ProjectModifyDispatchTypes.AddTimelane:
                 ProjectHelper.addTimelane(project!, payload.entity.targetComposition, payload.entity.timelane)
                 break
-                
+
             case ProjectModifyDispatchTypes.AddAsset:
                 ProjectHelper.addAsset(project!, payload.entity.asset)
                 break

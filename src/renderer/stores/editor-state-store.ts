@@ -52,9 +52,9 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 
                 const comp = ProjectHelper.findCompositionById(project, payload.entity.compositionId)
                 return state.set('activeComp', comp)
-                
+
             case EditorStateDispatchTypes.ChangeActiveLayer:
-                if (project == null) return state 
+                if (project == null) return state
 
                 const layer = ProjectHelper.findLayerById(project, payload.entity.layerId)
                 return state.set('activeLayer', layer)

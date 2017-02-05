@@ -4,7 +4,7 @@ import keyMirror from 'keymirror'
 import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
 
-export type DragEntity = 
+export type DragEntity =
     {type: 'asset', asset: Delir.Project.Asset}
     | {type: 'layer', layer: Delir.Project.Layer}
 
