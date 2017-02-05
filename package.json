@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "DELIR_ENV=dev $(npm bin)/gulp",
     "build": "DELIR_ENV=productName $(npm bin)/gulp publish",
-    "declare": "$(npm bin)/tsc -p src/delir-core/ -d --declarationDir src/delir-core/declares",
+    "declare": "$(npm bin)/tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "test": "$(npm bin)/mocha --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js",
     "watch-test": "$(npm bin)/mocha --watch --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js"
   },
