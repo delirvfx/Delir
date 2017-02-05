@@ -16,26 +16,21 @@ let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
 let audioBufferSource: AudioBufferSourceNode|null = null
 
-
 let state: {
     project: Delir.Project.Project|null,
-    renderer: Delir.Renderer|null,
 } = {
     project: null,
-    renderer: null
 }
 
 
 const handlePayload = (payload: KnownPayload) => {
     switch (payload.type) {
         case EditorStateDispatchTypes.SetActiveProject:
-            state.renderer!.setProject(payload.entity.project)
+            renderer.setProject(payload.entity.project)
             state.project = payload.entity.project
             break
         
         case EditorStateDispatchTypes.TogglePreview: (() => {
-            const {renderer} = state
-            
             if (!state.project) return
             if (!renderer || !audioContext) return
 
