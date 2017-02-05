@@ -22,7 +22,6 @@ import SettingCompositionWindow from '../modal-windows/setting-composition-windo
 import connectToStores from '../../utils/connectToStores'
 
 export interface AssetsViewProps {
-    app: ProjectModifyState,
     editor: EditorState,
 }
 
@@ -32,8 +31,7 @@ export interface AssetsViewState {
     settingCompositionQuery: {[name: string]: string|number} | null,
 }
 
-@connectToStores([AppStore, EditorStateStore, ProjectModifyStore], (context, props) => ({
-    app: AppStore.getState(),
+@connectToStores([AppStore, EditorStateStore], (context, props) => ({
     editor: EditorStateStore.getState(),
 }))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
@@ -137,9 +135,14 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         })
     }
 
-    onAssetsDragStart = ({target: HTMLElement}: any) => {
-        const {app: {project}} = this.props
-        EditorStateActions.setDragEntity('asset', ProjectHelper.findAssetById(project, target.dataset.assetId))
+    onAssetsDragStart = ({target}: {target: HTMLElement}) => {
+        const {editor: {project}} = this.props
+        if (!project) return
+
+        EditorStateActions.setDragEntity({
+            type: 'asset',
+            asset: ProjectHelper.findAssetById(project, target.dataset.assetId)!,
+        })
     }
 
     onAssetDragEnd = () => {
@@ -148,7 +151,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
     render()
     {
-        const {app, project: {project}} = this.state
+        const {editor: {project}} = this.props
         const assets = project ? Array.from(project.assets.values()) : []
         const compositions = project ? Array.from(project.compositions.values()) : []
 
