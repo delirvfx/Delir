@@ -6,6 +6,8 @@
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "allowJs": true,
         "jsx": "react",
         "target": "es6",
