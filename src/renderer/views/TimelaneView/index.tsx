@@ -4,26 +4,26 @@ import * as classnames from 'classnames'
 import * as React from 'react'
 import {PropTypes} from 'react'
 import * as Delir from 'delir-core'
-import connectToStores from '../utils/connectToStores'
+import connectToStores from '../../utils/connectToStores'
 
-import EditorStateActions from '../actions/editor-state-actions'
-import ProjectModifyActions from '../actions/project-modify-actions'
+import EditorStateActions from '../../actions/editor-state-actions'
+import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import RendererService from '../services/renderer'
+import RendererService from '../../services/renderer'
 
-import EditorStateStore from '../stores/editor-state-store'
-import ProjectModifyStore from '../stores/project-modify-store'
+import EditorStateStore from '../../stores/editor-state-store'
+import ProjectModifyStore from '../../stores/project-modify-store'
 
-import TimelaneHelper from '../helpers/timelane-helper'
+import TimelaneHelper from '../../helpers/timelane-helper'
 
-import Workspace from './components/workspace'
-import Pane from './components/pane'
+import Workspace from '../components/workspace'
+import Pane from '../components/pane'
 
-import {ContextMenu, MenuItem} from './electron/context-menu'
-import SelectList from './components/select-list'
+import {ContextMenu, MenuItem} from '../electron/context-menu'
+import SelectList from '../components/select-list'
 
-import LaneLabel from './timeline/lane-label'
-import LaneKeyframes from './timeline/lane-keyframes'
+import LaneLabel from '../timeline/lane-label'
+import LaneKeyframes from '../timeline/lane-keyframes'
 
 
 class TimelineLaneLayer extends React.Component
