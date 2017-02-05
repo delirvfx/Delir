@@ -38,11 +38,12 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 
         switch (payload.type) {
             case EditorStateDispatchTypes.SetActiveProject:
+                console.log('✨ Project activated', payload.entity.project)
                 return state.set('project', payload.entity.project)
-            
+
             case EditorStateDispatchTypes.SetDragEntity:
                 return state.set('dragEntity', payload.entity)
-            
+
             case EditorStateDispatchTypes.ClearDragEntity:
                 return state.set('dragEntity', null)
 

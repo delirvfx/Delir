@@ -128,6 +128,4 @@ ProjectHelper.createAddEffect(p, c1_t1_l1, {
 // ProjectHelper.addLayer(p, c2_t1, c2_t1_l3)
 // ProjectHelper.addKeyframe(p, c1_t1_l1, new Delir.Project.Keyframe)
 
-console.log(ProjectHelper.createAddEffect, p)
-
 export default p
