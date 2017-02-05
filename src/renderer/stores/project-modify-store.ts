@@ -28,9 +28,9 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
     areEqual(a: StateRecord, b: StateRecord): boolean
     {
-        const changed = a.get('lastChangeTime') !== b.get('lastChangeTime')
-        __DEV__ && changed && console.log('📷 Project updated')
-        return changed
+        const equal = a.equals(b)
+        __DEV__ && !equal && console.log('📷 Project updated')
+        return equal
     }
 
     reduce(state: StateRecord, payload: KnownPayload)
