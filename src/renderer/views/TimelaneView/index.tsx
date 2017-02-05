@@ -319,6 +319,7 @@ export default class TimelineView extends React.Component
         return (
             <Pane className='view-timeline' allowFocus>
                 <Workspace direction="horizontal" onDrop={this.dropAsset}>
+                    {/* Timelane Panel */}
                     <Pane className='timeline-labels-container'>
                         <div className='timeline-labels-header'>
                             <div className='--col-name'>Lanes</div>
@@ -344,6 +345,7 @@ export default class TimelineView extends React.Component
                             )}
                         </div>
                     </Pane>
+                    {/* Layer Panel */}
                     <Pane className='timeline-container' onWheel={this.scaleTimeline}>
                         <TimelineGradations
                             cursorHeight={this.state.cursorHeight}
