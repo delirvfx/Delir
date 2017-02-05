@@ -85,4 +85,6 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
     }
 }
 
-export default new ProjectModifyStore(dispatcher)
+const store = new ProjectModifyStore(dispatcher)
+_.set(window, 'app.store.ProjectModifyStore', store)
+export default store

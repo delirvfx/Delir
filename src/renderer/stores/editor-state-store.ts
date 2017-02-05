@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
 import * as Immutable from 'immutable'
 
@@ -64,4 +65,6 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
     }
 }
 
-export default new EditorStateStore(dispatcher)
+const store = new EditorStateStore(dispatcher)
+_.set(window, 'app.store.EditorStateStore', store)
+export default store

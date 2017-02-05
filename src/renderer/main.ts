@@ -6,13 +6,9 @@ import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-install
 
 import AppComponent from './views/AppView'
 
-import dispatcher from './dispatcher'
 import EditorStateActions from './actions/editor-state-actions'
-import EditorStateStore from './stores/editor-state-store'
 
 import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
-import {join} from 'path'
 
 import RendererService from './services/renderer'
 import BrowserProcessProxy from './services/browser-process-proxy'
@@ -43,10 +39,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     // initialize app
     BrowserProcessProxy.initialize()
     await RendererService.initialize()
-
-    ;(window as any).app = {
-        stores: {EditorStateStore}
-    }
 
     // const file = remote.dialog.showOpenDialog({
     //     title: 'Save as ...',
