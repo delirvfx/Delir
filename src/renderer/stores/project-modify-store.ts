@@ -1,17 +1,17 @@
 import * as _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
-import * as Immutable from 'immutable'
 
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
 
 import dispatcher from '../dispatcher'
+import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
 import {DispatchTypes as ProjectModifyDispatchTypes} from '../actions/project-modify-actions'
 
-type StateRecord = Immutable.Map<keyof StateType, StateType[keyof StateType]>
-interface StateType {
+type StateRecord = Record<ProjectModifyState, keyof ProjectModifyState>
+export interface ProjectModifyState {
     project: Delir.Project.Project|null,
 }
 
@@ -19,7 +19,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 {
     getInitialState(): StateRecord
     {
-        return Immutable.Map<keyof StateType, StateType[keyof StateType]>({
+        return new Record({
             project: null,
         })
     }

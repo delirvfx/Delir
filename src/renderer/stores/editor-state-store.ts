@@ -6,11 +6,12 @@ import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
 
 import dispatcher from '../dispatcher'
+import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as EditorStateDispatchTypes, DragEntity} from '../actions/editor-state-actions'
 
-type StateRecord = Immutable.Map<keyof StateType, StateType[keyof StateType]>
-interface StateType {
+type StateRecord = Record<EditorState, keyof EditorState>
+export interface EditorState {
     project: Delir.Project.Project|null,
     activeComp: Delir.Project.Composition|null,
     activeLayer: Delir.Project.Layer|null,
@@ -22,7 +23,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 {
     getInitialState(): StateRecord
     {
-        return Immutable.Map<keyof StateType, StateType[keyof StateType]>({
+        return new Record({
             project: null,
             activeComp: null,
             activeLayer: null,
