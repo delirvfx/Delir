@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import * as React from 'react'
+import {PropTypes} from 'react'
 import parseColor from 'parse-color'
 import {ProjectHelper, ColorRGB} from 'delir-core'
 
@@ -7,8 +8,8 @@ import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import AppStore from '../../stores/app-store'
-import EditorStateStore from '../../stores/editor-state-store'
-import ProjectModifyStore from '../../stores/project-modify-store'
+import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
 
 import Pane from '../components/pane'
 import LabelInput from '../components/label-input'
@@ -18,41 +19,39 @@ import {ContextMenu, MenuItem} from '../electron/context-menu'
 import NewCompositionWindow from '../modal-windows/new-composition-window'
 import SettingCompositionWindow from '../modal-windows/setting-composition-window'
 
-export interface AssetsViewProps {}
+import connectToStores from '../../utils/connectToStores'
+
+export interface AssetsViewProps {
+    app: ProjectModifyState,
+    editor: EditorState,
+}
 
 export interface AssetsViewState {
-    app: any,
-    project: any,
     newCompositionWindowOpened: boolean,
     settingCompositionWindowOpened: boolean,
     settingCompositionQuery: {[name: string]: string|number} | null,
 }
 
+@connectToStores([AppStore, EditorStateStore, ProjectModifyStore], (context, props) => ({
+    app: AppStore.getState(),
+    editor: EditorStateStore.getState(),
+}))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
 {
+    static propTypes = {
+        app: PropTypes.object.isRequired,
+        editor: PropTypes.object.isRequired,
+    }
+
     constructor()
     {
         super()
 
         this.state = {
-            app: AppStore.getState(),
-            project: EditorStateStore.getState(),
             newCompositionWindowOpened: false,
             settingCompositionWindowOpened: false,
             settingCompositionQuery: null,
         }
-
-        AppStore.addListener(() => {
-            this.setState({app: AppStore.getState()})
-        })
-
-        EditorStateStore.addListener(() => {
-            this.setState({project: EditorStateStore.getState()})
-        })
-
-        ProjectModifyStore.addListener(() => {
-            this.forceUpdate()
-        })
     }
 
     addAsset = e => {
@@ -79,18 +78,22 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
     openCompositionSettingWindow = compId =>
     {
-        const targetComposition = ProjectHelper.findCompositionById(this.state.project.project, compId)
+        const {project} = this.props.app
+        if (project == null) return
+
+        const targetComposition = ProjectHelper.findCompositionById(project, compId)
+        if (targetComposition == null) return
 
         this.setState({
             settingCompositionQuery: {
-                id: targetComposition.id,
-                name: targetComposition.name,
-                width: targetComposition.width,
-                height: targetComposition.height,
-                framerate: targetComposition.framerate,
-                durationFrames: targetComposition.durationFrames,
-                samplingRate: targetComposition.samplingRate,
-                audioChannels: targetComposition.audioChannels,
+                id: targetComposition.id!,
+                name: targetComposition.name!,
+                width: targetComposition.width!,
+                height: targetComposition.height!,
+                framerate: targetComposition.framerate!,
+                durationFrames: targetComposition.durationFrames!,
+                samplingRate: targetComposition.samplingRate!,
+                audioChannels: targetComposition.audioChannels!,
             },
             settingCompositionWindowOpened: true,
         })
@@ -135,7 +138,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
     }
 
     onAssetsDragStart = ({target: HTMLElement}: any) => {
-        const {project: {project}} = this.state
+        const {app: {project}} = this.props
         EditorStateActions.setDragEntity('asset', ProjectHelper.findAssetById(project, target.dataset.assetId))
     }
 
