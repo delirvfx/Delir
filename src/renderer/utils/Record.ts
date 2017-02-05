@@ -14,4 +14,9 @@ export default class Record<R, K extends keyof R> {
     set(key: K, value: R[K]): Record<R, K> {
         return ImmutableRecord.prototype.set.call(this, key, value)
     }
+
+    equals(other: Record<any, any>): boolean
+    {
+        return ImmutableRecord.prototype.equals(other)
+    }
 }
