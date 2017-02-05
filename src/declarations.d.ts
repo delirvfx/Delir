@@ -27,6 +27,8 @@ declare module 'tooloud' {
 }
 
 // Delir frontend deps
+declare const __DEV__: boolean
+
 declare module 'devtron' {
     export function install(): void
 }
