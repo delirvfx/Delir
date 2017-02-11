@@ -15,7 +15,7 @@ import * as _ from 'lodash'
 import * as Validators from './validators'
 import {PluginLoadFailException} from '../exceptions/'
 
-interface PluginEntry {
+export interface PluginEntry {
     id: string
     package: DelirPluginPackageJson
     pluginInfo: PackageJSONDelirSection
@@ -107,7 +107,7 @@ export default class PluginRegistry
         })
 
         return {
-            packages: _.cloneDeep(packages),
+            packages: (_.cloneDeep(packages) as {[packageName: string]: PluginEntry}),
             failed: failedPackages,
         }
     }
