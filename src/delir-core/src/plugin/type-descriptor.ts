@@ -51,27 +51,27 @@ export interface StructureTypeDescripter extends ParameterTypeDescriptor<'STRUCT
     subType: TypeDescriptor
 }
 
+export type AnyParameterTypeDescriptor =
+    Point2DTypeDescripter
+    | Point3DTypeDescripter
+    | Size2DTypeDescripter
+    | Size3DTypeDescripter
+    | Size3DTypeDescripter
+    | ColorRGBTypeDescripter
+    | ColorRGBATypeDescripter
+    | BoolTypeDescripter
+    | StringTypeDescripter
+    | NumberTypeDescripter
+    | FloatTypeDescripter
+    | PulseTypeDescripter
+    | EnumTypeDescripter
+    | LayerTypeDescripter
+    | AssetTypeDescripter
+    | ArrayOfTypeDescripter
+    | StructureTypeDescripter
 
 export class TypeDescriptor {
-    properties: Array<
-        Point2DTypeDescripter |
-        Point3DTypeDescripter |
-        Size2DTypeDescripter |
-        Size3DTypeDescripter |
-        Size3DTypeDescripter |
-        ColorRGBTypeDescripter |
-        ColorRGBATypeDescripter |
-        BoolTypeDescripter |
-        StringTypeDescripter |
-        NumberTypeDescripter |
-        FloatTypeDescripter |
-        PulseTypeDescripter |
-        EnumTypeDescripter |
-        LayerTypeDescripter |
-        AssetTypeDescripter |
-        ArrayOfTypeDescripter |
-        StructureTypeDescripter
-    > = []
+    properties: AnyParameterTypeDescriptor[] = []
 
     point2d(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
     {
