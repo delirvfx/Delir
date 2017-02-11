@@ -35,7 +35,7 @@ interface BeforeLoadEntryFragment {
     // parameters?: TypeDescriptor
 }
 
-export default class PluginRegistry
+export default class PluginLoader
 {
     static PluginFeatures = Object.freeze({
         Effect: 'Effect',
