@@ -2,6 +2,7 @@ import {
     PluginFeatures,
     DelirPluginPackageJson,
     PackageJSONDelirSection,
+    PluginEntry
 } from '../plugin/types'
 import {ParameterTypeDescriptor} from '../plugin/type-descriptor'
 
@@ -15,25 +16,6 @@ import * as _ from 'lodash'
 import * as Validators from './validators'
 import {PluginLoadFailException} from '../exceptions/'
 
-export interface PluginEntry {
-    id: string
-    package: DelirPluginPackageJson
-    pluginInfo: PackageJSONDelirSection
-    packageRoot: string
-    entryPath: string
-    class: typeof PluginBase
-    // parameters: TypeDescriptor
-}
-
-interface BeforeLoadEntryFragment {
-    id: string
-    package: DelirPluginPackageJson
-    pluginInfo: PackageJSONDelirSection
-    packageRoot: string
-    entryPath: string
-    class?: typeof PluginBase
-    // parameters?: TypeDescriptor
-}
 
 export default class PluginLoader
 {
@@ -44,10 +26,6 @@ export default class PluginLoader
         ExpressionExtension: 'ExpressionExtension',
     })
 
-    private _plugins: {
-        [packageName: string]: PluginEntry
-    } = {}
-
     /**
      * Load packages from packages directory
      * @param {string} packageDir
@@ -55,7 +33,7 @@ export default class PluginLoader
     async loadPackageDir(packageDir: string) {
         const dirs = await fs.readdir(packageDir)
 
-        const packages: {[packageName: string]: BeforeLoadEntryFragment} = {}
+        const packages: {[packageName: string]: any} = {}
         const failedPackages: {package: string, reason: string}[] = []
         await Promise.all(dirs.map(async dir => {
             try {
@@ -110,55 +88,5 @@ export default class PluginLoader
             packages: (_.cloneDeep(packages) as {[packageName: string]: PluginEntry}),
             failed: failedPackages,
         }
-    }
-
-    requireById(packageId: string): typeof PluginBase | null
-    {
-        const pluginInfo = this._plugins[packageId]
-        return pluginInfo ? pluginInfo.class : null
-    }
-
-    getPluginParametersById(packageId: string): ParameterTypeDescriptor<any>[]|null
-    {
-        const pluginInfo = this._plugins[packageId]
-
-        if (pluginInfo && pluginInfo.class.prototype instanceof LayerPluginBase) {
-            return (pluginInfo.class as typeof LayerPluginBase).provideParameters().properties
-        }
-
-        return null
-    }
-
-    getLoadedPluginSummaries(type: PluginFeatures | null)
-    {
-        let plugins
-
-        if (type != null) {
-            plugins = this.getLoadedPluginsByType(type)
-        } else {
-            plugins = this._plugins
-        }
-
-        return _.map(plugins, (plugin, packageName) => {
-            return {
-                packageName,
-                packageId: packageName,
-                packageInfo: _.cloneDeep(plugin.package),
-                packageRoot: plugin.packageRoot,
-            }
-        })
-    }
-
-    getLoadedPluginsByType(type: PluginFeatures)
-    {
-        return _.filter(this._plugins, entry => _.get(entry, 'package.delir.feature') === type)
-    }
-
-    getPluginsByAcceptFileType(type: string): typeof PluginBase[]
-    {
-        return _.filter(this._plugins, entry => {
-            entry.pluginInfo.acceptFileTypes && console.log(entry, type)
-            return entry.pluginInfo.acceptFileTypes && entry.pluginInfo.acceptFileTypes.includes(type)
-        })
     }
 }
