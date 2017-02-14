@@ -11,8 +11,8 @@
         "targetApi": {
             "renderer": "0.0.x"
         },
-        "acceptFileTypes": [
-            "video/mp4"
-        ]
+        "acceptFileTypes": {
+            "video/mp4": "source"
+        }
     }
 }
