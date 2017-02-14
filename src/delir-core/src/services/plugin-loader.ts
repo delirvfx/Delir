@@ -1,13 +1,4 @@
-import {
-    PluginFeatures,
-    DelirPluginPackageJson,
-    PackageJSONDelirSection,
-    PluginEntry
-} from '../plugin/types'
-import {ParameterTypeDescriptor} from '../plugin/type-descriptor'
-
-import PluginBase from '../plugin/plugin-base'
-import LayerPluginBase from '../plugin/layer-plugin-base'
+import {DelirPluginPackageJson, PluginEntry} from '../plugin/types'
 
 import * as fs from 'fs-promise'
 import * as path from 'path'
@@ -15,7 +6,6 @@ import * as _ from 'lodash'
 
 import * as Validators from './validators'
 import {PluginLoadFailException} from '../exceptions/'
-
 
 export default class PluginLoader
 {
@@ -30,10 +20,11 @@ export default class PluginLoader
      * Load packages from packages directory
      * @param {string} packageDir
      */
-    async loadPackageDir(packageDir: string) {
+    async loadPackageDir(packageDir: string): Promise<{loaded: PluginEntry[], failed: {package: string, reason: string}[]}>
+    {
         const dirs = await fs.readdir(packageDir)
 
-        const packages: {[packageName: string]: any} = {}
+        const packages: {[packageName: string]: PluginEntry} = {}
         const failedPackages: {package: string, reason: string}[] = []
         await Promise.all(dirs.map(async dir => {
             try {
@@ -58,6 +49,7 @@ export default class PluginLoader
                     pluginInfo: json.delir,
                     packageRoot,
                     entryPath,
+                    class: null!, // load later
                 }
             } catch (e) {
                 failedPackages.push({package: dir, reason: e.message})
@@ -77,15 +69,13 @@ export default class PluginLoader
                 }
 
                 packageInfo.class!.pluginDidLoad()
-                // packageInfo.parameters = packageInfo.class!.provideParameters()
-                this._plugins[id!] = packageInfo as PluginEntry
             } catch (e) {
                 throw new PluginLoadFailException(`Failed to requiring plugin \`${id}\`. (${e.message})`, {before: e})
             }
         })
 
         return {
-            packages: (_.cloneDeep(packages) as {[packageName: string]: PluginEntry}),
+            loaded: _.values(packages),
             failed: failedPackages,
         }
     }
