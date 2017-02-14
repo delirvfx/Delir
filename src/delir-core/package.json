@@ -1,5 +1,5 @@
 {
-  "name": "y",
+  "name": "delir-core",
   "version": "0.0.0",
   "description": "JavaScript VFX Engine",
   "main": "lib/index.js",
