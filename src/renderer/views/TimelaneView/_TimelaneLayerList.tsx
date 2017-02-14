@@ -34,13 +34,16 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
         activeLayer: PropTypes.object.isRequired,
     }
 
-    _plugins: {packageId: string, packageName: string}[]
+    _plugins: {id: string, packageName: string}[]
 
     constructor()
     {
         super()
 
-        this._plugins = RendererService.pluginRegistry.getLoadedPluginSummaries()
+        this._plugins = RendererService.pluginRegistry.getPlugins().map(entry => ({
+            id: entry.id,
+            packageName: entry.package.name
+        }))
 
         this.state = {
             dragovered: false,
@@ -120,7 +123,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
                     <MenuItem type='separator' />
                     <MenuItem label='Add new Layer' enabled={!!plugins.length}>
                         {_.map(plugins, p =>
-                            <MenuItem label={p.packageName} onClick={this.addNewLayer.bind(null, p.packageId)} />
+                            <MenuItem label={p.packageName} onClick={this.addNewLayer.bind(null, p.id)} />
                         )}
                     </MenuItem>
                     <MenuItem type='separator' />
