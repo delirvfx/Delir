@@ -1,9 +1,11 @@
 import keyMirror from 'keymirror'
+import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
 // import deprecated from '../utils/deprecated'
+import RendererService from '../services/renderer'
 
 export type CreateCompositionPayload = Payload<'CreateComposition', {composition: Delir.Project.Composition}>
 export type CreateTimelanePayload = Payload<'CreateTimelane', {targetCompositionId: string, timelane: Delir.Project.Timelane}>
@@ -12,6 +14,7 @@ export type CreateLayerPayload = Payload<'CreateLayer', {
     targetTimelaneId: string,
 }>
 export type AddTimelanePayload = Payload<'AddTimelane', {targetComposition: Delir.Project.Composition, timelane: Delir.Project.Timelane}>
+export type AddTimelaneWithAssetPayload = Payload<'AddTimelaneWithAsset', {targetComposition: Delir.Project.Composition, timelane: Delir.Project.Timelane, asset: Delir.Project.Asset}>
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type MoveLayerToTimelanePayload = Payload<'MoveLayerToTimelane', {targetTimelaneId: string, layerId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: any}>
@@ -24,6 +27,7 @@ export const DispatchTypes = keyMirror({
     CreateTimelane: null,
     CreateLayer: null,
     AddTimelane: null,
+    AddTimelaneWithAsset: null,
     AddAsset: null,
     MoveLayerToTimelane: null,
     ModifyComposition: null,
@@ -68,6 +72,35 @@ export default {
         timelane: Delir.Project.Timelane
     ) {
         dispatcher.dispatch(new Payload(DispatchTypes.AddTimelane, {targetComposition, timelane}))
+    },
+
+    addTimelaneWithAsset(
+        targetComposition: Delir.Project.Composition,
+        asset: Delir.Project.Asset
+    ) {
+        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => entry.package.delir.acceptFileTypes.includes(g))
+
+        // TODO: Support selection
+        if (processablePlugins.length) {
+            const timelane = new Delir.Project.Timelane
+            timelane.id = uuid.v4()
+
+            const layer = new Delir.Project.Layer
+            Object.assign(layer, {
+                id: uuid.v4(),
+                renderer: processablePlugins[0].id,
+                placedFrame: 0,
+                durationFrames: 1,
+            })
+
+            timelane.layers.add(layer)
+
+            dispatcher.dispatch(new Payload(DispatchTypes.AddTimelaneWithAsset, {
+                targetComposition,
+                timelane: timelane,
+                asset
+            }))
+        }
     },
 
     createLayer(
