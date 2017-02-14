@@ -13,6 +13,7 @@ import RenderRequest from './renderer/render-request'
 import PluginPreRenderRequest from './renderer/plugin-pre-rendering-request'
 import LayerPluginBase from './plugin/layer-plugin-base'
 import EffectPluginBase from './plugin/effect-plugin-base'
+import PluginRegistry from './plugin/plugin-registry'
 
 import * as ProjectHelper from './helper/project-helper'
 
@@ -35,6 +36,7 @@ export {
     EffectPluginBase,
     PluginPreRenderRequest,
     RenderRequest,
+    PluginRegistry,
 
     // import shorthand
     ProjectHelper,
