@@ -10,7 +10,8 @@ import {KnownPayload} from '../actions/PayloadTypes'
 import EditorStateActions from '../actions/editor-state-actions'
 import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
 
-let pluginRegistry: Delir.Services.PluginRegistry = null
+let pluginRegistry: Delir.PluginRegistry|null = null
+let pluginLoader: Delir.Services.PluginLoader|null = null
 let renderer: Delir.Renderer|null = null
 let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
@@ -22,22 +23,21 @@ let state: {
     project: null,
 }
 
-
 const handlePayload = (payload: KnownPayload) => {
     switch (payload.type) {
         case EditorStateDispatchTypes.SetActiveProject:
             renderer.setProject(payload.entity.project)
             state.project = payload.entity.project
             break
-        
+
         case EditorStateDispatchTypes.TogglePreview: (() => {
             if (!state.project) return
             if (!renderer || !audioContext) return
 
             const targetComposition = ProjectHelper.findCompositionById(state.project, compositionId)
             if (! targetComposition) return
-            
-            
+
+
             if (renderer.isPlaying) {
                 renderer.pause()
                 return
@@ -134,20 +134,22 @@ export default {
         // scriptProcessor
 
         const userDir = remote.app.getPath('appData')
-        pluginRegistry = new Delir.Services.PluginRegistry()
+        pluginLoader = new Delir.Services.PluginLoader()
+        pluginRegistry = new Delir.PluginRegistry()
 
         const loaded = [
-            await pluginRegistry.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
-            await pluginRegistry.loadPackageDir(join(userDir, '/delir/plugins')),
+            await pluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
+            await pluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
         ]
 
-        console.log('Plugin loaded', loaded);
+        console.log('Plugin loaded', [].concat(...loaded.map<any>(({loaded}) => loaded)));
+        loaded.forEach(({loaded}) => pluginRegistry.addEntries(loaded))
+
         renderer = new Delir.Renderer({
             pluginRegistry: pluginRegistry,
         })
 
         renderer.setAudioContext(audioContext)
-
         dispatcher.register(handlePayload)
     },
 
