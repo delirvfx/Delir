@@ -10,7 +10,7 @@ import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as EditorStateDispatchTypes, DragEntity} from '../actions/editor-state-actions'
 
-type StateRecord = Record<EditorState, keyof EditorState>
+type StateRecord = Record<EditorState>
 export interface EditorState {
     project: Delir.Project.Project|null,
     activeComp: Delir.Project.Composition|null,

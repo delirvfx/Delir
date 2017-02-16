@@ -10,7 +10,7 @@ import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
 import {DispatchTypes as ProjectModifyDispatchTypes} from '../actions/project-modify-actions'
 
-type StateRecord = Record<ProjectModifyState, keyof ProjectModifyState>
+type StateRecord = Record<ProjectModifyState>
 export interface ProjectModifyState {
     project: Delir.Project.Project|null,
     lastChangeTime: number,
