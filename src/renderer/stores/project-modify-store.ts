@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
+import * as uuid from 'uuid'
 
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
@@ -35,7 +36,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
     reduce(state: StateRecord, payload: KnownPayload)
     {
-        const project: Delir.Project.Project|null = state.get('project')
+        const project: Delir.Project.Project = state.get('project')!
         if (payload.type !== EditorStateDispatchTypes.SetActiveProject && project == null) return state
 
         switch (payload.type) {
@@ -56,6 +57,20 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
             case ProjectModifyDispatchTypes.AddTimelane:
                 ProjectHelper.addTimelane(project!, payload.entity.targetComposition, payload.entity.timelane)
+                break
+
+            case ProjectModifyDispatchTypes.AddTimelaneWithAsset:
+                (() => {
+                    const {targetComposition, layer, asset: registeredAsset, pluginRegistry} = payload.entity
+                    const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(layer, registeredAsset.mimeType, pluginRegistry)
+
+                    if (propName == null) return
+                    layer.config.rendererOptions[propName] = registeredAsset
+
+                    const timelane = new Delir.Project.Timelane
+                    ProjectHelper.addTimelane(project, targetComposition, timelane)
+                    ProjectHelper.addLayer(project, timelane, layer)
+                })()
                 break
 
             case ProjectModifyDispatchTypes.AddAsset:

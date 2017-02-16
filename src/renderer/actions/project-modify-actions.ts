@@ -14,7 +14,12 @@ export type CreateLayerPayload = Payload<'CreateLayer', {
     targetTimelaneId: string,
 }>
 export type AddTimelanePayload = Payload<'AddTimelane', {targetComposition: Delir.Project.Composition, timelane: Delir.Project.Timelane}>
-export type AddTimelaneWithAssetPayload = Payload<'AddTimelaneWithAsset', {targetComposition: Delir.Project.Composition, timelane: Delir.Project.Timelane, asset: Delir.Project.Asset}>
+export type AddTimelaneWithAssetPayload = Payload<'AddTimelaneWithAsset', {
+    targetComposition: Delir.Project.Composition,
+    layer: Delir.Project.Layer,
+    asset: Delir.Project.Asset,
+    pluginRegistry: Delir.PluginRegistry,
+}>
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type MoveLayerToTimelanePayload = Payload<'MoveLayerToTimelane', {targetTimelaneId: string, layerId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: any}>
@@ -78,27 +83,23 @@ export default {
         targetComposition: Delir.Project.Composition,
         asset: Delir.Project.Asset
     ) {
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => entry.package.delir.acceptFileTypes.includes(g))
+        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
 
         // TODO: Support selection
         if (processablePlugins.length) {
-            const timelane = new Delir.Project.Timelane
-            timelane.id = uuid.v4()
-
             const layer = new Delir.Project.Layer
             Object.assign(layer, {
                 id: uuid.v4(),
                 renderer: processablePlugins[0].id,
                 placedFrame: 0,
-                durationFrames: 1,
+                durationFrames: targetComposition.framerate,
             })
-
-            timelane.layers.add(layer)
 
             dispatcher.dispatch(new Payload(DispatchTypes.AddTimelaneWithAsset, {
                 targetComposition,
-                timelane: timelane,
-                asset
+                layer,
+                asset,
+                pluginRegistry: RendererService.pluginRegistry!,
             }))
         }
     },
