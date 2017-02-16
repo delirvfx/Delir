@@ -1,6 +1,5 @@
 import React, {PropTypes} from 'react'
 
-import AppStore from '../stores/app-store'
 import EditorStateStore from '../stores/editor-state-store'
 import ProjectModifyStore from '../stores/project-modify-store'
 

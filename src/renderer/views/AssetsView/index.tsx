@@ -7,7 +7,6 @@ import {ProjectHelper, ColorRGB} from 'delir-core'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import AppStore from '../../stores/app-store'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
 
@@ -31,7 +30,7 @@ export interface AssetsViewState {
     settingCompositionQuery: {[name: string]: string|number} | null,
 }
 
-@connectToStores([AppStore, EditorStateStore], (context, props) => ({
+@connectToStores([EditorStateStore], (context, props) => ({
     editor: EditorStateStore.getState(),
 }))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
