@@ -18,6 +18,7 @@ export default class PluginRegister {
                 throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
             }
 
+            entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
             this._plugins[entry.id] = Object.freeze(entry)
         }
     }
@@ -55,6 +56,20 @@ export default class PluginRegister {
         }
 
         throw new PluginAssertionFailedException(`plugin ${id} can't provide parameters`)
+    }
+
+    /**
+     * get plugin entry
+     * @param   {string}    id      target plugin ID
+     * @throws UnknownPluginReferenceException
+     */
+    getPlugin(id: string): Readonly<PluginEntry>
+    {
+        if (this._plugins[id] == null) {
+            throw new UnknownPluginReferenceException(`plugin ${id} doesn't loaded`)
+        }
+
+        return this._plugins[id]
     }
 
     /**

@@ -93,6 +93,15 @@ interface TimelineViewState {
     selectedLaneId: number|null,
 }
 
+/**
+ * Timeline structure:
+ *
+ * Timeline
+ *   └ Layer
+ *     └ LayerLabel
+ *     └ ClipSpace
+ *       └ Clip
+ */
 @connectToStores([EditorStateStore, ProjectModifyStore], context => ({
     editor: EditorStateStore.getState(),
 }))
@@ -165,26 +174,9 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     {
         const {dragEntity, activeComp} = this.props.editor
 
-        if (dragEntity.type !== 'asset') return
-        const {entity: asset} = dragEntity
-        const processablePlugins = RendererService.pluginRegistry.getPluginsByAcceptFileType(asset.mimeType)
-
-        // TODO: Support selection
-        if (processablePlugins.length) {
-            const timelane = new Delir.Project.Timelane
-            timelane.id = uuid.v4()
-
-            const layer = new Delir.Project.Layer
-            Object.assign(layer, {
-                id: uuid.v4(),
-                renderer: processablePlugins[0].id,
-                placedFrame: 0,
-                durationFrames: 1,
-            })
-
-            timelane.layers.add(layer)
-            ProjectModifyActions.addTimelane(activeComp, timelane)
-        }
+        if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
+        const {asset} = dragEntity
+        ProjectModifyActions.addTimelaneWithAsset(activeComp, asset)
     }
 
     render()

@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
+import * as uuid from 'uuid'
 
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
@@ -10,7 +11,7 @@ import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
 import {DispatchTypes as ProjectModifyDispatchTypes} from '../actions/project-modify-actions'
 
-type StateRecord = Record<ProjectModifyState, keyof ProjectModifyState>
+type StateRecord = Record<ProjectModifyState>
 export interface ProjectModifyState {
     project: Delir.Project.Project|null,
     lastChangeTime: number,
@@ -35,7 +36,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
     reduce(state: StateRecord, payload: KnownPayload)
     {
-        const project: Delir.Project.Project|null = state.get('project')
+        const project: Delir.Project.Project = state.get('project')!
         if (payload.type !== EditorStateDispatchTypes.SetActiveProject && project == null) return state
 
         switch (payload.type) {
@@ -54,8 +55,27 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.addLayer(project!, payload.entity.targetTimelaneId, payload.entity.props as any)
                 break
 
+            case ProjectModifyDispatchTypes.AddLayer:
+                const {targetTimelane, newLayer} = payload.entity
+                ProjectHelper.addLayer(project, targetTimelane, newLayer)
+                break
+
             case ProjectModifyDispatchTypes.AddTimelane:
                 ProjectHelper.addTimelane(project!, payload.entity.targetComposition, payload.entity.timelane)
+                break
+
+            case ProjectModifyDispatchTypes.AddTimelaneWithAsset:
+                (() => {
+                    const {targetComposition, layer, asset: registeredAsset, pluginRegistry} = payload.entity
+                    const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(layer, registeredAsset.mimeType, pluginRegistry)
+
+                    if (propName == null) return
+                    layer.config.rendererOptions[propName] = registeredAsset
+
+                    const timelane = new Delir.Project.Timelane
+                    ProjectHelper.addTimelane(project, targetComposition, timelane)
+                    ProjectHelper.addLayer(project, timelane, layer)
+                })()
                 break
 
             case ProjectModifyDispatchTypes.AddAsset:

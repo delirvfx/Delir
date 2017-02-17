@@ -43,12 +43,6 @@ export default class HTML5VideoLayer extends LayerPluginBase
     constructor()
     {
         super()
-        // document.body.appendChild(this.video)
-        // Object.assign(v.style, {
-        //     position: 'fixed',
-        //     top: '0px',
-        //     left: '0px',
-        // })
     }
 
     // onParameterChanged(newParam: Object, oldParam: Object)

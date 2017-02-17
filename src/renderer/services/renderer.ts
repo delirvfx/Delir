@@ -34,9 +34,8 @@ const handlePayload = (payload: KnownPayload) => {
             if (!state.project) return
             if (!renderer || !audioContext) return
 
-            const targetComposition = ProjectHelper.findCompositionById(state.project, compositionId)
+            const targetComposition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
             if (! targetComposition) return
-
 
             if (renderer.isPlaying) {
                 renderer.pause()
@@ -143,7 +142,7 @@ export default {
         ]
 
         console.log('Plugin loaded', [].concat(...loaded.map<any>(({loaded}) => loaded)));
-        loaded.forEach(({loaded}) => pluginRegistry.addEntries(loaded))
+        loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
 
         renderer = new Delir.Renderer({
             pluginRegistry: pluginRegistry,

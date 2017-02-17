@@ -1,4 +1,4 @@
-// @flow
+import Asset from './asset'
 
 export type ProjectData = {
     formatVersion: string,
@@ -44,5 +44,7 @@ export type KeyFrameObject = {
 }
 
 export type ProjectPreference = {
-    
+
 }
+
+export type RendererProperties = {[propName: string]: Asset|string|number}

@@ -2,6 +2,7 @@ import * as _ from 'lodash'
 import Keyframe from './keyframe'
 import Effect from './effect'
 import {LayerScheme, LayerConfigScheme} from './scheme/layer'
+import {RendererProperties} from './types'
 
 export default class Layer
 {
@@ -30,7 +31,7 @@ export default class Layer
 
     config: {
         renderer: string|null,
-        rendererOptions: Object|null,
+        rendererOptions: RendererProperties,
         placedFrame: number|null,
         durationFrames: number|null,
         keyframeInterpolationMethod: string,
@@ -50,8 +51,8 @@ export default class Layer
     get renderer(): string { return this.config.renderer as string }
     set renderer(renderer: string) { this.config.renderer = renderer }
 
-    get rendererOptions(): Object { return this.config.rendererOptions as Object }
-    set rendererOptions(rendererOptions: Object) { this.config.rendererOptions = rendererOptions }
+    get rendererOptions(): RendererProperties { return this.config.rendererOptions }
+    set rendererOptions(rendererOptions: RendererProperties) { this.config.rendererOptions = rendererOptions }
 
     get placedFrame(): number { return this.config.placedFrame as number }
     set placedFrame(placedFrame: number) { this.config.placedFrame = placedFrame }

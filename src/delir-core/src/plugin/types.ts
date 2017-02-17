@@ -4,7 +4,8 @@ export type PluginFeatures = 'Effect' | 'CustomLayer' | 'ExpressionExtension'
 
 export interface PackageJSONDelirSection {
     feature: PluginFeatures,
-    acceptFileTypes: string[],
+    /** Accept file types by mimeType:propName */
+    acceptFileTypes: {[mimeType: string]: string},
 }
 
 export interface DelirPluginPackageJson {

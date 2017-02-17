@@ -9,11 +9,15 @@ import RendererService from '../../services/renderer'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 import TimelaneHelper from '../../helpers/timelane-helper'
+import connectToStores from '../../utils/connectToStores'
+import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import cancelEvent from '../../utils/cancelEvent'
 
 import TimelaneLayer from './_TimelaneLayer'
 import LaneKeyframes from '../timeline/lane-keyframes'
 
 interface TimelaneLayerListProps {
+    editor: EditorState,
     timelane: Delir.Project.Timelane,
     activeLayer: Delir.Project.Layer,
     framerate: number,
@@ -25,9 +29,16 @@ interface TimelaneLayerListState {
     pxPerSec: number,
 }
 
+/**
+ * ClipSpace
+ */
+@connectToStores([EditorStateStore], context => ({
+    editor: EditorStateStore.getState(),
+}))
 export default class TimelaneLayerList extends React.Component<TimelaneLayerListProps, TimelaneLayerListState>
 {
     static propTypes = {
+        editor: PropTypes.object.isRequired,
         timelane: PropTypes.object.isRequired,
         framerate: PropTypes.number.isRequired,
         scale: PropTypes.number.isRequired,
@@ -51,22 +62,39 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
         }
     }
 
-    onDrop(e)
+    onDrop = (e: React.DragEvent<HTMLLIElement>) =>
     {
-        e.preventDefault()
-        e.stopPropagation()
+        const {dragEntity, activeComp} = this.props.editor
 
-        this.setState({dragovered: false})
+        if (!activeComp || !dragEntity) return
 
-        const data = JSON.parse(e.dataTransfer.getData('application/json'))
-        const {layerId} = data
-        let isChildLayer = !! _.find(Array.from(this.props.timelane.layers.values()), {id: layerId})
+        if (dragEntity.type === 'asset') {
+            const {asset} = dragEntity
+            const {state:{pxPerSec}, props:{framerate, scale}} = this
+            const placedFrame = TimelaneHelper.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
+            ProjectModifyActions.createLayerWithAsset(this.props.timelane, asset, placedFrame)
+        }
+        else if (dragEntity.type === 'layer') {
+            const {layer} = dragEntity
+            const isChildLayer = !! _.find(Array.from(this.props.timelane.layers.values()), {id: layer.id})
 
-        if (data.type !== 'delir/drag-layer' || isChildLayer) {
+            if (isChildLayer) {
+                const placedFrame = TimelaneHelper.pixelToFrames({
+                    pxPerSec: this.state.pxPerSec,
+                    framerate: this.props.framerate,
+                    pixel: e.pageX - e.currentTarget.getBoundingClientRect().left - (e.nativeEvent as DragEvent).offsetX,
+                    scale: this.props.scale,
+                })
+                ProjectModifyActions.modifyLayer(dragEntity.layer.id!, {placedFrame: placedFrame})
+            } else {
+                ProjectModifyActions.moveLayerToTimelane(layer.id!, this.props.timelane.id!)
+            }
+        } else {
             return
         }
 
-        ProjectModifyActions.moveLayerToTimelane(data.layerId, this.props.timelane.id)
+        EditorStateActions.clearDragEntity()
+        this.setState({dragovered: false})
     }
 
     onDragLeave(e)
@@ -76,21 +104,11 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
 
     onDragOver(e)
     {
-        e.preventDefault()
-        e.stopPropagation()
         this.setState({dragovered: true})
     }
 
     changeLayerPlace(layer, movedX)
     {
-        const movedFrames = TimelaneHelper.pixelToFrames({
-            pxPerSec: this.state.pxPerSec,
-            framerate: this.props.framerate,
-            pixel: movedX,
-            scale: this.props.scale,
-        })
-
-        ProjectModifyActions.modifyLayer(layer.id, {placedFrame: layer.placedFrame + movedFrames})
     }
 
     addNewLayer = (layerRendererId) =>
@@ -117,7 +135,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
                 data-lane-id={timelane.id}
                 onDragOver={this.onDragOver.bind(this)}
                 onDragLeave={this.onDragLeave.bind(this)}
-                onDrop={this.onDrop.bind(this)}
+                onDrop={this.onDrop}
             >
                 <ContextMenu>
                     <MenuItem type='separator' />

@@ -13,7 +13,9 @@ import {
     CreateCompositionPayload,
     CreateTimelanePayload,
     CreateLayerPayload,
+    AddLayerPayload,
     AddTimelanePayload,
+    AddTimelaneWithAssetPayload,
     AddAssetPayload,
     MoveLayerToTimelanePayload,
     ModifyCompositionPayload,
@@ -36,7 +38,9 @@ export type ProjectModifyActionPayload =
     CreateCompositionPayload
     | CreateTimelanePayload
     | CreateLayerPayload
+    | AddLayerPayload
     | AddTimelanePayload
+    | AddTimelaneWithAssetPayload
     | AddAssetPayload
     | MoveLayerToTimelanePayload
     | ModifyCompositionPayload

@@ -7,7 +7,6 @@ import {ProjectHelper, ColorRGB} from 'delir-core'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import AppStore from '../../stores/app-store'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
 
@@ -31,13 +30,12 @@ export interface AssetsViewState {
     settingCompositionQuery: {[name: string]: string|number} | null,
 }
 
-@connectToStores([AppStore, EditorStateStore], (context, props) => ({
+@connectToStores([EditorStateStore, ProjectModifyStore], (context, props) => ({
     editor: EditorStateStore.getState(),
 }))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
 {
     static propTypes = {
-        app: PropTypes.object.isRequired,
         editor: PropTypes.object.isRequired,
     }
 
@@ -172,7 +170,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     onHide={this.makeNewComposition}
                     onResponse={this.settingComoisition}
                 />
-                <Table className='asset-list' onDrop={this.addAsset} onDragEnd={this.onAssetDragEnd}>
+                <Table className='asset-list' onDrop={this.addAsset}>
                     <TableHeader>
                         <Row>
                             {/* <Col resizable={false} defaultWidth='2rem'></Col> */}
@@ -182,7 +180,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     </TableHeader>
                     <TableBodySelectList>
                         {assets.map(asset => (
-                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart}>
+                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
@@ -191,7 +189,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <Col></Col>
+                                {/*<Col></Col>*/}
                                 <Col>
                                     <LabelInput
                                         ref={`asset_name_input#${asset.id}`}

@@ -10,6 +10,8 @@ import Layer from '../project/layer'
 import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
 
+import PluginRegistory from '../plugin/plugin-registry'
+
 function setFreezedProp(obj: Object, name: string, value: any)
 {
     Object.defineProperty(obj, name, {value, writable: false})
@@ -623,4 +625,14 @@ export function findParentLayerAndPropNameByKeyframeId(project: Project, keyfram
         }
 
     return target
+}
+
+export function findAssetAttachablePropertyByMimeType(
+    layer: Layer,
+    mimeType: string,
+    registry: PluginRegistory
+): string|null
+{
+    const plugin = registry.getPlugin(layer.renderer)
+    return plugin.pluginInfo.acceptFileTypes[mimeType]
 }
