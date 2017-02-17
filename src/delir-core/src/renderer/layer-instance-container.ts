@@ -45,14 +45,14 @@ export default class LayerInstanceContainer
     {
         // Resolve renderers
         if (! this._rendererInstance) {
-            const Renderer = req.resolver.resolvePlugin(this._layer.renderer)
+            const Renderer: typeof LayerPluginBase = req.resolver.resolvePlugin(this._layer.renderer)
 
             if (Renderer == null) {
                 throw new RenderingFailedException(`Failed to load Renderer plugin \`${this._layer.renderer}\``)
             }
 
-            this._rendererClass = (Renderer as typeof LayerPluginBase)
-            this._rendererInstance = (new Renderer as LayerPluginBase)
+            this._rendererClass = Renderer
+            this._rendererInstance = new Renderer
         }
 
         // Resolve effects
