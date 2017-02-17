@@ -30,7 +30,7 @@ export interface AssetsViewState {
     settingCompositionQuery: {[name: string]: string|number} | null,
 }
 
-@connectToStores([EditorStateStore], (context, props) => ({
+@connectToStores([EditorStateStore, ProjectModifyStore], (context, props) => ({
     editor: EditorStateStore.getState(),
 }))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
