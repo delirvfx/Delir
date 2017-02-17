@@ -51,10 +51,7 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
             }
         })
 
-        e.dataTransfer.setData('application/json', JSON.stringify({
-            type: 'delir/drag-layer',
-            layerId: this.props.layer.id,
-        }))
+        EditorStateActions.setDragEntity({type: 'layer', layer: this.props.layer})
     }
 
     drag = (e) => {
@@ -70,13 +67,11 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
     }
 
     dragEnd = (e) => {
-        this.props.onChangePlace(this.state.draggedPxX)
+        EditorStateActions.clearDragEntity()
 
         this.setState({
             draggedPxX: 0,
-            dragStyle: {
-                transform: 'translateX(0)'
-            }
+            dragStyle: {transform: 'translateX(0)'}
         })
     }
 
