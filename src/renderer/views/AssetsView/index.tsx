@@ -171,7 +171,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     onHide={this.makeNewComposition}
                     onResponse={this.settingComoisition}
                 />
-                <Table className='asset-list' onDrop={this.addAsset} onDragEnd={this.onAssetDragEnd}>
+                <Table className='asset-list' onDrop={this.addAsset}>
                     <TableHeader>
                         <Row>
                             {/* <Col resizable={false} defaultWidth='2rem'></Col> */}
@@ -181,7 +181,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     </TableHeader>
                     <TableBodySelectList>
                         {assets.map(asset => (
-                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart}>
+                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
@@ -190,7 +190,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <Col></Col>
+                                {/*<Col></Col>*/}
                                 <Col>
                                     <LabelInput
                                         ref={`asset_name_input#${asset.id}`}
