@@ -1,6 +1,7 @@
 import keyMirror from 'keymirror'
 import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
+import {ProjectHelper} from 'delir-core'
 
 import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
@@ -13,6 +14,7 @@ export type CreateLayerPayload = Payload<'CreateLayer', {
     props: {renderer: string, placedFrame: number, durationFrames: number},
     targetTimelaneId: string,
 }>
+export type AddLayerPayload = Payload<'AddLayer', {targetTimelane: Delir.Project.Timelane, newLayer: Delir.Project.Layer}>
 export type AddTimelanePayload = Payload<'AddTimelane', {targetComposition: Delir.Project.Composition, timelane: Delir.Project.Timelane}>
 export type AddTimelaneWithAssetPayload = Payload<'AddTimelaneWithAsset', {
     targetComposition: Delir.Project.Composition,
@@ -31,6 +33,7 @@ export const DispatchTypes = keyMirror({
     CreateComposition: null,
     CreateTimelane: null,
     CreateLayer: null,
+    AddLayer: null,
     AddTimelane: null,
     AddTimelaneWithAsset: null,
     AddAsset: null,
@@ -118,6 +121,36 @@ export default {
             },
             targetTimelaneId: timelaneId,
         }))
+    },
+
+    createLayerWithAsset(
+        targetTimelane: Delir.Project.Timelane,
+        asset: Delir.Project.Asset,
+        placedFrame = 0,
+        durationFrames = 100,
+    ) {
+        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
+
+        // TODO: Support selection
+        if (processablePlugins.length === 0) return
+
+        const newLayer = new Delir.Project.Layer
+        Object.assign(newLayer, {
+            id: uuid.v4(),
+            renderer: processablePlugins[0].id,
+            placedFrame,
+            durationFrames,
+        })
+
+        const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(
+            newLayer,
+            asset.mimeType,
+            RendererService.pluginRegistry!
+        )
+
+        if (!propName) return
+        newLayer.config.rendererOptions[propName] = asset
+        dispatcher.dispatch(new Payload(DispatchTypes.AddLayer, {targetTimelane, newLayer}))
     },
 
     addAsset({name, mimeType, path}: {name: string, mimeType: string, path: string})

@@ -55,6 +55,11 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.addLayer(project!, payload.entity.targetTimelaneId, payload.entity.props as any)
                 break
 
+            case ProjectModifyDispatchTypes.AddLayer:
+                const {targetTimelane, newLayer} = payload.entity
+                ProjectHelper.addLayer(project, targetTimelane, newLayer)
+                break
+
             case ProjectModifyDispatchTypes.AddTimelane:
                 ProjectHelper.addTimelane(project!, payload.entity.targetComposition, payload.entity.timelane)
                 break
