@@ -36,7 +36,6 @@ export interface AssetsViewState {
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
 {
     static propTypes = {
-        app: PropTypes.object.isRequired,
         editor: PropTypes.object.isRequired,
     }
 
