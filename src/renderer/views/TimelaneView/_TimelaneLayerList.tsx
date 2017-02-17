@@ -29,6 +29,9 @@ interface TimelaneLayerListState {
     pxPerSec: number,
 }
 
+/**
+ * ClipSpace
+ */
 @connectToStores([EditorStateStore], context => ({
     editor: EditorStateStore.getState(),
 }))

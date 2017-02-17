@@ -93,6 +93,15 @@ interface TimelineViewState {
     selectedLaneId: number|null,
 }
 
+/**
+ * Timeline structure:
+ *
+ * Timeline
+ *   └ Layer
+ *     └ LayerLabel
+ *     └ ClipSpace
+ *       └ Clip
+ */
 @connectToStores([EditorStateStore, ProjectModifyStore], context => ({
     editor: EditorStateStore.getState(),
 }))
