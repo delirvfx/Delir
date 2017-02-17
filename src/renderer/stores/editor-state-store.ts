@@ -17,6 +17,7 @@ export interface EditorState {
     activeLayer: Delir.Project.Layer|null,
     dragEntity: DragEntity|null,
     processingState: string|null,
+    notifications: {title: string|null, message: string, timeout: number}[]
 }
 
 class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>

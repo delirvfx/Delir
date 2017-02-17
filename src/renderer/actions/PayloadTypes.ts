@@ -7,6 +7,7 @@ import {
     TogglePreviewPayload,
     RenderDestinatePayload,
     UpdateProcessingState,
+    AddMessagePayload,
 } from './editor-state-actions'
 
 import {
@@ -33,6 +34,7 @@ export type EditorStateActionPayload =
     | TogglePreviewPayload
     | RenderDestinatePayload
     | UpdateProcessingState
+    | AddMessagePayload
 
 export type ProjectModifyActionPayload =
     CreateCompositionPayload

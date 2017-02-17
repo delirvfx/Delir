@@ -16,6 +16,7 @@ export type ChangeActiveLayerPayload = Payload<'ChangeActiveLayer', {layerId: st
 export type TogglePreviewPayload = Payload<'TogglePreview', {compositionId: string}>
 export type RenderDestinatePayload = Payload<'RenderDestinate', {compositionId: string}>
 export type UpdateProcessingState = Payload<'UpdateProcessingState', {stateText: string}>
+export type AddMessagePayload = Payload<'AddMessage', {title: string|null, level: 'info'|'error', message: string|null, timeout: number}>
 
 export const DispatchTypes = keyMirror({
     SetActiveProject: null,
@@ -26,6 +27,7 @@ export const DispatchTypes = keyMirror({
     TogglePreview: null,
     RenderDestinate: null,
     UpdateProcessingState: null,
+    AddMessage: null,
 })
 
 export default {
@@ -60,6 +62,11 @@ export default {
     clearDragEntity()
     {
         dispatcher.dispatch(new Payload(DispatchTypes.ClearDragEntity, {}))
+    },
+
+    notify(message: string, title: string|null, level: 'info'|'error' = 'info', timeout = 2000)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.AddMessage, {title, message, level, timeout}))
     },
 
     //
