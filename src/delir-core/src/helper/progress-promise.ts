@@ -19,7 +19,7 @@ type PromiseProcessor<T> = (
     reject: (error: Error) => void,
     onAbort: (aborter: () => void) => void,
     notifier: (message: any) => void
-) => void
+) => Promise<T>|void
 
 export default class ProgressPromise<T>
 {
@@ -52,7 +52,9 @@ export default class ProgressPromise<T>
         }
 
         try {
-            executor(this._promise.resolve, this._promise.reject, onAbort, notifier)
+            const returnValue = executor(this._promise.resolve, this._promise.reject, onAbort, notifier)
+            if (returnValue && typeof returnValue.then === 'function') { returnValue.then(this._promise.resolve)}
+            if (returnValue && typeof returnValue.catch === 'function') { returnValue.catch(this._promise.reject)}
         } catch (e) {
             this._promise.reject(e)
         }
