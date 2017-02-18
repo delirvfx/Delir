@@ -110,10 +110,12 @@ export function compileRendererJs(done) {
         externals: [
             (ctx, request, callback) => {
                 if (request === 'delir-core') {
+                    // Ignore 'delir-core' requiring for plugins building
                     return callback()
                 }
 
-                if (/^(?!\.\.?\/)/.test(request)) {
+                if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
+                    // throughs non relative requiring ('./module', '../module', '!!../module')
                     return callback(null, `require('${request}')`)
                 }
 
@@ -160,14 +162,21 @@ export function compileRendererJs(done) {
                     test: /\.styl$/,
                     exclude: /node_modules/,
                     use: [
-                        {loader: 'style-loader'},
-                        {loader: 'css-loader', options: {
-                            modules: true,
-                            localIdentName: DELIR_ENV === 'dev' 
-                                ? '[path][name]__[local]--[emoji:4]' 
-                                : '[local]--[hash:base64:5]',
-                        }},
-                        {loader: 'stylus-loader'},
+                        {
+                            loader: 'style-loader'
+                        },
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                localIdentName: DELIR_ENV === 'dev'
+                                    ? '[path][name]__[local]--[emoji:4]'
+                                    : '[local]--[hash:base64:5]',
+                            }
+                        },
+                        {
+                            loader: 'stylus-loader'
+                        },
                     ],
                 },
             ]
