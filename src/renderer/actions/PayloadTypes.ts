@@ -8,6 +8,7 @@ import {
     RenderDestinatePayload,
     UpdateProcessingState,
     AddMessagePayload,
+    RemoveMessagePayload,
 } from './editor-state-actions'
 
 import {
@@ -35,6 +36,7 @@ export type EditorStateActionPayload =
     | RenderDestinatePayload
     | UpdateProcessingState
     | AddMessagePayload
+    | RemoveMessagePayload
 
 export type ProjectModifyActionPayload =
     CreateCompositionPayload

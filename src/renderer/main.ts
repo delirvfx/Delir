@@ -13,7 +13,6 @@ import * as Delir from 'delir-core'
 import RendererService from './services/renderer'
 import BrowserProcessProxy from './services/browser-process-proxy'
 
-
 if (typeof global !== 'undefined') {
     (global as any).require('babel-register')
 }

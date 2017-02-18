@@ -1,5 +1,6 @@
 import * as Delir from 'delir-core'
 import keyMirror from 'keymirror'
+import * as _ from 'lodash'
 
 import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
@@ -16,7 +17,8 @@ export type ChangeActiveLayerPayload = Payload<'ChangeActiveLayer', {layerId: st
 export type TogglePreviewPayload = Payload<'TogglePreview', {compositionId: string}>
 export type RenderDestinatePayload = Payload<'RenderDestinate', {compositionId: string}>
 export type UpdateProcessingState = Payload<'UpdateProcessingState', {stateText: string}>
-export type AddMessagePayload = Payload<'AddMessage', {title: string|null, level: 'info'|'error', message: string|null, timeout: number}>
+export type AddMessagePayload = Payload<'AddMessage', {id: string, title?: string, level: 'info'|'error', message: string, detail?: string}>
+export type RemoveMessagePayload = Payload<'RemoveMessage', {id: string}>
 
 export const DispatchTypes = keyMirror({
     SetActiveProject: null,
@@ -28,6 +30,7 @@ export const DispatchTypes = keyMirror({
     RenderDestinate: null,
     UpdateProcessingState: null,
     AddMessage: null,
+    RemoveMessage: null,
 })
 
 export default {
@@ -64,9 +67,13 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.ClearDragEntity, {}))
     },
 
-    notify(message: string, title: string|null, level: 'info'|'error' = 'info', timeout = 2000)
+    notify(message: string, title: string, level: 'info'|'error' = 'info', timeout?: number, detail?: string,)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.AddMessage, {title, message, level, timeout}))
+        const id = _.uniqueId('notify')
+        dispatcher.dispatch(new Payload(DispatchTypes.AddMessage, {id, title, message, detail, level}))
+        if (timeout != null) {
+            setTimeout(() => { dispatcher.dispatch(new Payload(DispatchTypes.RemoveMessage, {id})); }, timeout)
+        }
     },
 
     //
