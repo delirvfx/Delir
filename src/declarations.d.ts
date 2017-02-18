@@ -29,6 +29,11 @@ declare module 'tooloud' {
 // Delir frontend deps
 declare const __DEV__: boolean
 
+declare module '*.styl' {
+    const _ : {[className: string]: string}
+    export = _
+}
+
 declare module 'devtron' {
     export function install(): void
 }
