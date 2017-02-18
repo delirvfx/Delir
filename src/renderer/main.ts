@@ -67,7 +67,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         const p = require('./devel/example-project/ExampleProject1').default
         EditorStateActions.setActiveProject(p)
 
-        EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', 'Hello, welcome to Delir', 'info')
+        EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 Hello, welcome to Delir', 'info')
+        EditorStateActions.notify('Must be select any composition before add assets to timeline', 'Woops', 'error', 1000)
     }
 
     process.on('uncaughtException', (e: Error) => {

@@ -8,6 +8,8 @@ import Payload from '../utils/payload'
 // import deprecated from '../utils/deprecated'
 import RendererService from '../services/renderer'
 
+import EditorStateActions from './editor-state-actions'
+
 export type CreateCompositionPayload = Payload<'CreateComposition', {composition: Delir.Project.Composition}>
 export type CreateTimelanePayload = Payload<'CreateTimelane', {targetCompositionId: string, timelane: Delir.Project.Timelane}>
 export type CreateLayerPayload = Payload<'CreateLayer', {
@@ -89,22 +91,25 @@ export default {
         const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
 
         // TODO: Support selection
-        if (processablePlugins.length) {
-            const layer = new Delir.Project.Layer
-            Object.assign(layer, {
-                id: uuid.v4(),
-                renderer: processablePlugins[0].id,
-                placedFrame: 0,
-                durationFrames: targetComposition.framerate,
-            })
-
-            dispatcher.dispatch(new Payload(DispatchTypes.AddTimelaneWithAsset, {
-                targetComposition,
-                layer,
-                asset,
-                pluginRegistry: RendererService.pluginRegistry!,
-            }))
+        if (processablePlugins.length === 0) {
+            EditorStateActions.notify(`plugin not available for \`${asset.mimeType}\``, '😢 Supported plugin not available', 'info', 5000)
+            return
         }
+
+        const layer = new Delir.Project.Layer
+        Object.assign(layer, {
+            id: uuid.v4(),
+            renderer: processablePlugins[0].id,
+            placedFrame: 0,
+            durationFrames: targetComposition.framerate,
+        })
+
+        dispatcher.dispatch(new Payload(DispatchTypes.AddTimelaneWithAsset, {
+            targetComposition,
+            layer,
+            asset,
+            pluginRegistry: RendererService.pluginRegistry!,
+        }))
     },
 
     createLayer(
@@ -132,7 +137,10 @@ export default {
         const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
 
         // TODO: Support selection
-        if (processablePlugins.length === 0) return
+        if (processablePlugins.length === 0) {
+            EditorStateActions.notify(`plugin not available for \`${asset.mimeType}\``, '😢 Supported plugin not available', 'info', 3000)
+            return
+        }
 
         const newLayer = new Delir.Project.Layer
         Object.assign(newLayer, {
