@@ -174,6 +174,11 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     {
         const {dragEntity, activeComp} = this.props.editor
 
+        if (!activeComp) {
+            EditorStateActions.notify('Must be select any composition before add assets to timeline', 'Woops', 'error', 1000)
+            return
+        }
+
         if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
         const {asset} = dragEntity
         ProjectModifyActions.addTimelaneWithAsset(activeComp, asset)
