@@ -13,7 +13,6 @@ import * as Delir from 'delir-core'
 import RendererService from './services/renderer'
 import BrowserProcessProxy from './services/browser-process-proxy'
 
-
 if (typeof global !== 'undefined') {
     (global as any).require('babel-register')
 }
@@ -67,7 +66,17 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (__DEV__) {
         const p = require('./devel/example-project/ExampleProject1').default
         EditorStateActions.setActiveProject(p)
+
+        EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', 'Hello, welcome to Delir', 'info')
     }
+
+    process.on('uncaughtException', (e: Error) => {
+         EditorStateActions.notify(e.message, '😱Uncaught Exception😱', 'error', void 0, e.stack)
+    })
+
+    process.on('uncaughtRejection', (e: Error) => {
+         EditorStateActions.notify(e.message, '😱Uncaught Rejection😱', 'error', void 0, e.stack)
+    })
 
     RendererService.renderer.setDestinationCanvas(document.querySelector('canvas'))
     // RendererService.renderer.setDestinationAudioNode(audioContext.destination)

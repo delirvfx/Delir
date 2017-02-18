@@ -11,12 +11,17 @@ import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as EditorStateDispatchTypes, DragEntity} from '../actions/editor-state-actions'
 
 type StateRecord = Record<EditorState>
+
+export type NotificationEntry = {id: string, title?: string, message: string, level: 'info'|'error', detail?: string}
+export type NotificationEntries = Immutable.List<NotificationEntry>
+
 export interface EditorState {
     project: Delir.Project.Project|null,
     activeComp: Delir.Project.Composition|null,
     activeLayer: Delir.Project.Layer|null,
     dragEntity: DragEntity|null,
     processingState: string|null,
+    notifications: NotificationEntries
 }
 
 class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
@@ -29,6 +34,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
             activeLayer: null,
             dragEntity: null,
             processingState: null,
+            notifications: Immutable.List()
         })
     }
 
@@ -61,6 +67,21 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 
             case EditorStateDispatchTypes.UpdateProcessingState:
                 return state.set('processingState', payload.entity.stateText)
+
+            case EditorStateDispatchTypes.AddMessage:
+                return state.set('notifications', state.get('notifications').push({
+                    id: payload.entity.id,
+                    title: payload.entity.title,
+                    message: payload.entity.message!,
+                    level: payload.entity.level,
+                    detail: payload.entity.detail,
+                }))
+
+            case EditorStateDispatchTypes.RemoveMessage: {
+                const notifications = state.get('notifications')
+                const idx = notifications.findIndex(entry => entry!.id === payload.entity.id)
+                return state.set('notifications', notifications.remove(idx))
+            }
         }
 
         return state

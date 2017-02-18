@@ -8,6 +8,7 @@ import PreviewView from '../preview-view'
 import TimelaneView from '../TimelaneView'
 import NavigationView from '../navigation-view'
 import StatusView from '../status-view'
+import Notifications from '../Notifications'
 
 // import style from './style.styl'
 
@@ -38,6 +39,7 @@ export default class AppView extends React.Component<null, null>
                     <TimelaneView />
                 </Workspace>
                 <StatusView />
+                <Notifications />
             </div>
         )
     }
