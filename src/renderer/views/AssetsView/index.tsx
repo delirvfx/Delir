@@ -1,24 +1,30 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import {PropTypes} from 'react'
+import { PropTypes } from 'react'
 import parseColor from 'parse-color'
-import {ProjectHelper, ColorRGB} from 'delir-core'
+import serialize from 'form-serialize'
+import { ProjectHelper, ColorRGB } from 'delir-core'
 
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
-import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
+import { default as EditorStateStore, EditorState } from '../../stores/editor-state-store'
+import { default as ProjectModifyStore, ProjectModifyState } from '../../stores/project-modify-store'
 
+import Portal from '../../utils/portal'
 import Pane from '../components/pane'
 import LabelInput from '../components/label-input'
-import {Table, TableHeader, TableBodySelectList, Row, Col} from '../components/table'
-import {ContextMenu, MenuItem} from '../electron/context-menu'
+import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components/table'
+import { ContextMenu, MenuItem } from '../electron/context-menu'
 
+import * as Modal from '../electron/modal-window'
+import FormStyle from '../components/Form'
 import NewCompositionWindow from '../modal-windows/new-composition-window'
 import SettingCompositionWindow from '../modal-windows/setting-composition-window'
 
 import connectToStores from '../../utils/connectToStores'
+
+import * as s from './style.styl'
 
 export interface AssetsViewProps {
     editor: EditorState,
@@ -62,19 +68,16 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         })
     }
 
-    changeComposition = (compId, e) =>
-    {
+    changeComposition = (compId, e) => {
         EditorStateActions.changeActiveComposition(compId)
     }
 
-    modifyCompName = (compId, newName) =>
-    {
-        ProjectModifyActions.modifyComposition(compId, {name: newName})
+    modifyCompName = (compId, newName) => {
+        ProjectModifyActions.modifyComposition(compId, { name: newName })
     }
 
-    openCompositionSettingWindow = compId =>
-    {
-        const {project} = this.props.app
+    openCompositionSettingWindow = compId => {
+        const { project } = this.props.app
         if (project == null) return
 
         const targetComposition = ProjectHelper.findCompositionById(project, compId)
@@ -111,15 +114,28 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         ProjectModifyActions.modifyComposition(req.id, req)
     }
 
-    makeNewComposition = (req?: {name: string, width: string, height: string, framerate: string, durationSeconds: string, backgroundColor: string}) =>
+    openNewCompositionWindow =  async () =>
     {
-        if (req == null) return
+        type CreateRequest = {
+            name: string,
+            width: string,
+            height: string,
+            framerate: string,
+            durationSeconds: string,
+            backgroundColor: string
+        }
 
-        // `newCompositionWindowOpened` must be `false` before create Action.
-        // this state is not synced to real window show/hide state.
-        // if other state changing fired early to set `false`,
-        // component updated and open modal window once again by current state.
-        this.setState({newCompositionWindowOpened: false})
+        let modal = Modal.create()
+        const req = (await new Promise<{[p: string]: string}|void>(resolve => {
+            modal.mount(<NewCompositionModal onConfirm={resolve} onCancel={resolve} />)
+            modal.show()
+        })) as CreateRequest|void
+
+        modal.dispose()
+
+        if (!req) {
+            return
+        }
 
         const bgColor = parseColor(req.backgroundColor)
 
@@ -155,13 +171,6 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         return (
             <Pane className='view-assets' allowFocus>
-                <NewCompositionWindow
-                    show={this.state.newCompositionWindowOpened}
-                    width={400}
-                    height={350}
-                    onHide={this.makeNewComposition}
-                    onResponse={this.makeNewComposition}
-                />
                 <SettingCompositionWindow
                     show={this.state.settingCompositionWindowOpened}
                     width={400}
@@ -239,6 +248,109 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     </TableBodySelectList>
                 </Table>
             </Pane>
+        )
+    }
+}
+
+
+class NewCompositionModal extends React.PureComponent<{
+    onConfirm: (opts: {[props: string]: string}) => void,
+    onCancel: () => void
+}, any> {
+    onConfirm = () =>
+    {
+        const opts = serialize((this.refs.form as HTMLFormElement), {hash: true})
+        console.log(opts)
+        this.props.onConfirm(opts as {[p: string]: string})
+    }
+
+    onCancel = () =>
+    {
+        this.props.onCancel()
+    }
+
+    render()
+    {
+        return (
+            <div className={s.newCompModalRoot}>
+                <form ref='form' className={FormStyle.formHorizontal}>
+                    <div className='formGroup'>
+                        <label className="label">Composition name:</label>
+                        <div className="input">
+                            <div className='formControl'>
+                                <input name="name" type="text" value="New Composition" required="required" autofocus="autofocus" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className='formGroup'>
+                        <label className="label">width:</label>
+                        <div className="inputs">
+                            <div className='formControl'>
+                                <input name="width" type="number" min="1" required="required" />
+                            </div><span className="unit">px</span>
+                        </div>
+                    </div>
+                    <div className='formGroup'>
+                        <label className="label">height:</label>
+                        <div className="inputs">
+                            <div className='formControl'>
+                                <input name="height" type="number" min="1" required="required" />
+                            </div><span className="unit">px</span>
+                        </div>
+                    </div>
+                    <div className='formGroup'>
+                        <label className="label">background color:</label>
+                        <div className="inputs">
+                            <div className='formControl'>
+                                <input name="backgroundColor" type="color" required="required" />
+                            </div><span className="unit">px</span>
+                        </div>
+                    </div>
+                    <div className='formGroup'>
+                        <label className="label">framerate:</label>
+                        <div className="inputs">
+                            <div className='formControl'>
+                                <input name="framerate" type="number" min="1" value="30" required="required" />
+                            </div><span className="unit">fps</span>
+                        </div>
+                    </div>
+                    <div className='formGroup'>
+                        <label className="label">duration(sec):</label>
+                        <div className="inputs">
+                            <div className='formControl'>
+                                <input name="samplingRate" type="number" min="1" value="30" required="required" />
+                            </div><span className="unit">s</span>
+                        </div>
+                    </div>
+                    <div className='formGroup'>
+                        <label className="label">Sampling rate:</label>
+                        <div className="inputs">
+                            <div className='formControl'>
+                                <select name="samplingRate" required="required">
+                                    <option value="48000" selected="selected">48000</option>
+                                    <option value="41000">41000</option>
+                                </select>
+                            </div><span className="unit">Hz</span>
+                        </div>
+                    </div>
+                    <div className='formGroup'>
+                        <label className="label">Channels:</label>
+                        <div className="inputs">
+                            <div className='formControl'>
+                                <select name="audioChannels" required="required">
+                                    <option value="2" selected="selected">Stereo (2ch)</option>
+                                    <option value="1">Mono (1ch)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={s.modalFooter}>
+                        <button id="cancel" className="button" type='button' onClick={this.onCancel}>Cancel</button>
+                        <button className="button primary" type='button' onClick={this.onConfirm}>Create</button>
+                    </div>
+                </form>
+            </div>
         )
     }
 }

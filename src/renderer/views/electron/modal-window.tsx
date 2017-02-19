@@ -5,6 +5,11 @@ import * as path from 'path'
 import * as URL from 'url'
 import * as qs from 'querystring'
 import {remote} from 'electron'
+import * as classnames from 'classnames'
+
+import Portal from '../../utils/portal'
+
+import * as s from './modal-window.styl'
 
 const appPath = remote.app.getAppPath()
 const buildUrl = (filepath: string, query: Object) => {
@@ -21,6 +26,7 @@ export interface ModalWindowProps {
     url?: string,
     width?: number,
     height?: number,
+    closable?: boolean,
     query?: {[name: string]: string|number},
     onHide?: () => any,
     onResponse?: (param: {[name: string]: string|number}) => any,
@@ -35,6 +41,7 @@ export default class WindowComponent extends React.Component<ModalWindowProps, a
         width: PropTypes.number,
         height: PropTypes.number,
         query: PropTypes.object,
+        closable: PropTypes.bool,
         onHide: PropTypes.func,
         onResponse: PropTypes.func,
     }
@@ -42,6 +49,7 @@ export default class WindowComponent extends React.Component<ModalWindowProps, a
     static defaultProps = {
         show: false,
         url: 'about:blank',
+        closable: true,
     }
 
     window: Electron.BrowserWindow
@@ -50,63 +58,70 @@ export default class WindowComponent extends React.Component<ModalWindowProps, a
     {
         super(props, context)
 
-        this.window = new remote.BrowserWindow({
-            parent: remote.getCurrentWindow(),
-            modal: true,
-            show: this.props.show,
-            frame: true,
-            // minimizable: false,
-            // maximizable: false,
-            resizable: false,
-            // useContentSize: true,
-            width: this.props.width,
-            height: this.props.height,
-        })
-
         this.state = {
-            previousQuery: this.props.query,
+            show: this.props.show
         }
-
-        this.window.on('hide', () => {
-            this.props && this.props.onHide!()
-        })
-
-        this.window.webContents.on('will-navigate', (e, url) => {
-            const res = qs.parse(URL.parse(url).query)
-            this.props.onResponse && this.props.onResponse!(res)
-            e.preventDefault()
-        })
-
-        this.window.loadURL(buildUrl(this.props.url, this.props.query))
     }
 
     componentDidMount()
     {
     }
 
-    shouldComponentUpdate(nextProps: ModalWindowProps, nextState: any)
-    {
-        return this.props.url !== nextProps.url
-            || this.props.query !== nextProps.query
-            || this.props.show !== nextProps.show
-    }
-
-    componentWillUpdate(nextProps: ModalWindowProps, nextState: any)
-    {
-        if (this.props.show !== nextProps.show) {
-            nextProps.show ? this.window.show() : this.window.hide()
-        }
-    }
-
     componentWillUnmount()
     {
-        this.window.destroy()
+        // this.window.destroy()
     }
 
-    render() {
-        this.window.loadURL(buildUrl(this.props.url || "", this.props.query))
-        this.props.show ? this.window.show() : this.window.hide()
-        // this.props.url !== this.window.webContents.getURL() && this.window.loadURL(buildUrl(this.props.url))
-        return null
+    render()
+    {
+        const {children, url, width, height} = this.props
+        const {show} = this.state
+
+        console.log('state:', show)
+
+        return (
+            <div className={classnames(s.root, {[s['--show']]: show})}>
+                {children ? children : <webview className={s.webview} src={url} autosize='on' style={{width, height}} />}
+            </div>
+        )
     }
 }
+
+export class Modal {
+    private portal: Portal|null
+    private modalView: WindowComponent|null
+
+    constructor()
+    {
+        this.portal = new Portal()
+    }
+
+    mount(element: JSX.Element)
+    {
+        this.modalView = this.portal!.mount(<WindowComponent show={false}>{element}</WindowComponent>) as WindowComponent
+    }
+
+    dispose()
+    {
+        this.portal!.unmount()
+        this.portal = null
+        this.modalView = null
+    }
+
+    show()
+    {
+        this.modalView!.setState({show: true})
+    }
+
+    hide()
+    {
+        this.modalView!.setState({show: false})
+    }
+}
+
+
+export const show =  (component: JSX.Element, options: ModalWindowProps = {show: true}): Portal => {
+    return Portal.mount(<WindowComponent {...options}>{component}</WindowComponent>)
+}
+
+export const create = () => new Modal()
