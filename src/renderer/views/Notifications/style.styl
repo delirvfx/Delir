@@ -27,13 +27,19 @@
         border-radius 2px
 
     &.--info
-        background-color $color-info
+        background-color lighten($color-info, 50%)
 
         .entryTitle
-            background-color lighten($color-info, 50%)
+            background-color $color-info
+
+        .entryBody
+            color darken($color-info, 40%)
 
     &.--error
-        background-color $color-error
+        background-color lighten($color-error, 50%)
 
         .entryTitle
-            background-color lighten($color-error, 50%)
+            background-color $color-error
+
+        .entryBody
+            color darken($color-error, 40%)
