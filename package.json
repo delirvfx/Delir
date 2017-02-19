@@ -86,6 +86,7 @@
     "flac": "^0.3.0",
     "flux": "^3.1.2",
     "font-manager": "^0.2.2",
+    "form-serialize": "^0.7.1",
     "fs-promise": "^1.0.0",
     "immutable": "^3.8.1",
     "keymirror": "^0.1.1",
