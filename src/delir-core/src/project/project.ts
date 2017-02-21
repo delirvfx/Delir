@@ -1,6 +1,6 @@
 import {ProjectScheme} from './scheme/project'
 
-import {BSONPure} from 'bson'
+import {BSON} from 'bson'
 
 import Asset from './asset'
 import Composition from './composition'
@@ -9,7 +9,7 @@ export default class Project
 {
     static deserialize(projectBson: Buffer)
     {
-        const projectJson: ProjectScheme = (new BSONPure.BSON()).deserialize(projectBson) as ProjectScheme
+        const projectJson: ProjectScheme = (new BSON()).deserialize(projectBson) as ProjectScheme
 
         const project = new Project()
         const symbolIds = projectJson.symbolIds
