@@ -157,8 +157,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         const compositions = project ? Array.from(project.compositions.values()) : []
 
         return (
-            <Pane className='view-assets' allowFocus>
-                <Table className='asset-list' onDrop={this.addAsset}>
+            <Pane className={s.assetsView} allowFocus>
+                <Table className={s.assetList} onDrop={this.addAsset}>
                     <TableHeader>
                         <Row>
                             {/* <Col resizable={false} defaultWidth='2rem'></Col> */}
@@ -190,7 +190,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                         ))}
                     </TableBodySelectList>
                 </Table>
-                <Table className='composition-list'>
+                <Table className={s.compositionList}>
                     <TableHeader>
                         <Row>
                             <Col resizable={false} defaultWidth='2rem'>⛰</Col>
