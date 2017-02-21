@@ -3,7 +3,9 @@ import * as React from 'react'
 import { PropTypes } from 'react'
 import parseColor from 'parse-color'
 import serialize from 'form-serialize'
-import { ProjectHelper, ColorRGB } from 'delir-core'
+
+import * as Delir from 'delir-core'
+import {ProjectHelper, ColorRGB} from 'delir-core'
 
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
@@ -33,7 +35,16 @@ export interface AssetsViewProps {
 export interface AssetsViewState {
     newCompositionWindowOpened: boolean,
     settingCompositionWindowOpened: boolean,
-    settingCompositionQuery: {[name: string]: string|number} | null,
+    settingCompositionQuery: { [name: string]: string | number } | null,
+}
+
+type CompositionProps = {
+    name: string,
+    width: string,
+    height: string,
+    framerate: string,
+    durationSeconds: string,
+    backgroundColor: string
 }
 
 @connectToStores([EditorStateStore, ProjectModifyStore], (context, props) => ({
@@ -76,60 +87,36 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         ProjectModifyActions.modifyComposition(compId, { name: newName })
     }
 
-    openCompositionSettingWindow = compId => {
-        const { project } = this.props.app
-        if (project == null) return
+    openCompositionSetting = async (compId: string) => {
+        if (!this.props.editor.project) return
 
-        const targetComposition = ProjectHelper.findCompositionById(project, compId)
-        if (targetComposition == null) return
+        const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
 
-        this.setState({
-            settingCompositionQuery: {
-                id: targetComposition.id!,
-                name: targetComposition.name!,
-                width: targetComposition.width!,
-                height: targetComposition.height!,
-                framerate: targetComposition.framerate!,
-                durationFrames: targetComposition.durationFrames!,
-                samplingRate: targetComposition.samplingRate!,
-                audioChannels: targetComposition.audioChannels!,
-            },
-            settingCompositionWindowOpened: true,
-        })
-    }
+        const modal = Modal.create()
+        const req = (await new Promise<{[p: string]: string}|void>(resolve => {
+            modal.mount(<NewCompositionModal composition={comp} onConfirm={resolve} onCancel={resolve} />)
+            modal.show()
+        })) as CompositionProps|void
 
-    settingComoisition = (req: {
-        id:string,
-        name: string,
-        width: string,
-        height: string,
-        framerate: string,
-        durationSeconds: string
-    }) => {
-        this.setState({
-            settingCompositionQuery: null,
-            settingCompositionWindowOpened: false,
-        })
+        modal.dispose()
 
-        ProjectModifyActions.modifyComposition(req.id, req)
+        if (!req) {
+            return
+        }
+
+        const bgColor = parseColor(req.backgroundColor)
+        ProjectModifyActions.modifyComposition(compId, Object.assign(req, {
+            backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2])
+        }))
     }
 
     openNewCompositionWindow =  async () =>
     {
-        type CreateRequest = {
-            name: string,
-            width: string,
-            height: string,
-            framerate: string,
-            durationSeconds: string,
-            backgroundColor: string
-        }
-
-        let modal = Modal.create()
+        const modal = Modal.create()
         const req = (await new Promise<{[p: string]: string}|void>(resolve => {
             modal.mount(<NewCompositionModal onConfirm={resolve} onCancel={resolve} />)
             modal.show()
-        })) as CreateRequest|void
+        })) as CompositionProps|void
 
         modal.dispose()
 
@@ -171,14 +158,6 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         return (
             <Pane className='view-assets' allowFocus>
-                <SettingCompositionWindow
-                    show={this.state.settingCompositionWindowOpened}
-                    width={400}
-                    height={350}
-                    query={this.state.settingCompositionQuery!}
-                    onHide={this.makeNewComposition}
-                    onResponse={this.settingComoisition}
-                />
                 <Table className='asset-list' onDrop={this.addAsset}>
                     <TableHeader>
                         <Row>
@@ -221,16 +200,16 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     <TableBodySelectList onSelectionChanged={() => {}}>
                         <ContextMenu>
                             <MenuItem type='separator' />
-                            <MenuItem label='New Compositon' onClick={() => { this.setState({newCompositionWindowOpened: true}) }} />
+                            <MenuItem label='New Compositon' onClick={this.openNewCompositionWindow} />
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
                             <Row key={comp.id} onDoubleClick={this.changeComposition.bind(this, comp.id)}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label='Rename' onClick={() => { this.refs[`comp_name_input#${comp.id}`].enableAndFocus()}} />
-                                    <MenuItem label='Remove it' onClick={() => {}}/>
-                                    <MenuItem label='Composition setting' onClick={this.openCompositionSettingWindow.bind(null, comp.id)}/>
+                                    <MenuItem label='Rename' onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
+                                    <MenuItem label='Remove it' onClick={() => {}} />
+                                    <MenuItem label='Composition setting' onClick={this.openCompositionSetting.bind(null, comp.id)} />
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
@@ -254,9 +233,17 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
 
 class NewCompositionModal extends React.PureComponent<{
+    composition?: Delir.Project.Composition,
     onConfirm: (opts: {[props: string]: string}) => void,
     onCancel: () => void
-}, any> {
+}, any>
+{
+    static propTypes = {
+        composition: PropTypes.object,
+        onConfirm: PropTypes.func.isRequired,
+        onCancel: PropTypes.func.isRequired,
+    }
+
     onConfirm = () =>
     {
         const opts = serialize((this.refs.form as HTMLFormElement), {hash: true})
@@ -271,6 +258,20 @@ class NewCompositionModal extends React.PureComponent<{
 
     render()
     {
+        const {composition: comp} = this.props
+
+        const toRGBHash = ({r, g, b}: Delir.ColorRGB) => '#' + [r, g, b].map(c => c.toString(16)).join('')
+        const values: {[prop: string]: any} = {
+            name: comp ? comp.name : 'New Composition',
+            width: comp ? comp.width : 1,
+            height: comp ? comp.height : 1,
+            backgroundColor: comp ? toRGBHash(comp.backgroundColor) : '#fff',
+            framerate: comp ? comp.framerate : 30,
+            duration: comp ? comp.durationFrames / comp.framerate : 10,
+            samplingRate: comp ? comp.samplingRate : 48000,
+            audioChannels: comp ? comp.audioChannels : 2,
+        }
+
         return (
             <div className={s.newCompModalRoot}>
                 <form ref='form' className={FormStyle.formHorizontal}>
@@ -278,7 +279,7 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">Composition name:</label>
                         <div className="input">
                             <div className='formControl'>
-                                <input name="name" type="text" value="New Composition" required="required" autofocus="autofocus" />
+                                <input name="name" type="text" defaultValue={values.name} required autoFocus />
                             </div>
                         </div>
                     </div>
@@ -286,7 +287,7 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">width:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="width" type="number" min="1" required="required" />
+                                <input name="width" type="number" min="1" defaultValue={values.width} required />
                             </div><span className="unit">px</span>
                         </div>
                     </div>
@@ -294,7 +295,7 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">height:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="height" type="number" min="1" required="required" />
+                                <input name="height" type="number" min="1" defaultValue={values.height} required />
                             </div><span className="unit">px</span>
                         </div>
                     </div>
@@ -302,7 +303,7 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">background color:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="backgroundColor" type="color" required="required" />
+                                <input name="backgroundColor" type="color" defaultValue={values.backgroundColor} required />
                             </div><span className="unit">px</span>
                         </div>
                     </div>
@@ -310,7 +311,7 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">framerate:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="framerate" type="number" min="1" value="30" required="required" />
+                                <input name="framerate" type="number" min="1" defaultValue={values.framerate} required />
                             </div><span className="unit">fps</span>
                         </div>
                     </div>
@@ -318,7 +319,7 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">duration(sec):</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="samplingRate" type="number" min="1" value="30" required="required" />
+                                <input name="samplingRate" type="number" min="1" value="30" defaultValue={values.duration} required />
                             </div><span className="unit">s</span>
                         </div>
                     </div>
@@ -326,8 +327,8 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">Sampling rate:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <select name="samplingRate" required="required">
-                                    <option value="48000" selected="selected">48000</option>
+                                <select name="samplingRate" defaultValue={values.samplingRate} required>
+                                    <option value="48000">48000</option>
                                     <option value="41000">41000</option>
                                 </select>
                             </div><span className="unit">Hz</span>
@@ -337,8 +338,8 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">Channels:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <select name="audioChannels" required="required">
-                                    <option value="2" selected="selected">Stereo (2ch)</option>
+                                <select name="audioChannels" defaultValue={values.audioChannels} required>
+                                    <option value="2">Stereo (2ch)</option>
                                     <option value="1">Mono (1ch)</option>
                                 </select>
                             </div>
@@ -346,8 +347,8 @@ class NewCompositionModal extends React.PureComponent<{
                     </div>
 
                     <div className={s.modalFooter}>
-                        <button id="cancel" className="button" type='button' onClick={this.onCancel}>Cancel</button>
-                        <button className="button primary" type='button' onClick={this.onConfirm}>Create</button>
+                        <button id="cancel" className="button" type='button' onClick={this.onCancel}>キャンセル</button>
+                        <button className="button primary" type='button' onClick={this.onConfirm}>{comp ? '適用' : '作成'}</button>
                     </div>
                 </form>
             </div>

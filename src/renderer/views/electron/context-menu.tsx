@@ -121,8 +121,6 @@ class ContextMenuManager
             this.activeMenu = null
         }
 
-        console.log(menus.items)
-
         this.activeMenu = Portal.mount(
             <div
                 className={s.root}

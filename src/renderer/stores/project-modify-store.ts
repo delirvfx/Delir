@@ -94,7 +94,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 break
 
             case ProjectModifyDispatchTypes.ModifyComposition:
-                ProjectHelper.modifyLayer(project!, payload.entity.targetCompositionId, payload.entity.patch)
+                ProjectHelper.modifyComposition(project!, payload.entity.targetCompositionId, payload.entity.patch)
                 break
 
             case ProjectModifyDispatchTypes.ModifyLayer:

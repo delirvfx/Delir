@@ -52,12 +52,13 @@ export default {
     //
 
     // @deprecated
-    createComposition({name, width, height, framerate, durationFrames}: {
+    createComposition({name, width, height, framerate, durationFrames, backgroundColor}: {
         name: string,
         width: number,
         height: number,
         framerate: number,
         durationFrames: number,
+        backgroundColor: Delir.ColorRGB
     })
     {
         const composition = new Delir.Project.Composition
@@ -66,6 +67,7 @@ export default {
         composition.height = height
         composition.framerate = framerate
         composition.durationFrames = durationFrames
+        composition.backgroundColor = backgroundColor
 
         dispatcher.dispatch(new Payload(DispatchTypes.CreateComposition,　{composition}))
     },
