@@ -26,6 +26,18 @@ declare module 'tooloud' {
     export default _
 }
 
+// newer or exclusive API declarations
+declare interface PointerEvent {
+    path: EventTarget[]
+}
+
+declare interface Window {
+    requestIdleCallback: (
+        callback: (e: {timeRemaining: number, didTimeout: boolean}) => void,
+        options?: {timeout: number}
+    ) => void
+}
+
 // Delir frontend deps
 declare const __DEV__: boolean
 
@@ -54,6 +66,23 @@ declare module 'parse-color' {
     }
 }
 
+declare module 'form-serialize' {
+    interface SerializeOption {
+        /** if true, the hash serializer will be used for serializer option */
+        hash?: boolean
+        /** override the default serializer (hash or url-encoding) */
+        serializer?: Function
+        /** if true, disabled fields will also be serialized */
+        disabled?: boolean
+        /** if true, empty fields will also be serialized */
+        empty?: boolean
+    }
+
+    export default function serialize(form: HTMLFormElement, options?: SerializeOption): {[name: string]: string|string[]}|string
+    export default function serialize(form: HTMLFormElement, options?: SerializeOption & {hash:true}): {[name: string]: string|string[]}
+}
+
+// Delir exposed variables
 declare interface Window {
     app: {
         stores: {[storeName: string]: any}
