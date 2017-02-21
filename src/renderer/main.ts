@@ -67,16 +67,15 @@ window.addEventListener('DOMContentLoaded', async () => {
         const project = require('./devel/example-project/ExampleProject1').default
         EditorStateActions.setActiveProject(project);
 
-        EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 Hello, welcome to Delir', 'info')
-        EditorStateActions.notify('Must be select any composition before add assets to timeline', 'Woops', 'error', 1000)
+        EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 <DEV MODE> Hello, welcome to Delir', 'info')
     }
 
     process.on('uncaughtException', (e: Error) => {
-         EditorStateActions.notify(e.message, '😱Uncaught Exception😱', 'error', void 0, e.stack)
+         EditorStateActions.notify(e.message, '😱Uncaught Exception😱', 'error', 5000, e.stack)
     })
 
     process.on('uncaughtRejection', (e: Error) => {
-         EditorStateActions.notify(e.message, '😱Uncaught Rejection😱', 'error', void 0, e.stack)
+         EditorStateActions.notify(e.message, '😱Uncaught Rejection😱', 'error', 5000, e.stack)
     })
 
     RendererService.renderer.setDestinationCanvas(document.querySelector('canvas'))
