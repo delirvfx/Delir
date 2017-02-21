@@ -1,22 +1,29 @@
 import * as React from 'react'
 import {PropTypes} from 'react'
 import * as Delir from 'delir-core'
+import cancelEvent from '../../utils/cancelEvent'
 
 import {ContextMenu, MenuItem} from '../electron/context-menu'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
+
+import s from './Clip.styl'
 
 interface TimelaneLayerProps {
     layer: Delir.Project.Layer,
     left: number,
     width: number,
     onChangePlace: (draggedPx: number) => any,
+    onChangeDuration: (displayWidth: number) => any,
 }
 
 interface TimelaneLayerState {
-    draggedPxX: number,
-    dragStartPosition: {clientX: number, clientY: number}|null,
+    draggedPxX: number
+    dragStartPosition: {clientX: number, clientY: number}|null
     dragStyle: {[prop: string]: string}|null
+
+    resizeStartPosition: {clientX: number}|null
+    resizeMovedX: number
 }
 
 export default class TimelaneLayer extends React.Component<TimelaneLayerProps, TimelaneLayerState>
@@ -26,6 +33,7 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
         left: PropTypes.number.isRequired,
         width: PropTypes.number.isRequired,
         onChangePlace: PropTypes.func.isRequired,
+        onChangeDuration: PropTypes.func.isRequired,
     }
 
     constructor()
@@ -36,6 +44,9 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
             draggedPxX: 0,
             dragStartPosition: null,
             dragStyle: {transform: 'translateX(0)'},
+
+            resizeStartPosition: null,
+            resizeMovedX: 0,
         }
     }
 
@@ -84,15 +95,52 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
         ProjectModifyActions.removeLayer(layerId)
     }
 
+    resizeStart = (e: React.MouseEvent<HTMLDivElement>) =>
+    {
+        console.log('resize start')
+
+        this.setState({
+            resizeStartPosition: {clientX: e.clientX},
+        })
+
+        e.stopPropagation()
+    }
+
+    resizeMove = (e: React.MouseEvent<HTMLDivElement>) =>
+    {
+        const {resizeStartPosition} = this.state
+        console.log('resizing', resizeStartPosition)
+        if (!resizeStartPosition) return
+
+        this.setState({
+            resizeMovedX: e.clientX - resizeStartPosition.clientX,
+        })
+
+        e.stopPropagation()
+    }
+
+    resizeEnd = (e: React.MouseEvent<HTMLDivElement>) =>
+    {
+        const newWidth = this.props.width + this.state.resizeMovedX
+
+        this.setState({
+            resizeStartPosition: null,
+            resizeMovedX: 0,
+        })
+
+        this.props.onChangeDuration(newWidth)
+        e.stopPropagation()
+    }
+
     render()
     {
         const {layer} = this.props
 
         return (
-            <div className='timerange-bar'
+            <div className={s.clip}
                 style={{
                     left: this.props.left,
-                    width: this.props.width,
+                    width: this.props.width + this.state.resizeMovedX,
                     ...this.state.dragStyle,
                 }}
                 draggable={true}
@@ -108,6 +156,13 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
                     <MenuItem type='separator' />
                 </ContextMenu>
                 <span>#{layer.id.substring(0, 4)}</span>
+                <div
+                    className={s.resizeHandle}
+                    draggable
+                    onDragStart={this.resizeStart}
+                    onDrag={this.resizeMove}
+                    onDragEnd={this.resizeEnd}
+                />
             </div>
         )
     }

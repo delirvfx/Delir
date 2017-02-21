@@ -13,7 +13,7 @@ import connectToStores from '../../utils/connectToStores'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 import cancelEvent from '../../utils/cancelEvent'
 
-import TimelaneLayer from './_TimelaneLayer'
+import Clip from './_Clip'
 import LaneKeyframes from '../timeline/lane-keyframes'
 
 interface TimelaneLayerListProps {
@@ -164,7 +164,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
                         })
 
                         return (
-                            <TimelaneLayer
+                            <Clip
                                 key={layer.id!}
                                 layer={layer}
                                 width={width}
