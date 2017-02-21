@@ -52,23 +52,19 @@ export default {
     //
 
     // @deprecated
-    createComposition({name, width, height, framerate, durationFrames, backgroundColor}: {
+    createComposition(options: {
         name: string,
         width: number,
         height: number,
         framerate: number,
         durationFrames: number,
-        backgroundColor: Delir.ColorRGB
+        backgroundColor: Delir.ColorRGB,
+        samplingRate: number,
+        audioChannels: number,
     })
     {
         const composition = new Delir.Project.Composition
-        composition.name = name
-        composition.width = width
-        composition.height = height
-        composition.framerate = framerate
-        composition.durationFrames = durationFrames
-        composition.backgroundColor = backgroundColor
-
+        Object.assign(composition, options)
         dispatcher.dispatch(new Payload(DispatchTypes.CreateComposition,　{composition}))
     },
 

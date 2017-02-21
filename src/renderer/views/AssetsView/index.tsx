@@ -44,7 +44,9 @@ type CompositionProps = {
     height: string,
     framerate: string,
     durationSeconds: string,
-    backgroundColor: string
+    backgroundColor: string,
+    samplingRate: string,
+    audioChannels: string,
 }
 
 @connectToStores([EditorStateStore, ProjectModifyStore], (context, props) => ({
@@ -106,6 +108,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         const bgColor = parseColor(req.backgroundColor)
         ProjectModifyActions.modifyComposition(compId, Object.assign(req, {
+            durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
             backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2])
         }))
     }
@@ -133,6 +136,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
             framerate: +req.framerate,
             durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
             backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
+            samplingRate: +req.samplingRate,
+            audioChannels: +req.audioChannels,
         })
     }
 
@@ -267,7 +272,7 @@ class NewCompositionModal extends React.PureComponent<{
             height: comp ? comp.height : 1,
             backgroundColor: comp ? toRGBHash(comp.backgroundColor) : '#fff',
             framerate: comp ? comp.framerate : 30,
-            duration: comp ? comp.durationFrames / comp.framerate : 10,
+            durationSeconds: comp ? comp.durationFrames / comp.framerate : 10,
             samplingRate: comp ? comp.samplingRate : 48000,
             audioChannels: comp ? comp.audioChannels : 2,
         }
@@ -319,7 +324,7 @@ class NewCompositionModal extends React.PureComponent<{
                         <label className="label">duration(sec):</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="samplingRate" type="number" min="1" value="30" defaultValue={values.duration} required />
+                                <input name="durationSeconds" type="number" min="1" value="30" defaultValue={values.durationSeconds} required />
                             </div><span className="unit">s</span>
                         </div>
                     </div>
