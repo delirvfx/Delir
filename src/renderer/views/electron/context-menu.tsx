@@ -93,7 +93,7 @@ class ContextMenuManager
         window.addEventListener('contextmenu', e => {
             setTimeout(() => {
                 const menus = buildMenu(e.path, this.menus)
-                this.show(menus, e)
+                menus.items.length && this.show(menus, e)
             })
 
             e.preventDefault()
