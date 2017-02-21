@@ -1,9 +1,14 @@
 import * as Delir from 'delir-core'
 import keyMirror from 'keymirror'
 import * as _ from 'lodash'
+import {remote} from 'electron'
+import {BSON} from 'bson'
+import * as fs from 'fs-promise'
 
 import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
+
+import EditorStateStore from '../stores/editor-state-store'
 
 export type DragEntity =
     {type: 'asset', asset: Delir.Project.Asset}
@@ -33,7 +38,7 @@ export const DispatchTypes = keyMirror({
     RemoveMessage: null,
 })
 
-export default {
+const actions = {
     //
     // App services
     //
@@ -107,4 +112,31 @@ export default {
     {
         dispatcher.dispatch(new Payload(DispatchTypes.UpdateProcessingState,　{stateText}))
     },
+
+    // Exporting
+    async saveProject()
+    {
+        const project = EditorStateStore.getState().get('project')
+
+        if (! project) return
+
+        const path = remote.dialog.showSaveDialog({
+            title: 'Save as ...',
+            buttonLabel: 'Save',
+            filters: [
+                {
+                    name: 'Delir Project File',
+                    extensions: ['delir']
+                }
+            ],
+        })
+
+        if (!path) return
+
+        const bson = new BSON
+        await fs.writeFile(path, bson.serialize(project.toPreBSON()))
+        actions.notify('Project saved', '', 'info', 1000)
+    }
 }
+
+export default actions

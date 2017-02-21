@@ -3,6 +3,7 @@ import * as React from 'react'
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 
+import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
 import PreviewView from '../preview-view'
 import TimelaneView from '../TimelaneView'
@@ -28,6 +29,7 @@ export default class AppView extends React.Component<null, null>
     {
         return (
             <div className='_container' onDrop={this.prevent}>
+                <AppMenu />
                 <NavigationView />
                 <Workspace className='app-body' direction='vertical'>
                     <Pane className='body-pane'>

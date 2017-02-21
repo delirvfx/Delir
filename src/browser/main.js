@@ -68,10 +68,6 @@ const install = async () => {
     })
 
     const run = () => {
-        Menu.setApplicationMenu(
-            Menu.buildFromTemplate(require('./menus/darwin').default)
-        )
-
         const window = new BrowserWindow({
             // frame: false,
             titleBarStyle: 'hidden',
