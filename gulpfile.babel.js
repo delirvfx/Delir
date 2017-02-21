@@ -135,27 +135,28 @@ export function compileRendererJs(done) {
                     test: /\.jsx?$/,
                     loader: "babel-loader",
                     exclude: /node_modules/,
-                    query: JSON.parse(fs.readFileSync('./.babelrc')),
                 },
                 {
                     test: /\.tsx?$/,
-                    exclude: /node_modules|\.jsx?$/,
+                    exclude: [join(__dirname, './src/plugins'), /node_modules|\.jsx?$/],
                     use: [
                         {loader: 'ts-loader', options: {
                             useBabel: true,
                             configFileName: join(__dirname, './tsconfig.json'),
                         }},
-                    ]
+                    ],
                 },
                 {
                     // loader for Delir plugins
                     test: /\.tsx?$/,
-                    loader: 'awesome-typescript-loader',
                     include: [join(__dirname, './src/plugins')],
                     exclude: /node_modules|\.jsx?$/,
-                    query: {
-                        configFileName: join(__dirname, './tsconfig.json'),
-                        useBabel: true,
+                    use: {
+                        loader: 'awesome-typescript-loader',
+                        options: {
+                            configFileName: join(__dirname, './tsconfig.json'),
+                            useBabel: true,
+                        },
                     },
                 },
                 {
@@ -172,7 +173,7 @@ export function compileRendererJs(done) {
                                 localIdentName: DELIR_ENV === 'dev'
                                     ? '[path][name]__[local]--[emoji:4]'
                                     : '[local]--[hash:base64:5]',
-                            }
+                            },
                         },
                         {
                             loader: 'stylus-loader'
@@ -194,7 +195,6 @@ export function compileRendererJs(done) {
                 }
             }),
             new webpack.optimize.AggressiveMergingPlugin,
-            new webpack.optimize.DedupePlugin,
             ...(DELIR_ENV === 'dev' ? [] : [
                 new webpack.optimize.UglifyJsPlugin,
             ])
