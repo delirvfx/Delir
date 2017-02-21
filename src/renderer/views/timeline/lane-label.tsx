@@ -1,52 +1,40 @@
-import React, {PropTypes} from 'React'
-import classnames from 'classnames'
+import * as React from 'react'
+import {PropTypes} from 'React'
+import * as classnames from 'classnames'
+import * as Delir from 'delir-core'
+import connectToStores from '../../utils/connectToStores'
 
 import RendererService from '../../services/renderer'
-import EditorStateStore from '../../stores/editor-state-store'
+import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 
 import LabelInput from '../components/label-input'
 import {ContextMenu, MenuItem} from '../electron/context-menu'
 import LaneLabelProps from './lane-label-props'
 
-export default class LaneLabel extends React.Component
+interface LaneLabelProps {
+    editor: EditorState
+    timelane: Delir.Project.Timelane
+    onSelect: () => any
+    onRemove: () => any
+}
+
+@connectToStores([EditorStateStore], () => ({
+    editor: EditorStateStore.getState(),
+}))
+export default class LaneLabel extends React.Component<LaneLabelProps>
 {
     static propTypes = {
+        editor: PropTypes.object.isRequired,
         timelane: PropTypes.object.isRequired,
         onSelect: PropTypes.func.isRequired,
         onRemove: PropTypes.func.isRequired,
     }
 
-    constructor(...args)
-    {
-        super(...args)
-
-        this.state = {
-            editorState: EditorStateStore.getState(),
-        }
-
-        this.removers = [
-            EditorStateStore.addListener(() => {
-                this.setState(EditorStateStore.getState())
-            }),
-        ]
-    }
-
-    componetWillUnmount()
-    {
-        this.removers.forEach(remover => remover.remove())
-    }
-
     render()
     {
-        const {
-            timelane,
-            onSelect,
-            onRemove,
-        } = this.props
-
-        const {activeLayer} = this.state
+        const {timelane, editor: {activeLayer}, onSelect, onRemove} = this.props
         const layers = Array.from(timelane.layers.values())
-        const propTypes = activeLayer ? RendererService.pluginRegistry.getPluginParametersById(activeLayer.renderer) : []
+        const propTypes = activeLayer ? RendererService.pluginRegistry!.getParametersById(activeLayer.renderer) : []
         const hasActiveLayer = layers.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1
 
         return (
@@ -57,13 +45,12 @@ export default class LaneLabel extends React.Component
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label='複製' onClick={() => {}} />
+                    {/*<MenuItem label='複製' onClick={() => {}} />*/}
                     <MenuItem label='削除' onClick={onRemove.bind(null, timelane.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
 
                 <li className='timeline_lane-label_col --col-name' onClick={onSelect.bind(this, timelane.id)}>
-                    {/* {this.state.selectedLaneId === timelane.id && '*'} */}
                     <LabelInput defaultValue={timelane.name} placeholder='TimeLane' />
                 </li>
                 <li className='timeline_lane-label_col --col-visibility'>
