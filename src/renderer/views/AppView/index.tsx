@@ -7,7 +7,7 @@ import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
 import PreviewView from '../preview-view'
 import TimelaneView from '../TimelaneView'
-import NavigationView from '../navigation-view'
+import NavigationView from '../NavigationView'
 import StatusView from '../status-view'
 import Notifications from '../Notifications'
 
