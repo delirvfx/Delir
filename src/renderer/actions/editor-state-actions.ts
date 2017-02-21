@@ -14,7 +14,8 @@ export type DragEntity =
     {type: 'asset', asset: Delir.Project.Asset}
     | {type: 'layer', layer: Delir.Project.Layer}
 
-export type SetActiveProjectPayload = Payload<'SetActiveProject', {project: Delir.Project.Project}>
+export type SetActiveProjectPayload = Payload<'SetActiveProject', {project: Delir.Project.Project, path?: string}>
+export type ClearActiveProjectPayload = Payload<'ClearActiveProject', null>
 export type SetDragEntityPayload = Payload<'SetDragEntity', DragEntity>
 export type ClearDragEntityPayload = Payload<'ClearDragEntity', {}>
 export type ChangeActiveCompositionPayload = Payload<'ChangeActiveComposition', {compositionId: string}>
@@ -27,6 +28,7 @@ export type RemoveMessagePayload = Payload<'RemoveMessage', {id: string}>
 
 export const DispatchTypes = keyMirror({
     SetActiveProject: null,
+    ClearActiveProject: null,
     SetDragEntity: null,
     ClearDragEntity: null,
     ChangeActiveComposition: null,
@@ -57,9 +59,9 @@ const actions = {
     //
     // Editor Store
     //
-    setActiveProject(project: Delir.Project.Project)
+    setActiveProject(project: Delir.Project.Project, path?: string)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.SetActiveProject, {project}))
+        dispatcher.dispatch(new Payload(DispatchTypes.SetActiveProject, {project, path}))
     },
 
     setDragEntity(entity: DragEntity)
@@ -113,7 +115,65 @@ const actions = {
         dispatcher.dispatch(new Payload(DispatchTypes.UpdateProcessingState,　{stateText}))
     },
 
-    // Exporting
+    //
+    // Import & Export
+    //
+    newProject()
+    {
+        const project = EditorStateStore.getState().get('project')
+
+        if (project) {
+            const acceptDiscard = window.confirm('現在のプロジェクトの変更を破棄して新しいプロジェクトを開きますか？')
+            if (! acceptDiscard) {
+                return
+            }
+        }
+
+        actions.setActiveProject(new Delir.Project.Project())
+    },
+
+    async openProject()
+    {
+        const project = EditorStateStore.getState().get('project')
+
+        if (project) {
+            const acceptDiscard = window.confirm('現在のプロジェクトの変更を破棄してプロジェクトを開きますか？')
+            if (! acceptDiscard) {
+                return
+            }
+        }
+
+        const path = remote.dialog.showOpenDialog({
+            title: 'プロジェクトを開く',
+            filters: [{name: 'Delir project', extensions: ['delir']}],
+            properties: ['openFile'],
+        })
+
+        if (! path.length) return
+
+        const bson = new BSON
+        const projectBson = await fs.readFile(path[0])
+        actions.setActiveProject(Delir.Project.Project.deserialize(projectBson), path[0])
+    },
+
+    async overwriteProject()
+    {
+        const state = EditorStateStore.getState()
+        const project = state.get('project')
+        const path = state.get('projectPath')
+
+        if (!project) return
+
+        if (!path) {
+            actions.saveProject()
+            return
+        }
+
+        const bson = new BSON
+        await fs.writeFile(path, bson.serialize(project.toPreBSON()))
+        actions.notify('Project saved', '', 'info', 1000)
+    },
+
     async saveProject()
     {
         const project = EditorStateStore.getState().get('project')
@@ -135,6 +195,7 @@ const actions = {
 
         const bson = new BSON
         await fs.writeFile(path, bson.serialize(project.toPreBSON()))
+        actions.setActiveProject(project, path) // update path
         actions.notify('Project saved', '', 'info', 1000)
     }
 }

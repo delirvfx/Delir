@@ -43,6 +43,9 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
             case EditorStateDispatchTypes.SetActiveProject:
                 return state.set('project', payload.entity.project)
 
+            case EditorStateDispatchTypes.ClearActiveProject:
+                return state.set('project', null)
+
             case ProjectModifyDispatchTypes.CreateComposition:
                 ProjectHelper.addComposition(project!, payload.entity.composition)
                 break

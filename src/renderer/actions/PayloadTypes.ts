@@ -1,5 +1,6 @@
 import {
     SetActiveProjectPayload,
+    ClearActiveProjectPayload,
     SetDragEntityPayload,
     ClearDragEntityPayload,
     ChangeActiveCompositionPayload,
@@ -28,6 +29,7 @@ import {
 
 export type EditorStateActionPayload =
     SetActiveProjectPayload
+    | ClearActiveProjectPayload
     | SetDragEntityPayload
     | ClearDragEntityPayload
     | ChangeActiveCompositionPayload

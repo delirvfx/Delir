@@ -3,7 +3,6 @@ import {remote, MenuItem} from 'electron'
 import EditorStateActions from '../../../actions/editor-state-actions'
 
 export default (prop, state): MenuItem[] => {
-
     return [
         {
             label: remote.app.getName(),
@@ -25,21 +24,17 @@ export default (prop, state): MenuItem[] => {
                 {
                     label: 'Open',
                     accelerator: 'CmdOrCtrl+O',
-                    click(item, focusedWindow) {
-                    }
+                    click: () => EditorStateActions.openProject()
                 },
                 {
                     label: 'New Project',
-                    enabled: false,
-                    click(item, focusedWindow) {
-                    }
+                    click: () => EditorStateActions.newProject()
                 },
                 {type: 'separator'},
                 {
                     label: 'Save',
                     accelerator: 'CmdOrCtrl+S',
-                    click(item, focusedWindow) {
-                    }
+                    click: () => EditorStateActions.overwriteProject()
                 },
                 {
                     label: 'Save as ...',
@@ -106,6 +101,7 @@ export default (prop, state): MenuItem[] => {
                 },
             ],
         },
+    ].concat(__DEV__ ? [] : [
         {
             label: 'Develop',
             submenu: [
@@ -125,5 +121,5 @@ export default (prop, state): MenuItem[] => {
                 }
             ]
         }
-    ]
+    ])
 }

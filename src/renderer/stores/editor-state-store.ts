@@ -17,6 +17,7 @@ export type NotificationEntries = Immutable.List<NotificationEntry>
 
 export interface EditorState {
     project: Delir.Project.Project|null,
+    projectPath: string|null,
     activeComp: Delir.Project.Composition|null,
     activeLayer: Delir.Project.Layer|null,
     dragEntity: DragEntity|null,
@@ -30,6 +31,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
     {
         return new Record({
             project: null,
+            projectPath: null,
             activeComp: null,
             activeLayer: null,
             dragEntity: null,
@@ -45,7 +47,13 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
         switch (payload.type) {
             case EditorStateDispatchTypes.SetActiveProject:
                 console.log('✨ Project activated', payload.entity.project)
-                return state.set('project', payload.entity.project)
+                return state
+                    .set('project', payload.entity.project)
+                    .set('projectPath', payload.entity.path)
+
+            case EditorStateDispatchTypes.ClearActiveProject:
+                __DEV__ && console.log('💥 Project deactivated')
+                return state.set('project', null)
 
             case EditorStateDispatchTypes.SetDragEntity:
                 return state.set('dragEntity', payload.entity)
