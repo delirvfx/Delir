@@ -48,6 +48,7 @@ export default class Portal {
     unmount()
     {
         ReactDOM.unmountComponentAtNode(this.root)
+        this.root.parentElement!.removeChild(this.root)
         this.mountedComponent = null
     }
 }
