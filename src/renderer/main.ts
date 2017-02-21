@@ -64,8 +64,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
 
     if (__DEV__) {
-        const p = require('./devel/example-project/ExampleProject1').default
-        EditorStateActions.setActiveProject(p)
+        const project = require('./devel/example-project/ExampleProject1').default
+        EditorStateActions.setActiveProject(project);
 
         EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 Hello, welcome to Delir', 'info')
         EditorStateActions.notify('Must be select any composition before add assets to timeline', 'Woops', 'error', 1000)
