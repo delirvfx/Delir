@@ -47,7 +47,9 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 return state.set('project', null)
 
             case ProjectModifyDispatchTypes.CreateComposition:
+                const newTimelane = new Delir.Project.Timelane()
                 ProjectHelper.addComposition(project!, payload.entity.composition)
+                ProjectHelper.addTimelane(project!, payload.entity.composition, newTimelane)
                 break
 
             case ProjectModifyDispatchTypes.CreateTimelane:
