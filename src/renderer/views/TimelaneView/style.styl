@@ -1,0 +1,161 @@
+@import '../../styles/_variables'
+
+.timelaneView
+    display flex
+    height 400px
+    flex none
+    font-size 12px
+
+    :global
+        .--col-name
+            display inline-flex
+            align-items center
+            flex 1
+            overflow hidden
+            white-space normal
+            text-overflow ellipsis
+
+        .--col-visibility
+        .--col-lock
+            display inline-flex
+            align-items center
+            width 16px
+
+        .timeline-labels-container
+            display flex
+            flex-direction column
+            width 220px
+            flex none
+            background-color $pane-background
+
+        .timeline-labels-header
+            display flex
+            width 100%
+            height 30px
+            background-color var(--caption-row-background)
+
+        .timeline-labels
+            thin-scrollbar()
+
+            display block
+            flex 1
+            overflow auto
+            padding-bottom 20px
+
+            .timeline_lane-label
+                display flex
+                flex-wrap wrap
+                width 100%
+                height 24px
+                // padding 2px
+                // padding-left 4px
+                border-bottom 1px solid rgba(#fff, .1)
+                line-height 1.6
+                vertical-align middle
+
+                &.--expand
+                    height auto
+
+                .timeline_lane-props
+                    min-width 100%
+                    background-color $pane-background
+
+                .timeline_lane-prop
+                    display flex
+                    height 24px
+                    justify-content space-between
+                    text-indent 1rem
+
+                    .timeline_lane-prop_label
+                        width 40%
+                        text-overflow ellipsis
+                        white-space nowrap
+
+                    .timeline_lane-prop_inputs
+                        flex 1
+
+                        ._drag-number-input
+                            width 4rem
+                        .separator
+                            width 1rem
+
+            .timeline_lane-label_col
+                // display table-cell
+                display inline-block
+                padding 2px 0
+
+                &:first-child
+                    padding-left 2px
+                &:last-child
+                    padding-right 2px
+
+                &.--col-name
+                    // width 100px
+                    flex 1
+                    overflow hidden
+                    white-space normal
+                    text-overflow ellipsis
+
+                &.--col-visibility
+                &.--col-lock
+                    width 16px
+
+        .timeline-container
+            display flex
+            flex-direction column
+            flex 1
+            background-color $pane-background
+
+        .timeline-gradations
+            position relative
+            width 100%
+            height 30px
+            border-bottom 1px solid #444
+
+        .timeline-playingCursor
+            position absolute
+            top 100%
+            z-index 10
+
+            border-left 1px solid #fff
+            opacity .4
+
+            &::before
+                content ''
+                position relative
+                left -5px
+                top -5px
+
+                display block
+
+                border 5px solid transparent
+                border-top-color #fff
+
+        .timeline-lane-container
+            disable-scrollbar()
+            flex 1
+            padding-bottom 20px
+            overflow auto
+
+        .timeline-lane
+            border-bottom 1px solid rgba(#fff, .1)
+
+            &.dragover
+                background-color rgba(#fff, .2)
+
+            &.--expand
+                .timeline-lane-keyframes
+                    display block
+
+        .timeline-lane-layers
+            position relative
+            display block
+            height 24px
+            padding 1px 0
+            padding-left 4px
+            overflow visible
+
+        .timeline-lane-keyframes
+            display none
+            width 100%
+            overflow hidden

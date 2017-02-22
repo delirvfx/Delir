@@ -27,6 +27,8 @@ import LaneKeyframes from '../timeline/lane-keyframes'
 
 import TimelaneLayerList from './_TimelaneLayerList'
 
+import s from './style.styl'
+
 class TimelineGradations extends React.Component
 {
     static propTypes = {
@@ -192,7 +194,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         const timelineLanes = activeComp ? Array.from(activeComp.timelanes) : []
 
         return (
-            <Pane className='view-timeline' allowFocus>
+            <Pane className={s.timelaneView} allowFocus>
                 <Workspace direction="horizontal" onDrop={this.dropAsset}>
                     {/* Timelane Panel */}
                     <Pane className='timeline-labels-container'>
