@@ -161,38 +161,6 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         return (
             <Pane className={s.assetsView} allowFocus>
-                <Table className={s.assetList} onDrop={this.addAsset}>
-                    <TableHeader>
-                        <Row>
-                            {/* <Col resizable={false} defaultWidth='2rem'></Col> */}
-                            <Col defaultWidth='10rem'>名前</Col>
-                            <Col defaultWidth='5rem'>種類</Col>
-                        </Row>
-                    </TableHeader>
-                    <TableBodySelectList>
-                        {assets.map(asset => (
-                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
-                                <ContextMenu>
-                                    <MenuItem type='separator' />
-                                    <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
-                                    <MenuItem label='Reload' onClick={() => {}} />
-                                    <MenuItem label='Remove it' onClick={() => {}}/>
-                                    <MenuItem type='separator' />
-                                </ContextMenu>
-
-                                {/*<Col></Col>*/}
-                                <Col>
-                                    <LabelInput
-                                        ref={`asset_name_input#${asset.id}`}
-                                        defaultValue={asset.name}
-                                        placeholder='Unnamed Asset'
-                                    />
-                                </Col>
-                                <Col>{asset.mimeType}</Col>
-                            </Row>
-                        ))}
-                    </TableBodySelectList>
-                </Table>
                 <Table className={s.compositionList}>
                     <TableHeader>
                         <Row>
@@ -225,6 +193,38 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                         onChange={this.modifyCompName.bind(this, comp.id)}
                                     />
                                 </Col>
+                            </Row>
+                        ))}
+                    </TableBodySelectList>
+                </Table>
+                <Table className={s.assetList} onDrop={this.addAsset}>
+                    <TableHeader>
+                        <Row>
+                            {/* <Col resizable={false} defaultWidth='2rem'></Col> */}
+                            <Col defaultWidth='10rem'>名前</Col>
+                            <Col defaultWidth='5rem'>種類</Col>
+                        </Row>
+                    </TableHeader>
+                    <TableBodySelectList>
+                        {assets.map(asset => (
+                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
+                                <ContextMenu>
+                                    <MenuItem type='separator' />
+                                    <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
+                                    <MenuItem label='Reload' onClick={() => {}} />
+                                    <MenuItem label='Remove it' onClick={() => {}}/>
+                                    <MenuItem type='separator' />
+                                </ContextMenu>
+
+                                {/*<Col></Col>*/}
+                                <Col>
+                                    <LabelInput
+                                        ref={`asset_name_input#${asset.id}`}
+                                        defaultValue={asset.name}
+                                        placeholder='Unnamed Asset'
+                                    />
+                                </Col>
+                                <Col>{asset.mimeType}</Col>
                             </Row>
                         ))}
                     </TableBodySelectList>
