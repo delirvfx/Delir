@@ -1,8 +1,9 @@
-import _ from 'lodash'
-import React, {PropTypes} from 'react'
-import classnames from 'classnames'
+import * as _ from 'lodash'
+import * as React from 'react'
+import {PropTypes, Children} from 'react'
+import * as classnames from 'classnames'
 
-export default class SelectList extends React.Component
+export default class SelectList extends React.Component<any, any>
 {
     static propTypes = {
         className: PropTypes.string,
@@ -63,7 +64,7 @@ export default class SelectList extends React.Component
 
         return (
             <div className={classnames('_select-list', this.props.className)}>
-                {this.props.children && children.map((child, idx) => (
+                {this.props.children && Children.map(children, (child, idx) => (
                     <div
                         key={idx}
                         className={classnames('select-list-item', {'selected': this.state.selected.includes(idx)})}

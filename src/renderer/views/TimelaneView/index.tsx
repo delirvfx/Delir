@@ -245,7 +245,6 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                             timelane={timelane}
                                             framerate={framerate}
                                             scale={this.state.scale}
-                                            activeLayer={activeLayer}
                                         />
                                     ))}
                                 </ul>

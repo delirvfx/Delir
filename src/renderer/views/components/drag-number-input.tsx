@@ -1,12 +1,24 @@
-// @flow
+import * as React from 'react'
+import {PropTypes} from 'react'
+import * as classnames from 'classnames'
 
-import React, {PropTypes} from 'react'
-import classnames from 'classnames'
+interface DragNumberInputProps {
+    className?: string
+    min?: number
+    max?: number
+    name?: string
+    defaultValue?: string|number
+    disabled?: boolean
+    allowFloat?: boolean
+    onChange?: (value: number) => any
+    doubleClickToEdit?: boolean
+}
 
-export default class DragNumberInput extends React.Component
+export default class DragNumberInput extends React.Component<DragNumberInputProps, any>
 {
     static propTypes = {
         className: PropTypes.string,
+        data: PropTypes.object,
         min: PropTypes.number,
         max: PropTypes.number,
         name: PropTypes.string,
@@ -23,23 +35,14 @@ export default class DragNumberInput extends React.Component
         doubleClickToEdit: false,
     }
 
-    state: Object
-
-    constructor(...args)
-    {
-        super(...args)
-
-        this.state = {
-            readOnly: false,
-            value: this.props.defaultValue,
-            dummyImage: document.createElement('img'),
-        }
-
-        this.state.dummyImage.src = 'images/empty.png'
+    state = {
+        readOnly: false,
+        value: this.props.defaultValue,
     }
 
     componentDidMount()
     {
+        console.log(this.props.data)
         this.refs.input.onpointerlockerror = e => console.error(e)
     }
 
@@ -80,7 +83,7 @@ export default class DragNumberInput extends React.Component
         // e.dataTransfer.setDragImage(this.state.dummyImage, 0, 0)
     }
 
-    onMouseMove = ({nativeEvent: e}: MouseEvent) =>
+    onMouseMove = ({nativeEvent: e}: React.MouseEvent<HTMLSpanElement>) =>
     {
         if (e.which !== 1) return // not mouse left pressed
 
@@ -119,6 +122,7 @@ export default class DragNumberInput extends React.Component
                 ref='input'
                 type='text'
                 tabIndex='-1'
+                data={this.props.dataset}
                 className={classnames('_drag-number-input', this.props.className)}
                 placeholder={this.props.placeholder}
                 readOnly={this.state.readOnly}

@@ -43,7 +43,7 @@ declare const __DEV__: boolean
 
 declare module '*.styl' {
     const _ : {[className: string]: string}
-    export = _
+    export default _
 }
 
 declare module 'devtron' {
