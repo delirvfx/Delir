@@ -3,8 +3,7 @@ import * as React from 'react'
 import {Component, PropTypes} from 'react'
 import * as classnames from 'classnames'
 
-export interface WorkspaceProps {
-    children: React.ComponentElement<any, any>,
+export interface WorkspaceProps extends React.DOMAttributes<HTMLDivElement> {
     className?: string,
     acceptPaneDragIn?: boolean,
     direction: 'vertical'|'horizontal'
