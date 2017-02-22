@@ -24,7 +24,7 @@ import SelectList from '../components/select-list'
 
 import LaneLabel from '../timeline/lane-label'
 import LaneKeyframes from '../timeline/lane-keyframes'
-
+import KeyframeView from '../KeyframeView'
 import TimelaneLayerList from './_TimelaneLayerList'
 
 import s from './style.styl'
@@ -195,58 +195,65 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
         return (
             <Pane className={s.timelaneView} allowFocus>
-                <Workspace direction="horizontal" onDrop={this.dropAsset}>
-                    {/* Timelane Panel */}
-                    <Pane className='timeline-labels-container'>
-                        <div className='timeline-labels-header'>
-                            <div className='--col-name'>Lanes</div>
-                            <span>x {scale}</span>
-                            {/*
-                                <div className='--col-visibility'>Label</div>
-                                <div className='--col-lock'>Label</div>
-                            */}
-                        </div>
+                <Workspace direction='vertical'>
+                    <Pane>
+                        <Workspace direction="horizontal" onDrop={this.dropAsset}>
+                            {/* Timelane Panel */}
+                            <Pane className='timeline-labels-container'>
+                                <div className='timeline-labels-header'>
+                                    <div className='--col-name'>Lanes</div>
+                                    <span>x {scale}</span>
+                                    {/*
+                                        <div className='--col-visibility'>Label</div>
+                                        <div className='--col-lock'>Label</div>
+                                    */}
+                                </div>
 
-                        <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
-                            <ContextMenu>
-                                <MenuItem type='separator' />
-                                <MenuItem label='Add new timelane' onClick={this.addNewTimelane} enabled={!!activeComp} />
-                                <MenuItem type='separator' />
-                            </ContextMenu>
-                            {activeComp && (
-                                <SelectList key={compId}>
-                                    {timelineLanes.map(lane => (
-                                        <LaneLabel key={lane.id} timelane={lane} onSelect={this.laneSelected} onRemove={this.removeTimelane} />)
+                                <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
+                                    <ContextMenu>
+                                        <MenuItem type='separator' />
+                                        <MenuItem label='Add new timelane' onClick={this.addNewTimelane} enabled={!!activeComp} />
+                                        <MenuItem type='separator' />
+                                    </ContextMenu>
+                                    {activeComp && (
+                                        <SelectList key={compId}>
+                                            {timelineLanes.map(lane => (
+                                                <LaneLabel key={lane.id} timelane={lane} onSelect={this.laneSelected} onRemove={this.removeTimelane} />)
+                                            )}
+                                        </SelectList>
                                     )}
-                                </SelectList>
-                            )}
-                        </div>
-                    </Pane>
-                    {/* Layer Panel */}
-                    <Pane className='timeline-container' onWheel={this.scaleTimeline}>
-                        <TimelineGradations
-                            cursorHeight={this.state.cursorHeight}
-                            framerate={framerate}
-                            scale={this.state.scale}
-                            activeProject={project}
-                        />
-
-                        <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
-                            <ContextMenu>
-                                <MenuItem type='separator' />
-                                <MenuItem label='Add new timelane' onClick={this.addNewTimelane} enabled={!!activeComp} />
-                                <MenuItem type='separator' />
-                            </ContextMenu>
-                            {activeComp && timelineLanes.map(timelane => (
-                                <TimelaneLayerList
-                                    key={timelane.id!}
-                                    timelane={timelane}
+                                </div>
+                            </Pane>
+                            {/* Layer Panel */}
+                            <Pane className='timeline-container' onWheel={this.scaleTimeline}>
+                                <TimelineGradations
+                                    cursorHeight={this.state.cursorHeight}
                                     framerate={framerate}
                                     scale={this.state.scale}
-                                    activeLayer={activeLayer}
+                                    activeProject={project}
                                 />
-                            ))}
-                        </ul>
+
+                                <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
+                                    <ContextMenu>
+                                        <MenuItem type='separator' />
+                                        <MenuItem label='Add new timelane' onClick={this.addNewTimelane} enabled={!!activeComp} />
+                                        <MenuItem type='separator' />
+                                    </ContextMenu>
+                                    {activeComp && timelineLanes.map(timelane => (
+                                        <TimelaneLayerList
+                                            key={timelane.id!}
+                                            timelane={timelane}
+                                            framerate={framerate}
+                                            scale={this.state.scale}
+                                            activeLayer={activeLayer}
+                                        />
+                                    ))}
+                                </ul>
+                            </Pane>
+                        </Workspace>
+                    </Pane>
+                    <Pane>
+                        <KeyframeView activeLayer={activeLayer} />
                     </Pane>
                 </Workspace>
             </Pane>
