@@ -21,8 +21,6 @@ import { ContextMenu, MenuItem } from '../electron/context-menu'
 
 import * as Modal from '../electron/modal-window'
 import FormStyle from '../components/Form'
-import NewCompositionWindow from '../modal-windows/new-composition-window'
-import SettingCompositionWindow from '../modal-windows/setting-composition-window'
 
 import connectToStores from '../../utils/connectToStores'
 
