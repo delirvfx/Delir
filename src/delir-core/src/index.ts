@@ -7,7 +7,7 @@ import * as Exceptions from './exceptions'
 import ColorRGB from './struct/color-rgb'
 import ColorRGBA from './struct/color-rgba'
 
-import Type, {TypeDescriptor} from './plugin/type-descriptor'
+import Type, {TypeDescriptor, AnyParameterTypeDescriptor} from './plugin/type-descriptor'
 import PluginBase from './plugin/plugin-base'
 import RenderRequest from './renderer/render-request'
 import PluginPreRenderRequest from './renderer/plugin-pre-rendering-request'
@@ -40,4 +40,7 @@ export {
 
     // import shorthand
     ProjectHelper,
+
+    // Types
+    AnyParameterTypeDescriptor,
 }
