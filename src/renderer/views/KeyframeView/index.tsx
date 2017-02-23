@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import * as React from 'react'
 import {PropTypes} from 'react'
 import * as Delir from 'delir-core'
@@ -20,6 +21,26 @@ interface KeyframeViewProps {
     editor: EditorState
 }
 
+interface ValueInputProps {
+    descriptions: Delir.AnyParameterTypeDescriptor[],
+    onChange: (value: any) => void
+}
+
+class ValueInputProxy extends React.Component<ValueInputProps, any>
+{
+    static propTypes = {
+        descriptors: PropTypes.arrayOf(
+            PropTypes.instanceOf(Delir.TypeDescriptor)
+        ),
+        onChange: PropTypes.func.isRequired
+    }
+
+    render()
+    {
+
+    }
+}
+
 // @connectToStores([EditorStateStore], () => ({
 //     editor: EditorStateStore.getState(),
 // }))
@@ -30,7 +51,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, any
 
     castValue = (desc: Delir.AnyParameterTypeDescriptor, value: string|number) =>
     {
-        console.log(value)
+
         return value
     }
 
@@ -53,54 +74,55 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, any
         }
 
         const castedValue: any = this.castValue(desc, value)
+        const newOptions = _.set(_.cloneDeep(activeLayer!.rendererOptions), propName, castedValue)
 
         ProjectModifyActions.modifyLayer(activeLayer!.id!, {
-            rendererOptions: {
-                [propName]: castedValue
-            }
+            rendererOptions: newOptions
         })
     }
 
     buildInput = (descriptor: Delir.AnyParameterTypeDescriptor, value: string|number|boolean|Delir.Project.Asset) =>
     {
-        console.log(descriptor)
+        let component
         switch (descriptor.type) {
             case 'POINT_2D':
-                return [
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
+                component = [
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.x`} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
                     <span className='separator'>,</span>,
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.y`} onChange={this.valueChanged.bind(null, descriptor.propName)} />
                 ]
             case 'POINT_3D':
-                return [
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
+                component = [
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.x`} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
                     <span className='separator'>,</span>,
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.y`} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
                     <span className='separator'>,</span>,
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.z`} onChange={this.valueChanged.bind(null, descriptor.propName)} />
                 ]
             case 'SIZE_2D':
-                return [
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
+                component = [
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.width`} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
                     <span className='separator'>x</span>,
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.height`} onChange={this.valueChanged.bind(null, descriptor.propName)} />
                 ]
             case 'SIZE_3D':
-                return [
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
+                component = [
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.width`} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
                     <span className='separator'>x</span>,
-                    <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged.bind(null, descriptor.propName)} />, <span className='separator'>x</span>, <DragNumberInput data-prop-name={descriptor.propName} onChange={this.valueChanged} />
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.height`} onChange={this.valueChanged.bind(null, descriptor.propName)} />,
+                    <span className='separator'>x</span>,
+                    <DragNumberInput data-prop-name={`${descriptor.propName}.depth`} onChange={this.valueChanged.bind(null, descriptor.propName)} />
                 ]
             case 'COLOR_RGB':
-                return [<input type='color' defaultValue='' />]
+                component = [<input type='color' defaultValue='' />]
             case 'COLOR_RGBA':
-                return [<input type='color' defaultValue='' />]
+                component = [<input type='color' defaultValue='' />]
             case 'BOOL':
-                return [<input type='checkbox' checked={(value as boolean)} onChange={this.valueChanged.bind(null, descriptor.propName)} />]
+                component = [<input type='checkbox' checked={(value as boolean)} onChange={this.valueChanged.bind(null, descriptor.propName)} />]
             case 'STRING':
-                return [<textarea />]
+                component = [<textarea />]
             case 'NUMBER':
-                return [<DragNumberInput defaultValue={0} />]
+                component = [<DragNumberInput defaultValue={0} />]
             // case 'FLOAT': inputs =
             // case 'ENUM': inputs = [<select>{this.props.typeDescriptor.selection.map(value => <option value={value}>{value}</option>)}</select>]
             // case 'LAYER': inputs =
@@ -108,6 +130,8 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, any
             // case 'ASSET': inputs = [<LabelInput />]
             // case 'ARRAY': inputs =
         }
+
+        return component
     }
 
     render()
@@ -131,7 +155,9 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, any
                                 onClick={this.selectProperty}
                             >
                                 <span className={s.propItemName}>{desc.label}</span>
-                                <div className={s.propItemInput}>{this.buildInput(desc, activeLayer!.rendererOptions[desc.propName])}</div>
+                                <div className={s.propItemInput}>
+                                    {this.buildInput(desc, activeLayer!.rendererOptions[desc.propName])}
+                                </div>
                             </div>
                         ))}
                     </SelectList>

@@ -37,7 +37,7 @@ export interface NumberTypeDescripter extends ParameterTypeDescriptor<'NUMBER'> 
 export interface FloatTypeDescripter extends ParameterTypeDescriptor<'FLOAT'> {}
 export interface PulseTypeDescripter extends ParameterTypeDescriptor<'PULSE'> {}
 export interface EnumTypeDescripter extends ParameterTypeDescriptor<'ENUM'> {
-    selection: Array<any>
+    selection: Array<string>
 }
 export interface LayerTypeDescripter extends ParameterTypeDescriptor<'LAYER'> {}
 export interface AssetTypeDescripter extends ParameterTypeDescriptor<'ASSET'> {
