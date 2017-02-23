@@ -1,5 +1,5 @@
 import {TimelaneScheme} from './timelane'
-import {ColorRgbJSON} from '../../struct/color-rgb'
+import {ColorRgbJSON} from '../../values/color-rgb'
 
 export interface CompositionScheme {
     id: string|null

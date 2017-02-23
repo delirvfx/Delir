@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import ColorRGB from '../struct/color-rgb'
+import ColorRGB from '../values/color-rgb'
 import Project from './project'
 import Timelane from './timelane'
 
