@@ -58,14 +58,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, any
         })
     }
 
-    buildInput = (descriptor: Delir.AnyParameterTypeDescriptor, value: string|number|boolean|Delir.Project.Asset) =>
-    {
-        let component
-
-
-        return component
-    }
-
     render()
     {
         const {activeLayer, project: {project}} = this.props
