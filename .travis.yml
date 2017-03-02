@@ -7,7 +7,7 @@ env:
     - CXX=g++-4.8
 
 before_install:
-    - sudo apt-get install libfontconfig-dev
+    - apt-get install libfontconfig-dev
 
 install:
     - npm i -g yarn
