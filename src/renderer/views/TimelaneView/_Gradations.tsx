@@ -4,6 +4,8 @@ import * as Delir from 'delir-core'
 import TimelaneHelper from '../../helpers/timelane-helper'
 import RendererService from '../../services/renderer'
 
+import s from './Gradations.styl'
+
 interface GradationsProps {
     activeComposition: Delir.Project.Composition|null,
     cursorHeight: number,
@@ -55,8 +57,8 @@ export default class Gradations extends Component<GradationsProps, any>
     render()
     {
         return (
-            <div className='timeline-gradations'>
-                <div className='timeline-playingCursor' style={{
+            <div className={s.Gradations}>
+                <div className={s.playingCursor} style={{
                     left: this.state.left,
                     height: this.props.cursorHeight
                 }} />
