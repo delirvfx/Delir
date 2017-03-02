@@ -26,62 +26,9 @@ import LaneLabel from '../timeline/lane-label'
 import LaneKeyframes from '../timeline/lane-keyframes'
 import KeyframeView from '../KeyframeView'
 import TimelaneLayerList from './_TimelaneLayerList'
+import Gradations from './_Gradations'
 
 import s from './style.styl'
-
-class TimelineGradations extends React.Component
-{
-    static propTypes = {
-        activeProject: PropTypes.object.isRequired,
-        cursorHeight: PropTypes.number.isRequired,
-    }
-
-    intervalId = null
-
-    state = {
-        left: 0,
-    }
-
-    componentDidMount()
-    {
-        this.intervalId = requestAnimationFrame(this.updateCursor)
-    }
-
-    componentWillUnmount()
-    {
-        cancelAnimationFrame(this.intervalId)
-    }
-
-    updateCursor = () =>
-    {
-        const renderer = RendererService.renderer
-
-        if (this.props.activeProject && renderer.isPlaying) {
-            this.setState({
-                left: TimelaneHelper.framesToPixel({
-                    pxPerSec: 30,
-                    framerate: this.props.framerate,
-                    durationFrames: renderer.session.lastRenderedFrame,
-                    scale: this.props.scale,
-                }),
-            })
-        }
-
-        this.intervalId = requestAnimationFrame(this.updateCursor)
-    }
-
-    render()
-    {
-        return (
-            <div className='timeline-gradations'>
-                <div className='timeline-playingCursor' style={{
-                    left: this.state.left,
-                    height: this.props.cursorHeight
-                }} />
-            </div>
-        )
-    }
-}
 
 interface TimelineViewProps {
     editor: EditorState,
@@ -226,11 +173,10 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             </Pane>
                             {/* Layer Panel */}
                             <Pane className='timeline-container' onWheel={this.scaleTimeline}>
-                                <TimelineGradations
+                                <Gradations
                                     cursorHeight={this.state.cursorHeight}
-                                    framerate={framerate}
                                     scale={this.state.scale}
-                                    activeProject={project}
+                                    activeComposition={activeComp}
                                 />
 
                                 <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
