@@ -17,3 +17,5 @@ addons:
         packages:
             - g++-4.8
             - libfontconfig-dev
+            # dependent by `av`
+            - libasound2-dev
