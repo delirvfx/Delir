@@ -60,7 +60,7 @@ export default class LaneLabel extends React.Component<LaneLabelProps>
                     🔓
                 </li>
 
-                {hasActiveLayer && <LaneLabelProps onChanged={() => {}} descriptor={propTypes} />}
+                {/*{hasActiveLayer && <LaneLabelProps onChanged={() => {}} descriptor={propTypes} />}*/}
             </ul>
         )
     }

@@ -43,7 +43,7 @@ declare const __DEV__: boolean
 
 declare module '*.styl' {
     const _ : {[className: string]: string}
-    export = _
+    export default _
 }
 
 declare module 'devtron' {
@@ -62,7 +62,14 @@ declare module 'keymirror' {
 
 declare module 'parse-color' {
     export default function parseColor(colorCode: string): {
+        /** RGB values */
         rgb: [number, number, number],
+        /** RGBA values */
+        rgba: [number, number, number, number],
+        /** CSS color keyword */
+        keyword: string,
+        /** HEX color code */
+        hex: string,
     }
 }
 

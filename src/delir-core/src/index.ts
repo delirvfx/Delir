@@ -3,11 +3,10 @@ import * as Project from './project/index'
 import Renderer from './renderer/renderer'
 import * as Services from './services'
 import * as Exceptions from './exceptions'
+import * as Values from './values'
+import {ColorRGB, ColorRGBA} from './values'
 
-import ColorRGB from './struct/color-rgb'
-import ColorRGBA from './struct/color-rgba'
-
-import Type, {TypeDescriptor} from './plugin/type-descriptor'
+import Type, {TypeDescriptor, AnyParameterTypeDescriptor} from './plugin/type-descriptor'
 import PluginBase from './plugin/plugin-base'
 import RenderRequest from './renderer/render-request'
 import PluginPreRenderRequest from './renderer/plugin-pre-rendering-request'
@@ -24,8 +23,11 @@ export {
     Services,
     Exceptions,
 
-    // Structure
+    // Value Structure
+    Values,
+    /** @deprecated deprecated reference */
     ColorRGB,
+    /** @deprecated deprecated reference */
     ColorRGBA,
 
     // Plugins
@@ -40,4 +42,7 @@ export {
 
     // import shorthand
     ProjectHelper,
+
+    // Types
+    AnyParameterTypeDescriptor,
 }
