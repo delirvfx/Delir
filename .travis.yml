@@ -6,9 +6,6 @@ node_js:
 env:
     - CXX=g++-4.8
 
-before_install:
-    - sudo apt-get install libfontconfig-dev
-
 install:
     - npm i -g yarn
     - yarn install
@@ -19,3 +16,6 @@ addons:
             - ubuntu-toolchain-r-test
         packages:
             - g++-4.8
+            - libfontconfig1-dev
+            # dependent by `av`
+            - libasound2-dev
