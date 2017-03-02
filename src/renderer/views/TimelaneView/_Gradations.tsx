@@ -39,15 +39,16 @@ export default class Gradations extends Component<GradationsProps, any>
 
     updateCursor = () =>
     {
+        const renderer = RendererService.renderer
         const {activeComposition, scale} = this.props
 
-        if (comp && renderer.isPlaying) {
+        if (activeComposition && renderer.isPlaying) {
             this.setState({
                 left: TimelaneHelper.framesToPixel({
                     pxPerSec: 30,
                     framerate: activeComposition.framerate,
-                    durationFrames: RendererService.renderer.session.lastRenderedFrame,
-                    scale: this.props.scale,
+                    durationFrames: renderer.session.lastRenderedFrame,
+                    scale: scale,
                 }),
             })
         }
