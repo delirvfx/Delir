@@ -136,7 +136,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     render()
     {
         const {scale} = this.state
-        const {project, activeComp, activeLayer} = this.props.editor
+        const {activeComp, activeLayer} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.timelanes) : []
 
