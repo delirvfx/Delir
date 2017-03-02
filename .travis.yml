@@ -16,6 +16,6 @@ addons:
             - ubuntu-toolchain-r-test
         packages:
             - g++-4.8
-            - libfontconfig-dev
+            - libfontconfig1-dev
             # dependent by `av`
             - libasound2-dev
