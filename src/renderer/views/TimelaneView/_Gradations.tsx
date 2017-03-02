@@ -62,7 +62,7 @@ export default class Gradations extends Component<GradationsProps, any>
             <div className={s.Gradations}>
                 <div className={s.playingCursor} style={{
                     left: this.state.left,
-                    height: this.props.cursorHeight
+                    height: `calc(100% + ${this.props.cursorHeight}px - 5px)`
                 }} />
             </div>
         )
