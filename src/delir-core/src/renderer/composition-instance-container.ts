@@ -9,7 +9,6 @@ export default class CompositionInstanceContainer
     _composition: Composition
     _variableScope: Object = Object.create(null)
     _timelanes: Array<TimelaneInstanceContainer> = []
-    // _layers: Array<ClipInstanceContainer> = []
 
     get framerate(): number { return this._composition.framerate }
     get width(): number { return this._composition.width }
