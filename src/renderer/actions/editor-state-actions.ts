@@ -12,14 +12,14 @@ import EditorStateStore from '../stores/editor-state-store'
 
 export type DragEntity =
     {type: 'asset', asset: Delir.Project.Asset}
-    | {type: 'layer', layer: Delir.Project.Clip}
+    | {type: 'clip', clip: Delir.Project.Clip}
 
 export type SetActiveProjectPayload = Payload<'SetActiveProject', {project: Delir.Project.Project, path?: string}>
 export type ClearActiveProjectPayload = Payload<'ClearActiveProject', null>
 export type SetDragEntityPayload = Payload<'SetDragEntity', DragEntity>
 export type ClearDragEntityPayload = Payload<'ClearDragEntity', {}>
 export type ChangeActiveCompositionPayload = Payload<'ChangeActiveComposition', {compositionId: string}>
-export type ChangeActiveLayerPayload = Payload<'ChangeActiveLayer', {layerId: string}>
+export type ChangeActiveClipPayload = Payload<'ChangeActiveClip', {clipId: string}>
 export type TogglePreviewPayload = Payload<'TogglePreview', {compositionId: string}>
 export type RenderDestinatePayload = Payload<'RenderDestinate', {compositionId: string}>
 export type UpdateProcessingState = Payload<'UpdateProcessingState', {stateText: string}>
@@ -33,7 +33,7 @@ export const DispatchTypes = keyMirror({
     SetDragEntity: null,
     ClearDragEntity: null,
     ChangeActiveComposition: null,
-    ChangeActiveLayer: null,
+    ChangeActiveClip: null,
     TogglePreview: null,
     RenderDestinate: null,
     UpdateProcessingState: null,
@@ -93,9 +93,9 @@ const actions = {
         dispatcher.dispatch(new Payload(DispatchTypes.ChangeActiveComposition, {compositionId}))
     },
 
-    changeActiveLayer(layerId: string)
+    changeActiveClip(clipId: string)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.ChangeActiveLayer, {layerId}))
+        dispatcher.dispatch(new Payload(DispatchTypes.ChangeActiveClip, {clipId}))
     },
 
 
