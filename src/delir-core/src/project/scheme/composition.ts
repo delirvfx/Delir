@@ -1,4 +1,4 @@
-import {TimelaneScheme} from './timelane'
+import {LayerScheme} from './layer'
 import {ColorRgbJSON} from '../../values/color-rgb'
 
 export interface CompositionScheme {
@@ -6,6 +6,6 @@ export interface CompositionScheme {
     config: {
         [prop: string]: any
     }
-    timelanes: TimelaneScheme[]
+    layers: LayerScheme[]
     backgroundColor: ColorRgbJSON
 }
