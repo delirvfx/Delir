@@ -17,22 +17,22 @@ export interface EffectScheme {
 
 export default class Effect
 {
-    static deserialize(layerJson: EffectScheme)
+    static deserialize(effectJson: EffectScheme)
     {
-        const layer = new Effect
-        const options = _.pick(layerJson.options, [
+        const effect = new Effect
+        const options = _.pick(effectJson.options, [
             'processor',
             'keyframeInterpolationMethod',
         ]) as EffectOptionScheme
 
-        const keyframes = _.mapValues(layerJson.keyframes, keyframeSet => {
+        const keyframes = _.mapValues(effectJson.keyframes, keyframeSet => {
             return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
         })
 
-        Object.defineProperty(layer, 'id', {value: layerJson.id})
-        Object.assign(layer.options, options)
-        layer.keyframes = keyframes
-        return layer
+        Object.defineProperty(effect, 'id', {value: effectJson.id})
+        Object.assign(effect.options, options)
+        effect.keyframes = keyframes
+        return effect
     }
 
     id: string|null = null
