@@ -9,7 +9,7 @@ export default class Keyframe
         const keyframe = new Keyframe()
         const config = _.pick(keyframeJson.config, [
             'value',
-            'frameOnLayer',
+            'frameOnClip',
             'easeInParam',
             'easeOutParam',
         ]) as KeyframeConfigScheme
@@ -25,12 +25,12 @@ export default class Keyframe
     config: {
         // propName: string,
         value: any,
-        frameOnLayer: number|null,
+        frameOnClip: number|null,
         easeInParam: [number, number],
         easeOutParam: [number, number],
     } = {
         value: null,
-        frameOnLayer: null,
+        frameOnClip: null,
         easeInParam: [1, 0],
         easeOutParam: [0, 1],
     }
@@ -43,8 +43,8 @@ export default class Keyframe
     get value(): any { return this.config.value }
     set value(value: any) { this.config.value = value }
 
-    get frameOnLayer(): number { return this.config.frameOnLayer as number }
-    set frameOnLayer(frameOnLayer: number) { this.config.frameOnLayer = frameOnLayer }
+    get frameOnClip(): number { return this.config.frameOnClip as number }
+    set frameOnClip(frameOnClip: number) { this.config.frameOnClip = frameOnClip }
 
     get easeInParam(): [number, number] { return this.config.easeInParam }
     set easeInParam(easeInParam: [number, number]) { this.config.easeInParam = easeInParam }
