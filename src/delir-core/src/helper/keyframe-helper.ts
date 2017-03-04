@@ -64,7 +64,7 @@ export default class KeyframeHelper
                 case 'ENUM':
                     tables[propName] = KeyframeHelper.calcKeyframe(keyFrames[propName], beginFrame, calcFrames, KeyframeHelper.calcEnumKeyFrames)
                 break;
-                case 'LAYER':
+                case 'CLIP':
                     tables[propName] = KeyframeHelper.calcKeyframe(keyFrames[propName], beginFrame, calcFrames, KeyframeHelper.calcNoAnimatable)
                 break;
                 case 'PULSE':
