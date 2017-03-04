@@ -6,7 +6,7 @@ import Project from '../project/project'
 import Asset from '../project/asset'
 import Composition from '../project/composition'
 import Timelane from '../project/timelane'
-import Clip from '../project/layer'
+import Clip from '../project/clip'
 import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
 
