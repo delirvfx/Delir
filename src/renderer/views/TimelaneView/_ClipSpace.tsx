@@ -117,8 +117,9 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
 
     changeClipDuration = (clip: Delir.Project.Clip, newWidth: number) =>
     {
+
         const newDurationFrames = TimelineHelper.pixelToFrames({
-            pxPerSec: this.state.pxPerSec,
+            pxPerSec: this.props.pxPerSec,
             framerate: this.props.framerate,
             pixel: newWidth,
             scale: this.props.scale,
@@ -136,8 +137,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
 
     render()
     {
-        const {layer, activeClip, framerate, scale} = this.props
-        const {pxPerSec} = this.state
+        const {layer, activeClip, framerate, pxPerSec, scale} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
         const clips = Array.from<Delir.Project.Clip>(layer.clips.values())
         const plugins = this._plugins
