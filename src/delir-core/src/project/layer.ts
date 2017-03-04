@@ -8,15 +8,15 @@ export default class Layer
 {
     static deserialize(layerJson: LayerScheme)
     {
-        const timelane = new Layer
+        const layer = new Layer
         const config = _.pick(layerJson.config, ['name']) as LayerScheme
         const clips = layerJson.clips.map((clipJson: ClipScheme) => Clip.deserialize(clipJson))
 
-        Object.defineProperty(timelane, 'id', {value: layerJson.id})
-        timelane.clips = new Set<Clip>(clips)
-        Object.assign(timelane.config, config)
+        Object.defineProperty(layer, 'id', {value: layerJson.id})
+        layer.clips = new Set<Clip>(clips)
+        Object.assign(layer.config, config)
 
-        return timelane
+        return layer
     }
 
     id: string|null = null
