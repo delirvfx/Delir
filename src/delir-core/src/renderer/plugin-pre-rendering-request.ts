@@ -12,7 +12,7 @@ export default class PluginPreRenderingRequest
         'framerate',
 
         'compositionScope',
-        'layerScope',
+        'clipScope',
 
         'parameters',
     ]
@@ -32,7 +32,7 @@ export default class PluginPreRenderingRequest
     framerate: number
 
     compositionScope: Object
-    layerScope: Object
+    clipScope: Object
 
     parameters: Object
 

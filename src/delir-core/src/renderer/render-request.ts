@@ -9,11 +9,11 @@ export default class RenderRequest
     static _permitKeys = [
         'time',
         'timeOnComposition',
-        'timeOnLayer',
+        'timeOnClip',
 
         'frame',
         'frameOnComposition',
-        'frameOnLayer',
+        'frameOnClip',
 
         'destCanvas',
         'width',
@@ -32,7 +32,7 @@ export default class RenderRequest
         'parentComposition',
 
         'compositionScope',
-        'layerScope',
+        'clipScope',
 
         'parameters',
     ]
@@ -47,11 +47,11 @@ export default class RenderRequest
     //
     time: number
     timeOnComposition: number
-    timeOnLayer: number
+    timeOnClip: number
 
     frame: number
     frameOnComposition: number
-    frameOnLayer: number
+    frameOnClip: number
 
     //
     // Composition options
@@ -79,7 +79,7 @@ export default class RenderRequest
     // Variable store
     //
     compositionScope: Object
-    layerScope: Object
+    clipScope: Object
 
     parameters: Object
 

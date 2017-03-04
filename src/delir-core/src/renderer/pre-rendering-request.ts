@@ -17,7 +17,7 @@ export default class PreRenderingRequest
         'parentComposition',
 
         'compositionScope',
-        'layerScope',
+        'clipScope',
 
         'parameters',
     ]
@@ -50,7 +50,7 @@ export default class PreRenderingRequest
     // Variable store
     //
     compositionScope: Object
-    layerScope: Object
+    clipScope: Object
 
     parameters: Object
 
