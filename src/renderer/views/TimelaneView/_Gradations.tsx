@@ -11,6 +11,8 @@ interface GradationsProps {
     activeComposition: Delir.Project.Composition|null,
     cursorHeight: number,
     scale: number
+    pxPerSec: number,
+    onSeeked: (frame: number) => any
 }
 
 export default class Gradations extends Component<GradationsProps, any>
@@ -19,6 +21,8 @@ export default class Gradations extends Component<GradationsProps, any>
         activeComposition: PropTypes.object.isRequired,
         cursorHeight: PropTypes.number.isRequired,
         scale: PropTypes.number.isRequired,
+        pxPerSec: PropTypes.number.isRequired,
+        onSeeked: PropTypes.func.isRequired
     }
 
     intervalId = null
@@ -56,10 +60,26 @@ export default class Gradations extends Component<GradationsProps, any>
         this.intervalId = requestAnimationFrame(this.updateCursor)
     }
 
+    clicked = ({nativeEvent: e}: React.MouseEvent<HTMLDivElement>) =>
+    {
+        const {activeComposition, pxPerSec, scale} = this.props
+
+        if (! activeComposition) return
+
+        const frame = TimelaneHelper.pixelToFrames({
+            pxPerSec,
+            framerate: activeComposition.framerate,
+            scale,
+            pixel: (e as MouseEvent).layerX,
+        })
+
+        this.props.onSeeked(frame)
+    }
+
     render()
     {
         return (
-            <div className={s.Gradations}>
+            <div className={s.Gradations} onClick={this.clicked}>
                 <div className={s.playingCursor} style={{
                     left: this.state.left,
                     height: `calc(100% + ${this.props.cursorHeight}px - 5px)`

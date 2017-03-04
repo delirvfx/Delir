@@ -19,8 +19,10 @@ let audioBufferSource: AudioBufferSourceNode|null = null
 
 let state: {
     project: Delir.Project.Project|null,
+    composition: Delir.Project.Composition|null,
 } = {
     project: null,
+    composition: null,
 }
 
 const handlePayload = (payload: KnownPayload) => {
@@ -29,6 +31,12 @@ const handlePayload = (payload: KnownPayload) => {
             renderer.setProject(payload.entity.project)
             state.project = payload.entity.project
             break
+
+        case EditorStateDispatchTypes.ChangeActiveComposition: {
+            if (!state.project) break
+            state.composition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
+            break
+        }
 
         case EditorStateDispatchTypes.TogglePreview: (() => {
             if (!state.project) return
@@ -87,6 +95,34 @@ const handlePayload = (payload: KnownPayload) => {
             promise.catch((e: Error) => console.error(e.stack))
             })()
             break
+
+        case EditorStateDispatchTypes.SeekPreviewFrame: {
+            const {frame} = payload.entity
+            const targetComposition = state.composition!
+
+            if (!renderer || !audioContext) return
+
+            audioBuffer = audioContext.createBuffer(
+                targetComposition.audioChannels,
+                /* length */targetComposition.samplingRate,
+                /* sampleRate */targetComposition.samplingRate,
+            )
+            audioBufferSource = audioContext.createBufferSource()
+            audioBufferSource.buffer = audioBuffer
+            audioBufferSource.connect(audioContext.destination)
+            audioBufferSource.start(0)
+
+            renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
+
+            renderer!.render({
+                beginFrame: frame,
+                endFrame: frame,
+                targetCompositionId: state.composition!.id!,
+            })
+            .catch((e: Error) => console.error(e.stack))
+
+            break
+        }
 
         case EditorStateDispatchTypes.RenderDestinate: (() => {
             const file = remote.dialog.showSaveDialog(({

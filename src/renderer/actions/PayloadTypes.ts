@@ -10,6 +10,7 @@ import {
     UpdateProcessingState,
     AddMessagePayload,
     RemoveMessagePayload,
+    SeekPreviewFramePayload,
 } from './editor-state-actions'
 
 import {
@@ -39,6 +40,7 @@ export type EditorStateActionPayload =
     | UpdateProcessingState
     | AddMessagePayload
     | RemoveMessagePayload
+    | SeekPreviewFramePayload
 
 export type ProjectModifyActionPayload =
     CreateCompositionPayload
