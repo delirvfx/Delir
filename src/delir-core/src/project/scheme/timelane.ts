@@ -1,9 +1,9 @@
-import {LayerScheme} from './layer'
+import {ClipScheme} from './clip'
 
 export interface TimelaneScheme {
     id: string|null
     config: {
         name: string|null
     }
-    layers: LayerScheme[]
+    layers: ClipScheme[]
 }

@@ -1,6 +1,6 @@
 import {KeyframeScheme} from './keyframe'
 
-export interface LayerConfigScheme  {
+export interface ClipConfigScheme  {
     renderer: string|null
     rendererOptions: Object|null
     placedFrame: number|null
@@ -8,8 +8,8 @@ export interface LayerConfigScheme  {
     keyframeInterpolationMethod: string
 }
 
-export interface LayerScheme {
+export interface ClipScheme {
     id: string|null
-    config: LayerConfigScheme
+    config: ClipConfigScheme
     keyframes: {[keyName:string]: KeyframeScheme[]}
 }
