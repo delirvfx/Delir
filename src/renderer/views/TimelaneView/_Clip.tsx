@@ -29,7 +29,7 @@ interface TimelaneClipState {
 export default class TimelaneClip extends React.Component<TimelaneClipProps, TimelaneClipState>
 {
     static propTypes = {
-        clip: PropTypes.object.isRequired,
+        clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
         left: PropTypes.number.isRequired,
         width: PropTypes.number.isRequired,
         onChangePlace: PropTypes.func.isRequired,
