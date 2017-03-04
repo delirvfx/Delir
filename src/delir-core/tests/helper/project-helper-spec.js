@@ -4,7 +4,7 @@ import * as ProjectHelper from '../../src/helper/project-helper'
 import Project from '../../src/project/project'
 import Asset from '../../src/project/asset'
 import Composition from '../../src/project/composition'
-import TimeLane from '../../src/project/timelane'
+import Layer from '../../src/project/layer'
 import Clip from '../../src/project/clip'
 import Keyframe from '../../src/project/keyframe'
 
@@ -78,38 +78,38 @@ describe('ProjectHelper specs', () => {
             })
         })
 
-        describe('::createAddTimelane', () => {
-            it('correcty make and add Timelane', () => {
+        describe('::createAddLayer', () => {
+            it('correcty make and add Layer', () => {
                 const props = {name: 'test'}
                 const composition = new Composition
-                const timelane = ProjectHelper.createAddTimelane(project, composition, props)
-                props.id = timelane.id
+                const layer = ProjectHelper.createAddLayer(project, composition, props)
+                props.id = layer.id
 
                 // must be returns instanceof Asset
-                expect(timelane).to.be.an(TimeLane)
+                expect(layer).to.be.an(Layer)
 
                 // must be assign .id property
-                expect(timelane.id).to.not.be.empty()
+                expect(layer.id).to.not.be.empty()
 
                 // check correctry assigned given properties
-                Object.keys(props).forEach(key => expect(timelane[key]).to.eql(props[key]))
+                Object.keys(props).forEach(key => expect(layer[key]).to.eql(props[key]))
 
                 // must be not writable `id` property
-                expect(propNotWritable(timelane, 'id')).to.be(true)
+                expect(propNotWritable(layer, 'id')).to.be(true)
 
                 // must be added to target composition
-                expect(composition.timelanes.has(timelane)).to.be(true)
+                expect(composition.layers.has(layer)).to.be(true)
 
                 // must be register symbolId in Project
-                expect(project.symbolIds.has(timelane.id)).to.be(true)
+                expect(project.symbolIds.has(layer.id)).to.be(true)
             })
         })
 
         describe('::createAddClip', () => {
             it('correcty make and add Clip', () => {
                 const props = {renderer: 'test', placedFrame: 0, durationFrames: 100}
-                const timelane = new TimeLane
-                const clip = ProjectHelper.createAddClip(project, timelane, props)
+                const layer = new Layer
+                const clip = ProjectHelper.createAddClip(project, layer, props)
                 props.id = clip.id
 
                 // must be returns instanceof Asset
@@ -124,8 +124,8 @@ describe('ProjectHelper specs', () => {
                 // must be not writable `id` property
                 expect(propNotWritable(clip, 'id')).to.be(true)
 
-                // must be added to target timelane
-                expect(timelane.clips.has(clip)).to.be(true)
+                // must be added to target layer
+                expect(layer.clips.has(clip)).to.be(true)
 
                 // must be register symbolId in Project
                 expect(project.symbolIds.has(clip.id)).to.be(true)

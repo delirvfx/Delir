@@ -1,7 +1,7 @@
 import Project from '../../src/project/project'
 import Asset from '../../src/project/asset'
 import Composition from '../../src/project/composition'
-import TimeLane from '../../src/project/timelane'
+import Layer from '../../src/project/layer'
 import Clip from '../../src/project/clip'
 
 describe('project structure specs', () => {
@@ -23,8 +23,8 @@ describe('project structure specs', () => {
             const comp1 = new Composition
             project.compositions.add(comp1)
 
-            const lane1 = new TimeLane
-            comp1.timelanes.add(lane1)
+            const lane1 = new Layer
+            comp1.layers.add(lane1)
 
             lane1.clips.add(new Clip)
         })
@@ -33,8 +33,8 @@ describe('project structure specs', () => {
             const comp1 = new Composition
             project.compositions.add(comp1)
 
-            const lane1 = new TimeLane
-            comp1.timelanes.add(lane1)
+            const lane1 = new Layer
+            comp1.layers.add(lane1)
 
             const pbson = project.serialize()
             expect(Project.deserialize(pbson).toJSON()).to.eql(project.toJSON())
