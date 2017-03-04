@@ -2,7 +2,7 @@ import Project from '../../src/project/project'
 import Asset from '../../src/project/asset'
 import Composition from '../../src/project/composition'
 import TimeLane from '../../src/project/timelane'
-import Layer from '../../src/project/layer'
+import Clip from '../../src/project/clip'
 
 describe('project structure specs', () => {
     describe('Project', () => {
@@ -26,7 +26,7 @@ describe('project structure specs', () => {
             const lane1 = new TimeLane
             comp1.timelanes.add(lane1)
 
-            lane1.layers.add(new Layer)
+            lane1.layers.add(new Clip)
         })
 
         it('correctry serialize/deserialize the project', () => {
