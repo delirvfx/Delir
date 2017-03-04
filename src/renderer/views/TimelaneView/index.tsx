@@ -144,7 +144,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     render()
     {
         const {scale} = this.state
-        const {activeComp, activeLayer} = this.props.editor
+        const {activeComp, activeClip} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.timelanes) : []
 
@@ -209,7 +209,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                         </Workspace>
                     </Pane>
                     <Pane>
-                        <KeyframeView activeLayer={activeLayer} />
+                        <KeyframeView activeClip={activeClip} />
                     </Pane>
                 </Workspace>
             </Pane>
