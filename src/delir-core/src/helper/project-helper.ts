@@ -6,7 +6,7 @@ import Project from '../project/project'
 import Asset from '../project/asset'
 import Composition from '../project/composition'
 import Timelane from '../project/timelane'
-import Layer from '../project/layer'
+import Clip from '../project/layer'
 import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
 
@@ -82,10 +82,10 @@ export function createAddLayer(
     project: Project,
     targetTimelaneId: Timelane|string,
     layerProps: Object
-): Layer
+): Clip
 {
     const entityId = _generateAndReserveSymbolId(project)
-    const layer = new Layer
+    const layer = new Clip
 
     setFreezedProp(layer, 'id', entityId)
     Object.assign(layer, layerProps)
@@ -102,7 +102,7 @@ export function createAddLayer(
 
 export function createAddEffect(
   project: Project,
-  targetLayerId: Layer|string,
+  targetLayerId: Clip|string,
   effectProps: Object
 ): Effect
 {
@@ -115,7 +115,7 @@ export function createAddEffect(
 
 export function createAddKeyframe(
     project: Project,
-    targetLayerId: Layer|string,
+    targetLayerId: Clip|string,
     propName: string,
     keyframeProp: Object|Array<Object>
 ): Array<Keyframe>
@@ -129,7 +129,7 @@ export function createAddKeyframe(
 
     const createdKeyframes = []
     // TODO: Not found behaviour
-    const layer: Layer = targetLayerId instanceof Layer
+    const layer: Clip = targetLayerId instanceof Layer
         ? targetLayerId
         : findLayerById(project, targetLayerId)!
 
@@ -211,8 +211,8 @@ export function addTimelane(
 export function addLayer(
     project: Project,
     targetTimelaneId: Timelane|string,
-    layer: Layer
-): Layer
+    layer: Clip
+): Clip
 {
     if (typeof layer.id !== 'string') {
         // TODO: Clone instance
@@ -232,7 +232,7 @@ export function addLayer(
 
 export function addEffect(
   project: Project,
-  targetLayerId: Layer|string,
+  targetLayerId: Clip|string,
   effect: Effect
 ): Effect
 {
@@ -252,7 +252,7 @@ export function addEffect(
 
 export function addKeyframe(
     project: Project,
-    targetLayerId: Layer|string,
+    targetLayerId: Clip|string,
     propName: string,
     keyframe: Keyframe|Array<Keyframe>
 ): Keyframe|Array<Keyframe>
@@ -265,7 +265,7 @@ export function addKeyframe(
     }
 
     // TODO: Not found behaviour
-    const layer: Layer|null = targetLayerId instanceof Layer
+    const layer: Clip|null = targetLayerId instanceof Layer
         ? targetLayerId
         : findLayerById(project, targetLayerId)!
 
@@ -329,7 +329,7 @@ export function deleteTimelane(
 
 export function deleteLayer(
     project: Project,
-    targetLayerId: Layer|string,
+    targetLayerId: Clip|string,
 ) {
     const layer = targetLayerId instanceof Layer
         ? targetLayerId
@@ -341,7 +341,7 @@ export function deleteLayer(
 
 export function deleteEffectFromLayer(
     project: Project,
-    parentLayerId: Layer|string,
+    parentLayerId: Clip|string,
     targetEffectId: Effect|string,
 ) {
     const layer = parentLayerId instanceof Layer
@@ -409,7 +409,7 @@ export function modifyTimelane(
 
 export function modifyLayer(
     project: Project,
-    targetLayerId: Layer|string,
+    targetLayerId: Clip|string,
     patch: Object
 ) {
     const layer = targetLayerId instanceof Layer
@@ -421,7 +421,7 @@ export function modifyLayer(
 
 export function modifyEffect(
     project: Project,
-    parentLayerId: Layer|string,
+    parentLayerId: Clip|string,
     targetEffectId: Effect|string,
     patch: Object
 ) {
@@ -498,9 +498,9 @@ export function findTimelaneById(project: Project, timelaneId: string): Timelane
     return targetTimelane
 }
 
-export function findLayerById(project: Project, layerId: string): Layer|null
+export function findLayerById(project: Project, layerId: string): Clip|null
 {
-    let targetLayer: Layer|null = null
+    let targetLayer: Clip|null = null
 
     layerSearch:
         for (const comp of project.compositions.values()) {
@@ -517,7 +517,7 @@ export function findLayerById(project: Project, layerId: string): Layer|null
     return targetLayer
 }
 
-export function findEffectFromLayerById(layer: Layer, effectId: string): Effect|null
+export function findEffectFromLayerById(layer: Clip, effectId: string): Effect|null
 {
     for (const effect of layer.effects) {
         if (effect.id === effectId) {
@@ -564,7 +564,7 @@ export function findParentTimelaneByLayerId(project: Project, layerId: string): 
     return targetTimelane
 }
 
-export function findKeyframeFromLayerById(layer: Layer, keyframeId: string): Keyframe|null
+export function findKeyframeFromLayerById(layer: Clip, keyframeId: string): Keyframe|null
 {
     let targetKeyframe: Keyframe|null = null
 
@@ -604,9 +604,9 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     return targetKeyframe
 }
 
-export function findParentLayerAndPropNameByKeyframeId(project: Project, keyframeId: string): {layer: Layer, propName: string}|null
+export function findParentLayerAndPropNameByKeyframeId(project: Project, keyframeId: string): {layer: Clip, propName: string}|null
 {
-    let target: {layer: Layer, propName: string}|null = null
+    let target: {layer: Clip, propName: string}|null = null
 
     keyframeSearch:
         for (const comp of project.compositions.values()) {
@@ -628,7 +628,7 @@ export function findParentLayerAndPropNameByKeyframeId(project: Project, keyfram
 }
 
 export function findAssetAttachablePropertyByMimeType(
-    layer: Layer,
+    layer: Clip,
     mimeType: string,
     registry: PluginRegistory
 ): string|null
