@@ -5,5 +5,5 @@ export interface TimelaneScheme {
     config: {
         name: string|null
     }
-    layers: ClipScheme[]
+    clips: ClipScheme[]
 }

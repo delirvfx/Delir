@@ -9,17 +9,17 @@ export default class TimeLane
     {
         const timelane = new TimeLane
         const config = _.pick(timelaneJson.config, ['name']) as TimelaneScheme
-        const layers = timelaneJson.layers.map(layerJson => Clip.deserialize(layerJson))
+        const clips = timelaneJson.clips.map(layerJson => Clip.deserialize(layerJson))
 
         Object.defineProperty(timelane, 'id', {value: timelaneJson.id})
-        timelane.layers = new Set<Clip>(layers)
+        timelane.clips = new Set<Clip>(clips)
         Object.assign(timelane.config, config)
 
         return timelane
     }
 
     id: string|null = null
-    layers: Set<Clip> = new Set()
+    clips: Set<Clip> = new Set()
 
     config: {
         name: string|null,
@@ -40,7 +40,7 @@ export default class TimeLane
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            layers: Array.from(this.layers.values()).map(layer => layer.toPreBSON()),
+            clips: Array.from(this.clips.values()).map(clip => clip.toPreBSON()),
         }
     }
 
@@ -49,7 +49,7 @@ export default class TimeLane
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            layers: Array.from(this.layers.values()).map(layer => layer.toJSON()),
+            clips: Array.from(this.clips.values()).map(clip => clip.toJSON()),
         }
     }
 }
