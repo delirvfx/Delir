@@ -1,12 +1,12 @@
 import * as _ from 'lodash'
 import Keyframe from './keyframe'
 import Effect from './effect'
-import {LayerScheme, LayerConfigScheme} from './scheme/layer'
+import {ClipScheme, ClipConfigScheme} from './scheme/clip'
 import {RendererProperties} from './types'
 
 export default class Clip
 {
-    static deserialize(layerJson: LayerScheme)
+    static deserialize(layerJson: ClipScheme)
     {
         const layer = new Clip
         const config = _.pick(layerJson.config, [
@@ -15,7 +15,7 @@ export default class Clip
             'placedFrame',
             'durationFrames',
             'keyframeInterpolationMethod',
-        ]) as LayerConfigScheme
+        ]) as ClipConfigScheme
 
         const keyframes = _.mapValues(layerJson.keyframes, keyframeSet => {
             return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
