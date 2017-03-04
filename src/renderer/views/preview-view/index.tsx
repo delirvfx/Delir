@@ -31,20 +31,11 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         }
     }
 
-    componentDidMount()
+    selectScale = (e: React.ChangeEvent<HTMLSelectElement>) =>
     {
-        // const ctx = this.refs.canvas.getContext('2d')
-        //
-        // const cRand = () => ((Math.random() * 256) | 0).toString(16)
-        // const render = () => {
-        //     ctx.fillStyle = '#000'
-        //     ctx.fillRect(0, 0, 640, 360)
-        //     ctx.drawImage(this.refs.video, 0, 0)
-        //
-        //     requestAnimationFrame(render)
-        // }
-        //
-        // requestAnimationFrame(render)
+        this.setState({
+            scale: parseInt(e.target.value, 10) / 100
+        })
     }
 
     onWheel = e => {
@@ -58,6 +49,8 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
     render()
     {
         const {activeComp} = this.props
+        const currentScale = Math.round(this.state.scale * 100)
+
         return (
             <Pane className='view-preview' allowFocus>
                 <div className='inner'>
@@ -67,12 +60,14 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
                         <video ref='video' src='../../navcodec.mp4' style={{display:'none'}} controls loop />
                     </div>
                     <div className='footer'>
-                        <label>Scale</label>
-                        <select onChange={this.selectScale}>
-                            <option value="50">50%</option>
-                            <option value="100">100%</option>
-                            <option value="120">120%</option>
-                        </select>
+                        <label>
+                            Scale: {currentScale}%
+                            <select onChange={this.selectScale} style={{visibility: 'hidden'}}>
+                                <option value="50">50%</option>
+                                <option value="100">100%</option>
+                                <option value="120">120%</option>
+                            </select>
+                        </label>
                     </div>
                 </div>
             </Pane>
