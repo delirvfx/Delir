@@ -109,26 +109,26 @@ describe('ProjectHelper specs', () => {
             it('correcty make and add Layer', () => {
                 const props = {renderer: 'test', placedFrame: 0, durationFrames: 100}
                 const timelane = new TimeLane
-                const layer = ProjectHelper.createAddLayer(project, timelane, props)
-                props.id = layer.id
+                const clip = ProjectHelper.createAddLayer(project, timelane, props)
+                props.id = clip.id
 
                 // must be returns instanceof Asset
-                expect(layer).to.be.an(Layer)
+                expect(clip).to.be.an(Layer)
 
                 // must be assign .id property
-                expect(layer.id).to.not.be.empty()
+                expect(clip.id).to.not.be.empty()
 
                 // check correctry assigned given properties
-                Object.keys(props).forEach(key => expect(layer[key]).to.eql(props[key]))
+                Object.keys(props).forEach(key => expect(clip[key]).to.eql(props[key]))
 
                 // must be not writable `id` property
-                expect(propNotWritable(layer, 'id')).to.be(true)
+                expect(propNotWritable(clip, 'id')).to.be(true)
 
                 // must be added to target timelane
-                expect(timelane.layers.has(layer)).to.be(true)
+                expect(timelane.clips.has(clip)).to.be(true)
 
                 // must be register symbolId in Project
-                expect(project.symbolIds.has(layer.id)).to.be(true)
+                expect(project.symbolIds.has(clip.id)).to.be(true)
             })
         })
 

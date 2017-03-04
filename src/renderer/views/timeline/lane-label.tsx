@@ -33,9 +33,9 @@ export default class LaneLabel extends React.Component<LaneLabelProps>
     render()
     {
         const {timelane, editor: {activeLayer}, onSelect, onRemove} = this.props
-        const layers = Array.from(timelane.layers.values())
+        const clips = Array.from(timelane.clips.values())
         const propTypes = activeLayer ? RendererService.pluginRegistry!.getParametersById(activeLayer.renderer) : []
-        const hasActiveLayer = layers.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1
+        const hasActiveLayer = clips.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1
 
         return (
             <ul key={timelane.id} className={classnames(

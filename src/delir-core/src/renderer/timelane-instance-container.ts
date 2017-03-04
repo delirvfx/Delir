@@ -7,8 +7,8 @@ import ClipInstanceContainer from './clip-instance-container'
 export default class TimelaneInstanceContainer
 {
     private _timelane: Timelane
-    private _layers: Array<ClipInstanceContainer> = []
-    private _timeOrderLayers: Array<ClipInstanceContainer> = []
+    private _clips: Array<ClipInstanceContainer> = []
+    private _timeOrderClips: Array<ClipInstanceContainer> = []
 
     constructor(timelane: Timelane)
     {
@@ -17,18 +17,18 @@ export default class TimelaneInstanceContainer
 
     async beforeRender(preRenderReq: PreRenderingRequest)
     {
-        this._layers = Array.from(this._timelane.layers.values())
+        this._clips = Array.from(this._timelane.clips.values())
             .map(layer => new ClipInstanceContainer(layer))
 
         // sort layers
-        this._timeOrderLayers = this._layers.slice(0)
+        this._timeOrderClips = this._clips.slice(0)
             .sort((layerA, layerB) => layerA.holdLayer.placedFrame - layerB.holdLayer.placedFrame)
-        await Promise.all(this._layers.map(async layer => await layer.beforeRender(preRenderReq)))
+        await Promise.all(this._clips.map(async layer => await layer.beforeRender(preRenderReq)))
     }
 
     async render(req: RenderRequest)
     {
-        const targets = this._timeOrderLayers.filter(layer => {
+        const targets = this._timeOrderClips.filter(layer => {
             return layer.placedFrame <= req.frameOnComposition
                 && layer.placedFrame + layer.durationFrames >= req.frameOnComposition
         })

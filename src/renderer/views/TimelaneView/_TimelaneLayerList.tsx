@@ -77,7 +77,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
         }
         else if (dragEntity.type === 'layer') {
             const {layer} = dragEntity
-            const isChildLayer = !! _.find(Array.from(this.props.timelane.layers.values()), {id: layer.id})
+            const isChildLayer = !! _.find(Array.from(this.props.timelane.clips.values()), {id: layer.id})
 
             if (isChildLayer) {
                 const placedFrame = TimelaneHelper.pixelToFrames({
@@ -136,7 +136,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
         const {timelane, activeLayer, framerate, scale} = this.props
         const {pxPerSec} = this.state
         const keyframes = activeLayer ? activeLayer.keyframes : {}
-        const layers = Array.from<Delir.Project.Clip>(timelane.layers.values())
+        const clips = Array.from<Delir.Project.Clip>(timelane.clips.values())
         const plugins = this._plugins
 
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
@@ -145,7 +145,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
             <li
                 className={classnames('timeline-lane', {
                     dragover: this.state.dragovered,
-                    '--expand': layers.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1,
+                    '--expand': clips.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1,
                 })}
                 data-lane-id={timelane.id}
                 onDragOver={this.onDragOver.bind(this)}
@@ -163,7 +163,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
                 </ContextMenu>
 
                 <div className='timeline-lane-layers'>
-                    {layers.map(layer => {
+                    {clips.map(layer => {
                         const opt = {
                             pxPerSec: pxPerSec,
                             framerate: framerate,

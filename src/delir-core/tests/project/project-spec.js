@@ -26,7 +26,7 @@ describe('project structure specs', () => {
             const lane1 = new TimeLane
             comp1.timelanes.add(lane1)
 
-            lane1.layers.add(new Clip)
+            lane1.clips.add(new Clip)
         })
 
         it('correctry serialize/deserialize the project', () => {

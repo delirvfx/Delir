@@ -94,8 +94,8 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
                 if (targetLayer == null || sourceLane == null || destLane == null) break
 
-                sourceLane.layers.delete(targetLayer)
-                destLane.layers.add(targetLayer)
+                sourceLane.clips.delete(targetLayer)
+                destLane.clips.add(targetLayer)
                 break
 
             case ProjectModifyDispatchTypes.ModifyComposition:
