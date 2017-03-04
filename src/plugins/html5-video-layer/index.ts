@@ -75,9 +75,9 @@ export default class HTML5VideoLayer extends LayerPluginBase
 
         // frame to time mapping
         // const sourceFps = 30 // Math.ceil(this.video.webkitDecodedFrameCount / this.video.duration)
-        // const time = req.timeOnLayer * sourceFps
+        // const time = req.timeOnClip * sourceFps
         //
-        // console.dir(req.timeOnLayer * sourceFps);
+        // console.dir(req.timeOnClip * sourceFps);
         // console.log(time, req);
 
         // console.log('wait seek');
@@ -89,9 +89,9 @@ export default class HTML5VideoLayer extends LayerPluginBase
             this.video.addEventListener('seeked', waiter, {once: true} as any)
 
             if (param.loop) {
-                this.video.currentTime = req.timeOnLayer % this.video.duration
+                this.video.currentTime = req.timeOnClip % this.video.duration
             } else {
-                this.video.currentTime = req.timeOnLayer
+                this.video.currentTime = req.timeOnClip
             }
 
             setTimeout(waiter, 1000)
