@@ -109,7 +109,6 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     resizeMove = (e: React.MouseEvent<HTMLDivElement>) =>
     {
         const {resizeStartPosition} = this.state
-        console.log('resizing', resizeStartPosition)
         if (!resizeStartPosition) return
 
         this.setState({

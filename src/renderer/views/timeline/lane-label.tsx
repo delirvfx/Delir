@@ -13,7 +13,7 @@ import LaneLabelProps from './lane-label-props'
 
 interface LaneLabelProps {
     editor: EditorState
-    timelane: Delir.Project.Timelane
+    layer: Delir.Project.Layer
     onSelect: () => any
     onRemove: () => any
 }
@@ -25,20 +25,20 @@ export default class LaneLabel extends React.Component<LaneLabelProps>
 {
     static propTypes = {
         editor: PropTypes.object.isRequired,
-        timelane: PropTypes.object.isRequired,
+        layer: PropTypes.object.isRequired,
         onSelect: PropTypes.func.isRequired,
         onRemove: PropTypes.func.isRequired,
     }
 
     render()
     {
-        const {timelane, editor: {activeLayer}, onSelect, onRemove} = this.props
-        const clips = Array.from(timelane.clips.values())
+        const {layer, editor: {activeLayer}, onSelect, onRemove} = this.props
+        const clips = Array.from(layer.clips.values())
         const propTypes = activeLayer ? RendererService.pluginRegistry!.getParametersById(activeLayer.renderer) : []
         const hasActiveLayer = clips.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1
 
         return (
-            <ul key={timelane.id} className={classnames(
+            <ul key={layer.id} className={classnames(
                 'timeline_lane-label', {
                     '--expand': hasActiveLayer,
                 })}
@@ -46,12 +46,12 @@ export default class LaneLabel extends React.Component<LaneLabelProps>
                 <ContextMenu>
                     <MenuItem type='separator' />
                     {/*<MenuItem label='複製' onClick={() => {}} />*/}
-                    <MenuItem label='削除' onClick={onRemove.bind(null, timelane.id)} />
+                    <MenuItem label='削除' onClick={onRemove.bind(null, layer.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
 
-                <li className='timeline_lane-label_col --col-name' onClick={onSelect.bind(this, timelane.id)}>
-                    <LabelInput defaultValue={timelane.name} placeholder='TimeLane' />
+                <li className='timeline_lane-label_col --col-name' onClick={onSelect.bind(this, layer.id)}>
+                    <LabelInput defaultValue={layer.name} placeholder='Layer' />
                 </li>
                 <li className='timeline_lane-label_col --col-visibility'>
                     👁

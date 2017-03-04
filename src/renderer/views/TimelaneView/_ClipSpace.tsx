@@ -18,7 +18,7 @@ import LaneKeyframes from '../timeline/lane-keyframes'
 
 interface TimelaneClipSpaceProps {
     editor: EditorState,
-    timelane: Delir.Project.Timelane,
+    layer: Delir.Project.Layer,
     activeClip: Delir.Project.Clip,
     framerate: number,
     pxPerSec: number,
@@ -40,7 +40,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
 {
     static propTypes = {
         editor: PropTypes.object.isRequired,
-        timelane: PropTypes.object.isRequired,
+        layer: PropTypes.object.isRequired,
         framerate: PropTypes.number.isRequired,
         pxPerSec: PropTypes.number.isRequired,
         scale: PropTypes.number.isRequired,
@@ -74,12 +74,12 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             const {asset} = dragEntity
             const {props:{framerate, pxPerSec, scale}} = this
             const placedFrame = TimelineHelper.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
-            ProjectModifyActions.createClipWithAsset(this.props.timelane, asset, placedFrame)
+            ProjectModifyActions.createClipWithAsset(this.props.layer, asset, placedFrame)
         }
         else if (dragEntity.type === 'clip') {
             // Drop Clip into ClipSpace
             const {clip} = dragEntity
-            const isChildClip = !! _.find(Array.from(this.props.timelane.clips.values()), {id: clip.id})
+            const isChildClip = !! _.find(Array.from(this.props.layer.clips.values()), {id: clip.id})
 
             if (isChildClip) {
                 const placedFrame = TimelineHelper.pixelToFrames({
@@ -90,7 +90,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                 })
                 ProjectModifyActions.modifyClip(dragEntity.clip.id!, {placedFrame: placedFrame})
             } else {
-                ProjectModifyActions.moveClipToTimelane(clip.id!, this.props.timelane.id!)
+                ProjectModifyActions.moveClipToLayer(clip.id!, this.props.layer.id!)
             }
         } else {
             return
@@ -131,15 +131,15 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
 
     addNewClip = (clipRendererId) =>
     {
-        ProjectModifyActions.createClip(this.props.timelane.id!, clipRendererId, 0, 100)
+        ProjectModifyActions.createClip(this.props.layer.id!, clipRendererId, 0, 100)
     }
 
     render()
     {
-        const {timelane, activeClip, framerate, scale} = this.props
+        const {layer, activeClip, framerate, scale} = this.props
         const {pxPerSec} = this.state
         const keyframes = activeClip ? activeClip.keyframes : {}
-        const clips = Array.from<Delir.Project.Clip>(timelane.clips.values())
+        const clips = Array.from<Delir.Project.Clip>(layer.clips.values())
         const plugins = this._plugins
 
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
@@ -150,7 +150,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                     dragover: this.state.dragovered,
                     '--expand': clips.findIndex(clip => !!(activeClip && clip.id === activeClip.id)) !== -1,
                 })}
-                data-lane-id={timelane.id}
+                data-lane-id={layer.id}
                 onDragOver={this.onDragOver.bind(this)}
                 onDragLeave={this.onDragLeave.bind(this)}
                 onDrop={this.onDrop}
