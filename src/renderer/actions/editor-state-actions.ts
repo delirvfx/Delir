@@ -12,7 +12,7 @@ import EditorStateStore from '../stores/editor-state-store'
 
 export type DragEntity =
     {type: 'asset', asset: Delir.Project.Asset}
-    | {type: 'layer', layer: Delir.Project.Layer}
+    | {type: 'layer', layer: Delir.Project.Clip}
 
 export type SetActiveProjectPayload = Payload<'SetActiveProject', {project: Delir.Project.Project, path?: string}>
 export type ClearActiveProjectPayload = Payload<'ClearActiveProject', null>
