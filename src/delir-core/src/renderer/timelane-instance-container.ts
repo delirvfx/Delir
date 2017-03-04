@@ -2,13 +2,13 @@
 import Timelane from '../project/timelane'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
-import LayerInstanceContainer from './layer-instance-container'
+import ClipInstanceContainer from './clip-instance-container'
 
 export default class TimelaneInstanceContainer
 {
     private _timelane: Timelane
-    private _layers: Array<LayerInstanceContainer> = []
-    private _timeOrderLayers: Array<LayerInstanceContainer> = []
+    private _layers: Array<ClipInstanceContainer> = []
+    private _timeOrderLayers: Array<ClipInstanceContainer> = []
 
     constructor(timelane: Timelane)
     {
@@ -18,7 +18,7 @@ export default class TimelaneInstanceContainer
     async beforeRender(preRenderReq: PreRenderingRequest)
     {
         this._layers = Array.from(this._timelane.layers.values())
-            .map(layer => new LayerInstanceContainer(layer))
+            .map(layer => new ClipInstanceContainer(layer))
 
         // sort layers
         this._timeOrderLayers = this._layers.slice(0)
