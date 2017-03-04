@@ -4,11 +4,11 @@ import Effect from './effect'
 import {LayerScheme, LayerConfigScheme} from './scheme/layer'
 import {RendererProperties} from './types'
 
-export default class Layer
+export default class Clip
 {
     static deserialize(layerJson: LayerScheme)
     {
-        const layer = new Layer
+        const layer = new Clip
         const config = _.pick(layerJson.config, [
             'renderer',
             'rendererOptions',
