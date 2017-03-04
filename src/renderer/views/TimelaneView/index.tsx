@@ -147,7 +147,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
 
         return (
-            <Pane className={s.layerView} allowFocus>
+            <Pane className={s.timelineView} allowFocus>
                 <Workspace direction='vertical'>
                     <Pane>
                         <Workspace direction="horizontal" onDrop={this.dropAsset}>
