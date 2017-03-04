@@ -9,15 +9,15 @@ import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import s from './Clip.styl'
 
-interface TimelaneLayerProps {
-    layer: Delir.Project.Clip,
+interface TimelaneClipProps {
+    clip: Delir.Project.Clip,
     left: number,
     width: number,
     onChangePlace: (draggedPx: number) => any,
     onChangeDuration: (displayWidth: number) => any,
 }
 
-interface TimelaneLayerState {
+interface TimelaneClipState {
     draggedPxX: number
     dragStartPosition: {clientX: number, clientY: number}|null
     dragStyle: {[prop: string]: string}|null
@@ -26,10 +26,10 @@ interface TimelaneLayerState {
     resizeMovedX: number
 }
 
-export default class TimelaneLayer extends React.Component<TimelaneLayerProps, TimelaneLayerState>
+export default class TimelaneClip extends React.Component<TimelaneClipProps, TimelaneClipState>
 {
     static propTypes = {
-        layer: PropTypes.object.isRequired,
+        clip: PropTypes.object.isRequired,
         left: PropTypes.number.isRequired,
         width: PropTypes.number.isRequired,
         onChangePlace: PropTypes.func.isRequired,
@@ -50,8 +50,8 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
         }
     }
 
-    selectLayer = e => {
-        EditorStateActions.changeActiveClip(this.props.layer.id)
+    selectClip = e => {
+        EditorStateActions.changeActiveClip(this.props.clip.id)
     }
 
     dragStart = e => {
@@ -62,7 +62,7 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
             }
         })
 
-        EditorStateActions.setDragEntity({type: 'layer', layer: this.props.layer})
+        EditorStateActions.setDragEntity({type: 'clip', clip: this.props.clip})
     }
 
     drag = (e) => {
@@ -86,13 +86,13 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
         })
     }
 
-    makeAlias = layerId =>
+    makeAlias = clipId =>
     {
     }
 
-    removeLayer = layerId =>
+    removeClip = clipId =>
     {
-        ProjectModifyActions.removeLayer(layerId)
+        ProjectModifyActions.removeClip(clipId)
     }
 
     resizeStart = (e: React.MouseEvent<HTMLDivElement>) =>
@@ -134,7 +134,7 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
 
     render()
     {
-        const {layer} = this.props
+        const {clip} = this.props
 
         return (
             <div className={s.clip}
@@ -144,18 +144,18 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
                     ...this.state.dragStyle,
                 }}
                 draggable={true}
-                onClick={this.selectLayer}
+                onClick={this.selectClip}
                 onDragStart={this.dragStart}
                 onDrag={this.drag}
                 onDragEnd={this.dragEnd}
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, layer.id)} />
-                    <MenuItem label='remove ' onClick={this.removeLayer.bind(null, layer.id)} />
+                    <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} />
+                    <MenuItem label='remove ' onClick={this.removeClip.bind(null, clip.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
-                <span>#{layer.id.substring(0, 4)}</span>
+                <span>#{clip.id.substring(0, 4)}</span>
                 <div
                     className={s.resizeHandle}
                     draggable

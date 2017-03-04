@@ -177,7 +177,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
 
             case 'FLOAT':
             case 'ENUM':
-            case 'LAYER':
+            case 'CLIP':
             case 'PULSE':
                 component = []
                 break

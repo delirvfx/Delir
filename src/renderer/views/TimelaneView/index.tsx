@@ -25,7 +25,7 @@ import SelectList from '../components/select-list'
 import LaneLabel from '../timeline/lane-label'
 import LaneKeyframes from '../timeline/lane-keyframes'
 import KeyframeView from '../KeyframeView'
-import TimelaneLayerList from './_TimelaneLayerList'
+import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
 
 import s from './style.styl'
@@ -196,7 +196,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && timelineLanes.map(timelane => (
-                                        <TimelaneLayerList
+                                        <ClipSpace
                                             key={timelane.id!}
                                             timelane={timelane}
                                             framerate={framerate}
