@@ -51,7 +51,7 @@ export default class TimelaneLayer extends React.Component<TimelaneLayerProps, T
     }
 
     selectLayer = e => {
-        EditorStateActions.changeActiveLayer(this.props.layer.id)
+        EditorStateActions.changeActiveClip(this.props.layer.id)
     }
 
     dragStart = e => {
