@@ -78,37 +78,37 @@ const c1_t4_l1 = Object.assign(new Delir.Project.Clip, {
 ProjectHelper.addComposition(p, c1)
 ;[c1_t1, c1_t2, c1_t3, c1_t4].forEach(lane => ProjectHelper.addTimelane(p, c1, lane))
 
-// console.log(ProjectHelper.addLayer())
-ProjectHelper.addLayer(p, c1_t1, c1_t1_l1)
-// ProjectHelper.addLayer(p, c1_t2, c1_t2_l1)
-// ProjectHelper.addLayer(p, c1_t3, c1_t3_l1)
-// ProjectHelper.addLayer(p, c1_t3, c1_t4_l1)
+// console.log(ProjectHelper.addClip())
+ProjectHelper.addClip(p, c1_t1, c1_t1_l1)
+// ProjectHelper.addClip(p, c1_t2, c1_t2_l1)
+// ProjectHelper.addClip(p, c1_t3, c1_t3_l1)
+// ProjectHelper.addClip(p, c1_t3, c1_t4_l1)
 
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'x', [
 //     Object.assign(new Delir.Project.Keyframe, {
-//         frameOnLayer: 0,
+//         frameOnClip: 0,
 //         value: 0,
 //         easeOutParam: [1, -0.03],
 //     }),
 //     Object.assign(new Delir.Project.Keyframe, {
-//         frameOnLayer: fps * 5,
+//         frameOnClip: fps * 5,
 //         value: 900,
 //         easeInParam: [1, .09],
 //         easeOutParam: [1, -0.03],
 //     }),
 //     Object.assign(new Delir.Project.Keyframe, {
-//         frameOnLayer: durationFrames,
+//         frameOnClip: durationFrames,
 //         value: 0,
 //         easeInParam: [1, .09],
 //     })
 // ])
 //
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'y', [
-//     Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: -300})
+//     Object.assign(new Delir.Project.Keyframe, {frameOnClip: 0, value: -300})
 // ])
 //
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'loop', [
-//     Object.assign(new Delir.Project.Keyframe, {frameOnLayer: 0, value: true})
+//     Object.assign(new Delir.Project.Keyframe, {frameOnClip: 0, value: true})
 // ])
 
 
@@ -127,12 +127,12 @@ c2_t1_l2.placedFrame = 40
 
 ProjectHelper.addComposition(p, c2)
 ProjectHelper.addTimelane(p, c2, c2_t1)
-// ProjectHelper.addLayer(p, c2_t1, c2_t1_l1)
-ProjectHelper.addLayer(p, c2_t1, c2_t1_l2)
+// ProjectHelper.addClip(p, c2_t1, c2_t1_l1)
+ProjectHelper.addClip(p, c2_t1, c2_t1_l2)
 // ProjectHelper.createAddEffect(p, c1_t1_l1, {
 //     processor: 'noise',
 // })
-// ProjectHelper.addLayer(p, c2_t1, c2_t1_l3)
+// ProjectHelper.addClip(p, c2_t1, c2_t1_l3)
 // ProjectHelper.addKeyframe(p, c1_t1_l1, new Delir.Project.Keyframe)
 
 export default p
