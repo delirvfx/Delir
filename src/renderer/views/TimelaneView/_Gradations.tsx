@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Component, PropTypes} from 'react'
 import * as Delir from 'delir-core'
 
-import TimelaneHelper from '../../helpers/timelane-helper'
+import TimelineHelper from '../../helpers/timeline-helper'
 import RendererService from '../../services/renderer'
 
 import s from './Gradations.styl'
@@ -48,7 +48,7 @@ export default class Gradations extends Component<GradationsProps, any>
 
         if (activeComposition && renderer.isPlaying) {
             this.setState({
-                left: TimelaneHelper.framesToPixel({
+                left: TimelineHelper.framesToPixel({
                     pxPerSec: 30,
                     framerate: activeComposition.framerate,
                     durationFrames: renderer.session.lastRenderedFrame,
@@ -66,7 +66,7 @@ export default class Gradations extends Component<GradationsProps, any>
 
         if (! activeComposition) return
 
-        const frame = TimelaneHelper.pixelToFrames({
+        const frame = TimelineHelper.pixelToFrames({
             pxPerSec,
             framerate: activeComposition.framerate,
             scale,

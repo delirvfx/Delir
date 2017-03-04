@@ -1,6 +1,6 @@
 export interface KeyframeConfigScheme {
     value: any
-    frameOnLayer: number|null
+    frameOnClip: number|null
     easeInParam: [number, number]
     easeOutParam: [number, number]
 }

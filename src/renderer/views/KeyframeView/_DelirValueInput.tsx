@@ -20,7 +20,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         descriptors: PropTypes.arrayOf(
             PropTypes.instanceOf(Delir.TypeDescriptor)
         ),
-        value: PropTypes.any.isRequired,
+        value: PropTypes.any,
         onChange: PropTypes.func.isRequired,
     }
 
@@ -177,7 +177,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
 
             case 'FLOAT':
             case 'ENUM':
-            case 'LAYER':
+            case 'CLIP':
             case 'PULSE':
                 component = []
                 break

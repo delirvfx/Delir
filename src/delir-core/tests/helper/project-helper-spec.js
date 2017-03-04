@@ -4,8 +4,8 @@ import * as ProjectHelper from '../../src/helper/project-helper'
 import Project from '../../src/project/project'
 import Asset from '../../src/project/asset'
 import Composition from '../../src/project/composition'
-import TimeLane from '../../src/project/timelane'
 import Layer from '../../src/project/layer'
+import Clip from '../../src/project/clip'
 import Keyframe from '../../src/project/keyframe'
 
 import ColorRGB from '../../src/struct/color-rgb'
@@ -78,38 +78,11 @@ describe('ProjectHelper specs', () => {
             })
         })
 
-        describe('::createAddTimelane', () => {
-            it('correcty make and add Timelane', () => {
-                const props = {name: 'test'}
-                const composition = new Composition
-                const timelane = ProjectHelper.createAddTimelane(project, composition, props)
-                props.id = timelane.id
-
-                // must be returns instanceof Asset
-                expect(timelane).to.be.an(TimeLane)
-
-                // must be assign .id property
-                expect(timelane.id).to.not.be.empty()
-
-                // check correctry assigned given properties
-                Object.keys(props).forEach(key => expect(timelane[key]).to.eql(props[key]))
-
-                // must be not writable `id` property
-                expect(propNotWritable(timelane, 'id')).to.be(true)
-
-                // must be added to target composition
-                expect(composition.timelanes.has(timelane)).to.be(true)
-
-                // must be register symbolId in Project
-                expect(project.symbolIds.has(timelane.id)).to.be(true)
-            })
-        })
-
         describe('::createAddLayer', () => {
             it('correcty make and add Layer', () => {
-                const props = {renderer: 'test', placedFrame: 0, durationFrames: 100}
-                const timelane = new TimeLane
-                const layer = ProjectHelper.createAddLayer(project, timelane, props)
+                const props = {name: 'test'}
+                const composition = new Composition
+                const layer = ProjectHelper.createAddLayer(project, composition, props)
                 props.id = layer.id
 
                 // must be returns instanceof Asset
@@ -124,19 +97,46 @@ describe('ProjectHelper specs', () => {
                 // must be not writable `id` property
                 expect(propNotWritable(layer, 'id')).to.be(true)
 
-                // must be added to target timelane
-                expect(timelane.layers.has(layer)).to.be(true)
+                // must be added to target composition
+                expect(composition.layers.has(layer)).to.be(true)
 
                 // must be register symbolId in Project
                 expect(project.symbolIds.has(layer.id)).to.be(true)
             })
         })
 
+        describe('::createAddClip', () => {
+            it('correcty make and add Clip', () => {
+                const props = {renderer: 'test', placedFrame: 0, durationFrames: 100}
+                const layer = new Layer
+                const clip = ProjectHelper.createAddClip(project, layer, props)
+                props.id = clip.id
+
+                // must be returns instanceof Asset
+                expect(clip).to.be.an(Clip)
+
+                // must be assign .id property
+                expect(clip.id).to.not.be.empty()
+
+                // check correctry assigned given properties
+                Object.keys(props).forEach(key => expect(clip[key]).to.eql(props[key]))
+
+                // must be not writable `id` property
+                expect(propNotWritable(clip, 'id')).to.be(true)
+
+                // must be added to target layer
+                expect(layer.clips.has(clip)).to.be(true)
+
+                // must be register symbolId in Project
+                expect(project.symbolIds.has(clip.id)).to.be(true)
+            })
+        })
+
         describe('::createAddKeyframe', () => {
             it('correcty make and add Keyframe', () => {
-                const props = {value: 0, frameOnLayer: 0, easeInParam: [1, 0], easeOutParam: [0, 1]}
-                const layer = new Layer
-                const keyframe = ProjectHelper.createAddKeyframe(project, layer, 'x', props)[0]
+                const props = {value: 0, frameOnClip: 0, easeInParam: [1, 0], easeOutParam: [0, 1]}
+                const clip = new Clip
+                const keyframe = ProjectHelper.createAddKeyframe(project, clip, 'x', props)[0]
                 props.id = keyframe.id
 
                 // must be returns instanceof Asset
@@ -151,8 +151,8 @@ describe('ProjectHelper specs', () => {
                 // must be not writable `id` property
                 expect(propNotWritable(keyframe, 'id')).to.be(true)
 
-                // must be added to target prop of layer
-                expect(layer.keyframes.x.has(keyframe)).to.be(true)
+                // must be added to target prop of clip
+                expect(clip.keyframes.x.has(keyframe)).to.be(true)
 
                 // must be register symbolId in Project
                 expect(project.symbolIds.has(keyframe.id)).to.be(true)
@@ -160,11 +160,11 @@ describe('ProjectHelper specs', () => {
 
             it('correcty make and add Keyframe array', () => {
                 const props = [
-                    {value: 0, frameOnLayer: 0, easeInParam: [1, 0], easeOutParam: [0, 1]},
-                    {value: 10, frameOnLayer: 10, easeInParam: [1, 0], easeOutParam: [0, 1]}
+                    {value: 0, frameOnClip: 0, easeInParam: [1, 0], easeOutParam: [0, 1]},
+                    {value: 10, frameOnClip: 10, easeInParam: [1, 0], easeOutParam: [0, 1]}
                 ]
-                const layer = new Layer
-                const keyframes = ProjectHelper.createAddKeyframe(project, layer, 'x', props)
+                const clip = new Clip
+                const keyframes = ProjectHelper.createAddKeyframe(project, clip, 'x', props)
                 expect(keyframes).to.be.an(Array)
 
                 keyframes.forEach((keyframe, idx) => {
@@ -182,8 +182,8 @@ describe('ProjectHelper specs', () => {
                     // must be not writable `id` property
                     expect(propNotWritable(keyframe, 'id')).to.be(true)
 
-                    // must be added to target prop of layer
-                    expect(layer.keyframes.x.has(keyframe)).to.be(true)
+                    // must be added to target prop of clip
+                    expect(clip.keyframes.x.has(keyframe)).to.be(true)
 
                     // must be register symbolId in Project
                     expect(project.symbolIds.has(keyframe.id)).to.be(true)

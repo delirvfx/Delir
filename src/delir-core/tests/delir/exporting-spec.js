@@ -23,12 +23,12 @@ describe('Check exportings', () => {
             expect(Delir.Project.Composition).to.be.an('function')
         })
 
-        it('Delir.Project.TimeLane', () => {
-            expect(Delir.Project.TimeLane).to.be.an('function')
-        })
-
         it('Delir.Project.Layer', () => {
             expect(Delir.Project.Layer).to.be.an('function')
+        })
+
+        it('Delir.Project.Clip', () => {
+            expect(Delir.Project.Clip).to.be.an('function')
         })
 
         it('Delir.Project.Keyframe', () => {

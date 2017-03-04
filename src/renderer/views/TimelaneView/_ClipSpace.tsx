@@ -8,7 +8,7 @@ import {ContextMenu, MenuItem} from '../electron/context-menu'
 import RendererService from '../../services/renderer'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
-import TimelaneHelper from '../../helpers/timelane-helper'
+import TimelineHelper from '../../helpers/timeline-helper'
 import connectToStores from '../../utils/connectToStores'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 import cancelEvent from '../../utils/cancelEvent'
@@ -16,16 +16,16 @@ import cancelEvent from '../../utils/cancelEvent'
 import Clip from './_Clip'
 import LaneKeyframes from '../timeline/lane-keyframes'
 
-interface TimelaneLayerListProps {
+interface TimelaneClipSpaceProps {
     editor: EditorState,
-    timelane: Delir.Project.Timelane,
-    activeLayer: Delir.Project.Layer,
+    layer: Delir.Project.Layer,
+    activeClip: Delir.Project.Clip,
     framerate: number,
     pxPerSec: number,
     scale: number,
 }
 
-interface TimelaneLayerListState {
+interface TimelaneClipSpaceState {
     dragovered: boolean,
     pxPerSec: number,
 }
@@ -36,15 +36,15 @@ interface TimelaneLayerListState {
 @connectToStores([EditorStateStore], context => ({
     editor: EditorStateStore.getState(),
 }))
-export default class TimelaneLayerList extends React.Component<TimelaneLayerListProps, TimelaneLayerListState>
+export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, TimelaneClipSpaceState>
 {
     static propTypes = {
         editor: PropTypes.object.isRequired,
-        timelane: PropTypes.object.isRequired,
+        layer: PropTypes.object.isRequired,
         framerate: PropTypes.number.isRequired,
         pxPerSec: PropTypes.number.isRequired,
         scale: PropTypes.number.isRequired,
-        activeLayer: PropTypes.object.isRequired,
+        activeClip: PropTypes.object.isRequired,
     }
 
     _plugins: {id: string, packageName: string}[]
@@ -70,25 +70,27 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
         if (!activeComp || !dragEntity) return
 
         if (dragEntity.type === 'asset') {
+            // Drop asset into ClipSpace
             const {asset} = dragEntity
             const {props:{framerate, pxPerSec, scale}} = this
-            const placedFrame = TimelaneHelper.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
-            ProjectModifyActions.createLayerWithAsset(this.props.timelane, asset, placedFrame)
+            const placedFrame = TimelineHelper.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
+            ProjectModifyActions.createClipWithAsset(this.props.layer, asset, placedFrame)
         }
-        else if (dragEntity.type === 'layer') {
-            const {layer} = dragEntity
-            const isChildLayer = !! _.find(Array.from(this.props.timelane.layers.values()), {id: layer.id})
+        else if (dragEntity.type === 'clip') {
+            // Drop Clip into ClipSpace
+            const {clip} = dragEntity
+            const isChildClip = !! _.find(Array.from(this.props.layer.clips.values()), {id: clip.id})
 
-            if (isChildLayer) {
-                const placedFrame = TimelaneHelper.pixelToFrames({
-                    pxPerSec: this.state.pxPerSec,
+            if (isChildClip) {
+                const placedFrame = TimelineHelper.pixelToFrames({
+                    pxPerSec: this.props.pxPerSec,
                     framerate: this.props.framerate,
                     pixel: e.pageX - e.currentTarget.getBoundingClientRect().left - (e.nativeEvent as DragEvent).offsetX,
                     scale: this.props.scale,
                 })
-                ProjectModifyActions.modifyLayer(dragEntity.layer.id!, {placedFrame: placedFrame})
+                ProjectModifyActions.modifyClip(dragEntity.clip.id!, {placedFrame: placedFrame})
             } else {
-                ProjectModifyActions.moveLayerToTimelane(layer.id!, this.props.timelane.id!)
+                ProjectModifyActions.moveClipToLayer(clip.id!, this.props.layer.id!)
             }
         } else {
             return
@@ -108,35 +110,36 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
         this.setState({dragovered: true})
     }
 
-    changeLayerPlace(layer, movedX)
+    changeClipPlace(clip, movedX)
     {
+        console.log(movedX)
     }
 
-    changeLayerDuration = (layer: Delir.Project.Layer, newWidth: number) =>
+    changeClipDuration = (clip: Delir.Project.Clip, newWidth: number) =>
     {
-        const newDurationFrames = TimelaneHelper.pixelToFrames({
-            pxPerSec: this.state.pxPerSec,
+
+        const newDurationFrames = TimelineHelper.pixelToFrames({
+            pxPerSec: this.props.pxPerSec,
             framerate: this.props.framerate,
             pixel: newWidth,
             scale: this.props.scale,
         })
 
-        ProjectModifyActions.modifyLayer(layer.id, {
+        ProjectModifyActions.modifyClip(clip.id, {
             durationFrames: newDurationFrames,
         })
     }
 
-    addNewLayer = (layerRendererId) =>
+    addNewClip = (clipRendererId) =>
     {
-        ProjectModifyActions.createLayer(this.props.timelane.id!, layerRendererId, 0, 100)
+        ProjectModifyActions.createClip(this.props.layer.id!, clipRendererId, 0, 100)
     }
 
     render()
     {
-        const {timelane, activeLayer, framerate, scale} = this.props
-        const {pxPerSec} = this.state
-        const keyframes = activeLayer ? activeLayer.keyframes : {}
-        const layers = Array.from<Delir.Project.Layer>(timelane.layers.values())
+        const {layer, activeClip, framerate, pxPerSec, scale} = this.props
+        const keyframes = activeClip ? activeClip.keyframes : {}
+        const clips = Array.from<Delir.Project.Clip>(layer.clips.values())
         const plugins = this._plugins
 
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
@@ -145,47 +148,47 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
             <li
                 className={classnames('timeline-lane', {
                     dragover: this.state.dragovered,
-                    '--expand': layers.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1,
+                    '--expand': clips.findIndex(clip => !!(activeClip && clip.id === activeClip.id)) !== -1,
                 })}
-                data-lane-id={timelane.id}
+                data-lane-id={layer.id}
                 onDragOver={this.onDragOver.bind(this)}
                 onDragLeave={this.onDragLeave.bind(this)}
                 onDrop={this.onDrop}
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label='Add new Layer' enabled={!!plugins.length}>
+                    <MenuItem label='Add new Clip' enabled={!!plugins.length}>
                         {_.map(plugins, p =>
-                            <MenuItem label={p.packageName} onClick={this.addNewLayer.bind(null, p.id)} />
+                            <MenuItem label={p.packageName} onClick={this.addNewClip.bind(null, p.id)} />
                         )}
                     </MenuItem>
                     <MenuItem type='separator' />
                 </ContextMenu>
 
-                <div className='timeline-lane-layers'>
-                    {layers.map(layer => {
+                <div className='timeline-lane-clips'>
+                    {clips.map(clip => {
                         const opt = {
                             pxPerSec: pxPerSec,
                             framerate: framerate,
                             scale: scale,
                         };
-                        const width = TimelaneHelper.framesToPixel({
-                            durationFrames: layer.durationFrames|0,
+                        const width = TimelineHelper.framesToPixel({
+                            durationFrames: clip.durationFrames|0,
                             ...opt,
                         })
-                        const left = TimelaneHelper.framesToPixel({
-                            durationFrames: layer.placedFrame|0,
+                        const left = TimelineHelper.framesToPixel({
+                            durationFrames: clip.placedFrame|0,
                             ...opt,
                         })
 
                         return (
                             <Clip
-                                key={layer.id!}
-                                layer={layer}
+                                key={clip.id!}
+                                clip={clip}
                                 width={width}
                                 left={left}
-                                onChangePlace={this.changeLayerPlace.bind(this, layer)}
-                                onChangeDuration={this.changeLayerDuration.bind(null, layer)}
+                                onChangePlace={this.changeClipPlace.bind(this, clip)}
+                                onChangeDuration={this.changeClipDuration.bind(null, clip)}
                             />
                         )
                     })}

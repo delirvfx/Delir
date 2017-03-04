@@ -11,39 +11,39 @@ import RendererService from '../services/renderer'
 import EditorStateActions from './editor-state-actions'
 
 export type CreateCompositionPayload = Payload<'CreateComposition', {composition: Delir.Project.Composition}>
-export type CreateTimelanePayload = Payload<'CreateTimelane', {targetCompositionId: string, timelane: Delir.Project.Timelane}>
-export type CreateLayerPayload = Payload<'CreateLayer', {
+export type CreateLayerPayload = Payload<'CreateLayer', {targetCompositionId: string, layer: Delir.Project.Layer}>
+export type CreateClipPayload = Payload<'CreateClip', {
     props: {renderer: string, placedFrame: number, durationFrames: number},
-    targetTimelaneId: string,
+    targetLayerId: string,
 }>
-export type AddLayerPayload = Payload<'AddLayer', {targetTimelane: Delir.Project.Timelane, newLayer: Delir.Project.Layer}>
-export type AddTimelanePayload = Payload<'AddTimelane', {targetComposition: Delir.Project.Composition, timelane: Delir.Project.Timelane}>
-export type AddTimelaneWithAssetPayload = Payload<'AddTimelaneWithAsset', {
+export type AddClipPayload = Payload<'AddClip', {targetLayer: Delir.Project.Layer, newClip: Delir.Project.Clip}>
+export type AddLayerPayload = Payload<'AddLayer', {targetComposition: Delir.Project.Composition, layer: Delir.Project.Layer}>
+export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
     targetComposition: Delir.Project.Composition,
-    layer: Delir.Project.Layer,
+    clip: Delir.Project.Clip,
     asset: Delir.Project.Asset,
     pluginRegistry: Delir.PluginRegistry,
 }>
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
-export type MoveLayerToTimelanePayload = Payload<'MoveLayerToTimelane', {targetTimelaneId: string, layerId: string}>
+export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: any}>
-export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: any}>
-export type RemoveTimelanePayload = Payload<'RemoveTimelane', {targetLayerId: string}>
-export type RemoveLayerPayload = Payload<'RemoveLayer', {targetLayerId: string}>
+export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: any}>
+export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
+export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
 
 export const DispatchTypes = keyMirror({
     CreateComposition: null,
-    CreateTimelane: null,
     CreateLayer: null,
+    CreateClip: null,
+    AddClip: null,
     AddLayer: null,
-    AddTimelane: null,
-    AddTimelaneWithAsset: null,
+    AddLayerWithAsset: null,
     AddAsset: null,
-    MoveLayerToTimelane: null,
+    MoveClipToLayer: null,
     ModifyComposition: null,
-    ModifyLayer: null,
-    RemoveTimelane: null,
+    ModifyClip: null,
     RemoveLayer: null,
+    RemoveClip: null,
 })
 
 export default {
@@ -69,20 +69,20 @@ export default {
     },
 
     // @deprecated
-    createTimelane(compId: string)
+    createLayer(compId: string)
     {
-        const timelane = new Delir.Project.Timelane
-        dispatcher.dispatch(new Payload(DispatchTypes.CreateTimelane, {targetCompositionId: compId, timelane}))
+        const layer = new Delir.Project.Layer
+        dispatcher.dispatch(new Payload(DispatchTypes.CreateLayer, {targetCompositionId: compId, layer}))
     },
 
-    addTimelane(
+    addLayer(
         targetComposition: Delir.Project.Composition,
-        timelane: Delir.Project.Timelane
+        layer: Delir.Project.Layer
     ) {
-        dispatcher.dispatch(new Payload(DispatchTypes.AddTimelane, {targetComposition, timelane}))
+        dispatcher.dispatch(new Payload(DispatchTypes.AddLayer, {targetComposition, layer}))
     },
 
-    addTimelaneWithAsset(
+    addLayerWithAsset(
         targetComposition: Delir.Project.Composition,
         asset: Delir.Project.Asset
     ) {
@@ -94,40 +94,40 @@ export default {
             return
         }
 
-        const layer = new Delir.Project.Layer
-        Object.assign(layer, {
+        const clip = new Delir.Project.Clip
+        Object.assign(clip, {
             id: uuid.v4(),
             renderer: processablePlugins[0].id,
             placedFrame: 0,
             durationFrames: targetComposition.framerate,
         })
 
-        dispatcher.dispatch(new Payload(DispatchTypes.AddTimelaneWithAsset, {
+        dispatcher.dispatch(new Payload(DispatchTypes.AddLayerWithAsset, {
             targetComposition,
-            layer,
+            clip,
             asset,
             pluginRegistry: RendererService.pluginRegistry!,
         }))
     },
 
-    createLayer(
-        timelaneId: string,
-        layerRendererId: string,
+    createClip(
+        layerId: string,
+        clipRendererId: string,
         placedFrame = 0,
         durationFrames = 100
     ) {
-        dispatcher.dispatch(new Payload(DispatchTypes.CreateLayer, {
+        dispatcher.dispatch(new Payload(DispatchTypes.CreateClip, {
             props: {
-                renderer: layerRendererId,
+                renderer: clipRendererId,
                 placedFrame: placedFrame,
                 durationFrames: durationFrames,
             },
-            targetTimelaneId: timelaneId,
+            targetLayerId: layerId,
         }))
     },
 
-    createLayerWithAsset(
-        targetTimelane: Delir.Project.Timelane,
+    createClipWithAsset(
+        targetLayer: Delir.Project.Layer,
         asset: Delir.Project.Asset,
         placedFrame = 0,
         durationFrames = 100,
@@ -140,8 +140,8 @@ export default {
             return
         }
 
-        const newLayer = new Delir.Project.Layer
-        Object.assign(newLayer, {
+        const newClip = new Delir.Project.Clip
+        Object.assign(newClip, {
             id: uuid.v4(),
             renderer: processablePlugins[0].id,
             placedFrame,
@@ -149,14 +149,14 @@ export default {
         })
 
         const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(
-            newLayer,
+            newClip,
             asset.mimeType,
             RendererService.pluginRegistry!
         )
 
         if (!propName) return
-        newLayer.config.rendererOptions[propName] = asset
-        dispatcher.dispatch(new Payload(DispatchTypes.AddLayer, {targetTimelane, newLayer}))
+        newClip.config.rendererOptions[propName] = asset
+        dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },
 
     addAsset({name, mimeType, path}: {name: string, mimeType: string, path: string})
@@ -171,9 +171,9 @@ export default {
 
 
     // TODO: frame position
-    moveLayerToTimelane(layerId: string, targetTimelaneId: string)
+    moveClipToLayer(clipId: string, targetLayerId: string)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.MoveLayerToTimelane, {targetTimelaneId, layerId}))
+        dispatcher.dispatch(new Payload(DispatchTypes.MoveClipToLayer, {targetLayerId, clipId}))
     },
 
     modifyComposition(compId: string, props: {[propKey: string]: any})
@@ -184,20 +184,20 @@ export default {
         }))
     },
 
-    modifyLayer(layerId: string, props: {[propKey: string]: any}) {
-        dispatcher.dispatch(new Payload(DispatchTypes.ModifyLayer, {
-            targetLayerId: layerId,
+    modifyClip(clipId: string, props: {[propKey: string]: any}) {
+        dispatcher.dispatch(new Payload(DispatchTypes.ModifyClip, {
+            targetClipId: clipId,
             patch: props,
         }))
     },
 
-    removeTimelane(layerId: string)
+    removeLayer(clipId: string)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveTimelane, {targetLayerId: layerId}))
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveLayer, {targetClipId: clipId}))
     },
 
-    removeLayer(layerId: string)
+    removeClip(clipId: string)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveLayer,　{targetLayerId: layerId}))
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveClip,　{targetClipId: clipId}))
     },
 }

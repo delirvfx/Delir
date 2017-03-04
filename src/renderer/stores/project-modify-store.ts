@@ -47,39 +47,39 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 return state.set('project', null)
 
             case ProjectModifyDispatchTypes.CreateComposition:
-                const newTimelane = new Delir.Project.Timelane()
+                const newLayer = new Delir.Project.Layer()
                 ProjectHelper.addComposition(project!, payload.entity.composition)
-                ProjectHelper.addTimelane(project!, payload.entity.composition, newTimelane)
-                break
-
-            case ProjectModifyDispatchTypes.CreateTimelane:
-                ProjectHelper.addTimelane(project!, payload.entity.targetCompositionId, payload.entity.timelane)
+                ProjectHelper.addLayer(project!, payload.entity.composition, newLayer)
                 break
 
             case ProjectModifyDispatchTypes.CreateLayer:
-                ProjectHelper.addLayer(project!, payload.entity.targetTimelaneId, payload.entity.props as any)
+                ProjectHelper.addLayer(project!, payload.entity.targetCompositionId, payload.entity.layer)
+                break
+
+            case ProjectModifyDispatchTypes.CreateClip:
+                ProjectHelper.addClip(project!, payload.entity.targetLayerId, payload.entity.props as any)
+                break
+
+            case ProjectModifyDispatchTypes.AddClip:
+                const {targetLayer, newClip} = payload.entity
+                ProjectHelper.addClip(project, targetLayer, newClip)
                 break
 
             case ProjectModifyDispatchTypes.AddLayer:
-                const {targetTimelane, newLayer} = payload.entity
-                ProjectHelper.addLayer(project, targetTimelane, newLayer)
+                ProjectHelper.addLayer(project!, payload.entity.targetComposition, payload.entity.layer)
                 break
 
-            case ProjectModifyDispatchTypes.AddTimelane:
-                ProjectHelper.addTimelane(project!, payload.entity.targetComposition, payload.entity.timelane)
-                break
-
-            case ProjectModifyDispatchTypes.AddTimelaneWithAsset:
+            case ProjectModifyDispatchTypes.AddLayerWithAsset:
                 (() => {
-                    const {targetComposition, layer, asset: registeredAsset, pluginRegistry} = payload.entity
-                    const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(layer, registeredAsset.mimeType, pluginRegistry)
+                    const {targetComposition, clip, asset: registeredAsset, pluginRegistry} = payload.entity
+                    const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(clip, registeredAsset.mimeType, pluginRegistry)
 
                     if (propName == null) return
-                    layer.config.rendererOptions[propName] = registeredAsset
+                    clip.config.rendererOptions[propName] = registeredAsset
 
-                    const timelane = new Delir.Project.Timelane
-                    ProjectHelper.addTimelane(project, targetComposition, timelane)
-                    ProjectHelper.addLayer(project, timelane, layer)
+                    const layer = new Delir.Project.Layer
+                    ProjectHelper.addLayer(project, targetComposition, layer)
+                    ProjectHelper.addClip(project, layer, clip)
                 })()
                 break
 
@@ -87,31 +87,31 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.addAsset(project!, payload.entity.asset)
                 break
 
-            case ProjectModifyDispatchTypes.MoveLayerToTimelane:
-                const targetLayer = ProjectHelper.findLayerById(project!, payload.entity.layerId)
-                const sourceLane = ProjectHelper.findParentTimelaneByLayerId(project!, payload.entity.layerId)
-                const destLane = ProjectHelper.findTimelaneById(project!, payload.entity.targetTimelaneId)
+            case ProjectModifyDispatchTypes.MoveClipToLayer:
+                const targetClip = ProjectHelper.findClipById(project!, payload.entity.clipId)
+                const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.entity.clipId)
+                const destLane = ProjectHelper.findLayerById(project!, payload.entity.targetLayerId)
 
-                if (targetLayer == null || sourceLane == null || destLane == null) break
+                if (targetClip == null || sourceLane == null || destLane == null) break
 
-                sourceLane.layers.delete(targetLayer)
-                destLane.layers.add(targetLayer)
+                sourceLane.clips.delete(targetClip)
+                destLane.clips.add(targetClip)
                 break
 
             case ProjectModifyDispatchTypes.ModifyComposition:
                 ProjectHelper.modifyComposition(project!, payload.entity.targetCompositionId, payload.entity.patch)
                 break
 
-            case ProjectModifyDispatchTypes.ModifyLayer:
-                ProjectHelper.modifyLayer(project!, payload.entity.targetLayerId, payload.entity.patch)
-                break
-
-            case ProjectModifyDispatchTypes.RemoveTimelane:
-                ProjectHelper.deleteTimelane(project!, payload.entity.targetLayerId)
+            case ProjectModifyDispatchTypes.ModifyClip:
+                ProjectHelper.modifyClip(project!, payload.entity.targetClipId, payload.entity.patch)
                 break
 
             case ProjectModifyDispatchTypes.RemoveLayer:
-                ProjectHelper.deleteLayer(project!, payload.entity.targetLayerId)
+                ProjectHelper.deleteLayer(project!, payload.entity.targetClipId)
+                break
+
+            case ProjectModifyDispatchTypes.RemoveClip:
+                ProjectHelper.deleteClip(project!, payload.entity.targetClipId)
                 break
 
             default:

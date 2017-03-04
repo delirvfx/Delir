@@ -14,8 +14,6 @@ import RendererService from '../../services/renderer'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
 
-import TimelaneHelper from '../../helpers/timelane-helper'
-
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 
@@ -25,7 +23,7 @@ import SelectList from '../components/select-list'
 import LaneLabel from '../timeline/lane-label'
 import LaneKeyframes from '../timeline/lane-keyframes'
 import KeyframeView from '../KeyframeView'
-import TimelaneLayerList from './_TimelaneLayerList'
+import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
 
 import s from './style.styl'
@@ -98,20 +96,20 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         this.setState({scale: scale})
     }
 
-    addNewTimelane = () =>
+    addNewLayer = () =>
     {
         if (!this.props.editor.activeComp) return
 
-        ProjectModifyActions.addTimelane(
+        ProjectModifyActions.addLayer(
             this.props.editor.activeComp,
-            new Delir.Project.Timelane
+            new Delir.Project.Layer
         )
     }
 
-    removeTimelane = timelaneId =>
+    removeLayer = layerId =>
     {
         if (!this.props.editor.activeComp) return
-        ProjectModifyActions.removeTimelane(timelaneId)
+        ProjectModifyActions.removeLayer(layerId)
     }
 
     scaleTimeline = e =>
@@ -132,7 +130,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
         if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
         const {asset} = dragEntity
-        ProjectModifyActions.addTimelaneWithAsset(activeComp, asset)
+        ProjectModifyActions.addLayerWithAsset(activeComp, asset)
     }
 
     onSeekClicked = (frame: number) =>
@@ -144,16 +142,16 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     render()
     {
         const {scale} = this.state
-        const {activeComp, activeLayer} = this.props.editor
+        const {activeComp, activeClip} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
-        const timelineLanes = activeComp ? Array.from(activeComp.timelanes) : []
+        const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
 
         return (
-            <Pane className={s.timelaneView} allowFocus>
+            <Pane className={s.timelineView} allowFocus>
                 <Workspace direction='vertical'>
                     <Pane>
                         <Workspace direction="horizontal" onDrop={this.dropAsset}>
-                            {/* Timelane Panel */}
+                            {/* Layer Panel */}
                             <Pane className='timeline-labels-container'>
                                 <div className='timeline-labels-header'>
                                     <div className='--col-name'>Lanes</div>
@@ -167,13 +165,13 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label='Add new timelane' onClick={this.addNewTimelane} enabled={!!activeComp} />
+                                        <MenuItem label='Add new layer' onClick={this.addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && (
                                         <SelectList key={compId}>
                                             {timelineLanes.map(lane => (
-                                                <LaneLabel key={lane.id} timelane={lane} onSelect={this.laneSelected} onRemove={this.removeTimelane} />)
+                                                <LaneLabel key={lane.id} layer={lane} onSelect={this.laneSelected} onRemove={this.removeLayer} />)
                                             )}
                                         </SelectList>
                                     )}
@@ -192,13 +190,13 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label='Add new timelane' onClick={this.addNewTimelane} enabled={!!activeComp} />
+                                        <MenuItem label='Add new layer' onClick={this.addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
-                                    {activeComp && timelineLanes.map(timelane => (
-                                        <TimelaneLayerList
-                                            key={timelane.id!}
-                                            timelane={timelane}
+                                    {activeComp && timelineLanes.map(layer => (
+                                        <ClipSpace
+                                            key={layer.id!}
+                                            layer={layer}
                                             framerate={framerate}
                                             pxPerSec={PX_PER_SEC}
                                             scale={this.state.scale}
@@ -209,7 +207,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                         </Workspace>
                     </Pane>
                     <Pane>
-                        <KeyframeView activeLayer={activeLayer} />
+                        <KeyframeView activeClip={activeClip} />
                     </Pane>
                 </Workspace>
             </Pane>

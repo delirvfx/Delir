@@ -5,8 +5,8 @@ import * as _ from 'lodash'
 import Project from '../project/project'
 import Asset from '../project/asset'
 import Composition from '../project/composition'
-import Timelane from '../project/timelane'
 import Layer from '../project/layer'
+import Clip from '../project/clip'
 import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
 
@@ -61,61 +61,61 @@ export function createAddComposition(
     return composition
 }
 
-export function createAddTimelane(
-    project: Project,
-    targetCompositionId: Composition|string,
-    timelaneProps: Object
-    // TODO: position specify option
-): Timelane
-{
-    const entityId = _generateAndReserveSymbolId(project)
-    const timelane = new Timelane()
-
-    setFreezedProp(timelane, 'id', entityId)
-    Object.assign(timelane, timelaneProps)
-    addTimelane(project, targetCompositionId, timelane);
-
-    return timelane
-}
-
 export function createAddLayer(
     project: Project,
-    targetTimelaneId: Timelane|string,
+    targetCompositionId: Composition|string,
     layerProps: Object
+    // TODO: position specify option
 ): Layer
 {
     const entityId = _generateAndReserveSymbolId(project)
-    const layer = new Layer
+    const layer = new Layer()
 
     setFreezedProp(layer, 'id', entityId)
     Object.assign(layer, layerProps)
-
-    // TODO: Not found behaviour
-    const timelane = targetTimelaneId instanceof Timelane
-        ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)!
-
-    timelane.layers.add(layer)
+    addLayer(project, targetCompositionId, layer);
 
     return layer
 }
 
+export function createAddClip(
+    project: Project,
+    targetLayerId: Layer|string,
+    clipProps: Object
+): Clip
+{
+    const entityId = _generateAndReserveSymbolId(project)
+    const clip = new Clip
+
+    setFreezedProp(clip, 'id', entityId)
+    Object.assign(clip, clipProps)
+
+    // TODO: Not found behaviour
+    const layer = targetLayerId instanceof Layer
+        ? targetLayerId
+        : findLayerById(project, targetLayerId)!
+
+    layer.clips.add(clip)
+
+    return clip
+}
+
 export function createAddEffect(
   project: Project,
-  targetLayerId: Layer|string,
+  targetClipId: Clip|string,
   effectProps: Object
 ): Effect
 {
     const effect = new Effect
     Object.assign(effect, effectProps)
 
-    addEffect(project, targetLayerId, effect)
+    addEffect(project, targetClipId, effect)
     return effect
 }
 
 export function createAddKeyframe(
     project: Project,
-    targetLayerId: Layer|string,
+    targetClipId: Clip|string,
     propName: string,
     keyframeProp: Object|Array<Object>
 ): Array<Keyframe>
@@ -129,9 +129,9 @@ export function createAddKeyframe(
 
     const createdKeyframes = []
     // TODO: Not found behaviour
-    const layer: Layer = targetLayerId instanceof Layer
-        ? targetLayerId
-        : findLayerById(project, targetLayerId)!
+    const clip: Clip = targetClipId instanceof Clip
+        ? targetClipId
+        : findClipById(project, targetClipId)!
 
     for (const _keyframeProp of keyframeProps) {
         const entityId = _generateAndReserveSymbolId(project)
@@ -140,11 +140,11 @@ export function createAddKeyframe(
         setFreezedProp(keyframe, 'id', entityId)
         Object.assign(keyframe, _keyframeProp)
 
-        if (!layer.keyframes[propName]) {
-            layer.keyframes[propName] = new Set()
+        if (!clip.keyframes[propName]) {
+            clip.keyframes[propName] = new Set()
         }
 
-        layer.keyframes[propName].add(keyframe)
+        clip.keyframes[propName].add(keyframe)
         createdKeyframes.push(keyframe)
     }
 
@@ -185,33 +185,11 @@ export function addComposition(
     return composition
 }
 
-export function addTimelane(
-    project: Project,
-    targetCompositionId: Composition|string,
-    timelane: Timelane
-    // TODO: position specify option
-): Timelane
-{
-    if (typeof timelane.id !== 'string') {
-        // TODO: Clone instance
-        const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(timelane, 'id', entityId)
-    }
-
-    // TODO: Not found behaviour
-    const composition = targetCompositionId instanceof Composition
-        ? targetCompositionId
-        : findCompositionById(project, targetCompositionId)!
-
-    composition.timelanes = _.uniqBy([timelane, ...composition.timelanes], 'id')
-
-    return timelane
-}
-
 export function addLayer(
     project: Project,
-    targetTimelaneId: Timelane|string,
+    targetCompositionId: Composition|string,
     layer: Layer
+    // TODO: position specify option
 ): Layer
 {
     if (typeof layer.id !== 'string') {
@@ -221,18 +199,40 @@ export function addLayer(
     }
 
     // TODO: Not found behaviour
-    const timelane = targetTimelaneId instanceof Timelane
-        ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)!
+    const composition = targetCompositionId instanceof Composition
+        ? targetCompositionId
+        : findCompositionById(project, targetCompositionId)!
 
-    timelane.layers.add(layer)
+    composition.layers = _.uniqBy([layer, ...composition.layers], 'id')
 
     return layer
 }
 
+export function addClip(
+    project: Project,
+    targetLayerId: Layer|string,
+    clip: Clip
+): Clip
+{
+    if (typeof clip.id !== 'string') {
+        // TODO: Clone instance
+        const entityId = _generateAndReserveSymbolId(project)
+        setFreezedProp(clip, 'id', entityId)
+    }
+
+    // TODO: Not found behaviour
+    const layer = targetLayerId instanceof Layer
+        ? targetLayerId
+        : findLayerById(project, targetLayerId)!
+
+    layer.clips.add(clip)
+
+    return clip
+}
+
 export function addEffect(
   project: Project,
-  targetLayerId: Layer|string,
+  targetClipId: Clip|string,
   effect: Effect
 ): Effect
 {
@@ -241,18 +241,18 @@ export function addEffect(
         setFreezedProp(effect, 'id', entityId)
     }
 
-    const layer = targetLayerId instanceof Layer
-      ? targetLayerId
-      : findLayerById(project, targetLayerId)!
+    const clip = targetClipId instanceof Clip
+      ? targetClipId
+      : findClipById(project, targetClipId)!
 
-    layer.effects.push(effect)
+    clip.effects.push(effect)
 
     return effect
 }
 
 export function addKeyframe(
     project: Project,
-    targetLayerId: Layer|string,
+    targetClipId: Clip|string,
     propName: string,
     keyframe: Keyframe|Array<Keyframe>
 ): Keyframe|Array<Keyframe>
@@ -265,9 +265,9 @@ export function addKeyframe(
     }
 
     // TODO: Not found behaviour
-    const layer: Layer|null = targetLayerId instanceof Layer
-        ? targetLayerId
-        : findLayerById(project, targetLayerId)!
+    const clip: Clip|null = targetClipId instanceof Clip
+        ? targetClipId
+        : findClipById(project, targetClipId)!
 
     for (const _keyframe of keyframes) {
         if (typeof _keyframe.id !== 'string') {
@@ -276,11 +276,11 @@ export function addKeyframe(
             setFreezedProp(_keyframe, 'id', entityId)
         }
 
-        if (!layer.keyframes[propName]) {
-            layer.keyframes[propName] = new Set()
+        if (!clip.keyframes[propName]) {
+            clip.keyframes[propName] = new Set()
         }
 
-        layer.keyframes[propName].add(_keyframe)
+        clip.keyframes[propName].add(_keyframe)
     }
 
     return keyframe
@@ -314,19 +314,6 @@ export function deleteComposition(
     project.compositions.delete(composition)
 }
 
-export function deleteTimelane(
-    project: Project,
-    targetTimelaneId: Timelane|string,
-) {
-    const timelane = targetTimelaneId instanceof Timelane
-        ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)!
-
-    // TODO: Not found behaviour
-    const composition = findParentCompositionByTimelaneId(project, timelane.id!)!
-    _.remove(composition.timelanes, timelane)
-}
-
 export function deleteLayer(
     project: Project,
     targetLayerId: Layer|string,
@@ -335,24 +322,37 @@ export function deleteLayer(
         ? targetLayerId
         : findLayerById(project, targetLayerId)!
 
-    const timelane = findParentTimelaneByLayerId(project, layer.id!)!
-    timelane.layers.delete(layer)
+    // TODO: Not found behaviour
+    const composition = findParentCompositionByLayerId(project, layer.id!)!
+    _.remove(composition.layers, layer)
 }
 
-export function deleteEffectFromLayer(
+export function deleteClip(
     project: Project,
-    parentLayerId: Layer|string,
+    targetClipId: Clip|string,
+) {
+    const clip = targetClipId instanceof Clip
+        ? targetClipId
+        : findClipById(project, targetClipId)!
+
+    const layer = findParentLayerByClipId(project, clip.id!)!
+    layer.clips.delete(clip)
+}
+
+export function deleteEffectFromClip(
+    project: Project,
+    parentClipId: Clip|string,
     targetEffectId: Effect|string,
 ) {
-    const layer = parentLayerId instanceof Layer
-        ? parentLayerId
-        : findLayerById(project, parentLayerId)!
+    const clip = parentClipId instanceof Clip
+        ? parentClipId
+        : findClipById(project, parentClipId)!
 
     const effect = targetEffectId instanceof Effect
         ? targetEffectId
-        : findEffectFromLayerById(layer, targetEffectId)
+        : findEffectFromClipById(clip, targetEffectId)
 
-    _.remove(layer.effects, effect)
+    _.remove(clip.effects, effect)
 }
 
 export function deleteKeyframe(
@@ -363,9 +363,9 @@ export function deleteKeyframe(
         ? targetKeyframeId
         : findKeyframeById(project, targetKeyframeId)!
 
-    const {layer, propName} = findParentLayerAndPropNameByKeyframeId(project, keyframe.id!)!
-    if (!layer.keyframes[propName]) return
-    layer.keyframes[propName].delete(keyframe) // TODO: Implement this function Or change keyframe structure
+    const {clip, propName} = findParentClipAndPropNameByKeyframeId(project, keyframe.id!)!
+    if (!clip.keyframes[propName]) return
+    clip.keyframes[propName].delete(keyframe) // TODO: Implement this function Or change keyframe structure
 }
 
 //
@@ -395,18 +395,6 @@ export function modifyComposition(
     Object.assign(composition, patch)
 }
 
-export function modifyTimelane(
-    project: Project,
-    targetTimelaneId: Timelane|string,
-    patch: Object
-) {
-    const timelane = targetTimelaneId instanceof Timelane
-        ? targetTimelaneId
-        : findTimelaneById(project, targetTimelaneId)!
-
-    Object.assign(timelane, patch)
-}
-
 export function modifyLayer(
     project: Project,
     targetLayerId: Layer|string,
@@ -419,19 +407,31 @@ export function modifyLayer(
     Object.assign(layer, patch)
 }
 
+export function modifyClip(
+    project: Project,
+    targetClipId: Clip|string,
+    patch: Object
+) {
+    const clip = targetClipId instanceof Clip
+        ? targetClipId
+        : findClipById(project, targetClipId)!
+
+    Object.assign(clip, patch)
+}
+
 export function modifyEffect(
     project: Project,
-    parentLayerId: Layer|string,
+    parentClipId: Clip|string,
     targetEffectId: Effect|string,
     patch: Object
 ) {
-    const layer = parentLayerId instanceof Layer
-        ? parentLayerId
-        : findLayerById(project, parentLayerId)!
+    const clip = parentClipId instanceof Clip
+        ? parentClipId
+        : findClipById(project, parentClipId)!
 
     const effect = targetEffectId instanceof Effect
         ? targetEffectId
-        : findEffectFromLayerById(layer, targetEffectId)
+        : findEffectFromClipById(clip, targetEffectId)
 
     Object.assign(effect, patch)
 }
@@ -481,32 +481,79 @@ export function findCompositionById(project: Project, compositionId: string): Co
     return targetComp
 }
 
-export function findTimelaneById(project: Project, timelaneId: string): Timelane|null
-{
-    let targetTimelane: Timelane|null = null
-
-    timelaneSearch:
-        for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes) {
-                if (timelane.id === timelaneId) {
-                    targetTimelane = timelane
-                    break timelaneSearch
-                }
-            }
-        }
-
-    return targetTimelane
-}
-
 export function findLayerById(project: Project, layerId: string): Layer|null
 {
     let targetLayer: Layer|null = null
 
     layerSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes) {
-                for (const layer of timelane.layers.values()) {
-                    if (layer.id === layerId) {
+            for (const layer of comp.layers) {
+                if (layer.id === layerId) {
+                    targetLayer = layer
+                    break layerSearch
+                }
+            }
+        }
+
+    return targetLayer
+}
+
+export function findClipById(project: Project, clipId: string): Clip|null
+{
+    let targetClip: Clip|null = null
+
+    clipSearch:
+        for (const comp of project.compositions.values()) {
+            for (const layer of comp.layers) {
+                for (const clip of layer.clips.values()) {
+                    if (clip.id === clipId) {
+                        targetClip = clip
+                        break clipSearch
+                    }
+                }
+            }
+        }
+
+    return targetClip
+}
+
+export function findEffectFromClipById(clip: Clip, effectId: string): Effect|null
+{
+    for (const effect of clip.effects) {
+        if (effect.id === effectId) {
+            return effect
+        }
+    }
+
+    return null
+}
+
+export function findParentCompositionByLayerId(project: Project, layerId: string): Composition|null
+{
+    let targetComp: Composition|null = null
+
+    compositionSearch:
+        for (const comp of project.compositions.values()) {
+            for (const layer of comp.layers) {
+                if (layer.id === layerId) {
+                    targetComp = comp
+                    break compositionSearch
+                }
+            }
+        }
+
+    return targetComp
+}
+
+export function findParentLayerByClipId(project: Project, clipId: string): Layer|null
+{
+    let targetLayer: Layer|null = null
+
+    layerSearch:
+        for (const comp of project.compositions.values()) {
+            for (const layer of comp.layers) {
+                for (const clip of layer.clips.values()) {
+                    if (clip.id === clipId) {
                         targetLayer = layer
                         break layerSearch
                     }
@@ -517,60 +564,13 @@ export function findLayerById(project: Project, layerId: string): Layer|null
     return targetLayer
 }
 
-export function findEffectFromLayerById(layer: Layer, effectId: string): Effect|null
-{
-    for (const effect of layer.effects) {
-        if (effect.id === effectId) {
-            return effect
-        }
-    }
-
-    return null
-}
-
-export function findParentCompositionByTimelaneId(project: Project, timelaneId: string): Composition|null
-{
-    let targetComp: Composition|null = null
-
-    compositionSearch:
-        for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes) {
-                if (timelane.id === timelaneId) {
-                    targetComp = comp
-                    break compositionSearch
-                }
-            }
-        }
-
-    return targetComp
-}
-
-export function findParentTimelaneByLayerId(project: Project, layerId: string): Timelane|null
-{
-    let targetTimelane: Timelane|null = null
-
-    timelaneSearch:
-        for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes) {
-                for (const layer of timelane.layers.values()) {
-                    if (layer.id === layerId) {
-                        targetTimelane = timelane
-                        break timelaneSearch
-                    }
-                }
-            }
-        }
-
-    return targetTimelane
-}
-
-export function findKeyframeFromLayerById(layer: Layer, keyframeId: string): Keyframe|null
+export function findKeyframeFromClipById(clip: Clip, keyframeId: string): Keyframe|null
 {
     let targetKeyframe: Keyframe|null = null
 
     keyframeSearch:
-        for (const propName of Object.keys(layer.keyframes)) {
-            for (const keyframe of layer.keyframes[propName]) {
+        for (const propName of Object.keys(clip.keyframes)) {
+            for (const keyframe of clip.keyframes[propName]) {
                 if (keyframe.id === keyframeId) {
                     targetKeyframe = keyframe
                     break keyframeSearch
@@ -587,10 +587,10 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
 
     keyframeSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes) {
-                for (const layer of timelane.layers.values()) {
-                    for (const propName of Object.keys(layer.keyframes)) {
-                        for (const keyframe of layer.keyframes[propName]) {
+            for (const layer of comp.layers) {
+                for (const clip of layer.clips.values()) {
+                    for (const propName of Object.keys(clip.keyframes)) {
+                        for (const keyframe of clip.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {
                                 targetKeyframe = keyframe
                                 break keyframeSearch
@@ -604,18 +604,18 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     return targetKeyframe
 }
 
-export function findParentLayerAndPropNameByKeyframeId(project: Project, keyframeId: string): {layer: Layer, propName: string}|null
+export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, propName: string}|null
 {
-    let target: {layer: Layer, propName: string}|null = null
+    let target: {clip: Clip, propName: string}|null = null
 
     keyframeSearch:
         for (const comp of project.compositions.values()) {
-            for (const timelane of comp.timelanes) {
-                for (const layer of timelane.layers.values()) {
-                    for (const propName of Object.keys(layer.keyframes)) {
-                        for (const keyframe of layer.keyframes[propName]) {
+            for (const layer of comp.layers) {
+                for (const clip of layer.clips.values()) {
+                    for (const propName of Object.keys(clip.keyframes)) {
+                        for (const keyframe of clip.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {
-                                target = {layer, propName}
+                                target = {clip, propName}
                                 break keyframeSearch
                             }
                         }
@@ -628,11 +628,11 @@ export function findParentLayerAndPropNameByKeyframeId(project: Project, keyfram
 }
 
 export function findAssetAttachablePropertyByMimeType(
-    layer: Layer,
+    clip: Clip,
     mimeType: string,
     registry: PluginRegistory
 ): string|null
 {
-    const plugin = registry.getPlugin(layer.renderer)
+    const plugin = registry.getPlugin(clip.renderer)
     return plugin.pluginInfo.acceptFileTypes[mimeType]
 }

@@ -19,7 +19,7 @@ import RendererService from '../../services/renderer'
 import s from './style.styl'
 
 interface KeyframeViewProps {
-    activeLayer: Delir.Project.Layer|null
+    activeClip: Delir.Project.Clip|null
     editor: EditorState
     project: ProjectModifyState
 }
@@ -30,7 +30,7 @@ interface KeyframeViewProps {
 }))
 export default class KeyframeView extends React.Component<KeyframeViewProps, any> {
     static propTypes = {
-        activeLayer: PropTypes.instanceOf(Delir.Project.Layer)
+        activeClip: PropTypes.instanceOf(Delir.Project.Clip)
     }
 
     castValue = (desc: Delir.AnyParameterTypeDescriptor, value: string|number) =>
@@ -46,23 +46,23 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, any
 
     valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) =>
     {
-        const {activeLayer} = this.props
+        const {activeClip} = this.props
         const newOptions = _.set(
-            _.cloneDeep(activeLayer!.rendererOptions),
+            _.cloneDeep(activeClip!.rendererOptions),
             desc.propName,
             value
         )
 
-        ProjectModifyActions.modifyLayer(activeLayer!.id!, {
+        ProjectModifyActions.modifyClip(activeClip!.id!, {
             rendererOptions: newOptions
         })
     }
 
     render()
     {
-        const {activeLayer, project: {project}} = this.props
-        const descriptors = activeLayer
-            ? RendererService.pluginRegistry!.getParametersById(activeLayer.renderer) || []
+        const {activeClip, project: {project}} = this.props
+        const descriptors = activeClip
+            ? RendererService.pluginRegistry!.getParametersById(activeClip.renderer) || []
             : []
 
         return (
@@ -71,14 +71,14 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, any
                     <SelectList>
                         {descriptors.map(desc => (
                             <div
-                                key={activeLayer!.id + desc.propName}
+                                key={activeClip!.id + desc.propName}
                                 className={s.propItem}
                                 data-prop-name={desc.propName}
                                 onClick={this.selectProperty}
                             >
                                 <span className={s.propItemName}>{desc.label}</span>
                                 <div className={s.propItemInput}>
-                                    <DelirValueInput assets={project ? project.assets : null} descriptor={desc} value={activeLayer!.rendererOptions[desc.propName]} onChange={this.valueChanged} />
+                                    <DelirValueInput assets={project ? project.assets : null} descriptor={desc} value={activeClip!.rendererOptions[desc.propName]} onChange={this.valueChanged} />
                                 </div>
                             </div>
                         ))}

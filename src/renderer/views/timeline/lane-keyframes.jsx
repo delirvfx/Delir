@@ -1,6 +1,5 @@
 // @flow
 import React, {PropTypes} from 'react'
-import TimelaneHelper from '../../helpers/timelane-helper'
 
 export default class LaneKeyframes extends React.Component
 {

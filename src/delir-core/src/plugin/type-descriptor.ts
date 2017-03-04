@@ -10,7 +10,7 @@ export type ParameterType =
     'NUMBER'        |
     'FLOAT'         |
     'ENUM'          |
-    'LAYER'         |
+    'CLIP'          |
     'PULSE'         |
     'ASSET'         |
     'ARRAY'         |
@@ -39,7 +39,7 @@ export interface PulseTypeDescripter extends ParameterTypeDescriptor<'PULSE'> {}
 export interface EnumTypeDescripter extends ParameterTypeDescriptor<'ENUM'> {
     selection: Array<string>
 }
-export interface LayerTypeDescripter extends ParameterTypeDescriptor<'LAYER'> {}
+export interface ClipTypeDescripter extends ParameterTypeDescriptor<'CLIP'> {}
 export interface AssetTypeDescripter extends ParameterTypeDescriptor<'ASSET'> {
     mimeTypes: Array<string>
 }
@@ -65,7 +65,7 @@ export type AnyParameterTypeDescriptor =
     | FloatTypeDescripter
     | PulseTypeDescripter
     | EnumTypeDescripter
-    | LayerTypeDescripter
+    | ClipTypeDescripter
     | AssetTypeDescripter
     | ArrayOfTypeDescripter
     | StructureTypeDescripter
@@ -168,11 +168,11 @@ export class TypeDescriptor {
         return this
     }
 
-    layer(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    clip(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
     {
         enabled = enabled == null ? true : enabled
         animatable = animatable == null ? true : false
-        this.properties.push({type: 'LAYER', propName, label, enabled, animatable})
+        this.properties.push({type: 'CLIP', propName, label, enabled, animatable})
         return this
     }
 
@@ -265,9 +265,9 @@ export default class Type
         return (new TypeDescriptor()).enum(propName, option)
     }
 
-    static layer(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static clip(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
     {
-        return (new TypeDescriptor()).layer(propName, option)
+        return (new TypeDescriptor()).clip(propName, option)
     }
 
     static asset(propName: string, option: {label: string, enabled?: boolean, mimeTypes: Array<string>})
@@ -297,7 +297,7 @@ export const STRING = 'STRING'
 export const NUMBER = 'NUMBER'
 export const FLOAT = 'FLOAT'
 export const ENUM = 'ENUM'
-export const LAYER = 'LAYER'
+export const CLIP = 'CLIP'
 export const ASSET = 'ASSET'
 export const PULSE = 'PULSE'
 export const ARRAY = 'ARRAY'

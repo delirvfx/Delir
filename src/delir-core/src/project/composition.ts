@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 import ColorRGB from '../values/color-rgb'
 import Project from './project'
-import Timelane from './timelane'
+import Layer from './layer'
 
 import {CompositionScheme} from './scheme/composition'
 
@@ -21,10 +21,10 @@ export default class Composition
             'backgroundColor',
         ]) as CompositionScheme
 
-        const timelanes = compJson.timelanes.map(lane => Timelane.deserialize(lane))
+        const layers = compJson.layers.map(layer => Layer.deserialize(layer))
 
         Object.defineProperty(comp, 'id', {value: compJson.id})
-        comp.timelanes = timelanes
+        comp.layers = layers
         Object.assign(comp.config, config)
 
         const color = config.backgroundColor
@@ -34,7 +34,7 @@ export default class Composition
 
     id: string|null = null
 
-    timelanes : Timelane[] = []
+    layers : Layer[] = []
 
     config : {
         name: string|null,
@@ -99,7 +99,7 @@ export default class Composition
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            timelanes: this.timelanes.map(timelane => timelane.toPreBSON()),
+            layers: this.layers.map(layer => layer.toPreBSON()),
         }
     }
 
@@ -108,7 +108,7 @@ export default class Composition
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            timelanes: this.timelanes.map(timelane => timelane.toJSON()),
+            layers: this.layers.map(layer => layer.toJSON()),
         }
     }
 }

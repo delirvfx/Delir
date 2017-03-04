@@ -19,7 +19,7 @@ export interface EditorState {
     project: Delir.Project.Project|null,
     projectPath: string|null,
     activeComp: Delir.Project.Composition|null,
-    activeLayer: Delir.Project.Layer|null,
+    activeClip: Delir.Project.Clip|null,
     dragEntity: DragEntity|null,
     processingState: string|null,
     notifications: NotificationEntries
@@ -33,7 +33,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
             project: null,
             projectPath: null,
             activeComp: null,
-            activeLayer: null,
+            activeClip: null,
             dragEntity: null,
             processingState: null,
             notifications: Immutable.List()
@@ -65,13 +65,13 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                 if (project == null) return state
 
                 const comp = ProjectHelper.findCompositionById(project, payload.entity.compositionId)
-                return state.set('activeComp', comp).set('activeLayer', null)
+                return state.set('activeComp', comp).set('activeClip', null)
 
-            case EditorStateDispatchTypes.ChangeActiveLayer:
+            case EditorStateDispatchTypes.ChangeActiveClip:
                 if (project == null) return state
 
-                const layer = ProjectHelper.findLayerById(project, payload.entity.layerId)
-                return state.set('activeLayer', layer)
+                const clip = ProjectHelper.findClipById(project, payload.entity.clipId)
+                return state.set('activeClip', clip)
 
             case EditorStateDispatchTypes.UpdateProcessingState:
                 return state.set('processingState', payload.entity.stateText)
