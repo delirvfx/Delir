@@ -1,6 +1,6 @@
 import {ClipScheme} from './clip'
 
-export interface TimelaneScheme {
+export interface LayerScheme {
     id: string|null
     config: {
         name: string|null
