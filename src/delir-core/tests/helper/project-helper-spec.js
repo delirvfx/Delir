@@ -105,15 +105,15 @@ describe('ProjectHelper specs', () => {
             })
         })
 
-        describe('::createAddLayer', () => {
-            it('correcty make and add Layer', () => {
+        describe('::createAddClip', () => {
+            it('correcty make and add Clip', () => {
                 const props = {renderer: 'test', placedFrame: 0, durationFrames: 100}
                 const timelane = new TimeLane
-                const clip = ProjectHelper.createAddLayer(project, timelane, props)
+                const clip = ProjectHelper.createAddClip(project, timelane, props)
                 props.id = clip.id
 
                 // must be returns instanceof Asset
-                expect(clip).to.be.an(Layer)
+                expect(clip).to.be.an(Clip)
 
                 // must be assign .id property
                 expect(clip.id).to.not.be.empty()
@@ -134,7 +134,7 @@ describe('ProjectHelper specs', () => {
 
         describe('::createAddKeyframe', () => {
             it('correcty make and add Keyframe', () => {
-                const props = {value: 0, frameOnLayer: 0, easeInParam: [1, 0], easeOutParam: [0, 1]}
+                const props = {value: 0, frameOnClip: 0, easeInParam: [1, 0], easeOutParam: [0, 1]}
                 const clip = new Clip
                 const keyframe = ProjectHelper.createAddKeyframe(project, clip, 'x', props)[0]
                 props.id = keyframe.id
@@ -151,7 +151,7 @@ describe('ProjectHelper specs', () => {
                 // must be not writable `id` property
                 expect(propNotWritable(keyframe, 'id')).to.be(true)
 
-                // must be added to target prop of layer
+                // must be added to target prop of clip
                 expect(clip.keyframes.x.has(keyframe)).to.be(true)
 
                 // must be register symbolId in Project
@@ -160,8 +160,8 @@ describe('ProjectHelper specs', () => {
 
             it('correcty make and add Keyframe array', () => {
                 const props = [
-                    {value: 0, frameOnLayer: 0, easeInParam: [1, 0], easeOutParam: [0, 1]},
-                    {value: 10, frameOnLayer: 10, easeInParam: [1, 0], easeOutParam: [0, 1]}
+                    {value: 0, frameOnClip: 0, easeInParam: [1, 0], easeOutParam: [0, 1]},
+                    {value: 10, frameOnClip: 10, easeInParam: [1, 0], easeOutParam: [0, 1]}
                 ]
                 const clip = new Clip
                 const keyframes = ProjectHelper.createAddKeyframe(project, clip, 'x', props)
@@ -182,7 +182,7 @@ describe('ProjectHelper specs', () => {
                     // must be not writable `id` property
                     expect(propNotWritable(keyframe, 'id')).to.be(true)
 
-                    // must be added to target prop of layer
+                    // must be added to target prop of clip
                     expect(clip.keyframes.x.has(keyframe)).to.be(true)
 
                     // must be register symbolId in Project
