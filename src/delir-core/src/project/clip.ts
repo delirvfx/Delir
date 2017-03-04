@@ -6,10 +6,10 @@ import {RendererProperties} from './types'
 
 export default class Clip
 {
-    static deserialize(layerJson: ClipScheme)
+    static deserialize(clipJson: ClipScheme)
     {
-        const layer = new Clip
-        const config = _.pick(layerJson.config, [
+        const clip = new Clip
+        const config = _.pick(clipJson.config, [
             'renderer',
             'rendererOptions',
             'placedFrame',
@@ -17,14 +17,14 @@ export default class Clip
             'keyframeInterpolationMethod',
         ]) as ClipConfigScheme
 
-        const keyframes = _.mapValues(layerJson.keyframes, keyframeSet => {
+        const keyframes = _.mapValues(clipJson.keyframes, keyframeSet => {
             return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
         })
 
-        Object.defineProperty(layer, 'id', {value: layerJson.id})
-        Object.assign(layer.config, config)
-        layer.keyframes = keyframes
-        return layer
+        Object.defineProperty(clip, 'id', {value: clipJson.id})
+        Object.assign(clip.config, config)
+        clip.keyframes = keyframes
+        return clip
     }
 
     id: string|null = null
@@ -57,8 +57,8 @@ export default class Clip
     get placedFrame(): number { return this.config.placedFrame as number }
     set placedFrame(placedFrame: number) { this.config.placedFrame = placedFrame }
 
-    get durationFrame(): number { throw new Error('layer.durationFrame is discontinuance.') }
-    set durationFrame(durationFrames: number) { throw new Error('layer.durationFrame is discontinuance.') }
+    get durationFrame(): number { throw new Error('clip.durationFrame is discontinuance.') }
+    set durationFrame(durationFrames: number) { throw new Error('clip.durationFrame is discontinuance.') }
 
     get durationFrames(): number { return this.config.durationFrames as number }
     set durationFrames(durationFrames: number) { this.config.durationFrames = durationFrames }
