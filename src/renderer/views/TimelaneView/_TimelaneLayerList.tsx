@@ -21,6 +21,7 @@ interface TimelaneLayerListProps {
     timelane: Delir.Project.Timelane,
     activeLayer: Delir.Project.Layer,
     framerate: number,
+    pxPerSec: number,
     scale: number,
 }
 
@@ -41,6 +42,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
         editor: PropTypes.object.isRequired,
         timelane: PropTypes.object.isRequired,
         framerate: PropTypes.number.isRequired,
+        pxPerSec: PropTypes.number.isRequired,
         scale: PropTypes.number.isRequired,
         activeLayer: PropTypes.object.isRequired,
     }
@@ -58,7 +60,6 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
 
         this.state = {
             dragovered: false,
-            pxPerSec: 30,
         }
     }
 
@@ -70,7 +71,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
 
         if (dragEntity.type === 'asset') {
             const {asset} = dragEntity
-            const {state:{pxPerSec}, props:{framerate, scale}} = this
+            const {props:{framerate, pxPerSec, scale}} = this
             const placedFrame = TimelaneHelper.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
             ProjectModifyActions.createLayerWithAsset(this.props.timelane, asset, placedFrame)
         }

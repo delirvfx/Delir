@@ -42,6 +42,8 @@ interface TimelineViewState {
     selectedLaneId: number|null,
 }
 
+const PX_PER_SEC = 30
+
 /**
  * Timeline structure:
  *
@@ -177,6 +179,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                     cursorHeight={this.state.cursorHeight}
                                     scale={this.state.scale}
                                     activeComposition={activeComp}
+                                    pxPerSec={PX_PER_SEC}
                                 />
 
                                 <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
@@ -190,6 +193,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                             key={timelane.id!}
                                             timelane={timelane}
                                             framerate={framerate}
+                                            pxPerSec={PX_PER_SEC}
                                             scale={this.state.scale}
                                         />
                                     ))}
