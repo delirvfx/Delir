@@ -164,7 +164,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                     <MenuItem type='separator' />
                 </ContextMenu>
 
-                <div className='timeline-lane-layers'>
+                <div className='timeline-lane-clips'>
                     {clips.map(clip => {
                         const opt = {
                             pxPerSec: pxPerSec,
