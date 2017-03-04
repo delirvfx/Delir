@@ -7,6 +7,7 @@ import {ProjectHelper} from 'delir-core'
 import dispatcher from '../dispatcher'
 import {KnownPayload} from '../actions/PayloadTypes'
 
+import EditorStateStore from '../stores/editor-state-store'
 import EditorStateActions from '../actions/editor-state-actions'
 import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
 
@@ -101,6 +102,9 @@ const handlePayload = (payload: KnownPayload) => {
             const targetComposition = state.composition!
 
             if (!renderer || !audioContext) return
+            // たぶんプレビュー中
+            // TODO: Seek in preview
+            if (renderer.isPlaying) return
 
             audioBuffer = audioContext.createBuffer(
                 targetComposition.audioChannels,
