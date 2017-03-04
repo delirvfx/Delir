@@ -4,7 +4,7 @@ import {
     SetDragEntityPayload,
     ClearDragEntityPayload,
     ChangeActiveCompositionPayload,
-    ChangeActiveLayerPayload,
+    ChangeActiveClipPayload,
     TogglePreviewPayload,
     RenderDestinatePayload,
     UpdateProcessingState,
@@ -16,16 +16,16 @@ import {
 import {
     CreateCompositionPayload,
     CreateTimelanePayload,
-    CreateLayerPayload,
-    AddLayerPayload,
+    CreateClipPayload,
+    AddClipPayload,
     AddTimelanePayload,
     AddTimelaneWithAssetPayload,
     AddAssetPayload,
-    MoveLayerToTimelanePayload,
+    MoveClipToTimelanePayload,
     ModifyCompositionPayload,
-    ModifyLayerPayload,
+    ModifyClipPayload,
     RemoveTimelanePayload,
-    RemoveLayerPayload,
+    RemoveClipPayload,
 } from './project-modify-actions'
 
 export type EditorStateActionPayload =
@@ -34,7 +34,7 @@ export type EditorStateActionPayload =
     | SetDragEntityPayload
     | ClearDragEntityPayload
     | ChangeActiveCompositionPayload
-    | ChangeActiveLayerPayload
+    | ChangeActiveClipPayload
     | TogglePreviewPayload
     | RenderDestinatePayload
     | UpdateProcessingState
@@ -45,15 +45,15 @@ export type EditorStateActionPayload =
 export type ProjectModifyActionPayload =
     CreateCompositionPayload
     | CreateTimelanePayload
-    | CreateLayerPayload
-    | AddLayerPayload
+    | CreateClipPayload
+    | AddClipPayload
     | AddTimelanePayload
     | AddTimelaneWithAssetPayload
     | AddAssetPayload
-    | MoveLayerToTimelanePayload
+    | MoveClipToTimelanePayload
     | ModifyCompositionPayload
-    | ModifyLayerPayload
+    | ModifyClipPayload
     | RemoveTimelanePayload
-    | RemoveLayerPayload
+    | RemoveClipPayload
 
 export type KnownPayload = EditorStateActionPayload | ProjectModifyActionPayload
