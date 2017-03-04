@@ -1,23 +1,23 @@
 // @flow
-import Timelane from '../project/timelane'
+import Layer from '../project/layer'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 import ClipInstanceContainer from './clip-instance-container'
 
-export default class TimelaneInstanceContainer
+export default class LayerInstanceContainer
 {
-    private _timelane: Timelane
+    private _layer: Layer
     private _clips: Array<ClipInstanceContainer> = []
     private _timeOrderClips: Array<ClipInstanceContainer> = []
 
-    constructor(timelane: Timelane)
+    constructor(layer: Layer)
     {
-        this._timelane = timelane
+        this._layer = layer
     }
 
     async beforeRender(preRenderReq: PreRenderingRequest)
     {
-        this._clips = Array.from(this._timelane.clips.values())
+        this._clips = Array.from(this._layer.clips.values())
             .map(layer => new ClipInstanceContainer(layer))
 
         // sort layers
