@@ -2,7 +2,7 @@
 import LayerPluginBase from '../plugin/layer-plugin-base'
 import EffectPluginBase from '../plugin/effect-plugin-base'
 
-import Layer from '../project/layer'
+import Clip from '../project/clip'
 import Keyframe from '../project/keyframe'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
@@ -15,7 +15,7 @@ import PluginPreRenderingRequest from './plugin-pre-rendering-request'
 export default class LayerInstanceContainer
 {
     // _baseClass: Class<LayerPluginBase>
-    private _layer: Layer
+    private clip: Clip
     private _variableScope: Object = Object.create(null)
 
     // private _keyframes: Array<Keyframe>
@@ -27,13 +27,13 @@ export default class LayerInstanceContainer
 
     private effectInstances: Array<EffectPluginBase>
 
-    get holdLayer(): Layer { return this._layer }
-    get placedFrame(): number { return this._layer.placedFrame }
-    get durationFrames(): number { return this._layer.durationFrames }
+    get holdLayer(): Clip { return this.clip }
+    get placedFrame(): number { return this.clip.placedFrame }
+    get durationFrames(): number { return this.clip.durationFrames }
 
-    constructor(layer : Layer)
+    constructor(layer : Clip)
     {
-        this._layer = layer
+        this.clip = layer
     }
 
     // getPresentParameters(): Object
@@ -45,10 +45,10 @@ export default class LayerInstanceContainer
     {
         // Resolve renderers
         if (! this._rendererInstance) {
-            const Renderer: typeof LayerPluginBase = req.resolver.resolvePlugin(this._layer.renderer)
+            const Renderer: typeof LayerPluginBase = req.resolver.resolvePlugin(this.clip.renderer)
 
             if (Renderer == null) {
-                throw new RenderingFailedException(`Failed to load Renderer plugin \`${this._layer.renderer}\``)
+                throw new RenderingFailedException(`Failed to load Renderer plugin \`${this.clip.renderer}\``)
             }
 
             this._rendererClass = Renderer
@@ -59,7 +59,7 @@ export default class LayerInstanceContainer
         if (! this.effectInstances) {
             this.effectInstances = []
 
-            for (const effect of this._layer.effects) {
+            for (const effect of this.clip.effects) {
                 const Effector = req.resolver.resolvePlugin(effect.processor)
 
                 if (Effector == null || ! (Effector.prototype instanceof EffectPluginBase)) {
@@ -71,7 +71,7 @@ export default class LayerInstanceContainer
         }
 
         // Build renderer initialization requests
-        const receiveOptions: {[propName: string]: any} = this._layer.rendererOptions
+        const receiveOptions: {[propName: string]: any} = this.clip.rendererOptions
         const paramTypes = this._rendererClass.provideParameters()
 
         const params: {[propName: string]: any} = {}
@@ -102,7 +102,7 @@ export default class LayerInstanceContainer
         }
 
         // Pre calculate keyframe interpolation
-        const keyframes: {[propName: string]: Keyframe[]} = Object.assign({}, this._layer.keyframes)
+        const keyframes: {[propName: string]: Keyframe[]} = Object.assign({}, this.clip.keyframes)
         _.each(paramTypes.properties, ({propName}) => keyframes[propName] = keyframes[propName] ? Array.from(keyframes[propName]) : [])
         this._preCalcTable = KeyframeHelper.calcKeyFrames(paramTypes, keyframes, 0, req.durationFrames)
     }
@@ -110,15 +110,15 @@ export default class LayerInstanceContainer
     async render(req: RenderRequest)
     {
         const closestComposition = req.parentComposition || req.rootComposition
-        const placedTime = this._layer.placedFrame / closestComposition.framerate
+        const placedTime = this.clip.placedFrame / closestComposition.framerate
 
         const keyframes = _.mapValues(this._preCalcTable, propTable => propTable[req.frame])
 
         const _req = req.set({
             timeOnLayer: req.timeOnComposition - placedTime,
-            frameOnLayer: req.frameOnComposition - this._layer.placedFrame,
+            frameOnLayer: req.frameOnComposition - this.clip.placedFrame,
             layerScope: this._variableScope,
-            parameters: Object.assign({}, this._layer.rendererOptions, keyframes)
+            parameters: Object.assign({}, this.clip.rendererOptions, keyframes)
         })
 
         await this._rendererInstance.render(_req)
