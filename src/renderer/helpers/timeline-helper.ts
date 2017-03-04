@@ -1,9 +1,8 @@
-export default class TimelaneHelper
-{
+export default {
     /**
      * Transform frames to Pixel per Seconds
      */
-    static framesToPixel({
+    framesToPixel({
         pxPerSec,
         framerate,
         durationFrames,
@@ -15,12 +14,12 @@ export default class TimelaneHelper
         scale: number,
     }) {
         return (durationFrames / framerate) * pxPerSec * (scale || 1)
-    }
+    },
 
     /**
      * Transform Pixel to frames
      */
-    static pixelToFrames({
+    pixelToFrames({
         pxPerSec,
         framerate,
         pixel,
@@ -32,10 +31,10 @@ export default class TimelaneHelper
         scale: number,
     }) {
         return (pixel / (scale || 1)) / pxPerSec  * framerate
-    }
+    },
 
 
-    static secondsToPx({
+    secondsToPx({
         pxPerSec,
         seconds,
         scale,
@@ -46,9 +45,9 @@ export default class TimelaneHelper
         scale: number,
     }) {
         return seconds * pxPerSec * (scale || 1)
-    }
+    },
 
-    static pxToSeconds({
+    pxToSeconds({
         pxPerSec,
         pixel,
         scale,
@@ -59,5 +58,5 @@ export default class TimelaneHelper
         scale: number,
     }) {
         return pixel / (scale || 1) / pxPerSec
-    }
+    },
 }

@@ -8,7 +8,7 @@ import {ContextMenu, MenuItem} from '../electron/context-menu'
 import RendererService from '../../services/renderer'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
-import TimelaneHelper from '../../helpers/timelane-helper'
+import TimelineHelper from '../../helpers/timeline-helper'
 import connectToStores from '../../utils/connectToStores'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 import cancelEvent from '../../utils/cancelEvent'
@@ -73,7 +73,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             // Drop asset into ClipSpace
             const {asset} = dragEntity
             const {props:{framerate, pxPerSec, scale}} = this
-            const placedFrame = TimelaneHelper.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
+            const placedFrame = TimelineHelper.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
             ProjectModifyActions.createClipWithAsset(this.props.timelane, asset, placedFrame)
         }
         else if (dragEntity.type === 'clip') {
@@ -82,7 +82,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             const isChildClip = !! _.find(Array.from(this.props.timelane.clips.values()), {id: clip.id})
 
             if (isChildClip) {
-                const placedFrame = TimelaneHelper.pixelToFrames({
+                const placedFrame = TimelineHelper.pixelToFrames({
                     pxPerSec: this.props.pxPerSec,
                     framerate: this.props.framerate,
                     pixel: e.pageX - e.currentTarget.getBoundingClientRect().left - (e.nativeEvent as DragEvent).offsetX,
@@ -112,11 +112,12 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
 
     changeClipPlace(clip, movedX)
     {
+        console.log(movedX)
     }
 
     changeClipDuration = (clip: Delir.Project.Clip, newWidth: number) =>
     {
-        const newDurationFrames = TimelaneHelper.pixelToFrames({
+        const newDurationFrames = TimelineHelper.pixelToFrames({
             pxPerSec: this.state.pxPerSec,
             framerate: this.props.framerate,
             pixel: newWidth,
@@ -171,11 +172,11 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                             framerate: framerate,
                             scale: scale,
                         };
-                        const width = TimelaneHelper.framesToPixel({
+                        const width = TimelineHelper.framesToPixel({
                             durationFrames: clip.durationFrames|0,
                             ...opt,
                         })
-                        const left = TimelaneHelper.framesToPixel({
+                        const left = TimelineHelper.framesToPixel({
                             durationFrames: clip.placedFrame|0,
                             ...opt,
                         })
