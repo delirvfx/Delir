@@ -26,62 +26,9 @@ import LaneLabel from '../timeline/lane-label'
 import LaneKeyframes from '../timeline/lane-keyframes'
 import KeyframeView from '../KeyframeView'
 import TimelaneLayerList from './_TimelaneLayerList'
+import Gradations from './_Gradations'
 
 import s from './style.styl'
-
-class TimelineGradations extends React.Component
-{
-    static propTypes = {
-        activeProject: PropTypes.object.isRequired,
-        cursorHeight: PropTypes.number.isRequired,
-    }
-
-    intervalId = null
-
-    state = {
-        left: 0,
-    }
-
-    componentDidMount()
-    {
-        this.intervalId = requestAnimationFrame(this.updateCursor)
-    }
-
-    componentWillUnmount()
-    {
-        cancelAnimationFrame(this.intervalId)
-    }
-
-    updateCursor = () =>
-    {
-        const renderer = RendererService.renderer
-
-        if (this.props.activeProject && renderer.isPlaying) {
-            this.setState({
-                left: TimelaneHelper.framesToPixel({
-                    pxPerSec: 30,
-                    framerate: this.props.framerate,
-                    durationFrames: renderer.session.lastRenderedFrame,
-                    scale: this.props.scale,
-                }),
-            })
-        }
-
-        this.intervalId = requestAnimationFrame(this.updateCursor)
-    }
-
-    render()
-    {
-        return (
-            <div className='timeline-gradations'>
-                <div className='timeline-playingCursor' style={{
-                    left: this.state.left,
-                    height: this.props.cursorHeight
-                }} />
-            </div>
-        )
-    }
-}
 
 interface TimelineViewProps {
     editor: EditorState,
@@ -94,6 +41,8 @@ interface TimelineViewState {
     scale: number,
     selectedLaneId: number|null,
 }
+
+const PX_PER_SEC = 30
 
 /**
  * Timeline structure:
@@ -186,10 +135,16 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         ProjectModifyActions.addTimelaneWithAsset(activeComp, asset)
     }
 
+    onSeekClicked = (frame: number) =>
+    {
+        console.log(frame)
+        EditorStateActions.seekPreviewFrame(frame)
+    }
+
     render()
     {
         const {scale} = this.state
-        const {project, activeComp, activeLayer} = this.props.editor
+        const {activeComp, activeLayer} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.timelanes) : []
 
@@ -226,11 +181,12 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             </Pane>
                             {/* Layer Panel */}
                             <Pane className='timeline-container' onWheel={this.scaleTimeline}>
-                                <TimelineGradations
+                                <Gradations
                                     cursorHeight={this.state.cursorHeight}
-                                    framerate={framerate}
                                     scale={this.state.scale}
-                                    activeProject={project}
+                                    activeComposition={activeComp}
+                                    pxPerSec={PX_PER_SEC}
+                                    onSeeked={this.onSeekClicked}
                                 />
 
                                 <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
@@ -244,6 +200,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                             key={timelane.id!}
                                             timelane={timelane}
                                             framerate={framerate}
+                                            pxPerSec={PX_PER_SEC}
                                             scale={this.state.scale}
                                         />
                                     ))}

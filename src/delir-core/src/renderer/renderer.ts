@@ -195,8 +195,6 @@ export default class Renderer {
         // make render session / request
         //
         const baseRequest = new RenderRequest({
-            frame: req.beginFrame,
-
             destCanvas: bufferCanvas,
             width: rootCompWrap.width,
             height: rootCompWrap.height,
@@ -353,7 +351,7 @@ export default class Renderer {
                 }
 
                 // const elapsed = (Date.now() - session.renderStartTime) / 1000
-                const currentTime = session.renderedFrames / rootCompContainer.framerate
+                const currentTime = (req.beginFrame + session.renderedFrames) / rootCompContainer.framerate
                 const currentTimeForNotify = (Math.round(currentTime * 10) / 10).toFixed(1)
                 const isBufferingNeeded = lastBufferingTime !== (currentTime|0) && (session.renderedFrames + 1) <= session.durationFrames
                 // console.log(isBufferingNeeded, lastBufferingTime, currentTime);
@@ -362,7 +360,7 @@ export default class Renderer {
                     // time: elapsed,
                     // frame: elapsed * rootCompWrap.framerate,
                     time: currentTime,
-                    frame: baseRequest.frame + session.renderedFrames,
+                    frame: req.beginFrame + session.renderedFrames,
 
                     isBufferingFrame: isBufferingNeeded,
                 })
@@ -408,6 +406,7 @@ export default class Renderer {
 
                 session.lastRenderedFrame = req.beginFrame + session.renderedFrames
 
+                const currentFrame = (req.beginFrame + session.renderedFrames)
                 if (!req.loop && session.renderedFrames >= session.durationFrames) {
                     notifier({
                         state: `Render... time: ${currentTimeForNotify} frames: ${session.renderedFrames} / ${session.durationFrames} (${currentFps} fps${req.throttle ? ' / throttled' : ''})`,
@@ -430,8 +429,16 @@ export default class Renderer {
                     return
                 }
 
-                if (req.loop && req.endFrame != null && (req.beginFrame + session.renderedFrames) >= req.endFrame) {
-                    session.renderedFrames = 0
+                if (req.loop) {
+                    if (req.endFrame != null && currentFrame >= req.endFrame) {
+                        session.renderedFrames = 0
+                    }
+                } else {
+                    if (req.endFrame != null && currentFrame >= req.endFrame) {
+                        // exit loop
+                        session.renderedFrames = 0
+                        return
+                    }
                 }
 
                 notifier({

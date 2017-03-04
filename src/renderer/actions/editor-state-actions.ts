@@ -25,6 +25,7 @@ export type RenderDestinatePayload = Payload<'RenderDestinate', {compositionId: 
 export type UpdateProcessingState = Payload<'UpdateProcessingState', {stateText: string}>
 export type AddMessagePayload = Payload<'AddMessage', {id: string, title?: string, level: 'info'|'error', message: string, detail?: string}>
 export type RemoveMessagePayload = Payload<'RemoveMessage', {id: string}>
+export type SeekPreviewFramePayload = Payload<'SeekPreviewFrame', {frame: number}>
 
 export const DispatchTypes = keyMirror({
     SetActiveProject: null,
@@ -38,6 +39,7 @@ export const DispatchTypes = keyMirror({
     UpdateProcessingState: null,
     AddMessage: null,
     RemoveMessage: null,
+    SeekPreviewFrame: null,
 })
 
 const actions = {
@@ -113,6 +115,11 @@ const actions = {
     updateProcessingState(stateText: string)
     {
         dispatcher.dispatch(new Payload(DispatchTypes.UpdateProcessingState,　{stateText}))
+    },
+
+    seekPreviewFrame(frame: number)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.SeekPreviewFrame, {frame}))
     },
 
     //
