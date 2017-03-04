@@ -10,7 +10,7 @@ import ProjectModifyActions from '../../actions/project-modify-actions'
 import s from './Clip.styl'
 
 interface TimelaneLayerProps {
-    layer: Delir.Project.Layer,
+    layer: Delir.Project.Clip,
     left: number,
     width: number,
     onChangePlace: (draggedPx: number) => any,

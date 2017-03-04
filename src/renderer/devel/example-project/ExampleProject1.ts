@@ -41,7 +41,7 @@ c1_t3.name = 'NYAN = ^ . ^ = CAT'
 const c1_t4 = new Delir.Project.Timelane
 c1_t4.name = 'video'
 
-const c1_t1_l1 = new Delir.Project.Layer
+const c1_t1_l1 = new Delir.Project.Clip
 // c1_t1_l1.renderer = 'audio-layer'
 c1_t1_l1.renderer = 'html5-video-layer'
 // c1_t1_l1.renderer = 'plane'
@@ -50,7 +50,7 @@ c1_t1_l1.renderer = 'html5-video-layer'
 c1_t1_l1.placedFrame = 0
 c1_t1_l1.durationFrames = durationFrames
 
-const c1_t2_l1 = Object.assign(new Delir.Project.Layer, {
+const c1_t2_l1 = Object.assign(new Delir.Project.Clip, {
     // renderer: 'html5-video-layer'
     renderer: 'audio-layer',
     // renderer: 'proton-layer'
@@ -61,12 +61,12 @@ const c1_t2_l1 = Object.assign(new Delir.Project.Layer, {
     durationFrames: durationFrames,
 })
 
-const c1_t3_l1 = Object.assign(new Delir.Project.Layer, {
+const c1_t3_l1 = Object.assign(new Delir.Project.Clip, {
     renderer: 'plane',
     placedFrame: 0,
     durationFrames: 30 * 10,
 })
-const c1_t4_l1 = Object.assign(new Delir.Project.Layer, {
+const c1_t4_l1 = Object.assign(new Delir.Project.Clip, {
     renderer: 'html5-video-layer',
     rendererOptions: {
         source: 'file:///Users/ragg/workspace/delir/sample.mp4',
@@ -117,9 +117,9 @@ ProjectHelper.addLayer(p, c1_t1, c1_t1_l1)
 // Sub Composition
 const c2 = new Delir.Project.Composition
 const c2_t1 = new Delir.Project.Timelane
-const c2_t1_l1 = new Delir.Project.Layer
-const c2_t1_l2 = new Delir.Project.Layer
-const c2_t1_l3 = new Delir.Project.Layer
+const c2_t1_l1 = new Delir.Project.Clip
+const c2_t1_l2 = new Delir.Project.Clip
+const c2_t1_l3 = new Delir.Project.Clip
 c2.name = 'Sub Composition'
 c2_t1_l1.placedFrame = 20
 c2_t1_l2.placedFrame = 40

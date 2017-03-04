@@ -16,11 +16,11 @@ export type CreateLayerPayload = Payload<'CreateLayer', {
     props: {renderer: string, placedFrame: number, durationFrames: number},
     targetTimelaneId: string,
 }>
-export type AddLayerPayload = Payload<'AddLayer', {targetTimelane: Delir.Project.Timelane, newLayer: Delir.Project.Layer}>
+export type AddLayerPayload = Payload<'AddLayer', {targetTimelane: Delir.Project.Timelane, newLayer: Delir.Project.Clip}>
 export type AddTimelanePayload = Payload<'AddTimelane', {targetComposition: Delir.Project.Composition, timelane: Delir.Project.Timelane}>
 export type AddTimelaneWithAssetPayload = Payload<'AddTimelaneWithAsset', {
     targetComposition: Delir.Project.Composition,
-    layer: Delir.Project.Layer,
+    layer: Delir.Project.Clip,
     asset: Delir.Project.Asset,
     pluginRegistry: Delir.PluginRegistry,
 }>
@@ -94,7 +94,7 @@ export default {
             return
         }
 
-        const layer = new Delir.Project.Layer
+        const layer = new Delir.Project.Clip
         Object.assign(layer, {
             id: uuid.v4(),
             renderer: processablePlugins[0].id,
@@ -140,7 +140,7 @@ export default {
             return
         }
 
-        const newLayer = new Delir.Project.Layer
+        const newLayer = new Delir.Project.Clip
         Object.assign(newLayer, {
             id: uuid.v4(),
             renderer: processablePlugins[0].id,

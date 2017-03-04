@@ -19,7 +19,7 @@ import LaneKeyframes from '../timeline/lane-keyframes'
 interface TimelaneLayerListProps {
     editor: EditorState,
     timelane: Delir.Project.Timelane,
-    activeLayer: Delir.Project.Layer,
+    activeLayer: Delir.Project.Clip,
     framerate: number,
     pxPerSec: number,
     scale: number,
@@ -112,7 +112,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
     {
     }
 
-    changeLayerDuration = (layer: Delir.Project.Layer, newWidth: number) =>
+    changeLayerDuration = (layer: Delir.Project.Clip, newWidth: number) =>
     {
         const newDurationFrames = TimelaneHelper.pixelToFrames({
             pxPerSec: this.state.pxPerSec,
@@ -136,7 +136,7 @@ export default class TimelaneLayerList extends React.Component<TimelaneLayerList
         const {timelane, activeLayer, framerate, scale} = this.props
         const {pxPerSec} = this.state
         const keyframes = activeLayer ? activeLayer.keyframes : {}
-        const layers = Array.from<Delir.Project.Layer>(timelane.layers.values())
+        const layers = Array.from<Delir.Project.Clip>(timelane.layers.values())
         const plugins = this._plugins
 
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''

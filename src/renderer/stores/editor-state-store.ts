@@ -19,7 +19,7 @@ export interface EditorState {
     project: Delir.Project.Project|null,
     projectPath: string|null,
     activeComp: Delir.Project.Composition|null,
-    activeLayer: Delir.Project.Layer|null,
+    activeLayer: Delir.Project.Clip|null,
     dragEntity: DragEntity|null,
     processingState: string|null,
     notifications: NotificationEntries

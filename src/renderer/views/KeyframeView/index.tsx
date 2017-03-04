@@ -19,7 +19,7 @@ import RendererService from '../../services/renderer'
 import s from './style.styl'
 
 interface KeyframeViewProps {
-    activeLayer: Delir.Project.Layer|null
+    activeLayer: Delir.Project.Clip|null
     editor: EditorState
     project: ProjectModifyState
 }
@@ -30,7 +30,7 @@ interface KeyframeViewProps {
 }))
 export default class KeyframeView extends React.Component<KeyframeViewProps, any> {
     static propTypes = {
-        activeLayer: PropTypes.instanceOf(Delir.Project.Layer)
+        activeLayer: PropTypes.instanceOf(Delir.Project.Clip)
     }
 
     castValue = (desc: Delir.AnyParameterTypeDescriptor, value: string|number) =>
