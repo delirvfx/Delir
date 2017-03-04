@@ -29,16 +29,16 @@ c1.durationFrames = durationFrames
 c1.audioChannels = 2
 c1.samplingRate = 48000
 
-const c1_t1 = new Delir.Project.Timelane
+const c1_t1 = new Delir.Project.Layer
 c1_t1.name = 'Audio'
 
-const c1_t2 = new Delir.Project.Timelane
+const c1_t2 = new Delir.Project.Layer
 c1_t2.name = '🔥 FIRE 🔥'
 
-const c1_t3 = new Delir.Project.Timelane
+const c1_t3 = new Delir.Project.Layer
 c1_t3.name = 'NYAN = ^ . ^ = CAT'
 
-const c1_t4 = new Delir.Project.Timelane
+const c1_t4 = new Delir.Project.Layer
 c1_t4.name = 'video'
 
 const c1_t1_l1 = new Delir.Project.Clip
@@ -76,7 +76,7 @@ const c1_t4_l1 = Object.assign(new Delir.Project.Clip, {
 })
 
 ProjectHelper.addComposition(p, c1)
-;[c1_t1, c1_t2, c1_t3, c1_t4].forEach(lane => ProjectHelper.addTimelane(p, c1, lane))
+;[c1_t1, c1_t2, c1_t3, c1_t4].forEach(lane => ProjectHelper.addLayer(p, c1, lane))
 
 // console.log(ProjectHelper.addClip())
 ProjectHelper.addClip(p, c1_t1, c1_t1_l1)
@@ -116,7 +116,7 @@ ProjectHelper.addClip(p, c1_t1, c1_t1_l1)
 
 // Sub Composition
 const c2 = new Delir.Project.Composition
-const c2_t1 = new Delir.Project.Timelane
+const c2_t1 = new Delir.Project.Layer
 const c2_t1_l1 = new Delir.Project.Clip
 const c2_t1_l2 = new Delir.Project.Clip
 const c2_t1_l3 = new Delir.Project.Clip
@@ -126,7 +126,7 @@ c2_t1_l2.placedFrame = 40
 // c2_t1_l3.placedFrame = 100
 
 ProjectHelper.addComposition(p, c2)
-ProjectHelper.addTimelane(p, c2, c2_t1)
+ProjectHelper.addLayer(p, c2, c2_t1)
 // ProjectHelper.addClip(p, c2_t1, c2_t1_l1)
 ProjectHelper.addClip(p, c2_t1, c2_t1_l2)
 // ProjectHelper.createAddEffect(p, c1_t1_l1, {
