@@ -9,7 +9,7 @@ export default class TimeLane
     {
         const timelane = new TimeLane
         const config = _.pick(timelaneJson.config, ['name']) as TimelaneScheme
-        const clips = timelaneJson.clips.map(layerJson => Clip.deserialize(layerJson))
+        const clips = timelaneJson.clips.map(clipJson => Clip.deserialize(clipJson))
 
         Object.defineProperty(timelane, 'id', {value: timelaneJson.id})
         timelane.clips = new Set<Clip>(clips)
