@@ -1,6 +1,6 @@
 // @flow
 import * as _ from 'lodash'
-import Layer from './layer'
+import Clip from './clip'
 import {TimelaneScheme} from './scheme/timelane'
 
 export default class TimeLane
@@ -9,17 +9,17 @@ export default class TimeLane
     {
         const timelane = new TimeLane
         const config = _.pick(timelaneJson.config, ['name']) as TimelaneScheme
-        const layers = timelaneJson.layers.map(layerJson => Layer.deserialize(layerJson))
+        const layers = timelaneJson.layers.map(layerJson => Clip.deserialize(layerJson))
 
         Object.defineProperty(timelane, 'id', {value: timelaneJson.id})
-        timelane.layers = new Set<Layer>(layers)
+        timelane.layers = new Set<Clip>(layers)
         Object.assign(timelane.config, config)
 
         return timelane
     }
 
     id: string|null = null
-    layers: Set<Layer> = new Set()
+    layers: Set<Clip> = new Set()
 
     config: {
         name: string|null,
