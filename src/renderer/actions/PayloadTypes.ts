@@ -15,16 +15,16 @@ import {
 
 import {
     CreateCompositionPayload,
-    CreateTimelanePayload,
+    CreateLayerPayload,
     CreateClipPayload,
     AddClipPayload,
-    AddTimelanePayload,
-    AddTimelaneWithAssetPayload,
+    AddLayerPayload,
+    AddLayerWithAssetPayload,
     AddAssetPayload,
-    MoveClipToTimelanePayload,
+    MoveClipToLayerPayload,
     ModifyCompositionPayload,
     ModifyClipPayload,
-    RemoveTimelanePayload,
+    RemoveLayerPayload,
     RemoveClipPayload,
 } from './project-modify-actions'
 
@@ -44,16 +44,16 @@ export type EditorStateActionPayload =
 
 export type ProjectModifyActionPayload =
     CreateCompositionPayload
-    | CreateTimelanePayload
+    | CreateLayerPayload
     | CreateClipPayload
     | AddClipPayload
-    | AddTimelanePayload
-    | AddTimelaneWithAssetPayload
+    | AddLayerPayload
+    | AddLayerWithAssetPayload
     | AddAssetPayload
-    | MoveClipToTimelanePayload
+    | MoveClipToLayerPayload
     | ModifyCompositionPayload
     | ModifyClipPayload
-    | RemoveTimelanePayload
+    | RemoveLayerPayload
     | RemoveClipPayload
 
 export type KnownPayload = EditorStateActionPayload | ProjectModifyActionPayload
