@@ -20,13 +20,13 @@ export type AssetEntryType = {
 
 export type CompositionData = {
     name : string,
-    layers : Array<LayerData>,
+    clips : Array<ClipData>,
     preference : Object,
 }
 
-export type LayerData = {
+export type ClipData = {
     rendererId: string,
-    layerOptions: Object,
+    clipOptions: Object,
     parametors: Array<TimeLineObject>,
 }
 
