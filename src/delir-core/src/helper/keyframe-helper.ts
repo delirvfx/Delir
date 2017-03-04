@@ -89,7 +89,7 @@ export default class KeyframeHelper
         transformer: (rate: number, frame: number, keyFrameLink: KeyFrameLink) => any
     ): KeyFrameSequence
     {
-        const orderedSequense: Array<KeyFrame> = keyFrameSequense.slice(0).sort((kfA, kfB) => kfA.frameOnLayer - kfB.frameOnLayer)
+        const orderedSequense: Array<KeyFrame> = keyFrameSequense.slice(0).sort((kfA, kfB) => kfA.frameOnClip - kfB.frameOnClip)
         const linkedSequense: Array<KeyFrameLink> = KeyframeHelper._buildLinkedKeyFrame(orderedSequense)
 
         const table: KeyFrameSequence = {}
@@ -103,12 +103,12 @@ export default class KeyframeHelper
                 continue
             }
 
-            if (activeKeyFrame.previous == null && frame < activeKeyFrame.active.frameOnLayer) {
+            if (activeKeyFrame.previous == null && frame < activeKeyFrame.active.frameOnClip) {
                 table[frame] = activeKeyFrame.active.value
                 continue
             }
 
-            if (activeKeyFrame.next == null && frame >= activeKeyFrame.active.frameOnLayer) {
+            if (activeKeyFrame.next == null && frame >= activeKeyFrame.active.frameOnClip) {
                 table[frame] = activeKeyFrame.active.value
                 continue
             }
@@ -118,7 +118,7 @@ export default class KeyframeHelper
             // TODO: Cache Bezier instance between change active keyframe
             const bezier = bezierEasing(...currentKeyEaseOut, ...nextKeyEaseIn)
 
-            const progressRate = (frame - activeKeyFrame.active.frameOnLayer) / (activeKeyFrame.next!.frameOnLayer - activeKeyFrame.active.frameOnLayer)
+            const progressRate = (frame - activeKeyFrame.active.frameOnClip) / (activeKeyFrame.next!.frameOnClip - activeKeyFrame.active.frameOnClip)
             table[frame] = transformer(bezier(progressRate), frame, activeKeyFrame)
         }
 
@@ -150,8 +150,8 @@ export default class KeyframeHelper
         for (const keyFrameLink of linkedKeyFrameSeq) {
             if (
                 keyFrameLink.next == null ||
-                (keyFrameLink.active.frameOnLayer <= frame && frame < keyFrameLink.next.frameOnLayer) ||
-                (keyFrameLink.previous == null && frame < keyFrameLink.active.frameOnLayer)
+                (keyFrameLink.active.frameOnClip <= frame && frame < keyFrameLink.next.frameOnClip) ||
+                (keyFrameLink.previous == null && frame < keyFrameLink.active.frameOnClip)
             ) {
                 return keyFrameLink
             }
@@ -264,7 +264,7 @@ export default class KeyframeHelper
 
     static calcPulseKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): boolean
     {
-        return keyFrameLink.active.frameOnLayer === frame ? true : false
+        return keyFrameLink.active.frameOnClip === frame ? true : false
     }
 
     static calcEnumKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): any
@@ -272,7 +272,7 @@ export default class KeyframeHelper
         return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
     }
 
-    static calcLayerKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): any // TODO: Typing
+    static calcClipKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): any // TODO: Typing
     {
         return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
     }
