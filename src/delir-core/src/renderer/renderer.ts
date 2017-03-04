@@ -406,6 +406,7 @@ export default class Renderer {
 
                 session.lastRenderedFrame = req.beginFrame + session.renderedFrames
 
+                const currentFrame = (req.beginFrame + session.renderedFrames)
                 if (!req.loop && session.renderedFrames >= session.durationFrames) {
                     notifier({
                         state: `Render... time: ${currentTimeForNotify} frames: ${session.renderedFrames} / ${session.durationFrames} (${currentFps} fps${req.throttle ? ' / throttled' : ''})`,
@@ -428,8 +429,16 @@ export default class Renderer {
                     return
                 }
 
-                if (req.loop && req.endFrame != null && (req.beginFrame + session.renderedFrames) >= req.endFrame) {
-                    session.renderedFrames = 0
+                if (req.loop) {
+                    if (req.endFrame != null && currentFrame >= req.endFrame) {
+                        session.renderedFrames = 0
+                    }
+                } else {
+                    if (req.endFrame != null && currentFrame >= req.endFrame) {
+                        // exit loop
+                        session.renderedFrames = 0
+                        return
+                    }
                 }
 
                 notifier({
