@@ -70,7 +70,7 @@ export default class CompositionInstanceContainer
             context.fillRect(0, 0, this._composition.width, this._composition.height)
         }
 
-        renderOrderedDests.forEach(([layer, destCanvas]) => {
+        renderOrderedDests.forEach(([clip, destCanvas]) => {
             context.drawImage(destCanvas, 0, 0)
         })
     }
