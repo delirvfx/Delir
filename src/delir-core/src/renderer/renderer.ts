@@ -123,14 +123,22 @@ export default class Renderer {
         return !!(this._playingSession && this._playingSession.playing)
     }
 
+    stop()
+    {
+        if (!this._playingSession) return
+        this.pause()
+        this._playingSession = null
+    }
+
     pause()
     {
-        if (this._playingSession.animationFrameId === null) return
-        cancelAnimationFrame(this._playingSession.animationFrameId)
+        if (!this._playingSession) return
 
-        if (this._playingSession) {
-            this._playingSession.playing = false
+        if (this._playingSession.animationFrameId != null) {
+            cancelAnimationFrame(this._playingSession.animationFrameId)
         }
+
+        this._playingSession.playing = false
     }
 
     setProject(project: Project)

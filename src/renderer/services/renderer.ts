@@ -36,11 +36,12 @@ const handlePayload = (payload: KnownPayload) => {
         case EditorStateDispatchTypes.ChangeActiveComposition: {
             if (!state.project) break
             state.composition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
+            renderer.stop()
             break
         }
 
         case EditorStateDispatchTypes.TogglePreview: (() => {
-            if (!state.project) return
+            if (!state.project || !state.composition) return
             if (!renderer || !audioContext) return
 
             const targetComposition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
@@ -63,10 +64,9 @@ const handlePayload = (payload: KnownPayload) => {
 
             renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
 
-            console.log('begin render');
             let promise = renderer.render({
                 beginFrame: 0,
-                targetCompositionId: payload.entity.compositionId,
+                targetCompositionId: state.composition.id,
                 throttle: true,
             })
 
