@@ -436,6 +436,7 @@ export default class Renderer {
                     if (req.endFrame != null && currentFrame >= req.endFrame) {
                         // exit loop
                         session.renderedFrames = 0
+                        this.pause()
                         return
                     }
                 }
