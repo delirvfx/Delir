@@ -32,10 +32,10 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         scaleListShown: false
     }
 
-    constructor()
-    {
-        super()
+    refs: {
+        scaleList: DropDown
     }
+
 
     selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
     {
