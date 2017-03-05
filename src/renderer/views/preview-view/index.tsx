@@ -72,13 +72,17 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
                         <canvas ref='canvas' className='canvas' width='640' height='360' style={{transform:`scale(${this.state.scale})`}}/>
                         <video ref='video' src='../../navcodec.mp4' style={{display:'none'}} controls loop />
                     </div>
-                    <div className='footer'>
+                    <div className={s.footer}>
                         <label className={s.scaleLabel} onClick={this.toggleScaleList}>
-                            Scale: {currentScale}%
+                            Scale:
+                            <span className={s.currentScale}>{currentScale}%</span>
                             <DropDown ref='scaleList' className={s.dropdown} shownInitial={scaleListShown}>
                                 <li data-value="50" onClick={this.selectScale}>50%</li>
                                 <li data-value="100" onClick={this.selectScale}>100%</li>
-                                <li data-value="120" onClick={this.selectScale}>120%</li>
+                                <li data-value="150" onClick={this.selectScale}>150%</li>
+                                <li data-value="200" onClick={this.selectScale}>200%</li>
+                                <li data-value="250" onClick={this.selectScale}>250%</li>
+                                <li data-value="300" onClick={this.selectScale}>300%</li>
                             </DropDown>
                         </label>
                     </div>
