@@ -129,7 +129,6 @@ export default class Renderer {
         cancelAnimationFrame(this._playingSession.animationFrameId)
 
         if (this._playingSession) {
-            this._playingSession.renderedFrames = 0
             this._playingSession.playing = false
         }
     }
