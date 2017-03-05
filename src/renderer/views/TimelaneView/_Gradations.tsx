@@ -46,7 +46,7 @@ export default class Gradations extends Component<GradationsProps, any>
         const renderer = RendererService.renderer
         const {activeComposition, scale} = this.props
 
-        if (activeComposition && renderer.isPlaying) {
+        if (activeComposition) {
             this.setState({
                 left: TimelineHelper.framesToPixel({
                     pxPerSec: 30,
