@@ -64,8 +64,6 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         const {props: {className, children}, state: {show}} = this
         const {left, top} = this.refs.inspector.getBoundingClientRect()
 
-        console.log(show)
-
         this._portal.mount((
             <ul
                 className={classnames(s.dropdown, className, {
