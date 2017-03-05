@@ -4,10 +4,14 @@ import * as Delir from 'delir-core'
 
 import connectToStores from '../../utils/connectToStores'
 
+import Pane from '../components/pane'
+import DropDown from '../components/dropdown'
+import {ContextMenu, MenuItem} from '../electron/context-menu'
+
 import EditorStateStore from '../../stores/editor-state-store'
 import ProjectModifyStore from '../../stores/project-modify-store'
 
-import Pane from '../components/pane'
+import s from './style.styl'
 
 interface PreviewViewProps {
     activeComp: Delir.Project.Composition
@@ -15,6 +19,7 @@ interface PreviewViewProps {
 
 interface PreviewViewState {
     scale: number
+    scaleListShown: boolean
 }
 
 @connectToStores([EditorStateStore], () => ({
@@ -22,20 +27,27 @@ interface PreviewViewState {
 }))
 export default class PreviewView extends React.Component<PreviewViewProps, PreviewViewState>
 {
+    state = {
+        scale: 1,
+        scaleListShown: false
+    }
+
     constructor()
     {
         super()
-
-        this.state = {
-            scale: 1,
-        }
     }
 
-    selectScale = (e: React.ChangeEvent<HTMLSelectElement>) =>
+    selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
     {
         this.setState({
-            scale: parseInt(e.target.value, 10) / 100
+            scale: parseInt(e.target.dataset.value, 10) / 100,
+            scaleListShown: false,
         })
+    }
+
+    toggleScaleList = (e) =>
+    {
+        this.refs.scaleList.toggle()
     }
 
     onWheel = e => {
@@ -49,7 +61,8 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
     render()
     {
         const {activeComp} = this.props
-        const currentScale = Math.round(this.state.scale * 100)
+        const {scale, scaleListShown} = this.state
+        const currentScale = Math.round(scale * 100)
 
         return (
             <Pane className='view-preview' allowFocus>
@@ -60,13 +73,13 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
                         <video ref='video' src='../../navcodec.mp4' style={{display:'none'}} controls loop />
                     </div>
                     <div className='footer'>
-                        <label>
+                        <label className={s.scaleLabel} onClick={this.toggleScaleList}>
                             Scale: {currentScale}%
-                            <select onChange={this.selectScale} style={{visibility: 'hidden'}}>
-                                <option value="50">50%</option>
-                                <option value="100">100%</option>
-                                <option value="120">120%</option>
-                            </select>
+                            <DropDown ref='scaleList' className={s.dropdown} shownInitial={scaleListShown}>
+                                <li data-value="50" onClick={this.selectScale}>50%</li>
+                                <li data-value="100" onClick={this.selectScale}>100%</li>
+                                <li data-value="120" onClick={this.selectScale}>120%</li>
+                            </DropDown>
                         </label>
                     </div>
                 </div>
