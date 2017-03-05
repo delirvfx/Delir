@@ -47,6 +47,21 @@ type CompositionProps = {
     audioChannels: string,
 }
 
+const castToCompositionPropTypes = (req: CompositionProps) => {
+    const bgColor = parseColor(req.backgroundColor)
+
+    return {
+        name: req.name,
+        width: +req.width,
+        height: +req.height,
+        framerate: +req.framerate,
+        durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
+        backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
+        samplingRate: +req.samplingRate,
+        audioChannels: +req.audioChannels,
+    }
+}
+
 @connectToStores([EditorStateStore, ProjectModifyStore], (context, props) => ({
     editor: EditorStateStore.getState(),
 }))
@@ -104,11 +119,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
             return
         }
 
-        const bgColor = parseColor(req.backgroundColor)
-        ProjectModifyActions.modifyComposition(compId, Object.assign(req, {
-            durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
-            backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2])
-        }))
+        ProjectModifyActions.modifyComposition(compId, castToCompositionPropTypes(req))
     }
 
     openNewCompositionWindow =  async () =>
@@ -125,18 +136,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
             return
         }
 
-        const bgColor = parseColor(req.backgroundColor)
-
-        ProjectModifyActions.createComposition({
-            name: req.name,
-            width: +req.width,
-            height: +req.height,
-            framerate: +req.framerate,
-            durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
-            backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
-            samplingRate: +req.samplingRate,
-            audioChannels: +req.audioChannels,
-        })
+        ProjectModifyActions.createComposition(castToCompositionPropTypes(req))
     }
 
     onAssetsDragStart = ({target}: {target: HTMLElement}) => {
