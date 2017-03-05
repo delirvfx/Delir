@@ -98,6 +98,9 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
 
         EditorStateActions.clearDragEntity()
         this.setState({dragovered: false})
+
+        e.preventDefault()
+        e.stopPropagation()
     }
 
     onDragLeave(e)
