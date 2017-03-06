@@ -106,12 +106,20 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.modifyClip(project!, payload.entity.targetClipId, payload.entity.patch)
                 break
 
+            case ProjectModifyDispatchTypes.RemoveComposition:
+                ProjectHelper.deleteComposition(project!, payload.entity.targetCompositionId)
+                break
+
             case ProjectModifyDispatchTypes.RemoveLayer:
                 ProjectHelper.deleteLayer(project!, payload.entity.targetClipId)
                 break
 
             case ProjectModifyDispatchTypes.RemoveClip:
                 ProjectHelper.deleteClip(project!, payload.entity.targetClipId)
+                break
+
+            case ProjectModifyDispatchTypes.RemoveAsset:
+                ProjectHelper.deleteAsset(project!, payload.entity.targetAssetId)
                 break
 
             default:

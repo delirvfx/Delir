@@ -81,7 +81,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         }
     }
 
-    addAsset = e => {
+    addAsset = (e: React.DragEvent<HTMLDivElement>) =>
+    {
         _.each(e.dataTransfer.files, (file, idx) => {
             if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
 
@@ -93,15 +94,29 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         })
     }
 
-    changeComposition = (compId, e) => {
+    removeAsset = (assetId: string) =>
+    {
+        // TODO: Check references
+        ProjectModifyActions.removeAsset(assetId)
+    }
+
+    changeComposition = (compId, e) =>
+    {
         EditorStateActions.changeActiveComposition(compId)
     }
 
-    modifyCompName = (compId, newName) => {
+    removeComposition = (compId: string) =>
+    {
+        ProjectModifyActions.removeComposition(compId)
+    }
+
+    modifyCompName = (compId, newName) =>
+    {
         ProjectModifyActions.modifyComposition(compId, { name: newName })
     }
 
-    openCompositionSetting = async (compId: string) => {
+    openCompositionSetting = async (compId: string) =>
+    {
         if (!this.props.editor.project) return
 
         const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
@@ -138,7 +153,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         ProjectModifyActions.createComposition(castToCompositionPropTypes(req))
     }
 
-    onAssetsDragStart = ({target}: {target: HTMLElement}) => {
+    onAssetsDragStart = ({target}: {target: HTMLElement}) =>
+    {
         const {editor: {project}} = this.props
         if (!project) return
 
@@ -178,7 +194,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
-                                    <MenuItem label='Remove' onClick={() => {}} />
+                                    <MenuItem label='Remove' onClick={this.removeComposition.bind(null, comp.id)} />
                                     <MenuItem label='Composition setting' onClick={this.openCompositionSetting.bind(null, comp.id)} />
                                     <MenuItem type='separator' />
                                 </ContextMenu>
@@ -210,8 +226,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
-                                    <MenuItem label='Reload' onClick={() => {}} />
-                                    <MenuItem label='Remove' onClick={() => {}}/>
+                                    {/*<MenuItem label='Reload' onClick={() => {}} />*/}
+                                    <MenuItem label='Remove' onClick={this.removeAsset.bind(null, asset.id!)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 

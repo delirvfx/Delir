@@ -28,8 +28,10 @@ export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: any}>
 export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: any}>
+export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
+export type RemoveAssetPayload = Payload<'RemoveAsset', {targetAssetId: string}>
 
 export const DispatchTypes = keyMirror({
     CreateComposition: null,
@@ -42,8 +44,10 @@ export const DispatchTypes = keyMirror({
     MoveClipToLayer: null,
     ModifyComposition: null,
     ModifyClip: null,
+    RemoveComposition: null,
     RemoveLayer: null,
     RemoveClip: null,
+    RemoveAsset:null,
 })
 
 export default {
@@ -169,6 +173,11 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.AddAsset, {asset}))
     },
 
+    removeAsset(assetId: string)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveAsset, {targetAssetId: assetId}))
+    },
+
 
     // TODO: frame position
     moveClipToLayer(clipId: string, targetLayerId: string)
@@ -189,6 +198,11 @@ export default {
             targetClipId: clipId,
             patch: props,
         }))
+    },
+
+    removeComposition(compId: string)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveComposition, {targetCompositionId: compId}))
     },
 
     removeLayer(clipId: string)
