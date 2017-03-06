@@ -4,7 +4,7 @@ import {PropTypes} from 'react'
 import classnames from 'classnames'
 import * as Delir from 'delir-core'
 
-import {ContextMenu, MenuItem} from '../electron/context-menu'
+import {ContextMenu, MenuItem} from '../components/context-menu'
 import RendererService from '../../services/renderer'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'

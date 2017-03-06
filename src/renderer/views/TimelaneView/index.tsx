@@ -17,7 +17,7 @@ import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/pr
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 
-import {ContextMenu, MenuItem} from '../electron/context-menu'
+import {ContextMenu, MenuItem} from '../components/context-menu'
 import SelectList from '../components/select-list'
 
 import LaneLabel from '../timeline/lane-label'
