@@ -11,15 +11,14 @@ import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import { default as EditorStateStore, EditorState } from '../../stores/editor-state-store'
-import { default as ProjectModifyStore, ProjectModifyState } from '../../stores/project-modify-store'
+import { default as ProjectModifyStore } from '../../stores/project-modify-store'
 
-import Portal from '../../utils/portal'
 import Pane from '../components/pane'
 import LabelInput from '../components/label-input'
 import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components/table'
-import { ContextMenu, MenuItem } from '../electron/context-menu'
+import { ContextMenu, MenuItem } from '../components/context-menu'
 
-import * as Modal from '../electron/modal-window'
+import * as Modal from '../components/modal-window'
 import FormStyle from '../components/Form'
 
 import connectToStores from '../../utils/connectToStores'
@@ -47,6 +46,21 @@ type CompositionProps = {
     audioChannels: string,
 }
 
+const castToCompositionPropTypes = (req: CompositionProps) => {
+    const bgColor = parseColor(req.backgroundColor)
+
+    return {
+        name: req.name,
+        width: +req.width,
+        height: +req.height,
+        framerate: +req.framerate,
+        durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
+        backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
+        samplingRate: +req.samplingRate,
+        audioChannels: +req.audioChannels,
+    }
+}
+
 @connectToStores([EditorStateStore, ProjectModifyStore], (context, props) => ({
     editor: EditorStateStore.getState(),
 }))
@@ -67,7 +81,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         }
     }
 
-    addAsset = e => {
+    addAsset = (e: React.DragEvent<HTMLDivElement>) =>
+    {
         _.each(e.dataTransfer.files, (file, idx) => {
             if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
 
@@ -79,15 +94,29 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         })
     }
 
-    changeComposition = (compId, e) => {
+    removeAsset = (assetId: string) =>
+    {
+        // TODO: Check references
+        ProjectModifyActions.removeAsset(assetId)
+    }
+
+    changeComposition = (compId: string) =>
+    {
         EditorStateActions.changeActiveComposition(compId)
     }
 
-    modifyCompName = (compId, newName) => {
+    removeComposition = (compId: string) =>
+    {
+        ProjectModifyActions.removeComposition(compId)
+    }
+
+    modifyCompName = (compId, newName) =>
+    {
         ProjectModifyActions.modifyComposition(compId, { name: newName })
     }
 
-    openCompositionSetting = async (compId: string) => {
+    openCompositionSetting = async (compId: string) =>
+    {
         if (!this.props.editor.project) return
 
         const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
@@ -104,11 +133,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
             return
         }
 
-        const bgColor = parseColor(req.backgroundColor)
-        ProjectModifyActions.modifyComposition(compId, Object.assign(req, {
-            durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
-            backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2])
-        }))
+        ProjectModifyActions.modifyComposition(compId, castToCompositionPropTypes(req))
     }
 
     openNewCompositionWindow =  async () =>
@@ -125,21 +150,11 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
             return
         }
 
-        const bgColor = parseColor(req.backgroundColor)
-
-        ProjectModifyActions.createComposition({
-            name: req.name,
-            width: +req.width,
-            height: +req.height,
-            framerate: +req.framerate,
-            durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
-            backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
-            samplingRate: +req.samplingRate,
-            audioChannels: +req.audioChannels,
-        })
+        ProjectModifyActions.createComposition(castToCompositionPropTypes(req))
     }
 
-    onAssetsDragStart = ({target}: {target: HTMLElement}) => {
+    onAssetsDragStart = ({target}: {target: HTMLElement}) =>
+    {
         const {editor: {project}} = this.props
         if (!project) return
 
@@ -175,11 +190,11 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
-                            <Row key={comp.id} onDoubleClick={this.changeComposition.bind(this, comp.id)}>
+                            <Row key={comp.id} onDoubleClick={this.changeComposition.bind(null, comp.id)}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
-                                    <MenuItem label='Remove it' onClick={() => {}} />
+                                    <MenuItem label='Remove' onClick={this.removeComposition.bind(null, comp.id)} />
                                     <MenuItem label='Composition setting' onClick={this.openCompositionSetting.bind(null, comp.id)} />
                                     <MenuItem type='separator' />
                                 </ContextMenu>
@@ -211,8 +226,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
-                                    <MenuItem label='Reload' onClick={() => {}} />
-                                    <MenuItem label='Remove it' onClick={() => {}}/>
+                                    {/*<MenuItem label='Reload' onClick={() => {}} />*/}
+                                    <MenuItem label='Remove' onClick={this.removeAsset.bind(null, asset.id!)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 

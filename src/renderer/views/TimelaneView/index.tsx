@@ -133,9 +133,8 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         ProjectModifyActions.addLayerWithAsset(activeComp, asset)
     }
 
-    onSeekClicked = (frame: number) =>
+    onSeeked = (frame: number) =>
     {
-        console.log(frame)
         EditorStateActions.seekPreviewFrame(frame)
     }
 
@@ -184,7 +183,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                     scale={this.state.scale}
                                     activeComposition={activeComp}
                                     pxPerSec={PX_PER_SEC}
-                                    onSeeked={this.onSeekClicked}
+                                    onSeeked={this.onSeeked}
                                 />
 
                                 <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>

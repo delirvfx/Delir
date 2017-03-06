@@ -15,7 +15,12 @@ interface GradationsProps {
     onSeeked: (frame: number) => any
 }
 
-export default class Gradations extends Component<GradationsProps, any>
+interface GradationsState {
+    left: number,
+    dragSeekEnabled: boolean,
+}
+
+export default class Gradations extends Component<GradationsProps, GradationsState>
 {
     static propTypes = {
         activeComposition: PropTypes.object.isRequired,
@@ -29,6 +34,7 @@ export default class Gradations extends Component<GradationsProps, any>
 
     state = {
         left: 0,
+        dragSeekEnabled: false,
     }
 
     componentDidMount()
@@ -60,8 +66,17 @@ export default class Gradations extends Component<GradationsProps, any>
         this.intervalId = requestAnimationFrame(this.updateCursor)
     }
 
-    clicked = ({nativeEvent: e}: React.MouseEvent<HTMLDivElement>) =>
+    seeking = ({nativeEvent: e}: React.MouseEvent<HTMLDivElement>) =>
     {
+        if (e.type === 'mousedown') {
+            this.setState({dragSeekEnabled: true})
+        } else if (e.type === 'mouseup') {
+            this.setState({dragSeekEnabled: false})
+            return
+        }
+
+        if (!this.state.dragSeekEnabled) return
+
         const {activeComposition, pxPerSec, scale} = this.props
 
         if (! activeComposition) return
@@ -79,7 +94,7 @@ export default class Gradations extends Component<GradationsProps, any>
     render()
     {
         return (
-            <div className={s.Gradations} onClick={this.clicked}>
+            <div className={s.Gradations} onMouseDown={this.seeking} onMouseMove={this.seeking} onMouseUp={this.seeking}>
                 <div className={s.playingCursor} style={{
                     left: this.state.left,
                     height: `calc(100% + ${this.props.cursorHeight}px - 5px)`

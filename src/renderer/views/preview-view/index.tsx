@@ -6,7 +6,7 @@ import connectToStores from '../../utils/connectToStores'
 
 import Pane from '../components/pane'
 import DropDown from '../components/dropdown'
-import {ContextMenu, MenuItem} from '../electron/context-menu'
+import {ContextMenu, MenuItem} from '../components/context-menu'
 
 import EditorStateStore from '../../stores/editor-state-store'
 import ProjectModifyStore from '../../stores/project-modify-store'
@@ -63,13 +63,15 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         const {activeComp} = this.props
         const {scale, scaleListShown} = this.state
         const currentScale = Math.round(scale * 100)
+        const width = activeComp ? activeComp.width : 640
+        const height = activeComp ? activeComp.height : 360
 
         return (
             <Pane className='view-preview' allowFocus>
                 <div className='inner'>
                     <div className='header'>{activeComp && activeComp.name}</div>
                     <div className='view' onWheel={this.onWheel}>
-                        <canvas ref='canvas' className='canvas' width='640' height='360' style={{transform:`scale(${this.state.scale})`}}/>
+                        <canvas ref='canvas' className='canvas' width={width} height={height} style={{transform:`scale(${this.state.scale})`}}/>
                         <video ref='video' src='../../navcodec.mp4' style={{display:'none'}} controls loop />
                     </div>
                     <div className={s.footer}>
