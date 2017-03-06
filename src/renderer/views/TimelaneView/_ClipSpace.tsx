@@ -44,7 +44,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         framerate: PropTypes.number.isRequired,
         pxPerSec: PropTypes.number.isRequired,
         scale: PropTypes.number.isRequired,
-        activeClip: PropTypes.object.isRequired,
+        activeClip: PropTypes.object,
     }
 
     _plugins: {id: string, packageName: string}[]
