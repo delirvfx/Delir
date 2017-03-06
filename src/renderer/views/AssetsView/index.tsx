@@ -11,9 +11,8 @@ import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import { default as EditorStateStore, EditorState } from '../../stores/editor-state-store'
-import { default as ProjectModifyStore, ProjectModifyState } from '../../stores/project-modify-store'
+import { default as ProjectModifyStore } from '../../stores/project-modify-store'
 
-import Portal from '../../utils/portal'
 import Pane from '../components/pane'
 import LabelInput from '../components/label-input'
 import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components/table'
