@@ -259,7 +259,7 @@ export function pack(done) {
         "name"      : pjson.name,
         "platform"  : ["win32", "darwin"],
         "arch"      : "x64",
-        "version"   : "1.2.5",
+        "electronVersion" : "1.6.1",
 
         "out"       : paths.binary,
         "icon"      : null,
@@ -272,6 +272,7 @@ export function pack(done) {
         asar        : {
             unpack: 'node_modules/'
         },
+        derefSymlinks: true,
         "sign"      : null,
 
         "version-string": {
