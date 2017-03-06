@@ -161,8 +161,8 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                 <ContextMenu>
                     <MenuItem type='separator' />
                     <MenuItem label='Add new Clip' enabled={!!plugins.length}>
-                        {_.map(plugins, p =>
-                            <MenuItem label={p.packageName} onClick={this.addNewClip.bind(null, p.id)} />
+                        {_.map(plugins, (p, idx) =>
+                            <MenuItem keys={idx} label={p.packageName} onClick={this.addNewClip.bind(null, p.id)} />
                         )}
                     </MenuItem>
                     <MenuItem type='separator' />
