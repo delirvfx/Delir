@@ -100,7 +100,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         ProjectModifyActions.removeAsset(assetId)
     }
 
-    changeComposition = (compId, e) =>
+    changeComposition = (compId: string) =>
     {
         EditorStateActions.changeActiveComposition(compId)
     }
@@ -190,7 +190,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
-                            <Row key={comp.id} onDoubleClick={this.changeComposition.bind(this, comp.id)}>
+                            <Row key={comp.id} onDoubleClick={this.changeComposition.bind(null, comp.id)}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
