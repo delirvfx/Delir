@@ -178,7 +178,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
-                                    <MenuItem label='Remove it' onClick={() => {}} />
+                                    <MenuItem label='Remove' onClick={() => {}} />
                                     <MenuItem label='Composition setting' onClick={this.openCompositionSetting.bind(null, comp.id)} />
                                     <MenuItem type='separator' />
                                 </ContextMenu>
@@ -211,7 +211,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                     <MenuItem type='separator' />
                                     <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
                                     <MenuItem label='Reload' onClick={() => {}} />
-                                    <MenuItem label='Remove it' onClick={() => {}}/>
+                                    <MenuItem label='Remove' onClick={() => {}}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
