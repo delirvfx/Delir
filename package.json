@@ -51,6 +51,7 @@
     "css-loader": "^0.26.1",
     "devtron": "^1.4.0",
     "electron": "^1.6.1",
+    "electron-builder": "^15.1.1",
     "electron-devtools-installer": "^2.0.1",
     "electron-packager": "^8.5.2",
     "electron-rebuild": "^1.5.7",
