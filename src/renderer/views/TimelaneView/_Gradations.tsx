@@ -5,7 +5,7 @@ import * as Delir from 'delir-core'
 import TimelineHelper from '../../helpers/timeline-helper'
 import RendererService from '../../services/renderer'
 
-import s from './Gradations.styl'
+import * as s from './Gradations.styl'
 
 interface GradationsProps {
     activeComposition: Delir.Project.Composition|null,

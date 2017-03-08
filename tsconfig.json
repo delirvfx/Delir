@@ -11,7 +11,7 @@
         "allowJs": true,
         "jsx": "react",
         "target": "es2016",
-        "module": "es2015",
+        "module": "commonjs",
         "moduleResolution": "node",
         "lib": [
             "dom",

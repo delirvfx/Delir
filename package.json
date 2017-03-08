@@ -8,7 +8,7 @@
   "main": "browser/main.js",
   "scripts": {
     "dev": "DELIR_ENV=dev $(npm bin)/gulp",
-    "build": "DELIR_ENV=productName $(npm bin)/gulp publish",
+    "build": "DELIR_ENV=production $(npm bin)/gulp publish",
     "declare": "$(npm bin)/tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "test": "$(npm bin)/mocha --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js",
     "watch-test": "$(npm bin)/mocha --watch --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js"
@@ -46,13 +46,12 @@
     "babel-preset-stage-1": "^6.22.0",
     "babel-preset-stage-2": "^6.22.0",
     "babel-preset-stage-3": "^6.22.0",
-    "classnames": "^2.2.5",
     "clean-webpack-plugin": "^0.1.15",
     "css-loader": "^0.26.1",
     "devtron": "^1.4.0",
     "electron": "^1.6.1",
+    "electron-builder": "^15.1.1",
     "electron-devtools-installer": "^2.0.1",
-    "electron-packager": "^8.5.2",
     "electron-rebuild": "^1.5.7",
     "expect.js": "^0.3.1",
     "flow-bin": "^0.38.0",
@@ -84,6 +83,7 @@
     "av": "^0.4.9",
     "bezier-easing": "^2.0.3",
     "bson": "^1.0.4",
+    "classnames": "^2.2.5",
     "duplexer3": "^0.1.4",
     "electron-canvas-to-buffer": "^2.0.0",
     "event-kit": "^2.2.0",
@@ -102,6 +102,7 @@
     "react-dom": "^15.4.2",
     "semver": "^5.3.0",
     "tooloud": "^1.0.0",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "yargs": "^7.0.1"
   }
 }

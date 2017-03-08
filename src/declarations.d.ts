@@ -43,7 +43,7 @@ declare const __DEV__: boolean
 
 declare module '*.styl' {
     const _ : {[className: string]: string}
-    export default _
+    export = _
 }
 
 declare module 'devtron' {
@@ -57,7 +57,7 @@ declare module 'electron-devtools-installer' {
 }
 
 declare module 'keymirror' {
-    export default function keyMirror<K>(keys: K): {[P in keyof K]: P}
+    export function keyMirror<K>(keys: K): {[P in keyof K]: P}
 }
 
 declare module 'parse-color' {

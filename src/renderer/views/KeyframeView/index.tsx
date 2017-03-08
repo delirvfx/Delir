@@ -16,7 +16,7 @@ import {default as EditorStateStore, EditorState} from '../../stores/editor-stat
 import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
 import RendererService from '../../services/renderer'
 
-import s from './style.styl'
+import * as s from './style.styl'
 
 interface KeyframeViewProps {
     activeClip: Delir.Project.Clip|null

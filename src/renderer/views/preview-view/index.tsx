@@ -11,7 +11,7 @@ import {ContextMenu, MenuItem} from '../components/context-menu'
 import EditorStateStore from '../../stores/editor-state-store'
 import ProjectModifyStore from '../../stores/project-modify-store'
 
-import s from './style.styl'
+import * as s from './style.styl'
 
 interface PreviewViewProps {
     activeComp: Delir.Project.Composition

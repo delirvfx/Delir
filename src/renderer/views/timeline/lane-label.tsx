@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {PropTypes} from 'React'
+import {PropTypes} from 'react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
@@ -8,7 +8,7 @@ import RendererService from '../../services/renderer'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 
 import LabelInput from '../components/label-input'
-import {ContextMenu, MenuItem} from '../electron/context-menu'
+import {ContextMenu, MenuItem} from '../components/context-menu'
 import LaneLabelProps from './lane-label-props'
 
 interface LaneLabelProps {

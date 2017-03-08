@@ -3,11 +3,11 @@ import {PropTypes} from 'react'
 import * as Delir from 'delir-core'
 import cancelEvent from '../../utils/cancelEvent'
 
-import {ContextMenu, MenuItem} from '../electron/context-menu'
+import {ContextMenu, MenuItem} from '../components/context-menu'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import s from './Clip.styl'
+import * as s from './Clip.styl'
 
 interface TimelaneClipProps {
     clip: Delir.Project.Clip,

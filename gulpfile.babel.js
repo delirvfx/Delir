@@ -3,7 +3,7 @@ const $ = require("gulp-load-plugins")();
 const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const packager = require("electron-packager");
+const builder = require('electron-builder')
 const nib = require('nib')
 
 const fs = require("fs-promise");
@@ -252,39 +252,42 @@ export function copyImage() {
         .pipe(g.dest(join(paths.compiled.renderer, "images")));
 }
 
-export function pack(done) {
+export async function pack(done) {
     const pjson = require("./package.json");
-    packager({
-        "dir"       : paths.compiled.root,
-        "name"      : pjson.name,
-        "platform"  : ["win32", "darwin"],
-        "arch"      : "x64",
-        "version"   : "1.2.5",
 
-        "out"       : paths.binary,
-        "icon"      : null,
-        "app-bundle-id"     : null,
-        "app-version"       : pjson.version,
-        "helper-bundle-id"  : null,
-        ignore      : null,
-        prune       : true,
-        overwrite   : true,
-        asar        : {
-            unpack: 'node_modules/'
+    await rimraf(join(paths.build, 'node_modules'))
+
+    await new Promise((resolve, reject) => {
+        spawn('yarn', ['install'], {cwd: paths.build}).on('close', code => code === 0 ? resolve() : reject())
+    })
+
+    const targets = new Map([
+        ...builder.Platform.MAC.createTarget(),
+        ...builder.Platform.WINDOWS.createTarget(),
+        ...builder.Platform.LINUX.createTarget(),
+    ])
+
+    await builder.build({
+        // targets: builder.Platform.MAC.createTarget(),
+        targets,
+        config: {
+            appId: 'studio.delir',
+            copyright: '© 2017 Ragg',
+            productName: 'Delir',
+            electronVersion: '1.6.1',
+            asar: true,
+            asarUnpack: ["node_modules/"],
+            directories: {
+                app: paths.build,
+                output: paths.binary,
+            },
         },
-        "sign"      : null,
-
-        "version-string": {
-            CompanyName         : pjson.author,
-            LegalCopyright      : null,
-            FileDescription     : null,
-            OriginalFilename    : null,
-            FileVersion         : pjson.version,
-            ProductVersion      : pjson.version,
-            ProductName         : pjson.productName,
-            InternalName        : null,
-        }
-    }, done);
+        mac: {
+            target: 'default',
+            type: "distribution",
+            category: "AudioVideo",
+        },
+    })
 }
 
 export async function clean(done) {
@@ -313,67 +316,67 @@ export function run() {
     electron.on("close", (code) => { code === 0 && run(() => {}); });
 }
 
-export async function compileNavcodec() {
-    await new Promise(resolve => {
-        const compiler = spawn('npm', ['i', '../src/navcodec'], {
-            cwd: join(__dirname, 'test'),
-        });
+// export async function compileNavcodec() {
+//     await new Promise(resolve => {
+//         const compiler = spawn('npm', ['i', '../src/navcodec'], {
+//             cwd: join(__dirname, 'test'),
+//         });
 
-        compiler.on('close', code => {
-            console.log('npm install ending with %d', code)
-            resolve()
-        })
-    })
+//         compiler.on('close', code => {
+//             console.log('npm install ending with %d', code)
+//             resolve()
+//         })
+//     })
 
-    await new Promise(resolve => {
-        const testRun = spawn('node', ['index.js'], {
-            cwd: join(__dirname, 'test'),
-            stdio: 'inherit',
-        })
+//     await new Promise(resolve => {
+//         const testRun = spawn('node', ['index.js'], {
+//             cwd: join(__dirname, 'test'),
+//             stdio: 'inherit',
+//         })
 
-        testRun.on('close', code => {
-            console.log('testRun ending with %d', code)
-            resolve()
-        })
-    })
-}
+//         testRun.on('close', code => {
+//             console.log('testRun ending with %d', code)
+//             resolve()
+//         })
+//     })
+// }
 
-export async function compileNavcodecForElectron() {
-    if (buildingElectron) {
-        return
-    }
+// export async function compileNavcodecForElectron() {
+//     if (buildingElectron) {
+//         return
+//     }
 
-    buildingElectron = true
+//     buildingElectron = true
 
-    await new Promise(resolve => {
-        const compiler = spawn('npm', ['i', 'src/navcodec'], {
-            cwd: join(__dirname),
-        });
+//     await new Promise(resolve => {
+//         const compiler = spawn('npm', ['i', 'src/navcodec'], {
+//             cwd: join(__dirname),
+//         });
 
-        compiler.on('close', code => {
-            console.log('npm install for electron ending with %d', code);
-            resolve();
-        })
-    })
+//         compiler.on('close', code => {
+//             console.log('npm install for electron ending with %d', code);
+//             resolve();
+//         })
+//     })
 
-    await new Promise(resolve => {
-        const rebuild = spawn('./node_modules/.bin/electron-rebuild', [], {
-            cwd: join(__dirname),
-        })
-        rebuild.on('close', code => {
-            console.log('electron-rebuild ending with %d', code)
-            buildingElectron = false
-            resolve()
-        })
-    })
-}
+//     await new Promise(resolve => {
+//         const rebuild = spawn('./node_modules/.bin/electron-rebuild', [], {
+//             cwd: join(__dirname),
+//         })
+//         rebuild.on('close', code => {
+//             console.log('electron-rebuild ending with %d', code)
+//             buildingElectron = false
+//             resolve()
+//         })
+//     })
+// }
 
 export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
     g.watch(paths.src.renderer, buildRendererWithoutJs)
     g.watch(join(paths.src.renderer, 'styles'), compileStyles)
     g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, compilePlugins))
-    g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
+    // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }
 
@@ -384,9 +387,9 @@ const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
 const publish = g.series(clean, build, pack);
 
-export function navcodecTest() {
-    g.watch(join(__dirname, 'src/navcodec'), compileNavcodec)
-}
+// export function navcodecTest() {
+//     g.watch(join(__dirname, 'src/navcodec'), compileNavcodec)
+// }
 
 export {publish, build};
 export default buildAndWatch;

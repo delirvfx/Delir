@@ -4,7 +4,7 @@ import * as classnames from 'classnames'
 
 import Portal from '../../utils/portal'
 
-import s from './dropdown.styl'
+import * as s from './dropdown.styl'
 
 interface DropdownProps {
     shownInitial: boolean
