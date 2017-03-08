@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {PropTypes} from 'React'
+import {PropTypes} from 'react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
