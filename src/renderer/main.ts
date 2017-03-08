@@ -10,10 +10,6 @@ import * as Delir from 'delir-core'
 import RendererService from './services/renderer'
 import BrowserProcessProxy from './services/browser-process-proxy'
 
-if (typeof global !== 'undefined') {
-    (global as any).require('babel-register')
-}
-
 // Hook require function for plugins
 (() => {
     const Module = (global as any).module.constructor
