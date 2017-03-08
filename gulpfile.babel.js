@@ -3,7 +3,6 @@ const $ = require("gulp-load-plugins")();
 const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const packager = require("electron-packager");
 const builder = require('electron-builder')
 const nib = require('nib')
 
@@ -289,40 +288,6 @@ export async function pack(done) {
             category: "AudioVideo",
         },
     })
-
-
-    // packager({
-    //     "dir"       : paths.compiled.root,
-    //     "name"      : pjson.name,
-    //     "platform"  : ["win32", "darwin"],
-    //     "arch"      : "x64",
-    //     "electronVersion" : "1.6.1",
-
-    //     "out"       : paths.binary,
-    //     "icon"      : null,
-    //     "app-bundle-id"     : null,
-    //     "app-version"       : pjson.version,
-    //     "helper-bundle-id"  : null,
-    //     ignore      : null,
-    //     prune       : true,
-    //     overwrite   : true,
-    //     asar        : {
-    //         unpack: 'node_modules/'
-    //     },
-    //     derefSymlinks: true,
-    //     "sign"      : null,
-
-    //     "version-string": {
-    //         CompanyName         : pjson.author,
-    //         LegalCopyright      : null,
-    //         FileDescription     : null,
-    //         OriginalFilename    : null,
-    //         FileVersion         : pjson.version,
-    //         ProductVersion      : pjson.version,
-    //         ProductName         : pjson.productName,
-    //         InternalName        : null,
-    //     }
-    // }, done);
 }
 
 export async function clean(done) {
