@@ -27,8 +27,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // install devtools
     if (__DEV__) {
         const devtron = require('devtron')
-        const installExtension = require('electron-devtools-installer')
-        const {REACT_DEVELOPER_TOOLS} = installExtension
+        const {default: installExtension, REACT_DEVELOPER_TOOLS} = require('electron-devtools-installer')
         devtron.install()
         await installExtension(REACT_DEVELOPER_TOOLS)
     }
