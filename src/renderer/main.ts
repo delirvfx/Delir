@@ -1,9 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import * as devtron from 'devtron'
-import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer'
-
 import AppComponent from './views/AppView'
 
 import EditorStateActions from './actions/editor-state-actions'
@@ -32,8 +29,13 @@ if (typeof global !== 'undefined') {
 
 window.addEventListener('DOMContentLoaded', async () => {
     // install devtools
-    devtron.install()
-    await installExtension(REACT_DEVELOPER_TOOLS)
+    if (__DEV__) {
+        const devtron = require('devtron')
+        const installExtension = require('electron-devtools-installer')
+        const {REACT_DEVELOPER_TOOLS} = installExtension
+        devtron.install()
+        await installExtension(REACT_DEVELOPER_TOOLS)
+    }
 
     // initialize app
     BrowserProcessProxy.initialize()
