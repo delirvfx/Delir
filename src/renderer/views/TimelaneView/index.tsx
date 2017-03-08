@@ -26,7 +26,7 @@ import KeyframeView from '../KeyframeView'
 import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
 
-import s from './style.styl'
+import * as s from './style.styl'
 
 interface TimelineViewProps {
     editor: EditorState,

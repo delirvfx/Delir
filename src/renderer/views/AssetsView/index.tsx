@@ -1,8 +1,8 @@
 import * as _ from 'lodash'
 import * as React from 'react'
 import { PropTypes } from 'react'
-import parseColor from 'parse-color'
-import serialize from 'form-serialize'
+import * as parseColor from 'parse-color'
+import * as serialize from 'form-serialize'
 
 import * as Delir from 'delir-core'
 import {ProjectHelper, ColorRGB} from 'delir-core'

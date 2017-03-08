@@ -9,7 +9,7 @@ import EditorStateActions from '../../actions/editor-state-actions'
 
 import Pane from '../components/pane'
 
-import s from './style.styl'
+import * as s from './style.styl'
 
 interface NavigationViewProps {
     editor: EditorState,

@@ -7,7 +7,7 @@ import {ContextMenu, MenuItem} from '../components/context-menu'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import s from './Clip.styl'
+import * as s from './Clip.styl'
 
 interface TimelaneClipProps {
     clip: Delir.Project.Clip,
