@@ -275,7 +275,7 @@ export async function pack(done) {
             copyright: '© 2017 Ragg',
             productName: 'Delir',
             electronVersion: '1.6.1',
-            asar: false,
+            asar: true,
             asarUnpack: ["node_modules/"],
             directories: {
                 app: paths.build,
