@@ -101,7 +101,7 @@ export function compileRendererJs(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.root,
         entry: {
-            'renderer/main': './renderer/main',
+            'renderer/main': ['./renderer/require-hook', './renderer/main'],
         },
         output: {
             filename: "[name].js",

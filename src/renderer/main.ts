@@ -10,19 +10,6 @@ import * as Delir from 'delir-core'
 import RendererService from './services/renderer'
 import BrowserProcessProxy from './services/browser-process-proxy'
 
-// Hook require function for plugins
-(() => {
-    const Module = (global as any).module.constructor
-    const _require = Module.prototype.require
-    Module.prototype.require = function (this: any, module: string) {
-        if (module === 'delir-core') {
-            return Delir
-        }
-
-        return _require.call(this, module)
-    }
-})()
-
 window.addEventListener('DOMContentLoaded', async () => {
     // install devtools
     if (__DEV__) {
