@@ -60,7 +60,8 @@ declare module 'electron-devtools-installer' {
 }
 
 declare module 'keymirror' {
-    export function keyMirror<K>(keys: K): {[P in keyof K]: P}
+    function keyMirror<K extends Object>(keys: K): {[P in keyof K]: P}
+    export = keyMirror
 }
 
 declare module 'parse-color' {
