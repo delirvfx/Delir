@@ -102,6 +102,10 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.modifyComposition(project!, payload.entity.targetCompositionId, payload.entity.patch)
                 break
 
+            case ProjectModifyDispatchTypes.ModifyLayer:
+                ProjectHelper.modifyLayer(project!, payload.entity.targetLayerId, payload.entity.patch)
+                break
+
             case ProjectModifyDispatchTypes.ModifyClip:
                 ProjectHelper.modifyClip(project!, payload.entity.targetClipId, payload.entity.patch)
                 break

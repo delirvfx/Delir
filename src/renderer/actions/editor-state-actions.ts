@@ -1,5 +1,5 @@
 import * as Delir from 'delir-core'
-import * as keyMirror from 'keymirror'
+import keyMirror from '../utils/keymirror'
 import * as _ from 'lodash'
 import {remote} from 'electron'
 import {BSON} from 'bson'

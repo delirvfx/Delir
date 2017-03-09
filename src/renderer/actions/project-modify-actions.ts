@@ -1,4 +1,4 @@
-import * as keyMirror from 'keymirror'
+import keyMirror from '../utils/keymirror'
 import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
@@ -27,6 +27,7 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: any}>
+export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Optionalize<Delir.Project.Layer>}>
 export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: any}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
@@ -43,6 +44,7 @@ export const DispatchTypes = keyMirror({
     AddAsset: null,
     MoveClipToLayer: null,
     ModifyComposition: null,
+    ModifyLayer: null,
     ModifyClip: null,
     RemoveComposition: null,
     RemoveLayer: null,
@@ -190,6 +192,14 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.ModifyComposition,{
             targetCompositionId: compId,
             patch: props
+        }))
+    },
+
+    modifyLayer(layerId: string, props: Optionalize<Delir.Project.Layer>)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.ModifyLayer, {
+            targetLayerId: layerId,
+            patch: props,
         }))
     },
 
