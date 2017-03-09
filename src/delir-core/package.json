@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "JavaScript VFX Engine",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
+  "types": "src/index.ts",
   "author": "ragg",
   "license": "MIT"
 }

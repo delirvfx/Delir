@@ -13,11 +13,13 @@ const {spawn} = require("child_process");
 const paths = {
     src         : {
         root        : join(__dirname, "./src/"),
+        plugins     : join(__dirname, 'src/plugins'),
         browser     : join(__dirname, "./src/browser/"),
         renderer    : join(__dirname, "./src/renderer/"),
     },
     compiled    : {
         root        : join(__dirname, "./prepublish/"),
+        plugins     : join(__dirname, './prepublish/plugins'),
         browser     : join(__dirname, "./prepublish/browser/"),
         renderer    : join(__dirname, "./prepublish/renderer/"),
     },
@@ -99,7 +101,7 @@ export function compileRendererJs(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.root,
         entry: {
-            'renderer/main': './renderer/main',
+            'renderer/main': ['./renderer/require-hook', './renderer/main'],
         },
         output: {
             filename: "[name].js",
@@ -109,11 +111,6 @@ export function compileRendererJs(done) {
         devtool: "#source-map",
         externals: [
             (ctx, request, callback) => {
-                if (request === 'delir-core') {
-                    // Ignore 'delir-core' requiring for plugins building
-                    return callback()
-                }
-
                 if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
                     // throughs non relative requiring ('./module', '../module', '!!../module')
                     return callback(null, `require('${request}')`)
@@ -138,26 +135,13 @@ export function compileRendererJs(done) {
                 },
                 {
                     test: /\.tsx?$/,
-                    exclude: [join(__dirname, './src/plugins'), /node_modules|\.jsx?$/],
+                    exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
                             useBabel: true,
                             configFileName: join(__dirname, './tsconfig.json'),
                         }},
                     ],
-                },
-                {
-                    // loader for Delir plugins
-                    test: /\.tsx?$/,
-                    include: [join(__dirname, './src/plugins')],
-                    exclude: /node_modules|\.jsx?$/,
-                    use: {
-                        loader: 'awesome-typescript-loader',
-                        options: {
-                            configFileName: join(__dirname, './tsconfig.json'),
-                            useBabel: true,
-                        },
-                    },
                 },
                 {
                     test: /\.styl$/,
@@ -184,7 +168,6 @@ export function compileRendererJs(done) {
         },
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: paths.compiled.renderer}),
-            new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
             new webpack.LoaderOptionsPlugin({
                 test: /\.styl$/,
@@ -210,13 +193,80 @@ export function compileRendererJs(done) {
     })
 }
 
-export function compilePlugins() {
-    const project = $.typescript.createProject('tsconfig.json')
+export async function compilePlugins(done) {
 
-    return g.src(join(paths.src.root, 'plugins/**/*.ts'), {base: join(paths.src.root,　'src/')})
-        .pipe($.plumber())
-        .pipe(project())
-        .js.pipe(g.dest(join(paths.compiled.root, 'plugins')))
+    // const project = $.typescript.createProject('tsconfig.json')
+
+    // return g.src(join(paths.src.root, 'plugins/**/*.ts'), {base: join(paths.src.root,　'src/')})
+    //     .pipe($.plumber())
+    //     .pipe(project({
+    //         moduleResolution: "commonjs"
+    //     }))
+    //     .js.pipe(g.dest(join(paths.compiled.root, 'plugins')))
+
+    webpack({
+        target: "electron",
+        watch: DELIR_ENV === 'dev',
+        context: paths.src.plugins,
+        entry: {
+            'audio-layer/audio-layer': './audio-layer/audio-layer',
+            'composition-layer/composition-layer': './composition-layer/composition-layer',
+            'html5-video-layer/index': './html5-video-layer/index',
+            'image/index': './image/index',
+            'noise/index': './noise/index',
+            'plane/index': './plane/index',
+        },
+        output: {
+            filename: "[name].js",
+            path: paths.compiled.plugins,
+            libraryTarget: 'commonjs-module',
+        },
+        devtool: 'cheap-eval-source-map',
+        externals: [
+            (ctx, request: string, callback) => {
+                if (request.startsWith('delir-core')) {
+                    // Ignore 'delir-core' requiring for plugins building
+                    return callback(null, `require('${request}')`)
+                }
+
+                callback()
+            }
+        ],
+        resolve: {
+            extensions: ['.js', '.ts'],
+            modules: ["node_modules"],
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    exclude: /node_modules\//,
+                    use: [
+                        {loader: 'ts-loader', options: {
+                            useBabel: true,
+                            configFileName: join(__dirname, './tsconfig.json'),
+                        }},
+                    ],
+                },
+            ]
+        },
+        plugins: [
+            new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
+            new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
+            new webpack.optimize.AggressiveMergingPlugin,
+            ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.UglifyJsPlugin,
+            ])
+        ]
+    },  function(err, stats) {
+        err && console.error(err)
+        stats.compilation.errors.length && stats.compilation.errors.forEach(e => {
+            console.error('Plugin compilation: ', e.message)
+            e.module && console.error(e.module.userRequest)
+        });
+        console.log('Plugin compiled')
+        done()
+    })
 }
 
 export function copyPluginsPackageJson() {

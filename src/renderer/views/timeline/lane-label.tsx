@@ -6,6 +6,7 @@ import connectToStores from '../../utils/connectToStores'
 
 import RendererService from '../../services/renderer'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import LabelInput from '../components/label-input'
 import {ContextMenu, MenuItem} from '../components/context-menu'
@@ -14,20 +15,32 @@ import LaneLabelProps from './lane-label-props'
 interface LaneLabelProps {
     editor: EditorState
     layer: Delir.Project.Layer
+
+    /**
+     * Layer select handler
+     */
     onSelect: () => any
+
+    /** Layer remove handler */
     onRemove: () => any
 }
 
 @connectToStores([EditorStateStore], () => ({
     editor: EditorStateStore.getState(),
 }))
-export default class LaneLabel extends React.Component<LaneLabelProps>
+export default class LaneLabel extends React.Component<LaneLabelProps, null>
 {
     static propTypes = {
         editor: PropTypes.object.isRequired,
         layer: PropTypes.object.isRequired,
         onSelect: PropTypes.func.isRequired,
         onRemove: PropTypes.func.isRequired,
+    }
+
+    layerNameChanged = (value: string) =>
+    {
+        const {layer} = this.props
+        ProjectModifyActions.modifyLayer(layer.id!, {name: value})
     }
 
     render()
@@ -51,7 +64,7 @@ export default class LaneLabel extends React.Component<LaneLabelProps>
                 </ContextMenu>
 
                 <li className='timeline_lane-label_col --col-name' onClick={onSelect.bind(this, layer.id)}>
-                    <LabelInput defaultValue={layer.name} placeholder='Layer' />
+                    <LabelInput defaultValue={layer.name} placeholder='Layer name' onChange={this.layerNameChanged} />
                 </li>
                 <li className='timeline_lane-label_col --col-visibility'>
                     👁

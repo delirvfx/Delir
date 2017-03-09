@@ -86,7 +86,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         this.refs.timelineLabels.scrollTop = this.refs.timelineLanes.scrollTop = this.state.timelineScrollTop
     }
 
-    laneSelected = laneId =>
+    selectLayer = laneId =>
     {
         this.setState({selectedLaneId: laneId})
     }
@@ -170,7 +170,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                     {activeComp && (
                                         <SelectList key={compId}>
                                             {timelineLanes.map(lane => (
-                                                <LaneLabel key={lane.id} layer={lane} onSelect={this.laneSelected} onRemove={this.removeLayer} />)
+                                                <LaneLabel key={lane.id} layer={lane} onSelect={this.selectLayer} onRemove={this.removeLayer} />)
                                             )}
                                         </SelectList>
                                     )}
