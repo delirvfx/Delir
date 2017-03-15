@@ -49,6 +49,10 @@ c1_t1_l1.renderer = 'html5-video-layer'
 ;(c1_t1_l1.rendererOptions as any).loop = true
 c1_t1_l1.placedFrame = 0
 c1_t1_l1.durationFrames = durationFrames
+c1_t1_l1.keyframes['x'] = {
+    '0': Object.assign(new Delir.Project.Keyframe(), {value: 0}),
+    '300': Object.assign(new Delir.Project.Keyframe(), {value: 100}),
+}
 
 const c1_t2_l1 = Object.assign(new Delir.Project.Clip, {
     // renderer: 'html5-video-layer'
