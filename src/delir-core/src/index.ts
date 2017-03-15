@@ -15,6 +15,7 @@ import EffectPluginBase from './plugin/effect-plugin-base'
 import PluginRegistry from './plugin/plugin-registry'
 
 import * as ProjectHelper from './helper/project-helper'
+import * as KeyframeHelper from './helper/keyframe-helper'
 
 export {
     // Core
@@ -42,6 +43,7 @@ export {
 
     // import shorthand
     ProjectHelper,
+    KeyframeHelper,
 
     // Types
     AnyParameterTypeDescriptor,
