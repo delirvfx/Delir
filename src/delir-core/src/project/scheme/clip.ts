@@ -8,8 +8,12 @@ export interface ClipConfigScheme  {
     keyframeInterpolationMethod: string
 }
 
+export interface PropKeyframeList {
+    [frame: number]: KeyframeScheme
+}
+
 export interface ClipScheme {
     id: string|null
     config: ClipConfigScheme
-    keyframes: {[keyName:string]: KeyframeScheme[]}
+    keyframes: {[propName:string]: PropKeyframeList}
 }

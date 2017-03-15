@@ -47,4 +47,4 @@ export type ProjectPreference = {
 
 }
 
-export type RendererProperties = {[propName: string]: Asset|string|number}
+// export type RendererProperties = {[propName: string]: Asset|string|number}

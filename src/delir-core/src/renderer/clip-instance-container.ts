@@ -75,8 +75,16 @@ export default class ClipInstanceContainer
         const paramTypes = this._rendererClass.provideParameters()
 
         const params: {[propName: string]: any} = {}
-        paramTypes.properties.forEach(desc => params[desc.propName] = receiveOptions[desc.propName])
-        Object.freeze(params)
+        paramTypes.properties.forEach(desc => {
+            let keyframes = this.clip.keyframes[desc.propName]
+            if (keyframes) {
+                params[desc.propName] = KeyframeHelper.calcKeyframeValueAt(0, desc, this.clip.keyframes[desc.propName])
+            } else {
+                // TODO: default value
+                // this.clip.keyframes[desc.propName] = null
+            }
+        })
+        // Object.freeze(params)
 
         const preRenderReq = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
             clipScope: this._variableScope,
