@@ -161,7 +161,7 @@ export default {
         )
 
         if (!propName) return
-        newClip.config.rendererOptions[propName] = asset
+        // newClip.config.rendererOptions[propName] = asset
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },
 

@@ -72,8 +72,9 @@ export default class ClipInstanceContainer
         }
 
         // Build renderer initialization requests
-        const receiveOptions: {[propName: string]: any} = this.clip.rendererOptions
+        // const receiveOptions: {[propName: string]: any} = this.clip.rendererOptions
         const paramTypes = this._rendererClass.provideParameters()
+        // const params =
 
         const params: {[propName: string]: any} = {}
         paramTypes.properties.forEach(desc => {

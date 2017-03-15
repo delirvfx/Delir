@@ -32,13 +32,11 @@ export default class Clip
 
     config: {
         renderer: string|null,
-        rendererOptions: RendererProperties,
         placedFrame: number|null,
         durationFrames: number|null,
         keyframeInterpolationMethod: string,
     } = {
         renderer: null,
-        rendererOptions: {},
         placedFrame: null,
         durationFrames: null,
         keyframeInterpolationMethod: 'linear',
@@ -51,9 +49,6 @@ export default class Clip
 
     get renderer(): string { return this.config.renderer as string }
     set renderer(renderer: string) { this.config.renderer = renderer }
-
-    get rendererOptions(): RendererProperties { return this.config.rendererOptions }
-    set rendererOptions(rendererOptions: RendererProperties) { this.config.rendererOptions = rendererOptions }
 
     get placedFrame(): number { return this.config.placedFrame as number }
     set placedFrame(placedFrame: number) { this.config.placedFrame = placedFrame }
