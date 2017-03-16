@@ -39,7 +39,7 @@ declare interface Window {
 }
 
 // Typing helpers
-declare type Optionalize<T> = {[P in keyof T]?: T[P]}
+declare type Optionalized<T> = {[P in keyof T]?: T[P]}
 
 // Delir frontend deps
 declare const __DEV__: boolean

@@ -27,7 +27,7 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: any}>
-export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Optionalize<Delir.Project.Layer>}>
+export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Optionalized<Delir.Project.Layer>}>
 export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: any}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
@@ -195,7 +195,7 @@ export default {
         }))
     },
 
-    modifyLayer(layerId: string, props: Optionalize<Delir.Project.Layer>)
+    modifyLayer(layerId: string, props: Optionalized<Delir.Project.Layer>)
     {
         dispatcher.dispatch(new Payload(DispatchTypes.ModifyLayer, {
             targetLayerId: layerId,
