@@ -77,12 +77,13 @@ export default class ClipInstanceContainer
         // const params =
 
         const params: {[propName: string]: any} = {}
-        paramTypes.properties.forEach(desc => params[desc.propName] = receiveOptions[desc.propName])
-        Object.freeze(params)
+        paramTypes.properties.forEach(desc => {
+            params[desc.propName] = KeyframeHelper.calcKeyframeValueAt(0, desc, this.clip.keyframes[desc.propName] || [])
+        })
 
         const preRenderReq = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
             clipScope: this._variableScope,
-            parameters: params,
+            parameters: Object.freeze(params),
         })
 
         // initialize
@@ -114,13 +115,20 @@ export default class ClipInstanceContainer
         const closestComposition = req.parentComposition || req.rootComposition
         const placedTime = this.clip.placedFrame / closestComposition.framerate
 
-        const keyframes = _.mapValues(this._preCalcTable, propTable => propTable[req.frame])
+        const paramTypes = this._rendererClass.provideParameters()
+        const keyframes: {[propName: string]: ParameterValueTypes} = {}
+
+        paramTypes.properties.forEach(desc => {
+            keyframes[desc.propName] = desc.animatable
+                ? this._preCalcTable[desc.propName][req.frame]
+                : this._preCalcTable[desc.propName][0]
+        })
 
         const _req = req.set({
             timeOnClip: req.timeOnComposition - placedTime,
             frameOnClip: req.frameOnComposition - this.clip.placedFrame,
             clipScope: this._variableScope,
-            parameters: Object.assign({}, this.clip.rendererOptions, keyframes)
+            parameters: keyframes,
         })
 
         await this._rendererInstance.render(_req)
