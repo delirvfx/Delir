@@ -47,9 +47,17 @@ c1_t1_l1.renderer = 'html5-video-layer'
 // c1_t1_l1.renderer = 'plane'
 c1_t1_l1.placedFrame = 0
 c1_t1_l1.durationFrames = durationFrames
-c1_t1_l1.keyframes['x'] = {
-    '0': Object.assign(new Delir.Project.Keyframe(), {value: 0}),
-    '300': Object.assign(new Delir.Project.Keyframe(), {value: 100}),
+c1_t1_l1.keyframes = {
+    'source': [
+        Object.assign(new Delir.Project.Keyframe(), {value: movieAsset, frameOnClip: 0})
+    ],
+    'loop': [
+        Object.assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
+    ],
+    'x': [
+        Object.assign(new Delir.Project.Keyframe(), {value: 114, frameOnClip: 0}),
+        Object.assign(new Delir.Project.Keyframe(), {value: 100, frameOnClip: 300}),
+    ],
 }
 
 const c1_t2_l1 = Object.assign(new Delir.Project.Clip, {
