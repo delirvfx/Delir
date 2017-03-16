@@ -1,5 +1,6 @@
 import defaults from '../helper/defaults'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
+import {AssetPointerScheme} from '../project/scheme/keyframe'
 
 import {
     Point2D,
@@ -111,6 +112,10 @@ export type ParameterValueTypes =
     | Size3D
     | ColorRGB
     | ColorRGBA
+    | string
+    | number
+    | boolean
+    | AssetPointerScheme
 
 export const descriptorToValueType = (desc: AnyParameterTypeDescriptor) => {
      switch (desc.type) {

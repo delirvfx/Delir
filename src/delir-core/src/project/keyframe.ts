@@ -1,6 +1,6 @@
 // @flow
 import * as _ from 'lodash'
-import {KeyframeScheme, KeyframeConfigScheme} from './scheme/keyframe'
+import {KeyframeValueTypes, KeyframeScheme, KeyframeConfigScheme} from './scheme/keyframe'
 
 export default class Keyframe
 {
@@ -20,11 +20,11 @@ export default class Keyframe
         return keyframe
     }
 
-    id: string|null = null
+    private _id: string|null = null
 
     config: {
         // propName: string,
-        value: any,
+        value: KeyframeValueTypes|null,
         frameOnClip: number|null,
         easeInParam: [number, number],
         easeOutParam: [number, number],
@@ -35,13 +35,10 @@ export default class Keyframe
         easeOutParam: [0, 1],
     }
 
-    // get id(): string { return this._id }
+    get id(): string { return this._id }
 
-    // get propName(): string { return this.config.propName }
-    // set propName(propName: string) { this.config.propName = propName }
-
-    get value(): any { return this.config.value }
-    set value(value: any) { this.config.value = value }
+    get value(): KeyframeValueTypes|null { return this.config.value }
+    set value(value: KeyframeValueTypes|null) { this.config.value = value }
 
     get frameOnClip(): number { return this.config.frameOnClip as number }
     set frameOnClip(frameOnClip: number) { this.config.frameOnClip = frameOnClip }

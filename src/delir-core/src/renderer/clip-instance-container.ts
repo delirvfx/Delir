@@ -6,10 +6,11 @@ import Clip from '../project/clip'
 import Keyframe from '../project/keyframe'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
+import {ParameterValueTypes} from '../plugin/type-descriptor'
 
 import * as _ from 'lodash'
 import * as KeyframeHelper from '../helper/keyframe-helper'
-import {KeyFrameSequence} from '../helper/keyframe-helper'
+import {KeyframeValueSequence} from '../helper/keyframe-helper'
 import {RenderingFailedException} from '../exceptions'
 import PluginPreRenderingRequest from './plugin-pre-rendering-request'
 
@@ -21,7 +22,7 @@ export default class ClipInstanceContainer
 
     // private _keyframes: Array<Keyframe>
     // private _timeOrderKeyframes: Array<Keyframe>
-    private _preCalcTable: {[propName: string]: KeyFrameSequence}
+    private _preCalcTable: {[propName: string]: KeyframeValueSequence}
 
     private _rendererClass: typeof LayerPluginBase
     private _rendererInstance: LayerPluginBase
