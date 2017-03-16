@@ -132,15 +132,10 @@ export function addKeyframe(
     project: Project,
     targetClipId: Clip|string,
     propName: string,
-    keyframe: Keyframe|Array<Keyframe>
-): Keyframe|Array<Keyframe>
+    keyframe: Keyframe|Keyframe[]
+): Keyframe|Keyframe[]
 {
-    let keyframes
-    if (Array.isArray(keyframe)) {
-        keyframes = keyframe
-    } else {
-        keyframes = [keyframe]
-    }
+    let keyframes = Array.isArray(keyframe) ? keyframe : [keyframe]
 
     // TODO: Not found behaviour
     const clip: Clip|null = targetClipId instanceof Clip
@@ -155,10 +150,14 @@ export function addKeyframe(
         }
 
         if (!clip.keyframes[propName]) {
-            clip.keyframes[propName] = new Set()
+            clip.keyframes[propName] = []
         }
 
-        clip.keyframes[propName].add(_keyframe)
+        const duplicated = clip.keyframes[propName].some(kf => kf.frameOnClip === _keyframe.frameOnClip)
+
+        if (duplicated) {
+            throw new Error(`Keyframe duplicated on frame (property: ${propName}`)
+        }
     }
 
     return keyframe
@@ -323,6 +322,7 @@ export function modifyKeyframe(
         ? targetKeyframeId
         : findKeyframeById(project, targetKeyframeId)!
 
+    // TODO: Check duplicate on frame
     Object.assign(keyframe, patch)
 }
 
