@@ -29,14 +29,14 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 {
     getInitialState(): StateRecord
     {
-        return new Record({
+        return new Record<EditorState>({
             project: null,
             projectPath: null,
             activeComp: null,
             activeClip: null,
             dragEntity: null,
             processingState: null,
-            notifications: Immutable.List()
+            notifications: Immutable.List<NotificationEntry>()
         })
     }
 
