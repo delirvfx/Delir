@@ -1,8 +1,7 @@
 import {KeyframeScheme} from './keyframe'
 
-export interface ClipConfigScheme  {
+export interface ClipConfigScheme {
     renderer: string|null
-    rendererOptions: Object|null
     placedFrame: number|null
     durationFrames: number|null
     keyframeInterpolationMethod: string

@@ -11,7 +11,6 @@ export default class Clip
         const clip = new Clip
         const config = _.pick(clipJson.config, [
             'renderer',
-            'rendererOptions',
             'placedFrame',
             'durationFrames',
             'keyframeInterpolationMethod',
