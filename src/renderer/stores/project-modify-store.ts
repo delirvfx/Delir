@@ -75,7 +75,10 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                     const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(clip, registeredAsset.mimeType, pluginRegistry)
 
                     if (propName == null) return
-                    clip.config.rendererOptions[propName] = registeredAsset
+                    ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
+                        frameOnClip: 0,
+                        value: registeredAsset,
+                    }))
 
                     const layer = new Delir.Project.Layer
                     ProjectHelper.addLayer(project, targetComposition, layer)
