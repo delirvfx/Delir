@@ -18,7 +18,7 @@ export default class Clip
         ]) as ClipConfigScheme
 
         const keyframes = _.mapValues(clipJson.keyframes, keyframeSet => {
-            return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
+            return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
         Object.defineProperty(clip, 'id', {value: clipJson.id})
@@ -41,7 +41,7 @@ export default class Clip
         keyframeInterpolationMethod: 'linear',
     }
 
-    keyframes: {[keyName:string]: Set<Keyframe>} = {}
+    keyframes: {[propName:string]: Keyframe[]} = {}
     effects: Effect[] = []
 
     // get id(): string { return this._id }
