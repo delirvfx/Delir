@@ -1,7 +1,6 @@
 import * as _ from 'lodash'
 import Keyframe from './keyframe'
 import Effect from './effect'
-import {KeyframeScheme} from './scheme/keyframe'
 import {ClipScheme, ClipConfigScheme} from './scheme/clip'
 import {RendererProperties} from './types'
 
@@ -18,8 +17,8 @@ export default class Clip
             'keyframeInterpolationMethod',
         ]) as ClipConfigScheme
 
-        const keyframes = _.mapValues(clipJson.keyframes, propKeyframe => {
-            return _.mapValues(propKeyframe, (keyframe: KeyframeScheme) => Keyframe.deserialize(keyframe))
+        const keyframes = _.mapValues(clipJson.keyframes, keyframeSet => {
+            return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
         })
 
         Object.defineProperty(clip, 'id', {value: clipJson.id})
@@ -42,7 +41,7 @@ export default class Clip
         keyframeInterpolationMethod: 'linear',
     }
 
-    keyframes: {[propName: string]: {[frame: number]: Keyframe}|null} = {}
+    keyframes: {[keyName:string]: Set<Keyframe>} = {}
     effects: Effect[] = []
 
     // get id(): string { return this._id }
@@ -73,8 +72,8 @@ export default class Clip
             id: this.id,
             config: Object.assign({}, this.config),
             effects: this.effects.slice(0),
-            keyframes: _.mapValues(this.keyframes, (propKeyframes, propName) => {
-                return _.mapValues(propKeyframes, (keyframe: Keyframe) => keyframe.toPreBSON())
+            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
+                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
             }),
         }
     }
@@ -85,8 +84,8 @@ export default class Clip
             id: this.id,
             config: Object.assign({}, this.config),
             effects: this.effects.slice(0),
-            keyframes: _.mapValues(this.keyframes, (propKeyframes, propName) => {
-                return _.mapValues(propKeyframes, (keyframe: Keyframe) => keyframe.toPreBSON())
+            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
+                return Array.from(keyframe).map(keyframe => keyframe.toJSON())
             }),
         }
     }
