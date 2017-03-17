@@ -55,14 +55,11 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) =>
     {
-        const {activeClip} = this.props
-        const newOptions = _.set(
-            _.cloneDeep(activeClip!.rendererOptions),
-            desc.propName,
-            value
-        )
+        const {activeClip, editor: {currentPreviewFrame}} = this.props
+        if (!activeClip) return
 
-        ProjectModifyActions.modifyClip(activeClip!.id!, {})
+        console.log(value)
+        ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, desc.propName, currentPreviewFrame, {value})
     }
 
     render()

@@ -7,6 +7,8 @@ import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
 // import deprecated from '../utils/deprecated'
 import RendererService from '../services/renderer'
+import ProjectModifyStore from '../stores/project-modify-store'
+import RendererService from '../services/renderer'
 
 import EditorStateActions from './editor-state-actions'
 
@@ -25,10 +27,12 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
     pluginRegistry: Delir.PluginRegistry,
 }>
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
+export type AddKeyframePayload = Payload<'AddKeyframe', {targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe}>
 export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: Optionalized<Delir.Project.Composition>}>
 export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Optionalized<Delir.Project.Layer>}>
 export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: Optionalized<Delir.Project.Clip>}>
+export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Optionalized<Delir.Project.Keyframe>}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
@@ -42,10 +46,12 @@ export const DispatchTypes = keyMirror({
     AddLayer: null,
     AddLayerWithAsset: null,
     AddAsset: null,
+    AddKeyframe: null,
     MoveClipToLayer: null,
     ModifyComposition: null,
     ModifyLayer: null,
     ModifyClip: null,
+    ModifyKeyframe: null,
     RemoveComposition: null,
     RemoveLayer: null,
     RemoveClip: null,
@@ -163,6 +169,43 @@ export default {
         if (!propName) return
         // newClip.config.rendererOptions[propName] = asset
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
+    },
+
+    createOrModifyKeyframe(clipId: string, propName: string, frame: number, patch: Optionalized<Delir.Project.Keyframe>)
+    {
+        const project = ProjectModifyStore.getState().get('project')
+
+        if (!project) return
+        const clip = ProjectHelper.findClipById(project, clipId)
+
+        if (!clip) return
+        const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frame)
+
+        const props = RendererService.pluginRegistry!.getParametersById(clip.renderer!)
+        const prop = props ? props.find(prop => prop.propName === propName) : null
+        if (!prop) return
+
+        if (keyframe) {
+            dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
+                targetKeyframeId: keyframe.id,
+                patch: prop.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
+            }))
+        } else {
+            const newKeyframe = new Delir.Project.Keyframe()
+            const _patch = prop.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch
+
+            Object.assign(newKeyframe, Object.assign({
+                frameOnClip: frame,
+                easeInParam: [0, 1],
+                easeOutParam: [1, 0],
+            }, _patch))
+
+            dispatcher.dispatch(new Payload(DispatchTypes.AddKeyframe, {
+                targetClip: clip,
+                propName,
+                keyframe: newKeyframe
+            }))
+        }
     },
 
     addAsset({name, mimeType, path}: {name: string, mimeType: string, path: string})
