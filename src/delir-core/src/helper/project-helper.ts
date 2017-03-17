@@ -484,6 +484,13 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     return targetKeyframe
 }
 
+export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string, frame: number): Keyframe|null
+{
+    if (!clip.keyframes[propName]) return null
+    const target: Keyframe|undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frame)
+    return target ? target : null
+}
+
 export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, propName: string}|null
 {
     let target: {clip: Clip, propName: string}|null = null
