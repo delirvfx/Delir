@@ -1,5 +1,6 @@
 // @flow
 import * as _ from 'lodash'
+import * as uuid from 'uuid'
 import {KeyframeValueTypes, KeyframeScheme, KeyframeConfigScheme} from './scheme/keyframe'
 
 export default class Keyframe
@@ -20,10 +21,9 @@ export default class Keyframe
         return keyframe
     }
 
-    private _id: string|null = null
+    private _id: string|null =  null
 
     config: {
-        // propName: string,
         value: KeyframeValueTypes|null,
         frameOnClip: number|null,
         easeInParam: [number, number],
@@ -35,7 +35,7 @@ export default class Keyframe
         easeOutParam: [0, 1],
     }
 
-    get id(): string { return this._id }
+    get id(): string { return this._id = this._id || uuid.v4() }
 
     get value(): KeyframeValueTypes|null { return this.config.value }
     set value(value: KeyframeValueTypes|null) { this.config.value = value }
