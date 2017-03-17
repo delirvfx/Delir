@@ -153,10 +153,10 @@ export function addKeyframe(
             clip.keyframes[propName] = []
         }
 
-        const duplicated = clip.keyframes[propName].some(kf => kf.frameOnClip === _keyframe.frameOnClip)
+        const duplicated = clip.keyframes[propName].find(kf => kf.frameOnClip === _keyframe.frameOnClip)
 
         if (duplicated) {
-            throw new Error(`Keyframe duplicated on frame (property: ${propName}`)
+            throw new Error(`Keyframe duplicated on frame ${duplicated.frameOnClip} (property: ${propName})`)
         }
 
         clip.keyframes[propName].push(_keyframe)
