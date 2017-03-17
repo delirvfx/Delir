@@ -158,6 +158,8 @@ export function addKeyframe(
         if (duplicated) {
             throw new Error(`Keyframe duplicated on frame (property: ${propName}`)
         }
+
+        clip.keyframes[propName].push(_keyframe)
     }
 
     return keyframe
