@@ -86,7 +86,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
             framerate: activeComposition.framerate,
             scale,
             pixel: (e as MouseEvent).layerX,
-        })
+        })|0
 
         this.props.onSeeked(frame)
     }

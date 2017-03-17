@@ -29,7 +29,7 @@ interface KeyframeViewState {
 }
 
 @connectToStores([EditorStateStore], () => ({
-    // editor: EditorStateStore.getState(),
+    editor: EditorStateStore.getState(),
     project: ProjectModifyStore.getState()
 }))
 export default class KeyframeView extends React.Component<KeyframeViewProps, KeyframeViewState> {
@@ -67,24 +67,12 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     render()
     {
-        const {activeClip, project: {project}} = this.props
+        const {activeClip, project: {project}, editor} = this.props
         const {activePropName} = this.state
         const descriptors = activeClip
             ? RendererService.pluginRegistry!.getParametersById(activeClip.renderer) || []
             : []
-        let value = null
 
-        // if (activeClip && activePropName) {
-        //     console.log(activePropName, descriptors, descriptors.find(d => d.propName === activePropName)!)
-
-        //     console.log(
-        //         value = Delir.KeyframeHelper.calcKeyframeValueAt(
-        //             0,
-        //             descriptors.find(d => d.propName === activePropName)!,
-        //             activeClip.keyframes[activePropName] || []
-        //         )
-        //     )
-        // }
 
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
@@ -92,7 +80,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     <SelectList>
                         {descriptors.map(desc => {
                             const value = activeClip
-                                ? Delir.KeyframeHelper.calcKeyframeValueAt(0, desc, activeClip.keyframes[desc.propName] || [])
+                                ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, desc, activeClip.keyframes[desc.propName] || [])
                                 : undefined
 
                             return (
