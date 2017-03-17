@@ -322,7 +322,7 @@ function calcStringKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrame
 function calcNumberKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): number
 {
     const numVector = keyFrameLink.next.value - keyFrameLink.active.value
-    return keyFrameLink.active.value + (numVector * rate)
+    return Math.round(keyFrameLink.active.value + (numVector * rate))
 }
 
 function calcFloatKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): number
