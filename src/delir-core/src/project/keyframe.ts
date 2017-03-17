@@ -15,7 +15,7 @@ export default class Keyframe
             'easeOutParam',
         ]) as KeyframeConfigScheme
 
-        Object.defineProperty(keyframe, 'id', {value: keyframeJson.id})
+        Object.defineProperty(keyframe, '_id', {value: keyframeJson.id})
         keyframe.config = config
 
         return keyframe
