@@ -26,6 +26,7 @@ interface KeyframeViewProps {
 
 interface KeyframeViewState {
     activePropName: string|null
+    keyframeViewViewBox: string|undefined
 }
 
 @connectToStores([EditorStateStore], () => ({
@@ -39,6 +40,17 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     state: KeyframeViewState = {
         activePropName: null,
+        keyframeViewViewBox: undefined,
+    }
+
+    refs: {
+        svgParent: HTMLDivElement
+    }
+
+    componentDidMount()
+    {
+        const box = this.refs.svgParent.getBoundingClientRect()
+        this.setState({keyframeViewViewBox: `0 0 ${box.width} ${box.height}`})
     }
 
     castValue = (desc: Delir.AnyParameterTypeDescriptor, value: string|number) =>
@@ -65,11 +77,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     render()
     {
         const {activeClip, project: {project}, editor} = this.props
-        const {activePropName} = this.state
+        const {activePropName, keyframeViewViewBox} = this.state
         const descriptors = activeClip
             ? RendererService.pluginRegistry!.getParametersById(activeClip.renderer) || []
             : []
-
 
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
@@ -97,12 +108,19 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     </SelectList>
                 </Pane>
                 <Pane>
-                    <div className={s.keyframes}>
-                        <svg>
+                    <div ref='svgParent' className={s.keyframes}>
+                        <svg viewBox={keyframeViewViewBox}>
+                            <g>
+                                <rect transform='rotate(45)' width='5' height='5' fill='#ffffff' />
+                            </g>
                         </svg>
                     </div>
                 </Pane>
             </Workspace>
         )
+    }
+
+    renderKeyframes(activePropName: string)
+    {
     }
 }
