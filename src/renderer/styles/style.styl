@@ -157,8 +157,13 @@ html, body
         cursor default
 
 ._select-list
-    .select-list-item.selected
-        background-color rgba(#fff, .2)
+    .select-list-item
+        transition-property background-color
+        transition-duration $animate-bgcolor-duration
+        transition-timing-function $animate-function
+
+        &.selected
+            background-color rgba(#fff, .2)
 
 ._table
     display flex
