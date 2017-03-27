@@ -92,6 +92,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         if (!activeClip) return
 
         ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, desc.propName, currentPreviewFrame, {value})
+        EditorStateActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 
     render()
