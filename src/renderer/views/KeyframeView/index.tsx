@@ -1,8 +1,7 @@
-import * as _ from 'lodash'
 import * as React from 'react'
 import {PropTypes} from 'react'
+import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
-import parseColor from 'parse-color'
 import connectToStores from '../../utils/connectToStores'
 import TimelineHelper from '../../helpers/timeline-helper'
 
@@ -112,6 +111,8 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                                 ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, desc, activeClip.keyframes[desc.propName] || [])
                                 : undefined
 
+                            const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.propName] || []).length !== 0
+
                             return (
                                 <div
                                     key={activeClip!.id + desc.propName}
@@ -119,6 +120,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                                     data-prop-name={desc.propName}
                                     onClick={this.selectProperty}
                                 >
+                                    <span className={classnames(s.propKeyframeIndicator, {[s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe})}>🕛</span>
                                     <span className={s.propItemName}>{desc.label}</span>
                                     <div className={s.propItemInput}>
                                         <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.valueChanged} />
