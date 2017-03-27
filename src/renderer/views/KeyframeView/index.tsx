@@ -99,6 +99,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     {
         const {activeClip, project: {project}, editor} = this.props
         const {activePropName, keyframeViewViewBox, graphWidth, graphHeight} = this.state
+        const activePropDescriptor = this._getDescriptorByPropName(activePropName)
         const descriptors = activeClip
             ? RendererService.pluginRegistry!.getParametersById(activeClip.renderer) || []
             : []
@@ -131,7 +132,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer}>
                         <svg className={s.keyframeGraph} viewBox={keyframeViewViewBox} width={graphWidth} height={graphHeight}>
-                            {...this.renderKeyframes()}
+                            {...((activePropDescriptor && activePropDescriptor.animatable) ? this.renderKeyframes() : [])}
                         </svg>
                     </div>
                 </Pane>
@@ -287,7 +288,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         return []
     }
 
-    private _getDescriptorByPropName(propName: string)
+    private _getDescriptorByPropName(propName: string|null)
     {
         const {activeClip} = this.props
         const descriptors = activeClip
