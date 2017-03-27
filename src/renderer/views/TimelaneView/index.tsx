@@ -206,7 +206,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                         </Workspace>
                     </Pane>
                     <Pane>
-                        <KeyframeView activeClip={activeClip} />
+                        <KeyframeView activeClip={activeClip} pxPerSec={PX_PER_SEC} />
                     </Pane>
                 </Workspace>
             </Pane>
