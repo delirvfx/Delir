@@ -55,8 +55,8 @@ c1_t1_l1.keyframes = {
         Object.assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
     ],
     'x': [
-        Object.assign(new Delir.Project.Keyframe(), {value: 114, frameOnClip: 0}),
-        Object.assign(new Delir.Project.Keyframe(), {value: 100, frameOnClip: 300}),
+        Object.assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0}),
+        Object.assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600}),
     ],
 }
 
