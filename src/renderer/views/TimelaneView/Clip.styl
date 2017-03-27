@@ -7,6 +7,13 @@
     bottom 1px solid #3d157d
     box-shadow 0 0 3px rgba(0, 0, 0, .8)
 
+    transition-property filter
+    transition-duration 50ms
+    transition-timing-function cubic-bezier(0.6, 0, 0.8, 1.2)
+
+    &.clip--active
+        filter brightness(140%)
+
 .resizeHandle
     position absolute
     top 0

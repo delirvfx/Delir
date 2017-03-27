@@ -19,7 +19,7 @@ import LaneKeyframes from '../timeline/lane-keyframes'
 interface TimelaneClipSpaceProps {
     editor: EditorState,
     layer: Delir.Project.Layer,
-    activeClip: Delir.Project.Clip,
+    activeClip: Delir.Project.Clip|null,
     framerate: number,
     pxPerSec: number,
     scale: number,
@@ -190,6 +190,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                                 clip={clip}
                                 width={width}
                                 left={left}
+                                active={clip === activeClip}
                                 onChangePlace={this.changeClipPlace.bind(this, clip)}
                                 onChangeDuration={this.changeClipDuration.bind(null, clip)}
                             />

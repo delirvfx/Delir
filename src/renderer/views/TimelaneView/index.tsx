@@ -199,6 +199,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                             framerate={framerate}
                                             pxPerSec={PX_PER_SEC}
                                             scale={this.state.scale}
+                                            activeClip={activeClip}
                                         />
                                     ))}
                                 </ul>
