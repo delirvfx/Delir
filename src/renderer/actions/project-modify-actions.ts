@@ -179,11 +179,16 @@ export default {
         const clip = ProjectHelper.findClipById(project, clipId)
 
         if (!clip) return
-        const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frame)
 
         const props = RendererService.pluginRegistry!.getParametersById(clip.renderer!)
         const prop = props ? props.find(prop => prop.propName === propName) : null
         if (!prop) return
+
+        if (prop.animatable === false) {
+            frame = 0
+        }
+
+        const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frame)
 
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
@@ -192,13 +197,12 @@ export default {
             }))
         } else {
             const newKeyframe = new Delir.Project.Keyframe()
-            const _patch = prop.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch
 
             Object.assign(newKeyframe, Object.assign({
                 frameOnClip: frame,
                 easeInParam: [0, 1],
                 easeOutParam: [1, 0],
-            }, _patch))
+            }, patch))
 
             dispatcher.dispatch(new Payload(DispatchTypes.AddKeyframe, {
                 targetClip: clip,
