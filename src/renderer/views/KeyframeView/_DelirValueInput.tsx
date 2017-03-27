@@ -7,6 +7,8 @@ import EditorStateActions from '../../actions/editor-state-actions'
 
 import DragNumberInput from '../components/drag-number-input'
 
+import * as s from './delir-value-input.styl'
+
 interface DelirValueInputProps {
     assets: Set<Delir.Project.Asset>|null
     descriptor: Delir.AnyParameterTypeDescriptor,
@@ -165,7 +167,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         break
 
             case 'BOOL':
-                component = [<input ref='checkbox' type='checkbox' checked={value as boolean} onChange={this.valueChanged} />]
+                component = [<input ref='checkbox' type='checkbox' className={s.checkbox} checked={value as boolean} onChange={this.valueChanged} />]
                 break
 
         //     case 'STRING':
