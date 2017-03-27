@@ -40,6 +40,17 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         assets: HTMLSelectElement,
     }
 
+    state = {
+        value: this.props.value,
+    }
+
+    componentWillReceiveProps(nextProps: Readonly<DelirValueInputProps>, nextContext: any)
+    {
+        if (this.props.value !== nextProps.value) {
+            setTimeout(() => this.setState({value: nextProps.value}), 0)
+        }
+    }
+
     valueChanged = () =>
     {
         const {descriptor} = this.props
@@ -122,7 +133,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
 
     render()
     {
-        const {descriptor, value, assets} = this.props
+        const {props: {descriptor, assets}, state: {value}} = this
         let component: JSX.Element[] = []
 
         switch (descriptor.type) {
