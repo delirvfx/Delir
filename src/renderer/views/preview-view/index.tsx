@@ -72,7 +72,6 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
                     <div className='header'>{activeComp && activeComp.name}</div>
                     <div className='view' onWheel={this.onWheel}>
                         <canvas ref='canvas' className='canvas' width={width} height={height} style={{transform:`scale(${this.state.scale})`}}/>
-                        <video ref='video' src='../../navcodec.mp4' style={{display:'none'}} controls loop />
                     </div>
                     <div className={s.footer}>
                         <label className={s.scaleLabel} onClick={this.toggleScaleList}>
