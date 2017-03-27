@@ -82,7 +82,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     keyframeDoubleClicked = ({currentTarget}: React.MouseEvent<SVGGElement>) =>
     {
-        console.log(currentTarget.dataset.frame)
         EditorStateActions.seekPreviewFrame(currentTarget.dataset.frame | 0)
     }
 
