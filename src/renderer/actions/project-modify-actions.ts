@@ -14,10 +14,7 @@ import EditorStateActions from './editor-state-actions'
 
 export type CreateCompositionPayload = Payload<'CreateComposition', {composition: Delir.Project.Composition}>
 export type CreateLayerPayload = Payload<'CreateLayer', {targetCompositionId: string, layer: Delir.Project.Layer}>
-export type CreateClipPayload = Payload<'CreateClip', {
-    props: {renderer: string, placedFrame: number, durationFrames: number},
-    targetLayerId: string,
-}>
+export type CreateClipPayload = Payload<'CreateClip', {targetLayerId: string, newClip: Delir.Project.Clip}>
 export type AddClipPayload = Payload<'AddClip', {targetLayer: Delir.Project.Layer, newClip: Delir.Project.Clip}>
 export type AddLayerPayload = Payload<'AddLayer', {targetComposition: Delir.Project.Composition, layer: Delir.Project.Layer}>
 export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
@@ -128,12 +125,15 @@ export default {
         placedFrame = 0,
         durationFrames = 100
     ) {
+        const newClip = new Delir.Project.Clip()
+        Object.assign(newClip, {
+            renderer: clipRendererId,
+            placedFrame: placedFrame,
+            durationFrames: durationFrames,
+        })
+
         dispatcher.dispatch(new Payload(DispatchTypes.CreateClip, {
-            props: {
-                renderer: clipRendererId,
-                placedFrame: placedFrame,
-                durationFrames: durationFrames,
-            },
+            newClip,
             targetLayerId: layerId,
         }))
     },

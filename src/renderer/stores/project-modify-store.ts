@@ -57,7 +57,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 break
 
             case ProjectModifyDispatchTypes.CreateClip:
-                ProjectHelper.addClip(project!, payload.entity.targetLayerId, payload.entity.props as any)
+                ProjectHelper.addClip(project!, payload.entity.targetLayerId, payload.entity.newClip)
                 break
 
             case ProjectModifyDispatchTypes.AddClip:
