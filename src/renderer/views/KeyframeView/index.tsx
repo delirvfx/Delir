@@ -151,27 +151,29 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
         return points.map((p, idx) => (
             <g key={p.id} data-index={idx}>
-                {/*<path
-                    stroke='#fff'
-                    fill='none'
-                    strokeWidth='1'
-                    d={`M ${p.transition.beginX} ${p.transition.beginY} C ${p.transition.handleEoX} ${p.transition.handleEoY} ${p.transition.handleEiX} ${p.transition.handleEiY} ${p.transition.endPointX} ${p.transition.endPointY}`}
-                    data-transition-path
-                />
-                <path
-                    stroke='#acacac'
-                    fill='none'
-                    strokeWidth='1'
-                    d={`M ${p.easeInLine.handleEiX} ${p.easeInLine.handleEiY} L ${p.easeInLine.endPointX} ${p.easeInLine.endPointY}`}
-                    data-ease-in-handle-path
-                />*/}
-                {p.hasNextKeyframe && (
+                {p.transition && (
                     <path
-                        stroke='#acacac'
+                        stroke='#fff'
                         fill='none'
                         strokeWidth='1'
-                        d={`M ${p.point.x} ${p.point.y} L ${points[idx + 1].point.x} ${points[idx + 1].point.y}`}
-                        data-ease-out-handle-path
+                        d={`M ${p.transition.x} ${p.transition.y} C ${p.transition.xh} ${p.transition.yh} ${p.transition.xxh} ${p.transition.yyh} ${p.transition.xx} ${p.transition.yy}`}
+                        data-transition-path
+                    />
+                )}
+                {p.easeOutLine && (
+                    <path
+                        className={s.keyframeLineToHandle}
+                        strokeWidth='1'
+                        d={`M ${p.easeOutLine.x} ${p.easeOutLine.y} L ${p.easeOutLine.xx} ${p.easeOutLine.yy}`}
+                        data-ease-in-handle-path
+                    />
+                )}
+                {p.easeInLine && (
+                    <path
+                        className={s.keyframeLineToHandle}
+                        strokeWidth='1'
+                        d={`M ${p.easeInLine.x} ${p.easeInLine.y} L ${p.easeInLine.xx} ${p.easeInLine.yy}`}
+                        data-ease-in-handle-path
                     />
                 )}
                 <g
@@ -182,24 +184,24 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 >
                     <rect className={s.keyframeInner} width='8' height='8' fill="#fff"  />
                 </g>
-                {/*{kfp.hasNextKeyFrame && (
+                {p.easeInHandle && (
                     <circle
-                        cx={kfp.easeInHandle.handleEiX}
-                        cy={kfp.easeInHandle.handleEiY}
+                        cx={p.easeInHandle.x}
+                        cy={p.easeInHandle.y}
                         fill='#7100bf'
-                        r='6'
+                        r='4'
                         data-ease-in-handle
                     />
-                )}*/}
-                {/*{kfp.hasNextKeyFrame && (
+                )}
+                {p.easeOutHandle && (
                     <circle
-                        cx={kfp.easeOutHandle.handleEoX}
-                        cy={kfp.easeOutHandle.handleEoY}
+                        cx={p.easeOutHandle.x}
+                        cy={p.easeOutHandle.y}
                         fill='#7100bf'
-                        r='6'
+                        r='4'
                         data-ease-out-handle
                     />
-                )}*/}
+                )}
             </g>
         ))
     }
@@ -221,6 +223,11 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         frame: number,
         point: {x: number, y: number},
         hasNextKeyframe: boolean,
+        transition: {x: number, y: number, xh: number, yh: number, xxh: number, yyh: number, xx: number, yy: number}|null,
+        easeInLine: {x: number, y: number, xx: number, yy: number}|null,
+        easeOutLine: {x: number, y: number, xx: number, yy: number}|null,
+        easeInHandle: {x: number, y: number}|null,
+        easeOutHandle: {x: number, y: number}|null,
     }[] =>
     {
         const {props: {pxPerSec}, state: {activePropName, graphWidth, graphHeight}} = this
@@ -228,7 +235,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
         if (!activePropName) return []
 
-        const baseY = graphHeight / 2
         const descriptor = this._getDescriptorByPropName(activePropName)
 
         if (!descriptor || descriptor.animatable === false) return []
@@ -245,31 +251,27 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
             return orderedKeyframes.map((keyframe, idx) => {
                 const nextKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx + 1]
 
-                let pathElement,
-                    valueElement,
-                    easeOutHandle,
-                    easeOutLine,
-                    easeInHandle,
-                    easeInLine,
-                    endPointX,
-                    endPointY,
-                    handleEoX,
-                    handleEoY,
-                    handleEiX,
-                    handleEiY
+                let endPointX = 0,
+                    endPointY = 0,
+                    handleEoX = 0,
+                    handleEoY = 0,
+                    handleEiX = 0,
+                    handleEiY = 0
 
                 const beginX = this._frameToPx(keyframe.frameOnClip)
                 const beginY = graphHeight - graphHeight * ((keyframe.value + absMinValue) / minMaxRange)
 
                 if (nextKeyframe) {
+                    const nextY = graphHeight - graphHeight * ((nextKeyframe.value + absMinValue) / minMaxRange)
+
                     endPointX = this._frameToPx(nextKeyframe.frameOnClip)
                     endPointY = graphHeight - graphHeight * ((nextKeyframe.value + absMinValue) / minMaxRange)
 
                     handleEoX = (endPointX - beginX) * keyframe.easeOutParam[0]
-                    handleEoY = graphHeight * keyframe.easeOutParam[1]
+                    handleEoY = nextY * keyframe.easeOutParam[1]
 
                     handleEiX = (endPointX - beginX) * nextKeyframe.easeInParam[0]
-                    handleEiY = graphHeight * nextKeyframe.easeOutParam[1]
+                    handleEiY = beginY * nextKeyframe.easeInParam[1]
                 }
 
                 return {
@@ -277,11 +279,11 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     frame: keyframe.frameOnClip,
                     point: {x: beginX, y: beginY},
                     hasNextKeyframe: !!nextKeyframe,
-                    // transition: {beginX, beginY, handleEoX, handleEoY, handleEiX, handleEiY, endPointX, endPointY},
-                    // easeOutHandle: {handleEoX, handleEoY},
-                    // easeOutLine: {beginX, beginY, handleEoX, handleEoY},
-                    // easeInHandle: {handleEiX, handleEiY},
-                    // easeInLine: {handleEiX, handleEiY, endPointX, endPointY},
+                    transition: nextKeyframe ? {x: beginX, y: beginY, xh: handleEiX, yh: handleEiY, xxh: handleEoX, yyh: handleEoY, xx: endPointX, yy: endPointY} : null,
+                    easeInLine: nextKeyframe ? {x: handleEiX, y: handleEiY, xx: endPointX, yy: endPointY} : null,
+                    easeOutLine: nextKeyframe ? {x: beginX, y: beginY, xx: handleEoX, yy: handleEoY} : null,
+                    easeInHandle: nextKeyframe ? {x: handleEiX, y: handleEiY} : null,
+                    easeOutHandle: nextKeyframe ? {x: handleEoX, y: handleEoY} : null,
                 }
             })
         }
