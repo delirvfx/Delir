@@ -21,7 +21,7 @@ yarn dev
 ### engines.delir
 Specify supported delir version
 
-```json
+```json5
 {
     "engines": {
         "delir": "0.0.x" // => Support delir v0.0.*
@@ -32,7 +32,7 @@ Specify supported delir version
 ### delir
 Write about this plugin.
 
-```json
+```json5
 {
   "delir": {
     "feature": "CustomLayer",
