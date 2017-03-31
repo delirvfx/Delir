@@ -43,9 +43,17 @@ export default class Keyframe
     get frameOnClip(): number { return this.config.frameOnClip as number }
     set frameOnClip(frameOnClip: number) { this.config.frameOnClip = frameOnClip }
 
+    /**
+     * Easing param for transition to this keyframe
+     * @property easeInParam
+     */
     get easeInParam(): [number, number] { return this.config.easeInParam }
     set easeInParam(easeInParam: [number, number]) { this.config.easeInParam = easeInParam }
 
+    /**
+     * Easing param for transition to next keyframe from this keyframe
+     * @property easeOutParam
+     */
     get easeOutParam(): [number, number] { return this.config.easeOutParam }
     set easeOutParam(easeOutParam: [number, number]) { this.config.easeOutParam = easeOutParam }
 
