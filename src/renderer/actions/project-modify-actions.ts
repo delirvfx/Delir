@@ -200,8 +200,6 @@ export default {
 
             Object.assign(newKeyframe, Object.assign({
                 frameOnClip: frame,
-                easeInParam: [1, 0],
-                easeOutParam: [0, 1],
             }, patch))
 
             dispatcher.dispatch(new Payload(DispatchTypes.AddKeyframe, {
