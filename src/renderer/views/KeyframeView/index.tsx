@@ -249,29 +249,44 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
             // Calc keyframe and handle points
             return orderedKeyframes.map((keyframe, idx) => {
+                const previousKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx - 1]
                 const nextKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx + 1]
 
-                let endPointX = 0,
-                    endPointY = 0,
+                let previousX = 0,
+                    previousY = 0,
+                    nextX = 0,
+                    nextY = 0,
                     handleEoX = 0,
                     handleEoY = 0,
                     handleEiX = 0,
-                    handleEiY = 0
+                    handleEiY = 0,
+                    nextHandleEiX = 0,
+                    nextHandleEiY = 0
 
                 const beginX = this._frameToPx(keyframe.frameOnClip)
                 const beginY = graphHeight - graphHeight * ((keyframe.value + absMinValue) / minMaxRange)
 
+                if (previousKeyframe) {
+                    previousX = this._frameToPx(previousKeyframe.frameOnClip)
+                    previousY = graphHeight - graphHeight * ((previousKeyframe.value + absMinValue) / minMaxRange)
+
+                    // console.log(previousKeyframe)
+                    // Handle of control transition from previous keyframe to next keyframe
+                    handleEiX = ((beginX - previousX) * keyframe.easeInParam[0]) + previousX
+                    handleEiY = (beginY * keyframe.easeInParam[1]) + beginY
+                }
+
                 if (nextKeyframe) {
-                    const nextY = graphHeight - graphHeight * ((nextKeyframe.value + absMinValue) / minMaxRange)
+                    // Next keyframe position
+                    nextX = this._frameToPx(nextKeyframe.frameOnClip)
+                    nextY = graphHeight - graphHeight * ((nextKeyframe.value + absMinValue) / minMaxRange)
 
-                    endPointX = this._frameToPx(nextKeyframe.frameOnClip)
-                    endPointY = graphHeight - graphHeight * ((nextKeyframe.value + absMinValue) / minMaxRange)
+                    // Handle of control transition to next keyframe
+                    handleEoX = ((nextX - beginX) * keyframe.easeOutParam[0]) + beginX
+                    handleEoY = (Math.abs(nextY - beginY) * keyframe.easeOutParam[1]) + Math.min(beginY, nextY) // ((endPointY - beginY) * nextKeyframe.easeOutParam[1]) + beginY
 
-                    handleEoX = (endPointX - beginX) * keyframe.easeOutParam[0]
-                    handleEoY = nextY * keyframe.easeOutParam[1]
-
-                    handleEiX = (endPointX - beginX) * nextKeyframe.easeInParam[0]
-                    handleEiY = beginY * nextKeyframe.easeInParam[1]
+                    nextHandleEiX = ((nextX - beginX) * nextKeyframe.easeInParam[0]) + beginX
+                    nextHandleEiY = (nextY * keyframe.easeInParam[1]) + nextY
                 }
 
                 return {
@@ -279,10 +294,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     frame: keyframe.frameOnClip,
                     point: {x: beginX, y: beginY},
                     hasNextKeyframe: !!nextKeyframe,
-                    transition: nextKeyframe ? {x: beginX, y: beginY, xh: handleEiX, yh: handleEiY, xxh: handleEoX, yyh: handleEoY, xx: endPointX, yy: endPointY} : null,
-                    easeInLine: nextKeyframe ? {x: handleEiX, y: handleEiY, xx: endPointX, yy: endPointY} : null,
+                    transition: nextKeyframe ? {x: beginX, y: beginY, xh: handleEoX, yh: handleEoY, xxh: nextHandleEiX, yyh: nextHandleEiY, xx: nextX, yy: nextY} : null,
+                    easeInLine: previousKeyframe ? {x: beginX, y: beginY, xx: handleEiX, yy: handleEiY} : null,
                     easeOutLine: nextKeyframe ? {x: beginX, y: beginY, xx: handleEoX, yy: handleEoY} : null,
-                    easeInHandle: nextKeyframe ? {x: handleEiX, y: handleEiY} : null,
+                    easeInHandle: previousKeyframe ? {x: handleEiX, y: handleEiY} : null,
                     easeOutHandle: nextKeyframe ? {x: handleEoX, y: handleEoY} : null,
                 }
             })
