@@ -55,6 +55,8 @@ export default class NavigationView extends React.Component<NavigationViewProps,
             ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project')
             : 'Delir'
 
+        document.title = projectName
+
         return (
             <Pane className={s.navigationView} resizable={false}>
                 <ul className={s.titleBar} onDoubleClick={this.titleBarDoubleClicked}>
