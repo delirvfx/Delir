@@ -192,7 +192,13 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         return (
             <Pane className={s.assetsView} allowFocus>
-                <h1 className={s.compositionsHeading}>Compositions</h1>
+                <h1 className={s.compositionsHeading}>
+                    Compositions
+                    <i
+                        className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}
+                        onClick={this.openNewCompositionWindow}
+                    ></i>
+                </h1>
                 <Table className={s.compositionList}>
                     <TableHeader>
                         <Row>
