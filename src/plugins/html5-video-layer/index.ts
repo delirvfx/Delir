@@ -73,17 +73,6 @@ export default class HTML5VideoLayer extends LayerPluginBase
         const param = req.parameters as any
         const ctx = req.destCanvas.getContext('2d')
 
-        // frame to time mapping
-        // const sourceFps = 30 // Math.ceil(this.video.webkitDecodedFrameCount / this.video.duration)
-        // const time = req.timeOnClip * sourceFps
-        //
-        // console.dir(req.timeOnClip * sourceFps);
-        // console.log(time, req);
-
-        // console.log('wait seek');
-        // this.video.play()
-        // this.video.pause()
-
         await new Promise((resolve, reject) => {
             const waiter = (e: Event) => resolve()
             this.video.addEventListener('seeked', waiter, {once: true} as any)
