@@ -23,6 +23,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // initialize app
     BrowserProcessProxy.initialize()
     await RendererService.initialize()
+    EditorStateActions.setActiveProject(new Delir.Project.Project)
 
     // Attach platform class to body element
     switch (os.type()) {
