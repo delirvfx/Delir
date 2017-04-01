@@ -1,0 +1,21 @@
+{
+    "name": "delir-plugin-image",
+    "version": "0.0.1",
+    "author": "Ragg <ragg.devpr@gmail.com>",
+    "main": "index.js",
+    "engines": {
+        "delir": "0.0.x"
+    },
+    "delir": {
+        "feature": "CustomLayer",
+        "targetApi": {
+            "renderer": "0.0.x"
+        },
+        "acceptFileTypes": {
+            "image/jpeg": "source",
+            "image/png": "source",
+            "image/gif": "source",
+            "image/svg+xml": "source"
+        }
+    }
+}
