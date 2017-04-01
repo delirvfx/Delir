@@ -298,7 +298,7 @@ export function copyFonts() {
 }
 
 export function copyImage() {
-    return g.src(join(paths.src.renderer, "images/*"))
+    return g.src(join(paths.src.renderer, "images/**/*"), {since: g.lastRun('copyImage')})
         .pipe(g.dest(join(paths.compiled.renderer, "images")));
 }
 
