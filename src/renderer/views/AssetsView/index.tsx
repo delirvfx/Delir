@@ -2,6 +2,7 @@ import * as _ from 'lodash'
 import * as React from 'react'
 import { PropTypes } from 'react'
 import * as parseColor from 'parse-color'
+import * as classnames from 'classnames'
 
 import * as Delir from 'delir-core'
 import {ProjectHelper, ColorRGB} from 'delir-core'
@@ -114,6 +115,22 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         ProjectModifyActions.modifyComposition(compId, { name: newName })
     }
 
+    selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
+    {
+        const target = e.target as HTMLInputElement
+        const files = Array.from(target.files!)
+
+        files.forEach(file => {
+            ProjectModifyActions.addAsset({
+                name: file.name,
+                mimeType: file.type,
+                path: file.path,
+            })
+        })
+
+        target.value = ''
+    }
+
     openCompositionSetting = async (compId: string) =>
     {
         if (!this.props.editor.project) return
@@ -175,6 +192,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         return (
             <Pane className={s.assetsView} allowFocus>
+                <h1 className={s.compositionsHeading}>Compositions</h1>
                 <Table className={s.compositionList}>
                     <TableHeader>
                         <Row>
@@ -211,6 +229,12 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                         ))}
                     </TableBodySelectList>
                 </Table>
+                <h1 className={s.assetsHeading}>
+                    Assets
+                    <label className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
+                        <input ref='assetInput' type='file' style={{display: 'none'}} onChange={this.selectAsset} multiple />
+                    </label>
+                </h1>
                 <Table className={s.assetList} onDrop={this.addAsset}>
                     <TableHeader>
                         <Row>
