@@ -1,5 +1,5 @@
 {
-    "name": "audio-layer",
+    "name": "delir-plugin-audio",
     "version": "0.0.1",
     "author": "Ragg <ragg.devpr@gmail.com>",
     "main": "audio-layer.js",
@@ -10,6 +10,12 @@
         "feature": "CustomLayer",
         "targetApi": {
             "renderer": "0.0.x"
+        },
+        "acceptFileTypes": {
+            "audio/wav": "source",
+            "audio/webm": "source",
+            "audio/mpeg": "source",
+            "audio/ogg": "source"
         }
     }
 }

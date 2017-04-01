@@ -26,10 +26,16 @@ export default class AudioLayer extends LayerPluginBase
 
     static provideParameters(): TypeDescriptor
     {
-        return Type.asset('source', {
-            label: 'Audio file',
-            mimeTypes: ['audio/mpeg', 'audio/mp4', 'audio/ogg', 'audio/wav', 'audio/mp3'],
-        })
+        return Type
+            .asset('source', {
+                label: 'Audio file',
+                mimeTypes: ['audio/wav', 'audio/webm', 'audio/mpeg', 'audio/ogg'],
+            })
+            .float('volume', {
+                label: 'Volume',
+                defaultValue: 100,
+                animatable: true,
+            })
     }
 
     audio: any = {}

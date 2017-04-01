@@ -123,6 +123,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         break
         //     }
 
+            case 'FLOAT':
             case 'NUMBER': {
                 const input = this.refs.input
                 this.props.onChange(descriptor, input.value)
@@ -184,8 +185,9 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //     case 'STRING':
         //         component = [<textarea ref='textarea' />]
         //         break
+            case 'FLOAT':
             case 'NUMBER':
-                component = [<DragNumberInput ref='input' defaultValue={value as number} onChange={this.valueChanged} />]
+                component = [<DragNumberInput ref='input' defaultValue={value as number} onChange={this.valueChanged} allowFloat={descriptor.type === 'FLOAT'} />]
                 break
 
             case 'FLOAT':

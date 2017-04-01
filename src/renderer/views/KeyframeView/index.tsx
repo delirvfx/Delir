@@ -243,7 +243,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
         const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
 
-        if (descriptor.type === 'NUMBER') {
+        if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
             const maxValue = orderedKeyframes.reduce((memo, kf) => Math.max(memo, kf.value as number), 0) + 10
             const minValue = orderedKeyframes.reduce((memo, kf) => Math.min(memo, kf.value as number), 0) + -10
             const absMinValue = Math.abs(minValue)

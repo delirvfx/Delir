@@ -123,6 +123,8 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
 
         if (! this.props.allowFloat) {
             value = value|0
+        } else {
+            value = ((value * 100) | 0) / 100
         }
 
         this.setState({value})
