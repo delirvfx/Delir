@@ -2,7 +2,7 @@ import * as _ from 'lodash'
 import * as React from 'react'
 import { PropTypes } from 'react'
 import * as parseColor from 'parse-color'
-import * as serialize from 'form-serialize'
+import * as classnames from 'classnames'
 
 import * as Delir from 'delir-core'
 import {ProjectHelper, ColorRGB} from 'delir-core'
@@ -19,7 +19,7 @@ import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components
 import { ContextMenu, MenuItem } from '../components/context-menu'
 
 import * as Modal from '../components/modal-window'
-import FormStyle from '../components/Form'
+import CompositionSettingModal from '../CompositionSettingModal'
 
 import connectToStores from '../../utils/connectToStores'
 
@@ -115,6 +115,22 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         ProjectModifyActions.modifyComposition(compId, { name: newName })
     }
 
+    selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
+    {
+        const target = e.target as HTMLInputElement
+        const files = Array.from(target.files!)
+
+        files.forEach(file => {
+            ProjectModifyActions.addAsset({
+                name: file.name,
+                mimeType: file.type,
+                path: file.path,
+            })
+        })
+
+        target.value = ''
+    }
+
     openCompositionSetting = async (compId: string) =>
     {
         if (!this.props.editor.project) return
@@ -123,7 +139,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         const modal = Modal.create()
         const req = (await new Promise<{[p: string]: string}|void>(resolve => {
-            modal.mount(<NewCompositionModal composition={comp} onConfirm={resolve} onCancel={resolve} />)
+            modal.mount(<CompositionSettingModal composition={comp} onConfirm={resolve} onCancel={resolve} />)
             modal.show()
         })) as CompositionProps|void
 
@@ -140,7 +156,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
     {
         const modal = Modal.create()
         const req = (await new Promise<{[p: string]: string}|void>(resolve => {
-            modal.mount(<NewCompositionModal onConfirm={resolve} onCancel={resolve} />)
+            modal.mount(<CompositionSettingModal onConfirm={resolve} onCancel={resolve} />)
             modal.show()
         })) as CompositionProps|void
 
@@ -176,6 +192,13 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         return (
             <Pane className={s.assetsView} allowFocus>
+                <h1 className={s.compositionsHeading}>
+                    Compositions
+                    <i
+                        className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}
+                        onClick={this.openNewCompositionWindow}
+                    ></i>
+                </h1>
                 <Table className={s.compositionList}>
                     <TableHeader>
                         <Row>
@@ -212,6 +235,12 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                         ))}
                     </TableBodySelectList>
                 </Table>
+                <h1 className={s.assetsHeading}>
+                    Assets
+                    <label className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
+                        <input ref='assetInput' type='file' style={{display: 'none'}} onChange={this.selectAsset} multiple />
+                    </label>
+                </h1>
                 <Table className={s.assetList} onDrop={this.addAsset}>
                     <TableHeader>
                         <Row>
@@ -245,131 +274,6 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     </TableBodySelectList>
                 </Table>
             </Pane>
-        )
-    }
-}
-
-
-class NewCompositionModal extends React.PureComponent<{
-    composition?: Delir.Project.Composition,
-    onConfirm: (opts: {[props: string]: string}) => void,
-    onCancel: () => void
-}, any>
-{
-    static propTypes = {
-        composition: PropTypes.object,
-        onConfirm: PropTypes.func.isRequired,
-        onCancel: PropTypes.func.isRequired,
-    }
-
-    onConfirm = () =>
-    {
-        const opts = serialize((this.refs.form as HTMLFormElement), {hash: true})
-        console.log(opts)
-        this.props.onConfirm(opts as {[p: string]: string})
-    }
-
-    onCancel = () =>
-    {
-        this.props.onCancel()
-    }
-
-    render()
-    {
-        const {composition: comp} = this.props
-
-        const toRGBHash = ({r, g, b}: Delir.ColorRGB) => '#' + [r, g, b].map(c => c.toString(16)).join('')
-        const values: {[prop: string]: any} = {
-            name: comp ? comp.name : 'New Composition',
-            width: comp ? comp.width : 1,
-            height: comp ? comp.height : 1,
-            backgroundColor: comp ? toRGBHash(comp.backgroundColor) : '#fff',
-            framerate: comp ? comp.framerate : 30,
-            durationSeconds: comp ? comp.durationFrames / comp.framerate : 10,
-            samplingRate: comp ? comp.samplingRate : 48000,
-            audioChannels: comp ? comp.audioChannels : 2,
-        }
-
-        return (
-            <div className={s.newCompModalRoot}>
-                <form ref='form' className={FormStyle.formHorizontal}>
-                    <div className='formGroup'>
-                        <label className="label">Composition name:</label>
-                        <div className="input">
-                            <div className='formControl'>
-                                <input name="name" type="text" defaultValue={values.name} required autoFocus />
-                            </div>
-                        </div>
-                    </div>
-                    <div className='formGroup'>
-                        <label className="label">width:</label>
-                        <div className="inputs">
-                            <div className='formControl'>
-                                <input name="width" type="number" min="1" defaultValue={values.width} required />
-                            </div><span className="unit">px</span>
-                        </div>
-                    </div>
-                    <div className='formGroup'>
-                        <label className="label">height:</label>
-                        <div className="inputs">
-                            <div className='formControl'>
-                                <input name="height" type="number" min="1" defaultValue={values.height} required />
-                            </div><span className="unit">px</span>
-                        </div>
-                    </div>
-                    <div className='formGroup'>
-                        <label className="label">background color:</label>
-                        <div className="inputs">
-                            <div className='formControl'>
-                                <input name="backgroundColor" type="color" defaultValue={values.backgroundColor} required />
-                            </div><span className="unit">px</span>
-                        </div>
-                    </div>
-                    <div className='formGroup'>
-                        <label className="label">framerate:</label>
-                        <div className="inputs">
-                            <div className='formControl'>
-                                <input name="framerate" type="number" min="1" defaultValue={values.framerate} required />
-                            </div><span className="unit">fps</span>
-                        </div>
-                    </div>
-                    <div className='formGroup'>
-                        <label className="label">duration(sec):</label>
-                        <div className="inputs">
-                            <div className='formControl'>
-                                <input name="durationSeconds" type="number" min="1" value="30" defaultValue={values.durationSeconds} required />
-                            </div><span className="unit">s</span>
-                        </div>
-                    </div>
-                    <div className='formGroup'>
-                        <label className="label">Sampling rate:</label>
-                        <div className="inputs">
-                            <div className='formControl'>
-                                <select name="samplingRate" defaultValue={values.samplingRate} required>
-                                    <option value="48000">48000</option>
-                                    <option value="41000">41000</option>
-                                </select>
-                            </div><span className="unit">Hz</span>
-                        </div>
-                    </div>
-                    <div className='formGroup'>
-                        <label className="label">Channels:</label>
-                        <div className="inputs">
-                            <div className='formControl'>
-                                <select name="audioChannels" defaultValue={values.audioChannels} required>
-                                    <option value="2">Stereo (2ch)</option>
-                                    <option value="1">Mono (1ch)</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className={s.modalFooter}>
-                        <button id="cancel" className="button" type='button' onClick={this.onCancel}>キャンセル</button>
-                        <button className="button primary" type='button' onClick={this.onConfirm}>{comp ? '適用' : '作成'}</button>
-                    </div>
-                </form>
-            </div>
         )
     }
 }

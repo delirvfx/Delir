@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import * as os from 'os'
 
 import AppComponent from './views/AppView'
 
@@ -22,23 +23,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     // initialize app
     BrowserProcessProxy.initialize()
     await RendererService.initialize()
+    EditorStateActions.setActiveProject(new Delir.Project.Project)
 
-    // const file = remote.dialog.showOpenDialog({
-    //     title: 'Save as ...',
-    //     defaultPath: '/Users/ragg/',
-    //     buttonLabel: 'Save',
-    //     filters: [
-    //         {
-    //             name: 'Delir Project File',
-    //             extensions: ['delir']
-    //         }
-    //     ],
-    //     properties: ['openFile']
-    // })[0]
-    //
-    // console.log(file);
-    //
-    // const p = app.project = Delir.Project.Project.deserialize(fs.readFileSync(file))
+    // Attach platform class to body element
+    switch (os.type()) {
+        case 'Windows_NT': document.body.classList.add('platform-win'); break;
+        case 'Darwin': document.body.classList.add('platform-mac'); break;
+        case 'Linux': document.body.classList.add('platform-linux'); break;
+    }
 
     ReactDOM.render(
         React.createElement(AppComponent as any, {}, []),

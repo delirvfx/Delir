@@ -12,6 +12,8 @@
     width 100%
     flex 1
 
+    border-top 1px solid rgba(255, 255, 255, 0.2)
+
     // tbody, thead, tr, td, th
     //     display block
 
@@ -37,25 +39,25 @@
             border-right none
             border-bottom none
 
-.assetList
-    margin-top 16px
-    border-top 1px solid rgba(#fff, .8)
+.compositionsHeading
+.assetsHeading
+    width 100%
+    padding 4px 8px
+    font-size 12px
+    line-height 14px
 
-.newCompModalRoot
-    width 500px
-    padding 16px
-    padding-bottom 0
+.assetsHeading
+    border-top 1px solid rgba(255, 255, 255, 0.2)
 
-    background-color var(--background)
+.addAssetPlusSign
+    margin-left 8px
+    margin-bottom -1px
+    filter invert(100%)
+    cursor pointer
 
-    :global(.label)
-        width 10rem
+    &:hover
+        background-color rgba(invert(#fff), .2) // inverted, it appear as white
 
-    .modalFooter
-        display flex
-        align-items center
-        justify-content flex-end
 
-        margin-top 8px
-        padding 8px
-        border-top 1px solid #aaa
+// .assetList
+//     margin-top 16px

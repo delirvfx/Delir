@@ -32,7 +32,7 @@
             display flex
             width 100%
             height 30px
-            background-color var(--caption-row-background)
+            border-bottom 1px solid rgba(#fff, .4)
 
         .timeline-labels
             thin-scrollbar()
@@ -99,6 +99,7 @@
                 &.--col-visibility
                 &.--col-lock
                     width 16px
+                    opacity 0
 
         .timeline-container
             display flex
@@ -134,3 +135,14 @@
             display none
             width 100%
             overflow hidden
+
+.scaleLabel
+    display inline-flex
+    align-items center
+    font-size 12px
+
+.scaleList
+    width 200px
+    border 1px solid $color-dropdown-border
+    background-color $color-dropdown-bg
+    transform translateY(6px)
