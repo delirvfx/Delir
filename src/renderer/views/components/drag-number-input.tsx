@@ -18,6 +18,7 @@ interface DragNumberInputProps {
 interface DragNumberInputState {
     value: number
     readOnly: boolean
+    valueChanged: boolean
 }
 
 export default class DragNumberInput extends React.Component<DragNumberInputProps, DragNumberInputState>
@@ -48,6 +49,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
     state = {
         readOnly: false,
         value: this.props.defaultValue != null ? this.props.defaultValue : 0,
+        valueChanged: false,
     }
 
     get value(): number { return this.state.value as number }
@@ -55,6 +57,15 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
     componentDidMount()
     {
         this.refs.input.onpointerlockerror = e => console.error(e)
+    }
+
+    componentWillReceiveProps(nextProps: DragNumberInputProps)
+    {
+        if (!this.state.valueChanged) {
+            this.setState({value: nextProps.defaultValue})
+        }
+
+        this.setState({valueChanged: this.state.value !== this.props.defaultValue})
     }
 
     enableAndFocus()
@@ -123,6 +134,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
 
         const {onChange} = this.props
         onChange && onChange(this.state.value)
+        this.setState({valueChanged: this.state.value !== this.props.defaultValue})
     }
 
     // TODO: parse and calculate expression

@@ -45,18 +45,24 @@ const c1_t1_l1 = new Delir.Project.Clip
 // c1_t1_l1.renderer = 'audio-layer'
 c1_t1_l1.renderer = 'html5-video-layer'
 // c1_t1_l1.renderer = 'plane'
-;(c1_t1_l1.rendererOptions as any).source = movieAsset
-;(c1_t1_l1.rendererOptions as any).loop = true
 c1_t1_l1.placedFrame = 0
 c1_t1_l1.durationFrames = durationFrames
+c1_t1_l1.keyframes = {
+    'source': [
+        Object.assign(new Delir.Project.Keyframe(), {value: movieAsset, frameOnClip: 0})
+    ],
+    'loop': [
+        Object.assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
+    ],
+    'x': [
+        Object.assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0}),
+        Object.assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600}),
+    ],
+}
 
 const c1_t2_l1 = Object.assign(new Delir.Project.Clip, {
     // renderer: 'html5-video-layer'
     renderer: 'audio-layer',
-    // renderer: 'proton-layer'
-    rendererOptions: {
-        source: audioAsset,
-    },
     placedFrame: 0,
     durationFrames: durationFrames,
 })
@@ -68,9 +74,6 @@ const c1_t3_l1 = Object.assign(new Delir.Project.Clip, {
 })
 const c1_t4_l1 = Object.assign(new Delir.Project.Clip, {
     renderer: 'html5-video-layer',
-    rendererOptions: {
-        source: 'file:///Users/ragg/workspace/delir/sample.mp4',
-    },
     placedFrame: 0,
     durationFrames: 30 * 10,
 })

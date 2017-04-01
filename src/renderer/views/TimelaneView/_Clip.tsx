@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {PropTypes} from 'react'
 import * as Delir from 'delir-core'
+import * as classnames from 'classnames'
 import cancelEvent from '../../utils/cancelEvent'
 
 import {ContextMenu, MenuItem} from '../components/context-menu'
@@ -13,6 +14,7 @@ interface TimelaneClipProps {
     clip: Delir.Project.Clip,
     left: number,
     width: number,
+    active: boolean
     onChangePlace: (draggedPx: number) => any,
     onChangeDuration: (displayWidth: number) => any,
 }
@@ -32,6 +34,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
         left: PropTypes.number.isRequired,
         width: PropTypes.number.isRequired,
+        active: PropTypes.bool.isRequired,
         onChangePlace: PropTypes.func.isRequired,
         onChangeDuration: PropTypes.func.isRequired,
     }
@@ -51,7 +54,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     }
 
     selectClip = e => {
-        EditorStateActions.changeActiveClip(this.props.clip.id)
+        EditorStateActions.changeActiveClip(this.props.clip.id!)
     }
 
     dragStart = e => {
@@ -133,10 +136,10 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
     render()
     {
-        const {clip} = this.props
+        const {clip, active} = this.props
 
         return (
-            <div className={s.clip}
+            <div className={classnames(s.clip, {[s['clip--active']]: active})}
                 style={{
                     left: this.props.left,
                     width: this.props.width + this.state.resizeMovedX,

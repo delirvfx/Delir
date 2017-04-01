@@ -30,128 +30,6 @@ function _generateAndReserveSymbolId(project: Project): string
 }
 
 //
-// Create
-//
-export function createAddAsset(
-    project: Project,
-    assetProps: Object = {}
-) {
-    const entityId = _generateAndReserveSymbolId(project)
-    const asset = new Asset()
-
-    setFreezedProp(asset, 'id', entityId)
-    Object.assign(asset, assetProps)
-    project.assets.add(asset)
-
-    return asset
-}
-
-export function createAddComposition(
-    project: Project,
-    compositionProps: Object = {}
-): Composition
-{
-    const entityId = _generateAndReserveSymbolId(project)
-    const composition = new Composition()
-
-    setFreezedProp(composition, 'id', entityId)
-    Object.assign(composition, compositionProps)
-    project.compositions.add(composition)
-
-    return composition
-}
-
-export function createAddLayer(
-    project: Project,
-    targetCompositionId: Composition|string,
-    layerProps: Object
-    // TODO: position specify option
-): Layer
-{
-    const entityId = _generateAndReserveSymbolId(project)
-    const layer = new Layer()
-
-    setFreezedProp(layer, 'id', entityId)
-    Object.assign(layer, layerProps)
-    addLayer(project, targetCompositionId, layer);
-
-    return layer
-}
-
-export function createAddClip(
-    project: Project,
-    targetLayerId: Layer|string,
-    clipProps: Object
-): Clip
-{
-    const entityId = _generateAndReserveSymbolId(project)
-    const clip = new Clip
-
-    setFreezedProp(clip, 'id', entityId)
-    Object.assign(clip, clipProps)
-
-    // TODO: Not found behaviour
-    const layer = targetLayerId instanceof Layer
-        ? targetLayerId
-        : findLayerById(project, targetLayerId)!
-
-    layer.clips.add(clip)
-
-    return clip
-}
-
-export function createAddEffect(
-  project: Project,
-  targetClipId: Clip|string,
-  effectProps: Object
-): Effect
-{
-    const effect = new Effect
-    Object.assign(effect, effectProps)
-
-    addEffect(project, targetClipId, effect)
-    return effect
-}
-
-export function createAddKeyframe(
-    project: Project,
-    targetClipId: Clip|string,
-    propName: string,
-    keyframeProp: Object|Array<Object>
-): Array<Keyframe>
-{
-    let keyframeProps
-    if (Array.isArray(keyframeProp)) {
-        keyframeProps = keyframeProp
-    } else {
-        keyframeProps = [keyframeProp]
-    }
-
-    const createdKeyframes = []
-    // TODO: Not found behaviour
-    const clip: Clip = targetClipId instanceof Clip
-        ? targetClipId
-        : findClipById(project, targetClipId)!
-
-    for (const _keyframeProp of keyframeProps) {
-        const entityId = _generateAndReserveSymbolId(project)
-        const keyframe = new Keyframe
-
-        setFreezedProp(keyframe, 'id', entityId)
-        Object.assign(keyframe, _keyframeProp)
-
-        if (!clip.keyframes[propName]) {
-            clip.keyframes[propName] = new Set()
-        }
-
-        clip.keyframes[propName].add(keyframe)
-        createdKeyframes.push(keyframe)
-    }
-
-    return createdKeyframes
-}
-
-//
 // Add
 //
 export function addAsset(
@@ -254,15 +132,10 @@ export function addKeyframe(
     project: Project,
     targetClipId: Clip|string,
     propName: string,
-    keyframe: Keyframe|Array<Keyframe>
-): Keyframe|Array<Keyframe>
+    keyframe: Keyframe|Keyframe[]
+): Keyframe|Keyframe[]
 {
-    let keyframes
-    if (Array.isArray(keyframe)) {
-        keyframes = keyframe
-    } else {
-        keyframes = [keyframe]
-    }
+    let keyframes = Array.isArray(keyframe) ? keyframe : [keyframe]
 
     // TODO: Not found behaviour
     const clip: Clip|null = targetClipId instanceof Clip
@@ -277,10 +150,16 @@ export function addKeyframe(
         }
 
         if (!clip.keyframes[propName]) {
-            clip.keyframes[propName] = new Set()
+            clip.keyframes[propName] = []
         }
 
-        clip.keyframes[propName].add(_keyframe)
+        const duplicated = clip.keyframes[propName].find(kf => kf.frameOnClip === _keyframe.frameOnClip)
+
+        if (duplicated) {
+            throw new Error(`Keyframe duplicated on frame ${duplicated.frameOnClip} (property: ${propName})`)
+        }
+
+        clip.keyframes[propName].push(_keyframe)
     }
 
     return keyframe
@@ -374,7 +253,7 @@ export function deleteKeyframe(
 export function modifyAsset(
     project: Project,
     targetAssetId: Asset|string,
-    patch: Object
+    patch: Optionalized<Asset>
 ) {
     const asset = targetAssetId instanceof Asset
         ? targetAssetId
@@ -386,7 +265,7 @@ export function modifyAsset(
 export function modifyComposition(
     project: Project,
     targetCompositionId: Composition|string,
-    patch: Object
+    patch: Optionalized<Composition>
 ) {
     const composition = targetCompositionId instanceof Composition
         ? targetCompositionId
@@ -398,7 +277,7 @@ export function modifyComposition(
 export function modifyLayer(
     project: Project,
     targetLayerId: Layer|string,
-    patch: Object
+    patch: Optionalized<Layer>
 ) {
     const layer = targetLayerId instanceof Layer
         ? targetLayerId
@@ -410,7 +289,7 @@ export function modifyLayer(
 export function modifyClip(
     project: Project,
     targetClipId: Clip|string,
-    patch: Object
+    patch: Optionalized<Clip>
 ) {
     const clip = targetClipId instanceof Clip
         ? targetClipId
@@ -423,7 +302,7 @@ export function modifyEffect(
     project: Project,
     parentClipId: Clip|string,
     targetEffectId: Effect|string,
-    patch: Object
+    patch: Optionalized<Effect>
 ) {
     const clip = parentClipId instanceof Clip
         ? parentClipId
@@ -439,12 +318,13 @@ export function modifyEffect(
 export function modifyKeyframe(
     project: Project,
     targetKeyframeId: Keyframe|string,
-    patch: Object,
+    patch: Optionalized<Keyframe>,
 ) {
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId
         : findKeyframeById(project, targetKeyframeId)!
 
+    // TODO: Check duplicate on frame
     Object.assign(keyframe, patch)
 }
 
@@ -602,6 +482,13 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
         }
 
     return targetKeyframe
+}
+
+export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string, frame: number): Keyframe|null
+{
+    if (!clip.keyframes[propName]) return null
+    const target: Keyframe|undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frame)
+    return target ? target : null
 }
 
 export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, propName: string}|null

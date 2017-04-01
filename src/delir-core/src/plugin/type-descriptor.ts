@@ -1,3 +1,16 @@
+import defaults from '../helper/defaults'
+import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
+import {AssetPointerScheme} from '../project/scheme/keyframe'
+
+import {
+    Point2D,
+    Point3D,
+    Size2D,
+    Size3D,
+    ColorRGB,
+    ColorRGBA,
+} from '../values'
+
 export type ParameterType =
     'POINT_2D'      |
     'POINT_3D'      |
@@ -24,20 +37,42 @@ export interface ParameterTypeDescriptor<T extends ParameterType> {
     animatable: boolean|null
 }
 
-export interface Point2DTypeDescripter extends ParameterTypeDescriptor<'POINT_2D'> {}
-export interface Point3DTypeDescripter extends ParameterTypeDescriptor<'POINT_3D'> {}
-export interface Size2DTypeDescripter extends ParameterTypeDescriptor<'SIZE_2D'> {}
-export interface Size3DTypeDescripter extends ParameterTypeDescriptor<'SIZE_3D'> {}
-export interface Size3DTypeDescripter extends ParameterTypeDescriptor<'SIZE_3D'> {}
-export interface ColorRGBTypeDescripter extends ParameterTypeDescriptor<'COLOR_RGB'> {}
-export interface ColorRGBATypeDescripter extends ParameterTypeDescriptor<'COLOR_RGBA'> {}
-export interface BoolTypeDescripter extends ParameterTypeDescriptor<'BOOL'> {}
-export interface StringTypeDescripter extends ParameterTypeDescriptor<'STRING'> {}
-export interface NumberTypeDescripter extends ParameterTypeDescriptor<'NUMBER'> {}
-export interface FloatTypeDescripter extends ParameterTypeDescriptor<'FLOAT'> {}
-export interface PulseTypeDescripter extends ParameterTypeDescriptor<'PULSE'> {}
+export interface Point2DTypeDescripter extends ParameterTypeDescriptor<'POINT_2D'> {
+    defaultValue?: Point2D
+}
+export interface Point3DTypeDescripter extends ParameterTypeDescriptor<'POINT_3D'> {
+    defaultValue?: Point3D
+}
+export interface Size2DTypeDescripter extends ParameterTypeDescriptor<'SIZE_2D'> {
+    defaultValue?: Size2D
+}
+export interface Size3DTypeDescripter extends ParameterTypeDescriptor<'SIZE_3D'> {
+    defaultValue?: Size3D
+}
+export interface ColorRGBTypeDescripter extends ParameterTypeDescriptor<'COLOR_RGB'> {
+    defaultValue?: ColorRGB
+}
+export interface ColorRGBATypeDescripter extends ParameterTypeDescriptor<'COLOR_RGBA'> {
+    defaultValue?: ColorRGBA
+}
+export interface BoolTypeDescripter extends ParameterTypeDescriptor<'BOOL'> {
+    defaultValue?: boolean
+}
+export interface StringTypeDescripter extends ParameterTypeDescriptor<'STRING'> {
+    defaultValue?: string
+}
+export interface NumberTypeDescripter extends ParameterTypeDescriptor<'NUMBER'> {
+    defaultValue?: number
+}
+export interface FloatTypeDescripter extends ParameterTypeDescriptor<'FLOAT'> {
+    defaultValue?: number
+}
+export interface PulseTypeDescripter extends ParameterTypeDescriptor<'PULSE'> {
+    defaultValue?: true,
+}
 export interface EnumTypeDescripter extends ParameterTypeDescriptor<'ENUM'> {
-    selection: Array<string>
+    selection: string[]
+    defaultValue?: string
 }
 export interface ClipTypeDescripter extends ParameterTypeDescriptor<'CLIP'> {}
 export interface AssetTypeDescripter extends ParameterTypeDescriptor<'ASSET'> {
@@ -70,129 +105,227 @@ export type AnyParameterTypeDescriptor =
     | ArrayOfTypeDescripter
     | StructureTypeDescripter
 
+export type ParameterValueTypes =
+    | Point2D
+    | Point3D
+    | Size2D
+    | Size3D
+    | ColorRGB
+    | ColorRGBA
+    | string
+    | number
+    | boolean
+    | AssetPointerScheme
+
+export const descriptorToValueType = (desc: AnyParameterTypeDescriptor) => {
+     switch (desc.type) {
+         case 'POINT_2D': return Point2D
+         case 'POINT_3D': return Point3D
+         case 'SIZE_2D': return Size2D
+         case 'SIZE_3D': return Size3D
+         default: throw new Error(`Unsupported parameter type ${desc.type}`)
+     }
+}
+
 export class TypeDescriptor {
     properties: AnyParameterTypeDescriptor[] = []
 
-    point2d(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    point2d(propName: string, conf: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'POINT_2D', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: new Point2D(0, 0),
+            enabled: true,
+            animatable: true
+        })
+
+        this.properties.push({type: 'POINT_2D', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    point3d(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    point3d(propName: string, conf: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'POINT_3D', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: new Point3D(0, 0, 0),
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'POINT_3D', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    size2d(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    size2d(propName: string, conf: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'SIZE_2D', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: new Size2D(0, 0),
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'SIZE_2D', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    size3d(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    size3d(propName: string, conf: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'SIZE_3D', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: new Size3D(0, 0, 0),
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'SIZE_3D', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    colorRgb(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    colorRgb(propName: string, conf: {label: string, defaultValue?: ColorRGB, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'COLOR_RGB', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: new ColorRGB(0, 0, 0),
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'COLOR_RGB', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    colorRgba(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    colorRgba(propName: string, conf: {label: string, defaultValue?: ColorRGBA, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'COLOR_RGBA', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: new ColorRGBA(0, 0, 0, 1),
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'COLOR_RGBA', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    bool(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    bool(propName: string, conf: {label: string, defaultValue?: boolean, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'BOOL', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: false,
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'BOOL', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    string(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    string(propName: string, conf: {label: string, defaultValue?: string, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'STRING', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: '',
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'STRING', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    number(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    number(propName: string, conf: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'NUMBER', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: 0,
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'NUMBER', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    float(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    float(propName: string, conf: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'FLOAT', propName, label, enabled, animatable})
+        const {defaultValue, label, enabled, animatable} = defaults(conf, {
+            defaultValue: 0,
+            enabled: true,
+            animatable: true,
+        })
+
+        this.properties.push({type: 'FLOAT', propName, defaultValue, label, enabled, animatable})
         return this
     }
 
-    pulse(propName: string, {label, enabled}: {label: string, enabled?: boolean})
+    pulse(propName: string, conf: {label: string, enabled?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        this.properties.push({type: 'PULSE', propName, label, enabled, animatable: false})
+        const {label, enabled} = defaults(conf, {
+            defaultValue: false,
+            enabled: true,
+        })
+
+        this.properties.push({type: 'PULSE', propName, label, enabled, animatable: true})
         return this
     }
 
-    enum(propName: string, {label, enabled, selection}: {label: string, enabled?: boolean, selection: Array<any>})
+    enum(propName: string, conf: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
     {
-        enabled = enabled == null ? true : enabled
-        selection = selection ? selection : []
-        this.properties.push({type: 'ENUM', propName, label, enabled, selection, animatable: false})
+        const {defaultValue, label, enabled, selection} = defaults(conf, {
+            enabled: true,
+            selection: []
+        })
+
+        // Allow to empty selection.
+        const validSelection = Array.isArray(selection) && !selection.every(e => typeof e === 'string')
+
+        if (!validSelection) {
+            throw new PluginLoadFailException('`selection` must be an array of string')
+        }
+
+        if (defaultValue != null && !selection.includes(defaultValue)) {
+            throw new PluginLoadFailException('Default value not included in selection')
+        }
+
+        this.properties.push({type: 'ENUM', propName, defaultValue, label, enabled, selection, animatable: false})
         return this
     }
 
-    clip(propName: string, {label, enabled, animatable}: {label: string, enabled?: boolean, animatable?: boolean})
+    clip(propName: string, conf: {label: string, enabled?: boolean})
     {
-        enabled = enabled == null ? true : enabled
-        animatable = animatable == null ? true : false
-        this.properties.push({type: 'CLIP', propName, label, enabled, animatable})
+        const {label, enabled} = defaults(conf, {
+            enabled: true,
+        })
+
+        this.properties.push({type: 'CLIP', propName, label, enabled, animatable: false})
         return this
     }
 
-    asset(propName: string, {label, enabled, mimeTypes}: {label: string, enabled?: boolean, mimeTypes: Array<string>})
+    asset(propName: string, conf: {label: string, enabled?: boolean, mimeTypes: Array<string>})
     {
-        enabled = enabled == null ? true : enabled
+        const {label, enabled, mimeTypes} = defaults(conf, {
+            enabled: true,
+            mimeTypes: [],
+        })
+
+        const validMimeTypes = Array.isArray(mimeTypes) && mimeTypes.length > 0 && mimeTypes.every(e => typeof e === 'string')
+
+        if (!validMimeTypes) {
+            throw new PluginLoadFailException('`mimeTypes` must be an array of string and can not to be empty')
+        }
+
         this.properties.push({type: 'ASSET', propName, label, enabled, animatable: false, mimeTypes})
         return this
     }
 
-    arrayOf(propName: string, {label, enabled}: {label: string, enabled?: boolean}, type: TypeDescriptor)
+    arrayOf(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
     {
-        enabled = enabled == null ? true : enabled
+        const {label, enabled} = defaults(conf, {
+            enabled: true,
+        })
+
         this.properties.push({type: 'ARRAY', propName, subType: type, label, enabled, animatable: false})
         return this
     }
 
-    structure(propName: string, {label, enabled}: {label: string, enabled?: boolean}, type: TypeDescriptor)
+    structure(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
     {
-        enabled = enabled == null ? true : enabled
+        const {label, enabled} = defaults(conf, {
+            enabled: true,
+        })
+
         this.properties.push({type: 'STRUCTURE', propName, subType: type, label, enabled, animatable: false})
         return this
     }
@@ -205,52 +338,52 @@ export default class Type
         throw new TypeError('Type is can not constructing')
     }
 
-    static point2d(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static point2d(propName: string, option: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).point2d(propName, option)
     }
 
-    static point3d(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static point3d(propName: string, option: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).point3d(propName, option)
     }
 
-    static size2d(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static size2d(propName: string, option: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).size2d(propName, option)
     }
 
-    static size3d(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static size3d(propName: string, option: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).size3d(propName, option)
     }
 
-    static colorRgb(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static colorRgb(propName: string, option: {label: string, defaultValue?: ColorRGB, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).colorRgb(propName, option)
     }
 
-    static colorRgba(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static colorRgba(propName: string, option: {label: string, defaultValue?: ColorRGBA, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).colorRgba(propName, option)
     }
 
-    static bool(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static bool(propName: string, option: {label: string, defaultValue?: boolean, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).bool(propName, option)
     }
 
-    static string(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static string(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).string(propName, option)
     }
 
-    static number(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static number(propName: string, option: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).number(propName, option)
     }
 
-    static float(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static float(propName: string, option: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).float(propName, option)
     }
@@ -260,17 +393,17 @@ export default class Type
         return (new TypeDescriptor()).pulse(propName, option)
     }
 
-    static enum(propName: string, option: {label: string, enabled?: boolean, selection: Array<any>})
+    static enum(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
     {
         return (new TypeDescriptor()).enum(propName, option)
     }
 
-    static clip(propName: string, option: {label: string, enabled?: boolean, animatable?: boolean})
+    static clip(propName: string, option: {label: string, enabled?: boolean})
     {
         return (new TypeDescriptor()).clip(propName, option)
     }
 
-    static asset(propName: string, option: {label: string, enabled?: boolean, mimeTypes: Array<string>})
+    static asset(propName: string, option: {label: string, enabled?: boolean, mimeTypes: string[]})
     {
         return (new TypeDescriptor()).asset(propName, option)
     }

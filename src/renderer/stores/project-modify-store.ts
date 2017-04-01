@@ -57,7 +57,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 break
 
             case ProjectModifyDispatchTypes.CreateClip:
-                ProjectHelper.addClip(project!, payload.entity.targetLayerId, payload.entity.props as any)
+                ProjectHelper.addClip(project!, payload.entity.targetLayerId, payload.entity.newClip)
                 break
 
             case ProjectModifyDispatchTypes.AddClip:
@@ -75,7 +75,10 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                     const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(clip, registeredAsset.mimeType, pluginRegistry)
 
                     if (propName == null) return
-                    clip.config.rendererOptions[propName] = registeredAsset
+                    ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
+                        frameOnClip: 0,
+                        value: registeredAsset,
+                    }))
 
                     const layer = new Delir.Project.Layer
                     ProjectHelper.addLayer(project, targetComposition, layer)
@@ -86,6 +89,12 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
             case ProjectModifyDispatchTypes.AddAsset:
                 ProjectHelper.addAsset(project!, payload.entity.asset)
                 break
+
+            case ProjectModifyDispatchTypes.AddKeyframe: {
+                const {targetClip, propName, keyframe} = payload.entity
+                console.log('keyframe added', payload.entity)
+                ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
+            }
 
             case ProjectModifyDispatchTypes.MoveClipToLayer:
                 const targetClip = ProjectHelper.findClipById(project!, payload.entity.clipId)
@@ -108,6 +117,11 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
             case ProjectModifyDispatchTypes.ModifyClip:
                 ProjectHelper.modifyClip(project!, payload.entity.targetClipId, payload.entity.patch)
+                break
+
+            case ProjectModifyDispatchTypes.ModifyKeyframe:
+                console.log('apply keyframe modify', payload.entity)
+                ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
                 break
 
             case ProjectModifyDispatchTypes.RemoveComposition:

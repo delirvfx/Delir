@@ -11,14 +11,13 @@ export default class Clip
         const clip = new Clip
         const config = _.pick(clipJson.config, [
             'renderer',
-            'rendererOptions',
             'placedFrame',
             'durationFrames',
             'keyframeInterpolationMethod',
         ]) as ClipConfigScheme
 
         const keyframes = _.mapValues(clipJson.keyframes, keyframeSet => {
-            return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
+            return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
         Object.defineProperty(clip, 'id', {value: clipJson.id})
@@ -31,28 +30,23 @@ export default class Clip
 
     config: {
         renderer: string|null,
-        rendererOptions: RendererProperties,
         placedFrame: number|null,
         durationFrames: number|null,
         keyframeInterpolationMethod: string,
     } = {
         renderer: null,
-        rendererOptions: {},
         placedFrame: null,
         durationFrames: null,
         keyframeInterpolationMethod: 'linear',
     }
 
-    keyframes: {[keyName:string]: Set<Keyframe>} = {}
+    keyframes: {[propName:string]: Keyframe[]} = {}
     effects: Effect[] = []
 
     // get id(): string { return this._id }
 
     get renderer(): string { return this.config.renderer as string }
     set renderer(renderer: string) { this.config.renderer = renderer }
-
-    get rendererOptions(): RendererProperties { return this.config.rendererOptions }
-    set rendererOptions(rendererOptions: RendererProperties) { this.config.rendererOptions = rendererOptions }
 
     get placedFrame(): number { return this.config.placedFrame as number }
     set placedFrame(placedFrame: number) { this.config.placedFrame = placedFrame }

@@ -21,10 +21,12 @@ import {
     AddLayerPayload,
     AddLayerWithAssetPayload,
     AddAssetPayload,
+    AddKeyframePayload,
     MoveClipToLayerPayload,
     ModifyCompositionPayload,
     ModifyLayerPayload,
     ModifyClipPayload,
+    ModifyKeyframePayload,
     RemoveCompositionayload,
     RemoveLayerPayload,
     RemoveClipPayload,
@@ -53,10 +55,12 @@ export type ProjectModifyActionPayload =
     | AddLayerPayload
     | AddLayerWithAssetPayload
     | AddAssetPayload
+    | AddKeyframePayload
     | MoveClipToLayerPayload
     | ModifyCompositionPayload
     | ModifyLayerPayload
     | ModifyClipPayload
+    | ModifyKeyframePayload
     | RemoveCompositionayload
     | RemoveLayerPayload
     | RemoveClipPayload

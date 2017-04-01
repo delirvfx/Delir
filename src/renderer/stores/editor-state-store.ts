@@ -22,6 +22,8 @@ export interface EditorState {
     activeClip: Delir.Project.Clip|null,
     dragEntity: DragEntity|null,
     processingState: string|null,
+    previewPlayed: boolean,
+    currentPreviewFrame: number,
     notifications: NotificationEntries
 }
 
@@ -29,14 +31,16 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 {
     getInitialState(): StateRecord
     {
-        return new Record({
+        return new Record<EditorState>({
             project: null,
             projectPath: null,
             activeComp: null,
             activeClip: null,
             dragEntity: null,
             processingState: null,
-            notifications: Immutable.List()
+            previewPlayed: false,
+            currentPreviewFrame: 0,
+            notifications: Immutable.List<NotificationEntry>()
         })
     }
 
@@ -75,6 +79,12 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 
             case EditorStateDispatchTypes.UpdateProcessingState:
                 return state.set('processingState', payload.entity.stateText)
+
+            case EditorStateDispatchTypes.TogglePreview:
+                return state.set('previewPlayed', !state.get('previewPlayed'))
+
+            case EditorStateDispatchTypes.SeekPreviewFrame:
+                return state.set('currentPreviewFrame', payload.entity.frame)
 
             case EditorStateDispatchTypes.AddMessage:
                 return state.set('notifications', state.get('notifications').push({

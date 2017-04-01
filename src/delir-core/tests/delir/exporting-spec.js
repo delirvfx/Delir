@@ -1,6 +1,5 @@
 import * as Delir from '../../src/index'
 
-
 describe('Check exportings', () => {
     it('Delir (with import)', () => {
         expect(Delir).to.be.an('object')

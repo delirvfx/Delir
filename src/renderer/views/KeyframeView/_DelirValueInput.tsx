@@ -7,6 +7,8 @@ import EditorStateActions from '../../actions/editor-state-actions'
 
 import DragNumberInput from '../components/drag-number-input'
 
+import * as s from './delir-value-input.styl'
+
 interface DelirValueInputProps {
     assets: Set<Delir.Project.Asset>|null
     descriptor: Delir.AnyParameterTypeDescriptor,
@@ -36,6 +38,17 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         checkbox: HTMLInputElement,
         textarea: HTMLTextAreaElement,
         assets: HTMLSelectElement,
+    }
+
+    state = {
+        value: this.props.value,
+    }
+
+    componentWillReceiveProps(nextProps: Readonly<DelirValueInputProps>, nextContext: any)
+    {
+        if (this.props.value !== nextProps.value) {
+            setTimeout(() => this.setState({value: nextProps.value}), 0)
+        }
     }
 
     valueChanged = () =>
@@ -120,7 +133,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
 
     render()
     {
-        const {descriptor, value, assets} = this.props
+        const {props: {descriptor, assets}, state: {value}} = this
         let component: JSX.Element[] = []
 
         switch (descriptor.type) {
@@ -165,7 +178,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         break
 
             case 'BOOL':
-                component = [<input ref='checkbox' type='checkbox' checked={value as boolean} onChange={this.valueChanged} />]
+                component = [<input ref='checkbox' type='checkbox' className={s.checkbox} checked={value as boolean} onChange={this.valueChanged} />]
                 break
 
         //     case 'STRING':

@@ -12,8 +12,45 @@
     display flex
     justify-content space-between
     height 24px
-    padding-left 4px
+    padding 0 4px
     line-height 24px
+
+.propItemName
+    flex 1
+
+.propKeyframeIndicator
+    flex 0
+    display inline-block
+    width 16px
+    height 16px
+    margin-right 8px
+
+    font-size 14px
+    line-height 2
+
+    opacity .3
+
+    &.propKeyframeIndicator--hasKeyframe
+        opacity 1
+
+.keyframeContainer
+    display flex
+    flex 1
+    height 100%
 
 // .propItemInput
 //     padding:
+
+.keyframeGraph
+    height 100%
+
+    // .keyframe
+    //     width 8px
+    //     height 8px
+
+    .keyframeInner
+        transform-origin 4px 4px
+        transform rotateZ(45deg)
+
+    .keyframeLineToHandle
+        stroke rgba(#fff, .2)
