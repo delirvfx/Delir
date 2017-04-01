@@ -7,7 +7,7 @@ import {
     Exceptions
 } from 'delir-core'
 
-export default class HTML5VideoLayer extends LayerPluginBase
+export default class VideoLayer extends LayerPluginBase
 {
     static async pluginDidLoad()
     {
