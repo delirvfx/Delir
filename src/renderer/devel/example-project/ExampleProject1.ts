@@ -1,6 +1,7 @@
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
 import {join} from 'path'
+import EditorStateActions from '../../actions/editor-state-actions'
 
 const fps = 60
 const durationFrames = fps * 20
@@ -60,19 +61,19 @@ c1_t1_l1.keyframes = {
     ],
 }
 
-const c1_t2_l1 = Object.assign(new Delir.Project.Clip, {
+const c1_t2_cl1 = Object.assign(new Delir.Project.Clip, {
     // renderer: 'html5-video-layer'
     renderer: 'audio-layer',
     placedFrame: 0,
     durationFrames: durationFrames,
 })
 
-const c1_t3_l1 = Object.assign(new Delir.Project.Clip, {
+const c1_t3_cl1 = Object.assign(new Delir.Project.Clip, {
     renderer: 'plane',
     placedFrame: 0,
     durationFrames: 30 * 10,
 })
-const c1_t4_l1 = Object.assign(new Delir.Project.Clip, {
+const c1_t4_cl1 = Object.assign(new Delir.Project.Clip, {
     renderer: 'html5-video-layer',
     placedFrame: 0,
     durationFrames: 30 * 10,
@@ -138,4 +139,7 @@ ProjectHelper.addClip(p, c2_t1, c2_t1_l2)
 // ProjectHelper.addClip(p, c2_t1, c2_t1_l3)
 // ProjectHelper.addKeyframe(p, c1_t1_l1, new Delir.Project.Keyframe)
 
-export default p
+
+EditorStateActions.setActiveProject(p);
+EditorStateActions.changeActiveComposition(c1.id!)
+EditorStateActions.changeActiveClip(c1_t1_l1.id)

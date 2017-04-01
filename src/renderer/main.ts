@@ -48,9 +48,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
 
     if (__DEV__) {
-        const project = require('./devel/example-project/ExampleProject1').default
-        EditorStateActions.setActiveProject(project);
-
+        require('./devel/example-project/ExampleProject1').default
         EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 <DEV MODE> Hello, welcome to Delir', 'info')
     }
 
