@@ -4,7 +4,7 @@ import EntityResolver from './entity-resolver'
 
 import * as _ from 'lodash'
 
-export default class RenderRequest
+export default class RenderRequest<T = any>
 {
     static _permitKeys = [
         'time',
@@ -81,7 +81,7 @@ export default class RenderRequest
     compositionScope: Object
     clipScope: Object
 
-    parameters: Object
+    parameters: T
 
     //
     // Resolver
