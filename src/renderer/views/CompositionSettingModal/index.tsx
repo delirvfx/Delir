@@ -93,7 +93,7 @@ export default class CompositionSettingModal extends React.PureComponent<{
                         <label className="label">duration(sec):</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="durationSeconds" type="number" min="1" value="30" defaultValue={values.durationSeconds} required />
+                                <input name="durationSeconds" type="number" min="1" defaultValue={values.durationSeconds} required />
                             </div><span className="unit">s</span>
                         </div>
                     </div>
