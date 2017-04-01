@@ -19,9 +19,9 @@ import Pane from '../components/pane'
 
 import {ContextMenu, MenuItem} from '../components/context-menu'
 import SelectList from '../components/select-list'
+import DropDown from '../components/dropdown'
 
 import LaneLabel from '../timeline/lane-label'
-import LaneKeyframes from '../timeline/lane-keyframes'
 import KeyframeView from '../KeyframeView'
 import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
@@ -56,6 +56,10 @@ const PX_PER_SEC = 30
 }))
 export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>
 {
+    refs: {
+        scaleList: DropDown
+    }
+
     constructor()
     {
         super()
@@ -115,8 +119,19 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     scaleTimeline = e =>
     {
         if (e.altKey) {
-            this.setState({scale: this.state.scale + (e.deltaY * .05)})
+            const newScale = this.state.scale + (e.deltaY * .05)
+            this.setState({scale: Math.max(newScale, .1)})
         }
+    }
+
+    toggleScaleList = () =>
+    {
+        this.refs.scaleList.toggle()
+    }
+
+    selectScale = ({nativeEvent: e}: React.MouseEvent<HTMLLIElement>) => {
+        const scale = +(e.target as HTMLLIElement).dataset.value! / 100
+        this.setState({scale: scale})
     }
 
     dropAsset = e =>
@@ -154,11 +169,17 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             <Pane className='timeline-labels-container'>
                                 <div className='timeline-labels-header'>
                                     <div className='--col-name'>Lanes</div>
-                                    <span>x {scale}</span>
-                                    {/*
-                                        <div className='--col-visibility'>Label</div>
-                                        <div className='--col-lock'>Label</div>
-                                    */}
+                                    <div className={s.scaleLabel} onClick={this.toggleScaleList}>
+                                        <DropDown ref='scaleList' className={s.scaleList} shownInitial={false}>
+                                            <li data-value="50" onClick={this.selectScale}>50%</li>
+                                            <li data-value="100" onClick={this.selectScale}>100%</li>
+                                            <li data-value="150" onClick={this.selectScale}>150%</li>
+                                            <li data-value="200" onClick={this.selectScale}>200%</li>
+                                            <li data-value="250" onClick={this.selectScale}>250%</li>
+                                            <li data-value="300" onClick={this.selectScale}>300%</li>
+                                        </DropDown>
+                                        Scale: {scale * 100 | 0}%
+                                    </div>
                                 </div>
 
                                 <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
@@ -198,7 +219,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                             layer={layer}
                                             framerate={framerate}
                                             pxPerSec={PX_PER_SEC}
-                                            scale={this.state.scale}
+                                            scale={scale}
                                             activeClip={activeClip}
                                         />
                                     ))}
