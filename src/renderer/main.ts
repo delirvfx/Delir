@@ -24,23 +24,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     BrowserProcessProxy.initialize()
     await RendererService.initialize()
 
-    // const file = remote.dialog.showOpenDialog({
-    //     title: 'Save as ...',
-    //     defaultPath: '/Users/ragg/',
-    //     buttonLabel: 'Save',
-    //     filters: [
-    //         {
-    //             name: 'Delir Project File',
-    //             extensions: ['delir']
-    //         }
-    //     ],
-    //     properties: ['openFile']
-    // })[0]
-    //
-    // console.log(file);
-    //
-    // const p = app.project = Delir.Project.Project.deserialize(fs.readFileSync(file))
-
     // Attach platform class to body element
     switch (os.type()) {
         case 'Windows_NT': document.body.classList.add('platform-win'); break;
