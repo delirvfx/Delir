@@ -298,7 +298,7 @@ export function copyFonts() {
 }
 
 export function copyImage() {
-    return g.src(join(paths.src.renderer, "images/*"))
+    return g.src(join(paths.src.renderer, "images/**/*"), {since: g.lastRun('copyImage')})
         .pipe(g.dest(join(paths.compiled.renderer, "images")));
 }
 
@@ -360,10 +360,10 @@ export async function cleanBrowserScripts(done) {
     done();
 }
 
-export function run() {
-    console.log('run');
+export function run(done) {
     const electron = spawn(require("electron"), [paths.compiled.root], {stdio:'inherit'});
     electron.on("close", (code) => { code === 0 && run(() => {}); });
+    done()
 }
 
 // export async function compileNavcodec() {
@@ -424,7 +424,7 @@ export function run() {
 export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
     g.watch(paths.src.renderer, buildRendererWithoutJs)
-    g.watch(join(paths.src.renderer, 'styles'), compileStyles)
+    g.watch(join(paths.src.renderer, 'styles/**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, compilePlugins))
     // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)

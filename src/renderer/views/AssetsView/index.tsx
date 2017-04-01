@@ -179,7 +179,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                 <Table className={s.compositionList}>
                     <TableHeader>
                         <Row>
-                            <Col resizable={false} defaultWidth='2rem'>⛰</Col>
+                            <Col resizable={false} defaultWidth='2rem'></Col>
                             <Col defaultWidth='10rem'>名前</Col>
                         </Row>
                     </TableHeader>
@@ -199,7 +199,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <Col>🎬</Col>
+                                <Col><i className="twa twa-clapper"></i></Col>
                                 <Col>
                                     <LabelInput
                                         ref={`comp_name_input#${comp.id}`}
