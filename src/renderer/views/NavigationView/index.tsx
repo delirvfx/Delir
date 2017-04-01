@@ -51,8 +51,9 @@ export default class NavigationView extends React.Component<NavigationViewProps,
     render()
     {
         const {project, projectPath} = this.props.editor
-        const projectName = project ? 'New Project'
-            : (projectPath ? path.basename(projectPath) : null)
+        const projectName = project
+            ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project')
+            : 'Delir'
 
         return (
             <Pane className={s.navigationView} resizable={false}>
