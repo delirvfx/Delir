@@ -120,7 +120,9 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                                     data-prop-name={desc.propName}
                                     onClick={this.selectProperty}
                                 >
-                                    <span className={classnames(s.propKeyframeIndicator, {[s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe})}>🕛</span>
+                                    <span className={classnames(s.propKeyframeIndicator, {[s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe})}>
+                                        <i className='twa twa-clock12'></i>
+                                    </span>
                                     <span className={s.propItemName}>{desc.label}</span>
                                     <div className={s.propItemInput}>
                                         <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.valueChanged} />

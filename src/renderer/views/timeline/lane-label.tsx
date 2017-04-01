@@ -67,10 +67,10 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
                     <LabelInput defaultValue={layer.name} placeholder='Layer name' onChange={this.layerNameChanged} />
                 </li>
                 <li className='timeline_lane-label_col --col-visibility'>
-                    👁
+                    <i className="twa twa-eye"></i>
                 </li>
                 <li className='timeline_lane-label_col --col-lock'>
-                    🔓
+                    <i className="twa twa-lock"></i>
                 </li>
 
                 {/*{hasActiveLayer && <LaneLabelProps onChanged={() => {}} descriptor={propTypes} />}*/}
