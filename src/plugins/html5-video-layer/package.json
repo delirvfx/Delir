@@ -12,7 +12,8 @@
             "renderer": "0.0.x"
         },
         "acceptFileTypes": {
-            "video/mp4": "source"
+            "video/mp4": "source",
+            "video/webm": "source"
         }
     }
 }
