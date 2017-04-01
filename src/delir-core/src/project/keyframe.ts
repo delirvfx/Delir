@@ -31,8 +31,8 @@ export default class Keyframe
     } = {
         value: null,
         frameOnClip: null,
-        easeInParam: [1, 0],
-        easeOutParam: [0, 1],
+        easeInParam: [1, 1],
+        easeOutParam: [0, 0],
     }
 
     get id(): string { return this._id = this._id || uuid.v4() }

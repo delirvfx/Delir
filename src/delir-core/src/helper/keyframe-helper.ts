@@ -168,10 +168,10 @@ export function calcKeyframe(
             continue
         }
 
-        const currentKeyEaseOut = activeKeyFrame.active.easeOutParam ? activeKeyFrame.active.easeOutParam : [0, 1]
+        const currentKeyEaseOut = activeKeyFrame.active.easeOutParam ? activeKeyFrame.active.easeOutParam : [0, 0]
         const nextKeyEaseIn = activeKeyFrame.next
-            ? activeKeyFrame.next.easeInParam || [1, 0]
-            : [1, 0]
+            ? activeKeyFrame.next.easeInParam || [1, 1]
+            : [1, 1]
 
         // TODO: Cache Bezier instance between change active keyframe
         const bezier = bezierEasing(...currentKeyEaseOut, ...nextKeyEaseIn)
