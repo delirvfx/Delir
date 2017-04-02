@@ -39,12 +39,12 @@ export default class ImageLayer extends LayerPluginBase
                 animatable: true,
                 defaultValue: 0,
             })
-            .number('scale', {
+            .float('scale', {
                 label: 'Scale',
                 animatable: true,
                 defaultValue: 1,
             })
-            .number('rotate', {
+            .float('rotate', {
                 label: 'Rotation',
                 animatable: true,
                 defaultValue: 0,
@@ -67,7 +67,7 @@ export default class ImageLayer extends LayerPluginBase
 
         await new Promise((resolve, reject) => {
             this.image.addEventListener('load', () => resolve(), {once: true} as any)
-            this.image.addEventListener('error', () => reject(new Error('Image not found')), {once: true}  as any)
+            this.image.addEventListener('error', () => reject(new Error(`ImageLayer: Image not found (URL: ${this.image.src})`)), {once: true}  as any)
         })
     }
 
@@ -80,11 +80,12 @@ export default class ImageLayer extends LayerPluginBase
         const img = this.image
         const rad = param.rotate * Math.PI / 180
 
+        ctx.translate(param.x, param.y)
         ctx.scale(param.scale, param.scale)
         ctx.translate(img.width / 2, img.height / 2)
         ctx.rotate(rad)
         ctx.translate(-img.width / 2, -img.height / 2)
 
-        ctx.drawImage(img, param.x, param.y)
+        ctx.drawImage(img, 0, 0)
     }
 }
