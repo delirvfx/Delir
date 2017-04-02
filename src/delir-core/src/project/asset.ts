@@ -6,8 +6,9 @@ export default class Asset
     static deserialize(assetJson: Object)
     {
         const asset = new Asset
-        const permitKeys = _.keys(asset._config)
-        Object.assign(asset._config, _.pick(assetJson, permitKeys))
+
+        asset.id = assetJson.id
+        Object.assign(asset._config, _.pick(assetJson, _.keys(asset._config)))
         return asset
     }
 

@@ -1,8 +1,8 @@
 {
-    "name": "text-layer",
-    "version": "0.0.1",
+    "name": "composition-layer",
+    "version": "0.0.0",
     "author": "Ragg <ragg.devpr@gmail.com>",
-    "main": "index.js",
+    "main": "composition-layer.js",
     "engines": {
         "delir": "0.0.x"
     },

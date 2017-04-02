@@ -77,7 +77,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                     if (propName == null) return
                     ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
                         frameOnClip: 0,
-                        value: registeredAsset,
+                        value: {assetId: registeredAsset.id},
                     }))
 
                     const layer = new Delir.Project.Layer

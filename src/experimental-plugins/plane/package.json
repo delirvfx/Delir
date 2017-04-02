@@ -1,5 +1,5 @@
 {
-    "name": "noise",
+    "name": "delir-plugin-plate",
     "version": "0.0.1",
     "author": "Ragg <ragg.devpr@gmail.com>",
     "main": "index.js",
@@ -7,8 +7,7 @@
         "delir": "0.0.x"
     },
     "delir": {
-        "package-name": "Tooloud Noise",
-        "feature": "Effect",
+        "feature": "CustomLayer",
         "targetApi": {
             "renderer": "0.0.x"
         }

@@ -144,6 +144,10 @@ export default {
         placedFrame = 0,
         durationFrames = 100,
     ) {
+        const project = ProjectModifyStore.getState().get('project')
+
+        if (!project) return
+
         const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
 
         // TODO: Support selection
@@ -167,7 +171,11 @@ export default {
         )
 
         if (!propName) return
-        // newClip.config.rendererOptions[propName] = asset
+
+        ProjectHelper.addKeyframe(project!, newClip, propName, Object.assign(new Delir.Project.Keyframe(), {
+            frameOnClip: 0,
+            value: {assetId: asset.id},
+        }))
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },
 

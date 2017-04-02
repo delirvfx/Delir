@@ -120,8 +120,15 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                                     data-prop-name={desc.propName}
                                     onClick={this.selectProperty}
                                 >
-                                    <span className={classnames(s.propKeyframeIndicator, {[s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe})}>
-                                        <i className='twa twa-clock12'></i>
+                                    <span className={classnames(
+                                            s.propKeyframeIndicator,
+                                            {
+                                                [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                                [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                            })
+                                        }
+                                    >
+                                        {desc.animatable && (<i className='twa twa-clock12'></i>)}
                                     </span>
                                     <span className={s.propItemName}>{desc.label}</span>
                                     <div className={s.propItemInput}>
@@ -243,7 +250,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
         const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
 
-        if (descriptor.type === 'NUMBER') {
+        if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
             const maxValue = orderedKeyframes.reduce((memo, kf) => Math.max(memo, kf.value as number), 0) + 10
             const minValue = orderedKeyframes.reduce((memo, kf) => Math.min(memo, kf.value as number), 0) + -10
             const absMinValue = Math.abs(minValue)

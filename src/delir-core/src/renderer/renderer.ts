@@ -30,7 +30,7 @@ interface RenderingSession {
     baseRequest: RenderRequest,
     bufferCanvas: HTMLCanvasElement,
 
-    bufferAudioBuffer: Array<Float32Array>,
+    preDestinationAudioBuffer: Array<Float32Array>,
 
     rootCompContainer: CompositionInstanceContainer,
     durationFrames: number,
@@ -50,7 +50,7 @@ export default class Renderer {
         rootCompId: string|null,
         beginFrame?: number|null,
         destinationCanvas: HTMLCanvasElement|null,
-        destinationAudioBuffer: Array<Float32Array>|null,
+        destinationAudioBuffers: Array<Float32Array>|null,
         requestAnimationFrame: Function,
     } = {
         project: null,
@@ -58,7 +58,7 @@ export default class Renderer {
         rootCompId: null,
         beginFrame: 0,
         destinationCanvas: null,
-        destinationAudioBuffer: null,
+        destinationAudioBuffers: null,
         requestAnimationFrame: process.nextTick,
     }) : ProgressPromise<any> {
         const renderer = new Renderer({
@@ -68,7 +68,7 @@ export default class Renderer {
 
         // TODO: Strict types
         renderer.setDestinationCanvas(req.destinationCanvas!)
-        renderer.setDestinationAudioBuffer(req.destinationAudioBuffer!)
+        renderer.setDestinationAudioBuffer(req.destinationAudioBuffers!)
 
         return renderer.render({
             beginFrame: req.beginFrame!,
@@ -191,7 +191,7 @@ export default class Renderer {
 
         if (ctx == null) { return } // for flowtype lint
 
-        const bufferAudioBuffer = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootCompWrap.samplingRate)))
+        const audioBuffer = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootCompWrap.samplingRate)))
 
         //
         // Resolver
@@ -208,7 +208,7 @@ export default class Renderer {
             framerate: rootCompWrap.framerate,
             durationFrames: rootComp.durationFrames,
 
-            destAudioBuffer: bufferAudioBuffer,
+            destAudioBuffer: audioBuffer,
             audioContext: this._audioContext,
             samplingRate: rootCompWrap.samplingRate,
             neededSamples: rootCompWrap.samplingRate,
@@ -224,7 +224,7 @@ export default class Renderer {
             baseRequest,
             bufferCanvas,
 
-            bufferAudioBuffer: bufferAudioBuffer,
+            preDestinationAudioBuffer: audioBuffer,
             // bufferNode: bufferNode,
 
             rootCompContainer: rootCompWrap,
@@ -289,14 +289,14 @@ export default class Renderer {
             const bufferCanvasCtx = bufferCanvas.getContext('2d')
             if (bufferCanvasCtx == null) throw new Error('Failed create Canvas2D context on buffer canvas')
 
-            const {bufferAudioBuffer} = session
+            const {preDestinationAudioBuffer} = session
 
             const destCanvas = this._destinationCanvas
             const {width: destCanvasWidth, height: destCanvasHeight} = this._destinationCanvas
             const destCanvasCtx = destCanvas.getContext('2d')
             if (destCanvasCtx == null) throw new Error('Failed create Canvas2D context on destination canvas')
 
-            const destAudioBuffer = this._destinationAudioBuffer
+            const destinationAudioBuffer = this._destinationAudioBuffer
 
             const resolver = session.baseRequest.resolver
 
@@ -379,7 +379,7 @@ export default class Renderer {
                 //
                 bufferCanvasCtx.clearRect(0, 0, compWidth, compHeight)
                 for (let ch = 0, l = rootCompContainer.audioChannels; ch < l; ch++) {
-                    bufferAudioBuffer[ch].fill(0)
+                    preDestinationAudioBuffer[ch].fill(0)
                 }
 
                 //
@@ -407,7 +407,7 @@ export default class Renderer {
 
                 if (isBufferingNeeded) {
                     for (let ch = 0, l = rootCompContainer.audioChannels; ch < l; ch++) {
-                        destAudioBuffer[ch].set(bufferAudioBuffer[ch])
+                        destinationAudioBuffer[ch].set(preDestinationAudioBuffer[ch])
                     }
                 }
 
@@ -490,6 +490,8 @@ export default class Renderer {
             }
 
             const durationFrames = rootComp.durationFrames
+            const tmpMovieFilePath = path.join(req.tmpDir, 'delir-working.mov')
+            const tmpAudioFilePath = path.join(req.tmpDir,'delir-working.wav')
 
             // const canvas = new NodeCanvas(rootComp.width, rootComp.height)
             const canvas = document.createElement('canvas')
@@ -498,7 +500,6 @@ export default class Renderer {
 
             const audioBuffer =　_.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate)))
             const pcmAudioData = _.times(rootComp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * rootComp.samplingRate * Math.ceil(durationFrames / rootComp.framerate))))
-            console.log(pcmAudioData)
 
             const deream = Deream.video({
                 args: {
@@ -510,12 +511,8 @@ export default class Renderer {
                     // 'f': 'mp4',
                 },
                 inputFramerate: rootComp.framerate,
-                dest: path.join(req.tmpDir,'delir-working.avi'),
+                dest: tmpMovieFilePath,
             })
-
-            await new Promise(resolve => setTimeout(resolve, 2000))
-            // const encoder = spawn('ffmpeg', `-i pipe:0 -r ${durationFrames} -c:v mjpeg -c:v libx264 -r ${durationFrames} -s 640x360 test.mp4`.split(' '))
-            // encoder.stderr.on('data', data => console.log(data.toString()))
 
             const progPromise = Renderer.render({
                 project: this._project,
@@ -523,7 +520,7 @@ export default class Renderer {
                 rootCompId: req.targetCompositionId,
                 beginFrame: 0,
                 destinationCanvas: canvas,
-                destinationAudioBuffer: audioBuffer,
+                destinationAudioBuffers: audioBuffer,
                 requestAnimationFrame: window.requestAnimationFrame.bind(window),
             })
 
@@ -534,9 +531,6 @@ export default class Renderer {
                 notifier(progress)
 
                 if (progress.isRendering) {
-                    // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
-                    // console.log(imageData);
-                    // let buffer = new Buffer(imageData)
                     deream.write(canvasToBuffer(canvas, 'image/png'))
                 }
 
@@ -564,7 +558,7 @@ export default class Renderer {
                         getChannelData: ch => pcmAudioData[ch]
                     }, {float32: true})
 
-                    fs.writeFileSync(path.join(req.tmpDir,'delir-working.wav'), arrayBufferToBuffer(wav))
+                    fs.writeFileSync(tmpAudioFilePath, arrayBufferToBuffer(wav))
                 })(),
                 (async () => {
                     await new Promise(resolve => deream.ffmpeg.on('exit', resolve))
@@ -578,9 +572,9 @@ export default class Renderer {
                     // '-f',
                     // 'utvideo',
                     '-i',
-                    path.join(req.tmpDir,'delir-working.avi'),
+                    tmpMovieFilePath,
                     '-i',
-                    path.join(req.tmpDir,'delir-working.wav'),
+                    tmpAudioFilePath,
                     // '-c:a',
                     // 'pcm_f32be',
                     '-c:v',
@@ -609,8 +603,8 @@ export default class Renderer {
 
             notifier({state: 'Rendering completed'})
 
-            try { fs.unlinkSync(path.join(req.tmpDir,'delir-working.mp4')) } catch (e) {}
-            try { fs.unlinkSync(path.join(req.tmpDir,'delir-working.wav')) } catch (e) {}
+            try { fs.unlinkSync(tmpMovieFilePath) } catch (e) {}
+            try { fs.unlinkSync(tmpAudioFilePath) } catch (e) {}
         })
     }
 }

@@ -157,7 +157,8 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
                     <MenuItem label='remove ' onClick={this.removeClip.bind(null, clip.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
-                <span>#{clip.id.substring(0, 4)}</span>
+                <span className={s.clipNameLabel}>{clip.renderer}</span>
+                <span className={s.clipIdLabel}>#{clip.id.substring(0, 4)}</span>
                 <div
                     className={s.resizeHandle}
                     draggable

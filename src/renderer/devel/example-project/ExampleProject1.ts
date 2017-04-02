@@ -50,7 +50,7 @@ c1_t1_l1.placedFrame = 0
 c1_t1_l1.durationFrames = durationFrames
 c1_t1_l1.keyframes = {
     'source': [
-        Object.assign(new Delir.Project.Keyframe(), {value: movieAsset, frameOnClip: 0})
+        Object.assign(new Delir.Project.Keyframe(), {value: {assetId: movieAsset.id}, frameOnClip: 0})
     ],
     'loop': [
         Object.assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),

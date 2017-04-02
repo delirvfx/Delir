@@ -38,23 +38,25 @@ export default class ProgressPromise<T>
 
     private _promise: DeferredPromise<any> = _defer<T>()
 
+    private _isCompleted: boolean = false
     private _abortCallbacks: Function[]|null = []
     private _progressListeners: Function[] = []
 
-    constructor(executor: PromiseProcessor<T>)
+    constructor(resolver: PromiseProcessor<T>)
     {
         const onAbort = (callback: () => void) => {
             this._abortCallbacks!.push(callback)
         }
 
         const notifier = (progress: () => void) => {
+            if (this._isCompleted) return
             this._progressListeners.forEach(listener => listener(progress))
         }
 
+        this._promise.promise.then(() => this._isCompleted = true)
+
         try {
-            const returnValue = executor(this._promise.resolve, this._promise.reject, onAbort, notifier)
-            if (returnValue && typeof returnValue.then === 'function') { returnValue.then(this._promise.resolve)}
-            if (returnValue && typeof returnValue.catch === 'function') { returnValue.catch(this._promise.reject)}
+            const returnValue = resolver(this._promise.resolve, this._promise.reject, onAbort, notifier)
         } catch (e) {
             this._promise.reject(e)
         }

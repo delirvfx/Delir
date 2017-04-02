@@ -12,7 +12,7 @@ import * as s from './delir-value-input.styl'
 interface DelirValueInputProps {
     assets: Set<Delir.Project.Asset>|null
     descriptor: Delir.AnyParameterTypeDescriptor,
-    value: string|number|boolean|Delir.Project.Asset|Delir.Values.Point2D|Delir.Values.Point3D
+    value: string|number|boolean|{assetId: string}|Delir.Values.Point2D|Delir.Values.Point3D
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
 }
 
@@ -123,6 +123,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         break
         //     }
 
+            case 'FLOAT':
             case 'NUMBER': {
                 const input = this.refs.input
                 this.props.onChange(descriptor, input.value)
@@ -184,8 +185,9 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //     case 'STRING':
         //         component = [<textarea ref='textarea' />]
         //         break
+            case 'FLOAT':
             case 'NUMBER':
-                component = [<DragNumberInput ref='input' defaultValue={value as number} onChange={this.valueChanged} />]
+                component = [<DragNumberInput ref='input' defaultValue={value as number} onChange={this.valueChanged} allowFloat={descriptor.type === 'FLOAT'} />]
                 break
 
             case 'FLOAT':
@@ -197,7 +199,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
 
             case 'ASSET':
                 component = [
-                    <select ref='assets' defaultValue={value ? (value as Delir.Project.Asset).id! : undefined} onChange={this.valueChanged}>
+                    <select ref='assets' defaultValue={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
                         <option></option>
                         {!assets ? [] : Array.from(assets).map(asset => (
                             <option value={asset.id as string}>{asset.name}</option>
