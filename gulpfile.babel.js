@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const builder = require('electron-builder')
 const nib = require('nib')
+const notifier = require('node-notifier')
 
 const fs = require("fs-promise");
 const {join} = require("path");
@@ -188,6 +189,8 @@ export function compileRendererJs(done) {
             console.error(e.message)
             e.module && console.error(e.module.userRequest)
         });
+
+        notifier.notify({title: 'Delir build', message: 'Renderer compiled', sound: true})
         console.log('Compiled')
         done()
     })
@@ -266,6 +269,8 @@ export async function compilePlugins(done) {
             console.error('Plugin compilation: ', e.message)
             e.module && console.error(e.module.userRequest)
         });
+
+        notifier.notify({title: 'Delir build', message: 'Plugin compiled', sound: true})
         console.log('Plugin compiled')
         done()
     })
