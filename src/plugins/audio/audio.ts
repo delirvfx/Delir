@@ -57,6 +57,7 @@ export default class AudioLayer extends LayerPluginBase
         const buffer = await new Promise((resolve, reject) => {
             const fileBuffer = fs.readFileSync(params.source.path)
             const asset = AV.Asset.fromBuffer(fileBuffer)
+
             asset.on('error', (e: string) => reject(new Error(e)))
             asset.decodeToBuffer(decoded => {
                 const numOfChannels: number = asset.format.channelsPerFrame
@@ -92,10 +93,10 @@ export default class AudioLayer extends LayerPluginBase
     {
         if (!req.isBufferingFrame) return
 
-        console.info('put buffer');
         const destBuffers = req.destAudioBuffer
         const begin = (req.seconds|0) * req.samplingRate
         const end = begin + req.neededSamples
+
         for (let ch = 0, l = req.audioChannels; ch < l; ch++) {
             const buffer = this.audio.buffer[ch]
             destBuffers[ch].set(buffer.slice(begin, end))
