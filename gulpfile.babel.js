@@ -218,6 +218,7 @@ export async function compilePlugins(done) {
             'plane/index': './plane/index',
             ...(DELIR_ENV === 'dev' ? {
                 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
+                'plane/index': '../experimental-plugins/plane/index',
                 'noise/index': '../experimental-plugins/noise/index',
             }: {})
         },
