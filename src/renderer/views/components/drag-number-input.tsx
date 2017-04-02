@@ -16,7 +16,7 @@ interface DragNumberInputProps {
 }
 
 interface DragNumberInputState {
-    value: number
+    value: number|string
     readOnly: boolean
     valueChanged: boolean
 }
@@ -43,7 +43,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
     }
 
     refs: {
-        input: HTMLSpanElement
+        input: HTMLInputElement
     }
 
     state = {
@@ -52,7 +52,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         valueChanged: false,
     }
 
-    get value(): number { return this.state.value as number }
+    get value(): number { return +this.state.value }
 
     componentDidMount()
     {
@@ -72,37 +72,36 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
     {
         this.setState({readOnly: false})
         this.refs.input.focus()
-        // this.refs.input.select()
     }
 
-    // onKeyDown = (e: KeyboardEvent) => {
-    //     if (e.key === 'Enter') {
-    //         if (this.state.readOnly) {
-    //             this.enableAndFocus()
-    //         } else {
-    //             this.props.onChange && this.props.onChange(this.refs.input.value)
-    //             this.setState({value: this.refs.input.value})
-    //         }
-    //     } else if (e.key === 'Escape') {
-    //         this.refs.input.value = this.props.defaultValue
-    //         this.props.onChange && this.props.onChange(this.refs.input.value)
-    //         this.setState({readOnly: true, value: this.props.defaultValue})
-    //     }
-    // }
+    onKeyDown = (e: KeyboardEvent) => {
+        const {onChange} = this.props
 
-    // onBlur = (e: FocusEvent) =>
-    // {
-    //     if (this.state.readOnly) return
+        if (e.key === 'Enter') {
+            if (this.state.readOnly) {
+                this.enableAndFocus()
+            } else {
+                const value = this._parseValue(this.refs.input.value)
+                this.setState({value}, () => onChange && onChange(value))
+            }
+        } else if (e.key === 'Escape') {
+            this.refs.input.value = (this.props.defaultValue as string || '0')
+            this.setState({readOnly: true, value: this.props.defaultValue}, () => onChange && onChange(this.refs.input.value))
+        }
+    }
 
-    //     this.props.onChange && this.props.onChange(this.refs.input.value)
-    //     this.setState({readOnly: true})
-    // }
+    onBlur = (e: FocusEvent) =>
+    {
+        if (this.state.readOnly) return
+
+        const value = this._parseValue(this.refs.input.value)
+        this.props.onChange && this.props.onChange(value)
+        this.setState({readOnly: true, value})
+    }
 
     onMouseDown = (e: React.MouseEvent<HTMLSpanElement>) =>
     {
-        e.target.requestPointerLock()
-        // e.dataTransfer.effectAllowed = 'none'
-        // e.dataTransfer.setDragImage(this.state.dummyImage, 0, 0)
+        e.currentTarget.requestPointerLock()
     }
 
     onMouseMove = (event: React.MouseEvent<HTMLSpanElement>) =>
@@ -111,7 +110,6 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         if (e.which !== 1) return // not mouse left pressed
 
         let weight = 0.3
-        let value
 
         if (e.ctrlKey) {
             weight = 0.05
@@ -119,15 +117,8 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
             weight = 2
         }
 
-        value = this.state.value + e.movementX * weight
-
-        if (! this.props.allowFloat) {
-            value = value|0
-        } else {
-            value = ((value * 100) | 0) / 100
-        }
-
-        this.setState({value})
+        let value = this._parseValue(this.refs.input.value) + e.movementX * weight
+        this.setState({value: this._parseValue(value)})
     }
 
     onMouseUp = (e: React.MouseEvent<HTMLSpanElement>) =>
@@ -135,26 +126,44 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         document.exitPointerLock()
 
         const {onChange} = this.props
-        onChange && onChange(this.state.value)
-        this.setState({valueChanged: this.state.value !== this.props.defaultValue})
+        this.setState({valueChanged: this.state.value !== this.props.defaultValue}, () => onChange && onChange(this.state.value as number))
     }
 
     // TODO: parse and calculate expression
-    valueChanged = (e: Event) => {}
+    valueChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
+    {
+        this.setState({value: e.target.value})
+    }
+
+    private _parseValue(rawValue: number|string): number
+    {
+        const parsedValue = parseFloat(rawValue as string)
+        let value = _.isNaN(parsedValue) ? 0 : parsedValue
+
+        if (! this.props.allowFloat) {
+            value = value | 0
+        } else {
+            value = ((value * 100) | 0) / 100
+        }
+
+        return value
+    }
 
     render()
     {
         return (
-            <span
+            <input
                 ref='input'
-                tabIndex={-1}
+                type='text'
                 className={classnames('_drag-number-input', this.props.className)}
+                value={this.state.value}
+                onBlur={this.onBlur}
+                onChange={this.valueChanged}
+                onKeyDown={this.onKeyDown}
                 onMouseDown={this.onMouseDown}
                 onMouseMove={this.onMouseMove}
                 onMouseUp={this.onMouseUp}
-            >
-                {this.state.value}
-            </span>
+            />
         )
     }
 }
