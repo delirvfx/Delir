@@ -40,16 +40,16 @@ const handlePayload = (payload: KnownPayload) => {
             break
         }
 
-        case EditorStateDispatchTypes.TogglePreview: (() => {
-            if (!state.project || !state.composition) return
-            if (!renderer || !audioContext) return
+        case EditorStateDispatchTypes.TogglePreview: {
+            if (!state.project || !state.composition) break
+            if (!renderer || !audioContext) break
 
             const targetComposition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
-            if (! targetComposition) return
+            if (! targetComposition) break
 
             if (renderer.isPlaying) {
                 renderer.pause()
-                return
+                break
             }
 
             audioBuffer = audioContext.createBuffer(
@@ -94,8 +94,8 @@ const handlePayload = (payload: KnownPayload) => {
             })
 
             promise.catch((e: Error) => console.error(e.stack))
-            })()
             break
+        }
 
         case EditorStateDispatchTypes.SeekPreviewFrame: {
             const {frame} = payload.entity
