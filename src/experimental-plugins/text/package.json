@@ -1,5 +1,5 @@
 {
-    "name": "text-layer",
+    "name": "dlir-plugin-layer",
     "version": "0.0.1",
     "author": "Ragg <ragg.devpr@gmail.com>",
     "main": "index.js",
