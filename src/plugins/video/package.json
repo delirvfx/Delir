@@ -1,6 +1,6 @@
 {
     "name": "delir-plugin-video",
-    "version": "0.0.1",
+    "version": "0.0.0-alpha.1",
     "author": "Ragg <ragg.devpr@gmail.com>",
     "main": "index.js",
     "engines": {
