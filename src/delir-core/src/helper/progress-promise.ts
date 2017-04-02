@@ -38,6 +38,7 @@ export default class ProgressPromise<T>
 
     private _promise: DeferredPromise<any> = _defer<T>()
 
+    private _isCompleted: boolean = false
     private _abortCallbacks: Function[]|null = []
     private _progressListeners: Function[] = []
 
@@ -48,13 +49,14 @@ export default class ProgressPromise<T>
         }
 
         const notifier = (progress: () => void) => {
+            if (this._isCompleted) return
             this._progressListeners.forEach(listener => listener(progress))
         }
 
+        this._promise.promise.then(() => this._isCompleted = true)
+
         try {
             const returnValue = executor(this._promise.resolve, this._promise.reject, onAbort, notifier)
-            if (returnValue && typeof returnValue.then === 'function') { returnValue.then(this._promise.resolve)}
-            if (returnValue && typeof returnValue.catch === 'function') { returnValue.catch(this._promise.reject)}
         } catch (e) {
             this._promise.reject(e)
         }
