@@ -531,9 +531,6 @@ export default class Renderer {
                 notifier(progress)
 
                 if (progress.isRendering) {
-                    // let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer
-                    // console.log(imageData);
-                    // let buffer = new Buffer(imageData)
                     deream.write(canvasToBuffer(canvas, 'image/png'))
                 }
 
