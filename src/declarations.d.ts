@@ -94,12 +94,10 @@ declare module 'form-serialize' {
 }
 
 // Delir exposed variables
-declare interface Window {
-    app: {
-        stores: {[storeName: string]: any}
-    }
+declare interface DelirApp {
+    stores: {[storeName: string]: any}
 }
 
-declare var app: {
-    stores: {[storeName: string]: any}
+declare interface Window {
+    app: DelirApp
 }

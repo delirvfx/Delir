@@ -4,7 +4,7 @@ import {join} from 'path'
 import EditorStateActions from '../../actions/editor-state-actions'
 
 const fps = 60
-const durationFrames = fps * 20
+const durationFrames = fps * 10
 const p = (window as any).app.project = new Delir.Project.Project()
 
 const movieAsset = new Delir.Project.Asset
@@ -44,7 +44,7 @@ c1_t4.name = 'video'
 
 const c1_t1_l1 = new Delir.Project.Clip
 // c1_t1_l1.renderer = 'audio-layer'
-c1_t1_l1.renderer = 'html5-video-layer'
+c1_t1_l1.renderer = 'delir-plugin-video'
 // c1_t1_l1.renderer = 'plane'
 c1_t1_l1.placedFrame = 0
 c1_t1_l1.durationFrames = durationFrames
@@ -62,7 +62,7 @@ c1_t1_l1.keyframes = {
 }
 
 const c1_t2_cl1 = Object.assign(new Delir.Project.Clip, {
-    // renderer: 'html5-video-layer'
+    // renderer: 'delir-plugin-video'
     renderer: 'audio-layer',
     placedFrame: 0,
     durationFrames: durationFrames,
@@ -74,7 +74,7 @@ const c1_t3_cl1 = Object.assign(new Delir.Project.Clip, {
     durationFrames: 30 * 10,
 })
 const c1_t4_cl1 = Object.assign(new Delir.Project.Clip, {
-    renderer: 'html5-video-layer',
+    renderer: 'delir-plugin-video',
     placedFrame: 0,
     durationFrames: 30 * 10,
 })
