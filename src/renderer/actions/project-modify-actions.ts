@@ -174,7 +174,7 @@ export default {
 
         ProjectHelper.addKeyframe(project!, newClip, propName, Object.assign(new Delir.Project.Keyframe(), {
             frameOnClip: 0,
-            value: asset,
+            value: {assetId: asset.id},
         }))
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },

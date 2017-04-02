@@ -80,6 +80,10 @@ export default class ClipInstanceContainer
         const params: {[propName: string]: any} = {}
         paramTypes.properties.forEach(desc => {
             params[desc.propName] = KeyframeHelper.calcKeyframeValueAt(0, desc, this.clip.keyframes[desc.propName] || [])
+
+            if (desc.type === 'ASSET') {
+                params[desc.propName] = req.resolver.resolveAsset(params[desc.propName].assetId)
+            }
         })
 
         const preRenderReq = PluginPreRenderingRequest.fromPreRenderingRequest(req).set({
