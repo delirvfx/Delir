@@ -42,7 +42,7 @@ export default class ProgressPromise<T>
     private _abortCallbacks: Function[]|null = []
     private _progressListeners: Function[] = []
 
-    constructor(executor: PromiseProcessor<T>)
+    constructor(resolver: PromiseProcessor<T>)
     {
         const onAbort = (callback: () => void) => {
             this._abortCallbacks!.push(callback)
@@ -56,7 +56,7 @@ export default class ProgressPromise<T>
         this._promise.promise.then(() => this._isCompleted = true)
 
         try {
-            const returnValue = executor(this._promise.resolve, this._promise.reject, onAbort, notifier)
+            const returnValue = resolver(this._promise.resolve, this._promise.reject, onAbort, notifier)
         } catch (e) {
             this._promise.reject(e)
         }
