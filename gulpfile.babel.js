@@ -209,12 +209,14 @@ export async function compilePlugins(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.plugins,
         entry: {
-            'audio-layer/audio-layer': './audio-layer/audio-layer',
-            'composition-layer/composition-layer': './composition-layer/composition-layer',
-            'html5-video-layer/index': './html5-video-layer/index',
+            'audio/audio': './audio/audio',
+            'video/index': './video/index',
             'image/index': './image/index',
-            'noise/index': './noise/index',
             'plane/index': './plane/index',
+            ...(DELIR_ENV === 'dev' ? {
+                'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
+                'noise/index': '../experimental-plugins/noise/index',
+            }: {})
         },
         output: {
             filename: "[name].js",
@@ -270,9 +272,13 @@ export async function compilePlugins(done) {
 }
 
 export function copyPluginsPackageJson() {
-    console.log(join(paths.compiled.root, 'plugins'));
     return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: join(paths.src.root,　'src/')})
-        .pipe(g.dest(join(paths.compiled.root, 'plugins')));
+        .pipe(g.dest(paths.compiled.plugins));
+}
+
+export function copyExperimentalPluginsPackageJson() {
+    return g.src(join(paths.src.root, 'experimental-plugins/**/package.json'))
+        .pipe(g.dest(paths.compiled.plugins));
 }
 
 export function compilePugTempates() {
@@ -425,13 +431,13 @@ export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
     g.watch(paths.src.renderer, buildRendererWithoutJs)
     g.watch(join(paths.src.renderer, 'styles/**/*.styl'), compileStyles)
-    g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, compilePlugins))
+    g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson, compilePlugins))
     // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
+const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
