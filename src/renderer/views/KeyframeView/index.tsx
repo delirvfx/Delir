@@ -120,8 +120,15 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                                     data-prop-name={desc.propName}
                                     onClick={this.selectProperty}
                                 >
-                                    <span className={classnames(s.propKeyframeIndicator, {[s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe})}>
-                                        <i className='twa twa-clock12'></i>
+                                    <span className={classnames(
+                                            s.propKeyframeIndicator,
+                                            {
+                                                [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                                [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                            })
+                                        }
+                                    >
+                                        {desc.animatable && (<i className='twa twa-clock12'></i>)}
                                     </span>
                                     <span className={s.propItemName}>{desc.label}</span>
                                     <div className={s.propItemInput}>

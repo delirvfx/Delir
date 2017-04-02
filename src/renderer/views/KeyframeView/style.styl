@@ -33,6 +33,12 @@
     &.propKeyframeIndicator--hasKeyframe
         opacity 1
 
+    &.propKeyframeIndicator--nonAnimatable::before
+        content ''
+        display inline-block
+        width calc(1em + 2px)
+        height 1em
+
 .keyframeContainer
     display flex
     flex 1
