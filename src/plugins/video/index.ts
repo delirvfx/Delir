@@ -40,18 +40,6 @@ export default class VideoLayer extends LayerPluginBase
 
     video: HTMLVideoElement
 
-    constructor()
-    {
-        super()
-    }
-
-    // onParameterChanged(newParam: Object, oldParam: Object)
-    // {
-    //     if (newParam.sourceFile !== oldParam.sourceFile) {
-    //         this.video.src = newParam.sourceFile.path
-    //     }
-    // }
-
     async beforeRender(preRenderRequest: PluginPreRenderRequest)
     {
         const parameters = preRenderRequest.parameters as any
@@ -89,14 +77,4 @@ export default class VideoLayer extends LayerPluginBase
         if (ctx == null) { return }
         ctx.drawImage(this.video, param.x, param.y)
     }
-
-    //
-    // Editor handling methods
-    //
-
-    // MEMO: キャッシュが必要な（例えば音声ファイルなど）パラメータの変更を検知するためのAPI
-    // onDidParameterChanged(newParam, oldParam)
-    // {
-    //
-    // }
 }
