@@ -12,7 +12,7 @@ import * as s from './delir-value-input.styl'
 interface DelirValueInputProps {
     assets: Set<Delir.Project.Asset>|null
     descriptor: Delir.AnyParameterTypeDescriptor,
-    value: string|number|boolean|Delir.Project.Asset|Delir.Values.Point2D|Delir.Values.Point3D
+    value: string|number|boolean|{assetId: string}|Delir.Values.Point2D|Delir.Values.Point3D
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
 }
 
@@ -199,7 +199,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
 
             case 'ASSET':
                 component = [
-                    <select ref='assets' defaultValue={value ? (value as Delir.Project.Asset).id! : undefined} onChange={this.valueChanged}>
+                    <select ref='assets' defaultValue={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
                         <option></option>
                         {!assets ? [] : Array.from(assets).map(asset => (
                             <option value={asset.id as string}>{asset.name}</option>
