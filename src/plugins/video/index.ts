@@ -4,8 +4,19 @@ import {
     LayerPluginBase,
     PluginPreRenderRequest,
     RenderRequest,
+    Project,
     Exceptions
 } from 'delir-core'
+
+interface VideoLayerParam {
+    source: Project.Asset
+    loop: boolean
+    offsetTime: number
+    x: number
+    y: number
+    scale: number
+    rotate: number
+}
 
 export default class VideoLayer extends LayerPluginBase
 {
@@ -24,6 +35,11 @@ export default class VideoLayer extends LayerPluginBase
                 label: 'Movie file',
                 mimeTypes: ['movie/mp4'],
             })
+            .number('offsetTime', {
+                label: 'Start time',
+                animatable: false,
+                defaultValue: 0,
+            })
             .bool('loop', {
                 label: 'Loop',
                 animatable: false,
@@ -35,6 +51,16 @@ export default class VideoLayer extends LayerPluginBase
             .number('y', {
                 label: 'Position Y',
                 animatable: true,
+            })
+            .float('scale', {
+                label: 'Scale',
+                animatable: true,
+                defaultValue: 1,
+            })
+            .float('rotate', {
+                label: 'Rotation',
+                animatable: true,
+                defaultValue: 0,
             })
     }
 
@@ -51,30 +77,44 @@ export default class VideoLayer extends LayerPluginBase
         this.video.currentTime = -1
 
         await new Promise((resolve, reject) => {
-            this.video.addEventListener('loadeddata', () => resolve(), {once: true} as any)
-            this.video.addEventListener('error', () => reject(new Error('video not found')), {once: true}  as any)
+            const onLoaded = () => {
+                resolve()
+                this.video.removeEventListener('error', onError, false)
+            }
+
+            const onError = () => {
+                reject(new Error('video not found'))
+                this.video.removeEventListener('loadeddata', onLoaded, false)
+            }
+
+            this.video.addEventListener('loadeddata', onLoaded, {once: true, capture: false} as any)
+            this.video.addEventListener('error', onError, {once: true, capture: false}  as any)
         })
     }
 
-    async render(req: RenderRequest)
+    async render(req: RenderRequest<VideoLayerParam>)
     {
-        const param = req.parameters as any
-        const ctx = req.destCanvas.getContext('2d')
+        const param = req.parameters
+        const ctx = req.destCanvas.getContext('2d')!
+        const video = this.video
 
         await new Promise((resolve, reject) => {
             const waiter = (e: Event) => resolve()
-            this.video.addEventListener('seeked', waiter, {once: true} as any)
-
-            if (param.loop) {
-                this.video.currentTime = req.timeOnClip % this.video.duration
-            } else {
-                this.video.currentTime = req.timeOnClip
-            }
-
+            video.addEventListener('seeked', waiter, {once: true} as any)
             setTimeout(waiter, 1000)
+
+            const time = param.offsetTime +  req.timeOnClip
+            video.currentTime = param.loop ? time % video.duration : time
         })
 
-        if (ctx == null) { return }
-        ctx.drawImage(this.video, param.x, param.y)
+        const rad = param.rotate * Math.PI / 180
+
+        ctx.translate(param.x, param.y)
+        ctx.scale(param.scale, param.scale)
+        ctx.translate(video.videoWidth / 2, video.videoHeight / 2)
+        ctx.rotate(rad)
+        ctx.translate(-video.videoWidth / 2, -video.videoHeight / 2)
+
+        ctx.drawImage(this.video, 0, 0)
     }
 }
