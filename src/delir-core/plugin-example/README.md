@@ -19,7 +19,7 @@ yarn dev
 
 ## package.json fields
 ### engines.delir
-Specify supported delir version
+Specify supported Delir version
 
 ```json5
 {
