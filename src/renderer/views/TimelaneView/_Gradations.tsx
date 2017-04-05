@@ -101,7 +101,13 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
     render()
     {
         return (
-            <div className={s.Gradations} onMouseDown={this.seeking} onMouseMove={this.seeking} onMouseUp={this.seeking}>
+            <div
+                className={s.Gradations}
+                onMouseDown={this.seeking}
+                onMouseMove={this.seeking}
+                onMouseUp={this.seeking}
+                onClick={this.seeking}
+            >
                 <div className={s.measureLayer}>
                     {this.renderMeasure()}
                 </div>
