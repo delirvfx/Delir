@@ -10,7 +10,6 @@ import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import LabelInput from '../components/label-input'
 import {ContextMenu, MenuItem} from '../components/context-menu'
-import LaneLabelProps from './lane-label-props'
 
 interface LaneLabelProps {
     editor: EditorState
@@ -72,8 +71,6 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
                 <li className='timeline_lane-label_col --col-lock'>
                     <i className="twa twa-lock"></i>
                 </li>
-
-                {/*{hasActiveLayer && <LaneLabelProps onChanged={() => {}} descriptor={propTypes} />}*/}
             </ul>
         )
     }

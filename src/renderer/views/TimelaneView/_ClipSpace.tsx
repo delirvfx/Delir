@@ -14,7 +14,6 @@ import {default as EditorStateStore, EditorState} from '../../stores/editor-stat
 import cancelEvent from '../../utils/cancelEvent'
 
 import Clip from './_Clip'
-import LaneKeyframes from '../timeline/lane-keyframes'
 
 interface TimelaneClipSpaceProps {
     editor: EditorState,
@@ -197,7 +196,6 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                         )
                     })}
                 </div>
-                <LaneKeyframes keyframes={keyframes && keyframes[tmpKey] ? keyframes[tmpKey] : []} pxPerSec={pxPerSec} />
             </li>
         )
     }
