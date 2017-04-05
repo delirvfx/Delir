@@ -140,25 +140,25 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         switch (descriptor.type) {
         //     case 'POINT_2D':
         //         component = [
-        //             <DragNumberInput ref='propX' defaultValue={value.x} onChange={this.valueChanged} />,
+        //             <DragNumberInput ref='propX' value={value.x} onChange={this.valueChanged} />,
         //             <span className='separator'>,</span>,
-        //             <DragNumberInput ref='propY' defaultValue={value.y} onChange={this.valueChanged} />
+        //             <DragNumberInput ref='propY' value={value.y} onChange={this.valueChanged} />
         //         ]
         //         break
         //     case 'POINT_3D':
         //         component = [
-        //             <DragNumberInput ref='propX' defaultValue={value.x} onChange={this.valueChanged} />,
+        //             <DragNumberInput ref='propX' value={value.x} onChange={this.valueChanged} />,
         //             <span className='separator'>,</span>,
-        //             <DragNumberInput ref='propY' defaultValue={value.y} onChange={this.valueChanged} />,
+        //             <DragNumberInput ref='propY' value={value.y} onChange={this.valueChanged} />,
         //             <span className='separator'>,</span>,
-        //             <DragNumberInput ref='propZ' defaultValue={value.z} onChange={this.valueChanged} />
+        //             <DragNumberInput ref='propZ' value={value.z} onChange={this.valueChanged} />
         //         ]
         //         break
         //     case 'SIZE_2D':
         //         component = [
-        //             <DragNumberInput ref='propWidth' defaultValue={value.width} onChange={this.valueChanged} />,
+        //             <DragNumberInput ref='propWidth' value={value.width} onChange={this.valueChanged} />,
         //             <span className='separator'>x</span>,
-        //             <DragNumberInput ref='propHeight' defaultValue={value.height} onChange={this.valueChanged} />
+        //             <DragNumberInput ref='propHeight' value={value.height} onChange={this.valueChanged} />
         //         ]
         //         break
         //     case 'SIZE_3D':
@@ -172,10 +172,10 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         break
 
         //     case 'COLOR_RGB':
-        //         component = [<input ref='color' type='color' defaultValue='' />]
+        //         component = [<input ref='color' type='color' value='' />]
         //         break
         //     case 'COLOR_RGBA':
-        //         component = [<input ref='color' type='color' defaultValue='' />]
+        //         component = [<input ref='color' type='color' value='' />]
         //         break
 
             case 'BOOL':
@@ -187,7 +187,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         break
             case 'FLOAT':
             case 'NUMBER':
-                component = [<DragNumberInput ref='input' defaultValue={value as number} onChange={this.valueChanged} allowFloat={descriptor.type === 'FLOAT'} />]
+                component = [<DragNumberInput ref='input' value={value as number} onChange={this.valueChanged} allowFloat={descriptor.type === 'FLOAT'} />]
                 break
 
             case 'FLOAT':
