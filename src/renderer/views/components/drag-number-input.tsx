@@ -87,6 +87,12 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         } else if (e.key === 'Escape') {
             this.refs.input.value = (this.props.defaultValue as string || '0')
             this.setState({readOnly: true, value: this.props.defaultValue}, () => onChange && onChange(this.refs.input.value))
+        } else if (e.key === 'ArrowUp') {
+            const value = this._parseValue(this.refs.input.value) + 1
+            this.setState({value})
+        } else if (e.key === 'ArrowDown') {
+            const value = this._parseValue(this.refs.input.value) - 1
+            this.setState({value})
         }
     }
 
