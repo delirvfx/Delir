@@ -101,7 +101,7 @@ export default (prop, state): MenuItem[] => {
                 },
             ],
         },
-    ].concat(__DEV__ ? [
+    ].concat(/* __DEV__ */ true ? [
         {
             label: 'Develop',
             submenu: [
