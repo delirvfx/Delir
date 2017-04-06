@@ -209,16 +209,16 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     <TableBodySelectList onSelectionChanged={() => {}}>
                         <ContextMenu>
                             <MenuItem type='separator' />
-                            <MenuItem label='New Compositon' onClick={this.openNewCompositionWindow} />
+                            <MenuItem label='新規コンポジションを作成' onClick={this.openNewCompositionWindow} />
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
                             <Row key={comp.id} onDoubleClick={this.changeComposition.bind(null, comp.id)}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label='Rename' onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
-                                    <MenuItem label='Remove' onClick={this.removeComposition.bind(null, comp.id)} />
-                                    <MenuItem label='Composition setting' onClick={this.openCompositionSetting.bind(null, comp.id)} />
+                                    <MenuItem label='名前を変更' onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
+                                    <MenuItem label='削除' onClick={this.removeComposition.bind(null, comp.id)} />
+                                    <MenuItem label='コンポジション設定' onClick={this.openCompositionSetting.bind(null, comp.id)} />
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
@@ -254,13 +254,12 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                             <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label='Rename' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
+                                    <MenuItem label='名前を変更' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
                                     {/*<MenuItem label='Reload' onClick={() => {}} />*/}
-                                    <MenuItem label='Remove' onClick={this.removeAsset.bind(null, asset.id!)}/>
+                                    <MenuItem label='削除' onClick={this.removeAsset.bind(null, asset.id!)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                {/*<Col></Col>*/}
                                 <Col>
                                     <LabelInput
                                         ref={`asset_name_input#${asset.id}`}

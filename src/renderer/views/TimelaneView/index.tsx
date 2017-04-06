@@ -185,7 +185,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label='Add new layer' onClick={this.addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label='レイヤーを追加' onClick={this.addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && (
@@ -210,7 +210,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label='Add new layer' onClick={this.addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label='レイヤーを追加' onClick={this.addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && timelineLanes.map(layer => (

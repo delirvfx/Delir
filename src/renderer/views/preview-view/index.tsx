@@ -6,7 +6,6 @@ import connectToStores from '../../utils/connectToStores'
 
 import Pane from '../components/pane'
 import DropDown from '../components/dropdown'
-import {ContextMenu, MenuItem} from '../components/context-menu'
 
 import EditorStateStore from '../../stores/editor-state-store'
 import ProjectModifyStore from '../../stores/project-modify-store'

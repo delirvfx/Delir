@@ -153,8 +153,8 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} />
-                    <MenuItem label='remove ' onClick={this.removeClip.bind(null, clip.id)} />
+                    {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
+                    <MenuItem label='クリップを削除 ' onClick={this.removeClip.bind(null, clip.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
                 <span className={s.clipNameLabel}>{clip.renderer}</span>

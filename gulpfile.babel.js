@@ -283,8 +283,10 @@ export function copyPluginsPackageJson() {
 }
 
 export function copyExperimentalPluginsPackageJson() {
-    return g.src(join(paths.src.root, 'experimental-plugins/**/package.json'))
-        .pipe(g.dest(paths.compiled.plugins));
+    return DELIR_ENV === 'dev' ?
+        g.src(join(paths.src.root, 'experimental-plugins/**/package.json'))
+            .pipe(g.dest(paths.compiled.plugins))
+        : Promise.resolve()
 }
 
 export function compilePugTempates() {
