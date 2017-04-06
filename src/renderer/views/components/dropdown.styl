@@ -1,0 +1,17 @@
+.dropdownInspector
+    width 0
+    height 0
+
+.dropdown
+    position fixed
+    opacity 0
+    pointer-events none
+    box-shadow 0 0 4px rgba(#112, .5)
+
+    transition-property opacity
+    transition-duration 50ms
+    transition-timing-function ease-in-out
+
+    &.--shown
+        opacity 1
+        pointer-events all

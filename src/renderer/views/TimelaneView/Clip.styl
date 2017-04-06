@@ -1,0 +1,35 @@
+@require '../../styles/_variables'
+
+.clip
+    position absolute
+    display inline-flex
+    align-items flex-start
+    width 300px
+    height 21px
+    padding 4px
+    background-color #4d1eb0
+    bottom 1px solid #3d157d
+    box-shadow 0 0 3px rgba(0, 0, 0, .8)
+
+    transition-property filter
+    transition-duration $animate-bgcolor-duration
+    transition-timing-function $animate-function
+
+    &.clip--active
+        filter brightness(140%)
+
+.clipNameLabel
+    color #fff
+
+.clipIdLabel
+    margin-left 3px
+    color rgba(#000, .5)
+
+.resizeHandle
+    position absolute
+    top 0
+    right 0
+
+    width 8px
+    height 21px
+    cursor ew-resize

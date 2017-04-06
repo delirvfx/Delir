@@ -1,0 +1,9 @@
+{
+  "name": "delir-core",
+  "version": "0.0.0",
+  "description": "JavaScript VFX Engine",
+  "main": "lib/index.js",
+  "types": "src/index.ts",
+  "author": "ragg",
+  "license": "MIT"
+}

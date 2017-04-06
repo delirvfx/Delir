@@ -1,0 +1,66 @@
+.keyframeView
+    display flex
+    flex-flow row
+
+.propList
+    display block
+    width 220px
+    height 100%
+    flex none
+
+.propItem
+    display flex
+    justify-content space-between
+    height 24px
+    padding 0 4px
+    line-height 24px
+
+.propItemName
+    flex 1
+
+.propItemInput
+    width 5em
+
+    :global(._drag-number-input), select
+        display block
+        width 100%
+
+.propKeyframeIndicator
+    flex 0
+    display inline-block
+    width 16px
+    height 16px
+    margin-right 8px
+
+    font-size 14px
+    line-height 2
+
+    opacity .3
+
+    &.propKeyframeIndicator--hasKeyframe
+        opacity 1
+
+    &.propKeyframeIndicator--nonAnimatable::before
+        content ''
+        display inline-block
+        width calc(1em + 2px)
+        height 1em
+
+.keyframeContainer
+    display flex
+    flex 1
+    height 100%
+
+.keyframeGraph
+    height 100%
+
+    // .keyframe
+    //     width 8px
+    //     height 8px
+
+    .keyframeInner
+        transform-origin 4px 4px
+        transform rotateZ(45deg)
+
+    .keyframeLineToHandle
+        stroke rgba(#fff, .2)

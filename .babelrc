@@ -1,18 +1,18 @@
 {
     "presets": [
-        "stage-1",
-        "stage-2",
-        "stage-3",
-        "es2017",
-        "es2016"
+        ["env", {
+            "modules": false,
+            "targets": {
+                "node": true
+            }
+        }],
+        "react",
+        "flow"
     ],
     "plugins": [
-        "transform-flow-strip-types",
+        "transform-decorators-legacy",
         "transform-es2015-modules-commonjs",
         "transform-class-properties",
-        "transform-es2015-classes",
-        "transform-es2015-destructuring",
-        "transform-react-jsx",
-        "add-module-exports"
+        "transform-object-rest-spread"
     ]
 }

@@ -5,21 +5,13 @@ html
         title Delir
 
         link(rel="stylesheet", href="styles/style.css")
-        script(src="scripts/main.js" defer)
-    body
+        script(src="main.js" defer)
+    body.theme--default
         #loading Loading...
-        #root.theme--default
+        #root
             ._container
                 .view-navigation
                     ul.window-nav
                         li.window-nav-item.window-nav--close
                         //- li.window-nav-item.window-nav--minimize
                         //- li.window-nav-item.window-nav--maximize
-
-        script.
-            (() => {
-                const {remote} = require('electron')
-                document.querySelector('.window-nav-close').addEventListener('click', () => {
-                    remote.getCurrentWindow().close()
-                })
-            })()

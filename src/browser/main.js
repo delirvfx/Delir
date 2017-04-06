@@ -24,7 +24,7 @@ const parseCommandLine = () => {
     const args = parser.parse(process.argv.slice(1))
 
     if (args.help) {
-        args.showHelp('error')
+        parser.showHelp('error')
         process.exit(0);
     }
     if (args.version) {
@@ -61,6 +61,8 @@ const install = async () => {
     const args = parseCommandLine()
     await install()
 
+    args.devMode && console.log('Run as develop mode')
+
     app.on('window-all-closed', function() {
         if (process.platform !== 'darwin') {
             app.quit()
@@ -68,10 +70,6 @@ const install = async () => {
     })
 
     const run = () => {
-        Menu.setApplicationMenu(
-            Menu.buildFromTemplate(require('./menus/darwin').default)
-        )
-
         const window = new BrowserWindow({
             // frame: false,
             titleBarStyle: 'hidden',
@@ -80,11 +78,12 @@ const install = async () => {
                 webgl: true,
                 experimentalFeatures: true,
                 experimentalCanvasFeatures: true,
-            }
+            },
         })
 
         window.loadURL(`file://${path.join(__dirname, '/../renderer/index.html')}`)
         window.show()
+        args.devMode && window.webContents.openDevTools()
     }
 
     app.isReady() ? run() : app.on('ready', run)

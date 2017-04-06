@@ -1,0 +1,6 @@
+export {default as Point2D} from './point-2d'
+export {default as Point3D} from './point-3d'
+export {default as Size2D} from './size-2d'
+export {default as Size3D} from './size-3d'
+export {default as ColorRGB} from './color-rgb'
+export {default as ColorRGBA} from './color-rgba'

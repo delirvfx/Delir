@@ -4,10 +4,18 @@ language: node_js
 node_js:
     - "6.1.0"
 env:
-  - CXX=g++-4.8
+    - CXX=g++-4.8
+
+install:
+    - npm i -g yarn
+    - yarn install
+
 addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-4.8
+    apt:
+        sources:
+            - ubuntu-toolchain-r-test
+        packages:
+            - g++-4.8
+            - libfontconfig1-dev
+            # dependent by `av`
+            - libasound2-dev

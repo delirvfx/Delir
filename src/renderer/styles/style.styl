@@ -1,15 +1,15 @@
 @import 'nib'
 @import '_mixins'
 @import '_variables'
+@import '_twemoji'
 @import './font-awesome.min.css'
+
 global-reset()
 
 *
     box-sizing border-box
 
-
-
-#root.theme--default {
+body.theme--default {
     --background #2f2f36
     // --pane-background linear-gradient(to bottom, #24242b, 30% #0c070f, 50% #111)
     --pane-background transparent
@@ -33,6 +33,9 @@ html, body
     font-family 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, 'YuGothic', '游ゴシック Medium', 'Hiragino Kaku Gothic ProN', meiryo, sans-serif
     font-size 14px
 
+    background var(--background)
+    color var(--text-color)
+
 #loading
     position fixed
     top 0
@@ -54,9 +57,6 @@ html, body
     overflow hidden
 
     flex-direction column
-
-    background var(--background)
-    color var(--text-color)
 
     font-family 'Avenir Next', 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', sans-serif
     font-size 14px
@@ -147,18 +147,6 @@ html, body
         user-select none
         cursor default
 
-[type='checkbox']
-    width 1em
-    height 1em
-
-    border none
-    background-color #fff
-
-    -webkit-appearance none
-
-    &:checked
-        background-color #007dff
-
 ._drag-number-input
     text-align right
 
@@ -171,8 +159,13 @@ html, body
         cursor default
 
 ._select-list
-    .select-list-item.selected
-        background-color rgba(#fff, .2)
+    .select-list-item
+        transition-property background-color
+        transition-duration $animate-bgcolor-duration
+        transition-timing-function $animate-function
+
+        &.selected
+            background-color rgba(#fff, .2)
 
 ._table
     display flex
@@ -217,81 +210,6 @@ html, body
     flex 1
     overflow hidden
 
-.view-navigation
-    flex none
-    display flex
-    height 32px + 24px + 2px
-    flex-direction column
-    border-bottom 2px solid #000
-
-    .window-nav
-        display flex
-        width 100%
-        height 21px
-        padding 4px 8px
-
-        align-items center
-
-        border-bottom 1px solid #333
-        -webkit-app-region drag
-        user-select none
-
-    .window-nav-item
-        display inline-flex
-        width 12px
-        height 12px
-        margin-right 6px
-        border-radius 8px
-
-        align-items center
-        justify-content center
-
-        font-size 10px
-        text-align center
-        line-height 12px
-        vertical-align middle
-
-        color rgba(#fff, .2)
-        transition all .1s
-        background-color transparent
-        border 1px solid rgba(#fff, .5)
-
-        &:hover
-            border-color var(--active-pane-border)
-
-        &.window-nav--close:hover
-            background-color #820000
-
-        &.window-nav--minimize:hover
-            background-color #827900
-
-        &.window-nav--maximize:hover
-            background-color #008234
-
-
-    .navigation-items
-        display flex
-        align-items center
-        flex 1
-        padding 4px 16px
-        vertical-align middle
-
-        li
-            display inline-flex
-            align-items center
-            width 24px
-            height 24px
-            margin-right 8px
-            font-size 22px
-            line-height 1
-            border 1px solid transparent
-            cursor default
-            transition all .2s
-
-            &:hover
-                background-color rgba(#000, .5)
-                border-color #999
-
 .view-preview
     width 100%
     height 100%
@@ -309,7 +227,6 @@ html, body
         align-items center
         border-bottom 1px solid #333
 
-
     .view
         display flex
         flex-direction column
@@ -321,47 +238,8 @@ html, body
 
         .canvas
             display block
+            background-color #000
             box-shadow 0 0 5px rgba(0,0,0,.5)
-
-.view-assets
-    display flex
-    flex-direction column
-    align-items flex-start
-    width 300px
-    flex none
-
-    .asset-list, .composition-list
-        width 100%
-        flex 1
-
-        // tbody, thead, tr, td, th
-        //     display block
-
-        th
-            border-bottom 1px solid rgba(#fff, .3)
-
-        td
-            border-bottom 1px solid rgba(#fff, .2)
-
-        th, td
-            padding 4px
-            font-size 12px
-
-        ._label-input
-            width 100%
-
-        .table-body
-            overflow auto
-
-        .table-row, .table-col
-            border-right none
-            border-bottom none
-
-    .composition-list
-        margin-top 16px
-        border-top 1px solid rgba(#fff, .8)
-
-@import '_components/timeline'
 
 .view-status
     flex none
