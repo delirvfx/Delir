@@ -58,7 +58,7 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
                 <ContextMenu>
                     <MenuItem type='separator' />
                     {/*<MenuItem label='複製' onClick={() => {}} />*/}
-                    <MenuItem label='削除' onClick={onRemove.bind(null, layer.id)} />
+                    <MenuItem label='レイヤーを削除' onClick={onRemove.bind(null, layer.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
 
