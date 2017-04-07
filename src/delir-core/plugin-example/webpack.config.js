@@ -7,7 +7,9 @@ const distDir = path.join(__dirname, "dist");
 module.exports = {
     target: "electron",
     context: sourceDir,
-    entry: "./index.ts",
+    entry: {
+        index: "./index.ts",
+    },
     output: {
         filename: "[name].js",
         path: distDir,

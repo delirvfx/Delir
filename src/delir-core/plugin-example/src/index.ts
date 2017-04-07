@@ -39,20 +39,20 @@ export default class ExamplePlugin extends LayerPluginBase {
      * If you want initializing before rendering (likes load audio)
      * Do it in this method.
      */
-    async beforeRender(preRenderReq: PluginPreRenderRequest): Promise<void>
+    async beforeRender(preRenderReq: PluginPreRenderRequest)
     {
 
     }
 
     /**
      * Render frame into destination canvas.
-     * @param options
+     * @param req
      */
-    async render(options: RenderRequest): Promise<void>
+    async render(req: RenderRequest)
     {
-        const dest = options.destCanvas;
+        const dest = req.destCanvas;
         const context = dest.getContext('2d');
-        const params = options.parameters as Paramaters;
+        const params = req.parameters as Paramaters;
 
         context.fillStyle = params.color.toString()
         context.fillRect(params.x, params.y, params.width, params.height)
