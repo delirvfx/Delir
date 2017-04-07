@@ -7,8 +7,8 @@
   "author": "Ragg <ragg.devpr@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "$(yarn bin)/webpack --watch",
-    "build": "$(yarn bin)/webpack"
+    "dev": "./node_modules/.bin/webpack --watch",
+    "build": "./node_modules/.bin/webpack"
   },
   "engines": {
     "delir": "0.0.x"
