@@ -23,7 +23,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // initialize app
     BrowserProcessProxy.initialize()
     await RendererService.initialize()
-    EditorStateActions.setActiveProject(new Delir.Project.Project)
+    EditorStateActions.setActiveProject(new Delir.Project.Project())
 
     // Attach platform class to body element
     switch (os.type()) {
@@ -40,7 +40,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
 
     if (__DEV__) {
-        require('./devel/example-project/ExampleProject1').default
+        require('./devel/example-project/ExampleProject1')
         EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 <DEV MODE> Hello, welcome to Delir', 'info')
     }
 
