@@ -136,6 +136,12 @@ export function compileRendererJs(done) {
                 },
                 {
                     test: /\.tsx?$/,
+                    exclude: /node_modules/,
+                    enforce: 'pre',
+                    loader: 'tslint-loader',
+                },
+                {
+                    test: /\.tsx?$/,
                     exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
