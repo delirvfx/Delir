@@ -73,6 +73,8 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "ts-loader": "^2.0.0",
+    "tslint": "^5.0.0",
+    "tslint-loader": "^3.5.1",
     "typescript": "2.3.0-dev.20170308",
     "webpack": "2.2.0"
   },
