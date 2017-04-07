@@ -1,12 +1,20 @@
 # Delir plugin example
-Delirのサンプルプラグイン。
+Delirのサンプルプラグイン。  
 プラグイン開発のテンプレートとしてご利用ください。
 
-## 開発のはじめ方
-（開発にはVisualStudio Codeの使用をおすすめします。）
+[プラグインテンプレートをダウンロード](https://github.com/Ragg-/Delir/files/906748/plugin-example-88bd02b.zip)
 
-`Node.js`と`yarn`のインストールが必要です。
-これらをインスト―したあと、コマンドラインからダウンロードしたプラグインフォルダへ移動し
+## 開発のはじめ方
+- **事前に`Node.js`と`yarn`のインストールが必要です。**
+- 開発にはVisualStudio Codeの使用をおすすめします。
+
+プラグインテンプレートをダウンロードし、以下の場所にフォルダごと展開しましょう。
+（delir/plugins/プラグイン名/package.json が存在するようにしてください）
+
+Windows: %AppData%\delir\plugins
+macOS: $HOME/Library/Application\ Support/delir/plugins/
+
+テンプレートを展開したら、コマンドラインから展開したプラグインフォルダへ移動(cd)して  
 以下のコマンドを実行してください
 
 ```shell
