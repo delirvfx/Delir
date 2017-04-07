@@ -472,6 +472,7 @@ export default class Renderer {
         exportPath: string,
         tmpDir: string,
         targetCompositionId: string,
+        ffmpegBin: string,
     })
     {
         return new ProgressPromise(async (
@@ -512,6 +513,7 @@ export default class Renderer {
                 },
                 inputFramerate: rootComp.framerate,
                 dest: tmpMovieFilePath,
+                ffmpegBin,
             })
 
             const progPromise = Renderer.render({
@@ -567,7 +569,7 @@ export default class Renderer {
 
             notifier({state: 'Concat and encoding...'})
             await new Promise((resolve, reject) => {
-                const ffmpeg = spawn('ffmpeg', [
+                const ffmpeg = spawn(ffmpegBin, [
                     '-y',
                     // '-f',
                     // 'utvideo',

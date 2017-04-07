@@ -4,6 +4,7 @@ import {join} from 'path'
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
 
+import * as Platform from '../utils/platform'
 import dispatcher from '../dispatcher'
 import {KnownPayload} from '../actions/PayloadTypes'
 
@@ -129,6 +130,12 @@ const handlePayload = (payload: KnownPayload) => {
         }
 
         case EditorStateDispatchTypes.RenderDestinate: (() => {
+            const appPath = remote.app.getPath('exe')
+            const ffmpegBin = require('path').resolve(
+                appPath,
+                Platform.isMacOS() ? '../../Resources/ffmpeg' : './ffmpeg.exe'
+            )
+
             const file = remote.dialog.showSaveDialog(({
                 title: 'Destinate',
                 buttonLabel: 'Render',
@@ -152,6 +159,7 @@ const handlePayload = (payload: KnownPayload) => {
                     exportPath: file,
                     tmpDir: remote.app.getPath('temp'),
                     targetCompositionId: activeComp.id,
+                    ffmpegBin
                 })
                 .progress(progress => {
                     if (progress.isRendering) {
