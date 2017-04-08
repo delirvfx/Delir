@@ -12,10 +12,11 @@
             "renderer": "0.0.x"
         },
         "acceptFileTypes": {
-            "image/jpeg": "source",
-            "image/png": "source",
-            "image/gif": "source",
-            "image/svg+xml": "source"
+            "jpeg": "source",
+            "jpg": "source",
+            "png": "source",
+            "gif": "source",
+            "svg": "source"
         }
     }
 }

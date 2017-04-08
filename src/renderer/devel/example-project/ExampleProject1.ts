@@ -1,5 +1,5 @@
 import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
+import {ProjectHelper, ColorRGB} from 'delir-core'
 import {join} from 'path'
 import EditorStateActions from '../../actions/editor-state-actions'
 
@@ -9,13 +9,13 @@ const p = (window as any).app.project = new Delir.Project.Project()
 
 const movieAsset = new Delir.Project.Asset
 movieAsset.name = 'Movie'
-movieAsset.mimeType = 'video/mp4'
+movieAsset.fileType = 'mp4'
 movieAsset.path = '/Users/ragg/workspace/delir/sample.mp4'
 ProjectHelper.addAsset(p, movieAsset)
 
 const audioAsset = new Delir.Project.Asset
 audioAsset.name = 'Audio'
-audioAsset.mimeType = 'audio/mp3'
+audioAsset.fileType = 'mp3'
 audioAsset.path = '/Users/ragg/workspace/delir/deream_in.mp3'
 
 ;[movieAsset, audioAsset].forEach(a => ProjectHelper.addAsset(p, a))
@@ -29,6 +29,7 @@ c1.framerate = fps
 c1.durationFrames = durationFrames
 c1.audioChannels = 2
 c1.samplingRate = 48000
+c1.backgroundColor = new ColorRGB(0, 188, 255)
 
 const c1_t1 = new Delir.Project.Layer
 c1_t1.name = 'Audio'
@@ -44,7 +45,8 @@ c1_t4.name = 'video'
 
 const c1_t1_l1 = new Delir.Project.Clip
 // c1_t1_l1.renderer = 'audio-layer'
-c1_t1_l1.renderer = 'delir-plugin-video'
+// c1_t1_l1.renderer = 'delir-plugin-video'
+c1_t1_l1.renderer = 'delir-plugin-text'
 // c1_t1_l1.renderer = 'plane'
 c1_t1_l1.placedFrame = 0
 c1_t1_l1.durationFrames = durationFrames

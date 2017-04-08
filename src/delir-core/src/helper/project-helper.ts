@@ -514,12 +514,12 @@ export function findParentClipAndPropNameByKeyframeId(project: Project, keyframe
     return target
 }
 
-export function findAssetAttachablePropertyByMimeType(
+export function findAssetAttachablePropertyByFileType(
     clip: Clip,
-    mimeType: string,
+    fileType: string,
     registry: PluginRegistory
 ): string|null
 {
     const plugin = registry.getPlugin(clip.renderer)
-    return plugin.pluginInfo.acceptFileTypes[mimeType]
+    return plugin.pluginInfo.acceptFileTypes[fileType]
 }

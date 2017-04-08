@@ -14,20 +14,27 @@ export default class Asset
 
     id: string|null = null
 
-    _config: {
-        mimeType: string,
+    private _config: {
+        fileType: string,
         name: string,
         path: string|null,
         data: Object|null,
     } = {
-        mimeType: '',
+        fileType: '',
         name: '',
         path: null,
         data: null,
     }
 
-    get mimeType(): string { return this._config.mimeType }
-    set mimeType(mimeType: string) { this._config.mimeType = mimeType }
+    get mimeType(): string { throw new Error('Asset#mimeType is abandoned') }
+    set mimeType(mimeType: string) { throw new Error('Asset#mimeType is abandoned') }
+
+    /**
+     * Asset file extension (without `.` prefix)
+     * @property {string} fileType
+     */
+    get fileType(): string { return this._config.fileType }
+    set fileType(fileType: string) { this._config.fileType = fileType}
 
     get name(): string { return this._config.name }
     set name(name: string) { this._config.name = name }
