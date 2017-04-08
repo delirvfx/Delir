@@ -15,6 +15,7 @@
             "wav": "source",
             "webm": "source",
             "mpeg": "source",
+            "mp3": "source",
             "ogg": "source"
         }
     }
