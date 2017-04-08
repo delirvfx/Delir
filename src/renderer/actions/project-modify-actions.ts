@@ -95,11 +95,11 @@ export default {
         targetComposition: Delir.Project.Composition,
         asset: Delir.Project.Asset
     ) {
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
+        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.fileType])
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
-            EditorStateActions.notify(`plugin not available for \`${asset.mimeType}\``, '😢 Supported plugin not available', 'info', 5000)
+            EditorStateActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 5000)
             return
         }
 
@@ -148,11 +148,11 @@ export default {
 
         if (!project) return
 
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
+        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.fileType])
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
-            EditorStateActions.notify(`plugin not available for \`${asset.mimeType}\``, '😢 Supported plugin not available', 'info', 3000)
+            EditorStateActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 3000)
             return
         }
 
@@ -164,9 +164,9 @@ export default {
             durationFrames,
         })
 
-        const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(
+        const propName = ProjectHelper.findAssetAttachablePropertyByFileType(
             newClip,
-            asset.mimeType,
+            asset.fileType,
             RendererService.pluginRegistry!
         )
 
@@ -218,11 +218,11 @@ export default {
         }
     },
 
-    addAsset({name, mimeType, path}: {name: string, mimeType: string, path: string})
+    addAsset({name, fileType, path}: {name: string, fileType: string, path: string})
     {
         const asset = new Delir.Project.Asset()
         asset.name = name
-        asset.mimeType = mimeType
+        asset.fileType = fileType
         asset.path = path
 
         dispatcher.dispatch(new Payload(DispatchTypes.AddAsset, {asset}))
