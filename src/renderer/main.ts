@@ -9,7 +9,6 @@ import EditorStateActions from './actions/editor-state-actions'
 import * as Delir from 'delir-core'
 
 import RendererService from './services/renderer'
-import BrowserProcessProxy from './services/browser-process-proxy'
 
 window.addEventListener('DOMContentLoaded', async () => {
     // install devtools
@@ -21,7 +20,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     // initialize app
-    BrowserProcessProxy.initialize()
     await RendererService.initialize()
     EditorStateActions.setActiveProject(new Delir.Project.Project())
 
