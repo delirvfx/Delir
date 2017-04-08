@@ -1,0 +1,27 @@
+{
+    "extends": "tslint:latest",
+    "rules": {
+        "arrow-parens": false,
+        "curly": false,
+        "trailing-comma": [true],
+        "quotemark": [true, "single"],
+        "semicolon": [true, "never"],
+        "ordered-imports": [false],
+        "object-literal-sort-keys": false,
+        "max-line-length": [false],
+        "align": ["arguments", "parameters"],
+        "whitespace": [
+            "check-branch",
+            "check-decl",
+            "check-module",
+            "check-operator",
+            "check-separator",
+            "check-type",
+            "check-typecast",
+            true
+        ],
+        "max-classes-per-file": [false],
+        "indent": [true, "spaces"],
+        "indent-size": [true, 4]
+    }
+}
