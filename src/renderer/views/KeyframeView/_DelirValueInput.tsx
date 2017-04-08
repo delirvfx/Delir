@@ -6,6 +6,7 @@ import * as Delir from 'delir-core'
 import EditorStateActions from '../../actions/editor-state-actions'
 
 import DragNumberInput from '../components/drag-number-input'
+import Dropdown from '../components/dropdown'
 
 import * as s from './delir-value-input.styl'
 
@@ -36,8 +37,12 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         propDepth: DragNumberInput,
         color: HTMLInputElement,
         checkbox: HTMLInputElement,
-        textarea: HTMLTextAreaElement,
+        textArea: HTMLTextAreaElement,
+        enumSelect: HTMLSelectElement,
         assets: HTMLSelectElement,
+
+        textSummary: HTMLInputElement
+        textInputDropdown: Dropdown
     }
 
     state = {
@@ -102,6 +107,11 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         ))
         //         break
         //     }
+            case 'ENUM': {
+                const {enumSelect} = this.refs
+                this.props.onChange(descriptor, enumSelect.value)
+                break
+            }
 
             case 'ASSET': {
                 const {assets} = this.refs
@@ -117,11 +127,11 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
                 break
             }
 
-        //     case 'STRING': {
-        //         const {textarea} = this.refs
-        //         this.props.onChange(descriptor, textarea.value)
-        //         break
-        //     }
+            case 'STRING': {
+                const {textArea} = this.refs
+                this.props.onChange(descriptor, textArea.value)
+                break
+            }
 
             case 'FLOAT':
             case 'NUMBER': {
@@ -129,6 +139,20 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
                 this.props.onChange(descriptor, input.value)
                 break
             }
+        }
+    }
+
+    onFocusTextInput = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+        this.refs.textInputDropdown.show()
+        this.refs.textArea.focus()
+    }
+
+    onKeydownTextArea = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if ((e.metaKey === true || e.ctrlKey === true) && e.key === 'Enter') {
+            this.refs.textInputDropdown.hide()
+            this.valueChanged()
         }
     }
 
@@ -182,24 +206,38 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
                 component = [<input ref='checkbox' type='checkbox' className={s.checkbox} checked={value as boolean} onChange={this.valueChanged} />]
                 break
 
-        //     case 'STRING':
-        //         component = [<textarea ref='textarea' />]
-        //         break
+            case 'STRING':
+                component = [
+                    <Dropdown ref='textInputDropdown'>
+                        <textarea ref='textArea' className={s.textArea} onKeyDown={this.onKeydownTextArea} defaultValue={value as string} />
+                    </Dropdown>,
+                    <input ref='textSummary' type='text' className={s.textInput} onFocus={this.onFocusTextInput} value={value as string} readOnly />
+                ]
+                break
+
             case 'FLOAT':
             case 'NUMBER':
                 component = [<DragNumberInput ref='input' value={value as number} onChange={this.valueChanged} allowFloat={descriptor.type === 'FLOAT'} />]
                 break
 
             case 'FLOAT':
-            case 'ENUM':
             case 'CLIP':
             case 'PULSE':
                 component = []
                 break
 
+            case 'ENUM':
+                component = [
+                    <select ref='enumSelect' value={value ? (value as string) : ''} onChange={this.valueChanged}>
+                        <option></option>
+                        {descriptor.selection.map(item => <option value={item}>{item}</option>)}
+                    </select>
+                ]
+                break
+
             case 'ASSET':
                 component = [
-                    <select ref='assets' defaultValue={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
+                    <select ref='assets' value={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
                         <option></option>
                         {!assets ? [] : Array.from(assets).map(asset => (
                             <option value={asset.id as string}>{asset.name}</option>
