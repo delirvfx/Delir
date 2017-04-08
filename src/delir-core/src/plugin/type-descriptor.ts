@@ -269,7 +269,7 @@ export class TypeDescriptor {
         })
 
         // Allow to empty selection.
-        const validSelection = Array.isArray(selection) && !selection.every(e => typeof e === 'string')
+        const validSelection = Array.isArray(selection) && selection.every(e => typeof e === 'string')
 
         if (!validSelection) {
             throw new PluginLoadFailException('`selection` must be an array of string')
