@@ -42,7 +42,7 @@ const _custom = (validate: ValidatorFunction) : {(): any, isRequired: Function} 
     return chainedCheckType
 }
 
-const _validate = (displayName: string, schema: Object) => (object: Object) => T.validateWithErrors(schema, object, displayName)
+const _validate = (displayName: string, schema: Object) => (object: Object) => T.checkPropTypes(schema, object, displayName)
 const customTypes = {
     semver: _custom((props: {[key: string]: any}, propName: string, descriptiveName: string) => {
         if (semver.valid(props[propName]) == null) {
