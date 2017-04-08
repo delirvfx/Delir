@@ -72,7 +72,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
             case ProjectModifyDispatchTypes.AddLayerWithAsset:
                 (() => {
                     const {targetComposition, clip, asset: registeredAsset, pluginRegistry} = payload.entity
-                    const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(clip, registeredAsset.mimeType, pluginRegistry)
+                    const propName = ProjectHelper.findAssetAttachablePropertyByFileType(clip, registeredAsset.fileType, pluginRegistry)
 
                     if (propName == null) return
                     ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
