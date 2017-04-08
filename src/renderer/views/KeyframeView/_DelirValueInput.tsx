@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Component, PropTypes} from 'react'
-import parseColor from 'parse-color'
 import * as Delir from 'delir-core'
+import {ChromePicker} from 'react-color'
 
 import EditorStateActions from '../../actions/editor-state-actions'
 
@@ -13,7 +13,7 @@ import * as s from './delir-value-input.styl'
 interface DelirValueInputProps {
     assets: Set<Delir.Project.Asset>|null
     descriptor: Delir.AnyParameterTypeDescriptor,
-    value: string|number|boolean|{assetId: string}|Delir.Values.Point2D|Delir.Values.Point3D
+    value: string|number|boolean|{assetId: string}|Delir.Values.Point2D|Delir.Values.Point3D|Delir.Values.ColorRGB|Delir.Values.ColorRGBA
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
 }
 
@@ -35,7 +35,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         propWidth: DragNumberInput,
         propHeight: DragNumberInput,
         propDepth: DragNumberInput,
-        color: HTMLInputElement,
+        color: ChromePicker,
         checkbox: HTMLInputElement,
         textArea: HTMLTextAreaElement,
         enumSelect: HTMLSelectElement,
@@ -43,6 +43,8 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
 
         textSummary: HTMLInputElement
         textInputDropdown: Dropdown
+
+        colorPickerDropdown: Dropdown
     }
 
     state = {
@@ -85,28 +87,20 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         break
         //     }
 
-        //     case 'COLOR_RGB': {
-        //         const {color} = this.refs
-        //         const values = parseColor(color.value)
-        //         this.props.onChange(descriptor, new Delir.Values.ColorRGB(
-        //             values.rgb[0],
-        //             values.rgb[1],
-        //             values.rgb[2],
-        //         ))
-        //         break
-        //     }
+            case 'COLOR_RGB': {
+                const {color} = this.refs
+                const rgb = color.state.rgb
+                this.props.onChange(descriptor, new Delir.Values.ColorRGB(rgb.r, rgb.g, rgb.b))
+                break
+            }
 
-        //     case 'COLOR_RGBA': {
-        //         const {color} = this.refs
-        //         const values = parseColor(color.value)
-        //         this.props.onChange(descriptor, new Delir.Values.ColorRGBA(
-        //             values.rgb[0],
-        //             values.rgb[1],
-        //             values.rgb[2],
-        //             values.rgb[3],
-        //         ))
-        //         break
-        //     }
+            case 'COLOR_RGBA': {
+                const {color} = this.refs
+                const rgba = color.state.rgb
+                this.props.onChange(descriptor, new Delir.Values.ColorRGBA(rgba.r, rgba.g, rgba.b, rgba.a))
+                break
+            }
+
             case 'ENUM': {
                 const {enumSelect} = this.refs
                 this.props.onChange(descriptor, enumSelect.value)
@@ -156,6 +150,23 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         }
     }
 
+    openColorPicker = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const {colorPickerDropdown} = this.refs
+        colorPickerDropdown.show()
+
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+    closeColorPicker = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const {colorPickerDropdown} = this.refs
+        colorPickerDropdown.hide()
+        this.valueChanged()
+
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
     render()
     {
         const {props: {descriptor, assets}, state: {value}} = this
@@ -195,12 +206,22 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         ]
         //         break
 
-        //     case 'COLOR_RGB':
-        //         component = [<input ref='color' type='color' value='' />]
-        //         break
-        //     case 'COLOR_RGBA':
-        //         component = [<input ref='color' type='color' value='' />]
-        //         break
+            case 'COLOR_RGB':
+            case 'COLOR_RGBA':
+                component = [
+                    <button
+                        className={s.colorPickerOpenner}
+                        style={{
+                            backgroundColor: (value as Delir.ColorRGBA).toString()
+                        }}
+                        onClick={this.openColorPicker}
+                    />,
+                    <Dropdown ref='colorPickerDropdown' className={s.colorPickerContainer}>
+                        <button className={s.colorPickerCloser} onClick={this.closeColorPicker}>Close</button>
+                        <ChromePicker ref='color' color={value.toString()} onChange={this.valueChanged} disableAlpha={descriptor.type === 'COLOR_RGB'} />
+                    </Dropdown>
+                ]
+                break
 
             case 'BOOL':
                 component = [<input ref='checkbox' type='checkbox' className={s.checkbox} checked={value as boolean} onChange={this.valueChanged} />]
