@@ -184,8 +184,8 @@ export function compileRendererJs(done) {
                     }
                 }
             }),
-            new webpack.optimize.AggressiveMergingPlugin,
             ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.AggressiveMergingPlugin,
                 new webpack.optimize.UglifyJsPlugin,
             ])
         ]
@@ -266,8 +266,8 @@ export async function compilePlugins(done) {
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
-            new webpack.optimize.AggressiveMergingPlugin,
             ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.AggressiveMergingPlugin,
                 new webpack.optimize.UglifyJsPlugin,
             ])
         ]
