@@ -226,6 +226,7 @@ export async function compilePlugins(done) {
                 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 'plane/index': '../experimental-plugins/plane/index',
                 'noise/index': '../experimental-plugins/noise/index',
+                'text/index': '../experimental-plugins/text/index',
             }: {})
         },
         output: {
@@ -233,11 +234,11 @@ export async function compilePlugins(done) {
             path: paths.compiled.plugins,
             libraryTarget: 'commonjs-module',
         },
-        devtool: 'cheap-eval-source-map',
+        devtool: 'cheap-source-map',
         externals: [
             (ctx, request: string, callback) => {
-                if (request.startsWith('delir-core')) {
-                    // Ignore 'delir-core' requiring for plugins building
+                if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
+                    // throughs non relative requiring ('./module', '../module', '!!../module')
                     return callback(null, `require('${request}')`)
                 }
 
