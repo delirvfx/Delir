@@ -1,9 +1,16 @@
 {
   "name": "delir-core",
-  "version": "0.0.0",
+  "version": "0.0.0-alpha.1",
   "description": "JavaScript VFX Engine",
   "main": "lib/index.js",
   "types": "src/index.ts",
-  "author": "ragg",
-  "license": "MIT"
+  "author": "Ragg <ragg.devpr@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
+  "dependencies": {
+    "@types/bson": "^1.0.2",
+    "@types/lodash": "^4.14.62",
+    "@types/semver": "^5.3.31",
+    "@types/uuid": "^2.0.29"
+  }
 }
