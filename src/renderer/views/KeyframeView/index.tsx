@@ -153,10 +153,22 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     renderKeyframes()
     {
         const {props: {activeClip}, state: {activePropName}} = this
+        const descriptor = this._getDescriptorByPropName(activePropName)
 
-        if (!activePropName || !activeClip!.keyframes[activePropName]) return []
+        if (!activePropName || !activeClip!.keyframes[activePropName] || !descriptor) return []
 
-        const points = this._buildKeyframePoints(activeClip!.keyframes[activePropName])
+        switch (descriptor.type) {
+            case 'NUMBER':
+                return this._renderNumberKeyframes(activeClip!.keyframes[activePropName])
+
+            case 'STRING':
+                return this._renderStringKeyframes(activeClip!.keyframes[activePropName])
+        }
+    }
+
+    private _renderNumberKeyframes(keyframes: Delir.Project.Keyframe[])
+    {
+        const points = this._buildKeyframePoints(keyframes)
 
         return points.map((p, idx) => (
             <g key={p.id} data-index={idx}>
@@ -213,6 +225,27 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 )}
             </g>
         ))
+    }
+
+    private _renderStringKeyframes(keyframes: Delir.Project.Keyframe[])
+    {
+        const {state: {graphHeight}} = this
+        const halfHeight = graphHeight / 2
+
+        return keyframes.map(kf => {
+            const x = this._frameToPx(kf.frameOnClip)
+
+            return (
+                <g
+                    className={s.keyframe}
+                    transform={`translate(${x - 4} ${halfHeight})`}
+                    onDoubleClick={this.keyframeDoubleClicked}
+                    data-frame={kf.frameOnClip}
+                >
+                    <rect className={s.keyframeInner} width='8' height='8' fill="#fff"  />
+                </g>
+            )
+        })
     }
 
     private _frameToPx(frame: number): number

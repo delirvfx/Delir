@@ -43,7 +43,10 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
     private hideOnOutsideClicked = (e: MouseEvent) =>
     {
-        if (this.state.show) {
+        const path = ((e as any).path as Element[])
+        const clickSelfOrChild = path.includes(this._portal.root)
+
+        if (!clickSelfOrChild && this.state.show) {
             this.hide()
         }
     }
