@@ -12,10 +12,10 @@
             "renderer": "0.0.x"
         },
         "acceptFileTypes": {
-            "audio/wav": "source",
-            "audio/webm": "source",
-            "audio/mpeg": "source",
-            "audio/ogg": "source"
+            "wav": "source",
+            "webm": "source",
+            "mpeg": "source",
+            "ogg": "source"
         }
     }
 }
