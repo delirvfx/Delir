@@ -70,7 +70,7 @@
     "ts-loader": "^2.0.3",
     "tslint": "^5.0.0",
     "tslint-loader": "^3.5.1",
-    "typescript": "2.3.0-dev.20170308",
+    "typescript": "2.3.0-dev.20170407",
     "webpack": "^2.3.3"
   },
   "dependencies": {
