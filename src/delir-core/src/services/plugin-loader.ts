@@ -25,7 +25,7 @@ export default class PluginLoader
         const dirs = await fs.readdir(packageDir)
 
         const packages: {[packageName: string]: PluginEntry} = {}
-        const failedPackages: {package: string, reason: string}[] = []
+        const failedPackages: {package: string, reason: string, error: Error}[] = []
         await Promise.all(dirs.map(async dir => {
             try {
                 let packageRoot = path.join(packageDir, dir)
@@ -52,7 +52,7 @@ export default class PluginLoader
                     class: null!, // load later
                 }
             } catch (e) {
-                failedPackages.push({package: dir, reason: e.message})
+                failedPackages.push({package: dir, reason: e.message, error: e})
             }
         }))
 
@@ -70,7 +70,7 @@ export default class PluginLoader
 
                 packageInfo.class!.pluginDidLoad()
             } catch (e) {
-                throw new PluginLoadFailException(`Failed to requiring plugin \`${id}\`. (${e.message})`, {before: e})
+                failedPackages.push({package: packageInfo.id, reason: `Failed to requiring plugin \`${id}\`. (${e.message})`, error: e})
             }
         })
 
