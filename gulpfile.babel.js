@@ -222,11 +222,11 @@ export async function compilePlugins(done) {
             'video/index': './video/index',
             'image/index': './image/index',
             'plane/index': './plane/index',
+            'text/index': './text/index',
             ...(DELIR_ENV === 'dev' ? {
                 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 'plane/index': '../experimental-plugins/plane/index',
                 'noise/index': '../experimental-plugins/noise/index',
-                'text/index': '../experimental-plugins/text/index',
             }: {})
         },
         output: {
