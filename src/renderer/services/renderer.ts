@@ -131,7 +131,7 @@ const handlePayload = (payload: KnownPayload) => {
 
         case EditorStateDispatchTypes.RenderDestinate: (() => {
             const appPath = remote.app.getPath('exe')
-            const ffmpegBin = require('path').resolve(
+            const ffmpegBin = __DEV__ ? 'ffmpeg' : require('path').resolve(
                 appPath,
                 Platform.isMacOS() ? '../../Resources/ffmpeg' : './ffmpeg.exe'
             )
