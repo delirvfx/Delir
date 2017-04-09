@@ -1,14 +1,19 @@
 @require '../../styles/_variables'
+@require '../../styles/_mixins'
 
 .keyframeView
     display flex
     flex-flow row
 
 .propList
+    thin-scrollbar()
+
     display block
+    flex none
     width 220px
     height 100%
-    flex none
+    padding 4px 0
+    overflow auto
 
 .propItem
     display flex
