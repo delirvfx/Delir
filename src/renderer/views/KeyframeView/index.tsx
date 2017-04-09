@@ -31,6 +31,7 @@ interface KeyframeViewState {
     graphWidth: number
     graphHeight: number
     keyframeViewViewBox: string|undefined
+    selectedKeyframeId: string|null
 }
 
 @connectToStores([EditorStateStore], () => ({
@@ -93,6 +94,20 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         EditorStateActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 
+    selectKeyframe = (e: React.MouseEvent<SVGGElement>) =>
+    {
+        console.log(e.currentTarget.dataset.keyframeId)
+        this.setState({selectedKeyframeId: e.currentTarget.dataset.keyframeId})
+    }
+
+    onKeydownOnKeyframeGraph = (e: React.KeyboardEvent<HTMLDivElement>) =>
+    {
+        if ((e.key === 'Delete' || e.key === 'Backspace') && this.state.selectedKeyframeId) {
+            ProjectModifyActions.removeKeyframe(this.state.selectedKeyframeId)
+            this.setState({selectedKeyframeId: null})
+        }
+    }
+
     render()
     {
         const {activeClip, project: {project}, editor} = this.props
@@ -140,7 +155,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     </SelectList>
                 </Pane>
                 <Pane>
-                    <div ref='svgParent' className={s.keyframeContainer}>
+                    <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
                         <svg className={s.keyframeGraph} viewBox={keyframeViewViewBox} width={graphWidth} height={graphHeight}>
                             {...((activePropDescriptor && activePropDescriptor.animatable) ? this.renderKeyframes() : [])}
                         </svg>
@@ -200,10 +215,14 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 <g
                     className={s.keyframe}
                     transform={`translate(${p.point.x - 4} ${p.point.y - 4})`}
+                    onClick={this.selectKeyframe}
                     onDoubleClick={this.keyframeDoubleClicked}
+                    data-keyframe-id={p.id}
                     data-frame={p.frame}
                 >
-                    <rect className={s.keyframeInner} width='8' height='8' fill="#fff"  />
+                    <rect className={classnames(s.keyframeInner, {
+                        [s['keyframeInner--selected']]: p.id === this.state.selectedKeyframeId
+                    })} width='8' height='8'  />
                 </g>
                 {false && p.easeInHandle && (
                     <circle
@@ -239,7 +258,9 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 <g
                     className={s.keyframe}
                     transform={`translate(${x - 4} ${halfHeight})`}
+                    onClick={this.selectKeyframe}
                     onDoubleClick={this.keyframeDoubleClicked}
+                    data-keyframe-id={kf.id}
                     data-frame={kf.frameOnClip}
                 >
                     <rect className={s.keyframeInner} width='8' height='8' fill="#fff"  />

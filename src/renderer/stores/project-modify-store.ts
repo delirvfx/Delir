@@ -140,6 +140,11 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.deleteAsset(project!, payload.entity.targetAssetId)
                 break
 
+            case ProjectModifyDispatchTypes.RemoveKeyframe:
+                console.log(payload.entity.targetKeyframeId)
+                ProjectHelper.deleteKeyframe(project!, payload.entity.targetKeyframeId)
+                break
+
             default:
                 return state
         }
