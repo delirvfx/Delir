@@ -48,6 +48,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         graphWidth: 0,
         graphHeight: 0,
         keyframeViewViewBox: undefined,
+        selectedKeyframeId: null
     }
 
     refs: {
@@ -173,6 +174,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         if (!activePropName || !activeClip!.keyframes[activePropName] || !descriptor) return []
 
         switch (descriptor.type) {
+            case 'COLOR_RGB':
+            case 'COLOR_RGBA':
+                return this._renderColorKeyframes(activeClip!.keyframes[activePropName])
+
             case 'NUMBER':
                 return this._renderNumberKeyframes(activeClip!.keyframes[activePropName])
 
@@ -246,24 +251,86 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         ))
     }
 
+    private _renderColorKeyframes(keyframes: Delir.Project.Keyframe[])
+    {
+        const {state: {graphHeight}} = this
+        const halfHeight = graphHeight / 2
+
+        return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
+            const x = this._frameToPx(kf.frameOnClip)
+            const nextX = keyframes[idx + 1] ? this._frameToPx(keyframes[idx + 1].frameOnClip) : null
+            console.log(nextX)
+
+            return (
+                <g ref={kf.id}>
+                    {nextX != null && (
+                        <path
+                            stroke='#fff'
+                            fill='none'
+                            strokeWidth='1'
+                            d={`M ${x + 4} ${halfHeight + 4} L ${nextX - 4} ${halfHeight + 4}`}
+                        />
+                    )}
+                    <g
+                        className={classnames(s.keyframe, s['keyframe--color'])}
+                        transform={`translate(${x - 4} ${halfHeight})`}
+                        onClick={this.selectKeyframe}
+                        onDoubleClick={this.keyframeDoubleClicked}
+                        data-keyframe-id={kf.id}
+                        data-frame={kf.frameOnClip}
+                    >
+                        <rect
+                            className={classnames(s.keyframeInner, {
+                                [s['keyframeInner--selected']]: kf.id === this.state.selectedKeyframeId
+                            })}
+                            width='8'
+                            height='8'
+                            stroke='#fff'
+                            strokeWidth='1'
+                            style={{fill: (kf.value as Delir.ColorRGBA).toString()}}
+                        />
+                    </g>
+                </g>
+            )
+        })
+    }
+
     private _renderStringKeyframes(keyframes: Delir.Project.Keyframe[])
     {
         const {state: {graphHeight}} = this
         const halfHeight = graphHeight / 2
 
-        return keyframes.map(kf => {
+        return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
             const x = this._frameToPx(kf.frameOnClip)
+            const nextX = keyframes[idx + 1] ? this._frameToPx(keyframes[idx + 1].frameOnClip) : null
 
             return (
-                <g
-                    className={s.keyframe}
-                    transform={`translate(${x - 4} ${halfHeight})`}
-                    onClick={this.selectKeyframe}
-                    onDoubleClick={this.keyframeDoubleClicked}
-                    data-keyframe-id={kf.id}
-                    data-frame={kf.frameOnClip}
-                >
-                    <rect className={s.keyframeInner} width='8' height='8' fill="#fff"  />
+                <g ref={kf.id}>
+                    {nextX != null && (
+                        <path
+                            stroke='#fff'
+                            fill='none'
+                            strokeWidth='1'
+                            d={`M ${x + 4} ${halfHeight + 4} L ${nextX - 4} ${halfHeight + 4}`}
+                        />
+                    )}
+                    <g
+                        className={s.keyframe}
+                        transform={`translate(${x - 4} ${halfHeight})`}
+                        onClick={this.selectKeyframe}
+                        onDoubleClick={this.keyframeDoubleClicked}
+                        data-keyframe-id={kf.id}
+                        data-frame={kf.frameOnClip}
+                    >
+                        <rect
+                            className={classnames(s.keyframeInner, {
+                                [s['keyframeInner--selected']]: p.id === this.state.selectedKeyframeId
+                            })}
+                            width='8'
+                            height='8'
+                            fill="#fff"
+                        />
+                    </g>
                 </g>
             )
         })
