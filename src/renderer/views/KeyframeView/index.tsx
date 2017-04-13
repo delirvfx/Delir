@@ -471,7 +471,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     // console.log(previousKeyframe)
                     // Handle of control transition from previous keyframe to next keyframe
                     handleEiX = ((beginX - previousX) * keyframe.easeInParam[0]) + previousX
-                    handleEiY = (beginY * (1 - keyframe.easeInParam[1])) + beginY
+                    handleEiY = ((beginY - previousY) * keyframe.easeInParam[1]) + previousY
                 }
 
                 if (nextKeyframe) {
@@ -481,10 +481,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
                     // Handle of control transition to next keyframe
                     handleEoX = ((nextX - beginX) * keyframe.easeOutParam[0]) + beginX
-                    handleEoY = (Math.abs(nextY - beginY) * (1 - keyframe.easeOutParam[1])) + Math.min(beginY, nextY) // ((endPointY - beginY) * nextKeyframe.easeOutParam[1]) + beginY
+                    handleEoY = ((nextY - beginY) * keyframe.easeOutParam[1]) + beginY // ((endPointY - beginY) * nextKeyframe.easeOutParam[1]) + beginY
 
                     nextHandleEiX = ((nextX - beginX) * nextKeyframe.easeInParam[0]) + beginX
-                    nextHandleEiY = (nextY * (1 - keyframe.easeInParam[1])) + nextY
+                    nextHandleEiY = ((nextY - beginY) * nextKeyframe.easeInParam[1]) + beginY
                 }
 
                 return {
