@@ -133,7 +133,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         e.preventDefault()
         e.stopPropagation()
 
-
         if (!this._keyframeDragged) {
             this.setState({activeKeyframeId: this._selectedKeyframeId, keyframeMovement: null})
             this._selectedKeyframeId = null
@@ -451,16 +450,16 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 const previousKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx - 1]
                 const nextKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx + 1]
 
-                let previousX = 0,
-                    previousY = 0,
-                    nextX = 0,
-                    nextY = 0,
-                    handleEoX = 0,
-                    handleEoY = 0,
-                    handleEiX = 0,
-                    handleEiY = 0,
-                    nextHandleEiX = 0,
-                    nextHandleEiY = 0
+                let previousX = 0
+                let previousY = 0
+                let nextX = 0
+                let nextY = 0
+                let handleEoX = 0
+                let handleEoY = 0
+                let handleEiX = 0
+                let handleEiY = 0
+                let nextHandleEiX = 0
+                let nextHandleEiY = 0
 
                 const beginX = this._frameToPx(keyframe.frameOnClip)
                 const beginY = graphHeight - graphHeight * ((keyframe.value + absMinValue) / minMaxRange)
