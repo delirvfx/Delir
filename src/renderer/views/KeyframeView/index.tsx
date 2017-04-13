@@ -31,7 +31,8 @@ interface KeyframeViewState {
     graphWidth: number
     graphHeight: number
     keyframeViewViewBox: string|undefined
-    selectedKeyframeId: string|null
+    activeKeyframeId: string|null
+    keyframeMovement: {x: number, y: number}|null
 }
 
 @connectToStores([EditorStateStore], () => ({
@@ -48,14 +49,20 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         graphWidth: 0,
         graphHeight: 0,
         keyframeViewViewBox: undefined,
-        selectedKeyframeId: null
+        activeKeyframeId: null,
+        keyframeDragged: false,
+        keyframeMovement: null
     }
 
     refs: {
         svgParent: HTMLDivElement
     }
 
-    componentDidMount()
+    private _selectedKeyframeId: string|null = null
+    private _initialKeyframePosition: {x: number, y: number}|null = null
+    private _keyframeDragged: boolean = false
+
+    protected componentDidMount()
     {
         const box = this.refs.svgParent.getBoundingClientRect()
         this.setState({
@@ -97,16 +104,55 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     selectKeyframe = (e: React.MouseEvent<SVGGElement>) =>
     {
-        console.log(e.currentTarget.dataset.keyframeId)
-        this.setState({selectedKeyframeId: e.currentTarget.dataset.keyframeId})
+        if ((e.key === 'Delete' || e.key === 'Backspace') && this.state.activeKeyframeId) {
+            ProjectModifyActions.removeKeyframe(this.state.activeKeyframeId)
+            // this.setState({selectedKeyframeId: null})
+        }
     }
 
-    onKeydownOnKeyframeGraph = (e: React.KeyboardEvent<HTMLDivElement>) =>
+    private mouseDownOnKeyframe = (e: React.MouseEvent<SVGGElement>) =>
     {
-        if ((e.key === 'Delete' || e.key === 'Backspace') && this.state.selectedKeyframeId) {
-            ProjectModifyActions.removeKeyframe(this.state.selectedKeyframeId)
-            this.setState({selectedKeyframeId: null})
+        this._selectedKeyframeId = e.currentTarget.dataset.keyframeId
+        this._keyframeDragged = false
+        this._initialKeyframePosition = {x: e.screenX, y: e.screenY}
+    }
+
+    private onMouseMoveOnSvg = (e: React.MouseEvent<SVGElement>) =>
+    {
+        if (!this._selectedKeyframeId) return
+        this._keyframeDragged = true
+
+        this.setState({
+            keyframeMovement: {
+                x: e.screenX - this._initialKeyframePosition!.x,
+                y: e.screenY - this._initialKeyframePosition!.y,
+            }
+        })
+    }
+
+    private mouseUpOnSvg = (e: React.MouseEvent<SVGElement>) =>
+    {
+        if (!this._keyframeDragged) {
+            this.setState({
+                activeKeyframeId: this._selectedKeyframeId,
+                keyframeMovement: null,
+            })
+
+            return
         }
+
+        const {props: {activeClip}, state: {activePropName, keyframeMovement}} = this
+
+        if (!activeClip || !activePropName || !keyframeMovement) return
+
+        const keyframe = activeClip.keyframes[activePropName].find(kf => kf.id === this._selectedKeyframeId)!
+        const movedFrame =this._pxToFrame(keyframeMovement.x)
+
+        ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframe.frameOnClip, {
+            frameOnClip: keyframe.frameOnClip + movedFrame
+        })
+
+        this._selectedKeyframeId = null
     }
 
     render()
@@ -157,7 +203,14 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 </Pane>
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
-                        <svg className={s.keyframeGraph} viewBox={keyframeViewViewBox} width={graphWidth} height={graphHeight}>
+                        <svg
+                            className={s.keyframeGraph}
+                            viewBox={keyframeViewViewBox}
+                            width={graphWidth}
+                            height={graphHeight}
+                            onMouseMove={this.onMouseMoveOnSvg}
+                            onMouseUp={this.mouseUpOnSvg}
+                        >
                             {...((activePropDescriptor && activePropDescriptor.animatable) ? this.renderKeyframes() : [])}
                         </svg>
                     </div>
@@ -190,65 +243,70 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     {
         const points = this._buildKeyframePoints(keyframes)
 
-        return points.map((p, idx) => (
-            <g key={p.id} data-index={idx}>
-                {p.transition && (
-                    <path
-                        stroke='#fff'
-                        fill='none'
-                        strokeWidth='1'
-                        d={`M ${p.transition.x} ${p.transition.y} C ${p.transition.xh} ${p.transition.yh} ${p.transition.xxh} ${p.transition.yyh} ${p.transition.xx} ${p.transition.yy}`}
-                        data-transition-path
-                    />
-                )}
-                {false && p.easeOutLine && (
-                    <path
-                        className={s.keyframeLineToHandle}
-                        strokeWidth='1'
-                        d={`M ${p.easeOutLine.x} ${p.easeOutLine.y} L ${p.easeOutLine.xx} ${p.easeOutLine.yy}`}
-                        data-ease-in-handle-path
-                    />
-                )}
-                {false && p.easeInLine && (
-                    <path
-                        className={s.keyframeLineToHandle}
-                        strokeWidth='1'
-                        d={`M ${p.easeInLine.x} ${p.easeInLine.y} L ${p.easeInLine.xx} ${p.easeInLine.yy}`}
-                        data-ease-in-handle-path
-                    />
-                )}
-                <g
-                    className={s.keyframe}
-                    transform={`translate(${p.point.x - 4} ${p.point.y - 4})`}
-                    onClick={this.selectKeyframe}
-                    onDoubleClick={this.keyframeDoubleClicked}
-                    data-keyframe-id={p.id}
-                    data-frame={p.frame}
-                >
-                    <rect className={classnames(s.keyframeInner, {
-                        [s['keyframeInner--selected']]: p.id === this.state.selectedKeyframeId
-                    })} width='8' height='8'  />
+        return points.map((p, idx) => {
+            const transform = (this.state.keyframeMovement && p.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0, y: 0}
+            console.log(transform)
+
+            return (
+                <g key={p.id} data-index={idx}>
+                    {p.transition && (
+                        <path
+                            stroke='#fff'
+                            fill='none'
+                            strokeWidth='1'
+                            d={`M ${p.transition.x} ${p.transition.y} C ${p.transition.xh} ${p.transition.yh} ${p.transition.xxh} ${p.transition.yyh} ${p.transition.xx} ${p.transition.yy}`}
+                            data-transition-path
+                        />
+                    )}
+                    {false && p.easeOutLine && (
+                        <path
+                            className={s.keyframeLineToHandle}
+                            strokeWidth='1'
+                            d={`M ${p.easeOutLine.x} ${p.easeOutLine.y} L ${p.easeOutLine.xx} ${p.easeOutLine.yy}`}
+                            data-ease-in-handle-path
+                        />
+                    )}
+                    {false && p.easeInLine && (
+                        <path
+                            className={s.keyframeLineToHandle}
+                            strokeWidth='1'
+                            d={`M ${p.easeInLine.x} ${p.easeInLine.y} L ${p.easeInLine.xx} ${p.easeInLine.yy}`}
+                            data-ease-in-handle-path
+                        />
+                    )}
+                    <g
+                        className={s.keyframe}
+                        transform={`translate(${p.point.x + transform.x - 4} ${p.point.y + transform.y - 4})`}
+                        onDoubleClick={this.keyframeDoubleClicked}
+                        onMouseDown={this.mouseDownOnKeyframe}
+                        data-keyframe-id={p.id}
+                        data-frame={p.frame}
+                    >
+                        <rect className={classnames(s.keyframeInner, {
+                            [s['keyframeInner--selected']]: p.id === this.state.activeKeyframeId
+                        })} width='8' height='8'  />
+                    </g>
+                    {false && p.easeInHandle && (
+                        <circle
+                            cx={p.easeInHandle.x}
+                            cy={p.easeInHandle.y}
+                            fill='#7100bf'
+                            r='4'
+                            data-ease-in-handle
+                        />
+                    )}
+                    {false && p.easeOutHandle && (
+                        <circle
+                            cx={p.easeOutHandle.x}
+                            cy={p.easeOutHandle.y}
+                            fill='#7100bf'
+                            r='4'
+                            data-ease-out-handle
+                        />
+                    )}
                 </g>
-                {false && p.easeInHandle && (
-                    <circle
-                        cx={p.easeInHandle.x}
-                        cy={p.easeInHandle.y}
-                        fill='#7100bf'
-                        r='4'
-                        data-ease-in-handle
-                    />
-                )}
-                {false && p.easeOutHandle && (
-                    <circle
-                        cx={p.easeOutHandle.x}
-                        cy={p.easeOutHandle.y}
-                        fill='#7100bf'
-                        r='4'
-                        data-ease-out-handle
-                    />
-                )}
-            </g>
-        ))
+            )
+        })
     }
 
     private _renderColorKeyframes(keyframes: Delir.Project.Keyframe[])
@@ -274,14 +332,13 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     <g
                         className={classnames(s.keyframe, s['keyframe--color'])}
                         transform={`translate(${x - 4} ${halfHeight})`}
-                        onClick={this.selectKeyframe}
                         onDoubleClick={this.keyframeDoubleClicked}
                         data-keyframe-id={kf.id}
                         data-frame={kf.frameOnClip}
                     >
                         <rect
                             className={classnames(s.keyframeInner, {
-                                [s['keyframeInner--selected']]: kf.id === this.state.selectedKeyframeId
+                                [s['keyframeInner--selected']]: kf.id === this.state.activeKeyframeId
                             })}
                             width='8'
                             height='8'
@@ -317,14 +374,13 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     <g
                         className={s.keyframe}
                         transform={`translate(${x - 4} ${halfHeight})`}
-                        onClick={this.selectKeyframe}
                         onDoubleClick={this.keyframeDoubleClicked}
                         data-keyframe-id={kf.id}
                         data-frame={kf.frameOnClip}
                     >
                         <rect
                             className={classnames(s.keyframeInner, {
-                                [s['keyframeInner--selected']]: p.id === this.state.selectedKeyframeId
+                                [s['keyframeInner--selected']]: p.id === this.state.activeKeyframeId
                             })}
                             width='8'
                             height='8'
@@ -345,6 +401,18 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
             framerate: activeComp!.framerate,
             durationFrames: frame,
             scale: 1
+        })
+    }
+
+    private _pxToFrame(x: number): number
+    {
+        const {props: {pxPerSec, editor: {activeComp}}} = this
+
+        return TimelineHelper.pixelToFrames({
+            framerate: activeComp!.framerate,
+            pixel: x,
+            pxPerSec,
+            scale: 1,
         })
     }
 
