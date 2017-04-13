@@ -257,7 +257,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                             data-transition-path
                         />
                     )}
-                    {false && p.easeOutLine && (
+                    {p.easeOutLine && (
                         <path
                             className={s.keyframeLineToHandle}
                             strokeWidth='1'
@@ -265,7 +265,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                             data-ease-in-handle-path
                         />
                     )}
-                    {false && p.easeInLine && (
+                    {p.easeInLine && (
                         <path
                             className={s.keyframeLineToHandle}
                             strokeWidth='1'
@@ -286,7 +286,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                             [s['keyframeInner--selected']]: p.id === this.state.activeKeyframeId
                         })} width='8' height='8'  />
                     </g>
-                    {false && p.easeInHandle && (
+                    {p.easeInHandle && (
                         <circle
                             cx={p.easeInHandle.x}
                             cy={p.easeInHandle.y}
@@ -295,7 +295,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                             data-ease-in-handle
                         />
                     )}
-                    {false && p.easeOutHandle && (
+                    {p.easeOutHandle && (
                         <circle
                             cx={p.easeOutHandle.x}
                             cy={p.easeOutHandle.y}
