@@ -32,7 +32,7 @@ interface KeyframeViewState {
     graphHeight: number
     keyframeViewViewBox: string|undefined
     activeKeyframeId: string|null
-    keyframeMovement: {x: number, y: number}|null
+    keyframeMovement: {x: number}|null
 }
 
 @connectToStores([EditorStateStore], () => ({
@@ -125,7 +125,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         this.setState({
             keyframeMovement: {
                 x: e.screenX - this._initialKeyframePosition!.x,
-                y: e.screenY - this._initialKeyframePosition!.y,
             }
         })
     }
@@ -146,7 +145,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         if (!activeClip || !activePropName || !keyframeMovement) return
 
         const keyframe = activeClip.keyframes[activePropName].find(kf => kf.id === this._selectedKeyframeId)!
-        const movedFrame =this._pxToFrame(keyframeMovement.x)
+        const movedFrame = this._pxToFrame(keyframeMovement.x)
 
         ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframe.frameOnClip, {
             frameOnClip: keyframe.frameOnClip + movedFrame
@@ -244,8 +243,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const points = this._buildKeyframePoints(keyframes)
 
         return points.map((p, idx) => {
-            const transform = (this.state.keyframeMovement && p.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0, y: 0}
-            console.log(transform)
+            const transform = (this.state.keyframeMovement && p.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
                 <g key={p.id} data-index={idx}>
@@ -276,7 +274,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     )}
                     <g
                         className={s.keyframe}
-                        transform={`translate(${p.point.x + transform.x - 4} ${p.point.y + transform.y - 4})`}
+                        transform={`translate(${p.point.x + transform.x - 4} ${p.point.y - 4})`}
                         onDoubleClick={this.keyframeDoubleClicked}
                         onMouseDown={this.mouseDownOnKeyframe}
                         data-keyframe-id={p.id}
