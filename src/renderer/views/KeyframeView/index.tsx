@@ -44,7 +44,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         activeClip: PropTypes.instanceOf(Delir.Project.Clip),
     }
 
-    state: KeyframeViewState = {
+    protected state: KeyframeViewState = {
         activePropName: null,
         graphWidth: 0,
         graphHeight: 0,
@@ -54,7 +54,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         keyframeMovement: null
     }
 
-    refs: {
+    protected refs: {
         svgParent: HTMLDivElement
     }
 
@@ -72,7 +72,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         })
     }
 
-    castValue = (desc: Delir.AnyParameterTypeDescriptor, value: string|number) =>
+    private castValue = (desc: Delir.AnyParameterTypeDescriptor, value: string|number) =>
     {
         return value
     }
@@ -82,18 +82,18 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     //     return this.props.editor.previewPlayed ? false : true
     // }
 
-    selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
+    private selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
     {
         const propName: string = currentTarget.dataset.propName!
         this.setState({activePropName: propName})
     }
 
-    keyframeDoubleClicked = ({currentTarget}: React.MouseEvent<SVGGElement>) =>
+    private keyframeDoubleClicked = ({currentTarget}: React.MouseEvent<SVGGElement>) =>
     {
         EditorStateActions.seekPreviewFrame(currentTarget.dataset.frame | 0)
     }
 
-    valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) =>
+    private valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) =>
     {
         const {activeClip, editor: {currentPreviewFrame}} = this.props
         if (!activeClip) return
@@ -102,7 +102,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         EditorStateActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 
-    selectKeyframe = (e: React.MouseEvent<SVGGElement>) =>
+    private onKeydownOnKeyframeGraph = (e: React.KeyboardEvent<HTMLDivElement>) =>
     {
         if ((e.key === 'Delete' || e.key === 'Backspace') && this.state.activeKeyframeId) {
             ProjectModifyActions.removeKeyframe(this.state.activeKeyframeId)
@@ -157,7 +157,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         this._keyframeDragged = false
     }
 
-    render()
+    protected render()
     {
         const {activeClip, project: {project}, editor} = this.props
         const {activePropName, keyframeViewViewBox, graphWidth, graphHeight} = this.state
@@ -221,7 +221,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         )
     }
 
-    renderKeyframes()
+    private renderKeyframes()
     {
         const {props: {activeClip}, state: {activePropName}} = this
         const descriptor = this._getDescriptorByPropName(activePropName)
