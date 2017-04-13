@@ -106,7 +106,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     {
         if ((e.key === 'Delete' || e.key === 'Backspace') && this.state.activeKeyframeId) {
             ProjectModifyActions.removeKeyframe(this.state.activeKeyframeId)
-            // this.setState({selectedKeyframeId: null})
+            this._selectedKeyframeId = null
         }
     }
 
@@ -131,18 +131,20 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private mouseUpOnSvg = (e: React.MouseEvent<SVGElement>) =>
     {
-        if (!this._keyframeDragged) {
-            this.setState({
-                activeKeyframeId: this._selectedKeyframeId,
-                keyframeMovement: null,
-            })
+        e.preventDefault()
+        e.stopPropagation()
 
+
+        if (!this._keyframeDragged) {
+            this.setState({activeKeyframeId: this._selectedKeyframeId, keyframeMovement: null})
+            this._selectedKeyframeId = null
+            this._keyframeDragged = false
             return
         }
 
         const {props: {activeClip}, state: {activePropName, keyframeMovement}} = this
 
-        if (!activeClip || !activePropName || !keyframeMovement) return
+        if (!activeClip || !activePropName || !keyframeMovement || !this._selectedKeyframeId) return
 
         const keyframe = activeClip.keyframes[activePropName].find(kf => kf.id === this._selectedKeyframeId)!
         const movedFrame = this._pxToFrame(keyframeMovement.x)
@@ -152,6 +154,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         })
 
         this._selectedKeyframeId = null
+        this._keyframeDragged = false
     }
 
     render()
@@ -277,6 +280,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                         transform={`translate(${p.point.x + transform.x - 4} ${p.point.y - 4})`}
                         onDoubleClick={this.keyframeDoubleClicked}
                         onMouseDown={this.mouseDownOnKeyframe}
+                        onMouseUp={this.mouseUpOnSvg}
                         data-keyframe-id={p.id}
                         data-frame={p.frame}
                     >
