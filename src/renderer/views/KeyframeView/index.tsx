@@ -50,7 +50,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         graphHeight: 0,
         keyframeViewViewBox: undefined,
         activeKeyframeId: null,
-        keyframeDragged: false,
         keyframeMovement: null
     }
 
