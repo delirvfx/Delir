@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import * as React from 'react'
 import {PropTypes} from 'react'
 import * as classnames from 'classnames'
@@ -33,6 +34,7 @@ interface KeyframeViewState {
     keyframeViewViewBox: string|undefined
     activeKeyframeId: string|null
     keyframeMovement: {x: number}|null
+    easingHandleMovement: {x: number, y: number}|null
 }
 
 @connectToStores([EditorStateStore], () => ({
@@ -50,7 +52,8 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         graphHeight: 0,
         keyframeViewViewBox: undefined,
         activeKeyframeId: null,
-        keyframeMovement: null
+        keyframeMovement: null,
+        easingHandleMovement: null
     }
 
     protected refs: {
@@ -60,6 +63,14 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     private _selectedKeyframeId: string|null = null
     private _initialKeyframePosition: {x: number, y: number}|null = null
     private _keyframeDragged: boolean = false
+
+    private _selectedEasingHandleHolderData: {
+        type: 'ease-in'|'ease-out',
+        keyframeId: string,
+        element: SVGCircleElement,
+        container: SVGGElement,
+        initialPosition: {x: number, y: number},
+    }|null = null
 
     protected componentDidMount()
     {
@@ -116,16 +127,36 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         this._initialKeyframePosition = {x: e.screenX, y: e.screenY}
     }
 
+    private mouseDonwOnEasingHandle = (e: React.MouseEvent<SVGCircleElement>) =>
+    {
+        const {dataset} = e.currentTarget
+        this._selectedEasingHandleHolderData = {
+            type: dataset.isEaseIn ? 'ease-in' : 'ease-out',
+            keyframeId: dataset.keyframeId,
+            element: e.currentTarget,
+            container: (e.currentTarget.parentElement! as any) as SVGGElement,
+            initialPosition: {x: e.screenX, y: e.screenY}
+        }
+    }
+
     private onMouseMoveOnSvg = (e: React.MouseEvent<SVGElement>) =>
     {
-        if (!this._selectedKeyframeId) return
-        this._keyframeDragged = true
+        if (this._selectedKeyframeId) {
+            this._keyframeDragged = true
 
-        this.setState({
-            keyframeMovement: {
-                x: e.screenX - this._initialKeyframePosition!.x,
-            }
-        })
+            this.setState({
+                keyframeMovement: {
+                    x: e.screenX - this._initialKeyframePosition!.x,
+                }
+            })
+        } else if (this._selectedEasingHandleHolderData) {
+            this.setState({
+                easingHandleMovement: {
+                    x: e.screenX - this._selectedEasingHandleHolderData.initialPosition!.x,
+                    y: e.screenY - this._selectedEasingHandleHolderData.initialPosition!.y,
+                },
+            })
+        }
     }
 
     private mouseUpOnSvg = (e: React.MouseEvent<SVGElement>) =>
@@ -133,26 +164,61 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         e.preventDefault()
         e.stopPropagation()
 
-        if (!this._keyframeDragged) {
-            this.setState({activeKeyframeId: this._selectedKeyframeId, keyframeMovement: null})
-            this._selectedKeyframeId = null
-            this._keyframeDragged = false
-            return
+        const {props: {activeClip}, state: {activePropName, keyframeMovement, easingHandleMovement}} = this
+        if (!activeClip || !activePropName) return
+
+        process: {
+            if (this._selectedKeyframeId) {
+                // Process for keyframe dragged
+
+                if (!keyframeMovement) break process
+
+                if (!this._keyframeDragged) {
+                    this.setState({activeKeyframeId: this._selectedKeyframeId, keyframeMovement: null})
+                    break process
+                }
+
+                const keyframe = activeClip.keyframes[activePropName].find(kf => kf.id === this._selectedKeyframeId)!
+                const movedFrame = this._pxToFrame(keyframeMovement.x)
+
+                ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframe.frameOnClip, {
+                    frameOnClip: keyframe.frameOnClip + movedFrame
+                })
+
+            } else if (this._selectedEasingHandleHolderData) {
+                // Process for easing handle dragged
+
+                const data = this._selectedEasingHandleHolderData
+                const transitionPath = this._selectedEasingHandleHolderData.container.querySelector('[data-transition-path]')
+
+                const keyframes = activeClip.keyframes[activePropName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
+                const keyframeIdx = keyframes.findIndex(kf => kf.id === this._selectedEasingHandleHolderData!.keyframeId)!
+                if (keyframeIdx === -1) break process
+
+                const {beginX, beginY, endX, endY} = _.mapValues<string, number>(transitionPath.dataset, val => parseFloat(val))
+                const rect = {width: endX - beginX, height: endY - beginY}
+                const position = {x: data.element.cx.baseVal.value, y: data.element.cy.baseVal.value}
+
+                if (data.type === 'ease-in') {
+                    ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframes[keyframeIdx + 1].frameOnClip, {
+                        easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
+                    })
+                } else if (data.type === 'ease-out') {
+                    ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframes[keyframeIdx].frameOnClip, {
+                        easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
+                    })
+                }
+            }
         }
 
-        const {props: {activeClip}, state: {activePropName, keyframeMovement}} = this
-
-        if (!activeClip || !activePropName || !keyframeMovement || !this._selectedKeyframeId) return
-
-        const keyframe = activeClip.keyframes[activePropName].find(kf => kf.id === this._selectedKeyframeId)!
-        const movedFrame = this._pxToFrame(keyframeMovement.x)
-
-        ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframe.frameOnClip, {
-            frameOnClip: keyframe.frameOnClip + movedFrame
-        })
-
+        // Clear dragging state
         this._selectedKeyframeId = null
         this._keyframeDragged = false
+        this._selectedEasingHandleHolderData = null
+        this.setState({
+            keyframeMovement: null,
+            easingHandleMovement: null,
+        })
     }
 
     protected render()
@@ -241,10 +307,16 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private _renderNumberKeyframes(keyframes: Delir.Project.Keyframe[])
     {
+        const {state: {keyframeMovement, easingHandleMovement}} = this
         const points = this._buildKeyframePoints(keyframes)
+        const NO_TRANSFORM = {x: 0, y: 0}
+        const easingHandleHolderData = this._selectedEasingHandleHolderData
 
         return points.map((p, idx) => {
-            const transform = (this.state.keyframeMovement && p.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
+            const transform = (keyframeMovement && p.id === this._selectedKeyframeId) ? keyframeMovement : NO_TRANSFORM
+            const easingHandleTransform = (easingHandleMovement && p.id === this._selectedEasingHandleHolderData!.keyframeId) ? easingHandleMovement : NO_TRANSFORM
+            const easeOutHandleTransform = (easingHandleHolderData && easingHandleHolderData!.type === 'ease-out') ? easingHandleTransform : NO_TRANSFORM
+            const easeInHandleTransform = (easingHandleHolderData && easingHandleHolderData!.type === 'ease-in') ? easingHandleTransform : NO_TRANSFORM
 
             return (
                 <g key={p.id} data-index={idx}>
@@ -253,7 +325,16 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                             stroke='#fff'
                             fill='none'
                             strokeWidth='1'
-                            d={`M ${p.transition.x} ${p.transition.y} C ${p.transition.xh} ${p.transition.yh} ${p.transition.xxh} ${p.transition.yyh} ${p.transition.xx} ${p.transition.yy}`}
+                            d={`
+                                M ${p.transition.x} ${p.transition.y}
+                                C ${p.transition.xh + easeOutHandleTransform.x} ${p.transition.yh + easeOutHandleTransform.y}
+                                  ${p.transition.xxh + easeInHandleTransform.x} ${p.transition.yyh + easeInHandleTransform.y}
+                                  ${p.transition.xx} ${p.transition.yy}
+                            `}
+                            data-begin-x={p.transition.x}
+                            data-begin-y={p.transition.y}
+                            data-end-x={p.transition.xx}
+                            data-end-y={p.transition.yy}
                             data-transition-path
                         />
                     )}
@@ -261,15 +342,21 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                         <path
                             className={s.keyframeLineToHandle}
                             strokeWidth='1'
-                            d={`M ${p.easeOutLine.x} ${p.easeOutLine.y} L ${p.easeOutLine.xx} ${p.easeOutLine.yy}`}
-                            data-ease-in-handle-path
+                            d={`
+                                M ${p.easeOutLine.x} ${p.easeOutLine.y}
+                                L ${p.easeOutLine.xx + easeOutHandleTransform.x} ${p.easeOutLine.yy + easeOutHandleTransform.y}
+                            `}
+                            data-ease-out-handle-path
                         />
                     )}
-                    {p.easeInLine && (
+                    {p.nextEaseInLine && (
                         <path
                             className={s.keyframeLineToHandle}
                             strokeWidth='1'
-                            d={`M ${p.easeInLine.x} ${p.easeInLine.y} L ${p.easeInLine.xx} ${p.easeInLine.yy}`}
+                            d={`
+                                M ${p.nextEaseInLine.x} ${p.nextEaseInLine.y}
+                                L ${p.nextEaseInLine.xx + easeInHandleTransform.x} ${p.nextEaseInLine.yy + easeInHandleTransform.y}
+                            `}
                             data-ease-in-handle-path
                         />
                     )}
@@ -286,27 +373,33 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                             [s['keyframeInner--selected']]: p.id === this.state.activeKeyframeId
                         })} width='8' height='8'  />
                     </g>
-                    {p.easeInHandle && (
+                    {p.nextEaseInHandle && (
                         <circle
-                            cx={p.easeInHandle.x}
-                            cy={p.easeInHandle.y}
+                            cx={p.nextEaseInHandle.x + easeInHandleTransform.x}
+                            cy={p.nextEaseInHandle.y + easeInHandleTransform.y}
                             fill='#7100bf'
                             r='4'
-                            data-ease-in-handle
+                            onMouseDown={this.mouseDonwOnEasingHandle}
+                            onMouseUp={this.mouseUpOnSvg}
+                            data-keyframe-id={p.id}
+                            data-is-ease-in
                         />
                     )}
                     {p.easeOutHandle && (
                         <circle
-                            cx={p.easeOutHandle.x}
-                            cy={p.easeOutHandle.y}
+                            cx={p.easeOutHandle.x + easeOutHandleTransform.x}
+                            cy={p.easeOutHandle.y + easeOutHandleTransform.y}
                             fill='#7100bf'
                             r='4'
-                            data-ease-out-handle
+                            onMouseDown={this.mouseDonwOnEasingHandle}
+                            onMouseUp={this.mouseUpOnSvg}
+                            data-keyframe-id={p.id}
+                            data-is-ease-out
                         />
                     )}
                 </g>
             )
-        })
+        }).reverse()
     }
 
     private _renderColorKeyframes(keyframes: Delir.Project.Keyframe[])
@@ -317,7 +410,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
             const x = this._frameToPx(kf.frameOnClip)
             const nextX = keyframes[idx + 1] ? this._frameToPx(keyframes[idx + 1].frameOnClip) : null
-            console.log(nextX)
+            const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
                 <g ref={kf.id}>
@@ -331,8 +424,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     )}
                     <g
                         className={classnames(s.keyframe, s['keyframe--color'])}
-                        transform={`translate(${x - 4} ${halfHeight})`}
+                        transform={`translate(${x + transform.x - 4} ${halfHeight})`}
                         onDoubleClick={this.keyframeDoubleClicked}
+                        onMouseDown={this.mouseDownOnKeyframe}
+                        onMouseUp={this.mouseUpOnSvg}
                         data-keyframe-id={kf.id}
                         data-frame={kf.frameOnClip}
                     >
@@ -360,6 +455,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
             const x = this._frameToPx(kf.frameOnClip)
             const nextX = keyframes[idx + 1] ? this._frameToPx(keyframes[idx + 1].frameOnClip) : null
+            const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
                 <g ref={kf.id}>
@@ -373,8 +469,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     )}
                     <g
                         className={s.keyframe}
-                        transform={`translate(${x - 4} ${halfHeight})`}
+                        transform={`translate(${x + transform.x - 4} ${halfHeight})`}
                         onDoubleClick={this.keyframeDoubleClicked}
+                        onMouseDown={this.mouseDownOnKeyframe}
+                        onMouseUp={this.mouseUpOnSvg}
                         data-keyframe-id={kf.id}
                         data-frame={kf.frameOnClip}
                     >
@@ -422,10 +520,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         point: {x: number, y: number},
         hasNextKeyframe: boolean,
         transition: {x: number, y: number, xh: number, yh: number, xxh: number, yyh: number, xx: number, yy: number}|null,
-        easeInLine: {x: number, y: number, xx: number, yy: number}|null,
         easeOutLine: {x: number, y: number, xx: number, yy: number}|null,
-        easeInHandle: {x: number, y: number}|null,
+        nextEaseInLine: {x: number, y: number, xx: number, yy: number}|null,
         easeOutHandle: {x: number, y: number}|null,
+        nextEaseInHandle: {x: number, y: number}|null,
     }[] =>
     {
         const {props: {pxPerSec}, state: {activePropName, graphWidth, graphHeight}} = this
@@ -450,29 +548,19 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 const previousKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx - 1]
                 const nextKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx + 1]
 
-                let previousX = 0
-                let previousY = 0
+                // let previousX = 0
+                // let previousY = 0
                 let nextX = 0
                 let nextY = 0
                 let handleEoX = 0
                 let handleEoY = 0
-                let handleEiX = 0
-                let handleEiY = 0
-                let nextHandleEiX = 0
-                let nextHandleEiY = 0
+                // let handleEiX = 0
+                // let handleEiY = 0
+                let nextKeyframeEiX = 0
+                let nextKeyframeEiY = 0
 
                 const beginX = this._frameToPx(keyframe.frameOnClip)
                 const beginY = graphHeight - graphHeight * ((keyframe.value + absMinValue) / minMaxRange)
-
-                if (previousKeyframe) {
-                    previousX = this._frameToPx(previousKeyframe.frameOnClip)
-                    previousY = graphHeight - graphHeight * ((previousKeyframe.value + absMinValue) / minMaxRange)
-
-                    // console.log(previousKeyframe)
-                    // Handle of control transition from previous keyframe to next keyframe
-                    handleEiX = ((beginX - previousX) * keyframe.easeInParam[0]) + previousX
-                    handleEiY = ((beginY - previousY) * keyframe.easeInParam[1]) + previousY
-                }
 
                 if (nextKeyframe) {
                     // Next keyframe position
@@ -483,8 +571,9 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     handleEoX = ((nextX - beginX) * keyframe.easeOutParam[0]) + beginX
                     handleEoY = ((nextY - beginY) * keyframe.easeOutParam[1]) + beginY // ((endPointY - beginY) * nextKeyframe.easeOutParam[1]) + beginY
 
-                    nextHandleEiX = ((nextX - beginX) * nextKeyframe.easeInParam[0]) + beginX
-                    nextHandleEiY = ((nextY - beginY) * nextKeyframe.easeInParam[1]) + beginY
+                    nextKeyframeEiX = ((nextX - beginX) * nextKeyframe.easeInParam[0]) + beginX
+                    nextKeyframeEiY = ((nextY - beginY) * nextKeyframe.easeInParam[1]) + beginY
+
                 }
 
                 return {
@@ -492,11 +581,11 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     frame: keyframe.frameOnClip,
                     point: {x: beginX, y: beginY},
                     hasNextKeyframe: !!nextKeyframe,
-                    transition: nextKeyframe ? {x: beginX, y: beginY, xh: handleEoX, yh: handleEoY, xxh: nextHandleEiX, yyh: nextHandleEiY, xx: nextX, yy: nextY} : null,
-                    easeInLine: previousKeyframe ? {x: beginX, y: beginY, xx: handleEiX, yy: handleEiY} : null,
+                    transition: nextKeyframe ? {x: beginX, y: beginY, xh: handleEoX, yh: handleEoY, xxh: nextKeyframeEiX, yyh: nextKeyframeEiY, xx: nextX, yy: nextY} : null,
                     easeOutLine: nextKeyframe ? {x: beginX, y: beginY, xx: handleEoX, yy: handleEoY} : null,
-                    easeInHandle: previousKeyframe ? {x: handleEiX, y: handleEiY} : null,
+                    nextEaseInLine: nextKeyframe ? {x: nextX, y: nextY, xx: nextKeyframeEiX, yy: nextKeyframeEiY} : null,
                     easeOutHandle: nextKeyframe ? {x: handleEoX, y: handleEoY} : null,
+                    nextEaseInHandle: nextKeyframe ? {x: nextKeyframeEiX, y: nextKeyframeEiY} : null,
                 }
             })
         }
