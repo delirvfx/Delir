@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import keyMirror from '../utils/keymirror'
 import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
@@ -199,6 +200,20 @@ export default {
         }
 
         const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frame)
+
+        if (patch.easeInParam) {
+            patch.easeInParam = [
+                _.clamp(patch.easeInParam[0], 0, 1),
+                patch.easeInParam[1]
+            ]
+        }
+
+        if (patch.easeOutParam) {
+            patch.easeOutParam = [
+                _.clamp(patch.easeOutParam[0], 0, 1),
+                patch.easeOutParam[1]
+            ]
+        }
 
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
