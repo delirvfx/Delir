@@ -294,7 +294,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {props: {activeClip}, state: {activePropName}} = this
         const descriptor = this._getDescriptorByPropName(activePropName)
 
-        if (!activePropName || !activeClip!.keyframes[activePropName] || !descriptor) return []
+        if (!activeClip || !activePropName || !activeClip!.keyframes[activePropName] || !descriptor) return []
 
         switch (descriptor.type) {
             case 'COLOR_RGB':
@@ -408,12 +408,16 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private _renderColorKeyframes(keyframes: Delir.Project.Keyframe[])
     {
-        const {state: {graphHeight}} = this
+        const {props:{activeClip}, state: {graphHeight}} = this
         const halfHeight = graphHeight / 2
 
+        if (!activeClip) return []
+
+        const clipPlacedPositionX = this._frameToPx(activeClip.placedFrame)
+
         return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
-            const x = this._frameToPx(kf.frameOnClip)
-            const nextX = keyframes[idx + 1] ? this._frameToPx(keyframes[idx + 1].frameOnClip) : null
+            const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
+            const nextX = keyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(keyframes[idx + 1].frameOnClip) : null
             const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
@@ -453,12 +457,15 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private _renderStringKeyframes(keyframes: Delir.Project.Keyframe[])
     {
-        const {state: {graphHeight}} = this
+        const {props: {activeClip}, state: {graphHeight}} = this
         const halfHeight = graphHeight / 2
 
+        if (!activeClip) return []
+        const clipPlacedPositionX = this._frameToPx(activeClip.placedFrame)
+
         return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
-            const x = this._frameToPx(kf.frameOnClip)
-            const nextX = keyframes[idx + 1] ? this._frameToPx(keyframes[idx + 1].frameOnClip) : null
+            const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
+            const nextX = keyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(keyframes[idx + 1].frameOnClip) : null
             const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
@@ -482,7 +489,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     >
                         <rect
                             className={classnames(s.keyframeInner, {
-                                [s['keyframeInner--selected']]: p.id === this.state.activeKeyframeId
+                                [s['keyframeInner--selected']]: kf.id === this.state.activeKeyframeId
                             })}
                             width='8'
                             height='8'
