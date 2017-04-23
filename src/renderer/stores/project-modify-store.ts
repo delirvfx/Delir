@@ -92,7 +92,6 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
             case ProjectModifyDispatchTypes.AddKeyframe: {
                 const {targetClip, propName, keyframe} = payload.entity
-                console.log('keyframe added', payload.entity)
                 ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
             }
 
@@ -120,7 +119,6 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 break
 
             case ProjectModifyDispatchTypes.ModifyKeyframe:
-                console.log('apply keyframe modify', payload.entity)
                 ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
                 break
 
@@ -141,7 +139,6 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 break
 
             case ProjectModifyDispatchTypes.RemoveKeyframe:
-                console.log(payload.entity.targetKeyframeId)
                 ProjectHelper.deleteKeyframe(project!, payload.entity.targetKeyframeId)
                 break
 
