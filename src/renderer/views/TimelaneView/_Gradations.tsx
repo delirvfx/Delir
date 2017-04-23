@@ -59,6 +59,8 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         const {activeComposition, scale} = this.props
         const {cursor} = this.refs
 
+        if (!renderer) return
+
         if (activeComposition) {
             // Reactの仕組みを使うとrenderMeasureが走りまくってCPUがヤバいので
             // Reactの輪廻 - Life cycle - から外した
@@ -66,7 +68,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
                 durationFrames: renderer.session.lastRenderedFrame,
-                scale: scale,
+                scale,
             }) + 'px'
         }
 
