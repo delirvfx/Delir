@@ -24,6 +24,7 @@ interface KeyframeViewProps {
     activeClip: Delir.Project.Clip|null
     editor: EditorState
     project: ProjectModifyState
+    scale: number
     pxPerSec: number
 }
 
@@ -503,25 +504,25 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private _frameToPx(frame: number): number
     {
-        const {props: {pxPerSec, editor: {activeComp}}} = this
+        const {props: {pxPerSec, scale, editor: {activeComp}}} = this
 
         return TimelineHelper.framesToPixel({
             pxPerSec: pxPerSec,
             framerate: activeComp!.framerate,
             durationFrames: frame,
-            scale: 1
+            scale,
         })
     }
 
     private _pxToFrame(x: number): number
     {
-        const {props: {pxPerSec, editor: {activeComp}}} = this
+        const {props: {pxPerSec, scale, editor: {activeComp}}} = this
 
         return TimelineHelper.pixelToFrames({
             framerate: activeComp!.framerate,
             pixel: x,
             pxPerSec,
-            scale: 1,
+            scale,
         })
     }
 
