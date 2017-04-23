@@ -484,10 +484,10 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     return targetKeyframe
 }
 
-export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string, frame: number): Keyframe|null
+export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string, frameOnClip: number): Keyframe|null
 {
     if (!clip.keyframes[propName]) return null
-    const target: Keyframe|undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frame)
+    const target: Keyframe|undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frameOnClip)
     return target ? target : null
 }
 

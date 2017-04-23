@@ -182,7 +182,7 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },
 
-    createOrModifyKeyframe(clipId: string, propName: string, frame: number, patch: Optionalized<Delir.Project.Keyframe>)
+    createOrModifyKeyframe(clipId: string, propName: string, frameOnClip: number, patch: Optionalized<Delir.Project.Keyframe>)
     {
         const project = ProjectModifyStore.getState().get('project')
 
@@ -196,10 +196,10 @@ export default {
         if (!prop) return
 
         if (prop.animatable === false) {
-            frame = 0
+            frameOnClip = 0
         }
 
-        const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frame)
+        const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frameOnClip)
 
         if (patch.easeInParam) {
             patch.easeInParam = [
@@ -224,7 +224,7 @@ export default {
             const newKeyframe = new Delir.Project.Keyframe()
 
             Object.assign(newKeyframe, Object.assign({
-                frameOnClip: frame,
+                frameOnClip,
             }, patch))
 
             dispatcher.dispatch(new Payload(DispatchTypes.AddKeyframe, {
