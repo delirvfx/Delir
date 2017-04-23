@@ -123,7 +123,11 @@ const actions = {
 
     seekPreviewFrame(frame: number)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.SeekPreviewFrame, {frame}))
+        const activeComp = EditorStateStore.getState().get('activeComp')
+        if (!activeComp) return
+
+        const overloadGuardedFrame = _.clamp(frame, 0, activeComp.durationFrames)
+        dispatcher.dispatch(new Payload(DispatchTypes.SeekPreviewFrame, {frame: overloadGuardedFrame}))
     },
 
     //
