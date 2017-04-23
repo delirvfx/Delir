@@ -489,7 +489,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     >
                         <rect
                             className={classnames(s.keyframeInner, {
-                                [s['keyframeInner--selected']]: p.id === this.state.activeKeyframeId
+                                [s['keyframeInner--selected']]: kf.id === this.state.activeKeyframeId
                             })}
                             width='8'
                             height='8'
