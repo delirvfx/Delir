@@ -184,8 +184,8 @@ export function compileRendererJs(done) {
                     }
                 }
             }),
-            new webpack.optimize.AggressiveMergingPlugin,
             ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.AggressiveMergingPlugin,
                 new webpack.optimize.UglifyJsPlugin,
             ])
         ]
@@ -222,11 +222,11 @@ export async function compilePlugins(done) {
             'video/index': './video/index',
             'image/index': './image/index',
             'plane/index': './plane/index',
+            'text/index': './text/index',
             ...(DELIR_ENV === 'dev' ? {
                 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 'plane/index': '../experimental-plugins/plane/index',
                 'noise/index': '../experimental-plugins/noise/index',
-                'text/index': '../experimental-plugins/text/index',
             }: {})
         },
         output: {
@@ -266,8 +266,8 @@ export async function compilePlugins(done) {
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
-            new webpack.optimize.AggressiveMergingPlugin,
             ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.AggressiveMergingPlugin,
                 new webpack.optimize.UglifyJsPlugin,
             ])
         ]

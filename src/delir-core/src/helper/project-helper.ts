@@ -244,7 +244,7 @@ export function deleteKeyframe(
 
     const {clip, propName} = findParentClipAndPropNameByKeyframeId(project, keyframe.id!)!
     if (!clip.keyframes[propName]) return
-    clip.keyframes[propName].delete(keyframe) // TODO: Implement this function Or change keyframe structure
+    _.remove(clip.keyframes[propName], kf => kf.id === targetKeyframeId) // TODO: Implement this function Or change keyframe structure
 }
 
 //

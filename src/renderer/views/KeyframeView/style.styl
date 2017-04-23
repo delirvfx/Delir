@@ -1,12 +1,19 @@
+@require '../../styles/_variables'
+@require '../../styles/_mixins'
+
 .keyframeView
     display flex
     flex-flow row
 
 .propList
+    thin-scrollbar()
+
     display block
+    flex none
     width 220px
     height 100%
-    flex none
+    padding 4px 0
+    overflow auto
 
 .propItem
     display flex
@@ -54,13 +61,15 @@
 .keyframeGraph
     height 100%
 
-    // .keyframe
-    //     width 8px
-    //     height 8px
-
     .keyframeInner
         transform-origin 4px 4px
         transform rotateZ(45deg)
+        fill #fff
+        transition-property fill
+        transition-duration .2s
+
+        &.keyframeInner--selected
+            fill #1ac5ff
 
     .keyframeLineToHandle
         stroke rgba(#fff, .2)

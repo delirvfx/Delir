@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import keyMirror from '../utils/keymirror'
 import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
@@ -34,6 +35,7 @@ export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompos
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
 export type RemoveAssetPayload = Payload<'RemoveAsset', {targetAssetId: string}>
+export type RemoveKeyframePayload = Payload<'RemoveKeyframe', {targetKeyframeId: string}>
 
 export const DispatchTypes = keyMirror({
     CreateComposition: null,
@@ -53,6 +55,7 @@ export const DispatchTypes = keyMirror({
     RemoveLayer: null,
     RemoveClip: null,
     RemoveAsset:null,
+    RemoveKeyframe: null,
 })
 
 export default {
@@ -198,6 +201,20 @@ export default {
 
         const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frame)
 
+        if (patch.easeInParam) {
+            patch.easeInParam = [
+                _.clamp(patch.easeInParam[0], 0, 1),
+                patch.easeInParam[1]
+            ]
+        }
+
+        if (patch.easeOutParam) {
+            patch.easeOutParam = [
+                _.clamp(patch.easeOutParam[0], 0, 1),
+                patch.easeOutParam[1]
+            ]
+        }
+
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
                 targetKeyframeId: keyframe.id,
@@ -277,4 +294,9 @@ export default {
     {
         dispatcher.dispatch(new Payload(DispatchTypes.RemoveClip,　{targetClipId: clipId}))
     },
+
+    removeKeyframe(keyframeId: string)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveKeyframe, {targetKeyframeId: keyframeId}))
+    }
 }
