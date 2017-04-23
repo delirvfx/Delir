@@ -100,7 +100,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private keyframeDoubleClicked = ({currentTarget}: React.MouseEvent<SVGGElement>) =>
     {
-        EditorStateActions.seekPreviewFrame(currentTarget.dataset.frame | 0)
+        const {activeClip} = this.props
+        if (!activeClip) return
+
+        EditorStateActions.seekPreviewFrame(activeClip.placedFrame + (currentTarget.dataset.frame | 0))
     }
 
     private valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) =>
@@ -108,7 +111,8 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {activeClip, editor: {currentPreviewFrame}} = this.props
         if (!activeClip) return
 
-        ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, desc.propName, currentPreviewFrame, {value})
+        const frameOnClip = currentPreviewFrame - activeClip.placedFrame
+        ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, desc.propName, frameOnClip, {value})
         EditorStateActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 
@@ -526,16 +530,17 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         nextEaseInHandle: {x: number, y: number}|null,
     }[] =>
     {
-        const {props: {pxPerSec}, state: {activePropName, graphWidth, graphHeight}} = this
+        const {props: {pxPerSec, activeClip}, state: {activePropName, graphWidth, graphHeight}} = this
         const framerate = this.props.editor!.activeComp!.framerate
 
-        if (!activePropName) return []
+        if (!activePropName || !activeClip) return []
 
         const descriptor = this._getDescriptorByPropName(activePropName)
 
         if (!descriptor || descriptor.animatable === false) return []
 
         const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
+        const clipPlacedPositionX = this._frameToPx(activeClip.placedFrame)
 
         if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
             const maxValue = orderedKeyframes.reduce((memo, kf) => Math.max(memo, kf.value as number), 0) + 10
@@ -559,12 +564,12 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 let nextKeyframeEiX = 0
                 let nextKeyframeEiY = 0
 
-                const beginX = this._frameToPx(keyframe.frameOnClip)
+                const beginX = clipPlacedPositionX + this._frameToPx(keyframe.frameOnClip)
                 const beginY = graphHeight - graphHeight * ((keyframe.value + absMinValue) / minMaxRange)
 
                 if (nextKeyframe) {
                     // Next keyframe position
-                    nextX = this._frameToPx(nextKeyframe.frameOnClip)
+                    nextX = clipPlacedPositionX + this._frameToPx(nextKeyframe.frameOnClip)
                     nextY = graphHeight - graphHeight * ((nextKeyframe.value + absMinValue) / minMaxRange)
 
                     // Handle of control transition to next keyframe
