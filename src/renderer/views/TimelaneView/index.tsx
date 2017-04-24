@@ -62,16 +62,11 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         timelineLabels: HTMLDivElement
     }
 
-    constructor()
-    {
-        super()
-
-        this.state = {
-            timelineScrollTop: 0,
-            cursorHeight: 0,
-            scale: 1,
-            selectedLaneId: null,
-        }
+    protected state: TimelineViewState = {
+        timelineScrollTop: 0,
+        cursorHeight: 0,
+        scale: 1,
+        selectedLaneId: null,
     }
 
     protected componentDidMount()
