@@ -24,6 +24,7 @@ interface KeyframeViewProps {
     activeClip: Delir.Project.Clip|null
     editor: EditorState
     project: ProjectModifyState
+    scrollLeft: number
     scale: number
     pxPerSec: number
 }
@@ -45,6 +46,11 @@ interface KeyframeViewState {
 export default class KeyframeView extends React.Component<KeyframeViewProps, KeyframeViewState> {
     static propTypes = {
         activeClip: PropTypes.instanceOf(Delir.Project.Clip),
+        scrollLeft: PropTypes.number,
+    }
+
+    protected static defaultProps: Partial<KeyframeViewProps> = {
+        scrollLeft: 0
     }
 
     protected state: KeyframeViewState = {
@@ -226,7 +232,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         })
     }
 
-    protected render()
+    public render()
     {
         const {activeClip, project: {project}, editor} = this.props
         const {activePropName, keyframeViewViewBox, graphWidth, graphHeight} = this.state
@@ -409,12 +415,12 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private _renderColorKeyframes(keyframes: Delir.Project.Keyframe[])
     {
-        const {props:{activeClip}, state: {graphHeight}} = this
+        const {props:{activeClip, scrollLeft}, state: {graphHeight}} = this
         const halfHeight = graphHeight / 2
 
         if (!activeClip) return []
 
-        const clipPlacedPositionX = this._frameToPx(activeClip.placedFrame)
+        const clipPlacedPositionX = this._frameToPx(activeClip.placedFrame) - scrollLeft
 
         return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
             const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
@@ -538,7 +544,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         nextEaseInHandle: {x: number, y: number}|null,
     }[] =>
     {
-        const {props: {pxPerSec, activeClip}, state: {activePropName, graphWidth, graphHeight}} = this
+        const {props: {pxPerSec, activeClip, scrollLeft}, state: {activePropName, graphWidth, graphHeight}} = this
         const framerate = this.props.editor!.activeComp!.framerate
 
         if (!activePropName || !activeClip) return []
@@ -572,12 +578,12 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 let nextKeyframeEiX = 0
                 let nextKeyframeEiY = 0
 
-                const beginX = clipPlacedPositionX + this._frameToPx(keyframe.frameOnClip)
+                const beginX = clipPlacedPositionX + this._frameToPx(keyframe.frameOnClip) - scrollLeft
                 const beginY = graphHeight - graphHeight * ((keyframe.value + absMinValue) / minMaxRange)
 
                 if (nextKeyframe) {
                     // Next keyframe position
-                    nextX = clipPlacedPositionX + this._frameToPx(nextKeyframe.frameOnClip)
+                    nextX = clipPlacedPositionX + this._frameToPx(nextKeyframe.frameOnClip) - scrollLeft
                     nextY = graphHeight - graphHeight * ((nextKeyframe.value + absMinValue) / minMaxRange)
 
                     // Handle of control transition to next keyframe
@@ -586,7 +592,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
                     nextKeyframeEiX = ((nextX - beginX) * nextKeyframe.easeInParam[0]) + beginX
                     nextKeyframeEiY = ((nextY - beginY) * nextKeyframe.easeInParam[1]) + beginY
-
                 }
 
                 return {
