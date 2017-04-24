@@ -58,6 +58,8 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 {
     protected refs: {
         scaleList: DropDown
+        timelineLanes: HTMLUListElement
+        timelineLabels: HTMLDivElement
     }
 
     constructor()
