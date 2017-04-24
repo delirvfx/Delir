@@ -24,13 +24,18 @@
             border 5px solid transparent
             border-top-color #fff
 
-    .measureLayer
+    .measureLayerTrimer
         position absolute
         top 0
         left 0
         right 0
         bottom 0
+        overflow hidden
         pointer-events none
+
+    .measureLayer
+        width 100%
+        height 100%
 
         .measureLine
             position absolute

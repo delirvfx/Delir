@@ -3,6 +3,7 @@ import * as uuid from 'uuid'
 import * as classnames from 'classnames'
 import * as React from 'react'
 import {PropTypes} from 'react'
+import * as ReactDOM from 'react-dom'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
 
@@ -35,6 +36,7 @@ interface TimelineViewProps {
 
 interface TimelineViewState {
     timelineScrollTop: number,
+    timelineScrollLeft: number,
     cursorHeight: number,
     scale: number,
     selectedLaneId: number|null,
@@ -58,12 +60,14 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 {
     protected refs: {
         scaleList: DropDown
+        keyframeView: KeyframeView
         timelineLanes: HTMLUListElement
         timelineLabels: HTMLDivElement
     }
 
     protected state: TimelineViewState = {
         timelineScrollTop: 0,
+        timelineScrollLeft: 0,
         cursorHeight: 0,
         scale: 1,
         selectedLaneId: null,
@@ -71,9 +75,13 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     protected componentDidMount()
     {
-        const {timelineLanes} = this.refs
+        const {timelineLanes, keyframeView} = this.refs
+
+        const timelineHeight = timelineLanes.getBoundingClientRect().height
+        const keyFrameViewHeight = ReactDOM.findDOMNode(keyframeView).getBoundingClientRect().height
+
         this.setState({
-            cursorHeight: timelineLanes ? timelineLanes.getBoundingClientRect().height + 1 : 0
+            cursorHeight: timelineHeight + keyFrameViewHeight + 1
         })
     }
 
@@ -84,7 +92,10 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     private _scrollSync = (e: React.WheelEvent<HTMLElement>) =>
     {
-        this.setState({'timelineScrollTop': e.currentTarget.scrollTop})
+        this.setState({
+            timelineScrollLeft: e.currentTarget.scrollLeft,
+            timelineScrollTop: e.currentTarget.scrollTop
+        })
     }
 
     private _selectLayer = laneId =>
@@ -147,7 +158,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     protected render()
     {
-        const {scale} = this.state
+        const {scale, timelineScrollLeft} = this.state
         const {activeComp, activeClip} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
@@ -192,10 +203,11 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             {/* Layer Panel */}
                             <Pane className='timeline-container' onWheel={this._scaleTimeline}>
                                 <Gradations
+                                    activeComposition={activeComp}
                                     cursorHeight={this.state.cursorHeight}
                                     scale={this.state.scale}
-                                    activeComposition={activeComp}
                                     pxPerSec={PX_PER_SEC}
+                                    scrollLeft={timelineScrollLeft}
                                     onSeeked={this._onSeeked}
                                 />
 
@@ -220,7 +232,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                         </Workspace>
                     </Pane>
                     <Pane className={s.keyframeGraphRegion}>
-                        <KeyframeView activeClip={activeClip} pxPerSec={PX_PER_SEC} scale={scale} />
+                        <KeyframeView ref='keyframeView' activeClip={activeClip} pxPerSec={PX_PER_SEC} scale={scale} />
                     </Pane>
                 </Workspace>
             </Pane>
