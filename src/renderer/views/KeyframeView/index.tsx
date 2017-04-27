@@ -179,16 +179,17 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {props: {activeClip}, state: {activePropName, keyframeMovement, easingHandleMovement}} = this
         if (!activeClip || !activePropName) return
 
+        console.log('up')
+
         process: {
             if (this._selectedKeyframeId) {
                 // Process for keyframe dragged
-
-                if (!keyframeMovement) break process
-
                 if (!this._keyframeDragged) {
                     this.setState({activeKeyframeId: this._selectedKeyframeId, keyframeMovement: null})
                     break process
                 }
+
+                if (!keyframeMovement) break process
 
                 const keyframe = activeClip.keyframes[activePropName].find(kf => kf.id === this._selectedKeyframeId)!
                 const movedFrame = this._pxToFrame(keyframeMovement.x)
