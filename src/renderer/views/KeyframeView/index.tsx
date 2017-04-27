@@ -470,7 +470,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private _renderStringKeyframes(keyframes: Delir.Project.Keyframe[])
     {
-        const {props: {activeClip}, state: {graphHeight}} = this
+        const {props: {activeClip, scrollLeft}, state: {graphHeight}} = this
         const halfHeight = graphHeight / 2
 
         if (!activeClip) return []
