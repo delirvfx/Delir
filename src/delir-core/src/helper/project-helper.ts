@@ -324,6 +324,10 @@ export function modifyKeyframe(
         ? targetKeyframeId
         : findKeyframeById(project, targetKeyframeId)!
 
+    if (patch.frameOnClip != null) {
+        patch.frameOnClip = patch.frameOnClip | 0
+    }
+
     // TODO: Check duplicate on frame
     Object.assign(keyframe, patch)
 }
