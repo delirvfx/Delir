@@ -43,10 +43,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     process.on('uncaughtException', (e: Error) => {
+        console.error(e)
          EditorStateActions.notify(e.message, '😱Uncaught Exception😱', 'error', 5000, e.stack)
     })
 
     process.on('uncaughtRejection', (e: Error) => {
+        console.error(e)
          EditorStateActions.notify(e.message, '😱Uncaught Rejection😱', 'error', 5000, e.stack)
     })
 
