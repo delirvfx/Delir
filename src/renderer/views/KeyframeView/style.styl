@@ -53,6 +53,27 @@
         width calc(1em + 2px)
         height 1em
 
+.measureContainer
+    position absolute
+    top 0
+    width 100%
+    height 100%
+    overflow hidden
+    pointer-events none
+
+    .measureLayer
+        width 100%
+        height 100%
+
+    .measureLine
+        position absolute
+        height 100%
+        padding-top 2px
+        padding-left 2px
+        font-size 8px
+        border-left 1px dotted #aaa
+        opacity .5
+
 .keyframeContainer
     display flex
     flex 1

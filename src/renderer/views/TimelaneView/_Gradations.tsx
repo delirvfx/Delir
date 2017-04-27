@@ -134,7 +134,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
 
     private _renderMeasure(): JSX.Element[]
     {
-        const {activeComposition, scrollLeft} = this.props
+        const {activeComposition} = this.props
         if (! activeComposition) return []
 
         let previousPos = -40

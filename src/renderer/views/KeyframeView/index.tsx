@@ -21,6 +21,7 @@ import RendererService from '../../services/renderer'
 import * as s from './style.styl'
 
 interface KeyframeViewProps {
+    activeComposition: Delir.Project.Composition|null
     activeClip: Delir.Project.Clip|null
     editor: EditorState
     project: ProjectModifyState
@@ -234,7 +235,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     public render()
     {
-        const {activeClip, project: {project}, editor} = this.props
+        const {activeClip, project: {project}, editor, scrollLeft} = this.props
         const {activePropName, keyframeViewViewBox, graphWidth, graphHeight} = this.state
         const activePropDescriptor = this._getDescriptorByPropName(activePropName)
         const descriptors = activeClip
@@ -280,6 +281,11 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 </Pane>
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
+                        <div className={s.measureContainer}>
+                            <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
+                                {...this._renderMeasure()}
+                            </div>
+                        </div>
                         <svg
                             className={s.keyframeGraph}
                             viewBox={keyframeViewViewBox}
@@ -619,5 +625,50 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
             : []
 
         return descriptors.find(desc => desc.propName === propName) || null
+    }
+
+    private _renderMeasure(): JSX.Element[]
+    {
+        const {activeComposition} = this.props
+        if (! activeComposition) return []
+
+        let previousPos = -40
+        const components: JSX.Element[] = []
+        for (let idx = 0; idx < 300; idx++) {
+            const frame = 10 * idx
+
+            if (frame >= activeComposition.durationFrames) {
+                // Hit last frame marker
+                const pos = TimelineHelper.framesToPixel({
+                    pxPerSec: this.props.pxPerSec,
+                    framerate: this.props.activeComposition!.framerate,
+                    scale: this.props.scale,
+                    durationFrames: activeComposition.durationFrames
+                })
+
+                components.push(
+                    <div
+                        key={idx}
+                        className={classnames(s.measureLine, s['--endFrame'])}
+                        style={{left: pos}}
+                    ></div>
+                )
+                break
+            }
+
+            const pos = TimelineHelper.framesToPixel({
+                pxPerSec: this.props.pxPerSec,
+                framerate: this.props.activeComposition!.framerate,
+                scale: this.props.scale,
+                durationFrames: frame
+            })
+
+            if (pos - previousPos >= 40/* px */) {
+                previousPos = pos
+                components.push(<div key={idx} className={s.measureLine} style={{left: pos}}>{frame}</div>)
+            }
+        }
+
+        return components
     }
 }
