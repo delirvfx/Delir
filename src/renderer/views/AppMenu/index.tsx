@@ -4,6 +4,7 @@ import {remote} from 'electron'
 import * as Platform from '../../utils/platform'
 
 import EditorStateActions from '../../actions/editor-state-actions'
+import EditorStateStore from '../../stores/editor-state-store'
 
 export default class AppMenu extends React.Component<any, any>
 {
@@ -70,26 +71,10 @@ export default class AppMenu extends React.Component<any, any>
                 {
                     label: 'Rendering',
                     accelerator: 'CmdOrCtrl+Shift+R',
-                    click(item, focusedWindow) {
-                        const path = dialog.showSaveDialog({
-                            title: 'Save as ...',
-                            // defaultPath: '/Users/ragg/',
-                            buttonLabel: 'Render',
-                            filters: [
-                                {
-                                    name: 'Movie',
-                                    extensions: ['mp4']
-                                }
-                            ],
-                        })
-
-                        if (!path) return
-                        focusedWindow.webContents.send('action', {
-                            type: 'RENDER_DESTINATE',
-                            payload: {
-                                path: path
-                            }
-                        })
+                    click() {
+                        const comp = EditorStateStore.getState().get('activeComp')
+                        if (!comp) return
+                        EditorStateActions.renderDestinate(comp.id!)
                     }
                 },
             ]
