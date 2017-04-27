@@ -633,10 +633,16 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {activeComposition} = this.props
         if (! activeComposition) return []
 
+        let created = 0
+        let frame = -1
         let previousPos = -40
         const components: JSX.Element[] = []
-        for (let idx = 0; idx < 300; idx++) {
-            const frame = 10 * idx
+        while (true) {
+            frame++
+
+            if (components.length >= 300) {
+                break
+            }
 
             if (frame >= activeComposition.durationFrames) {
                 // Hit last frame marker
@@ -649,11 +655,12 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
                 components.push(
                     <div
-                        key={idx}
+                        key={created++}
                         className={classnames(s.measureLine, s['--endFrame'])}
                         style={{left: pos}}
                     ></div>
                 )
+
                 break
             }
 
@@ -664,9 +671,19 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 durationFrames: frame
             })
 
-            if (pos - previousPos >= 40/* px */) {
+            if (pos - previousPos >= 20/* px */) {
                 previousPos = pos
-                components.push(<div key={idx} className={s.measureLine} style={{left: pos}}>{frame}</div>)
+                components.push(
+                    <div
+                        key={created++}
+                        className={classnames(s.measureLine, {
+                            [s['--grid']]: frame % 10 === 0,
+                        })}
+                        style={{left: pos}}
+                    >
+                        {frame}
+                    </div>
+                )
             }
         }
 
