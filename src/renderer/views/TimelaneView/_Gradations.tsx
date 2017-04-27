@@ -74,7 +74,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
             const cursorLeft = TimelineHelper.framesToPixel({
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
-                durationFrames: renderer.session.lastRenderedFrame,
+                durationFrames: renderer.session.lastRenderedFrame || 0,
                 scale,
             })
 
