@@ -7,6 +7,7 @@ const builder = require('electron-builder')
 const nib = require('nib')
 const notifier = require('node-notifier')
 
+const os = require('os')
 const fs = require("fs-promise");
 const {join} = require("path");
 const {spawn, spawnSync} = require("child_process");
@@ -28,6 +29,7 @@ const paths = {
     binary  : join(__dirname, "./release/"),
 };
 
+const isWindows = os.type() === 'Windows_NT'
 const DELIR_ENV = process.env.DELIR_ENV
 
 export function buildBrowserJs() {
@@ -325,34 +327,36 @@ export function copyImage() {
 
 export function makeIcon() {
     return new Promise((resolve, reject) => {
-        const bin = join(__dirname, 'node_modules/.bin/electron-icon-maker')
+        const binName = isWindows ? 'electron-icon-maker.cmd' : 'electron-icon-maker'
+        const binPath = join(__dirname, 'node_modules/.bin/', binName)
         const source = join(__dirname, 'build-assets/icon.png')
 
-        const iconMaker = spawn(bin, [`--input=${source}`, `--output=./build-assets`]);
-        iconMaker.on('close', (code) => {
-            code === 0 ? resolve() : reject()
-        })
+        const iconMaker = spawn(binPath, [`--input=${source}`, `--output=./build-assets`]);
+        iconMaker
+            .on('error', err => reject(err))
+            .on('close', (code, signal) => code === 0 ? resolve() : reject(new Error(signal)))
     })
 }
 
 export async function pack(done) {
     const pjson = require("./package.json");
+    const yarnBin = isWindows ? 'yarn.cmd' : 'yarn'
 
     await rimraf(join(paths.build, 'node_modules'))
 
     await new Promise((resolve, reject) => {
-        spawn('yarn', ['install'], {cwd: paths.build}).on('close', code => code === 0 ? resolve() : reject())
+        spawn(yarnBin, ['install'], {cwd: paths.build})
+            .on('error', err => reject(err))
+            .on('close', (code, signal) => code === 0 ? resolve() : reject(new Error(signal)))
     })
 
     const targets = [
-        builder.Platform.MAC.createTarget(),
+        ...(!isWindows ? [builder.Platform.MAC.createTarget()] : []),
         builder.Platform.WINDOWS.createTarget(),
         // ...builder.Platform.LINUX.createTarget(),
     ]
 
     for (const target of targets) {
-
-
         await builder.build({
             // targets: builder.Platform.MAC.createTarget(),
             targets: target,

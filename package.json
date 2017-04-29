@@ -44,6 +44,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "clean-webpack-plugin": "^0.1.16",
+    "cross-env": "^4.0.0",
     "css-loader": "^0.28.0",
     "devtron": "^1.4.0",
     "electron": "^1.6.6",
