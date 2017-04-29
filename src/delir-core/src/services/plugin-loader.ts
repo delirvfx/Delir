@@ -9,13 +9,6 @@ import {PluginLoadFailException} from '../exceptions/'
 
 export default class PluginLoader
 {
-    static PluginFeatures = Object.freeze({
-        Effect: 'Effect',
-        CustomLayer: 'CustomLayer',
-        // CustomLayer: 'CustomLayer',
-        ExpressionExtension: 'ExpressionExtension',
-    })
-
     /**
      * Load packages from packages directory
      * @param {string} packageDir
