@@ -4,6 +4,7 @@ import * as _ from 'lodash'
 import {remote} from 'electron'
 import {BSON} from 'bson'
 import * as fs from 'fs-promise'
+import * as path from 'path'
 
 import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
@@ -54,9 +55,12 @@ const actions = {
         // })
     },
 
-    //
-    //
-    //
+    openPluginDirectory()
+    {
+        const userDir = remote.app.getPath('appData')
+        const pluginsDir = path.join(userDir, 'delir/plugins')
+        remote.shell.openItem(pluginsDir)
+    },
 
     //
     // Editor Store
@@ -119,7 +123,11 @@ const actions = {
 
     seekPreviewFrame(frame: number)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.SeekPreviewFrame, {frame}))
+        const activeComp = EditorStateStore.getState().get('activeComp')
+        if (!activeComp) return
+
+        const overloadGuardedFrame = _.clamp(frame, 0, activeComp.durationFrames)
+        dispatcher.dispatch(new Payload(DispatchTypes.SeekPreviewFrame, {frame: overloadGuardedFrame}))
     },
 
     //

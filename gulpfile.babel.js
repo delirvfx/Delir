@@ -136,6 +136,12 @@ export function compileRendererJs(done) {
                 },
                 {
                     test: /\.tsx?$/,
+                    exclude: /node_modules/,
+                    enforce: 'pre',
+                    loader: 'tslint-loader',
+                },
+                {
+                    test: /\.tsx?$/,
                     exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
@@ -178,8 +184,8 @@ export function compileRendererJs(done) {
                     }
                 }
             }),
-            new webpack.optimize.AggressiveMergingPlugin,
             ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.AggressiveMergingPlugin,
                 new webpack.optimize.UglifyJsPlugin,
             ])
         ]
@@ -216,6 +222,7 @@ export async function compilePlugins(done) {
             'video/index': './video/index',
             'image/index': './image/index',
             'plane/index': './plane/index',
+            'text/index': './text/index',
             ...(DELIR_ENV === 'dev' ? {
                 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 'plane/index': '../experimental-plugins/plane/index',
@@ -227,11 +234,11 @@ export async function compilePlugins(done) {
             path: paths.compiled.plugins,
             libraryTarget: 'commonjs-module',
         },
-        devtool: 'cheap-eval-source-map',
+        devtool: 'cheap-source-map',
         externals: [
             (ctx, request: string, callback) => {
-                if (request.startsWith('delir-core')) {
-                    // Ignore 'delir-core' requiring for plugins building
+                if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
+                    // throughs non relative requiring ('./module', '../module', '!!../module')
                     return callback(null, `require('${request}')`)
                 }
 
@@ -259,8 +266,8 @@ export async function compilePlugins(done) {
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
-            new webpack.optimize.AggressiveMergingPlugin,
             ...(DELIR_ENV === 'dev' ? [] : [
+                new webpack.optimize.AggressiveMergingPlugin,
                 new webpack.optimize.UglifyJsPlugin,
             ])
         ]
@@ -316,6 +323,18 @@ export function copyImage() {
         .pipe(g.dest(join(paths.compiled.renderer, "images")));
 }
 
+export function makeIcon() {
+    return new Promise((resolve, reject) => {
+        const bin = join(__dirname, 'node_modules/.bin/electron-icon-maker')
+        const source = join(__dirname, 'build-assets/icon.png')
+
+        const iconMaker = spawn(bin, [`--input=${source}`, `--output=./build-assets`]);
+        iconMaker.on('close', (code) => {
+            code === 0 ? resolve() : reject()
+        })
+    })
+}
+
 export async function pack(done) {
     const pjson = require("./package.json");
 
@@ -328,7 +347,7 @@ export async function pack(done) {
     const targets = new Map([
         ...builder.Platform.MAC.createTarget(),
         ...builder.Platform.WINDOWS.createTarget(),
-        ...builder.Platform.LINUX.createTarget(),
+        // ...builder.Platform.LINUX.createTarget(),
     ])
 
     await builder.build({
@@ -345,11 +364,16 @@ export async function pack(done) {
                 app: paths.build,
                 output: paths.binary,
             },
-        },
-        mac: {
-            target: 'default',
-            type: "distribution",
-            category: "AudioVideo",
+            mac: {
+                target: 'zip',
+                type: "distribution",
+                category: "AudioVideo",
+                icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
+            },
+            win: {
+                target: 'zip',
+                icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
+            },
         },
     })
 }
@@ -449,7 +473,7 @@ const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compileP
 const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
-const publish = g.series(clean, build, pack);
+const publish = g.series(clean, build, makeIcon, pack);
 
 // export function navcodecTest() {
 //     g.watch(join(__dirname, 'src/navcodec'), compileNavcodec)

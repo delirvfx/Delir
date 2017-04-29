@@ -10,7 +10,7 @@ import Clip from '../project/clip'
 import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
 
-import PluginRegistory from '../plugin/plugin-registry'
+import PluginRegistory from '../plugin-support/plugin-registry'
 
 function setFreezedProp(obj: Object, name: string, value: any)
 {
@@ -244,7 +244,7 @@ export function deleteKeyframe(
 
     const {clip, propName} = findParentClipAndPropNameByKeyframeId(project, keyframe.id!)!
     if (!clip.keyframes[propName]) return
-    clip.keyframes[propName].delete(keyframe) // TODO: Implement this function Or change keyframe structure
+    _.remove(clip.keyframes[propName], kf => kf.id === targetKeyframeId) // TODO: Implement this function Or change keyframe structure
 }
 
 //
@@ -323,6 +323,10 @@ export function modifyKeyframe(
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId
         : findKeyframeById(project, targetKeyframeId)!
+
+    if (patch.frameOnClip != null) {
+        patch.frameOnClip = patch.frameOnClip | 0
+    }
 
     // TODO: Check duplicate on frame
     Object.assign(keyframe, patch)
@@ -484,10 +488,10 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     return targetKeyframe
 }
 
-export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string, frame: number): Keyframe|null
+export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string, frameOnClip: number): Keyframe|null
 {
     if (!clip.keyframes[propName]) return null
-    const target: Keyframe|undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frame)
+    const target: Keyframe|undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frameOnClip)
     return target ? target : null
 }
 
@@ -514,12 +518,12 @@ export function findParentClipAndPropNameByKeyframeId(project: Project, keyframe
     return target
 }
 
-export function findAssetAttachablePropertyByMimeType(
+export function findAssetAttachablePropertyByFileType(
     clip: Clip,
-    mimeType: string,
+    fileType: string,
     registry: PluginRegistory
 ): string|null
 {
     const plugin = registry.getPlugin(clip.renderer)
-    return plugin.pluginInfo.acceptFileTypes[mimeType]
+    return plugin.pluginInfo.acceptFileTypes[fileType]
 }

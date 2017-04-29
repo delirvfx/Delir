@@ -1,8 +1,9 @@
 @import '../../styles/_variables'
+@import '../../styles/_mixins'
 
 .timelineView
     display flex
-    height 400px
+    height 50%
     flex none
     font-size 12px
 
@@ -135,6 +136,12 @@
             display none
             width 100%
             overflow hidden
+
+    .timelineRegion
+        height 50%
+
+    .keyframeGraphRegion
+        height 50%
 
 .scaleLabel
     display inline-flex

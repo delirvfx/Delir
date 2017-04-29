@@ -1,0 +1,44 @@
+{
+    "extends": "tslint:latest",
+    "rules": {
+        "arrow-parens": false,
+        "curly": false,
+        "trailing-comma": [true],
+        "quotemark": [true, "single", "jsx-single", "avoid-escape"],
+        "semicolon": [true, "never"],
+        "ordered-imports": [false],
+        "object-literal-sort-keys": false,
+        "max-line-length": [false],
+        "align": ["arguments", "parameters"],
+        "whitespace": [
+            "check-branch",
+            "check-decl",
+            "check-module",
+            "check-operator",
+            "check-separator",
+            "check-type",
+            "check-typecast",
+            true
+        ],
+        "max-classes-per-file": [false],
+        "indent": [true, "spaces"],
+        "member-ordering": [
+            true, {
+                "order": [
+                    "public-static-field",
+                    "private-static-method",
+                    "public-static-method",
+                    "private-instance-field",
+                    "public-instance-field",
+                    "constrctor"
+                ]
+            }
+        ],
+        "array-type": [true, "array"],
+        "one-line": [true, "check-else", "check-catch", "check-finally", "check-whitespace"],
+        "variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"],
+        "no-consecutive-blank-lines": [true, 1],
+        "no-bitwise": false,
+        "triple-equals": [true, "allow-null-check"]
+    }
+}

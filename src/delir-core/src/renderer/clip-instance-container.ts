@@ -1,12 +1,12 @@
 // @flow
-import LayerPluginBase from '../plugin/layer-plugin-base'
-import EffectPluginBase from '../plugin/effect-plugin-base'
+import LayerPluginBase from '../plugin-support/layer-plugin-base'
+import EffectPluginBase from '../plugin-support/effect-plugin-base'
 
 import Clip from '../project/clip'
 import Keyframe from '../project/keyframe'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
-import {ParameterValueTypes} from '../plugin/type-descriptor'
+import {ParameterValueTypes} from '../plugin-support/type-descriptor'
 
 import * as _ from 'lodash'
 import * as KeyframeHelper from '../helper/keyframe-helper'

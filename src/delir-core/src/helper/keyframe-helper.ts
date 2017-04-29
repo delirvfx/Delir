@@ -5,7 +5,7 @@ import {
     TypeDescriptor,
     ParameterValueTypes,
     AnyParameterTypeDescriptor,
-} from '../plugin/type-descriptor'
+} from '../plugin-support/type-descriptor'
 
 import bezierEasing from 'bezier-easing'
 
@@ -168,13 +168,13 @@ export function calcKeyframe(
             continue
         }
 
-        const currentKeyEaseIn = activeKeyFrame.active.easeInParam ? activeKeyFrame.active.easeInParam : [1, 1]
-        const previousKeyEaseOut = activeKeyFrame.previous
-            ? activeKeyFrame.previous.easeOutParam || [0, 0]
-            : [0, 0]
+        const currentKeyEaseOut = activeKeyFrame.active.easeOutParam ? activeKeyFrame.active.easeOutParam : [0, 0]
+        const nextKeyEaseIn = activeKeyFrame.next ?
+            activeKeyFrame.next.easeInParam || [1, 1]
+            : [1, 2]
 
         // TODO: Cache Bezier instance between change active keyframe
-        const bezier = bezierEasing(...previousKeyEaseOut, ...currentKeyEaseIn)
+        const bezier = bezierEasing(...currentKeyEaseOut, ...nextKeyEaseIn)
 
         const progressRate = activeKeyFrame.next
             ? (frame - activeKeyFrame.active.frameOnClip) / (activeKeyFrame.next.frameOnClip - activeKeyFrame.active.frameOnClip)

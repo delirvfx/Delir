@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import keyMirror from '../utils/keymirror'
 import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
@@ -34,6 +35,7 @@ export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompos
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
 export type RemoveAssetPayload = Payload<'RemoveAsset', {targetAssetId: string}>
+export type RemoveKeyframePayload = Payload<'RemoveKeyframe', {targetKeyframeId: string}>
 
 export const DispatchTypes = keyMirror({
     CreateComposition: null,
@@ -53,6 +55,7 @@ export const DispatchTypes = keyMirror({
     RemoveLayer: null,
     RemoveClip: null,
     RemoveAsset:null,
+    RemoveKeyframe: null,
 })
 
 export default {
@@ -95,11 +98,11 @@ export default {
         targetComposition: Delir.Project.Composition,
         asset: Delir.Project.Asset
     ) {
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
+        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.fileType])
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
-            EditorStateActions.notify(`plugin not available for \`${asset.mimeType}\``, '😢 Supported plugin not available', 'info', 5000)
+            EditorStateActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 5000)
             return
         }
 
@@ -148,11 +151,11 @@ export default {
 
         if (!project) return
 
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.mimeType])
+        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.fileType])
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
-            EditorStateActions.notify(`plugin not available for \`${asset.mimeType}\``, '😢 Supported plugin not available', 'info', 3000)
+            EditorStateActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 3000)
             return
         }
 
@@ -164,9 +167,9 @@ export default {
             durationFrames,
         })
 
-        const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(
+        const propName = ProjectHelper.findAssetAttachablePropertyByFileType(
             newClip,
-            asset.mimeType,
+            asset.fileType,
             RendererService.pluginRegistry!
         )
 
@@ -179,7 +182,7 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },
 
-    createOrModifyKeyframe(clipId: string, propName: string, frame: number, patch: Optionalized<Delir.Project.Keyframe>)
+    createOrModifyKeyframe(clipId: string, propName: string, frameOnClip: number, patch: Optionalized<Delir.Project.Keyframe>)
     {
         const project = ProjectModifyStore.getState().get('project')
 
@@ -193,10 +196,24 @@ export default {
         if (!prop) return
 
         if (prop.animatable === false) {
-            frame = 0
+            frameOnClip = 0
         }
 
-        const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frame)
+        const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frameOnClip)
+
+        if (patch.easeInParam) {
+            patch.easeInParam = [
+                _.clamp(patch.easeInParam[0], 0, 1),
+                patch.easeInParam[1]
+            ]
+        }
+
+        if (patch.easeOutParam) {
+            patch.easeOutParam = [
+                _.clamp(patch.easeOutParam[0], 0, 1),
+                patch.easeOutParam[1]
+            ]
+        }
 
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
@@ -207,7 +224,7 @@ export default {
             const newKeyframe = new Delir.Project.Keyframe()
 
             Object.assign(newKeyframe, Object.assign({
-                frameOnClip: frame,
+                frameOnClip,
             }, patch))
 
             dispatcher.dispatch(new Payload(DispatchTypes.AddKeyframe, {
@@ -218,11 +235,11 @@ export default {
         }
     },
 
-    addAsset({name, mimeType, path}: {name: string, mimeType: string, path: string})
+    addAsset({name, fileType, path}: {name: string, fileType: string, path: string})
     {
         const asset = new Delir.Project.Asset()
         asset.name = name
-        asset.mimeType = mimeType
+        asset.fileType = fileType
         asset.path = path
 
         dispatcher.dispatch(new Payload(DispatchTypes.AddAsset, {asset}))
@@ -277,4 +294,9 @@ export default {
     {
         dispatcher.dispatch(new Payload(DispatchTypes.RemoveClip,　{targetClipId: clipId}))
     },
+
+    removeKeyframe(keyframeId: string)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveKeyframe, {targetKeyframeId: keyframeId}))
+    }
 }

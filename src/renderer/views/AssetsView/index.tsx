@@ -3,6 +3,7 @@ import * as React from 'react'
 import { PropTypes } from 'react'
 import * as parseColor from 'parse-color'
 import * as classnames from 'classnames'
+import * as path from 'path'
 
 import * as Delir from 'delir-core'
 import {ProjectHelper, ColorRGB} from 'delir-core'
@@ -88,7 +89,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
             ProjectModifyActions.addAsset({
                 name: file.name,
-                mimeType: file.type,
+                fileType: path.extname(file.name).slice(1),
                 path: file.path,
             })
         })
@@ -123,7 +124,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         files.forEach(file => {
             ProjectModifyActions.addAsset({
                 name: file.name,
-                mimeType: file.type,
+                fileType: path.extname(file.name).slice(1),
                 path: file.path,
             })
         })
@@ -267,7 +268,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                         placeholder='Unnamed Asset'
                                     />
                                 </Col>
-                                <Col>{asset.mimeType}</Col>
+                                <Col>{asset.fileType}</Col>
                             </Row>
                         ))}
                     </TableBodySelectList>

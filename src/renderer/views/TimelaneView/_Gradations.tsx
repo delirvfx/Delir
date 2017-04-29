@@ -4,14 +4,16 @@ import {Component, PropTypes} from 'react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
-import TimelineHelper from '../../helpers/timeline-helper'
+import {default as TimelineHelper, MeasurePoint} from '../../helpers/timeline-helper'
 import RendererService from '../../services/renderer'
 
 import * as s from './Gradations.styl'
 
 interface GradationsProps {
+    measures: MeasurePoint[]
     activeComposition: Delir.Project.Composition|null,
     cursorHeight: number,
+    scrollLeft: number,
     scale: number
     pxPerSec: number,
     onSeeked: (frame: number) => any
@@ -24,56 +26,70 @@ interface GradationsState {
 
 export default class Gradations extends Component<GradationsProps, GradationsState>
 {
-    static propTypes = {
+    protected static propTypes = {
+        measures: PropTypes.array.isRequired,
         activeComposition: PropTypes.object.isRequired,
         cursorHeight: PropTypes.number.isRequired,
+        scrollLeft: PropTypes.number,
         scale: PropTypes.number.isRequired,
         pxPerSec: PropTypes.number.isRequired,
         onSeeked: PropTypes.func.isRequired
     }
 
-    intervalId: number = -1
-
-    refs: {
-        cursor: HTMLDivElement
+    protected static defaultProps = {
+        scrollLeft: 0,
     }
 
-    state = {
+    private intervalId: number = -1
+
+    private refs: {
+        cursor: HTMLDivElement
+        measureLayer: HTMLDivElement
+    }
+
+    private state = {
         left: 0,
         dragSeekEnabled: false,
     }
 
-    componentDidMount()
+    protected componentDidMount()
     {
-        this.intervalId = requestAnimationFrame(this.updateCursor)
+        this.intervalId = requestAnimationFrame(this._updateCursor)
     }
 
-    componentWillUnmount()
+    protected componentWillUnmount()
     {
         cancelAnimationFrame(this.intervalId)
     }
 
-    updateCursor = () =>
+    private _updateCursor = () =>
     {
         const renderer = RendererService.renderer
-        const {activeComposition, scale} = this.props
-        const {cursor} = this.refs
+        const {activeComposition, scrollLeft, scale} = this.props
+        const {cursor, measureLayer} = this.refs
+
+        if (!renderer) return
 
         if (activeComposition) {
             // Reactの仕組みを使うとrenderMeasureが走りまくってCPUがヤバいので
-            // Reactの輪廻 - Life cycle - から外した
-            cursor.style.left = TimelineHelper.framesToPixel({
+            // Reactのライフサイクルから外す
+            const cursorLeft = TimelineHelper.framesToPixel({
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
-                durationFrames: renderer.session.lastRenderedFrame,
-                scale: scale,
-            }) + 'px'
+                durationFrames: renderer.session.lastRenderedFrame || 0,
+                scale,
+            })
+
+            cursor.style.display = cursorLeft - scrollLeft < 0 ? 'none' : 'block'
+            cursor.style.left = `${cursorLeft}px`
+            cursor.style.transform = `translateX(-${scrollLeft}px)`
+            measureLayer.style.transform = `translateX(-${scrollLeft}px)`
         }
 
-        this.intervalId = requestAnimationFrame(this.updateCursor)
+        this.intervalId = requestAnimationFrame(this._updateCursor)
     }
 
-    seeking = ({nativeEvent: e}: React.MouseEvent<HTMLDivElement>) =>
+    private _seeking = ({nativeEvent: e}: React.MouseEvent<HTMLDivElement>) =>
     {
         if (e.type === 'mousedown') {
             this.setState({dragSeekEnabled: true})
@@ -84,7 +100,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
 
         if (!this.state.dragSeekEnabled) return
 
-        const {activeComposition, pxPerSec, scale} = this.props
+        const {activeComposition, pxPerSec, scale, scrollLeft} = this.props
 
         if (! activeComposition) return
 
@@ -92,71 +108,52 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
             pxPerSec,
             framerate: activeComposition.framerate,
             scale,
-            pixel: (e as MouseEvent).layerX,
-        })|0
+            pixel: (e as MouseEvent).layerX + scrollLeft,
+        }) | 0
 
         this.props.onSeeked(frame)
     }
 
-    render()
+    protected render()
     {
         return (
             <div
                 className={s.Gradations}
-                onMouseDown={this.seeking}
-                onMouseMove={this.seeking}
-                onMouseUp={this.seeking}
-                onClick={this.seeking}
+                onMouseDown={this._seeking}
+                onMouseMove={this._seeking}
+                onMouseUp={this._seeking}
+                onClick={this._seeking}
             >
-                <div className={s.measureLayer}>
-                    {this.renderMeasure()}
+                <div className={s.measureLayerTrimer}>
+                    <div ref='measureLayer' className={s.measureLayer}>
+                        {this._renderMeasure()}
+                    </div>
                 </div>
                 <div ref='cursor' className={s.playingCursor} style={{height: `calc(100% + ${this.props.cursorHeight}px - 5px)`}} />
             </div>
         )
     }
 
-    renderMeasure(): JSX.Element[]
+    private _renderMeasure = (): JSX.Element[] =>
     {
-        const {activeComposition} = this.props
-        if (! activeComposition) {
-            return []
-        }
-
-        let previousPos = -40
+        const {measures, activeComposition} = this.props
         const components: JSX.Element[] = []
-        for (let idx = 0; idx < 300; idx++) {
-            let frame = 10 * idx
 
-            if (frame >= activeComposition.durationFrames) {
-                const pos = TimelineHelper.framesToPixel({
-                    pxPerSec: this.props.pxPerSec,
-                    framerate: this.props.activeComposition!.framerate,
-                    scale: this.props.scale,
-                    durationFrames: activeComposition.durationFrames
-                })
+        if (! activeComposition) return []
 
-                components.push(
-                    <div
-                        key={idx}
-                        className={classnames(s.measureLine, s['--endFrame'])}
-                        style={{left: pos}}
-                    ></div>
-                )
-                break
-            }
-
-            const pos = TimelineHelper.framesToPixel({
-                pxPerSec: this.props.pxPerSec,
-                framerate: this.props.activeComposition!.framerate,
-                scale: this.props.scale,
-                durationFrames: frame
-            })
-
-            if (pos - previousPos >= 40/* px */) {
-                previousPos = pos
-                components.push(<div key={idx} className={s.measureLine} style={{left: pos}}>{frame}</div>)
-            }
+        for (const point of measures) {
+            components.push(
+                <div
+                    key={point.index}
+                    className={classnames(s.measureLine, {
+                        [s['--grid']]: point.frameNumber % 10 === 0,
+                        [s['--endFrame']]: point.frameNumber === activeComposition.durationFrames,
+                    })}
+                    style={{left: point.left}}
+                >
+                    {point.frameNumber}
+                </div>
+            )
         }
 
         return components

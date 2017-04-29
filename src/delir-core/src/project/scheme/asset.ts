@@ -1,6 +1,6 @@
 export interface AssetScheme {
     id: string|null
-    mimeType: string
+    fileType: string
     name: string|null
     path: string|null
     data: any

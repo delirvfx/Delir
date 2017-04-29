@@ -131,7 +131,7 @@ const handlePayload = (payload: KnownPayload) => {
 
         case EditorStateDispatchTypes.RenderDestinate: (() => {
             const appPath = remote.app.getPath('exe')
-            const ffmpegBin = require('path').resolve(
+            const ffmpegBin = __DEV__ ? 'ffmpeg' : require('path').resolve(
                 appPath,
                 Platform.isMacOS() ? '../../Resources/ffmpeg' : './ffmpeg.exe'
             )
@@ -189,7 +189,16 @@ export default {
             await pluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
         ]
 
-        console.log('Plugin loaded', [].concat(...loaded.map<any>(({loaded}) => loaded)));
+        const successes = [].concat(...loaded.map<any>(({loaded}) => loaded))
+        const fails = [].concat(...loaded.map<any>(({failed}) => failed))
+
+        if (fails.length > 0) {
+            const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
+            const message = fails.map((fail: any) => fail.reason).join('\n\n')
+            EditorStateActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
+        }
+
+        console.log('Plugin loaded', successes, 'Failed:', fails)
         loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
 
         renderer = new Delir.Renderer({

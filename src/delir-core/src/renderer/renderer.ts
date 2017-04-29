@@ -10,7 +10,7 @@ import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
 import Project from '../project/project'
 import Composition from '../project/composition'
-import PluginRegistry from '../plugin/plugin-registry'
+import PluginRegistry from '../plugin-support/plugin-registry'
 
 import CompositionInstanceContainer from './composition-instance-container'
 import EntityResolver from './entity-resolver'
@@ -513,7 +513,7 @@ export default class Renderer {
                 },
                 inputFramerate: rootComp.framerate,
                 dest: tmpMovieFilePath,
-                ffmpegBin,
+                ffmpegBin: req.ffmpegBin,
             })
 
             const progPromise = Renderer.render({
@@ -569,7 +569,7 @@ export default class Renderer {
 
             notifier({state: 'Concat and encoding...'})
             await new Promise((resolve, reject) => {
-                const ffmpeg = spawn(ffmpegBin, [
+                const ffmpeg = spawn(req.ffmpegBin, [
                     '-y',
                     // '-f',
                     // 'utvideo',

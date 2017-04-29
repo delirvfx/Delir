@@ -31,6 +31,7 @@ import {
     RemoveLayerPayload,
     RemoveClipPayload,
     RemoveAssetPayload,
+    RemoveKeyframePayload,
 } from './project-modify-actions'
 
 export type EditorStateActionPayload =
@@ -65,5 +66,6 @@ export type ProjectModifyActionPayload =
     | RemoveLayerPayload
     | RemoveClipPayload
     | RemoveAssetPayload
+    | RemoveKeyframePayload
 
 export type KnownPayload = EditorStateActionPayload | ProjectModifyActionPayload

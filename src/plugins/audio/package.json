@@ -1,6 +1,6 @@
 {
     "name": "delir-plugin-audio",
-    "version": "0.0.0-alpha.1",
+    "version": "0.0.0-alpha.2",
     "author": "Ragg <ragg.devpr@gmail.com>",
     "main": "audio.js",
     "engines": {
@@ -12,10 +12,11 @@
             "renderer": "0.0.x"
         },
         "acceptFileTypes": {
-            "audio/wav": "source",
-            "audio/webm": "source",
-            "audio/mpeg": "source",
-            "audio/ogg": "source"
+            "wav": "source",
+            "webm": "source",
+            "mpeg": "source",
+            "mp3": "source",
+            "ogg": "source"
         }
     }
 }

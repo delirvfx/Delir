@@ -72,7 +72,7 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
             case ProjectModifyDispatchTypes.AddLayerWithAsset:
                 (() => {
                     const {targetComposition, clip, asset: registeredAsset, pluginRegistry} = payload.entity
-                    const propName = ProjectHelper.findAssetAttachablePropertyByMimeType(clip, registeredAsset.mimeType, pluginRegistry)
+                    const propName = ProjectHelper.findAssetAttachablePropertyByFileType(clip, registeredAsset.fileType, pluginRegistry)
 
                     if (propName == null) return
                     ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
@@ -92,7 +92,6 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
             case ProjectModifyDispatchTypes.AddKeyframe: {
                 const {targetClip, propName, keyframe} = payload.entity
-                console.log('keyframe added', payload.entity)
                 ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
             }
 
@@ -120,7 +119,6 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 break
 
             case ProjectModifyDispatchTypes.ModifyKeyframe:
-                console.log('apply keyframe modify', payload.entity)
                 ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
                 break
 
@@ -138,6 +136,10 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
 
             case ProjectModifyDispatchTypes.RemoveAsset:
                 ProjectHelper.deleteAsset(project!, payload.entity.targetAssetId)
+                break
+
+            case ProjectModifyDispatchTypes.RemoveKeyframe:
+                ProjectHelper.deleteKeyframe(project!, payload.entity.targetKeyframeId)
                 break
 
             default:

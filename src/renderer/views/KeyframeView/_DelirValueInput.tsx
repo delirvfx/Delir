@@ -1,18 +1,19 @@
 import * as React from 'react'
 import {Component, PropTypes} from 'react'
-import parseColor from 'parse-color'
 import * as Delir from 'delir-core'
+import {ChromePicker} from 'react-color'
 
 import EditorStateActions from '../../actions/editor-state-actions'
 
 import DragNumberInput from '../components/drag-number-input'
+import Dropdown from '../components/dropdown'
 
 import * as s from './delir-value-input.styl'
 
 interface DelirValueInputProps {
     assets: Set<Delir.Project.Asset>|null
     descriptor: Delir.AnyParameterTypeDescriptor,
-    value: string|number|boolean|{assetId: string}|Delir.Values.Point2D|Delir.Values.Point3D
+    value: string|number|boolean|{assetId: string}|Delir.Values.Point2D|Delir.Values.Point3D|Delir.Values.ColorRGB|Delir.Values.ColorRGBA
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
 }
 
@@ -34,10 +35,16 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         propWidth: DragNumberInput,
         propHeight: DragNumberInput,
         propDepth: DragNumberInput,
-        color: HTMLInputElement,
+        color: ChromePicker,
         checkbox: HTMLInputElement,
-        textarea: HTMLTextAreaElement,
+        textArea: HTMLTextAreaElement,
+        enumSelect: HTMLSelectElement,
         assets: HTMLSelectElement,
+
+        textSummary: HTMLInputElement
+        textInputDropdown: Dropdown
+
+        colorPickerDropdown: Dropdown
     }
 
     state = {
@@ -80,28 +87,25 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         break
         //     }
 
-        //     case 'COLOR_RGB': {
-        //         const {color} = this.refs
-        //         const values = parseColor(color.value)
-        //         this.props.onChange(descriptor, new Delir.Values.ColorRGB(
-        //             values.rgb[0],
-        //             values.rgb[1],
-        //             values.rgb[2],
-        //         ))
-        //         break
-        //     }
+            case 'COLOR_RGB': {
+                const {color} = this.refs
+                const rgb = color.state.rgb
+                this.props.onChange(descriptor, new Delir.Values.ColorRGB(rgb.r, rgb.g, rgb.b))
+                break
+            }
 
-        //     case 'COLOR_RGBA': {
-        //         const {color} = this.refs
-        //         const values = parseColor(color.value)
-        //         this.props.onChange(descriptor, new Delir.Values.ColorRGBA(
-        //             values.rgb[0],
-        //             values.rgb[1],
-        //             values.rgb[2],
-        //             values.rgb[3],
-        //         ))
-        //         break
-        //     }
+            case 'COLOR_RGBA': {
+                const {color} = this.refs
+                const rgba = color.state.rgb
+                this.props.onChange(descriptor, new Delir.Values.ColorRGBA(rgba.r, rgba.g, rgba.b, rgba.a))
+                break
+            }
+
+            case 'ENUM': {
+                const {enumSelect} = this.refs
+                this.props.onChange(descriptor, enumSelect.value)
+                break
+            }
 
             case 'ASSET': {
                 const {assets} = this.refs
@@ -117,11 +121,11 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
                 break
             }
 
-        //     case 'STRING': {
-        //         const {textarea} = this.refs
-        //         this.props.onChange(descriptor, textarea.value)
-        //         break
-        //     }
+            case 'STRING': {
+                const {textArea} = this.refs
+                this.props.onChange(descriptor, textArea.value)
+                break
+            }
 
             case 'FLOAT':
             case 'NUMBER': {
@@ -130,6 +134,37 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
                 break
             }
         }
+    }
+
+    onFocusTextInput = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+        this.refs.textInputDropdown.show()
+        this.refs.textArea.focus()
+    }
+
+    onKeydownTextArea = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if ((e.metaKey === true || e.ctrlKey === true) && e.key === 'Enter') {
+            this.refs.textInputDropdown.hide()
+            this.valueChanged()
+        }
+    }
+
+    openColorPicker = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const {colorPickerDropdown} = this.refs
+        colorPickerDropdown.show()
+
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+    closeColorPicker = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const {colorPickerDropdown} = this.refs
+        colorPickerDropdown.hide()
+        this.valueChanged()
+
+        e.preventDefault()
+        e.stopPropagation()
     }
 
     render()
@@ -171,35 +206,59 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         //         ]
         //         break
 
-        //     case 'COLOR_RGB':
-        //         component = [<input ref='color' type='color' value='' />]
-        //         break
-        //     case 'COLOR_RGBA':
-        //         component = [<input ref='color' type='color' value='' />]
-        //         break
+            case 'COLOR_RGB':
+            case 'COLOR_RGBA':
+                component = [
+                    <button
+                        className={s.colorPickerOpenner}
+                        style={{
+                            backgroundColor: (value as Delir.ColorRGBA).toString()
+                        }}
+                        onClick={this.openColorPicker}
+                    />,
+                    <Dropdown ref='colorPickerDropdown' className={s.colorPickerContainer}>
+                        <button className={s.colorPickerCloser} onClick={this.closeColorPicker}>Close</button>
+                        <ChromePicker ref='color' color={value.toString()} onChange={this.valueChanged} disableAlpha={descriptor.type === 'COLOR_RGB'} />
+                    </Dropdown>
+                ]
+                break
 
             case 'BOOL':
                 component = [<input ref='checkbox' type='checkbox' className={s.checkbox} checked={value as boolean} onChange={this.valueChanged} />]
                 break
 
-        //     case 'STRING':
-        //         component = [<textarea ref='textarea' />]
-        //         break
+            case 'STRING':
+                component = [
+                    <Dropdown ref='textInputDropdown'>
+                        <textarea ref='textArea' className={s.textArea} onKeyDown={this.onKeydownTextArea} defaultValue={value as string} />
+                    </Dropdown>,
+                    <input ref='textSummary' type='text' className={s.textInput} onFocus={this.onFocusTextInput} value={value as string} readOnly />
+                ]
+                break
+
             case 'FLOAT':
             case 'NUMBER':
                 component = [<DragNumberInput ref='input' value={value as number} onChange={this.valueChanged} allowFloat={descriptor.type === 'FLOAT'} />]
                 break
 
             case 'FLOAT':
-            case 'ENUM':
             case 'CLIP':
             case 'PULSE':
                 component = []
                 break
 
+            case 'ENUM':
+                component = [
+                    <select ref='enumSelect' value={value ? (value as string) : ''} onChange={this.valueChanged}>
+                        <option></option>
+                        {descriptor.selection.map(item => <option value={item}>{item}</option>)}
+                    </select>
+                ]
+                break
+
             case 'ASSET':
                 component = [
-                    <select ref='assets' defaultValue={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
+                    <select ref='assets' value={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
                         <option></option>
                         {!assets ? [] : Array.from(assets).map(asset => (
                             <option value={asset.id as string}>{asset.name}</option>

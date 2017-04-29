@@ -1,6 +1,6 @@
 {
     "name": "delir-plugin-video",
-    "version": "0.0.0-alpha.1",
+    "version": "0.0.0-alpha.2",
     "author": "Ragg <ragg.devpr@gmail.com>",
     "main": "index.js",
     "engines": {
@@ -12,8 +12,8 @@
             "renderer": "0.0.x"
         },
         "acceptFileTypes": {
-            "video/mp4": "source",
-            "video/webm": "source"
+            "mp4": "source",
+            "webm": "source"
         }
     }
 }

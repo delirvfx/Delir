@@ -1,10 +1,12 @@
-import _ from 'lodash'
+import * as _ from 'lodash'
 import * as uuid from 'uuid'
 import * as classnames from 'classnames'
 import * as React from 'react'
 import {PropTypes} from 'react'
+import * as ReactDOM from 'react-dom'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
+import TimelineHelper from '../../helpers/timeline-helper'
 
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
@@ -35,6 +37,7 @@ interface TimelineViewProps {
 
 interface TimelineViewState {
     timelineScrollTop: number,
+    timelineScrollLeft: number,
     cursorHeight: number,
     scale: number,
     selectedLaneId: number|null,
@@ -56,51 +59,58 @@ const PX_PER_SEC = 30
 }))
 export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>
 {
-    refs: {
+    protected refs: {
         scaleList: DropDown
+        keyframeView: KeyframeView
+        timelineLanes: HTMLUListElement
+        timelineLabels: HTMLDivElement
     }
 
-    constructor()
+    protected state: TimelineViewState = {
+        timelineScrollTop: 0,
+        timelineScrollLeft: 0,
+        cursorHeight: 0,
+        scale: 1,
+        selectedLaneId: null,
+    }
+
+    protected componentDidMount()
     {
-        super()
-
-        this.state = {
-            timelineScrollTop: 0,
-            cursorHeight: 0,
-            scale: 1,
-            selectedLaneId: null,
-        }
+        this._syncCursorHeight()
+        window.addEventListener('resize', _.debounce(this._syncCursorHeight, 1000 / 30))
     }
 
-    scrollSync(event)
-    {
-        this.setState({'timelineScrollTop': event.target.scrollTop})
-    }
-
-    componentDidMount()
-    {
-        const {timelineLanes} = this.refs
-        this.setState({
-            cursorHeight: timelineLanes ? timelineLanes.getBoundingClientRect().height + 1 : 0
-        })
-    }
-
-    componentDidUpdate()
+    protected componentDidUpdate()
     {
         this.refs.timelineLabels.scrollTop = this.refs.timelineLanes.scrollTop = this.state.timelineScrollTop
     }
 
-    selectLayer = laneId =>
+    private _syncCursorHeight = () =>
+    {
+        const {timelineLanes, keyframeView} = this.refs
+
+        const timelineHeight = timelineLanes.getBoundingClientRect().height
+        const keyFrameViewHeight = ReactDOM.findDOMNode(keyframeView).getBoundingClientRect().height
+
+        this.setState({
+            cursorHeight: timelineHeight + keyFrameViewHeight + 1
+        })
+    }
+
+    private _scrollSync = (e: React.WheelEvent<HTMLElement>) =>
+    {
+        this.setState({
+            timelineScrollLeft: e.currentTarget.scrollLeft,
+            timelineScrollTop: e.currentTarget.scrollTop
+        })
+    }
+
+    private _selectLayer = laneId =>
     {
         this.setState({selectedLaneId: laneId})
     }
 
-    scaleChanged = scale =>
-    {
-        this.setState({scale: scale})
-    }
-
-    addNewLayer = () =>
+    private _addNewLayer = () =>
     {
         if (!this.props.editor.activeComp) return
 
@@ -110,13 +120,13 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         )
     }
 
-    removeLayer = layerId =>
+    private _removeLayer = layerId =>
     {
         if (!this.props.editor.activeComp) return
         ProjectModifyActions.removeLayer(layerId)
     }
 
-    scaleTimeline = e =>
+    private _scaleTimeline = e =>
     {
         if (e.altKey) {
             const newScale = this.state.scale + (e.deltaY * .05)
@@ -124,17 +134,17 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         }
     }
 
-    toggleScaleList = () =>
+    private _toggleScaleList = () =>
     {
         this.refs.scaleList.toggle()
     }
 
-    selectScale = ({nativeEvent: e}: React.MouseEvent<HTMLLIElement>) => {
+    private _selectScale = ({nativeEvent: e}: React.MouseEvent<HTMLLIElement>) => {
         const scale = +(e.target as HTMLLIElement).dataset.value! / 100
         this.setState({scale: scale})
     }
 
-    dropAsset = e =>
+    private _dropAsset = e =>
     {
         const {dragEntity, activeComp} = this.props.editor
 
@@ -148,69 +158,80 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         ProjectModifyActions.addLayerWithAsset(activeComp, asset)
     }
 
-    onSeeked = (frame: number) =>
+    private _onSeeked = (frame: number) =>
     {
         EditorStateActions.seekPreviewFrame(frame)
     }
 
-    render()
+    protected render()
     {
-        const {scale} = this.state
+        const {scale, timelineScrollLeft} = this.state
         const {activeComp, activeClip} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
 
+        const measures = !activeComp ? [] : TimelineHelper.buildMeasures({
+            durationFrames      : activeComp.durationFrames,
+            pxPerSec            : PX_PER_SEC,
+            framerate           : activeComp.framerate,
+            scale,
+            placeIntervalWidth  : 20,
+            maxMeasures         : activeComp.durationFrames
+        })
+
         return (
             <Pane className={s.timelineView} allowFocus>
                 <Workspace direction='vertical'>
-                    <Pane>
-                        <Workspace direction="horizontal" onDrop={this.dropAsset}>
+                    <Pane className={s.timelineRegion}>
+                        <Workspace direction="horizontal" onDrop={this._dropAsset}>
                             {/* Layer Panel */}
                             <Pane className='timeline-labels-container'>
                                 <div className='timeline-labels-header'>
                                     <div className='--col-name'>Lanes</div>
-                                    <div className={s.scaleLabel} onClick={this.toggleScaleList}>
+                                    <div className={s.scaleLabel} onClick={this._toggleScaleList}>
                                         <DropDown ref='scaleList' className={s.scaleList} shownInitial={false}>
-                                            <li data-value="50" onClick={this.selectScale}>50%</li>
-                                            <li data-value="100" onClick={this.selectScale}>100%</li>
-                                            <li data-value="150" onClick={this.selectScale}>150%</li>
-                                            <li data-value="200" onClick={this.selectScale}>200%</li>
-                                            <li data-value="250" onClick={this.selectScale}>250%</li>
-                                            <li data-value="300" onClick={this.selectScale}>300%</li>
+                                            <li data-value="50" onClick={this._selectScale}>50%</li>
+                                            <li data-value="100" onClick={this._selectScale}>100%</li>
+                                            <li data-value="150" onClick={this._selectScale}>150%</li>
+                                            <li data-value="200" onClick={this._selectScale}>200%</li>
+                                            <li data-value="250" onClick={this._selectScale}>250%</li>
+                                            <li data-value="300" onClick={this._selectScale}>300%</li>
                                         </DropDown>
                                         Scale: {scale * 100 | 0}%
                                     </div>
                                 </div>
 
-                                <div ref='timelineLabels' className='timeline-labels' onScroll={this.scrollSync.bind(this)}>
+                                <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync.bind(this)}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label='レイヤーを追加' onClick={this.addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label='レイヤーを追加' onClick={this._addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && (
                                         <SelectList key={compId}>
                                             {timelineLanes.map(lane => (
-                                                <LaneLabel key={lane.id} layer={lane} onSelect={this.selectLayer} onRemove={this.removeLayer} />)
+                                                <LaneLabel key={lane.id} layer={lane} onSelect={this._selectLayer} onRemove={this._removeLayer} />)
                                             )}
                                         </SelectList>
                                     )}
                                 </div>
                             </Pane>
                             {/* Layer Panel */}
-                            <Pane className='timeline-container' onWheel={this.scaleTimeline}>
+                            <Pane className='timeline-container' onWheel={this._scaleTimeline}>
                                 <Gradations
+                                    activeComposition={activeComp}
+                                    measures={measures}
                                     cursorHeight={this.state.cursorHeight}
                                     scale={this.state.scale}
-                                    activeComposition={activeComp}
                                     pxPerSec={PX_PER_SEC}
-                                    onSeeked={this.onSeeked}
+                                    scrollLeft={timelineScrollLeft}
+                                    onSeeked={this._onSeeked}
                                 />
 
-                                <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this.scrollSync.bind(this)}>
+                                <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label='レイヤーを追加' onClick={this.addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label='レイヤーを追加' onClick={this._addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && timelineLanes.map(layer => (
@@ -227,8 +248,16 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             </Pane>
                         </Workspace>
                     </Pane>
-                    <Pane>
-                        <KeyframeView activeClip={activeClip} pxPerSec={PX_PER_SEC} />
+                    <Pane className={s.keyframeGraphRegion}>
+                        <KeyframeView
+                            ref='keyframeView'
+                            activeComposition={activeComp}
+                            activeClip={activeClip}
+                            pxPerSec={PX_PER_SEC}
+                            scale={scale}
+                            scrollLeft={timelineScrollLeft}
+                            measures={measures}
+                        />
                     </Pane>
                 </Workspace>
             </Pane>
