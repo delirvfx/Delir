@@ -10,7 +10,7 @@ import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
 import Project from '../project/project'
 import Composition from '../project/composition'
-import PluginRegistry from '../plugin/plugin-registry'
+import PluginRegistry from '../plugin-support/plugin-registry'
 
 import CompositionInstanceContainer from './composition-instance-container'
 import EntityResolver from './entity-resolver'

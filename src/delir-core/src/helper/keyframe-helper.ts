@@ -5,7 +5,7 @@ import {
     TypeDescriptor,
     ParameterValueTypes,
     AnyParameterTypeDescriptor,
-} from '../plugin/type-descriptor'
+} from '../plugin-support/type-descriptor'
 
 import bezierEasing from 'bezier-easing'
 

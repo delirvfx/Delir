@@ -1,4 +1,4 @@
-import {DelirPluginPackageJson, PluginEntry} from '../plugin/types'
+import {DelirPluginPackageJson, PluginEntry} from '../plugin-support/types'
 
 import * as fs from 'fs-promise'
 import * as path from 'path'
