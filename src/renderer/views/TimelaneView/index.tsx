@@ -170,7 +170,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
             framerate           : activeComp.framerate,
             scale,
             placeIntervalWidth  : 20,
-            maxMeasures         : 300
+            maxMeasures         : activeComp.durationFrames
         })
 
         return (
