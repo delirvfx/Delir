@@ -146,10 +146,13 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
                 <div
                     key={point.index}
                     className={classnames(s.measureLine, {
+                        [s['--grid']]: point.frameNumber % 10 === 0,
                         [s['--endFrame']]: point.frameNumber === activeComposition.durationFrames,
                     })}
                     style={{left: point.left}}
-                />
+                >
+                    {point.frameNumber}
+                </div>
             )
         }
 
