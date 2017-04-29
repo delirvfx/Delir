@@ -9,7 +9,7 @@ const notifier = require('node-notifier')
 
 const fs = require("fs-promise");
 const {join} = require("path");
-const {spawn} = require("child_process");
+const {spawn, spawnSync} = require("child_process");
 
 const paths = {
     src         : {
@@ -344,38 +344,44 @@ export async function pack(done) {
         spawn('yarn', ['install'], {cwd: paths.build}).on('close', code => code === 0 ? resolve() : reject())
     })
 
-    const targets = new Map([
-        ...builder.Platform.MAC.createTarget(),
-        ...builder.Platform.WINDOWS.createTarget(),
+    const targets = [
+        builder.Platform.MAC.createTarget(),
+        builder.Platform.WINDOWS.createTarget(),
         // ...builder.Platform.LINUX.createTarget(),
-    ])
+    ]
 
-    await builder.build({
-        // targets: builder.Platform.MAC.createTarget(),
-        targets,
-        config: {
-            appId: 'studio.delir',
-            copyright: '© 2017 Ragg',
-            productName: 'Delir',
-            electronVersion: '1.6.1',
-            asar: true,
-            asarUnpack: ["node_modules/"],
-            directories: {
-                app: paths.build,
-                output: paths.binary,
+    for (const target of targets) {
+
+
+        await builder.build({
+            // targets: builder.Platform.MAC.createTarget(),
+            targets: target,
+            config: {
+                appId: 'studio.delir',
+                copyright: '© 2017 Ragg',
+                productName: 'Delir',
+                electronVersion: '1.6.1',
+                asar: true,
+                asarUnpack: ["node_modules/"],
+                npmRebuild: false,
+                // nodeGypRebuild: true,
+                directories: {
+                    app: paths.build,
+                    output: paths.binary,
+                },
+                mac: {
+                    target: 'zip',
+                    type: "distribution",
+                    category: "AudioVideo",
+                    icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
+                },
+                win: {
+                    target: 'zip',
+                    icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
+                },
             },
-            mac: {
-                target: 'zip',
-                type: "distribution",
-                category: "AudioVideo",
-                icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
-            },
-            win: {
-                target: 'zip',
-                icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
-            },
-        },
-    })
+        })
+    }
 }
 
 export async function clean(done) {
