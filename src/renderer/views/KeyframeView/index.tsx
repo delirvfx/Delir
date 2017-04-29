@@ -628,63 +628,35 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         return descriptors.find(desc => desc.propName === propName) || null
     }
 
-    private _renderMeasure(): JSX.Element[]
+    private _renderMeasure = (): JSX.Element[] =>
     {
         const {activeComposition} = this.props
         if (! activeComposition) return []
 
-        let created = 0
-        let frame = -1
-        let previousPos = -40
+        const measures = TimelineHelper.buildMeasures({
+            durationFrames      : activeComposition.durationFrames,
+            pxPerSec            : this.props.pxPerSec,
+            framerate           : activeComposition.framerate,
+            scale               : this.props.scale,
+            placeIntervalWidth  : 20,
+            maxMeasures         : 300
+        })
+
         const components: JSX.Element[] = []
-        while (true) {
-            frame++
 
-            if (components.length >= 300) {
-                break
-            }
-
-            if (frame >= activeComposition.durationFrames) {
-                // Hit last frame marker
-                const pos = TimelineHelper.framesToPixel({
-                    pxPerSec: this.props.pxPerSec,
-                    framerate: this.props.activeComposition!.framerate,
-                    scale: this.props.scale,
-                    durationFrames: activeComposition.durationFrames
-                })
-
-                components.push(
-                    <div
-                        key={created++}
-                        className={classnames(s.measureLine, s['--endFrame'])}
-                        style={{left: pos}}
-                    ></div>
-                )
-
-                break
-            }
-
-            const pos = TimelineHelper.framesToPixel({
-                pxPerSec: this.props.pxPerSec,
-                framerate: this.props.activeComposition!.framerate,
-                scale: this.props.scale,
-                durationFrames: frame
-            })
-
-            if (pos - previousPos >= 20/* px */) {
-                previousPos = pos
-                components.push(
-                    <div
-                        key={created++}
-                        className={classnames(s.measureLine, {
-                            [s['--grid']]: frame % 10 === 0,
-                        })}
-                        style={{left: pos}}
-                    >
-                        {frame}
-                    </div>
-                )
-            }
+        for (const point of measures) {
+            components.push(
+                <div
+                    key={point.index}
+                    className={classnames(s.measureLine, {
+                        [s['--grid']]: point.frameNumber % 10 === 0,
+                        [s['--endFrame']]: point.frameNumber === activeComposition.durationFrames,
+                    })}
+                    style={{left: point.left}}
+                >
+                    {point.frameNumber}
+                </div>
+            )
         }
 
         return components
