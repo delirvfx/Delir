@@ -352,17 +352,17 @@ export async function pack(done) {
                 app: paths.build,
                 output: paths.binary,
             },
+            mac: {
+                target: 'zip',
+                type: "distribution",
+                category: "AudioVideo",
+                icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
+            },
+            win: {
+                target: 'zip',
+                icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
+            },
         },
-        mac: {
-            target: 'zip',
-            type: "distribution",
-            category: "AudioVideo",
-            icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
-        },
-        win: {
-            target: 'zip',
-            icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
-        }
     })
 }
 
