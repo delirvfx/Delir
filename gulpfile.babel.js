@@ -354,12 +354,13 @@ export async function pack(done) {
             },
         },
         mac: {
-            target: 'default',
+            target: 'zip',
             type: "distribution",
             category: "AudioVideo",
             icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
         },
         win: {
+            target: 'zip',
             icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
         }
     })
