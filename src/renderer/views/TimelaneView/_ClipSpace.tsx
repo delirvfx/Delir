@@ -62,7 +62,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         }
     }
 
-    onDrop = (e: React.DragEvent<HTMLLIElement>) =>
+    private _onDrop = (e: React.DragEvent<HTMLLIElement>) =>
     {
         const {dragEntity, activeComp} = this.props.editor
 
@@ -153,9 +153,9 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                     '--expand': clips.findIndex(clip => !!(activeClip && clip.id === activeClip.id)) !== -1,
                 })}
                 data-lane-id={layer.id}
-                onDragOver={this.onDragOver.bind(this)}
-                onDragLeave={this.onDragLeave.bind(this)}
-                onDrop={this.onDrop}
+                onDragOver={this._onDragOver}
+                onDragLeave={this._onDragLeave}
+                onDrop={this._onDrop}
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
@@ -190,7 +190,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                                 width={width}
                                 left={left}
                                 active={clip === activeClip}
-                                onChangePlace={this.changeClipPlace.bind(this, clip)}
+                                onChangePlace={this._changeClipPlace.bind(this, clip)}
                                 onChangeDuration={this.changeClipDuration.bind(null, clip)}
                             />
                         )
