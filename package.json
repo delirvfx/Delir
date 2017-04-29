@@ -45,7 +45,7 @@
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.28.0",
     "devtron": "^1.4.0",
-    "electron": "^1.6.2",
+    "electron": "^1.6.6",
     "electron-builder": "^16.7.1",
     "electron-devtools-installer": "^2.2.0",
     "electron-icon-maker": "^0.0.3",
