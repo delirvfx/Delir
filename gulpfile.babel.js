@@ -335,7 +335,7 @@ export async function pack(done) {
     const targets = new Map([
         ...builder.Platform.MAC.createTarget(),
         ...builder.Platform.WINDOWS.createTarget(),
-        ...builder.Platform.LINUX.createTarget(),
+        // ...builder.Platform.LINUX.createTarget(),
     ])
 
     await builder.build({
