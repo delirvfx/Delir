@@ -10,7 +10,7 @@ import Clip from '../project/clip'
 import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
 
-import PluginRegistory from '../plugin/plugin-registry'
+import PluginRegistory from '../plugin-support/plugin-registry'
 
 function setFreezedProp(obj: Object, name: string, value: any)
 {
