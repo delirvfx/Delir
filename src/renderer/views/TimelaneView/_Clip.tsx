@@ -39,18 +39,17 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         onChangeDuration: PropTypes.func.isRequired,
     }
 
-    constructor()
-    {
-        super()
+    public state = {
+        draggedPxX: 0,
+        dragStartPosition: null,
+        dragStyle: {transform: 'translateX(0)'},
 
-        this.state = {
-            draggedPxX: 0,
-            dragStartPosition: null,
-            dragStyle: {transform: 'translateX(0)'},
+        resizeStartPosition: null,
+        resizeMovedX: 0,
+    }
 
-            resizeStartPosition: null,
-            resizeMovedX: 0,
-        }
+    public refs: {
+        clipRoot: HTMLDivElement
     }
 
     selectClip = e => {

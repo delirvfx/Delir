@@ -46,17 +46,17 @@ interface KeyframeViewState {
     project: ProjectModifyStore.getState()
 }))
 export default class KeyframeView extends React.Component<KeyframeViewProps, KeyframeViewState> {
-    static propTypes = {
+    public static propTypes = {
         activeClip: PropTypes.instanceOf(Delir.Project.Clip),
         scrollLeft: PropTypes.number,
         measures: PropTypes.array.isRequired
     }
 
-    protected static defaultProps: Partial<KeyframeViewProps> = {
+    public static defaultProps: Partial<KeyframeViewProps> = {
         scrollLeft: 0
     }
 
-    protected state: KeyframeViewState = {
+    public state: KeyframeViewState = {
         activePropName: null,
         graphWidth: 0,
         graphHeight: 0,
@@ -66,7 +66,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         easingHandleMovement: null
     }
 
-    protected refs: {
+    public refs: {
         svgParent: HTMLDivElement
     }
 
