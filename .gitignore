@@ -8,3 +8,4 @@ npm-debug.log
 /prepublish
 /release
 /.vscode/extensions.json
+/build-assets/icons
