@@ -1,2 +1,3 @@
 #!/bin/sh
-yarn install && $(yarn bin)/flow-typed install
+yarn
+ln -s ../src/delir-core node_modules/delir-core
