@@ -4,7 +4,7 @@ import {PropTypes} from 'react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
-import TimelineHelper from '../../helpers/timeline-helper'
+import {default as TimelineHelper, MeasurePoint} from '../../helpers/timeline-helper'
 
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
@@ -28,6 +28,7 @@ interface KeyframeViewProps {
     scrollLeft: number
     scale: number
     pxPerSec: number
+    measures: MeasurePoint[]
 }
 
 interface KeyframeViewState {
@@ -48,6 +49,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     static propTypes = {
         activeClip: PropTypes.instanceOf(Delir.Project.Clip),
         scrollLeft: PropTypes.number,
+        measures: PropTypes.array.isRequired
     }
 
     protected static defaultProps: Partial<KeyframeViewProps> = {
@@ -633,15 +635,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {activeComposition} = this.props
         if (! activeComposition) return []
 
-        const measures = TimelineHelper.buildMeasures({
-            durationFrames      : activeComposition.durationFrames,
-            pxPerSec            : this.props.pxPerSec,
-            framerate           : activeComposition.framerate,
-            scale               : this.props.scale,
-            placeIntervalWidth  : 20,
-            maxMeasures         : 300
-        })
-
+        const {measures} = this.props
         const components: JSX.Element[] = []
 
         for (const point of measures) {

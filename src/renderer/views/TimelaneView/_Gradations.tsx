@@ -4,12 +4,13 @@ import {Component, PropTypes} from 'react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
-import TimelineHelper from '../../helpers/timeline-helper'
+import {default as TimelineHelper, MeasurePoint} from '../../helpers/timeline-helper'
 import RendererService from '../../services/renderer'
 
 import * as s from './Gradations.styl'
 
 interface GradationsProps {
+    measures: MeasurePoint[]
     activeComposition: Delir.Project.Composition|null,
     cursorHeight: number,
     scrollLeft: number,
@@ -26,6 +27,7 @@ interface GradationsState {
 export default class Gradations extends Component<GradationsProps, GradationsState>
 {
     protected static propTypes = {
+        measures: PropTypes.array.isRequired,
         activeComposition: PropTypes.object.isRequired,
         cursorHeight: PropTypes.number.isRequired,
         scrollLeft: PropTypes.number,
@@ -132,46 +134,23 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         )
     }
 
-    private _renderMeasure(): JSX.Element[]
+    private _renderMeasure = (): JSX.Element[] =>
     {
-        const {activeComposition} = this.props
+        const {measures, activeComposition} = this.props
+        const components: JSX.Element[] = []
+
         if (! activeComposition) return []
 
-        let previousPos = -40
-        const components: JSX.Element[] = []
-        for (let idx = 0; idx < 300; idx++) {
-            const frame = 10 * idx
-
-            if (frame >= activeComposition.durationFrames) {
-                // Hit last frame marker
-                const pos = TimelineHelper.framesToPixel({
-                    pxPerSec: this.props.pxPerSec,
-                    framerate: this.props.activeComposition!.framerate,
-                    scale: this.props.scale,
-                    durationFrames: activeComposition.durationFrames
-                })
-
-                components.push(
-                    <div
-                        key={idx}
-                        className={classnames(s.measureLine, s['--endFrame'])}
-                        style={{left: pos}}
-                    ></div>
-                )
-                break
-            }
-
-            const pos = TimelineHelper.framesToPixel({
-                pxPerSec: this.props.pxPerSec,
-                framerate: this.props.activeComposition!.framerate,
-                scale: this.props.scale,
-                durationFrames: frame
-            })
-
-            if (pos - previousPos >= 40/* px */) {
-                previousPos = pos
-                components.push(<div key={idx} className={s.measureLine} style={{left: pos}}>{frame}</div>)
-            }
+        for (const point of measures) {
+            components.push(
+                <div
+                    key={point.index}
+                    className={classnames(s.measureLine, {
+                        [s['--endFrame']]: point.frameNumber === activeComposition.durationFrames,
+                    })}
+                    style={{left: point.left}}
+                />
+            )
         }
 
         return components
