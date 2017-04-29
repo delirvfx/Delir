@@ -38,6 +38,7 @@
         "one-line": [true, "check-else", "check-catch", "check-finally", "check-whitespace"],
         "variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"],
         "no-consecutive-blank-lines": [true, 1],
-        "no-bitwise": false
+        "no-bitwise": false,
+        "triple-equals": [true, "allow-null-check"]
     }
 }
