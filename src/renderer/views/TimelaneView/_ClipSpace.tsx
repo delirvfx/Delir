@@ -102,17 +102,17 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         e.stopPropagation()
     }
 
-    onDragLeave(e)
+    private _onDragLeave = (e: React.DragEvent<HTMLLIElement>) =>
     {
         this.setState({dragovered: false})
     }
 
-    onDragOver(e)
+    private _onDragOver = (e: React.DragEvent<HTMLLIElement>) =>
     {
         this.setState({dragovered: true})
     }
 
-    changeClipPlace(clip, movedX)
+    private _changeClipPlace = (clip, movedX) =>
     {
         console.log(movedX)
     }
