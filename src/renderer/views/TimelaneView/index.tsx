@@ -6,6 +6,7 @@ import {PropTypes} from 'react'
 import * as ReactDOM from 'react-dom'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
+import TimelineHelper from '../../helpers/timeline-helper'
 
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
@@ -163,6 +164,15 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
 
+        const measures = !activeComp ? [] : TimelineHelper.buildMeasures({
+            durationFrames      : activeComp.durationFrames,
+            pxPerSec            : PX_PER_SEC,
+            framerate           : activeComp.framerate,
+            scale,
+            placeIntervalWidth  : 20,
+            maxMeasures         : 300
+        })
+
         return (
             <Pane className={s.timelineView} allowFocus>
                 <Workspace direction='vertical'>
@@ -204,6 +214,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             <Pane className='timeline-container' onWheel={this._scaleTimeline}>
                                 <Gradations
                                     activeComposition={activeComp}
+                                    measures={measures}
                                     cursorHeight={this.state.cursorHeight}
                                     scale={this.state.scale}
                                     pxPerSec={PX_PER_SEC}
@@ -232,7 +243,15 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                         </Workspace>
                     </Pane>
                     <Pane className={s.keyframeGraphRegion}>
-                        <KeyframeView ref='keyframeView' activeComposition={activeComp} activeClip={activeClip} pxPerSec={PX_PER_SEC} scale={scale} scrollLeft={timelineScrollLeft} />
+                        <KeyframeView
+                            ref='keyframeView'
+                            activeComposition={activeComp}
+                            activeClip={activeClip}
+                            pxPerSec={PX_PER_SEC}
+                            scale={scale}
+                            scrollLeft={timelineScrollLeft}
+                            measures={measures}
+                        />
                     </Pane>
                 </Workspace>
             </Pane>
