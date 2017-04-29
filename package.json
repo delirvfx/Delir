@@ -8,6 +8,7 @@
   "main": "browser/main.js",
   "scripts": {
     "dev": "DELIR_ENV=dev $(npm bin)/gulp",
+    "rebuild": "$(npm bin)/electron-rebuild",
     "build": "DELIR_ENV=production $(npm bin)/gulp publish",
     "declare": "$(npm bin)/tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "test": "$(npm bin)/mocha --compilers babel-register --reporter spec --require ./src/delir-core/tests/bootstrap.js --colors ./src/delir-core/tests/**/*-spec.js",
