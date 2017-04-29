@@ -323,6 +323,18 @@ export function copyImage() {
         .pipe(g.dest(join(paths.compiled.renderer, "images")));
 }
 
+export function makeIcon() {
+    return new Promise((resolve, reject) => {
+        const bin = join(__dirname, 'node_modules/.bin/electron-icon-maker')
+        const source = join(__dirname, 'build-assets/icon.png')
+
+        const iconMaker = spawn(bin, [`--input=${source}`, `--output=./build-assets`]);
+        iconMaker.on('close', (code) => {
+            code === 0 ? resolve() : reject()
+        })
+    })
+}
+
 export async function pack(done) {
     const pjson = require("./package.json");
 
@@ -461,7 +473,7 @@ const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compileP
 const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
-const publish = g.series(clean, build, pack);
+const publish = g.series(clean, build, makeIcon, pack);
 
 // export function navcodecTest() {
 //     g.watch(join(__dirname, 'src/navcodec'), compileNavcodec)
