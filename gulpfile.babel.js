@@ -357,7 +357,11 @@ export async function pack(done) {
             target: 'default',
             type: "distribution",
             category: "AudioVideo",
+            icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
         },
+        win: {
+            icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
+        }
     })
 }
 
