@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import * as _ from 'lodash'
 import * as uuid from 'uuid'
 import * as classnames from 'classnames'
 import * as React from 'react'
@@ -76,6 +76,17 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     protected componentDidMount()
     {
+        this._syncCursorHeight()
+        window.addEventListener('resize', _.debounce(this._syncCursorHeight, 1000 / 30))
+    }
+
+    protected componentDidUpdate()
+    {
+        this.refs.timelineLabels.scrollTop = this.refs.timelineLanes.scrollTop = this.state.timelineScrollTop
+    }
+
+    private _syncCursorHeight = () =>
+    {
         const {timelineLanes, keyframeView} = this.refs
 
         const timelineHeight = timelineLanes.getBoundingClientRect().height
@@ -84,11 +95,6 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         this.setState({
             cursorHeight: timelineHeight + keyFrameViewHeight + 1
         })
-    }
-
-    protected componentDidUpdate()
-    {
-        this.refs.timelineLabels.scrollTop = this.refs.timelineLanes.scrollTop = this.state.timelineScrollTop
     }
 
     private _scrollSync = (e: React.WheelEvent<HTMLElement>) =>

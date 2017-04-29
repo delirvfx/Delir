@@ -84,12 +84,8 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     protected componentDidMount()
     {
-        const box = this.refs.svgParent.getBoundingClientRect()
-        this.setState({
-            graphWidth: box.width,
-            graphHeight: box.height,
-            keyframeViewViewBox: `0 0 ${box.width} ${box.height}`,
-        })
+        this._syncGraphHeight()
+        window.addEventListener('resize', _.debounce(this._syncGraphHeight, 1000 / 30))
     }
 
     private castValue = (desc: Delir.AnyParameterTypeDescriptor, value: string|number) =>
@@ -101,6 +97,17 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     // {
     //     return this.props.editor.previewPlayed ? false : true
     // }
+
+    private _syncGraphHeight = () =>
+    {
+        const box = this.refs.svgParent.getBoundingClientRect()
+
+        this.setState({
+            graphWidth: box.width,
+            graphHeight: box.height,
+            keyframeViewViewBox: `0 0 ${box.width} ${box.height}`,
+        })
+    }
 
     private selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
     {
