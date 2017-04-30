@@ -1,26 +1,5 @@
-import {Component, PropTypes} from 'react'
+import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-
-// export default class Portal extends Component<any, any> {
-//     static propTypes = {
-//         children: PropTypes.element.isRequired
-//     }
-
-//     componentDidMount = () =>
-//     {
-//         ReactDOM.unstable_renderSubtreeIntoContainer(this, this.props.children, this.root)
-
-//     }
-
-//     componentWillUnmount = () =>
-//     {
-//         ReactDOM.unmountComponentAtNode(this.root)
-//     }
-
-//     render() {
-//         return null
-//     }
-// }
 
 export default class Portal {
     root: Element
