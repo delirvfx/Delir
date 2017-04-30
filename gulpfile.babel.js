@@ -223,7 +223,6 @@ export async function compilePlugins(done) {
             'audio/audio': './audio/audio',
             'video/index': './video/index',
             'image/index': './image/index',
-            'plane/index': './plane/index',
             'text/index': './text/index',
             ...(DELIR_ENV === 'dev' ? {
                 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
