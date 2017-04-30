@@ -1,6 +1,6 @@
 import {remote} from 'electron'
 import * as React from 'react'
-import {PropTypes} from 'react'
+import * as PropTypes from 'prop-types'
 import * as Electron from 'electron'
 import * as classnames from 'classnames'
 
