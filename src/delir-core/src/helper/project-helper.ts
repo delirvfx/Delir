@@ -35,6 +35,10 @@ export function addAsset(
         setFreezedProp(asset, 'id', entityId)
     }
 
+    if (_.find(project.assets, {id: asset.id})) {
+        return
+    }
+
     project.assets.push(asset)
 
     return asset
@@ -49,6 +53,10 @@ export function addComposition(
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
         setFreezedProp(composition, 'id', entityId)
+    }
+
+    if (_.find(project.compositions, {id: composition.id})) {
+        return
     }
 
     project.compositions.push(composition)
