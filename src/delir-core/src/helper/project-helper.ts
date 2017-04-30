@@ -35,11 +35,7 @@ export function addAsset(
         setFreezedProp(asset, 'id', entityId)
     }
 
-    if (_.find(project.assets, {id: asset.id})) {
-        return
-    }
-
-    project.assets.push(asset)
+    project.assets = _.uniqBy([...project.assets, asset], 'id')
 
     return asset
 }
@@ -55,11 +51,7 @@ export function addComposition(
         setFreezedProp(composition, 'id', entityId)
     }
 
-    if (_.find(project.compositions, {id: composition.id})) {
-        return
-    }
-
-    project.compositions.push(composition)
+    project.compositions = _.uniqBy([...project.compositions, composition], 'id')
 
     return composition
 }
