@@ -44,6 +44,6 @@ export default class Project
 
     public serialize()
     {
-        return (new BSONPure.BSON()).serialize(this.toPreBSON())
+        return (new BSON()).serialize(this.toPreBSON())
     }
 }

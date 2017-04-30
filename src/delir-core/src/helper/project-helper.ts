@@ -12,7 +12,7 @@ import Keyframe from '../project/keyframe'
 
 import PluginRegistory from '../plugin-support/plugin-registry'
 
-function setFreezedProp(obj: Object, name: string, value: any)
+function setFreezedProp(obj: object, name: string, value: any)
 {
     Object.defineProperty(obj, name, {value, writable: false})
 }
@@ -32,7 +32,7 @@ export function addAsset(
     if (typeof asset.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(asset, 'id', entityId)
+        setFreezedProp(asset, '_id', entityId)
     }
 
     project.assets = _.uniqBy([...project.assets, asset], 'id')
@@ -48,7 +48,7 @@ export function addComposition(
     if (typeof composition.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(composition, 'id', entityId)
+        setFreezedProp(composition, '_id', entityId)
     }
 
     project.compositions = _.uniqBy([...project.compositions, composition], 'id')
@@ -66,7 +66,7 @@ export function addLayer(
     if (typeof layer.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(layer, 'id', entityId)
+        setFreezedProp(layer, '_id', entityId)
     }
 
     // TODO: Not found behaviour
@@ -88,7 +88,7 @@ export function addClip(
     if (typeof clip.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(clip, 'id', entityId)
+        setFreezedProp(clip, '_id', entityId)
     }
 
     // TODO: Not found behaviour
@@ -109,7 +109,7 @@ export function addEffect(
 {
     if (typeof effect.id !== 'string') {
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(effect, 'id', entityId)
+        setFreezedProp(effect, '_id', entityId)
     }
 
     const clip = targetClipId instanceof Clip
@@ -139,7 +139,7 @@ export function addKeyframe(
         if (typeof _keyframe.id !== 'string') {
             // TODO: Clone instance
             const entityId = _generateAndReserveSymbolId(project)
-            setFreezedProp(_keyframe, 'id', entityId)
+            setFreezedProp(_keyframe, '_id', entityId)
         }
 
         if (!clip.keyframes[propName]) {

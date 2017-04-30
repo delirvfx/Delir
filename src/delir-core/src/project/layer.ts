@@ -1,42 +1,48 @@
 // @flow
 import * as _ from 'lodash'
+import * as uuid from 'uuid'
+
 import Clip from './clip'
 import {ClipScheme} from './scheme/clip'
 import {LayerScheme} from './scheme/layer'
 
 export default class Layer
 {
-    static deserialize(layerJson: LayerScheme)
+    public static deserialize(layerJson: LayerScheme)
     {
-        const layer = new Layer
-        const config = _.pick(layerJson.config, ['name']) as LayerScheme
+        const layer = new Layer()
+
+        const config = _.pick(layerJson.config, ['name'])
         const clips = layerJson.clips.map((clipJson: ClipScheme) => Clip.deserialize(clipJson))
 
-        Object.defineProperty(layer, 'id', {value: layerJson.id})
+        Object.defineProperty(layer, '_id', {value: layerJson.id || uuid.v4()})
+        Object.assign(layer._config, config)
         layer.clips = clips
-        Object.assign(layer.config, config)
 
         return layer
     }
 
-    id: string|null = null
-    clips: Clip[] = []
+    private _id: string = uuid.v4()
 
-    config: {
+    public clips: Clip[] = []
+
+    private _config: {
         name: string|null,
     } = {
         name: null
     }
 
-    get name(): string { return (this.config.name as string) }
-    set name(name: string) { this.config.name = name }
+    get id(): string { return this._id }
+
+    get name(): string { return (this._config.name as string) }
+    set name(name: string) { this._config.name = name }
 
     constructor()
     {
         Object.seal(this)
     }
 
-    toPreBSON(): Object
+    public toPreBSON(): Object
     {
         return {
             id: this.id,
@@ -45,7 +51,7 @@ export default class Layer
         }
     }
 
-    toJSON(): Object
+    public toJSON(): Object
     {
         return {
             id: this.id,
