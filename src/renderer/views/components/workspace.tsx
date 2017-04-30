@@ -1,6 +1,7 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import {Component, PropTypes} from 'react'
+import {Component} from 'react'
+import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 
 export interface WorkspaceProps extends React.DOMAttributes<HTMLDivElement> {

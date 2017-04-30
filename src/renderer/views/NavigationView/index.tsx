@@ -1,6 +1,6 @@
 import {remote} from 'electron'
 import * as React from 'react'
-import {PropTypes} from 'react'
+import * as PropTypes from 'prop-types'
 import * as path from 'path'
 import connectToStores from '../../utils/connectToStores'
 

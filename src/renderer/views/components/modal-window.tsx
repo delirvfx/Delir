@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import {PropTypes} from 'react'
+import * as PropTypes from 'prop-types'
 import * as path from 'path'
 import * as URL from 'url'
 import * as qs from 'querystring'

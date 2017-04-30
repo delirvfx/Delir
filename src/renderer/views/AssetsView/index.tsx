@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import { PropTypes } from 'react'
+import * as PropTypes from 'prop-types'
 import * as parseColor from 'parse-color'
 import * as classnames from 'classnames'
 import * as path from 'path'

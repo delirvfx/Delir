@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {Component, PropTypes} from 'react'
+import {Component} from 'react'
+import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import {ChromePicker} from 'react-color'
 

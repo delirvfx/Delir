@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {PureComponent, PropTypes} from 'react'
+import {PureComponent} from 'react'
+import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 
 import Portal from '../../utils/portal'
