@@ -25,18 +25,6 @@ export default class Project
 
     public compositions: Set<Composition> = new Set
 
-    // _commandHistory: []
-
-    // static deserialize(deserializedBson: Object)
-    // {
-    //
-    // }
-    //
-    // static deserialize(): Document {
-    //     const bson = new BSONPure.BSON()
-    //     return new Document()
-    // }
-
     public toPreBSON()
     {
         return {
