@@ -5,7 +5,7 @@ import Pane from '../components/pane'
 
 import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
-import PreviewView from '../preview-view/'
+import PreviewView from '../PreviewView/'
 import TimelaneView from '../TimelaneView'
 import NavigationView from '../NavigationView'
 import StatusView from '../status-view'
