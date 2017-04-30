@@ -28,7 +28,7 @@ export default class Project
     {
         return {
             formatVersion: 'v0.0.0',
-            assets: Array.from(this.assets.values()).map(asset => asset.toPreBSON()),
+            assets: this.assets.map(asset => asset.toPreBSON()),
             compositions: Array.from(this.compositions.values()).map(comp => comp.toPreBSON()),
         }
     }
@@ -37,7 +37,7 @@ export default class Project
     {
         return {
             formatVersion: '0.0.0',
-            assets: Array.from(this.assets.values()).map(asset => asset.toJSON()),
+            assets: this.assets.map(asset => asset.toJSON()),
             compositions: Array.from(this.compositions.values()).map(comp => comp.toJSON()),
         }
     }

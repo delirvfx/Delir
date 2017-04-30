@@ -35,7 +35,7 @@ export function addAsset(
         setFreezedProp(asset, 'id', entityId)
     }
 
-    project.assets.add(asset)
+    project.assets.push(asset)
 
     return asset
 }
@@ -51,7 +51,7 @@ export function addComposition(
         setFreezedProp(composition, 'id', entityId)
     }
 
-    project.compositions.add(composition)
+    project.compositions.push(composition)
 
     return composition
 }
@@ -171,7 +171,7 @@ export function deleteAsset(
         ? targetAssetId
         : findAssetById(project, targetAssetId)!
 
-    project.assets.delete(asset)
+    _.remove(project.assets, {id: asset.id})
 }
 
 export function deleteComposition(
@@ -183,7 +183,7 @@ export function deleteComposition(
         : findCompositionById(project, targetCompositionId)!
 
     // TODO: Not found behaviour
-    project.compositions.delete(composition)
+    _.remove(project.compositions, {id: composition.id})
 }
 
 export function deleteLayer(
@@ -333,7 +333,7 @@ export function findAssetById(project: Project, assetId: string): Asset|null
     let targetAsset: Asset|null = null
 
     compSearch:
-        for (const asset of Array.from(project.assets)) {
+        for (const asset of project.assets) {
             if (asset.id === assetId) {
                 targetAsset = asset
                 break compSearch
@@ -348,7 +348,7 @@ export function findCompositionById(project: Project, compositionId: string): Co
     let targetComp: Composition|null = null
 
     compSearch:
-        for (const comp of Array.from(project.compositions)) {
+        for (const comp of project.compositions) {
             if (comp.id === compositionId) {
                 targetComp = comp
                 break compSearch
@@ -363,7 +363,7 @@ export function findLayerById(project: Project, layerId: string): Layer|null
     let targetLayer: Layer|null = null
 
     layerSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 if (layer.id === layerId) {
                     targetLayer = layer
@@ -380,7 +380,7 @@ export function findClipById(project: Project, clipId: string): Clip|null
     let targetClip: Clip|null = null
 
     clipSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 for (const clip of layer.clips.values()) {
                     if (clip.id === clipId) {
@@ -410,7 +410,7 @@ export function findParentCompositionByLayerId(project: Project, layerId: string
     let targetComp: Composition|null = null
 
     compositionSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 if (layer.id === layerId) {
                     targetComp = comp
@@ -427,7 +427,7 @@ export function findParentLayerByClipId(project: Project, clipId: string): Layer
     let targetLayer: Layer|null = null
 
     layerSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 for (const clip of layer.clips.values()) {
                     if (clip.id === clipId) {
@@ -463,7 +463,7 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     let targetKeyframe: Keyframe|null = null
 
     keyframeSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 for (const clip of layer.clips.values()) {
                     for (const propName of Object.keys(clip.keyframes)) {
@@ -493,7 +493,7 @@ export function findParentClipAndPropNameByKeyframeId(project: Project, keyframe
     let target: {clip: Clip, propName: string}|null = null
 
     keyframeSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 for (const clip of layer.clips.values()) {
                     for (const propName of Object.keys(clip.keyframes)) {
