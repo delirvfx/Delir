@@ -49,7 +49,7 @@ export default class PluginRegister {
 
         if (!entry) {
             throw new UnknownPluginReferenceException(`Plugin ${id} doesn't loaded`)
-        }　
+        }
 
         if (entry.class.prototype instanceof LayerPluginBase) {
             return (entry.class as typeof LayerPluginBase).provideParameters().properties
