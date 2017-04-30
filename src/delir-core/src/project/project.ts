@@ -7,7 +7,7 @@ import Composition from './composition'
 
 export default class Project
 {
-    static deserialize(projectBson: Buffer)
+    public static deserialize(projectBson: Buffer)
     {
         const projectJson: ProjectScheme = (new BSON()).deserialize(projectBson) as ProjectScheme
 
@@ -21,9 +21,9 @@ export default class Project
         return project
     }
 
-    assets: Set<Asset> = new Set
+    public assets: Set<Asset> = new Set
 
-    compositions: Set<Composition> = new Set
+    public compositions: Set<Composition> = new Set
 
     // _commandHistory: []
 
@@ -37,7 +37,7 @@ export default class Project
     //     return new Document()
     // }
 
-    toPreBSON()
+    public toPreBSON()
     {
         return {
             formatVersion: 'v0.0.0',
@@ -46,7 +46,7 @@ export default class Project
         }
     }
 
-    toJSON()
+    public toJSON()
     {
         return {
             formatVersion: '0.0.0',
@@ -55,7 +55,7 @@ export default class Project
         }
     }
 
-    serialize()
+    public serialize()
     {
         return (new BSONPure.BSON()).serialize(this.toPreBSON())
     }
