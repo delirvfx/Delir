@@ -61,7 +61,15 @@ const install = async () => {
     const args = parseCommandLine()
     await install()
 
-    args.devMode && console.log('Run as develop mode')
+    if (args.devMode) {
+        console.log('Run as develop mode')
+
+        // install devtools
+        const devtron = require('devtron')
+        const {default: installExtension, REACT_DEVELOPER_TOOLS} = require('electron-devtools-installer')
+        devtron.install()
+        await installExtension(REACT_DEVELOPER_TOOLS)
+    }
 
     app.on('window-all-closed', function() {
         if (process.platform !== 'darwin') {

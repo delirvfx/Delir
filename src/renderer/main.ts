@@ -11,14 +11,6 @@ import * as Delir from 'delir-core'
 import RendererService from './services/renderer'
 
 window.addEventListener('DOMContentLoaded', async () => {
-    // install devtools
-    if (__DEV__) {
-        const devtron = require('devtron')
-        const {default: installExtension, REACT_DEVELOPER_TOOLS} = require('electron-devtools-installer')
-        devtron.install()
-        await installExtension(REACT_DEVELOPER_TOOLS)
-    }
-
     // initialize app
     await RendererService.initialize()
     EditorStateActions.setActiveProject(new Delir.Project.Project())
