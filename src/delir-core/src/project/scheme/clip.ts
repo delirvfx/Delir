@@ -10,5 +10,6 @@ export interface ClipConfigScheme {
 export interface ClipScheme {
     id: string|null
     config: ClipConfigScheme
+    effects: any[]
     keyframes: {[keyName:string]: KeyframeScheme[]}
 }

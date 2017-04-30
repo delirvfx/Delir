@@ -21,7 +21,7 @@ describe('project structure specs', () => {
             project.assets.add(new Asset)
 
             const comp1 = new Composition
-            project.compositions.add(comp1)
+            project.compositions.push(comp1)
 
             const lane1 = new Layer
             comp1.layers.add(lane1)
@@ -31,7 +31,7 @@ describe('project structure specs', () => {
 
         it('correctry serialize/deserialize the project', () => {
             const comp1 = new Composition
-            project.compositions.add(comp1)
+            project.compositions.push(comp1)
 
             const lane1 = new Layer
             comp1.layers.add(lane1)

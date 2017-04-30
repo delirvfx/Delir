@@ -17,7 +17,7 @@ export default class LayerInstanceContainer
 
     async beforeRender(preRenderReq: PreRenderingRequest)
     {
-        this._clips = Array.from(this._layer.clips.values())
+        this._clips = Array.from(this._layer.clips)
             .map(layer => new ClipInstanceContainer(layer))
 
         // sort layers

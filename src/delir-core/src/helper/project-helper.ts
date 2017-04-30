@@ -12,21 +12,14 @@ import Keyframe from '../project/keyframe'
 
 import PluginRegistory from '../plugin-support/plugin-registry'
 
-function setFreezedProp(obj: Object, name: string, value: any)
+function setFreezedProp(obj: object, name: string, value: any)
 {
     Object.defineProperty(obj, name, {value, writable: false})
 }
 
 function _generateAndReserveSymbolId(project: Project): string
 {
-    let id
-
-    do {
-        id = uuid.v4()
-    } while (project.symbolIds.has(id))
-
-    project.symbolIds.add(id)
-    return id
+    return uuid.v4()
 }
 
 //
@@ -39,10 +32,10 @@ export function addAsset(
     if (typeof asset.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(asset, 'id', entityId)
+        setFreezedProp(asset, '_id', entityId)
     }
 
-    project.assets.add(asset)
+    project.assets = _.uniqBy([...project.assets, asset], 'id')
 
     return asset
 }
@@ -55,10 +48,10 @@ export function addComposition(
     if (typeof composition.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(composition, 'id', entityId)
+        setFreezedProp(composition, '_id', entityId)
     }
 
-    project.compositions.add(composition)
+    project.compositions = _.uniqBy([...project.compositions, composition], 'id')
 
     return composition
 }
@@ -73,7 +66,7 @@ export function addLayer(
     if (typeof layer.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(layer, 'id', entityId)
+        setFreezedProp(layer, '_id', entityId)
     }
 
     // TODO: Not found behaviour
@@ -95,7 +88,7 @@ export function addClip(
     if (typeof clip.id !== 'string') {
         // TODO: Clone instance
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(clip, 'id', entityId)
+        setFreezedProp(clip, '_id', entityId)
     }
 
     // TODO: Not found behaviour
@@ -103,7 +96,7 @@ export function addClip(
         ? targetLayerId
         : findLayerById(project, targetLayerId)!
 
-    layer.clips.add(clip)
+    layer.clips = _.uniqBy([...layer.clips, clip], 'id')
 
     return clip
 }
@@ -116,7 +109,7 @@ export function addEffect(
 {
     if (typeof effect.id !== 'string') {
         const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(effect, 'id', entityId)
+        setFreezedProp(effect, '_id', entityId)
     }
 
     const clip = targetClipId instanceof Clip
@@ -146,7 +139,7 @@ export function addKeyframe(
         if (typeof _keyframe.id !== 'string') {
             // TODO: Clone instance
             const entityId = _generateAndReserveSymbolId(project)
-            setFreezedProp(_keyframe, 'id', entityId)
+            setFreezedProp(_keyframe, '_id', entityId)
         }
 
         if (!clip.keyframes[propName]) {
@@ -178,7 +171,7 @@ export function deleteAsset(
         ? targetAssetId
         : findAssetById(project, targetAssetId)!
 
-    project.assets.delete(asset)
+    _.remove(project.assets, {id: asset.id})
 }
 
 export function deleteComposition(
@@ -190,7 +183,7 @@ export function deleteComposition(
         : findCompositionById(project, targetCompositionId)!
 
     // TODO: Not found behaviour
-    project.compositions.delete(composition)
+    _.remove(project.compositions, {id: composition.id})
 }
 
 export function deleteLayer(
@@ -215,7 +208,7 @@ export function deleteClip(
         : findClipById(project, targetClipId)!
 
     const layer = findParentLayerByClipId(project, clip.id!)!
-    layer.clips.delete(clip)
+    _.remove(layer.clips, {id: clip.id})
 }
 
 export function deleteEffectFromClip(
@@ -340,7 +333,7 @@ export function findAssetById(project: Project, assetId: string): Asset|null
     let targetAsset: Asset|null = null
 
     compSearch:
-        for (const asset of Array.from(project.assets)) {
+        for (const asset of project.assets) {
             if (asset.id === assetId) {
                 targetAsset = asset
                 break compSearch
@@ -355,7 +348,7 @@ export function findCompositionById(project: Project, compositionId: string): Co
     let targetComp: Composition|null = null
 
     compSearch:
-        for (const comp of Array.from(project.compositions)) {
+        for (const comp of project.compositions) {
             if (comp.id === compositionId) {
                 targetComp = comp
                 break compSearch
@@ -370,7 +363,7 @@ export function findLayerById(project: Project, layerId: string): Layer|null
     let targetLayer: Layer|null = null
 
     layerSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 if (layer.id === layerId) {
                     targetLayer = layer
@@ -387,9 +380,9 @@ export function findClipById(project: Project, clipId: string): Clip|null
     let targetClip: Clip|null = null
 
     clipSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
-                for (const clip of layer.clips.values()) {
+                for (const clip of layer.clips) {
                     if (clip.id === clipId) {
                         targetClip = clip
                         break clipSearch
@@ -417,7 +410,7 @@ export function findParentCompositionByLayerId(project: Project, layerId: string
     let targetComp: Composition|null = null
 
     compositionSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 if (layer.id === layerId) {
                     targetComp = comp
@@ -434,9 +427,9 @@ export function findParentLayerByClipId(project: Project, clipId: string): Layer
     let targetLayer: Layer|null = null
 
     layerSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
-                for (const clip of layer.clips.values()) {
+                for (const clip of layer.clips) {
                     if (clip.id === clipId) {
                         targetLayer = layer
                         break layerSearch
@@ -470,9 +463,9 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     let targetKeyframe: Keyframe|null = null
 
     keyframeSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
-                for (const clip of layer.clips.values()) {
+                for (const clip of layer.clips) {
                     for (const propName of Object.keys(clip.keyframes)) {
                         for (const keyframe of clip.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {
@@ -500,9 +493,9 @@ export function findParentClipAndPropNameByKeyframeId(project: Project, keyframe
     let target: {clip: Clip, propName: string}|null = null
 
     keyframeSearch:
-        for (const comp of project.compositions.values()) {
+        for (const comp of project.compositions) {
             for (const layer of comp.layers) {
-                for (const clip of layer.clips.values()) {
+                for (const clip of layer.clips) {
                     for (const propName of Object.keys(clip.keyframes)) {
                         for (const keyframe of clip.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {

@@ -188,8 +188,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
     render()
     {
         const {editor: {project}} = this.props
-        const assets = project ? Array.from(project.assets.values()) : []
-        const compositions = project ? Array.from(project.compositions.values()) : []
+        const assets = project ? Array.from(project.assets) : []
+        const compositions = project ? Array.from(project.compositions) : []
 
         return (
             <Pane className={s.assetsView} allowFocus>

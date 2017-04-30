@@ -1,14 +1,16 @@
 import * as _ from 'lodash'
+import * as uuid from 'uuid'
+
 import Keyframe from './keyframe'
 import Effect from './effect'
 import {ClipScheme, ClipConfigScheme} from './scheme/clip'
-import {RendererProperties} from './types'
 
 export default class Clip
 {
-    static deserialize(clipJson: ClipScheme)
+    public static deserialize(clipJson: ClipScheme)
     {
-        const clip = new Clip
+        const clip = new Clip()
+
         const config = _.pick(clipJson.config, [
             'renderer',
             'placedFrame',
@@ -20,15 +22,16 @@ export default class Clip
             return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
-        Object.defineProperty(clip, 'id', {value: clipJson.id})
-        Object.assign(clip.config, config)
+        Object.defineProperty(clip, '_id', {value: clipJson.id || uuid.v4()})
+        Object.assign(clip._config, config)
         clip.keyframes = keyframes
+
         return clip
     }
 
-    id: string|null = null
+    private _id: string = uuid.v4()
 
-    config: {
+    private _config: {
         renderer: string|null,
         placedFrame: number|null,
         durationFrames: number|null,
@@ -40,52 +43,53 @@ export default class Clip
         keyframeInterpolationMethod: 'linear',
     }
 
-    keyframes: {[propName:string]: Keyframe[]} = {}
-    effects: Effect[] = []
+    public keyframes: {[propName: string]: Keyframe[]} = {}
 
-    // get id(): string { return this._id }
+    public effects: Effect[] = []
 
-    get renderer(): string { return this.config.renderer as string }
-    set renderer(renderer: string) { this.config.renderer = renderer }
+    get id(): string { return this._id }
 
-    get placedFrame(): number { return this.config.placedFrame as number }
-    set placedFrame(placedFrame: number) { this.config.placedFrame = placedFrame }
+    get renderer(): string { return this._config.renderer as string }
+    set renderer(renderer: string) { this._config.renderer = renderer }
+
+    get placedFrame(): number { return this._config.placedFrame as number }
+    set placedFrame(placedFrame: number) { this._config.placedFrame = placedFrame }
 
     get durationFrame(): number { throw new Error('clip.durationFrame is discontinuance.') }
     set durationFrame(durationFrames: number) { throw new Error('clip.durationFrame is discontinuance.') }
 
-    get durationFrames(): number { return this.config.durationFrames as number }
-    set durationFrames(durationFrames: number) { this.config.durationFrames = durationFrames }
+    get durationFrames(): number { return this._config.durationFrames as number }
+    set durationFrames(durationFrames: number) { this._config.durationFrames = durationFrames }
 
-    get keyframeInterpolationMethod(): string { return this.config.keyframeInterpolationMethod as string }
-    set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { this.config.keyframeInterpolationMethod = keyframeInterpolationMethod }
+    get keyframeInterpolationMethod(): string { return this._config.keyframeInterpolationMethod as string }
+    set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { this._config.keyframeInterpolationMethod = keyframeInterpolationMethod }
 
     constructor()
     {
         Object.seal(this)
     }
 
-    toPreBSON(): Object
+    public toPreBSON(): ClipScheme
     {
         return {
-            id: this.id,
-            config: Object.assign({}, this.config),
+            id: this._id,
+            config: Object.assign({}, this._config),
             effects: this.effects.slice(0),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
                 return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
-            }),
+            }) as any,
         }
     }
 
-    toJSON(): Object
+    public toJSON(): ClipScheme
     {
         return {
-            id: this.id,
-            config: Object.assign({}, this.config),
+            id: this._id,
+            config: Object.assign({}, this._config),
             effects: this.effects.slice(0),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
                 return Array.from(keyframe).map(keyframe => keyframe.toJSON())
-            }),
+            }) as any,
         }
     }
 }

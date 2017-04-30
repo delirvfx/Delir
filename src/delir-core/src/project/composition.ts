@@ -1,4 +1,5 @@
 import * as _ from 'lodash'
+import * as uuid from 'uuid'
 import ColorRGB from '../values/color-rgb'
 import Project from './project'
 import Layer from './layer'
@@ -9,7 +10,8 @@ export default class Composition
 {
     static deserialize(compJson: CompositionScheme, project: Project)
     {
-        const comp = new Composition
+        const comp = new Composition()
+
         const config: CompositionScheme = _.pick(compJson.config, [
             'name',
             'width',
@@ -23,20 +25,20 @@ export default class Composition
 
         const layers = compJson.layers.map(layer => Layer.deserialize(layer))
 
-        Object.defineProperty(comp, 'id', {value: compJson.id})
-        comp.layers = layers
+        Object.defineProperty(comp, '_id', {value: compJson.id || uuid.v4()})
         Object.assign(comp.config, config)
+        comp.layers = layers
 
         const color = config.backgroundColor
         comp.backgroundColor = new ColorRGB(color.red, color.green, color.blue)
         return comp
     }
 
-    id: string|null = null
+    private _id: string = uuid.v4()
 
-    layers : Layer[] = []
+    public layers : Layer[] = []
 
-    config : {
+    private config : {
         name: string|null,
         width: number|null,
         height: number|null,
@@ -60,6 +62,8 @@ export default class Composition
         backgroundColor: new ColorRGB(0, 0, 0),
     }
 
+    get id(): string { return this._id }
+
     get name(): string { return this.config.name as string }
     set name(name: string) { this.config.name = name }
 
@@ -71,11 +75,6 @@ export default class Composition
 
     get framerate(): number { return this.config.framerate as number }
     set framerate(framerate: number) { this.config.framerate = framerate }
-
-    /** @deprecated */
-    get durationFrame(): number { throw new Error('composition.durationFrame is discontinuance.') }
-    /** @deprecated */
-    set durationFrame(durationFrames: number) { throw new Error('composition.durationFrame is discontinuance.') }
 
     get durationFrames(): number { return this.config.durationFrames as number }
     set durationFrames(durationFrames: number) { this.config.durationFrames = durationFrames }
@@ -94,7 +93,7 @@ export default class Composition
         Object.seal(this)
     }
 
-    toPreBSON(): Object
+    public toPreBSON(): Object
     {
         return {
             id: this.id,
@@ -103,7 +102,7 @@ export default class Composition
         }
     }
 
-    toJSON(): Object
+    public toJSON(): Object
     {
         return {
             id: this.id,

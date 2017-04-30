@@ -1,18 +1,21 @@
-// @flow
+import {AssetScheme} from './scheme/asset'
+
 import * as _ from 'lodash'
+import * as uuid from 'uuid'
 
 export default class Asset
 {
-    static deserialize(assetJson: Object)
+    public static deserialize(assetJson: AssetScheme)
     {
-        const asset = new Asset
+        const asset = new Asset()
 
-        asset.id = assetJson.id
+        Object.defineProperty(asset, '_id', {value: assetJson.id || uuid.v4()})
         Object.assign(asset._config, _.pick(assetJson, _.keys(asset._config)))
+
         return asset
     }
 
-    id: string|null = null
+    private _id: string = uuid.v4()
 
     private _config: {
         fileType: string,
@@ -25,6 +28,8 @@ export default class Asset
         path: null,
         data: null,
     }
+
+    get id(): string { return this._id }
 
     get mimeType(): string { throw new Error('Asset#mimeType is abandoned') }
     set mimeType(mimeType: string) { throw new Error('Asset#mimeType is abandoned') }
@@ -49,12 +54,12 @@ export default class Asset
         Object.seal(this)
     }
 
-    toPreBSON(): Object
+    public toPreBSON(): Object
     {
         return this.toJSON()
     }
 
-    toJSON()
+    public toJSON()
     {
         return Object.assign({}, this._config, {id: this.id});
     }
