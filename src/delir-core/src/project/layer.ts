@@ -13,14 +13,14 @@ export default class Layer
         const clips = layerJson.clips.map((clipJson: ClipScheme) => Clip.deserialize(clipJson))
 
         Object.defineProperty(layer, 'id', {value: layerJson.id})
-        layer.clips = new Set<Clip>(clips)
+        layer.clips = clips
         Object.assign(layer.config, config)
 
         return layer
     }
 
     id: string|null = null
-    clips: Set<Clip> = new Set()
+    clips: Clip[] = []
 
     config: {
         name: string|null,
