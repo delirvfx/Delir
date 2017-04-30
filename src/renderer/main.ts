@@ -22,10 +22,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         case 'Linux': document.body.classList.add('platform-linux'); break;
     }
 
-    ReactDOM.render(
-        React.createElement(AppComponent as any, {}, []),
-        document.querySelector('#root')
-    )
+    ReactDOM.unstable_deferredUpdates(() => {
+        ReactDOM.render(
+            React.createElement(AppComponent as any, {}, []),
+            document.querySelector('#root')
+        )
+    })
 
     ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
 
@@ -44,6 +46,5 @@ window.addEventListener('DOMContentLoaded', async () => {
          EditorStateActions.notify(e.message, '😱Uncaught Rejection😱', 'error', 5000, e.stack)
     })
 
-    RendererService.renderer.setDestinationCanvas(document.querySelector('canvas'))
     // RendererService.renderer.setDestinationAudioNode(audioContext.destination)
 });

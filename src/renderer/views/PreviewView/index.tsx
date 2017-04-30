@@ -9,6 +9,7 @@ import DropDown from '../components/dropdown'
 
 import EditorStateStore from '../../stores/editor-state-store'
 import ProjectModifyStore from '../../stores/project-modify-store'
+import RendererService from '../../services/renderer'
 
 import * as s from './style.styl'
 
@@ -26,13 +27,19 @@ interface PreviewViewState {
 }))
 export default class PreviewView extends React.Component<PreviewViewProps, PreviewViewState>
 {
-    state = {
+    public state = {
         scale: 1,
         scaleListShown: false
     }
 
-    refs: {
+    public refs: {
+        canvas: HTMLCanvasElement
         scaleList: DropDown
+    }
+
+    protected componentDidMount()
+    {
+        RendererService.renderer!.setDestinationCanvas(this.refs.canvas)
     }
 
 
