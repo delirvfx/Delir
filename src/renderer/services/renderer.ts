@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import {remote} from 'electron'
-import {join} from 'path'
+import {join, dirname} from 'path'
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
 
@@ -130,7 +130,7 @@ const handlePayload = (payload: KnownPayload) => {
         }
 
         case EditorStateDispatchTypes.RenderDestinate: (() => {
-            const appPath = remote.app.getPath('exe')
+            const appPath = dirname(remote.app.getPath('exe'))
             const ffmpegBin = __DEV__ ? 'ffmpeg' : require('path').resolve(
                 appPath,
                 Platform.isMacOS() ? '../../Resources/ffmpeg' : './ffmpeg.exe'
