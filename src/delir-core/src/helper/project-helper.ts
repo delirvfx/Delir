@@ -19,14 +19,7 @@ function setFreezedProp(obj: Object, name: string, value: any)
 
 function _generateAndReserveSymbolId(project: Project): string
 {
-    let id
-
-    do {
-        id = uuid.v4()
-    } while (project.symbolIds.has(id))
-
-    project.symbolIds.add(id)
-    return id
+    return uuid.v4()
 }
 
 //
