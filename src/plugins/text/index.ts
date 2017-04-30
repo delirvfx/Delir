@@ -33,7 +33,7 @@ export default class TextLayer extends LayerPluginBase
         }
     }
 
-    static provideParameters(): TypeDescriptor
+    static provideParameters = _.once((): TypeDescriptor =>
     {
         const fonts = FontManager.getAvailableFontsSync()
         const families: string[] = [
@@ -82,7 +82,7 @@ export default class TextLayer extends LayerPluginBase
                 label: 'Rotate',
                 animatable: true,
             })
-    }
+    })
 
     bufferCanvas: HTMLCanvasElement
 
