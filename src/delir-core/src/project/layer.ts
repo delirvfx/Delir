@@ -41,7 +41,7 @@ export default class Layer
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            clips: Array.from(this.clips.values()).map(clip => clip.toPreBSON()),
+            clips: Array.from(this.clips).map(clip => clip.toPreBSON()),
         }
     }
 
@@ -50,7 +50,7 @@ export default class Layer
         return {
             id: this.id,
             config: Object.assign({}, this.config),
-            clips: Array.from(this.clips.values()).map(clip => clip.toJSON()),
+            clips: Array.from(this.clips).map(clip => clip.toJSON()),
         }
     }
 }

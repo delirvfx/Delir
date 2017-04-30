@@ -78,7 +78,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         else if (dragEntity.type === 'clip') {
             // Drop Clip into ClipSpace
             const {clip} = dragEntity
-            const isChildClip = !! _.find(Array.from(this.props.layer.clips.values()), {id: clip.id})
+            const isChildClip = !! _.find(this.props.layer.clips, {id: clip.id})
 
             if (isChildClip) {
                 const placedFrame = TimelineHelper.pixelToFrames({
@@ -141,7 +141,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
     {
         const {layer, activeClip, framerate, pxPerSec, scale} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
-        const clips = Array.from<Delir.Project.Clip>(layer.clips.values())
+        const clips = Array.from<Delir.Project.Clip>(layer.clips)
         const plugins = this._plugins
 
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''

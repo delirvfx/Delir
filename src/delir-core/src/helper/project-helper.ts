@@ -96,7 +96,7 @@ export function addClip(
         ? targetLayerId
         : findLayerById(project, targetLayerId)!
 
-    layer.clips.add(clip)
+    layer.clips = _.uniqBy([...layer.clips, clip], 'id')
 
     return clip
 }
@@ -208,7 +208,7 @@ export function deleteClip(
         : findClipById(project, targetClipId)!
 
     const layer = findParentLayerByClipId(project, clip.id!)!
-    layer.clips.delete(clip)
+    _.remove(layer.clips, {id: clip.id})
 }
 
 export function deleteEffectFromClip(
@@ -382,7 +382,7 @@ export function findClipById(project: Project, clipId: string): Clip|null
     clipSearch:
         for (const comp of project.compositions) {
             for (const layer of comp.layers) {
-                for (const clip of layer.clips.values()) {
+                for (const clip of layer.clips) {
                     if (clip.id === clipId) {
                         targetClip = clip
                         break clipSearch
@@ -429,7 +429,7 @@ export function findParentLayerByClipId(project: Project, clipId: string): Layer
     layerSearch:
         for (const comp of project.compositions) {
             for (const layer of comp.layers) {
-                for (const clip of layer.clips.values()) {
+                for (const clip of layer.clips) {
                     if (clip.id === clipId) {
                         targetLayer = layer
                         break layerSearch
@@ -465,7 +465,7 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     keyframeSearch:
         for (const comp of project.compositions) {
             for (const layer of comp.layers) {
-                for (const clip of layer.clips.values()) {
+                for (const clip of layer.clips) {
                     for (const propName of Object.keys(clip.keyframes)) {
                         for (const keyframe of clip.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {
@@ -495,7 +495,7 @@ export function findParentClipAndPropNameByKeyframeId(project: Project, keyframe
     keyframeSearch:
         for (const comp of project.compositions) {
             for (const layer of comp.layers) {
-                for (const clip of layer.clips.values()) {
+                for (const clip of layer.clips) {
                     for (const propName of Object.keys(clip.keyframes)) {
                         for (const keyframe of clip.keyframes[propName]) {
                             if (keyframe.id === keyframeId) {

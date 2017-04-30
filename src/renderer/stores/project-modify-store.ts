@@ -95,16 +95,17 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
             }
 
-            case ProjectModifyDispatchTypes.MoveClipToLayer:
+            case ProjectModifyDispatchTypes.MoveClipToLayer: {
                 const targetClip = ProjectHelper.findClipById(project!, payload.entity.clipId)
                 const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.entity.clipId)
                 const destLane = ProjectHelper.findLayerById(project!, payload.entity.targetLayerId)
 
                 if (targetClip == null || sourceLane == null || destLane == null) break
 
-                sourceLane.clips.delete(targetClip)
-                destLane.clips.add(targetClip)
+                ProjectHelper.deleteClip(project!, targetClip)
+                ProjectHelper.addClip(project!, destLane, targetClip)
                 break
+            }
 
             case ProjectModifyDispatchTypes.ModifyComposition:
                 ProjectHelper.modifyComposition(project!, payload.entity.targetCompositionId, payload.entity.patch)
