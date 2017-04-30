@@ -15,15 +15,14 @@ export default class Project
         const assets = projectJson.assets.map(assetJson => Asset.deserialize(assetJson))
         const compositions = projectJson.compositions.map(compJson => Composition.deserialize(compJson, project))
 
-        project.assets = new Set(assets)
-        project.compositions = new Set(compositions)
+        project.assets = assets
+        project.compositions = compositions
 
         return project
     }
 
-    public assets: Set<Asset> = new Set
-
-    public compositions: Set<Composition> = new Set
+    public assets: Asset[] = []
+    public compositions: Composition[] = []
 
     public toPreBSON()
     {
