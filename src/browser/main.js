@@ -61,7 +61,7 @@ const install = async () => {
     const args = parseCommandLine()
     await install()
 
-    if (args.devMode) {
+    if (args.devMode && process.env.DELIR_ENV === 'dev') {
         console.log('Run as develop mode')
 
         // install devtools
