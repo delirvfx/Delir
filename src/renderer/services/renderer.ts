@@ -133,7 +133,7 @@ const handlePayload = (payload: KnownPayload) => {
             const appPath = dirname(remote.app.getPath('exe'))
             const ffmpegBin = __DEV__ ? 'ffmpeg' : require('path').resolve(
                 appPath,
-                Platform.isMacOS() ? '../../Resources/ffmpeg' : './ffmpeg.exe'
+                Platform.isMacOS() ? '../Resources/ffmpeg' : './ffmpeg.exe'
             )
 
             const file = remote.dialog.showSaveDialog(({
