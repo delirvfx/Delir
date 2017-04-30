@@ -367,7 +367,7 @@ export async function pack(done) {
                 electronVersion: '1.6.1',
                 asar: true,
                 asarUnpack: ["node_modules/"],
-                npmRebuild: false,
+                npmRebuild: true,
                 // nodeGypRebuild: true,
                 directories: {
                     app: paths.build,
