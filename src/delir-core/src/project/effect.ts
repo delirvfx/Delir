@@ -66,8 +66,8 @@ export default class Effect
         return {
             id: this.id,
             config: Object.assign({}, this._config),
-            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return keyframe.map(keyframe => keyframe.toPreBSON())
+            keyframes: _.mapValues(this.keyframes, (keyframeSeq, propName) => {
+                return keyframeSeq.map(keyframe => keyframe.toPreBSON())
             }),
         }
     }
@@ -77,8 +77,8 @@ export default class Effect
         return {
             id: this.id,
             config: Object.assign({}, this._config),
-            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return keyframe.map(keyframe => keyframe.toJSON())
+            keyframes: _.mapValues(this.keyframes, (keyframeSeq, propName) => {
+                return keyframeSeq.map(keyframe => keyframe.toJSON())
             }),
         }
     }
