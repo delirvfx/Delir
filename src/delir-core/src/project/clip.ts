@@ -75,8 +75,8 @@ export default class Clip
             id: this._id,
             config: Object.assign({}, this._config),
             effects: this.effects.slice(0),
-            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+            keyframes: _.mapValues(this.keyframes, (keyframes, propName) => {
+                return keyframes.map(keyframe => keyframe.toPreBSON())
             }) as any,
         }
     }
@@ -87,8 +87,8 @@ export default class Clip
             id: this._id,
             config: Object.assign({}, this._config),
             effects: this.effects.slice(0),
-            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toJSON())
+            keyframes: _.mapValues(this.keyframes, (keyframes, propName) => {
+                return keyframes.map(keyframe => keyframe.toJSON())
             }) as any,
         }
     }
