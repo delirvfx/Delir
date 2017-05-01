@@ -12,7 +12,7 @@ export interface EffectOptionScheme {
 
 export interface EffectScheme {
     id: string|null
-    options: EffectOptionScheme
+    config: EffectOptionScheme
     keyframes: {[keyName:string]: KeyframeScheme[]}
 }
 
@@ -22,7 +22,7 @@ export default class Effect
     {
         const effect = new Effect()
 
-        const options = _.pick(effectJson.options, [
+        const config = _.pick(effectJson.config, [
             'processor',
             'keyframeInterpolationMethod',
         ]) as EffectOptionScheme
@@ -32,7 +32,7 @@ export default class Effect
         })
 
         Object.defineProperty(effect, '_id', {value: effectJson.id})
-        Object.assign(effect._options, options)
+        Object.assign(effect._config, config)
         effect.keyframes = keyframes
 
         return effect
@@ -40,7 +40,7 @@ export default class Effect
 
     private _id: string = uuid.v4()
 
-    private _options: EffectOptionScheme = {
+    private _config: EffectOptionScheme = {
         name: null,
         processor: null,
         keyframeInterpolationMethod: 'linear',
@@ -50,8 +50,8 @@ export default class Effect
 
     get id(): string { return this._id }
 
-    get processor(): string { return this._options.processor as string }
-    set processor(processor: string) { this._options.processor = processor }
+    get processor(): string { return this._config.processor as string }
+    set processor(processor: string) { this._config.processor = processor }
 
     get keyframeInterpolationMethod(): string { throw new Error('Effect.keyframeInterpolationMethod not implemented') }
     set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { throw new Error('Effect.keyframeInterpolationMethod not implemented') }
@@ -65,7 +65,7 @@ export default class Effect
     {
         return {
             id: this.id,
-            options: Object.assign({}, this._options),
+            config: Object.assign({}, this._config),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
                 return keyframe.map(keyframe => keyframe.toPreBSON())
             }),
@@ -76,7 +76,7 @@ export default class Effect
     {
         return {
             id: this.id,
-            options: Object.assign({}, this._options),
+            config: Object.assign({}, this._config),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
                 return keyframe.map(keyframe => keyframe.toJSON())
             }),
