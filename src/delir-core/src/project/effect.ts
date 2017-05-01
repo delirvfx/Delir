@@ -31,7 +31,7 @@ export default class Effect
             return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
-        Object.defineProperty(effect, '_id', {value: effectJson.id})
+        Object.defineProperty(effect, '_id', {value: effectJson.id || uuid.v4()})
         Object.assign(effect._config, config)
         effect.keyframes = keyframes
 
