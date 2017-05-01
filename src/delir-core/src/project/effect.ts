@@ -28,7 +28,7 @@ export default class Effect
         ]) as EffectOptionScheme
 
         const keyframes = _.mapValues(effectJson.keyframes, keyframeSet => {
-            return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
+            return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
         Object.defineProperty(effect, '_id', {value: effectJson.id})
@@ -46,7 +46,7 @@ export default class Effect
         keyframeInterpolationMethod: 'linear',
     }
 
-    public keyframes: {[keyName:string]: Set<Keyframe>} = {}
+    public keyframes: {[keyName: string]: Keyframe[]} = {}
 
     get id(): string { return this._id }
 
