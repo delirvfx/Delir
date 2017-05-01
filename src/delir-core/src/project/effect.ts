@@ -67,7 +67,7 @@ export default class Effect
             id: this.id,
             options: Object.assign({}, this._options),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+                return keyframe.map(keyframe => keyframe.toPreBSON())
             }),
         }
     }
@@ -78,7 +78,7 @@ export default class Effect
             id: this.id,
             options: Object.assign({}, this._options),
             keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toJSON())
+                return keyframe.map(keyframe => keyframe.toJSON())
             }),
         }
     }
