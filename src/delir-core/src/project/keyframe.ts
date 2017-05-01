@@ -72,7 +72,7 @@ export default class Keyframe
     {
         return {
             id: this.id,
-            config: Object.assign({}, this.config),
+            config: Object.assign({}, this._config),
         }
     }
 }
