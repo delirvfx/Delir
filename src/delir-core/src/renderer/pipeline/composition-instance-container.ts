@@ -1,5 +1,5 @@
 // @flow
-import Composition from '../project/composition'
+import Composition from '../../project/composition'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 import LayerInstanceContainer from './layer-instance-container'

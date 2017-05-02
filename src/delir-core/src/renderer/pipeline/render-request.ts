@@ -1,5 +1,5 @@
 // @flow
-import Composition from '../project/composition'
+import Composition from '../../project/composition'
 import EntityResolver from './entity-resolver'
 
 import * as _ from 'lodash'

@@ -1,17 +1,17 @@
 // @flow
-import LayerPluginBase from '../plugin-support/layer-plugin-base'
-import EffectPluginBase from '../plugin-support/effect-plugin-base'
+import LayerPluginBase from '../../plugin-support/layer-plugin-base'
+import EffectPluginBase from '../../plugin-support/effect-plugin-base'
 
-import Clip from '../project/clip'
-import Keyframe from '../project/keyframe'
+import Clip from '../../project/clip'
+import Keyframe from '../../project/keyframe'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
-import {ParameterValueTypes} from '../plugin-support/type-descriptor'
+import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
 
 import * as _ from 'lodash'
-import * as KeyframeHelper from '../helper/keyframe-helper'
-import {KeyframeValueSequence} from '../helper/keyframe-helper'
-import {RenderingFailedException} from '../exceptions'
+import * as KeyframeHelper from '../../helper/keyframe-helper'
+import {KeyframeValueSequence} from '../../helper/keyframe-helper'
+import {RenderingFailedException} from '../../exceptions'
 import PluginPreRenderingRequest from './plugin-pre-rendering-request'
 
 export default class ClipInstanceContainer

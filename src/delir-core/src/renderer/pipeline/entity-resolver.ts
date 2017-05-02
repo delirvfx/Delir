@@ -1,8 +1,8 @@
 // @flow
-import Project from '../project/project'
-import PluginRegistry from '../services/plugin-registry'
+import Project from '../../project/project'
+import PluginRegistry from '../../services/plugin-registry'
 
-import * as ProjectHelper from '../helper/project-helper'
+import * as ProjectHelper from '../../helper/project-helper'
 
 export default class EntityResolver
 {

@@ -1,6 +1,6 @@
 // @flow
 import * as Project from './project/index'
-import Renderer from './renderer/renderer'
+import Renderer from './renderer/pipeline/renderer'
 import * as Services from './services'
 import * as Exceptions from './exceptions'
 import * as Values from './values'
@@ -8,8 +8,8 @@ import {ColorRGB, ColorRGBA} from './values'
 
 import Type, {TypeDescriptor, AnyParameterTypeDescriptor} from './plugin-support/type-descriptor'
 import PluginBase from './plugin-support/plugin-base'
-import RenderRequest from './renderer/render-request'
-import PluginPreRenderRequest from './renderer/plugin-pre-rendering-request'
+import RenderRequest from './renderer/pipeline/render-request'
+import PluginPreRenderRequest from './renderer/pipeline/plugin-pre-rendering-request'
 import LayerPluginBase from './plugin-support/layer-plugin-base'
 import EffectPluginBase from './plugin-support/effect-plugin-base'
 import PluginRegistry from './plugin-support/plugin-registry'
