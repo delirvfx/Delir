@@ -76,7 +76,7 @@ export interface EnumTypeDescripter extends ParameterTypeDescriptor<'ENUM'> {
 }
 export interface ClipTypeDescripter extends ParameterTypeDescriptor<'CLIP'> {}
 export interface AssetTypeDescripter extends ParameterTypeDescriptor<'ASSET'> {
-    mimeTypes: Array<string>
+    extensions: Array<string>
 }
 export interface ArrayOfTypeDescripter extends ParameterTypeDescriptor<'ARRAY'> {
     subType: TypeDescriptor
@@ -293,20 +293,20 @@ export class TypeDescriptor {
         return this
     }
 
-    asset(propName: string, conf: {label: string, enabled?: boolean, mimeTypes: Array<string>})
+    asset(propName: string, conf: {label: string, enabled?: boolean, extensions: Array<string>})
     {
-        const {label, enabled, mimeTypes} = defaults(conf, {
+        const {label, enabled, extensions} = defaults(conf, {
             enabled: true,
-            mimeTypes: [],
+            extensions: [],
         })
 
-        const validMimeTypes = Array.isArray(mimeTypes) && mimeTypes.length > 0 && mimeTypes.every(e => typeof e === 'string')
+        const validextensions = Array.isArray(extensions) && extensions.length > 0 && extensions.every(e => typeof e === 'string')
 
-        if (!validMimeTypes) {
-            throw new PluginLoadFailException('`mimeTypes` must be an array of string and can not to be empty')
+        if (!validextensions) {
+            throw new PluginLoadFailException('`extensions` must be an array of string and can not to be empty')
         }
 
-        this.properties.push({type: 'ASSET', propName, label, enabled, animatable: false, mimeTypes})
+        this.properties.push({type: 'ASSET', propName, label, enabled, animatable: false, extensions})
         return this
     }
 
@@ -403,7 +403,7 @@ export default class Type
         return (new TypeDescriptor()).clip(propName, option)
     }
 
-    static asset(propName: string, option: {label: string, enabled?: boolean, mimeTypes: string[]})
+    static asset(propName: string, option: {label: string, enabled?: boolean, extensions: string[]})
     {
         return (new TypeDescriptor()).asset(propName, option)
     }
