@@ -17,7 +17,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
 {
     public static get rendererId(): string { return 'image' }
 
-    public static provideHandlableFileTypes()
+    public static provideAssetAssignMap()
     {
         return {
             jpeg: 'source',

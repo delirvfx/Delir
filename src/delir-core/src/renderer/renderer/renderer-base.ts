@@ -3,7 +3,7 @@ import RenderingRequest from '../pipeline/render-request'
 
 export interface IRendererStatic {
     rendererId: string
-    provideHandlableFileTypes(): {[extName: string]: string}
+    provideAssetAssignMap(): {[extName: string]: string}
     provideParameters(): TypeDescriptor
 
     new(): IRenderer<any>

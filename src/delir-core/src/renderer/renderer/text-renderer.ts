@@ -24,7 +24,7 @@ export default class TextLayer implements IRenderer<TextRendererParam>
 {
     public static get rendererId(): string { return 'text' }
 
-    public static provideHandlableFileTypes()
+    public static provideAssetAssignMap()
     {
         return {}
     }

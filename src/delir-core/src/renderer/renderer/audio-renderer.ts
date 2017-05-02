@@ -21,7 +21,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 {
     public static get rendererId(): string { return 'audio' }
 
-    public static provideHandlableFileTypes()
+    public static provideAssetAssignMap()
     {
         return {
             wav: 'source',

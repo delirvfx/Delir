@@ -19,7 +19,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 {
     public static get rendererId(): string { return 'video' }
 
-    public static provideHandlableFileTypes()
+    public static provideAssetAssignMap()
     {
         return {
             mp4: 'source',
