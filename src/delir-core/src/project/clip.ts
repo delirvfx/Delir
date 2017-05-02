@@ -4,7 +4,7 @@ import * as uuid from 'uuid'
 import Keyframe from './keyframe'
 import Effect from './effect'
 import {ClipScheme, ClipConfigScheme} from './scheme/clip'
-import {AvailableRenderer} from '../renderer/available-renderer'
+import {AvailableRenderer} from '../renderer/renderer'
 
 export default class Clip
 {
@@ -33,7 +33,7 @@ export default class Clip
     private _id: string = uuid.v4()
 
     private _config: {
-        renderer: AvailableRenderer|null,
+        renderer: AvailableRenderer,
         placedFrame: number|null,
         durationFrames: number|null,
         keyframeInterpolationMethod: string,
