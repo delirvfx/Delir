@@ -1,17 +1,14 @@
-import {
-    Type,
-    TypeDescriptor,
-    LayerPluginBase,
-    PluginPreRenderRequest,
-    RenderRequest,
-    Exceptions,
-    ColorRGBA
-} from 'delir-core'
+import {IRenderer} from './renderer-base'
+import Type from '../../plugin-support/type-descriptor'
+import {TypeDescriptor} from '../../plugin-support/type-descriptor'
+import RenderingRequest from '../pipeline/render-request'
+
+import ColorRGBA from '../../values/color-rgba'
 
 import * as _ from 'lodash'
 import * as FontManager from 'font-manager'
 
-interface TextLayerParam {
+interface TextRendererParam {
     text: string
     family: string
     weight: string
@@ -23,17 +20,17 @@ interface TextLayerParam {
     rotate: number
 }
 
-export default class TextLayer extends LayerPluginBase
+export default class TextLayer implements IRenderer<TextRendererParam>
 {
-    static async pluginDidLoad()
+    public static get rendererId(): string { return 'text' }
+
+    public static provideHandlableFileTypes()
     {
-        // ✋( ͡° ͜ʖ ͡°) インターフェースに誓って
-        if (typeof window === 'undefined') {
-            throw new Exceptions.PluginLoadFailException('this plugin only running on Electron')
-        }
+        return {}
     }
 
-    static provideParameters = _.once((): TypeDescriptor =>
+    // `getAvailableFontsSync` is very heavy, Cache returned result with _.once
+    public static provideParameters = _.once((): TypeDescriptor =>
     {
         const fonts = FontManager.getAvailableFontsSync()
         const families: string[] = [
@@ -84,14 +81,14 @@ export default class TextLayer extends LayerPluginBase
             })
     })
 
-    bufferCanvas: HTMLCanvasElement
+    private _bufferCanvas: HTMLCanvasElement
 
-    async beforeRender(preRenderRequest: PluginPreRenderRequest)
+    public async beforeRender(req: RenderingRequest<TextRendererParam>)
     {
-        this.bufferCanvas = document.createElement('canvas')
+        this._bufferCanvas = document.createElement('canvas')
     }
 
-    async render(req: RenderRequest<TextLayerParam>)
+    public async render(req: RenderingRequest<TextRendererParam>)
     {
         const param = req.parameters
         const ctx = req.destCanvas.getContext('2d')!
@@ -115,14 +112,4 @@ export default class TextLayer extends LayerPluginBase
             placePointY += unit
         }
     }
-
-    //
-    // Editor handling methods
-    //
-
-    // MEMO: キャッシュが必要な（例えば音声ファイルなど）パラメータの変更を検知するためのAPI
-    // onDidParameterChanged(newParam, oldParam)
-    // {
-    //
-    // }
 }

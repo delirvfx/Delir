@@ -1,11 +1,9 @@
-import {
-    Type,
-    TypeDescriptor,
-    LayerPluginBase,
-    PluginPreRenderRequest,
-    RenderRequest,
-    Exceptions,
-} from 'delir-core'
+import {IRenderer} from './renderer-base'
+import Type from '../../plugin-support/type-descriptor'
+import {TypeDescriptor} from '../../plugin-support/type-descriptor'
+import RenderingRequest from '../pipeline/render-request'
+
+import Asset from '../../project/asset'
 
 import * as fs from 'fs'
 import AV from 'av'
@@ -14,22 +12,32 @@ import 'flac'
 import 'alac'
 import 'aac'
 
-export default class AudioLayer extends LayerPluginBase
+interface AudioRendererParam {
+    source: Asset
+    volume: number
+}
+
+export default class AudioRenderer implements IRenderer<AudioRendererParam>
 {
-    static async pluginDidLoad()
+    public static get rendererId(): string { return 'audio' }
+
+    public static provideHandlableFileTypes()
     {
-        // ✋( ͡° ͜ʖ ͡°) インターフェースに誓って
-        if (typeof window === 'undefined') {
-            throw new Exceptions.PluginLoadFailException('this plugin only running on Electron')
+        return {
+            wav: 'source',
+            webm: 'source',
+            mpeg: 'source',
+            mp3: 'source',
+            ogg: 'source'
         }
     }
 
-    static provideParameters(): TypeDescriptor
+    public static provideParameters(): TypeDescriptor
     {
         return Type
             .asset('source', {
                 label: 'Audio file',
-                mimeTypes: ['audio/wav', 'audio/webm', 'audio/mpeg', 'audio/ogg'],
+                extensions: ['wav', 'webm', 'mpeg', 'mp3', 'ogg'],
             })
             .float('volume', {
                 label: 'Volume',
@@ -38,19 +46,13 @@ export default class AudioLayer extends LayerPluginBase
             })
     }
 
-    audio: any = {}
+    private _audio: any = {}
 
-    constructor()
+    public async beforeRender(req: RenderingRequest<AudioRendererParam>)
     {
-        super()
-        this.audio = {}
-    }
+        const params = req.parameters
 
-    async beforeRender(preRenderRequest: PluginPreRenderRequest)
-    {
-        const params = preRenderRequest.parameters as any
-
-        if (this.audio.source === params.source.path) {
+        if (this._audio.source === params.source.path) {
             return
         }
 
@@ -78,18 +80,18 @@ export default class AudioLayer extends LayerPluginBase
             })
         })
 
-        this.audio = {
+        this._audio = {
             source: params.source.path,
-            buffer: buffer,
+            buffer,
         }
     }
 
-    async render(req: RenderRequest)
+    public async render(req: RenderingRequest<AudioRendererParam>)
     {
         return await this.renderAudio(req)
     }
 
-    async renderAudio(req: RenderRequest)
+    public async renderAudio(req: RenderingRequest)
     {
         if (!req.isBufferingFrame) return
 
@@ -98,7 +100,7 @@ export default class AudioLayer extends LayerPluginBase
         const end = begin + req.neededSamples
 
         for (let ch = 0, l = req.audioChannels; ch < l; ch++) {
-            const buffer = this.audio.buffer[ch]
+            const buffer = this._audio.buffer[ch]
             destBuffers[ch].set(buffer.slice(begin, end))
         }
     }
