@@ -1,13 +1,14 @@
 // @flow
 import Project from '../../project/project'
-import PluginRegistry from '../../services/plugin-registry'
+import PluginRegistry from '../../plugin-support/plugin-registry'
+import EffectPluginBase from '../../plugin-support/effect-plugin-base'
 
 import * as ProjectHelper from '../../helper/project-helper'
 
 export default class EntityResolver
 {
-    _project: Project
-    _pluginRegistry: PluginRegistry
+    private _project: Project
+    private _pluginRegistry: PluginRegistry
 
     constructor(project: Project, pluginRegistry: PluginRegistry)
     {
@@ -15,15 +16,23 @@ export default class EntityResolver
         this._pluginRegistry = pluginRegistry
     }
 
-    resolveAsset(assetId: string) {
+    public resolveAsset(assetId: string)
+    {
         return ProjectHelper.findAssetById(this._project, assetId)
     }
 
-    resolveComp(compId: string) {
+    public resolveComp(compId: string)
+    {
         return ProjectHelper.findCompositionById(this._project, compId)
     }
 
-    resolvePlugin(pluginName: string) {
+    public resolvePlugin(pluginName: string)
+    {
         return this._pluginRegistry.requireById(pluginName)
+    }
+
+    public resolveEffectPlugin(pluginId: string): typeof EffectPluginBase
+    {
+        return this._pluginRegistry.requireById(pluginId) as any
     }
 }
