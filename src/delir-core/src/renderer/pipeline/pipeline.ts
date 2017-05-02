@@ -1,6 +1,7 @@
 import Project from '../../project/project'
 import Clip from '../../project/clip'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
+import TypeDescriptor from '../../plugin-support/type-descriptor'
 
 import PluginRegistry from '../../plugin-support/plugin-registry'
 
@@ -9,9 +10,9 @@ import ProgressPromise from '../../helper/progress-promise'
 import RenderingRequest from './render-request'
 import EntityResolver from './entity-resolver'
 import * as ProjectHelper from '../../helper/project-helper'
-import {RenderingFailedException} from '../../exceptions/'
+import {RenderingFailedException, RenderingAbortedException} from '../../exceptions/'
 import * as RendererFactory from '../renderer'
-
+import * as KeyframeHelper from '../../helper/keyframe-helper'
 
 export default class Pipeline
 {
@@ -39,11 +40,17 @@ export default class Pipeline
     public renderFrame(compositionId: string, frame: number)
     {
         return new ProgressPromise<any>(async (resolve, reject, onAbort, notifier) => {
+            let aborted = false
+            onAbort(() => aborted = true)
+
             const request = this._currentRequest ? this._currentRequest : this._initStage(compositionId)
             this._currentRequest = request
 
             for await (let process of this._setupStage(request)) {
-
+                if (aborted) {
+                    reject(new RenderingAbortedException('Rendering aborted'))
+                    return
+                }
             }
         })
     }
@@ -105,27 +112,48 @@ export default class Pipeline
 
                 yield
 
-                clipInstances.push(instanceSet)
+                instanceSet.keyframes = this._calcKeyframes(clip)
 
+                clipInstances.push(instanceSet)
             }
         }
     }
 
     private async _setupClip(clip: Clip, req: RenderingRequest) : Promise<{
         renderer: any,
-        effects: {entityId: string, instance: EffectPluginBase}[],
+        effects: {entityId: string, instance: EffectPluginBase, parameters: TypeDescriptor}[],
     }>
     {
         const renderer = RendererFactory.create(clip.renderer)
-        const effects: {entityId: string, instance: EffectPluginBase}[] = []
+        const effects: {entityId: string, instance: EffectPluginBase, parameters: TypeDescriptor}[] = []
 
         for (const effectConfig of clip.effects) {
             const Effect = req.resolver.resolveEffectPlugin(effectConfig.processor)
             const effector = new Effect()
-            effects.push({entityId: effectConfig.id, instance: effector})
+            effects.push({
+                entityId: effectConfig.id,
+                instance: effector,
+                parameters: Effect.provideParameters(),
+            })
         }
 
         return {renderer, effects}
+    }
+
+    private _calcKeyframes(clip: Clip, req: RenderingRequest)
+    {
+        const rendererParamType = RendererFactory.getInfo(clip.renderer).paramaters.properties
+        const initialRendererParams: {[propName: string]: any} = {}
+
+        rendererParamType.forEach(desc => {
+            initialRendererParams[desc.propName] = KeyframeHelper.calcKeyframeValueAt(0, desc, clip.keyframes[desc.propName] || [])
+
+            if (desc.type === 'ASSET') {
+                initialRendererParams[desc.propName] = req.resolver.resolveAsset(initialRendererParams[desc.propName].assetId)
+            }
+        })
+
+        req.clone({parameters: Object.freeze(initialRendererParams)})
     }
 
     private _renderingStage()

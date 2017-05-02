@@ -81,7 +81,7 @@ export default class RenderRequest<T = any>
     compositionScope: Object
     clipScope: Object
 
-    parameters: T
+    parameters: any
 
     //
     // Resolver
@@ -111,7 +111,7 @@ export default class RenderRequest<T = any>
         return new RenderRequest(Object.assign({}, this, permitPatch))
     }
 
-    clone(patch: Object): RenderRequest
+    clone(patch: Pick<RenderRequest, keyof RenderRequest>): RenderRequest
     {
         const permitPatch = _.pick(patch, RenderRequest._permitKeys)
         return new RenderRequest(Object.assign({}, this, permitPatch))
