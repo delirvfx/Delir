@@ -1,6 +1,9 @@
 // @flow
+Symbol.asyncIterator = Symbol.asyncIterator || Symbol.for('asyncIterator')
+
 import * as Project from './project/index'
-import Renderer from './renderer/pipeline/renderer'
+import * as Renderer from './renderer/index'
+// export {default as Pipeline} from './renderer/pipeline/pipeline'
 import * as Services from './services'
 import * as Exceptions from './exceptions'
 import * as Values from './values'

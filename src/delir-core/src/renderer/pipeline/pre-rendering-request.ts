@@ -1,11 +1,12 @@
-import CompositionInstanceContainer from './composition-instance-container'
+import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
+import Composition from '../../project/composition'
 import EntityResolver from './entity-resolver'
 
 import * as _ from 'lodash'
 
-export default class PreRenderingRequest
+export default class PreRenderingRequest<T = {[propName: string]: ParameterValueTypes}>
 {
-    static _permitKeys = [
+    private static _permitKeys = [
         'width',
         'height',
         'framerate',
@@ -16,13 +17,13 @@ export default class PreRenderingRequest
 
         'parentComposition',
 
-        'compositionScope',
-        'clipScope',
+        // 'compositionScope',
+        // 'clipScope',
 
         'parameters',
     ]
 
-    static _permitOnlyInitializeKey = [
+    private static _permitOnlyInitializeKey = [
         'rootComposition',
         'resolver',
     ]
@@ -30,36 +31,35 @@ export default class PreRenderingRequest
     //
     // Composition options
     //
-    width: number
-    height: number
-    framerate: number
-    durationFrames: number
+    public width: number
+    public height: number
+    public framerate: number
+    public durationFrames: number
 
-    audioContext: AudioContext
-    samplingRate: number
-    audioBufferSize: number
-    audioChannels: number
+    public samplingRate: number
+    public audioBufferSize: number
+    public audioChannels: number
 
     //
     // Composition hierarchy
     //
-    rootComposition: CompositionInstanceContainer
-    parentComposition: CompositionInstanceContainer
+    public rootComposition: Readonly<Composition>
+    public parentComposition: Readonly<Composition>|null
 
     //
     // Variable store
     //
-    compositionScope: Object
-    clipScope: Object
+    // public compositionScope: {[prop: string]: any}
+    // public clipScope: {[prop: string]: any}
 
-    parameters: Object
+    public parameters: T
 
     //
     // Resolver
     //
-    resolver: EntityResolver
+    public resolver: EntityResolver
 
-    constructor(properties: Object = {})
+    constructor(properties: Optionalized<PreRenderingRequest<T>> = {})
     {
         const props = _.pick(
             properties,
@@ -70,9 +70,9 @@ export default class PreRenderingRequest
         Object.freeze(this);
     }
 
-    set(patch: Object) : PreRenderingRequest
+    public clone(patch: Optionalized<PreRenderingRequest<T>>): PreRenderingRequest<T>
     {
         const permitPatch = _.pick(patch, PreRenderingRequest._permitKeys)
-        return new PreRenderingRequest(Object.assign({}, this, permitPatch))
+        return new PreRenderingRequest<T>(Object.assign({}, this, permitPatch))
     }
 }

@@ -1,12 +1,13 @@
-// @flow
+import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import Composition from '../../project/composition'
 import EntityResolver from './entity-resolver'
+import PreRenderingRequest from './pre-rendering-request'
 
 import * as _ from 'lodash'
 
-export default class RenderRequest<T = any>
+export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}>
 {
-    static _permitKeys = [
+    private static _permitKeys = [
         'time',
         'timeOnComposition',
         'timeOnClip',
@@ -31,13 +32,13 @@ export default class RenderRequest<T = any>
         // 'rootComposition', // not permitted
         'parentComposition',
 
-        'compositionScope',
-        'clipScope',
+        // 'compositionScope',
+        // 'clipScope',
 
         'parameters',
     ]
 
-    static _permitOnlyInitializeKey = [
+    private static _permitOnlyInitializeKey = [
         'rootComposition',
         'resolver',
     ]
@@ -45,53 +46,53 @@ export default class RenderRequest<T = any>
     //
     // Current frame times
     //
-    time: number
-    timeOnComposition: number
-    timeOnClip: number
+    public time: number
+    public timeOnComposition: number
+    public timeOnClip: number
 
-    frame: number
-    frameOnComposition: number
-    frameOnClip: number
+    public frame: number
+    public frameOnComposition: number
+    public frameOnClip: number
 
     //
     // Composition options
     //
-    destCanvas: HTMLCanvasElement
-    width: number
-    height: number
-    framerate: number
-    durationFrames: number
+    public destCanvas: HTMLCanvasElement
+    public width: number
+    public height: number
+    public framerate: number
+    public durationFrames: number
 
-    destAudioBuffer: Array<Float32Array>
-    audioContext: AudioContext
-    samplingRate: number
-    neededSamples: number
-    audioChannels: number
-    isBufferingFrame: boolean
+    public destAudioBuffer: Float32Array[]
+    public audioContext: AudioContext|OfflineAudioContext
+    public samplingRate: number
+    public neededSamples: number
+    public audioChannels: number
+    public isBufferingFrame: boolean
 
     //
     // Composition hierarchy
     //
-    rootComposition: Composition
-    parentComposition: Composition
+    public rootComposition: Readonly<Composition>
+    public parentComposition: Readonly<Composition>
 
     //
     // Variable store
     //
-    compositionScope: Object
-    clipScope: Object
+    // public compositionScope: {[prop: string]: any}
+    // public clipScope: {[prop: string]: any}
 
-    parameters: any
+    public parameters: T
 
     //
     // Resolver
     //
-    resolver: EntityResolver
+    public resolver: EntityResolver
 
     // alias
-    get seconds(): number { return this.time }
+    public get seconds(): number { return this.time }
 
-    constructor(properties: Object = {})
+    constructor(properties: Optionalized<RenderRequest<T>> = {})
     {
         const props = _.pick(
             properties,
@@ -102,18 +103,30 @@ export default class RenderRequest<T = any>
         Object.freeze(this)
     }
 
-    /**
-     * @deprecated
-     */
-    set(patch: Object): RenderRequest
+    public clone(patch: Optionalized<RenderRequest<T>>): RenderRequest<T>
     {
         const permitPatch = _.pick(patch, RenderRequest._permitKeys)
-        return new RenderRequest(Object.assign({}, this, permitPatch))
+        return new RenderRequest<T>(Object.assign({}, this, permitPatch))
     }
 
-    clone(patch: Pick<RenderRequest, keyof RenderRequest>): RenderRequest
+    public toPreRenderingRequest(): PreRenderingRequest<T>
     {
-        const permitPatch = _.pick(patch, RenderRequest._permitKeys)
-        return new RenderRequest(Object.assign({}, this, permitPatch))
+        return new PreRenderingRequest<T>({
+            width: this.width,
+            height: this.height,
+            framerate: this.framerate,
+            durationFrames: this.durationFrames,
+
+            samplingRate: this.samplingRate,
+            audioBufferSize: this.neededSamples,
+            audioChannels: this.audioChannels,
+
+            rootComposition: this.rootComposition,
+            parentComposition: this.parentComposition,
+
+            parameters: this.parameters,
+
+            resolver: this.resolver,
+        })
     }
 }

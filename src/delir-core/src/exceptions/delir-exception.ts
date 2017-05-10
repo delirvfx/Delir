@@ -1,4 +1,4 @@
-export default class DelirException
+export default class DelirException extends Error
 {
     before: Error
     message: string
@@ -8,6 +8,8 @@ export default class DelirException
 
     constructor(message: string, info: any = {})
     {
+        super(message)
+
         const {stack} = (new Error())
 
         this.message = message

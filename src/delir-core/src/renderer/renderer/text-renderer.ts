@@ -1,6 +1,7 @@
 import {IRenderer} from './renderer-base'
 import Type from '../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
+import PreRenderingRequest from '../pipeline/pre-render-request'
 import RenderingRequest from '../pipeline/render-request'
 
 import ColorRGBA from '../../values/color-rgba'
@@ -83,7 +84,7 @@ export default class TextLayer implements IRenderer<TextRendererParam>
 
     private _bufferCanvas: HTMLCanvasElement
 
-    public async beforeRender(req: RenderingRequest<TextRendererParam>)
+    public async beforeRender(req: PreRenderingRequest<TextRendererParam>)
     {
         this._bufferCanvas = document.createElement('canvas')
     }

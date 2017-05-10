@@ -25,7 +25,7 @@ const RENDERER_SUMMARY = _.mapValues(RENDERERS, renderer => {
         id: renderer.rendererId,
         handlableFileTypes,
         assetAssignMap,
-        paramaters: renderer.provideParameters()
+        parameter: renderer.provideParameters()
     }
 })
 

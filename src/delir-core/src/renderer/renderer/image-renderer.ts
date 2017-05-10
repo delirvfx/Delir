@@ -1,6 +1,7 @@
 import {IRenderer} from './renderer-base'
 import Type from '../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
+import PreRenderingRequest from '../pipeline/pre-render-request'
 import RenderingRequest from '../pipeline/render-request'
 
 import Asset from '../../project/asset'
@@ -59,7 +60,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
 
     private _image: HTMLImageElement
 
-    public async beforeRender(req: RenderingRequest<ImageRendererParams>)
+    public async beforeRender(req: PreRenderingRequest<ImageRendererParams>)
     {
         const parameters = req.parameters
 

@@ -1,7 +1,9 @@
 import Project from '../../project/project'
 import Clip from '../../project/clip'
+import Keyframe from '../../project/keyframe'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
-import TypeDescriptor from '../../plugin-support/type-descriptor'
+import {default as TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
+import {IRenderer} from '../renderer/renderer-base'
 
 import PluginRegistry from '../../plugin-support/plugin-registry'
 
@@ -14,6 +16,18 @@ import {RenderingFailedException, RenderingAbortedException} from '../../excepti
 import * as RendererFactory from '../renderer'
 import * as KeyframeHelper from '../../helper/keyframe-helper'
 
+interface IEffectorInstanceSet {
+    entityId: string
+    instance: EffectPluginBase
+    keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
+}
+
+interface IRenderTask {
+    renderer: IRenderer<any>
+    effects: IEffectorInstanceSet[]
+    keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
+}
+
 export default class Pipeline
 {
     private _state = {
@@ -21,16 +35,23 @@ export default class Pipeline
     }
 
     private _currentRequest: RenderingRequest
+    private _project: Project
+    private _pluginRegistry: PluginRegistry
+    private _destinationCanvas: HTMLCanvasElement
+    private _destinationAudioNode: AudioNode
 
-    constructor(
-        private _project: Project,
-        private _pluginRegistry: PluginRegistry,
-        private _destinationCanvas: HTMLCanvasElement,
-        private _destinationAudioNode: AudioNode
-    )
-    {
+    get project() { return this._project }
+    set project(project: Project) { this._project = project }
 
-    }
+    get pluginRegistry() { return this._pluginRegistry }
+    set pluginRegistry(pluginRegistry: PluginRegistry) { this._pluginRegistry = pluginRegistry }
+
+    get destinationCanvas() { return this._destinationCanvas }
+    set destinationCanvas(destinationCanvas: HTMLCanvasElement) { this._destinationCanvas = destinationCanvas }
+
+    get destinationAudioNode() { return this._destinationAudioNode }
+    set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
+
 
     public reInit()
     {
@@ -39,20 +60,38 @@ export default class Pipeline
 
     public renderFrame(compositionId: string, frame: number)
     {
-        return new ProgressPromise<any>(async (resolve, reject, onAbort, notifier) => {
+        return new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
             let aborted = false
             onAbort(() => aborted = true)
 
             const request = this._currentRequest ? this._currentRequest : this._initStage(compositionId)
             this._currentRequest = request
 
-            for await (let process of this._setupStage(request)) {
+            const instanceSets = []
+            for await (let instanceSet of this._setupStage(request)) {
+                if (aborted) {
+                    reject(new RenderingAbortedException('Rendering aborted'))
+                    return
+                }
+
+                instanceSet.push(instanceSet)
+            }
+
+            for await (let process of this._renderStage(request, instanceSets)) {
                 if (aborted) {
                     reject(new RenderingAbortedException('Rendering aborted'))
                     return
                 }
             }
+
+            console.log('done')
+            resolve()
         })
+    }
+
+    public renderSequencial(compositionId: string, beginFrame: number)
+    {
+
     }
 
     private _initStage(compositionId: string): RenderingRequest
@@ -98,28 +137,61 @@ export default class Pipeline
         })
     }
 
-    private _setupStage = async function*(this: Pipeline, req: RenderingRequest)
+    private _setupStage = async function*(this: Pipeline, req: RenderingRequest): AsyncIterator<IRenderTask[]>
     {
-        const clipInstances = []
+        const renderTasks: IRenderTask[] = []
 
         for (const layer of req.rootComposition.layers) {
             for (const clip of layer.clips) {
-                const instanceSet: any = {}
-
-                const renderers = await this._setupClip(clip, req)
-                instanceSet.renderer = renderers.renderer
-                instanceSet.effects = renderers.effects
-
                 yield
 
-                instanceSet.keyframes = this._calcKeyframes(clip)
+                // Initialize renderer
+                const rendererParamType = RendererFactory.getInfo(clip.renderer).parameter
+                const rendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, rendererParamType, clip.keyframes)
+                const renderer = RendererFactory.create(clip.renderer)
+                renderer.beforeRender(req.clone({parameters: rendererInitParam}).toPreRenderingRequest())
 
-                clipInstances.push(instanceSet)
+                const renderers = await this._initRenderer(clip, req)
+                await renderer.beforeRender(req.clone({parameters: rendererInitParam}).toPreRenderingRequest())
+
+                const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParamType, clip.keyframes, 0, req.durationFrames)
+
+                // Initialize effects
+                const effects = []
+                for (const effect of clip.effects) {
+                    const EffectPluginClass = req.resolver.resolveEffectPlugin(effect.processor)
+
+                    const effectParamType = EffectPluginClass.provideParameters()
+                    const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, effectParamType, effect.keyframes)
+
+                    const effector: EffectPluginBase = new EffectPluginClass()
+                    await effector.beforeRender(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
+
+                    const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectParamType, effect.keyframes, 0, req.durationFrames)
+
+                    effects.push({entityId: effect.id, instance: effector, keyframeLUT: effectKeyframeLUT})
+                }
+
+
+                renderTasks.push({renderer, effects, keyframeLUT: rendererKeyframeLUT})
             }
+        }
+
+        return renderTasks
+    }
+
+    private _renderStage(req: RenderingRequest, renderTasks: IRenderTask[])
+    {
+        for (const instanceSet of renderTasks) {
+            const canvas = document.createElement('canvas') as HTMLCanvasElement
+            const renderReq = req.clone({
+                destCanvas: canvas,
+                parameters: instanceSet.initialParam
+            })
         }
     }
 
-    private async _setupClip(clip: Clip, req: RenderingRequest) : Promise<{
+    private async _initRenderer(clip: Clip, req: RenderingRequest): Promise<{
         renderer: any,
         effects: {entityId: string, instance: EffectPluginBase, parameters: TypeDescriptor}[],
     }>
@@ -130,6 +202,7 @@ export default class Pipeline
         for (const effectConfig of clip.effects) {
             const Effect = req.resolver.resolveEffectPlugin(effectConfig.processor)
             const effector = new Effect()
+
             effects.push({
                 entityId: effectConfig.id,
                 instance: effector,
@@ -140,9 +213,10 @@ export default class Pipeline
         return {renderer, effects}
     }
 
-    private _calcKeyframes(clip: Clip, req: RenderingRequest)
+    // private _calcKeyframes(clip: Clip, req: RenderingRequest)
+    private _calcKeyframes(descriptor: TypeDescriptor, keyframes: {[propName: string]: Keyframe[]})
     {
-        const rendererParamType = RendererFactory.getInfo(clip.renderer).paramaters.properties
+        const rendererParamType = RendererFactory.getInfo(clip.renderer).parameter.properties
         const initialRendererParams: {[propName: string]: any} = {}
 
         rendererParamType.forEach(desc => {
@@ -154,10 +228,19 @@ export default class Pipeline
         })
 
         req.clone({parameters: Object.freeze(initialRendererParams)})
-    }
 
-    private _renderingStage()
-    {
+        // TODO: Effect keyframe calculation
 
+        // Pre calculate keyframe interpolation
+        const keyframes: {[propName: string]: Keyframe[]} = Object.assign({}, clip.keyframes)
+        _.each(rendererParamType, ({propName}) => keyframes[propName] = keyframes[propName] ? keyframes[propName] : [])
+        const preCalcTable = KeyframeHelper.calcKeyFrames(rendererParamType, keyframes, 0, req.durationFrames)
+
+        return {
+            renderer: {
+                initParam: initialRendererParams,
+                keyframeLUT: preCalcTable,
+            },
+        }
     }
 }

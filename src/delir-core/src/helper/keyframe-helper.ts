@@ -19,6 +19,24 @@ export interface KeyframeValueSequence {
     [frame: number]: ParameterValueTypes
 }
 
+export function calcKeyframeValuesAt(
+    frame: number,
+    descriptor: TypeDescriptor,
+    keyframes: {[propName: string]: Keyframe[]},
+): {[propName: string]: ParameterValueTypes}
+{
+    return descriptor.properties.map<[string, ParameterValueTypes]>(desc => {
+        return [
+            desc.propName,
+            calcKeyframeValueAt(frame, desc, keyframes[desc.propName])
+        ]
+    })
+    .reduce((values, entry) => {
+        values[entry[0]] = entry[1]
+        return values
+    }, Object.create(null))
+}
+
 export function calcKeyframeValueAt(
     frame: number,
     desc: AnyParameterTypeDescriptor,
@@ -62,15 +80,16 @@ export function calcKeyframeValueAt(
 }
 
 export function calcKeyFrames(
-    paramTypes: TypeDescriptor,
+    paramTypes: TypeDescriptor|AnyParameterTypeDescriptor[],
     keyFrames: {[propName: string]: Keyframe[]},
     beginFrame: number,
     calcFrames: number
 ): {[propName: string]: KeyframeValueSequence}
 {
     const tables: {[propName: string]: KeyframeValueSequence} = {}
+    const props = paramTypes instanceof TypeDescriptor ? paramTypes.properties : paramTypes
 
-    for (const propDesc of paramTypes.properties) {
+    for (const propDesc of props) {
         const {propName} = propDesc
 
         switch (propDesc.type) {

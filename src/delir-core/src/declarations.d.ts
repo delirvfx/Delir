@@ -44,3 +44,6 @@ declare namespace NodeJS {
         require: NodeRequire
     }
 }
+
+// Typing helpers
+declare type Optionalized<T> = {[P in keyof T]?: T[P]}

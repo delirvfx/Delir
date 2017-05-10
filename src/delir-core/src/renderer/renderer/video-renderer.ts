@@ -1,6 +1,7 @@
 import {IRenderer} from './renderer-base'
 import Type from '../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
+import PreRenderingRequest from '../pipeline/pre-render-request'
 import RenderingRequest from '../pipeline/render-request'
 
 import Asset from '../../project/asset'
@@ -64,7 +65,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 
     private _video: HTMLVideoElement
 
-    public async beforeRender(req: RenderingRequest<VideoRendererParam>)
+    public async beforeRender(req: PreRenderingRequest<VideoRendererParam>)
     {
         const parameters = req.parameters as any
 

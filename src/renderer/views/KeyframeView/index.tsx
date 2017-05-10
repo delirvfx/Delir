@@ -249,7 +249,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {activePropName, keyframeViewViewBox, graphWidth, graphHeight} = this.state
         const activePropDescriptor = this._getDescriptorByPropName(activePropName)
         const descriptors = activeClip
-            ? RendererService.pluginRegistry!.getParametersById(activeClip.renderer) || []
+            ? Delir.Renderer.Renderers.getInfo(activeClip.renderer).parameter.properties || []
             : []
 
         return (
@@ -631,10 +631,10 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     {
         const {activeClip} = this.props
         const descriptors = activeClip
-            ? RendererService.pluginRegistry!.getParametersById(activeClip.renderer) || []
-            : []
+            ? Delir.Renderer.Renderers.getInfo(activeClip.renderer)
+            : {parameter: {properties: []}}
 
-        return descriptors.find(desc => desc.propName === propName) || null
+        return descriptors.parameter.properties.find(desc => desc.propName === propName) || null
     }
 
     private _renderMeasure = (): JSX.Element[] =>
