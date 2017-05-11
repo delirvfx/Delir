@@ -28,7 +28,7 @@ export function calcKeyframeValuesAt(
     return descriptor.properties.map<[string, ParameterValueTypes]>(desc => {
         return [
             desc.propName,
-            calcKeyframeValueAt(frame, desc, keyframes[desc.propName])
+            calcKeyframeValueAt(frame, desc,  keyframes[desc.propName] || [])
         ]
     })
     .reduce((values, entry) => {
@@ -91,52 +91,53 @@ export function calcKeyFrames(
 
     for (const propDesc of props) {
         const {propName} = propDesc
+        const propSequence = keyFrames[propName] || []
 
         switch (propDesc.type) {
             case 'POINT_2D':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcPoint2dKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcPoint2dKeyFrames)
             break;
             case 'POINT_3D':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcPoint3dKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcPoint3dKeyFrames)
             break;
             case 'SIZE_2D':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcSize2dKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcSize2dKeyFrames)
             break;
             case 'SIZE_3D':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcSize3dKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcSize3dKeyFrames)
             break;
             case 'COLOR_RGB':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcColorRgbKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcColorRgbKeyFrames)
             break;
             case 'COLOR_RGBA':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcColorRgbaKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcColorRgbaKeyFrames)
             break;
             case 'BOOL':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcBoolKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcBoolKeyFrames)
             break;
             case 'STRING':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcStringKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcStringKeyFrames)
             break;
             case 'NUMBER':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcNumberKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcNumberKeyFrames)
             break;
             case 'FLOAT':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcFloatKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcFloatKeyFrames)
             break;
             case 'ENUM':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcEnumKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcEnumKeyFrames)
             break;
             case 'CLIP':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcNoAnimatable)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcNoAnimatable)
             break;
             case 'PULSE':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcPulseKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcPulseKeyFrames)
             break;
             case 'ARRAY':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcArrayOfKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcArrayOfKeyFrames)
             break;
             case 'ASSET':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcAssetKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, beginFrame, calcFrames, calcAssetKeyFrames)
             break;
         }
     }

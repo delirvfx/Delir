@@ -74,7 +74,8 @@ export default class Pipeline
                     return
                 }
 
-                instanceSet.push(instanceSet)
+                console.log(instanceSet)
+                // instanceSets.push(instanceSet)
             }
 
             for await (let process of this._renderStage(request, instanceSets)) {
@@ -180,13 +181,13 @@ export default class Pipeline
         return renderTasks
     }
 
-    private _renderStage(req: RenderingRequest, renderTasks: IRenderTask[])
+    private _renderStage = async function*(this: Pipeline, req: RenderingRequest, renderTasks: IRenderTask[]): AsyncIterator<void>
     {
         for (const instanceSet of renderTasks) {
             const canvas = document.createElement('canvas') as HTMLCanvasElement
             const renderReq = req.clone({
                 destCanvas: canvas,
-                parameters: instanceSet.initialParam
+                parameters: instanceSet,
             })
         }
     }
@@ -232,8 +233,8 @@ export default class Pipeline
         // TODO: Effect keyframe calculation
 
         // Pre calculate keyframe interpolation
-        const keyframes: {[propName: string]: Keyframe[]} = Object.assign({}, clip.keyframes)
-        _.each(rendererParamType, ({propName}) => keyframes[propName] = keyframes[propName] ? keyframes[propName] : [])
+        const keyframesClone: {[propName: string]: Keyframe[]} = Object.assign({}, clip.keyframes)
+        _.each(rendererParamType, ({propName}) => keyframesClone[propName] = keyframesClone[propName] ? keyframesClone[propName] : [])
         const preCalcTable = KeyframeHelper.calcKeyFrames(rendererParamType, keyframes, 0, req.durationFrames)
 
         return {
