@@ -2,7 +2,7 @@ import Project from '../../project/project'
 import Clip from '../../project/clip'
 import Keyframe from '../../project/keyframe'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
-import {default as TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
+import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import {IRenderer} from '../renderer/renderer-base'
 
 import PluginRegistry from '../../plugin-support/plugin-registry'
@@ -16,25 +16,33 @@ import {RenderingFailedException, RenderingAbortedException} from '../../excepti
 import * as RendererFactory from '../renderer'
 import * as KeyframeHelper from '../../helper/keyframe-helper'
 
-interface IEffectorInstanceSet {
-    entityId: string
+interface IEffectRenderTask {
+    effectEntityId: string
     instance: EffectPluginBase
+    effectorProps: TypeDescriptor
     keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
 }
 
-interface IRenderTask {
+interface IClipRenderTask {
     renderer: IRenderer<any>
-    effects: IEffectorInstanceSet[]
+    rendererProps: TypeDescriptor
+    clipPlacedFrame: number
+    clipDurationFrames: number
     keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
+    effects: IEffectRenderTask[]
+}
+
+interface ILayerRenderTask {
+    layerId: string
+    clips: IClipRenderTask[]
 }
 
 export default class Pipeline
 {
     private _state = {
-        frameCursor: 0,
+        renderedFrames: 0,
     }
 
-    private _currentRequest: RenderingRequest
     private _project: Project
     private _pluginRegistry: PluginRegistry
     private _destinationCanvas: HTMLCanvasElement
@@ -58,32 +66,20 @@ export default class Pipeline
 
     }
 
-    public renderFrame(compositionId: string, frame: number)
+    public renderFrame(compositionId: string, beginFrame: number): ProgressPromise<void>
     {
         return new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
             let aborted = false
             onAbort(() => aborted = true)
 
-            const request = this._currentRequest ? this._currentRequest : this._initStage(compositionId)
-            this._currentRequest = request
+            const request = this._initStage(compositionId, beginFrame)
 
-            const instanceSets = []
-            for await (let instanceSet of this._setupStage(request)) {
-                if (aborted) {
-                    reject(new RenderingAbortedException('Rendering aborted'))
-                    return
-                }
+            const renderTasks = await this._setupStage(request)
+            console.log(renderTasks)
+            await this._renderStage(request, renderTasks)
 
-                console.log(instanceSet)
-                // instanceSets.push(instanceSet)
-            }
-
-            for await (let process of this._renderStage(request, instanceSets)) {
-                if (aborted) {
-                    reject(new RenderingAbortedException('Rendering aborted'))
-                    return
-                }
-            }
+            const destCanvasCtx = this.destinationCanvas.getContext('2d')!
+            destCanvasCtx.drawImage(request.destCanvas, 0, 0)
 
             console.log('done')
             resolve()
@@ -95,7 +91,7 @@ export default class Pipeline
 
     }
 
-    private _initStage(compositionId: string): RenderingRequest
+    private _initStage(compositionId: string, beginFrame: number): RenderingRequest
     {
         if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
         if (!this._pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
@@ -110,6 +106,10 @@ export default class Pipeline
         canvas.width = rootComposition.width
         canvas.height = rootComposition.height
 
+        const canvasCtx = canvas.getContext('2d')!
+        canvasCtx.fillStyle = rootComposition.backgroundColor.toString()
+        canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
+
         const compositionDurationTime = rootComposition.durationFrames / rootComposition.framerate
         const bufferSizeBytePerSec = rootComposition.samplingRate *  4 /* bytes */
 
@@ -118,9 +118,19 @@ export default class Pipeline
             Math.ceil(bufferSizeBytePerSec * compositionDurationTime),
             rootComposition.samplingRate
         )
+
         const audioBuffers = _.times(rootComposition.audioChannels, () => new Float32Array(new ArrayBuffer(bufferSizeBytePerSec)))
 
+        const currentFrame = beginFrame + this._state.renderedFrames
+        const currentTime = currentFrame / rootComposition.framerate
+
         return new RenderingRequest({
+            time: currentTime,
+            timeOnComposition: currentTime,
+
+            frame: currentFrame,
+            frameOnComposition: currentFrame,
+
             destCanvas: canvas,
             width: rootComposition.width,
             height: rootComposition.height,
@@ -138,57 +148,129 @@ export default class Pipeline
         })
     }
 
-    private _setupStage = async function*(this: Pipeline, req: RenderingRequest): AsyncIterator<IRenderTask[]>
+    private async _setupStage(this: Pipeline, req: RenderingRequest): Promise<ILayerRenderTask[]>
     {
-        const renderTasks: IRenderTask[] = []
+        const layerTasks: ILayerRenderTask[] = []
 
-        for (const layer of req.rootComposition.layers) {
+        const renderOrderLayers = req.rootComposition.layers.slice(0).reverse()
+        for (const layer of renderOrderLayers) {
+
+            const clips: IClipRenderTask[] = []
             for (const clip of layer.clips) {
-                yield
+                // yield
 
                 // Initialize renderer
-                const rendererParamType = RendererFactory.getInfo(clip.renderer).parameter
-                const rendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, rendererParamType, clip.keyframes)
+                const rendererProps = RendererFactory.getInfo(clip.renderer).parameter
+                const rendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, rendererProps, clip.keyframes)
                 const renderer = RendererFactory.create(clip.renderer)
-                renderer.beforeRender(req.clone({parameters: rendererInitParam}).toPreRenderingRequest())
-
-                const renderers = await this._initRenderer(clip, req)
                 await renderer.beforeRender(req.clone({parameters: rendererInitParam}).toPreRenderingRequest())
 
-                const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParamType, clip.keyframes, 0, req.durationFrames)
+                const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererProps, clip.keyframes, 0, req.durationFrames)
 
                 // Initialize effects
-                const effects = []
+                const effects: IEffectRenderTask[] = []
                 for (const effect of clip.effects) {
                     const EffectPluginClass = req.resolver.resolveEffectPlugin(effect.processor)
 
-                    const effectParamType = EffectPluginClass.provideParameters()
-                    const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, effectParamType, effect.keyframes)
+                    const effectProps = EffectPluginClass.provideParameters()
+                    const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, effectProps, effect.keyframes)
 
                     const effector: EffectPluginBase = new EffectPluginClass()
                     await effector.beforeRender(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
 
-                    const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectParamType, effect.keyframes, 0, req.durationFrames)
+                    const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectProps, effect.keyframes, 0, req.durationFrames)
 
-                    effects.push({entityId: effect.id, instance: effector, keyframeLUT: effectKeyframeLUT})
+                    effects.push({
+                        effectEntityId: effect.id,
+                        instance: effector,
+                        effectorProps: effectProps,
+                        keyframeLUT: effectKeyframeLUT
+                    })
                 }
 
-
-                renderTasks.push({renderer, effects, keyframeLUT: rendererKeyframeLUT})
+                clips.push({
+                    renderer,
+                    // rendererInfo: RendererFactory.getInfo(clip.renderer),
+                    rendererProps,
+                    clipPlacedFrame: clip.placedFrame,
+                    clipDurationFrames: clip.durationFrames,
+                    keyframeLUT: rendererKeyframeLUT,
+                    effects,
+                })
             }
+
+            layerTasks.push({
+                layerId: layer.id,
+                clips
+            })
         }
 
-        return renderTasks
+        return layerTasks
     }
 
-    private _renderStage = async function*(this: Pipeline, req: RenderingRequest, renderTasks: IRenderTask[]): AsyncIterator<void>
+    private async _renderStage(req: RenderingRequest, layerRenderTasks: ILayerRenderTask[]): Promise<void>
     {
-        for (const instanceSet of renderTasks) {
-            const canvas = document.createElement('canvas') as HTMLCanvasElement
-            const renderReq = req.clone({
-                destCanvas: canvas,
-                parameters: instanceSet,
+        const destBufferCanvas = req.destCanvas
+        const destBufferCtx = destBufferCanvas.getContext('2d')!
+
+        for (const layerTask of layerRenderTasks) {
+            const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
+            layerBufferCanvas.width = req.width
+            layerBufferCanvas.height = req.height
+
+            const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
+
+            const renderTargetClips = layerTask.clips.filter(clip => {
+                return clip.clipPlacedFrame <= req.frameOnComposition
+                    && clip.clipPlacedFrame + clip.clipDurationFrames >= req.frameOnComposition
             })
+
+            console.log(renderTargetClips, layerTask)
+
+            // Render clips
+            for (const clipTask of renderTargetClips) {
+                const clipBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
+                clipBufferCanvas.width = req.width
+                clipBufferCanvas.height = req.height
+
+                const params = _.fromPairs(clipTask.rendererProps.properties.map(desc => [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]))
+                let renderReq = req.clone({
+                    timeOnClip: req.time - (clipTask.clipPlacedFrame / req.framerate),
+                    frameOnClip: req.frame - clipTask.clipPlacedFrame,
+
+                    destCanvas: /* isAdjustClip */ false ? destBufferCanvas: clipBufferCanvas,
+                    parameters: params,
+                })
+
+                if (/* composition clip */ false) {
+                    const frameOnComposition = req.frame - clipTask.clipPlacedFrame
+
+                    // TODO: frame mapping for set different framerate for sub-composition
+                    renderReq = req.clone({
+                        frameOnComposition,
+                        timeOnComposition: frameOnComposition / req.framerate,
+
+                        parentComposition: req.rootComposition
+                    })
+                }
+
+                await clipTask.renderer.render(renderReq)
+
+                // Post process effects
+                for (const effectTask of clipTask.effects) {
+                    const effectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => [desc.propName, effectTask.keyframeLUT[desc.propName][req.frame]])) as {[propName: string]: ParameterValueTypes}
+                    const effectRenderReq = req.clone({
+                        destCanvas: clipBufferCanvas,
+                        parameters: effectorParams,
+                    })
+
+                    await effectTask.instance.render(effectRenderReq)
+                }
+
+                layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
+            }
+
+            destBufferCtx.drawImage(layerBufferCanvas, 0, 0)
         }
     }
 
