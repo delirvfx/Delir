@@ -75,13 +75,11 @@ export default class Pipeline
             const request = this._initStage(compositionId, beginFrame)
 
             const renderTasks = await this._setupStage(request)
-            console.log(renderTasks)
             await this._renderStage(request, renderTasks)
 
             const destCanvasCtx = this.destinationCanvas.getContext('2d')!
             destCanvasCtx.drawImage(request.destCanvas, 0, 0)
 
-            console.log('done')
             resolve()
         })
     }
@@ -225,8 +223,6 @@ export default class Pipeline
                     && clip.clipPlacedFrame + clip.clipDurationFrames >= req.frameOnComposition
             })
 
-            console.log(renderTargetClips, layerTask)
-
             // Render clips
             for (const clipTask of renderTargetClips) {
                 const clipBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
@@ -242,7 +238,7 @@ export default class Pipeline
                     parameters: params,
                 })
 
-                if (/* composition clip */ false) {
+                if (/* isCompositionClip */ false) {
                     const frameOnComposition = req.frame - clipTask.clipPlacedFrame
 
                     // TODO: frame mapping for set different framerate for sub-composition
