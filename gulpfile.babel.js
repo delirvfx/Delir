@@ -220,10 +220,7 @@ export async function compilePlugins(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.plugins,
         entry: {
-            'audio/audio': './audio/audio',
-            'video/index': './video/index',
-            'image/index': './image/index',
-            'text/index': './text/index',
+            'gaussian-blur/index': './gaussian-blur/index',
             ...(DELIR_ENV === 'dev' ? {
                 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 'plane/index': '../experimental-plugins/plane/index',
