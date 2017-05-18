@@ -15,6 +15,7 @@ import * as ProjectHelper from '../../helper/project-helper'
 import {RenderingFailedException, RenderingAbortedException} from '../../exceptions/'
 import * as RendererFactory from '../renderer'
 import * as KeyframeHelper from '../../helper/keyframe-helper'
+import defaults from '../../helper/defaults'
 
 interface IEffectRenderTask {
     effectEntityId: string
@@ -35,6 +36,11 @@ interface IClipRenderTask {
 interface ILayerRenderTask {
     layerId: string
     clips: IClipRenderTask[]
+}
+
+interface RenderingOption {
+    beginFrame: number
+    loop: boolean
 }
 
 export default class Pipeline
@@ -84,9 +90,55 @@ export default class Pipeline
         })
     }
 
-    public renderSequencial(compositionId: string, beginFrame: number)
+    public renderSequencial(compositionId: string, options: Optionalized<RenderingOption> = {}): ProgressPromise<void>
     {
+        const _options: RenderingOption  = defaults(options, {
+            beginFrame: 0,
+            loop: false,
+        })
 
+        return new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
+            let aborted = false
+            onAbort(() => aborted = true)
+
+            let request = this._initStage(compositionId, _options.beginFrame)
+            const renderTasks = await this._setupStage(request)
+
+            // const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
+            const framerate = request.rootComposition.framerate
+            const lastFrame = request.rootComposition.durationFrames
+            let animationFrameId: number
+            let rendereredFrames = 0
+
+            const render = async () => {
+                const currentFrame = _options.beginFrame + rendereredFrames
+
+                request = request.clone({
+                    frame: currentFrame,
+                    time: currentFrame / framerate
+                })
+
+                // reqDestCanvasCtx.clearRect(0, 0, request.width, request.height)
+                await this._renderStage(request, renderTasks)
+
+                const destCanvasCtx = this.destinationCanvas.getContext('2d')!
+                destCanvasCtx.drawImage(request.destCanvas, 0, 0)
+
+                if (_options.loop) {
+                    rendereredFrames = 0
+                } else if (_options.beginFrame + rendereredFrames >= lastFrame) {
+                    cancelAnimationFrame(animationFrameId)
+                    resolve()
+                    return
+                } else {
+                    rendereredFrames++
+                }
+
+                animationFrameId = requestAnimationFrame(render)
+            }
+
+            animationFrameId = requestAnimationFrame(render)
+        })
     }
 
     private _initStage(compositionId: string, beginFrame: number): RenderingRequest
@@ -103,10 +155,6 @@ export default class Pipeline
         const canvas = document.createElement('canvas') as HTMLCanvasElement
         canvas.width = rootComposition.width
         canvas.height = rootComposition.height
-
-        const canvasCtx = canvas.getContext('2d')!
-        canvasCtx.fillStyle = rootComposition.backgroundColor.toString()
-        canvasCtx.fillRect(0, 0, canvas.width, canvas.height)
 
         const compositionDurationTime = rootComposition.durationFrames / rootComposition.framerate
         const bufferSizeBytePerSec = rootComposition.samplingRate *  4 /* bytes */
@@ -210,6 +258,9 @@ export default class Pipeline
     {
         const destBufferCanvas = req.destCanvas
         const destBufferCtx = destBufferCanvas.getContext('2d')!
+
+        destBufferCtx.fillStyle = req.rootComposition.backgroundColor.toString()
+        destBufferCtx.fillRect(0, 0, req.width, req.height)
 
         for (const layerTask of layerRenderTasks) {
             const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
