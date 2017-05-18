@@ -9,14 +9,14 @@ const _defer = <T>(): DeferredPromise<T> => {
 }
 
 export interface DeferredPromise<T> {
-    resolve: (value: T) => void;
-    reject: (error: Error) => void;
-    promise: Promise<T>;
+    resolve: (value?: T) => void
+    reject: (error?: Error) => void
+    promise: Promise<T>
 }
 
 type PromiseProcessor<T> = (
-    resolve: (value: T) => void,
-    reject: (error: Error) => void,
+    resolve: (value?: T) => void,
+    reject: (error?: Error) => void,
     onAbort: (aborter: () => void) => void,
     notifier: (message: any) => void
 ) => Promise<T>|void
