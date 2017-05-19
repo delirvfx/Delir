@@ -129,7 +129,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, desc.propName, frameOnClip, {value})
+        ProjectModifyActions.createOrModifyKeyframeForClip(activeClip.id!, desc.propName, frameOnClip, {value})
         EditorStateActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 
@@ -203,7 +203,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 const keyframe = activeClip.keyframes[activePropName].find(kf => kf.id === this._selectedKeyframeId)!
                 const movedFrame = this._pxToFrame(keyframeMovement.x)
 
-                ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframe.frameOnClip, {
+                ProjectModifyActions.createOrModifyKeyframeForClip(activeClip.id!, activePropName, keyframe.frameOnClip, {
                     frameOnClip: keyframe.frameOnClip + movedFrame
                 })
 
@@ -222,11 +222,11 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 const position = {x: data.element.cx.baseVal.value, y: data.element.cy.baseVal.value}
 
                 if (data.type === 'ease-in') {
-                    ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframes[keyframeIdx + 1].frameOnClip, {
+                    ProjectModifyActions.createOrModifyKeyframeForClip(activeClip.id!, activePropName, keyframes[keyframeIdx + 1].frameOnClip, {
                         easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 } else if (data.type === 'ease-out') {
-                    ProjectModifyActions.createOrModifyKeyframe(activeClip.id!, activePropName, keyframes[keyframeIdx].frameOnClip, {
+                    ProjectModifyActions.createOrModifyKeyframeForClip(activeClip.id!, activePropName, keyframes[keyframeIdx].frameOnClip, {
                         easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 }

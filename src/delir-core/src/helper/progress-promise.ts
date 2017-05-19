@@ -21,7 +21,7 @@ type PromiseProcessor<T> = (
     notifier: (message: any) => void
 ) => Promise<T>|void
 
-export default class ProgressPromise<T>
+export default class ProgressPromise<T, PT = any>
 {
     static defer<T>()
     {
@@ -83,7 +83,7 @@ export default class ProgressPromise<T>
         return this
     }
 
-    progress(listener: (progress: any) => void): this
+    progress(listener: (progress: PT) => void): this
     {
         this._progressListeners.push(listener)
         return this

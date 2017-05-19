@@ -182,7 +182,7 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },
 
-    createOrModifyKeyframe(clipId: string, propName: string, frameOnClip: number, patch: Optionalized<Delir.Project.Keyframe>)
+    createOrModifyKeyframeForClip(clipId: string, propName: string, frameOnClip: number, patch: Optionalized<Delir.Project.Keyframe>)
     {
         const project = ProjectModifyStore.getState().get('project')
 
@@ -191,11 +191,11 @@ export default {
 
         if (!clip) return
 
-        const props = RendererService.pluginRegistry!.getParametersById(clip.renderer!)
-        const prop = props ? props.find(prop => prop.propName === propName) : null
-        if (!prop) return
+        const props = Delir.Renderer.Renderers.getInfo(clip.renderer!).parameter.properties
+        const propDesc = props ? props.find(prop => prop.propName === propName) : null
+        if (!propDesc) return
 
-        if (prop.animatable === false) {
+        if (propDesc.animatable === false) {
             frameOnClip = 0
         }
 
@@ -218,7 +218,7 @@ export default {
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
                 targetKeyframeId: keyframe.id,
-                patch: prop.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
+                patch: propDesc.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
             }))
         } else {
             const newKeyframe = new Delir.Project.Keyframe()

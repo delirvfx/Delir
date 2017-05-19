@@ -12,8 +12,6 @@ import EditorStateStore from '../stores/editor-state-store'
 import EditorStateActions from '../actions/editor-state-actions'
 import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
 
-console.log(Delir.Renderer)
-
 let pluginRegistry: Delir.PluginRegistry|null = null
 let pluginLoader: Delir.Services.PluginLoader|null = null
 // let renderer: Delir.Renderer.Renderer|null = null
@@ -76,7 +74,7 @@ const handlePayload = (payload: KnownPayload) => {
             //     throttle: true,
             // })
 
-            let promise = pipeline.renderFrame(targetComposition.id, 0)
+            let promise = pipeline.renderSequencial(targetComposition.id, 0)
 
             promise.progress(progress => {
                 EditorStateActions.updateProcessingState(`Preview: ${progress.state}`)
