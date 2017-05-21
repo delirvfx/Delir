@@ -11,6 +11,7 @@ import RendererService from '../../services/renderer'
 import * as s from './Gradations.styl'
 
 interface GradationsProps {
+    currentFrame: number
     measures: MeasurePoint[]
     activeComposition: Delir.Project.Composition|null,
     cursorHeight: number,
@@ -28,6 +29,7 @@ interface GradationsState {
 export default class Gradations extends Component<GradationsProps, GradationsState>
 {
     protected static propTypes = {
+        currentFrame: PropTypes.number.isRequired,
         measures: PropTypes.array.isRequired,
         activeComposition: PropTypes.object.isRequired,
         cursorHeight: PropTypes.number.isRequired,
@@ -66,7 +68,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
     private _updateCursor = () =>
     {
         const renderer = RendererService.renderer
-        const {activeComposition, scrollLeft, scale} = this.props
+        const {activeComposition, scrollLeft, scale, currentFrame} = this.props
         const {cursor, measureLayer} = this.refs
 
         if (!renderer) return
@@ -77,7 +79,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
             const cursorLeft = TimelineHelper.framesToPixel({
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
-                durationFrames: 0, // renderer.session.lastRenderedFrame || 0,
+                durationFrames: currentFrame,
                 scale,
             })
 

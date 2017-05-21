@@ -111,26 +111,28 @@ const handlePayload = (payload: KnownPayload) => {
             // たぶんプレビュー中
             // TODO: Seek in preview
             // if (renderer.isPlaying) return
-            return
 
-            audioBuffer = audioContext.createBuffer(
-                targetComposition.audioChannels,
-                /* length */targetComposition.samplingRate,
-                /* sampleRate */targetComposition.samplingRate,
-            )
-            audioBufferSource = audioContext.createBufferSource()
-            audioBufferSource.buffer = audioBuffer
-            audioBufferSource.connect(audioContext.destination)
-            audioBufferSource.start(0)
+            // audioBuffer = audioContext.createBuffer(
+            //     targetComposition.audioChannels,
+            //     /* length */targetComposition.samplingRate,
+            //     /* sampleRate */targetComposition.samplingRate,
+            // )
+            // audioBufferSource = audioContext.createBufferSource()
+            // audioBufferSource.buffer = audioBuffer
+            // audioBufferSource.connect(audioContext.destination)
+            // audioBufferSource.start(0)
 
-            renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
+            // renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
 
-            renderer!.render({
-                beginFrame: frame,
-                endFrame: frame,
-                targetCompositionId: state.composition!.id!,
-            })
-            .catch((e: Error) => console.error(e.stack))
+            // renderer!.render({
+            //     beginFrame: frame,
+            //     endFrame: frame,
+            //     targetCompositionId: state.composition!.id!,
+            // })
+            // .catch((e: Error) => console.error(e.stack))
+            pipeline!.renderFrame(targetComposition.id, frame)
+            .catch(e => console.error(e))
+
 
             break
         }
