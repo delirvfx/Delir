@@ -124,12 +124,14 @@ export default class Pipeline
                 const destCanvasCtx = this.destinationCanvas.getContext('2d')!
                 destCanvasCtx.drawImage(request.destCanvas, 0, 0)
 
-                if (_options.loop) {
-                    rendereredFrames = 0
-                } else if (_options.beginFrame + rendereredFrames >= lastFrame) {
-                    cancelAnimationFrame(animationFrameId)
-                    resolve()
-                    return
+                if (_options.beginFrame + rendereredFrames >= lastFrame) {\
+                    if (_options.loop) {
+                        rendereredFrames = 0
+                    } else {
+                        cancelAnimationFrame(animationFrameId)
+                        resolve()
+                        return
+                    }
                 } else {
                     rendereredFrames++
                 }
