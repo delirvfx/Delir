@@ -74,7 +74,10 @@ const handlePayload = (payload: KnownPayload) => {
             //     throttle: true,
             // })
 
-            let promise = pipeline.renderSequencial(targetComposition.id, 0)
+            const promise = pipeline.renderSequencial(targetComposition.id, {
+                beginFrame: payload.entity.beginFrame,
+                loop: true,
+            })
 
             promise.progress(progress => {
                 EditorStateActions.updateProcessingState(`Preview: ${progress.state}`)
@@ -99,8 +102,18 @@ const handlePayload = (payload: KnownPayload) => {
                 }
             })
 
-            promise.catch((e: Error) => console.error(e.stack))
+            promise.catch(e => {
+                if (e instanceof Delir.Exceptions.RenderingAbortedException) return
+                console.error(e)
+            })
+
             break
+        }
+
+        case EditorStateDispatchTypes.StopPreview: {
+            if (pipeline) {
+                pipeline.stopCurrentRendering()
+            }
         }
 
         case EditorStateDispatchTypes.SeekPreviewFrame: {

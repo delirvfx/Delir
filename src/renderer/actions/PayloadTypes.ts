@@ -6,6 +6,7 @@ import {
     ChangeActiveCompositionPayload,
     ChangeActiveClipPayload,
     StartPreviewPayload,
+    StopPreviewPayload,
     RenderDestinatePayload,
     UpdateProcessingState,
     AddMessagePayload,
@@ -42,6 +43,7 @@ export type EditorStateActionPayload =
     | ChangeActiveCompositionPayload
     | ChangeActiveClipPayload
     | StartPreviewPayload
+    | StopPreviewPayload
     | RenderDestinatePayload
     | UpdateProcessingState
     | AddMessagePayload

@@ -36,6 +36,10 @@ export default class NavigationView extends React.Component<NavigationViewProps,
         EditorStateActions.startPreview(activeComp.id!)
     }
 
+    private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
+        EditorStateActions.stopPreview()
+    }
+
     onClickDest = action =>
     {
         const {activeComp} = this.props.editor
@@ -50,7 +54,7 @@ export default class NavigationView extends React.Component<NavigationViewProps,
 
     render()
     {
-        const {project, projectPath} = this.props.editor
+        const {project, projectPath, previewPlayed} = this.props.editor
         const projectName = project
             ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project')
             : 'Delir'
@@ -63,7 +67,12 @@ export default class NavigationView extends React.Component<NavigationViewProps,
                     {projectName}
                 </ul>
                 <ul className={s.navigationList}>
-                    <li onClick={this.onClickPlay}><i className='fa fa-play' /></li>
+                    {previewPlayed ? (
+                            <li onClick={this.onClickPause}><i className='fa fa-pause' /></li>
+                        ) : (
+                            <li onClick={this.onClickPlay}><i className='fa fa-play' /></li>
+                        )
+                    }
                     <li onClick={this.onClickDest}><i className='fa fa-film' /></li>
                 </ul>
             </Pane>
