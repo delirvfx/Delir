@@ -20,15 +20,11 @@ interface NavigationViewProps {
 }))
 export default class NavigationView extends React.Component<NavigationViewProps, null>
 {
-    static propTypes = {
+    public static propTypes = {
         editor: PropTypes.object.isRequired,
     }
 
-    onTitleDoubleClicked()
-    {
-    }
-
-    onClickPlay = action =>
+    private onClickPlay = action =>
     {
         const {activeComp} = this.props.editor
 
@@ -40,19 +36,19 @@ export default class NavigationView extends React.Component<NavigationViewProps,
         EditorStateActions.stopPreview()
     }
 
-    onClickDest = action =>
+    private onClickDest = action =>
     {
         const {activeComp} = this.props.editor
         activeComp && EditorStateActions.renderDestinate(activeComp.id!)
     }
 
-    titleBarDoubleClicked = e =>
+    private titleBarDoubleClicked = e =>
     {
         const browserWindow = remote.getCurrentWindow()
         browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
     }
 
-    render()
+    public render()
     {
         const {project, projectPath, previewPlayed} = this.props.editor
         const projectName = project
