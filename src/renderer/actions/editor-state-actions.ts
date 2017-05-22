@@ -21,7 +21,7 @@ export type SetDragEntityPayload = Payload<'SetDragEntity', DragEntity>
 export type ClearDragEntityPayload = Payload<'ClearDragEntity', {}>
 export type ChangeActiveCompositionPayload = Payload<'ChangeActiveComposition', {compositionId: string}>
 export type ChangeActiveClipPayload = Payload<'ChangeActiveClip', {clipId: string}>
-export type TogglePreviewPayload = Payload<'TogglePreview', {compositionId: string}>
+export type StartPreviewPayload = Payload<'StartPreview', {compositionId: string, beginFrame: number}>
 export type RenderDestinatePayload = Payload<'RenderDestinate', {compositionId: string}>
 export type UpdateProcessingState = Payload<'UpdateProcessingState', {stateText: string}>
 export type AddMessagePayload = Payload<'AddMessage', {id: string, title?: string, level: 'info'|'error', message: string, detail?: string}>
@@ -35,7 +35,7 @@ export const DispatchTypes = keyMirror({
     ClearDragEntity: null,
     ChangeActiveComposition: null,
     ChangeActiveClip: null,
-    TogglePreview: null,
+    StartPreview: null,
     RenderDestinate: null,
     UpdateProcessingState: null,
     AddMessage: null,
@@ -106,9 +106,9 @@ const actions = {
     //
     // Preview
     //
-    togglePreview(compositionId: string)
+    startPreview(compositionId: string, beginFrame: number = 0)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.TogglePreview, {compositionId}))
+        dispatcher.dispatch(new Payload(DispatchTypes.StartPreview, {compositionId, beginFrame}))
     },
 
     renderDestinate(compositionId: string)

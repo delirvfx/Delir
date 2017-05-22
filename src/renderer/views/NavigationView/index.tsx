@@ -33,7 +33,7 @@ export default class NavigationView extends React.Component<NavigationViewProps,
         const {activeComp} = this.props.editor
 
         if (! activeComp) return
-        EditorStateActions.togglePreview(activeComp.id!)
+        EditorStateActions.startPreview(activeComp.id!)
     }
 
     onClickDest = action =>

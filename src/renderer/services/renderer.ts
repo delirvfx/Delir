@@ -43,7 +43,7 @@ const handlePayload = (payload: KnownPayload) => {
             break
         }
 
-        case EditorStateDispatchTypes.TogglePreview: {
+        case EditorStateDispatchTypes.StartPreview: {
             if (!state.project || !state.composition) break
             if (!pipeline || !audioContext) break
 
