@@ -49,6 +49,7 @@ export default class Pipeline
         renderedFrames: 0,
     }
 
+    private _seqRenderPromise: ProgressPromise<void>|null = null
     private _project: Project
     private _pluginRegistry: PluginRegistry
     private _destinationCanvas: HTMLCanvasElement
@@ -70,6 +71,12 @@ export default class Pipeline
     public reInit()
     {
 
+    }
+
+    public stopCurrentRendering() {
+        if (this._seqRenderPromise) {
+            this._seqRenderPromise.abort()
+        }
     }
 
     public renderFrame(compositionId: string, beginFrame: number): ProgressPromise<void>
@@ -97,9 +104,14 @@ export default class Pipeline
             loop: false,
         })
 
-        return new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
+        this.stopCurrentRendering()
+
+        return this._seqRenderPromise = new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
             let aborted = false
-            onAbort(() => aborted = true)
+            onAbort(() => {
+                aborted = true
+                this._seqRenderPromise = null
+            })
 
             let request = this._initStage(compositionId, _options.beginFrame)
             const renderTasks = await this._setupStage(request)
@@ -124,16 +136,22 @@ export default class Pipeline
                 const destCanvasCtx = this.destinationCanvas.getContext('2d')!
                 destCanvasCtx.drawImage(request.destCanvas, 0, 0)
 
-                if (_options.beginFrame + rendereredFrames >= lastFrame) {\
+                if (_options.beginFrame + rendereredFrames >= lastFrame) {
                     if (_options.loop) {
                         rendereredFrames = 0
                     } else {
                         cancelAnimationFrame(animationFrameId)
-                        resolve()
+                        reject(new RenderingAbortedException('Rendering aborted.'))
                         return
                     }
                 } else {
                     rendereredFrames++
+                }
+
+                if (aborted) {
+                    cancelAnimationFrame(animationFrameId)
+                    reject(new RenderingAbortedException('Rendering aborted.'))
+                    return
                 }
 
                 animationFrameId = requestAnimationFrame(render)
