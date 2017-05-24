@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import {IRenderer} from './renderer-base'
 import Type from '../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
@@ -12,6 +13,7 @@ interface ImageRendererParams {
     y: number
     scale: number
     rotate: number
+    opacity: number
 }
 
 export default class ImageLayer implements IRenderer<ImageRendererParams>
@@ -49,12 +51,17 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
             .float('scale', {
                 label: 'Scale',
                 animatable: true,
-                defaultValue: 1,
+                defaultValue: 100,
             })
             .float('rotate', {
                 label: 'Rotation',
                 animatable: true,
                 defaultValue: 0,
+            })
+            .float('opacity', {
+                label: 'Opacity',
+                animatable: true,
+                defaultValue: 100,
             })
     }
 
@@ -72,23 +79,26 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
         this._image = new Image()
         this._image.src = `file://${parameters.source.path}`
 
+
+
         await new Promise((resolve, reject) => {
             this._image.addEventListener('load', () => resolve(), {once: true} as any)
             this._image.addEventListener('error', () => reject(new Error(`ImageLayer: Image not found (URL: ${this._image.src})`)), {once: true}  as any)
         })
     }
 
-    public async render(req: RenderingRequest)
+    public async render(req: RenderingRequest<ImageRendererParams>)
     {
         if (! this._image) return
 
         const param = req.parameters
-        const ctx = req.destCanvas.getContext('2d')
+        const ctx = req.destCanvas.getContext('2d')!
         const img = this._image
         const rad = param.rotate * Math.PI / 180
 
+        ctx.globalAlpha = _.clamp(param.opacity / 100, 0, 100)
         ctx.translate(param.x, param.y)
-        ctx.scale(param.scale, param.scale)
+        ctx.scale(param.scale / 100, param.scale / 100)
         ctx.translate(img.width / 2, img.height / 2)
         ctx.rotate(rad)
         ctx.translate(-img.width / 2, -img.height / 2)

@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import {IRenderer} from './renderer-base'
 import Type from '../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
@@ -14,6 +15,7 @@ interface VideoRendererParam {
     y: number
     scale: number
     rotate: number
+    opacity: number
 }
 
 export default class VideoLayer implements IRenderer<VideoRendererParam>
@@ -54,12 +56,17 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
             .float('scale', {
                 label: 'Scale',
                 animatable: true,
-                defaultValue: 1,
+                defaultValue: 100,
             })
             .float('rotate', {
                 label: 'Rotation',
                 animatable: true,
                 defaultValue: 0,
+            })
+            .float('opacity', {
+                label: 'Opacity',
+                animatable: true,
+                defaultValue: 100,
             })
     }
 
@@ -108,8 +115,9 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 
         const rad = param.rotate * Math.PI / 180
 
+        ctx.globalAlpha = _.clamp(param.opacity / 100, 0, 100)
         ctx.translate(param.x, param.y)
-        ctx.scale(param.scale, param.scale)
+        ctx.scale(param.scale / 100, param.scale / 100)
         ctx.translate(video.videoWidth / 2, video.videoHeight / 2)
         ctx.rotate(rad)
         ctx.translate(-video.videoWidth / 2, -video.videoHeight / 2)

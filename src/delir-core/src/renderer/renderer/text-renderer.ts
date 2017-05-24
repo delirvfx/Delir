@@ -1,3 +1,6 @@
+import * as _ from 'lodash'
+import * as FontManager from 'font-manager'
+
 import {IRenderer} from './renderer-base'
 import Type from '../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
@@ -5,9 +8,6 @@ import PreRenderingRequest from '../pipeline/pre-render-request'
 import RenderingRequest from '../pipeline/render-request'
 
 import ColorRGBA from '../../values/color-rgba'
-
-import * as _ from 'lodash'
-import * as FontManager from 'font-manager'
 
 interface TextRendererParam {
     text: string
@@ -19,6 +19,7 @@ interface TextRendererParam {
     x: number
     y: number
     rotate: number
+    opacity: number
 }
 
 export default class TextLayer implements IRenderer<TextRendererParam>
@@ -80,6 +81,11 @@ export default class TextLayer implements IRenderer<TextRendererParam>
                 label: 'Rotate',
                 animatable: true,
             })
+            .float('opacity', {
+                label: 'Opacity',
+                animatable: true,
+                defaultValue: 100,
+            })
     })
 
     private _bufferCanvas: HTMLCanvasElement
@@ -101,6 +107,7 @@ export default class TextLayer implements IRenderer<TextRendererParam>
         ctx.translate(param.x, param.y)
         ctx.rotate(rad)
 
+        ctx.globalAlpha = _.clamp(param.opacity / 100, 0, 1)
         ctx.textBaseline = 'top'
         ctx.fillStyle = param.color.toString()
         ctx.font = `${param.weight} ${param.size}px/${lineHeight} ${family}`
