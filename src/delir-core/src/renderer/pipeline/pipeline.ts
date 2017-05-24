@@ -227,11 +227,19 @@ export default class Pipeline
 
                 // Initialize renderer
                 const rendererProps = RendererFactory.getInfo(clip.renderer).parameter
+                const rendererAssetProps = rendererProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
                 const rendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, rendererProps, clip.keyframes)
+                rendererAssetProps.forEach(propName => {
+                    rendererInitParam[propName] = req.resolver.resolveAsset(rendererInitParam[propName].assetId)!
+                })
+
                 const renderer = RendererFactory.create(clip.renderer)
                 await renderer.beforeRender(req.clone({parameters: rendererInitParam}).toPreRenderingRequest())
 
                 const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererProps, clip.keyframes, 0, req.durationFrames)
+                rendererAssetProps.forEach(propName => {
+                    rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
+                })
 
                 // Initialize effects
                 const effects: IEffectRenderTask[] = []
@@ -239,12 +247,19 @@ export default class Pipeline
                     const EffectPluginClass = req.resolver.resolveEffectPlugin(effect.processor)
 
                     const effectProps = EffectPluginClass.provideParameters()
+                    const effectAssetProps = rendererProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
                     const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, effectProps, effect.keyframes)
+                    effectAssetProps.forEach(propName => {
+                        rendererInitParam[propName] = req.resolver.resolveAsset(rendererInitParam[propName].assetId)!
+                    })
 
                     const effector: EffectPluginBase = new EffectPluginClass()
                     await effector.beforeRender(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
 
                     const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectProps, effect.keyframes, 0, req.durationFrames)
+                    effectAssetProps.forEach(propName => {
+                        effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
+                    })
 
                     effects.push({
                         effectEntityId: effect.id,
