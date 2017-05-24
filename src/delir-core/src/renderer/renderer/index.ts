@@ -1,4 +1,5 @@
 import {IRendererStatic} from './renderer-base'
+import {TypeDescriptor} from '../../plugin-support/type-descriptor'
 
 import * as _ from 'lodash'
 import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
@@ -17,6 +18,13 @@ export const RENDERERS: {[name: string]: IRendererStatic} = {
     text: TextRenderer,
 }
 
+interface PluginInfo {
+    id: string
+    handlableFileTypes: string[]
+    assetAssignMap: {[extName: string]: string}
+    parameter: TypeDescriptor
+}
+
 const RENDERER_SUMMARY = _.mapValues(RENDERERS, renderer => {
     const assetAssignMap  = renderer.provideAssetAssignMap()
     const handlableFileTypes = Object.keys(assetAssignMap)
@@ -27,7 +35,11 @@ const RENDERER_SUMMARY = _.mapValues(RENDERERS, renderer => {
         assetAssignMap,
         parameter: renderer.provideParameters()
     }
-})
+}) as {[name: string]: PluginInfo}
+
+export function getAvailableRenderers() {
+    return Object.values(_.clone(RENDERER_SUMMARY))
+}
 
 export function getInfo(renderer: AvailableRenderer) {
     const summary = RENDERER_SUMMARY[renderer]

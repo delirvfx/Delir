@@ -22,7 +22,6 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
     targetComposition: Delir.Project.Composition,
     clip: Delir.Project.Clip,
     asset: Delir.Project.Asset,
-    pluginRegistry: Delir.PluginRegistry,
 }>
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type AddKeyframePayload = Payload<'AddKeyframe', {targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe}>
@@ -98,7 +97,7 @@ export default {
         targetComposition: Delir.Project.Composition,
         asset: Delir.Project.Asset
     ) {
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.fileType])
+        const processablePlugins = Delir.Renderer.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
@@ -108,7 +107,6 @@ export default {
 
         const clip = new Delir.Project.Clip
         Object.assign(clip, {
-            id: uuid.v4(),
             renderer: processablePlugins[0].id,
             placedFrame: 0,
             durationFrames: targetComposition.framerate,
@@ -151,7 +149,7 @@ export default {
 
         if (!project) return
 
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.fileType])
+        const processablePlugins = Delir.Renderer.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
@@ -161,17 +159,12 @@ export default {
 
         const newClip = new Delir.Project.Clip
         Object.assign(newClip, {
-            id: uuid.v4(),
             renderer: processablePlugins[0].id,
             placedFrame,
             durationFrames,
         })
 
-        const propName = ProjectHelper.findAssetAttachablePropertyByFileType(
-            newClip,
-            asset.fileType,
-            RendererService.pluginRegistry!
-        )
+        const propName = Delir.Renderer.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
 
         if (!propName) return
 
