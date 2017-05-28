@@ -47,10 +47,6 @@ interface RenderingOption {
 
 export default class Pipeline
 {
-    private _state = {
-        renderedFrames: 0,
-    }
-
     private _fpsCounter: FPSCounter = new FPSCounter()
     private _seqRenderPromise: ProgressPromise<void>|null = null
     private _project: Project
@@ -69,12 +65,6 @@ export default class Pipeline
 
     get destinationAudioNode() { return this._destinationAudioNode }
     set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
-
-
-    public reInit()
-    {
-
-    }
 
     public stopCurrentRendering() {
         if (this._seqRenderPromise) {
@@ -195,7 +185,7 @@ export default class Pipeline
 
         const audioBuffers = _.times(rootComposition.audioChannels, () => new Float32Array(new ArrayBuffer(bufferSizeBytePerSec)))
 
-        const currentFrame = beginFrame + this._state.renderedFrames
+        const currentFrame = beginFrame
         const currentTime = currentFrame / rootComposition.framerate
 
         return new RenderingRequest({
