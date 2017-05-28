@@ -103,7 +103,10 @@ const handlePayload = (payload: KnownPayload) => {
             })
 
             promise.catch(e => {
-                if (e instanceof Delir.Exceptions.RenderingAbortedException) return
+                if (e instanceof Delir.Exceptions.RenderingAbortedException) {
+                    EditorStateActions.updateProcessingState(`Stop.`)
+                    return
+                }
                 console.error(e)
             })
 
