@@ -117,7 +117,7 @@ export default class Pipeline
             let animationFrameId: number
             let rendereredFrames = 0
 
-            const render = async () => {
+            const render = _.throttle(async () => {
                 const currentFrame = _options.beginFrame + rendereredFrames
 
                 request = request.clone({
@@ -153,7 +153,7 @@ export default class Pipeline
                 notifier({state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${request.framerate} fps)`})
                 this._fpsCounter.increase()
                 animationFrameId = requestAnimationFrame(render)
-            }
+            }, 1000 / request.framerate)
 
             animationFrameId = requestAnimationFrame(render)
         })
