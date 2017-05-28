@@ -4156,6 +4156,10 @@ node-pre-gyp@^0.6.29:
     tar "^2.2.1"
     tar-pack "^3.4.0"
 
+node-timecodes@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/node-timecodes/-/node-timecodes-2.4.1.tgz#9aa23d9868d1438fd3ec19d1121979e3e3ad7da6"
+
 "nopt@2 || 3":
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-3.0.6.tgz#c6465dbf08abcd4db359317f79ac68a646b28ff9"

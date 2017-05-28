@@ -8,6 +8,7 @@ import {IRenderer} from '../renderer/renderer-base'
 import PluginRegistry from '../../plugin-support/plugin-registry'
 
 import * as _ from 'lodash'
+import * as timecodes from 'node-timecodes'
 import ProgressPromise from '../../helper/progress-promise'
 import RenderingRequest from './render-request'
 import EntityResolver from './entity-resolver'
@@ -16,6 +17,7 @@ import {RenderingFailedException, RenderingAbortedException} from '../../excepti
 import * as RendererFactory from '../renderer'
 import * as KeyframeHelper from '../../helper/keyframe-helper'
 import defaults from '../../helper/defaults'
+import FPSCounter from '../../helper/FPSCounter'
 
 interface IEffectRenderTask {
     effectEntityId: string
@@ -49,6 +51,7 @@ export default class Pipeline
         renderedFrames: 0,
     }
 
+    private _fpsCounter: FPSCounter = new FPSCounter()
     private _seqRenderPromise: ProgressPromise<void>|null = null
     private _project: Project
     private _pluginRegistry: PluginRegistry
@@ -108,6 +111,7 @@ export default class Pipeline
 
         return this._seqRenderPromise = new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
             let aborted = false
+
             onAbort(() => {
                 aborted = true
                 this._seqRenderPromise = null
@@ -115,6 +119,7 @@ export default class Pipeline
 
             let request = this._initStage(compositionId, _options.beginFrame)
             const renderTasks = await this._setupStage(request)
+            this._fpsCounter.reset()
 
             // const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
             const framerate = request.rootComposition.framerate
@@ -154,6 +159,9 @@ export default class Pipeline
                     return
                 }
 
+                const timecode = timecodes.fromSeconds(request.time, {frameRate: request.framerate})
+                notifier({state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${request.framerate} fps)`})
+                this._fpsCounter.increase()
                 animationFrameId = requestAnimationFrame(render)
             }
 
