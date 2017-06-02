@@ -42,7 +42,14 @@ interface ILayerRenderTask {
 
 interface RenderingOption {
     beginFrame: number
+    endFrame: number
     loop: boolean
+}
+
+interface RenderProgression {
+    state: string
+    currentFrame: number
+    rangeEndFrame: number
 }
 
 export default class Pipeline
@@ -90,16 +97,17 @@ export default class Pipeline
         })
     }
 
-    public renderSequencial(compositionId: string, options: Optionalized<RenderingOption> = {}): ProgressPromise<void>
+    public renderSequencial(compositionId: string, options: Optionalized<RenderingOption> = {}): ProgressPromise<void, RenderProgression>
     {
         const _options: RenderingOption  = defaults(options, {
             beginFrame: 0,
             loop: false,
+            endFrame: -1,
         })
 
         this.stopCurrentRendering()
 
-        return this._seqRenderPromise = new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
+        return this._seqRenderPromise = new ProgressPromise<void, RenderProgression>(async (resolve, reject, onAbort, notifier) => {
             let aborted = false
 
             onAbort(() => {
@@ -152,7 +160,12 @@ export default class Pipeline
                 }
 
                 const timecode = timecodes.fromSeconds(request.time, {frameRate: request.framerate})
-                notifier({state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${request.framerate} fps)`})
+                notifier({
+                    state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${request.framerate} fps)`,
+                    currentFrame: request.frame,
+                    rangeEndFrame: _options.endFrame
+                })
+
                 this._fpsCounter.increase()
                 animationFrameId = requestAnimationFrame(render)
             }, 1000 / request.framerate)
