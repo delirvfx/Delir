@@ -1,6 +1,4 @@
 import Project from '../../project/project'
-import Clip from '../../project/clip'
-import Keyframe from '../../project/keyframe'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
 import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import {IRenderer} from '../renderer/renderer-base'
