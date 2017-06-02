@@ -122,7 +122,9 @@ export default class Pipeline
 
                 request = request.clone({
                     frame: currentFrame,
-                    time: currentFrame / framerate
+                    time: currentFrame / framerate,
+                    frameOnComposition: currentFrame,
+                    timeOnComposition: currentFrame / framerate,
                 })
 
                 // reqDestCanvasCtx.clearRect(0, 0, request.width, request.height)
