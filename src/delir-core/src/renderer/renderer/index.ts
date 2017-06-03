@@ -1,4 +1,4 @@
-import {IRendererStatic} from './renderer-base'
+import {IRendererStatic, IRenderer} from './renderer-base'
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
 
 import * as _ from 'lodash'
@@ -51,7 +51,7 @@ export function getInfo(renderer: AvailableRenderer) {
     return summary
 }
 
-export function create(renderer: AvailableRenderer) {
+export function create(renderer: AvailableRenderer): IRenderer<any> {
     const Renderer = RENDERERS[renderer]
 
     if (!Renderer) {

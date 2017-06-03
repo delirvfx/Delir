@@ -1,4 +1,5 @@
 import Project from '../../project/project'
+import Clip from '../../project/clip'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
 import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import {IRenderer} from '../renderer/renderer-base'
@@ -58,6 +59,7 @@ export default class Pipeline
     private _pluginRegistry: PluginRegistry
     private _destinationCanvas: HTMLCanvasElement
     private _destinationAudioNode: AudioNode
+    private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap();
 
     get project() { return this._project }
     set project(project: Project) { this._project = project }
@@ -252,8 +254,12 @@ export default class Pipeline
                     rendererInitParam[propName] = req.resolver.resolveAsset(rendererInitParam[propName].assetId)!
                 })
 
-                const renderer = RendererFactory.create(clip.renderer)
-                await renderer.beforeRender(req.clone({parameters: rendererInitParam}).toPreRenderingRequest())
+                let renderer = this._rendererCache.get(clip)
+                if (!renderer) {
+                    renderer = RendererFactory.create(clip.renderer)
+                    this._rendererCache.set(clip, renderer)
+                    await renderer.beforeRender(req.clone({parameters: rendererInitParam}).toPreRenderingRequest())
+                }
 
                 const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererProps, clip.keyframes, 0, req.durationFrames)
                 rendererAssetProps.forEach(propName => {
