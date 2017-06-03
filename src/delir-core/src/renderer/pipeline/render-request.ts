@@ -46,48 +46,48 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
     //
     // Current frame times
     //
-    public time: number
-    public timeOnComposition: number
-    public timeOnClip: number
+    public readonly time: number
+    public readonly timeOnComposition: number
+    public readonly timeOnClip: number
 
-    public frame: number
-    public frameOnComposition: number
-    public frameOnClip: number
+    public readonly frame: number
+    public readonly frameOnComposition: number
+    public readonly frameOnClip: number
 
     //
     // Composition options
     //
-    public destCanvas: HTMLCanvasElement
-    public width: number
-    public height: number
-    public framerate: number
-    public durationFrames: number
+    public readonly destCanvas: HTMLCanvasElement
+    public readonly width: number
+    public readonly height: number
+    public readonly framerate: number
+    public readonly durationFrames: number
 
-    public destAudioBuffer: Float32Array[]
-    public audioContext: AudioContext|OfflineAudioContext
-    public samplingRate: number
-    public neededSamples: number
-    public audioChannels: number
-    public isBufferingFrame: boolean
+    public readonly destAudioBuffer: Float32Array[]
+    public readonly audioContext: AudioContext|OfflineAudioContext
+    public readonly samplingRate: number
+    public readonly neededSamples: number
+    public readonly audioChannels: number
+    public readonly isAudioBufferingNeeded: boolean
 
     //
     // Composition hierarchy
     //
-    public rootComposition: Readonly<Composition>
-    public parentComposition: Readonly<Composition>
+    public readonly rootComposition: Readonly<Composition>
+    public readonly parentComposition: Readonly<Composition>
 
     //
     // Variable store
     //
-    // public compositionScope: {[prop: string]: any}
-    // public clipScope: {[prop: string]: any}
+    // public readonly compositionScope: {[prop: string]: any}
+    // public readonly clipScope: {[prop: string]: any}
 
-    public parameters: T
+    public readonly parameters: T
 
     //
     // Resolver
     //
-    public resolver: EntityResolver
+    public readonly resolver: EntityResolver
 
     // alias
     public get seconds(): number { return this.time }
