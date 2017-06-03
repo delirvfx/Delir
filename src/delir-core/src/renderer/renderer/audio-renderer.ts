@@ -94,7 +94,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
     public async renderAudio(req: RenderingRequest)
     {
-        if (!req.isBufferingFrame) return
+        if (!req.isAudioBufferingNeeded) return
 
         const destBuffers = req.destAudioBuffer
         const begin = (req.seconds|0) * req.samplingRate

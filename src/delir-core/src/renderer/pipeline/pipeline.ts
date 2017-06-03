@@ -125,12 +125,19 @@ export default class Pipeline
 
             const render = _.throttle(async () => {
                 const currentFrame = _options.beginFrame + rendereredFrames
+                const currentTime = currentFrame / framerate
+
+                const previousFrameTime = request.time | 0
+                const isAudioBufferingNeeded = previousFrameTime !== currentTime && (currentFrame + 1) <= request.rootComposition.durationFrames
+
+                isAudioBufferingNeeded && console.log('Buffering')
 
                 request = request.clone({
                     frame: currentFrame,
-                    time: currentFrame / framerate,
+                    time: currentTime,
                     frameOnComposition: currentFrame,
-                    timeOnComposition: currentFrame / framerate,
+                    timeOnComposition: currentTime,
+                    isAudioBufferingNeeded
                 })
 
                 // reqDestCanvasCtx.clearRect(0, 0, request.width, request.height)
@@ -219,6 +226,7 @@ export default class Pipeline
             samplingRate: rootComposition.samplingRate,
             neededSamples: rootComposition.samplingRate,
             audioChannels: rootComposition.audioChannels,
+            isAudioBufferingNeeded: false,
 
             rootComposition,
             resolver,
@@ -308,6 +316,10 @@ export default class Pipeline
         destBufferCtx.fillStyle = req.rootComposition.backgroundColor.toString()
         destBufferCtx.fillRect(0, 0, req.width, req.height)
 
+        const channelAudioBuffers = _.times(req.rootComposition.audioChannels, () => {
+            return new Float32Array(new ArrayBuffer(4 /* bytes */ * req.rootComposition.samplingRate))
+        })
+
         for (const layerTask of layerRenderTasks) {
             const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
             layerBufferCanvas.width = req.width
@@ -326,12 +338,17 @@ export default class Pipeline
                 clipBufferCanvas.width = req.width
                 clipBufferCanvas.height = req.height
 
+                for (const chBuffer of channelAudioBuffers) {
+                    chBuffer.fill(0)
+                }
+
                 const params = _.fromPairs(clipTask.rendererProps.properties.map(desc => [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]))
                 let renderReq = req.clone({
                     timeOnClip: req.time - (clipTask.clipPlacedFrame / req.framerate),
                     frameOnClip: req.frame - clipTask.clipPlacedFrame,
 
                     destCanvas: /* isAdjustClip */ false ? destBufferCanvas: clipBufferCanvas,
+                    destAudioBuffer: channelAudioBuffers,
                     parameters: params,
                 })
 
@@ -361,6 +378,15 @@ export default class Pipeline
                 }
 
                 layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
+
+                if (req.isAudioBufferingNeeded) {
+                    console.log('merging...');
+                    req.destAudioBuffer.forEach((buffer, ch) => {
+                        buffer.forEach((_, idx) => {
+                            buffer[idx] += channelAudioBuffers[ch][idx]
+                        })
+                    })
+                }
             }
 
             destBufferCtx.drawImage(layerBufferCanvas, 0, 0)
