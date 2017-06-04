@@ -14,7 +14,8 @@ import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state
 
 let pluginRegistry: Delir.PluginRegistry|null = null
 let pluginLoader: Delir.Services.PluginLoader|null = null
-let renderer: Delir.Renderer|null = null
+// let renderer: Delir.Renderer.Renderer|null = null
+let pipeline: Delir.Renderer.Pipeline|null = null
 let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
 let audioBufferSource: AudioBufferSourceNode|null = null
@@ -30,28 +31,29 @@ let state: {
 const handlePayload = (payload: KnownPayload) => {
     switch (payload.type) {
         case EditorStateDispatchTypes.SetActiveProject:
-            renderer.setProject(payload.entity.project)
+            // renderer.setProject(payload.entity.project)
+            pipeline!.project = payload.entity.project
             state.project = payload.entity.project
             break
 
         case EditorStateDispatchTypes.ChangeActiveComposition: {
             if (!state.project) break
             state.composition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
-            renderer.stop()
+            // renderer.stop()
             break
         }
 
-        case EditorStateDispatchTypes.TogglePreview: {
+        case EditorStateDispatchTypes.StartPreview: {
             if (!state.project || !state.composition) break
-            if (!renderer || !audioContext) break
+            if (!pipeline || !audioContext) break
 
             const targetComposition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
             if (! targetComposition) break
 
-            if (renderer.isPlaying) {
-                renderer.pause()
-                break
-            }
+            // if (renderer.isPlaying) {
+            //     renderer.pause()
+            //     break
+            // }
 
             audioBuffer = audioContext.createBuffer(
                 targetComposition.audioChannels,
@@ -63,12 +65,18 @@ const handlePayload = (payload: KnownPayload) => {
             audioBufferSource.connect(audioContext.destination)
             audioBufferSource.start(0)
 
-            renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
+            // renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
+            pipeline.destinationAudioNode = audioContext.destination
 
-            let promise = renderer.render({
-                beginFrame: 0,
-                targetCompositionId: state.composition.id,
-                throttle: true,
+            // let promise = pipeline.renderFrame({
+            //     beginFrame: 0,
+            //     targetCompositionId: state.composition.id,
+            //     throttle: true,
+            // })
+
+            const promise = pipeline.renderSequencial(targetComposition.id, {
+                beginFrame: payload.entity.beginFrame,
+                loop: true,
             })
 
             promise.progress(progress => {
@@ -94,37 +102,53 @@ const handlePayload = (payload: KnownPayload) => {
                 }
             })
 
-            promise.catch((e: Error) => console.error(e.stack))
+            promise.catch(e => {
+                if (e instanceof Delir.Exceptions.RenderingAbortedException) {
+                    EditorStateActions.updateProcessingState(`Stop.`)
+                    return
+                }
+                console.error(e)
+            })
+
             break
+        }
+
+        case EditorStateDispatchTypes.StopPreview: {
+            if (pipeline) {
+                pipeline.stopCurrentRendering()
+            }
         }
 
         case EditorStateDispatchTypes.SeekPreviewFrame: {
             const {frame} = payload.entity
             const targetComposition = state.composition!
 
-            if (!renderer || !audioContext) return
+            // if (!renderer || !audioContext) return
             // たぶんプレビュー中
             // TODO: Seek in preview
-            if (renderer.isPlaying) return
+            // if (renderer.isPlaying) return
 
-            audioBuffer = audioContext.createBuffer(
-                targetComposition.audioChannels,
-                /* length */targetComposition.samplingRate,
-                /* sampleRate */targetComposition.samplingRate,
-            )
-            audioBufferSource = audioContext.createBufferSource()
-            audioBufferSource.buffer = audioBuffer
-            audioBufferSource.connect(audioContext.destination)
-            audioBufferSource.start(0)
+            // audioBuffer = audioContext.createBuffer(
+            //     targetComposition.audioChannels,
+            //     /* length */targetComposition.samplingRate,
+            //     /* sampleRate */targetComposition.samplingRate,
+            // )
+            // audioBufferSource = audioContext.createBufferSource()
+            // audioBufferSource.buffer = audioBuffer
+            // audioBufferSource.connect(audioContext.destination)
+            // audioBufferSource.start(0)
 
-            renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
+            // renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
 
-            renderer!.render({
-                beginFrame: frame,
-                endFrame: frame,
-                targetCompositionId: state.composition!.id!,
-            })
-            .catch((e: Error) => console.error(e.stack))
+            // renderer!.render({
+            //     beginFrame: frame,
+            //     endFrame: frame,
+            //     targetCompositionId: state.composition!.id!,
+            // })
+            // .catch((e: Error) => console.error(e.stack))
+            pipeline!.renderFrame(targetComposition.id, frame)
+            .catch(e => console.error(e))
+
 
             break
         }
@@ -175,7 +199,7 @@ const handlePayload = (payload: KnownPayload) => {
     }
 }
 
-export default {
+const rendererService = {
     initialize: async () => {
         audioContext = new AudioContext
         // scriptProcessor
@@ -201,11 +225,15 @@ export default {
         console.log('Plugin loaded', successes, 'Failed:', fails)
         loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
 
-        renderer = new Delir.Renderer({
-            pluginRegistry: pluginRegistry,
-        })
+        // renderer = new Delir.Renderer.Renderer({
+        //     pluginRegistry: pluginRegistry,
+        // })
 
-        renderer.setAudioContext(audioContext)
+        // renderer.setAudioContext(audioContext)
+
+        pipeline = new Delir.Renderer.Pipeline()
+        pipeline.pluginRegistry = pluginRegistry
+
         dispatcher.register(handlePayload)
     },
 
@@ -213,7 +241,10 @@ export default {
         return pluginRegistry
     },
 
-    get renderer() {
+    get renderer(): Delir.Renderer.Pipeline {
+        return pipeline
         return renderer
     }
 }
+window.app.renderer = rendererService
+export default rendererService

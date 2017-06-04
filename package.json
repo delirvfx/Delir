@@ -99,6 +99,7 @@
     "keymirror": "^0.1.1",
     "lodash": "^4.17.4",
     "mp3": "^0.1.0",
+    "node-timecodes": "^2.4.1",
     "parse-color": "^1.0.0",
     "prop-types": "^15.5.8",
     "react": "16.0.0-alpha.11",

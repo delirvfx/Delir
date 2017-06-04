@@ -1,5 +1,5 @@
 // @flow
-import Layer from '../project/layer'
+import Layer from '../../project/layer'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 import ClipInstanceContainer from './clip-instance-container'

@@ -1,39 +1,40 @@
-import {
-    Type,
-    TypeDescriptor,
-    LayerPluginBase,
-    PluginPreRenderRequest,
-    RenderRequest,
-    Project,
-    Exceptions
-} from 'delir-core'
+import * as _ from 'lodash'
+import {IRenderer} from './renderer-base'
+import Type from '../../plugin-support/type-descriptor'
+import {TypeDescriptor} from '../../plugin-support/type-descriptor'
+import PreRenderingRequest from '../pipeline/pre-render-request'
+import RenderingRequest from '../pipeline/render-request'
 
-interface VideoLayerParam {
-    source: Project.Asset
+import Asset from '../../project/asset'
+
+interface VideoRendererParam {
+    source: Asset
     loop: boolean
     offsetTime: number
     x: number
     y: number
     scale: number
     rotate: number
+    opacity: number
 }
 
-export default class VideoLayer extends LayerPluginBase
+export default class VideoLayer implements IRenderer<VideoRendererParam>
 {
-    static async pluginDidLoad()
+    public static get rendererId(): string { return 'video' }
+
+    public static provideAssetAssignMap()
     {
-        // ✋( ͡° ͜ʖ ͡°) インターフェースに誓って
-        if (typeof window === 'undefined') {
-            throw new Exceptions.PluginLoadFailException('this plugin only running on Electron')
+        return {
+            mp4: 'source',
         }
     }
 
-    static provideParameters(): TypeDescriptor
+    public static provideParameters(): TypeDescriptor
     {
         return Type
             .asset('source', {
                 label: 'Movie file',
-                mimeTypes: ['movie/mp4'],
+                extensions: ['mp4'],
             })
             .number('offsetTime', {
                 label: 'Start time',
@@ -55,48 +56,53 @@ export default class VideoLayer extends LayerPluginBase
             .float('scale', {
                 label: 'Scale',
                 animatable: true,
-                defaultValue: 1,
+                defaultValue: 100,
             })
             .float('rotate', {
                 label: 'Rotation',
                 animatable: true,
                 defaultValue: 0,
             })
+            .float('opacity', {
+                label: 'Opacity',
+                animatable: true,
+                defaultValue: 100,
+            })
     }
 
-    video: HTMLVideoElement
+    private _video: HTMLVideoElement
 
-    async beforeRender(preRenderRequest: PluginPreRenderRequest)
+    public async beforeRender(req: PreRenderingRequest<VideoRendererParam>)
     {
-        const parameters = preRenderRequest.parameters as any
+        const parameters = req.parameters as any
 
-        this.video = document.createElement('video')
-        this.video.src = `file://${parameters.source.path}`
-        this.video.loop = parameters.loop
-        this.video.load()
-        this.video.currentTime = -1
+        this._video = document.createElement('video')
+        this._video.src = `file://${parameters.source.path}`
+        this._video.loop = parameters.loop
+        this._video.load()
+        this._video.currentTime = -1
 
         await new Promise((resolve, reject) => {
             const onLoaded = () => {
                 resolve()
-                this.video.removeEventListener('error', onError, false)
+                this._video.removeEventListener('error', onError, false)
             }
 
             const onError = () => {
                 reject(new Error('video not found'))
-                this.video.removeEventListener('loadeddata', onLoaded, false)
+                this._video.removeEventListener('loadeddata', onLoaded, false)
             }
 
-            this.video.addEventListener('loadeddata', onLoaded, {once: true, capture: false} as any)
-            this.video.addEventListener('error', onError, {once: true, capture: false}  as any)
+            this._video.addEventListener('loadeddata', onLoaded, {once: true, capture: false} as any)
+            this._video.addEventListener('error', onError, {once: true, capture: false}  as any)
         })
     }
 
-    async render(req: RenderRequest<VideoLayerParam>)
+    public async render(req:  RenderingRequest<VideoRendererParam>)
     {
         const param = req.parameters
         const ctx = req.destCanvas.getContext('2d')!
-        const video = this.video
+        const video = this._video
 
         await new Promise((resolve, reject) => {
             const waiter = (e: Event) => resolve()
@@ -109,12 +115,13 @@ export default class VideoLayer extends LayerPluginBase
 
         const rad = param.rotate * Math.PI / 180
 
+        ctx.globalAlpha = _.clamp(param.opacity / 100, 0, 100)
         ctx.translate(param.x, param.y)
-        ctx.scale(param.scale, param.scale)
+        ctx.scale(param.scale / 100, param.scale / 100)
         ctx.translate(video.videoWidth / 2, video.videoHeight / 2)
         ctx.rotate(rad)
         ctx.translate(-video.videoWidth / 2, -video.videoHeight / 2)
 
-        ctx.drawImage(this.video, 0, 0)
+        ctx.drawImage(this._video, 0, 0)
     }
 }

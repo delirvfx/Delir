@@ -1,17 +1,15 @@
-import {
-    Type,
-    TypeDescriptor,
-    LayerPluginBase,
-    PluginPreRenderRequest,
-    RenderRequest,
-    Exceptions,
-    ColorRGBA
-} from 'delir-core'
-
 import * as _ from 'lodash'
 import * as FontManager from 'font-manager'
 
-interface TextLayerParam {
+import {IRenderer} from './renderer-base'
+import Type from '../../plugin-support/type-descriptor'
+import {TypeDescriptor} from '../../plugin-support/type-descriptor'
+import PreRenderingRequest from '../pipeline/pre-render-request'
+import RenderingRequest from '../pipeline/render-request'
+
+import ColorRGBA from '../../values/color-rgba'
+
+interface TextRendererParam {
     text: string
     family: string
     weight: string
@@ -21,19 +19,20 @@ interface TextLayerParam {
     x: number
     y: number
     rotate: number
+    opacity: number
 }
 
-export default class TextLayer extends LayerPluginBase
+export default class TextLayer implements IRenderer<TextRendererParam>
 {
-    static async pluginDidLoad()
+    public static get rendererId(): string { return 'text' }
+
+    public static provideAssetAssignMap()
     {
-        // ✋( ͡° ͜ʖ ͡°) インターフェースに誓って
-        if (typeof window === 'undefined') {
-            throw new Exceptions.PluginLoadFailException('this plugin only running on Electron')
-        }
+        return {}
     }
 
-    static provideParameters = _.once((): TypeDescriptor =>
+    // `getAvailableFontsSync` is very heavy, Cache returned result with _.once
+    public static provideParameters = _.once((): TypeDescriptor =>
     {
         const fonts = FontManager.getAvailableFontsSync()
         const families: string[] = [
@@ -82,16 +81,21 @@ export default class TextLayer extends LayerPluginBase
                 label: 'Rotate',
                 animatable: true,
             })
+            .float('opacity', {
+                label: 'Opacity',
+                animatable: true,
+                defaultValue: 100,
+            })
     })
 
-    bufferCanvas: HTMLCanvasElement
+    private _bufferCanvas: HTMLCanvasElement
 
-    async beforeRender(preRenderRequest: PluginPreRenderRequest)
+    public async beforeRender(req: PreRenderingRequest<TextRendererParam>)
     {
-        this.bufferCanvas = document.createElement('canvas')
+        this._bufferCanvas = document.createElement('canvas')
     }
 
-    async render(req: RenderRequest<TextLayerParam>)
+    public async render(req: RenderingRequest<TextRendererParam>)
     {
         const param = req.parameters
         const ctx = req.destCanvas.getContext('2d')!
@@ -103,6 +107,7 @@ export default class TextLayer extends LayerPluginBase
         ctx.translate(param.x, param.y)
         ctx.rotate(rad)
 
+        ctx.globalAlpha = _.clamp(param.opacity / 100, 0, 1)
         ctx.textBaseline = 'top'
         ctx.fillStyle = param.color.toString()
         ctx.font = `${param.weight} ${param.size}px/${lineHeight} ${family}`
@@ -115,14 +120,4 @@ export default class TextLayer extends LayerPluginBase
             placePointY += unit
         }
     }
-
-    //
-    // Editor handling methods
-    //
-
-    // MEMO: キャッシュが必要な（例えば音声ファイルなど）パラメータの変更を検知するためのAPI
-    // onDidParameterChanged(newParam, oldParam)
-    // {
-    //
-    // }
 }

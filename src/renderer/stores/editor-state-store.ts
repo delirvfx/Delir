@@ -87,8 +87,12 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
             case EditorStateDispatchTypes.UpdateProcessingState:
                 return state.set('processingState', payload.entity.stateText)
 
-            case EditorStateDispatchTypes.TogglePreview:
-                return state.set('previewPlayed', !state.get('previewPlayed'))
+            case EditorStateDispatchTypes.StartPreview:
+                return state.set('previewPlayed', true)
+
+            case EditorStateDispatchTypes.StopPreview:
+                console.log('hi')
+                return state.set('previewPlayed', false)
 
             case EditorStateDispatchTypes.SeekPreviewFrame:
                 return state.set('currentPreviewFrame', payload.entity.frame)

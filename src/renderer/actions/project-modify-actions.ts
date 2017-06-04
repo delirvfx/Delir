@@ -22,7 +22,6 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
     targetComposition: Delir.Project.Composition,
     clip: Delir.Project.Clip,
     asset: Delir.Project.Asset,
-    pluginRegistry: Delir.PluginRegistry,
 }>
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type AddKeyframePayload = Payload<'AddKeyframe', {targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe}>
@@ -98,7 +97,7 @@ export default {
         targetComposition: Delir.Project.Composition,
         asset: Delir.Project.Asset
     ) {
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.fileType])
+        const processablePlugins = Delir.Renderer.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
@@ -108,7 +107,6 @@ export default {
 
         const clip = new Delir.Project.Clip
         Object.assign(clip, {
-            id: uuid.v4(),
             renderer: processablePlugins[0].id,
             placedFrame: 0,
             durationFrames: targetComposition.framerate,
@@ -151,7 +149,7 @@ export default {
 
         if (!project) return
 
-        const processablePlugins = RendererService.pluginRegistry!.getPlugins().filter(entry => !!entry.package.delir.acceptFileTypes[asset.fileType])
+        const processablePlugins = Delir.Renderer.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
@@ -161,17 +159,12 @@ export default {
 
         const newClip = new Delir.Project.Clip
         Object.assign(newClip, {
-            id: uuid.v4(),
             renderer: processablePlugins[0].id,
             placedFrame,
             durationFrames,
         })
 
-        const propName = ProjectHelper.findAssetAttachablePropertyByFileType(
-            newClip,
-            asset.fileType,
-            RendererService.pluginRegistry!
-        )
+        const propName = Delir.Renderer.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
 
         if (!propName) return
 
@@ -182,7 +175,7 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },
 
-    createOrModifyKeyframe(clipId: string, propName: string, frameOnClip: number, patch: Optionalized<Delir.Project.Keyframe>)
+    createOrModifyKeyframeForClip(clipId: string, propName: string, frameOnClip: number, patch: Optionalized<Delir.Project.Keyframe>)
     {
         const project = ProjectModifyStore.getState().get('project')
 
@@ -191,11 +184,11 @@ export default {
 
         if (!clip) return
 
-        const props = RendererService.pluginRegistry!.getParametersById(clip.renderer!)
-        const prop = props ? props.find(prop => prop.propName === propName) : null
-        if (!prop) return
+        const props = Delir.Renderer.Renderers.getInfo(clip.renderer!).parameter.properties
+        const propDesc = props ? props.find(prop => prop.propName === propName) : null
+        if (!propDesc) return
 
-        if (prop.animatable === false) {
+        if (propDesc.animatable === false) {
             frameOnClip = 0
         }
 
@@ -218,7 +211,7 @@ export default {
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
                 targetKeyframeId: keyframe.id,
-                patch: prop.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
+                patch: propDesc.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
             }))
         } else {
             const newKeyframe = new Delir.Project.Keyframe()

@@ -9,19 +9,19 @@ const _defer = <T>(): DeferredPromise<T> => {
 }
 
 export interface DeferredPromise<T> {
-    resolve: (value: T) => void;
-    reject: (error: Error) => void;
-    promise: Promise<T>;
+    resolve: (value?: T) => void
+    reject: (error?: Error) => void
+    promise: Promise<T>
 }
 
-type PromiseProcessor<T> = (
-    resolve: (value: T) => void,
-    reject: (error: Error) => void,
+type PromiseProcessor<T, PT> = (
+    resolve: (value?: T) => void,
+    reject: (error?: Error) => void,
     onAbort: (aborter: () => void) => void,
-    notifier: (message: any) => void
+    notifier: (message: PT) => void
 ) => Promise<T>|void
 
-export default class ProgressPromise<T>
+export default class ProgressPromise<T, PT = any>
 {
     static defer<T>()
     {
@@ -42,7 +42,7 @@ export default class ProgressPromise<T>
     private _abortCallbacks: Function[]|null = []
     private _progressListeners: Function[] = []
 
-    constructor(resolver: PromiseProcessor<T>)
+    constructor(resolver: PromiseProcessor<T, PT>)
     {
         const onAbort = (callback: () => void) => {
             this._abortCallbacks!.push(callback)
@@ -83,7 +83,7 @@ export default class ProgressPromise<T>
         return this
     }
 
-    progress(listener: (progress: any) => void): this
+    progress(listener: (progress: PT) => void): this
     {
         this._progressListeners.push(listener)
         return this

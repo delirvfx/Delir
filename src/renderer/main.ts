@@ -48,3 +48,5 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     // RendererService.renderer.setDestinationAudioNode(audioContext.destination)
 });
+
+window.delir = Delir

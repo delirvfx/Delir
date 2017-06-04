@@ -20,37 +20,37 @@ interface NavigationViewProps {
 }))
 export default class NavigationView extends React.Component<NavigationViewProps, null>
 {
-    static propTypes = {
+    public static propTypes = {
         editor: PropTypes.object.isRequired,
     }
 
-    onTitleDoubleClicked()
-    {
-    }
-
-    onClickPlay = action =>
+    private onClickPlay = action =>
     {
         const {activeComp} = this.props.editor
 
         if (! activeComp) return
-        EditorStateActions.togglePreview(activeComp.id!)
+        EditorStateActions.startPreview(activeComp.id!)
     }
 
-    onClickDest = action =>
+    private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
+        EditorStateActions.stopPreview()
+    }
+
+    private onClickDest = action =>
     {
         const {activeComp} = this.props.editor
         activeComp && EditorStateActions.renderDestinate(activeComp.id!)
     }
 
-    titleBarDoubleClicked = e =>
+    private titleBarDoubleClicked = e =>
     {
         const browserWindow = remote.getCurrentWindow()
         browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
     }
 
-    render()
+    public render()
     {
-        const {project, projectPath} = this.props.editor
+        const {project, projectPath, previewPlayed} = this.props.editor
         const projectName = project
             ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project')
             : 'Delir'
@@ -63,7 +63,12 @@ export default class NavigationView extends React.Component<NavigationViewProps,
                     {projectName}
                 </ul>
                 <ul className={s.navigationList}>
-                    <li onClick={this.onClickPlay}><i className='fa fa-play' /></li>
+                    {previewPlayed ? (
+                            <li onClick={this.onClickPause}><i className='fa fa-pause' /></li>
+                        ) : (
+                            <li onClick={this.onClickPlay}><i className='fa fa-play' /></li>
+                        )
+                    }
                     <li onClick={this.onClickDest}><i className='fa fa-film' /></li>
                 </ul>
             </Pane>

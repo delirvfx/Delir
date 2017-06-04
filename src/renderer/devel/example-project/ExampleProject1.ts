@@ -45,8 +45,8 @@ c1_t4.name = 'video'
 
 const c1_t1_cl1 = new Delir.Project.Clip
 // c1_t1_l1.renderer = 'audio-layer'
-// c1_t1_l1.renderer = 'delir-plugin-video'
-c1_t1_cl1.renderer = 'delir-plugin-text'
+// c1_t1_l1.renderer = 'video'
+c1_t1_cl1.renderer = 'text'
 // c1_t1_l1.renderer = 'plane'
 c1_t1_cl1.placedFrame = 0
 c1_t1_cl1.durationFrames = durationFrames
@@ -67,8 +67,8 @@ c1_t1_cl1.keyframes = {
 }
 
 const c1_t2_cl1 = Object.assign(new Delir.Project.Clip, {
-    // renderer: 'delir-plugin-video'
-    renderer: 'delir-plugin-audio',
+    // renderer: 'video'
+    renderer: 'audio',
     placedFrame: 0,
     durationFrames: durationFrames,
     keyframes: {
@@ -87,7 +87,7 @@ const c1_t3_cl1 = Object.assign(new Delir.Project.Clip, {
     durationFrames: 30 * 10,
 })
 const c1_t4_cl1 = Object.assign(new Delir.Project.Clip, {
-    renderer: 'delir-plugin-video',
+    renderer: 'video',
     placedFrame: 0,
     durationFrames: 30 * 10,
 })

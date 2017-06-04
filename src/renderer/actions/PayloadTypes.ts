@@ -5,7 +5,8 @@ import {
     ClearDragEntityPayload,
     ChangeActiveCompositionPayload,
     ChangeActiveClipPayload,
-    TogglePreviewPayload,
+    StartPreviewPayload,
+    StopPreviewPayload,
     RenderDestinatePayload,
     UpdateProcessingState,
     AddMessagePayload,
@@ -41,7 +42,8 @@ export type EditorStateActionPayload =
     | ClearDragEntityPayload
     | ChangeActiveCompositionPayload
     | ChangeActiveClipPayload
-    | TogglePreviewPayload
+    | StartPreviewPayload
+    | StopPreviewPayload
     | RenderDestinatePayload
     | UpdateProcessingState
     | AddMessagePayload

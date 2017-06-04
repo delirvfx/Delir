@@ -3,24 +3,24 @@ import * as _ from 'lodash'
 import * as fs from 'fs'
 import * as path from 'path'
 
-import * as Deream from '../../../deream'
+import * as Deream from '../../../../deream'
 import canvasToBuffer from 'electron-canvas-to-buffer'
 import audioBufferToWave from 'audiobuffer-to-wav'
 import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
-import Project from '../project/project'
-import Composition from '../project/composition'
-import PluginRegistry from '../plugin-support/plugin-registry'
+import Project from '../../project/project'
+import Composition from '../../project/composition'
+import PluginRegistry from '../../plugin-support/plugin-registry'
 
 import CompositionInstanceContainer from './composition-instance-container'
 import EntityResolver from './entity-resolver'
 import PreRenderingRequest from './pre-rendering-request'
 import RenderRequest from './render-request'
 
-import * as ProjectHelper from '../helper/project-helper'
-import ProgressPromise from '../helper/progress-promise'
+import * as ProjectHelper from '../../helper/project-helper'
+import ProgressPromise from '../../helper/progress-promise'
 
-import {RenderingFailedException} from '../exceptions/'
+import {RenderingFailedException} from '../../exceptions/'
 
 // TODO: Split audio concat process
 import {spawn} from 'child_process'
