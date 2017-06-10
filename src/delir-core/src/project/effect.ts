@@ -4,6 +4,7 @@ import * as uuid from 'uuid'
 import {EffectScheme, EffectOptionScheme} from './scheme/effect'
 import {KeyframeScheme} from './scheme/keyframe'
 import Keyframe from './keyframe'
+import Expression from '../values/expression'
 
 export default class Effect
 {
@@ -36,6 +37,8 @@ export default class Effect
     }
 
     public keyframes: {[keyName: string]: Keyframe[]} = {}
+
+    public expressions: {[keyName: string]: Expression} = {}
 
     get id(): string { return this._id }
 

@@ -5,6 +5,7 @@ import Keyframe from './keyframe'
 import Effect from './effect'
 import {ClipScheme, ClipConfigScheme} from './scheme/clip'
 import {AvailableRenderer} from '../renderer/renderer'
+import Expression from '../values/expression'
 
 export default class Clip
 {
@@ -45,6 +46,8 @@ export default class Clip
     }
 
     public keyframes: {[propName: string]: Keyframe[]} = {}
+
+    public expressions: {[keyName: string]: Expression} = {}
 
     public effects: Effect[] = []
 

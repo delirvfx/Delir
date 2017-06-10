@@ -29,13 +29,11 @@ export default class Keyframe
         frameOnClip: number|null,
         easeInParam: [number, number],
         easeOutParam: [number, number],
-        expression: string|null
     } = {
         value: null,
         frameOnClip: null,
         easeInParam: [1, 1],
         easeOutParam: [0, 0],
-        expression: null
     }
 
     get id(): string { return this._id = this._id || uuid.v4() }
@@ -59,9 +57,6 @@ export default class Keyframe
      */
     get easeOutParam(): [number, number] { return this._config.easeOutParam }
     set easeOutParam(easeOutParam: [number, number]) { this._config.easeOutParam = easeOutParam }
-
-    get expression(): string|null { return this._config.expression }
-    set expression(expression: string) { this._config.expression = expression }
 
     constructor()
     {
