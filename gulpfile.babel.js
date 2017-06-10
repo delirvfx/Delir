@@ -360,7 +360,7 @@ export async function pack(done) {
                 appId: 'studio.delir',
                 copyright: '© 2017 Ragg',
                 productName: 'Delir',
-                electronVersion: '1.6.1',
+                electronVersion: '1.7.3',
                 asar: true,
                 asarUnpack: ["node_modules/"],
                 npmRebuild: true,
