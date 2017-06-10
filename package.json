@@ -47,7 +47,7 @@
     "cross-env": "^4.0.0",
     "css-loader": "^0.28.0",
     "devtron": "^1.4.0",
-    "electron": "^1.6.6",
+    "electron": "1.7.3",
     "electron-builder": "^16.7.1",
     "electron-devtools-installer": "^2.2.0",
     "electron-icon-maker": "^0.0.3",
@@ -74,7 +74,7 @@
     "ts-loader": "^2.0.3",
     "tslint": "^5.0.0",
     "tslint-loader": "^3.5.1",
-    "typescript": "2.4.0-dev.20170429",
+    "typescript": "2.4.0-dev.20170610",
     "webpack": "^2.3.3"
   },
   "dependencies": {

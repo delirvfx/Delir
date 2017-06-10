@@ -78,6 +78,10 @@
   version "7.0.12"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.12.tgz#ae5f67a19c15f752148004db07cbbb372e69efc9"
 
+"@types/node@^7.0.18":
+  version "7.0.29"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.29.tgz#ccfcec5b7135c7caf6c4ffb8c7f33102340d99df"
+
 "@types/prop-types@^15.5.1":
   version "15.5.1"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.1.tgz#1ecf52621299e65b855374337fb11fd2d1066fc1"
@@ -2069,10 +2073,11 @@ electron-to-chromium@^1.2.7:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.2.tgz#b8ce5c93b308db0e92f6d0435c46ddec8f6363ab"
 
-electron@^1.6.6:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-1.6.6.tgz#17df8cdf73ec2c04cfad7abb413579b8b8dafc28"
+electron@1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-1.7.3.tgz#839cab0a0598835a100dceede215988ba99c325b"
   dependencies:
+    "@types/node" "^7.0.18"
     electron-download "^3.0.1"
     extract-zip "^1.0.3"
 
@@ -5986,9 +5991,9 @@ typedarray@~0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@2.4.0-dev.20170429:
-  version "2.4.0-dev.20170429"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.0-dev.20170429.tgz#f37349f882a02d230ddca8c00a7ae90d3e6494d1"
+typescript@2.4.0-dev.20170610:
+  version "2.4.0-dev.20170610"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.0-dev.20170610.tgz#95d03a7c8ae3fbdd24c981e4a2d86c88985716ad"
 
 ua-parser-js@^0.7.9:
   version "0.7.12"
