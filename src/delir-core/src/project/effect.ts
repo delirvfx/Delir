@@ -1,20 +1,9 @@
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 
+import {EffectScheme, EffectOptionScheme} from './scheme/effect'
 import {KeyframeScheme} from './scheme/keyframe'
 import Keyframe from './keyframe'
-
-export interface EffectOptionScheme {
-    name: string|null
-    processor: string|null
-    keyframeInterpolationMethod: string
-}
-
-export interface EffectScheme {
-    id: string|null
-    config: EffectOptionScheme
-    keyframes: {[keyName:string]: KeyframeScheme[]}
-}
 
 export default class Effect
 {
