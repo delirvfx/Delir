@@ -1,0 +1,9 @@
+{
+    "name": "delir-effect-gaussian-blur",
+    "version": "0.0.0",
+    "author": "Ragg <ragg.devpr@gmail.com>",
+    "main": "index.js",
+    "delir": {
+
+    }
+}
