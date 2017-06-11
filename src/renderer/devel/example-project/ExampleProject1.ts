@@ -1,5 +1,5 @@
 import * as Delir from 'delir-core'
-import {ProjectHelper, ColorRGB} from 'delir-core'
+import {ProjectHelper, ColorRGB, Values} from 'delir-core'
 import {join} from 'path'
 import EditorStateActions from '../../actions/editor-state-actions'
 
@@ -64,6 +64,9 @@ c1_t1_cl1.keyframes = {
         Object.assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
         Object.assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
     ],
+}
+c1_t1_cl1.expressions = {
+    'text': new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`')
 }
 
 const c1_t2_cl1 = Object.assign(new Delir.Project.Clip, {

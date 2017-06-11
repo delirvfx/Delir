@@ -103,7 +103,7 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
         Object.freeze(this)
     }
 
-    public clone(patch: Optionalized<RenderRequest<T>>): RenderRequest<T>
+    public clone(patch: Partial<RenderRequest<T>>): RenderRequest<T>
     {
         const permitPatch = _.pick(patch, RenderRequest._permitKeys)
         return new RenderRequest<T>(Object.assign({}, this, permitPatch))
