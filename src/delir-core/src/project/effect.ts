@@ -21,9 +21,14 @@ export default class Effect
             return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
+        const expressions = _.mapValues(effectJson.expressions, expr => {
+            return new Expression(expr.language, expr.code)
+        })
+
         Object.defineProperty(effect, '_id', {value: effectJson.id || uuid.v4()})
         Object.assign(effect._config, config)
         effect.keyframes = keyframes
+        effect.expressions = expressions
 
         return effect
     }

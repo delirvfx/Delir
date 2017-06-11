@@ -24,9 +24,14 @@ export default class Clip
             return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
+        const expressions = _.mapValues(clipJson.expressions, expr => {
+            return new Expression(expr.language, expr.code)
+        })
+
         Object.defineProperty(clip, '_id', {value: clipJson.id || uuid.v4()})
         Object.assign(clip._config, config)
         clip.keyframes = keyframes
+        clip.expressions = expressions
 
         return clip
     }
