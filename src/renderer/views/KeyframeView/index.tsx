@@ -9,6 +9,7 @@ import {default as TimelineHelper, MeasurePoint} from '../../helpers/timeline-he
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 import SelectList from '../components/select-list'
+import {ContextMenu, MenuItem} from '../components/context-menu'
 import DelirValueInput from './_DelirValueInput'
 
 import EditorStateActions from '../../actions/editor-state-actions'
@@ -243,6 +244,11 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         })
     }
 
+    private _openExpressionEditor = (propName: string) => {
+        console.log('open')
+
+    }
+
     public render()
     {
         const {activeClip, project: {project}, editor, scrollLeft} = this.props
@@ -270,6 +276,9 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                                     data-prop-name={desc.propName}
                                     onClick={this.selectProperty}
                                 >
+                                    <ContextMenu>
+                                        <MenuItem label='エクスプレッション' onClick={() => this._openExpressionEditor(desc.propName) } />
+                                    </ContextMenu>
                                     <span className={classnames(
                                             s.propKeyframeIndicator,
                                             {
