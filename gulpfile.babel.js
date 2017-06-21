@@ -147,7 +147,7 @@ export function compileRendererJs(done) {
                     exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
-                            useBabel: true,
+                            transpileOnly: true,
                             configFileName: join(__dirname, './tsconfig.json'),
                         }},
                     ],
@@ -254,7 +254,7 @@ export async function compilePlugins(done) {
                     exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
-                            useBabel: true,
+                            transpileOnly: true,
                             configFileName: join(__dirname, './tsconfig.json'),
                         }},
                     ],
