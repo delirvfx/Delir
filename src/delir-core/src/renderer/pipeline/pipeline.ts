@@ -392,7 +392,7 @@ export default class Pipeline
                     return value
                 })
 
-                renderReq = req.clone({parameters: afterExpressionParams})
+                renderReq = renderReq.clone({parameters: afterExpressionParams})
 
                 if (/* isCompositionClip */ false) {
                     const frameOnComposition = req.frame - clipTask.clipPlacedFrame
