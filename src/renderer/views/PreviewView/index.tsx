@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 
 import connectToStores from '../../utils/connectToStores'
+import monaco from '../../helpers/monaco'
 
 import Pane from '../components/pane'
 import DropDown from '../components/dropdown'
@@ -41,6 +42,16 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
     {
         // RendererService.renderer!.setDestinationCanvas(this.refs.canvas)
         RendererService.renderer!.destinationCanvas = this.refs.canvas
+
+        monaco.editor.create(document.querySelector('#monaco'), {
+            value: [
+                'function x() {',
+                '\tconsole.log("Hello world!");',
+                '}'
+            ].join('\n'),
+
+            language: 'javascript'
+        })
     }
 
 
