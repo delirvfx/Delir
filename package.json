@@ -99,7 +99,7 @@
     "immutable": "^3.8.1",
     "keymirror": "^0.1.1",
     "lodash": "^4.17.4",
-    "monaco-editor": "^0.8.3",
+    "monaco-editor": "0.9.0",
     "mp3": "^0.1.0",
     "node-timecodes": "^2.4.1",
     "parse-color": "^1.0.0",
