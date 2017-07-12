@@ -1,3 +1,4 @@
+import * as _monaco from 'monaco-editor'
 import * as _ from 'lodash'
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
@@ -40,6 +41,7 @@ interface KeyframeViewState {
     activeKeyframeId: string|null
     keyframeMovement: {x: number}|null
     easingHandleMovement: {x: number, y: number}|null
+    editorOpened: boolean
 }
 
 @connectToStores([EditorStateStore], () => ({
@@ -64,16 +66,20 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         keyframeViewViewBox: undefined,
         activeKeyframeId: null,
         keyframeMovement: null,
-        easingHandleMovement: null
+        easingHandleMovement: null,
+        editorOpened: false,
     }
 
     public refs: {
         svgParent: HTMLDivElement
     }
 
+    private _editor: monaco.editor.IStandaloneCodeEditor
     private _selectedKeyframeId: string|null = null
     private _initialKeyframePosition: {x: number, y: number}|null = null
     private _keyframeDragged: boolean = false
+
+    private editorElement: HTMLDivElement
 
     private _selectedEasingHandleHolderData: {
         type: 'ease-in'|'ease-out',
@@ -87,6 +93,40 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     {
         this._syncGraphHeight()
         window.addEventListener('resize', _.debounce(this._syncGraphHeight, 1000 / 30))
+
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(Delir.Renderer.expressionContextTypeDefinition, 'ExpressionAPI.ts')
+
+        this._editor = monaco.editor.create(this.editorElement, {
+            language: 'typescript',
+            codeLens: true,
+            automaticLayout: true,
+            theme: 'vs-dark',
+            minimap: {enabled: false},
+        })
+
+        this._editor.createContextKey('cond1', true)
+        this._editor.createContextKey('cond2', true)
+        this._editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleEditorSave, 'cond1')
+        this._editor.addCommand(monaco.KeyCode.Escape, this.closeEditor, 'cond2')
+    }
+
+    private handleEditorSave = () => {
+        const {activeClip} = this.props
+        const {activePropName} = this.state
+
+        console.log('saving', activePropName)
+        if (!activePropName) return
+
+        try {
+            activeClip!.expressions[activePropName] = new Delir.Values.Expression('typescript', this._editor.getValue())
+            this.setState({editorOpened: false, activePropName: null})
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    private closeEditor = () => {
+        this.setState({editorOpened: false, activePropName: null})
     }
 
     private castValue = (desc: Delir.AnyParameterTypeDescriptor, value: string|number) =>
@@ -189,8 +229,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {props: {activeClip}, state: {activePropName, keyframeMovement, easingHandleMovement}} = this
         if (!activeClip || !activePropName) return
 
-        console.log('up')
-
         process: {
             if (this._selectedKeyframeId) {
                 // Process for keyframe dragged
@@ -245,14 +283,17 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     }
 
     private _openExpressionEditor = (propName: string) => {
-        console.log('open')
+        const {activeClip} = this.props
+        const expression = activeClip!.expressions[propName]
 
+        this._editor.setValue(expression ? expression.code : '')
+        this.setState({editorOpened: true, activePropName: propName})
     }
 
     public render()
     {
         const {activeClip, project: {project}, editor, scrollLeft} = this.props
-        const {activePropName, keyframeViewViewBox, graphWidth, graphHeight} = this.state
+        const {activePropName, keyframeViewViewBox, graphWidth, graphHeight, editorOpened} = this.state
         const activePropDescriptor = this._getDescriptorByPropName(activePropName)
         const descriptors = activeClip
             ? Delir.Renderer.Renderers.getInfo(activeClip.renderer).parameter.properties || []
@@ -300,6 +341,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 </Pane>
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
+                        <div ref={el => { this.editorElement = el }} className={s.expressionEditor} style={{display: editorOpened ? null : 'none'}} />
                         <div className={s.measureContainer}>
                             <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
                                 {...this._renderMeasure()}

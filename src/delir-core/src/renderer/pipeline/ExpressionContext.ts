@@ -13,8 +13,7 @@ export const makeContext = (exposes: Exposes) => {
         set: () => { throw new Error(`Illegal property setting in expression`) }
     })
 
-    return {
-        console,
+    const context = {
         get time() { return exposes.req.time },
         get frame() { return exposes.req.frame },
         get timeOnComposition() { return exposes.req.timeOnComposition },
@@ -27,10 +26,31 @@ export const makeContext = (exposes: Exposes) => {
         get clipProp() { return clipPropertyProxy },
         get currentValue() { return exposes.currentValue },
     }
+
+    return {
+        console,
+        get self() { return this },
+        ...context
+    }
 }
 
 export const expressionContextTypeDefinition = `
 interface Clip {}
+
+declare const self: {
+    time: number
+    time: number
+    frame: number
+    timeOnComposition: number
+    frameOnComposition: number
+    width: number
+    height: number
+    audioBuffer: Float32Array[]
+    duration: number
+    durationFrames: number
+    clipProp: {[propertyName: string]: any}
+    currentValue: any
+}
 
 declare const time: number;
 declare const time: number;
