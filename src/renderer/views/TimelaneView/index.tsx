@@ -24,7 +24,7 @@ import SelectList from '../components/select-list'
 import DropDown from '../components/dropdown'
 
 import LaneLabel from '../timeline/lane-label'
-import KeyframeView from '../KeyframeView'
+import KeyframeEditor from '../KeyframeEditor'
 import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
 
@@ -61,7 +61,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 {
     protected refs: {
         scaleList: DropDown
-        keyframeView: KeyframeView
+        keyframeView: KeyframeEditor
         timelineLanes: HTMLUListElement
         timelineLabels: HTMLDivElement
     }
@@ -250,7 +250,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                         </Workspace>
                     </Pane>
                     <Pane className={s.keyframeGraphRegion}>
-                        <KeyframeView
+                        <KeyframeEditor
                             ref='keyframeView'
                             activeComposition={activeComp}
                             activeClip={activeClip}
