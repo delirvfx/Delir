@@ -102,6 +102,12 @@
   version "5.3.31"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.3.31.tgz#b999d7d935f43f5207b01b00d3de20852f4ca75f"
 
+"@types/typescript@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/typescript/-/typescript-2.0.0.tgz#c433539c98bae28682b307eaa7a0fd2115b83c28"
+  dependencies:
+    typescript "*"
+
 "@types/uuid@3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.0.0.tgz#be93b14bcf97f59c079a9e58754960b5efd946c3"
@@ -4113,6 +4119,10 @@ mocha@^3.2.0:
     mkdirp "0.5.1"
     supports-color "3.1.2"
 
+monaco-editor@0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.9.0.tgz#c50c53251c47b7ff12e09f0f83cfd32a44dfe6ec"
+
 mp3@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/mp3/-/mp3-0.1.0.tgz#e53e4723e34698ee3ffddcdb60bf88356a4910c1"
@@ -5141,6 +5151,10 @@ randombytes@^2.0.0, randombytes@^2.0.1:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.0.3.tgz#674c99760901c3c4112771a31e521dc349cc09ec"
 
+raw-loader@0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/raw-loader/-/raw-loader-0.5.1.tgz#0c3d0beaed8a01c966d9787bf778281252a979aa"
+
 rc@^1.0.1, rc@^1.1.2, rc@^1.1.6, rc@^1.1.7, rc@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.1.tgz#2e03e8e42ee450b8cb3dce65be1bf8974e1dfd95"
@@ -6154,9 +6168,13 @@ typedarray@~0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@2.4.0-dev.20170610:
-  version "2.4.0-dev.20170610"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.0-dev.20170610.tgz#95d03a7c8ae3fbdd24c981e4a2d86c88985716ad"
+typescript@*:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.0.tgz#aef5a8d404beba36ad339abf079ddddfffba86dd"
+
+typescript@2.5.0-dev.20170624:
+  version "2.5.0-dev.20170624"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.5.0-dev.20170624.tgz#21fe9e20cb239bea79f2a945330009b646bf6112"
 
 ua-parser-js@^0.7.9:
   version "0.7.12"

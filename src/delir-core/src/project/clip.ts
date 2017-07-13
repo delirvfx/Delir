@@ -5,6 +5,7 @@ import Keyframe from './keyframe'
 import Effect from './effect'
 import {ClipScheme, ClipConfigScheme} from './scheme/clip'
 import {AvailableRenderer} from '../renderer/renderer'
+import Expression from '../values/expression'
 
 export default class Clip
 {
@@ -23,9 +24,14 @@ export default class Clip
             return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
+        const expressions = _.mapValues(clipJson.expressions, expr => {
+            return new Expression(expr.language, expr.code)
+        })
+
         Object.defineProperty(clip, '_id', {value: clipJson.id || uuid.v4()})
         Object.assign(clip._config, config)
         clip.keyframes = keyframes
+        clip.expressions = expressions
 
         return clip
     }
@@ -45,6 +51,8 @@ export default class Clip
     }
 
     public keyframes: {[propName: string]: Keyframe[]} = {}
+
+    public expressions: {[keyName: string]: Expression} = {}
 
     public effects: Effect[] = []
 

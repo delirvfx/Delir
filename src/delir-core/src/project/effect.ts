@@ -1,20 +1,10 @@
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 
+import {EffectScheme, EffectOptionScheme} from './scheme/effect'
 import {KeyframeScheme} from './scheme/keyframe'
 import Keyframe from './keyframe'
-
-export interface EffectOptionScheme {
-    name: string|null
-    processor: string|null
-    keyframeInterpolationMethod: string
-}
-
-export interface EffectScheme {
-    id: string|null
-    config: EffectOptionScheme
-    keyframes: {[keyName:string]: KeyframeScheme[]}
-}
+import Expression from '../values/expression'
 
 export default class Effect
 {
@@ -31,9 +21,14 @@ export default class Effect
             return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
+        const expressions = _.mapValues(effectJson.expressions, expr => {
+            return new Expression(expr.language, expr.code)
+        })
+
         Object.defineProperty(effect, '_id', {value: effectJson.id || uuid.v4()})
         Object.assign(effect._config, config)
         effect.keyframes = keyframes
+        effect.expressions = expressions
 
         return effect
     }
@@ -47,6 +42,8 @@ export default class Effect
     }
 
     public keyframes: {[keyName: string]: Keyframe[]} = {}
+
+    public expressions: {[keyName: string]: Expression} = {}
 
     get id(): string { return this._id }
 

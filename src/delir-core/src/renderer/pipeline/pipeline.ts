@@ -8,6 +8,8 @@ import PluginRegistry from '../../plugin-support/plugin-registry'
 
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
+import * as TypeScript from 'typescript'
+import * as vm from 'vm'
 import ProgressPromise from '../../helper/progress-promise'
 import RenderingRequest from './render-request'
 import EntityResolver from './entity-resolver'
@@ -17,12 +19,14 @@ import * as RendererFactory from '../renderer'
 import * as KeyframeHelper from '../../helper/keyframe-helper'
 import defaults from '../../helper/defaults'
 import FPSCounter from '../../helper/FPSCounter'
+import * as ExpressionContext from './ExpressionContext'
 
 interface IEffectRenderTask {
     effectEntityId: string
     instance: EffectPluginBase
     effectorProps: TypeDescriptor
     keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
+    expressions: {[propName: string]: (exposes: ExpressionContext.Exposes) => void}
 }
 
 interface IClipRenderTask {
@@ -31,6 +35,7 @@ interface IClipRenderTask {
     clipPlacedFrame: number
     clipDurationFrames: number
     keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
+    expressions: {[propName: string]: (exposes: ExpressionContext.Exposes) => void}
     effects: IEffectRenderTask[]
 }
 
@@ -50,6 +55,8 @@ interface RenderProgression {
     currentFrame: number
     rangeEndFrame: number
 }
+
+const tsCompileOption: TypeScript.CompilerOptions = {}
 
 export default class Pipeline
 {
@@ -97,7 +104,7 @@ export default class Pipeline
         })
     }
 
-    public renderSequencial(compositionId: string, options: Optionalized<RenderingOption> = {}): ProgressPromise<void, RenderProgression>
+    public renderSequencial(compositionId: string, options: Partial<RenderingOption> = {}): ProgressPromise<void, RenderProgression>
     {
         const _options: RenderingOption  = defaults(options, {
             beginFrame: 0,
@@ -131,8 +138,6 @@ export default class Pipeline
 
                 const previousFrameTime = request.time | 0
                 const isAudioBufferingNeeded = previousFrameTime !== currentTime && (currentFrame + 1) <= request.rootComposition.durationFrames
-
-                isAudioBufferingNeeded && console.log('Buffering')
 
                 request = request.clone({
                     frame: currentFrame,
@@ -266,6 +271,12 @@ export default class Pipeline
                     rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
                 })
 
+                const rendererExpressions = _.mapValues(clip.expressions, expr => {
+                    const code = expr.language === 'typescript' ? TypeScript.transpile(expr.code, tsCompileOption) : expr.code
+                    const script = new vm.Script(code, {filename: `${layer.name}.${clip.id}.expression.ts`})
+                    return (exposes: ExpressionContext.Exposes) => script.runInNewContext(ExpressionContext.makeContext(exposes))
+                })
+
                 // Initialize effects
                 const effects: IEffectRenderTask[] = []
                 for (const effect of clip.effects) {
@@ -286,11 +297,18 @@ export default class Pipeline
                         effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
                     })
 
+                    const effectExpressions = _.mapValues(clip.expressions, expr => {
+                        const code = expr.language === 'typescript' ? TypeScript.transpile(expr.code, tsCompileOption) : expr.code
+                        const script = new vm.Script(code, {filename: `${layer.name}.${clip.id}.effect.expression.ts`})
+                        return (exposes: ExpressionContext.Exposes) => script.runInNewContext(ExpressionContext.makeContext(exposes))
+                    })
+
                     effects.push({
                         effectEntityId: effect.id,
                         instance: effector,
                         effectorProps: effectProps,
-                        keyframeLUT: effectKeyframeLUT
+                        keyframeLUT: effectKeyframeLUT,
+                        expressions: effectExpressions,
                     })
                 }
 
@@ -301,6 +319,7 @@ export default class Pipeline
                     clipPlacedFrame: clip.placedFrame,
                     clipDurationFrames: clip.durationFrames,
                     keyframeLUT: rendererKeyframeLUT,
+                    expressions: rendererExpressions,
                     effects,
                 })
             }
@@ -348,15 +367,32 @@ export default class Pipeline
                     chBuffer.fill(0)
                 }
 
-                const params = _.fromPairs(clipTask.rendererProps.properties.map(desc => [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]))
                 let renderReq = req.clone({
                     timeOnClip: req.time - (clipTask.clipPlacedFrame / req.framerate),
                     frameOnClip: req.frame - clipTask.clipPlacedFrame,
 
                     destCanvas: /* isAdjustClip */ false ? destBufferCanvas: clipBufferCanvas,
                     destAudioBuffer: channelAudioBuffers,
-                    parameters: params,
                 })
+
+                const beforeExpressionParams = _.fromPairs(clipTask.rendererProps.properties.map(desc => {
+                    return [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]
+                }))
+
+                const afterExpressionParams = _.mapValues(beforeExpressionParams, (value, propName) => {
+                    if (clipTask.expressions[propName!]) {
+                        // TODO: Value type Validation
+                        return clipTask.expressions[propName!]({
+                            req: renderReq,
+                            clipProperties: beforeExpressionParams,
+                            currentValue: value
+                        })
+                    }
+
+                    return value
+                })
+
+                renderReq = renderReq.clone({parameters: afterExpressionParams})
 
                 if (/* isCompositionClip */ false) {
                     const frameOnComposition = req.frame - clipTask.clipPlacedFrame

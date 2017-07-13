@@ -43,7 +43,6 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         RendererService.renderer!.destinationCanvas = this.refs.canvas
     }
 
-
     selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
     {
         this.setState({

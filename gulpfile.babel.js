@@ -147,7 +147,7 @@ export function compileRendererJs(done) {
                     exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
-                            useBabel: true,
+                            transpileOnly: true,
                             configFileName: join(__dirname, './tsconfig.json'),
                         }},
                     ],
@@ -254,7 +254,7 @@ export async function compilePlugins(done) {
                     exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
-                            useBabel: true,
+                            transpileOnly: true,
                             configFileName: join(__dirname, './tsconfig.json'),
                         }},
                     ],
@@ -467,7 +467,7 @@ export function run(done) {
 
 export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
-    g.watch(paths.src.renderer, buildRendererWithoutJs)
+    g.watch(join(paths.src.renderer, '**/*'), buildRendererWithoutJs)
     g.watch(join(paths.src.renderer, 'styles/**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
     // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))

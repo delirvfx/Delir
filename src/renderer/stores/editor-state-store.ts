@@ -91,7 +91,6 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                 return state.set('previewPlayed', true)
 
             case EditorStateDispatchTypes.StopPreview:
-                console.log('hi')
                 return state.set('previewPlayed', false)
 
             case EditorStateDispatchTypes.SeekPreviewFrame:

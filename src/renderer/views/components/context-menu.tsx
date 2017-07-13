@@ -46,8 +46,6 @@ const buildMenu = (path: EventTarget[], registeredMenus: WeakMap<Element, Electr
 }
 
 const buildMenuElements = ({items}: Electron.Menu): JSX.Element => {
-    console.log(items)
-
     return (
         <ul className={s.list}>
             {items.map((entry, idx) => {
@@ -81,8 +79,8 @@ const buildMenuElements = ({items}: Electron.Menu): JSX.Element => {
 
 class ContextMenuManager
 {
-    activeMenu: Portal|null
-    menus: WeakMap<Element, Electron.MenuItem[]> = new WeakMap
+    private activeMenu: Portal|null
+    private menus: WeakMap<Element, Electron.MenuItem[]> = new WeakMap()
 
     private _leakCheck: WeakSet<any>
 
@@ -110,11 +108,9 @@ class ContextMenuManager
         })
     }
 
-    onBlur = () => {
+    private onBlur = () => { }
 
-    }
-
-    show(menus: Electron.Menu, e: PointerEvent)
+    private show(menus: Electron.Menu, e: PointerEvent)
     {
         if (this.activeMenu) {
             this.activeMenu.unmount()
@@ -133,13 +129,13 @@ class ContextMenuManager
         __DEV__ && this._leakCheck!.add(this.activeMenu)
     }
 
-    register(el: Element, menu: Electron.MenuItem[])
+    public register(el: Element, menu: Electron.MenuItem[])
     {
         // const el = ReactDOM.findDOMNode(element)
         this.menus.set(el, menu)
     }
 
-    unregister(el)
+    public unregister(el)
     {
         this.menus.delete(el)
     }
@@ -147,11 +143,18 @@ class ContextMenuManager
 
 const manager = new ContextMenuManager()
 
+interface MenuItemProps {
+    label: string
+    type?: string
+    onClick?: () => any
+    checked?: boolean
+    submenu?: Electron.MenuItem[]
+    context?: any
+}
 
-
-export class MenuItem extends React.Component
+export class MenuItem extends React.Component<MenuItemProps, void>
 {
-    static propTypes = {
+    protected static propTypes = {
         label: PropTypes.string,
         type: PropTypes.string,
         onClick: PropTypes.func,
@@ -159,13 +162,13 @@ export class MenuItem extends React.Component
         submenu: PropTypes.array,
     }
 
-    render()
+    public render()
     {
         return null
     }
 }
 
-export class ContextMenu extends React.Component
+export class ContextMenu extends React.Component<any, void>
 {
     componentDidMount()
     {
@@ -178,22 +181,22 @@ export class ContextMenu extends React.Component
         manager.unregister(this.refs.root)
     }
 
-
     toMenuItem(item)
     {
         return new Electron.remote.MenuItem(this.toMenuItemJSON(item))
     }
 
-    toMenuItemJSON(item)
+    toMenuItemJSON(item: MenuItem)
     {
-        const menuItem = {
+        const menuItem: any = {
             label: item.props.label,
             type: item.props.type,
             click: item.props.onClick,
             checked: item.props.checked,
+            context: item.props.context,
         }
 
-        const subItems = Array.isArray(item.props.children) ? item.props.children : [item.props.children]
+        const subItems: MenuItem[] = Array.isArray(item.props.children) ? item.props.children : [item.props.children] as any
         if (subItems && subItems.length > 0 && subItems[0] != null) {
             menuItem.submenu = subItems.map(subItem => this.toMenuItemJSON(subItem))
         }
