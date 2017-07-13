@@ -114,11 +114,14 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {activeClip} = this.props
         const {activePropName} = this.state
 
-        console.log('saving', activePropName)
-        if (!activePropName) return
+        if (!activeClip || !activePropName) return
 
         try {
-            activeClip!.expressions[activePropName] = new Delir.Values.Expression('typescript', this._editor.getValue())
+            ProjectModifyActions.modifyClipExpression(activeClip.id, activePropName, {
+                language: 'typescript',
+                code: this._editor.getValue(),
+            })
+
             this.setState({editorOpened: false, activePropName: null})
         } catch (e) {
             console.log(e)
@@ -126,6 +129,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     }
 
     private closeEditor = () => {
+        this._editor.setValue('')
         this.setState({editorOpened: false, activePropName: null})
     }
 

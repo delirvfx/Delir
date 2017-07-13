@@ -9,6 +9,7 @@ import Layer from '../project/layer'
 import Clip from '../project/clip'
 import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
+import Expression from '../values/expression'
 
 import PluginRegistory from '../plugin-support/plugin-registry'
 
@@ -289,6 +290,19 @@ export function modifyClip(
         : findClipById(project, targetClipId)!
 
     Object.assign(clip, patch)
+}
+
+export function modifyClipExpression(
+    project: Project,
+    targetClipId: Clip|string,
+    property: string,
+    expr: Expression,
+) {
+    const clip = targetClipId instanceof Clip
+        ? targetClipId
+        : findClipById(project, targetClipId)!
+
+    clip.expressions[property] = expr
 }
 
 export function modifyEffect(

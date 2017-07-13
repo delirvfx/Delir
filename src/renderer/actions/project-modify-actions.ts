@@ -30,6 +30,7 @@ export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompo
 export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Optionalized<Delir.Project.Layer>}>
 export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: Optionalized<Delir.Project.Clip>}>
 export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Optionalized<Delir.Project.Keyframe>}>
+export type ModifyClipExpression = Payload<'ModifyClipExpression', {targetClipId: string, targetProperty: string, expr: {language: string, code: string}}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
@@ -49,6 +50,7 @@ export const DispatchTypes = keyMirror({
     ModifyComposition: null,
     ModifyLayer: null,
     ModifyClip: null,
+    ModifyClipExpression: null,
     ModifyKeyframe: null,
     RemoveComposition: null,
     RemoveLayer: null,
@@ -270,6 +272,18 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.ModifyClip, {
             targetClipId: clipId,
             patch: props,
+        }))
+    },
+
+    modifyClipExpression(clipId: string, property: string, expr: {language: string, code: string})
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.ModifyClipExpression, {
+            targetClipId: clipId,
+            targetProperty: property,
+            expr: {
+                language: expr.language,
+                code: expr.code,
+            }
         }))
     },
 

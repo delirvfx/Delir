@@ -119,6 +119,12 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.modifyClip(project!, payload.entity.targetClipId, payload.entity.patch)
                 break
 
+            case ProjectModifyDispatchTypes.ModifyClipExpression: {
+                const {targetClipId, targetProperty, expr} = payload.entity
+                ProjectHelper.modifyClipExpression(project!, targetClipId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
+                break
+            }
+
             case ProjectModifyDispatchTypes.ModifyKeyframe:
                 ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
                 break
