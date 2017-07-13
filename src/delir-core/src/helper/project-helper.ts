@@ -247,7 +247,7 @@ export function deleteKeyframe(
 export function modifyAsset(
     project: Project,
     targetAssetId: Asset|string,
-    patch: Optionalized<Asset>
+    patch: Partial<Asset>
 ) {
     const asset = targetAssetId instanceof Asset
         ? targetAssetId
@@ -259,7 +259,7 @@ export function modifyAsset(
 export function modifyComposition(
     project: Project,
     targetCompositionId: Composition|string,
-    patch: Optionalized<Composition>
+    patch: Partial<Composition>
 ) {
     const composition = targetCompositionId instanceof Composition
         ? targetCompositionId
@@ -271,7 +271,7 @@ export function modifyComposition(
 export function modifyLayer(
     project: Project,
     targetLayerId: Layer|string,
-    patch: Optionalized<Layer>
+    patch: Partial<Layer>
 ) {
     const layer = targetLayerId instanceof Layer
         ? targetLayerId
@@ -283,7 +283,7 @@ export function modifyLayer(
 export function modifyClip(
     project: Project,
     targetClipId: Clip|string,
-    patch: Optionalized<Clip>
+    patch: Partial<Clip>
 ) {
     const clip = targetClipId instanceof Clip
         ? targetClipId
@@ -309,7 +309,7 @@ export function modifyEffect(
     project: Project,
     parentClipId: Clip|string,
     targetEffectId: Effect|string,
-    patch: Optionalized<Effect>
+    patch: Partial<Effect>
 ) {
     const clip = parentClipId instanceof Clip
         ? parentClipId
@@ -325,7 +325,7 @@ export function modifyEffect(
 export function modifyKeyframe(
     project: Project,
     targetKeyframeId: Keyframe|string,
-    patch: Optionalized<Keyframe>,
+    patch: Partial<Keyframe>,
 ) {
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId

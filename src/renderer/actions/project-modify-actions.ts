@@ -26,11 +26,11 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type AddKeyframePayload = Payload<'AddKeyframe', {targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe}>
 export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
-export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: Optionalized<Delir.Project.Composition>}>
-export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Optionalized<Delir.Project.Layer>}>
-export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: Optionalized<Delir.Project.Clip>}>
-export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Optionalized<Delir.Project.Keyframe>}>
+export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: Partial<Delir.Project.Composition>}>
+export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Partial<Delir.Project.Layer>}>
+export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: Partial<Delir.Project.Clip>}>
 export type ModifyClipExpression = Payload<'ModifyClipExpression', {targetClipId: string, targetProperty: string, expr: {language: string, code: string}}>
+export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
@@ -177,7 +177,7 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
     },
 
-    createOrModifyKeyframeForClip(clipId: string, propName: string, frameOnClip: number, patch: Optionalized<Delir.Project.Keyframe>)
+    createOrModifyKeyframeForClip(clipId: string, propName: string, frameOnClip: number, patch: Partial<Delir.Project.Keyframe>)
     {
         const project = ProjectModifyStore.getState().get('project')
 
@@ -252,15 +252,15 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.MoveClipToLayer, {targetLayerId, clipId}))
     },
 
-    modifyComposition(compId: string, props: Optionalized<Delir.Project.Composition>)
+    modifyComposition(compId: string, props: Partial<Delir.Project.Composition>)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.ModifyComposition,{
+        dispatcher.dispatch(new Payload(DispatchTypes.ModifyComposition, {
             targetCompositionId: compId,
             patch: props
         }))
     },
 
-    modifyLayer(layerId: string, props: Optionalized<Delir.Project.Layer>)
+    modifyLayer(layerId: string, props: Partial<Delir.Project.Layer>)
     {
         dispatcher.dispatch(new Payload(DispatchTypes.ModifyLayer, {
             targetLayerId: layerId,
@@ -268,7 +268,7 @@ export default {
         }))
     },
 
-    modifyClip(clipId: string, props: Optionalized<Delir.Project.Clip>) {
+    modifyClip(clipId: string, props: Partial<Delir.Project.Clip>) {
         dispatcher.dispatch(new Payload(DispatchTypes.ModifyClip, {
             targetClipId: clipId,
             patch: props,
