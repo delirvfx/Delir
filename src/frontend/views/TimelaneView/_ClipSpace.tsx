@@ -11,7 +11,6 @@ import ProjectModifyActions from '../../actions/project-modify-actions'
 import TimelineHelper from '../../helpers/timeline-helper'
 import connectToStores from '../../utils/connectToStores'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
-import cancelEvent from '../../utils/cancelEvent'
 
 import Clip from './_Clip'
 

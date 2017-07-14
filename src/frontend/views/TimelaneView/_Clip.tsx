@@ -2,7 +2,6 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import * as classnames from 'classnames'
-import cancelEvent from '../../utils/cancelEvent'
 
 import {ContextMenu, MenuItem} from '../components/context-menu'
 import EditorStateActions from '../../actions/editor-state-actions'
