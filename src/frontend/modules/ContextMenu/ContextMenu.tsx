@@ -5,8 +5,7 @@ import * as Electron from 'electron'
 import * as classnames from 'classnames'
 
 import Portal from '../../utils/portal'
-import * as s from './context-menu.styl'
-
+import * as s from './ContextMenu.styl'
 
 // const {Menu, MenuItem: ElectronMenuItem} = remote
 

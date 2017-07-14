@@ -17,7 +17,7 @@ import { default as ProjectModifyStore } from '../../stores/project-modify-store
 import Pane from '../components/pane'
 import LabelInput from '../components/label-input'
 import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components/table'
-import { ContextMenu, MenuItem } from '../components/context-menu'
+import { ContextMenu, MenuItem } from '../../modules/ContextMenu'
 
 import * as Modal from '../components/modal-window'
 import CompositionSettingModal from '../CompositionSettingModal'
