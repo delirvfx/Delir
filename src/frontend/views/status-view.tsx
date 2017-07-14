@@ -7,18 +7,22 @@ import EditorStateActions from '../actions/editor-state-actions'
 
 import Pane from './components/pane'
 
-export default class StatusView extends React.Component
+interface State {
+    stateText: string
+}
+
+export default class StatusView extends React.Component<void, State>
 {
     constructor(...args)
     {
         super(...args)
         this.state = {
-            stateText: EditorStateStore.getState().processingState,
+            stateText: EditorStateStore.getState().get('processingState'),
         }
 
         EditorStateStore.addListener(() => {
             this.setState({
-                stateText: EditorStateStore.getState().processingState,
+                stateText: EditorStateStore.getState().get('processingState'),
             })
         })
     }
