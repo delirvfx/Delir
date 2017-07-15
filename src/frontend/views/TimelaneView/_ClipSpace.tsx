@@ -10,7 +10,7 @@ import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import connectToStores from '../../utils/connectToStores'
-import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 
 import Clip from './_Clip'
 

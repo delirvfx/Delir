@@ -9,7 +9,7 @@ import * as path from 'path'
 import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
 
-import EditorStateStore from '../stores/editor-state-store'
+import EditorStateStore from '../stores/EditorStateStore'
 
 export type DragEntity =
     {type: 'asset', asset: Delir.Project.Asset}

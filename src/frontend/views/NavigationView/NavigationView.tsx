@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types'
 import * as path from 'path'
 import connectToStores from '../../utils/connectToStores'
 
-import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import EditorStateActions from '../../actions/editor-state-actions'
 
 import Pane from '../components/pane'

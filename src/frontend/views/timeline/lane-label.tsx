@@ -5,7 +5,7 @@ import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
 
 import RendererService from '../../services/renderer'
-import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import LabelInput from '../components/label-input'

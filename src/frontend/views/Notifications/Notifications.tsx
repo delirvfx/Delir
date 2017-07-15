@@ -3,7 +3,7 @@ import {Component} from 'react'
 import * as classnames from 'classnames'
 
 import connectToStores from '../../utils/connectToStores'
-import {default as EditorStateStore, NotificationEntries as NotificationEntries} from '../../stores/editor-state-store'
+import {default as EditorStateStore, NotificationEntries as NotificationEntries} from '../../stores/EditorStateStore'
 
 import * as s from './style.styl'
 

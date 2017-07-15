@@ -17,7 +17,7 @@ import KeyframeGraph from './KeyframeGraph'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
 import RendererService from '../../services/renderer'
 

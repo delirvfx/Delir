@@ -2,7 +2,7 @@ import React from 'react'
 import * as PropTypes from 'prop-types'
 import {remote} from 'electron'
 
-import EditorStateStore from '../stores/editor-state-store'
+import EditorStateStore from '../stores/EditorStateStore'
 import EditorStateActions from '../actions/editor-state-actions'
 
 import Pane from './components/pane'

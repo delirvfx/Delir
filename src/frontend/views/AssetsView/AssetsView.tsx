@@ -11,7 +11,7 @@ import {ProjectHelper, ColorRGB} from 'delir-core'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
-import { default as EditorStateStore, EditorState } from '../../stores/editor-state-store'
+import { default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
 import { default as ProjectModifyStore } from '../../stores/project-modify-store'
 
 import Pane from '../components/pane'

@@ -8,7 +8,7 @@ import * as Platform from '../utils/platform'
 import dispatcher from '../dispatcher'
 import {KnownPayload} from '../actions/PayloadTypes'
 
-import EditorStateStore from '../stores/editor-state-store'
+import EditorStateStore from '../stores/EditorStateStore'
 import EditorStateActions from '../actions/editor-state-actions'
 import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
 

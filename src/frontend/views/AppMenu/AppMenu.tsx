@@ -4,7 +4,7 @@ import {remote} from 'electron'
 import * as Platform from '../../utils/platform'
 
 import EditorStateActions from '../../actions/editor-state-actions'
-import EditorStateStore from '../../stores/editor-state-store'
+import EditorStateStore from '../../stores/EditorStateStore'
 
 export default class AppMenu extends React.Component<any, any>
 {

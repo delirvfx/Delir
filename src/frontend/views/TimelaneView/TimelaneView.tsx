@@ -13,7 +13,7 @@ import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import RendererService from '../../services/renderer'
 
-import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
+import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
 
 import Workspace from '../components/workspace'
