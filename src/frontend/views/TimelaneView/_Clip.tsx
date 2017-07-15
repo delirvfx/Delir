@@ -52,7 +52,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     }
 
     selectClip = e => {
-        AppActions'.changeActiveClip(this.props.clip.id!)
+        AppActions.changeActiveClip(this.props.clip.id!)
     }
 
     dragStart = e => {
@@ -63,7 +63,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
             }
         })
 
-        AppActions'.setDragEntity({type: 'clip', clip: this.props.clip})
+        AppActions.setDragEntity({type: 'clip', clip: this.props.clip})
     }
 
     drag = (e) => {
@@ -79,7 +79,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     }
 
     dragEnd = (e) => {
-        AppActions'.clearDragEntity()
+        AppActions.clearDragEntity()
 
         this.setState({
             draggedPxX: 0,
