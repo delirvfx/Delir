@@ -6,7 +6,7 @@ import Pane from '../components/pane'
 import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
 import PreviewView from '../PreviewView/'
-import TimelaneView from '../TimelaneView'
+import TimelineView from '../TimelineView'
 import NavigationView from '../NavigationView'
 import StatusView from '../status-view'
 import Notifications from '../Notifications'
@@ -38,7 +38,7 @@ export default class AppView extends React.Component<null, null>
                             <PreviewView />
                         </Workspace>
                     </Pane>
-                    <TimelaneView />
+                    <TimelineView />
                 </Workspace>
                 <StatusView />
                 <Notifications />

@@ -23,7 +23,7 @@ import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import SelectList from '../components/select-list'
 import DropDown from '../components/dropdown'
 
-import LaneLabel from '../timeline/lane-label'
+import LaneLabel from './LaneLabel'
 import KeyframeEditor from '../KeyframeEditor'
 import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
@@ -59,14 +59,14 @@ const PX_PER_SEC = 30
 }))
 export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>
 {
-    protected refs: {
+    public refs: {
         scaleList: DropDown
         keyframeView: KeyframeEditor
         timelineLanes: HTMLUListElement
         timelineLabels: HTMLDivElement
     }
 
-    protected state: TimelineViewState = {
+    public state: TimelineViewState = {
         timelineScrollTop: 0,
         timelineScrollLeft: 0,
         cursorHeight: 0,
@@ -74,13 +74,13 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         selectedLaneId: null,
     }
 
-    protected componentDidMount()
+    public componentDidMount()
     {
         this._syncCursorHeight()
         window.addEventListener('resize', _.debounce(this._syncCursorHeight, 1000 / 30))
     }
 
-    protected componentDidUpdate()
+    public componentDidUpdate()
     {
         this.refs.timelineLabels.scrollTop = this.refs.timelineLanes.scrollTop = this.state.timelineScrollTop
     }
@@ -163,7 +163,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         AppActions.seekPreviewFrame(frame)
     }
 
-    protected render()
+    public render()
     {
         const {scale, timelineScrollLeft} = this.state
         const {activeComp, activeClip, currentPreviewFrame} = this.props.editor
