@@ -19,7 +19,7 @@ import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/pr
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 
-import {ContextMenu, MenuItem} from '../components/context-menu'
+import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import SelectList from '../components/select-list'
 import DropDown from '../components/dropdown'
 

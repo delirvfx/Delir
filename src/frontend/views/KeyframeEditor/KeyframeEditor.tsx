@@ -10,7 +10,7 @@ import {MeasurePoint} from '../../helpers/timeline-helper'
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 import SelectList from '../components/select-list'
-import {ContextMenu, MenuItem} from '../components/context-menu'
+import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import DelirValueInput from './_DelirValueInput'
 import KeyframeGraph from './KeyframeGraph'
 

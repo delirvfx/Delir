@@ -9,7 +9,7 @@ import {default as EditorStateStore, EditorState} from '../../stores/editor-stat
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import LabelInput from '../components/label-input'
-import {ContextMenu, MenuItem} from '../components/context-menu'
+import {ContextMenu, MenuItem} from '../components/ContextMenu'
 
 interface LaneLabelProps {
     editor: EditorState

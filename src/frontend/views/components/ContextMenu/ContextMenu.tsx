@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types'
 import * as Electron from 'electron'
 import * as classnames from 'classnames'
 
-import Portal from '../../utils/portal'
+import Portal from '../../../modules/Portal'
 import * as s from './ContextMenu.styl'
 
 // const {Menu, MenuItem: ElectronMenuItem} = remote

@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import * as classnames from 'classnames'
 
-import {ContextMenu, MenuItem} from '../components/context-menu'
+import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
