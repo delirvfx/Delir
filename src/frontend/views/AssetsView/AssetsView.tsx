@@ -22,7 +22,7 @@ import { ContextMenu, MenuItem } from '../components/ContextMenu'
 import * as Modal from '../../modules/ModalWindow'
 import CompositionSettingModal from '../CompositionSettingModal'
 
-import connectToStores from '../../utils/connectToStores'
+import connectToStores from '../../utils/Flux/connectToStores'
 
 import * as s from './style.styl'
 

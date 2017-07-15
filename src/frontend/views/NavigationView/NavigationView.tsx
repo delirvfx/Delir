@@ -2,7 +2,7 @@ import {remote} from 'electron'
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as path from 'path'
-import connectToStores from '../../utils/connectToStores'
+import connectToStores from '../../utils/Flux/connectToStores'
 
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import AppActions from '../../actions/App'

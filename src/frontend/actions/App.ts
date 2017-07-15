@@ -6,8 +6,8 @@ import {BSON} from 'bson'
 import * as fs from 'fs-promise'
 import * as path from 'path'
 
-import dispatcher from '../dispatcher'
-import Payload from '../utils/payload'
+import dispatcher from '../utils/Flux/Dispatcher'
+import Payload from '../utils/Flux/Payload'
 
 import EditorStateStore from '../stores/EditorStateStore'
 

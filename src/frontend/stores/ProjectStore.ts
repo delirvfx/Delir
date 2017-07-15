@@ -5,7 +5,7 @@ import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
 
-import dispatcher from '../dispatcher'
+import dispatcher from '../utils/Flux/Dispatcher'
 import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as AppActionsDispatchTypes} from '../actions/App'

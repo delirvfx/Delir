@@ -5,7 +5,7 @@ import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
 
 import * as Platform from '../utils/platform'
-import dispatcher from '../dispatcher'
+import dispatcher from '../utils/Flux/Dispatcher'
 import {KnownPayload} from '../actions/PayloadTypes'
 
 import EditorStateStore from '../stores/EditorStateStore'

@@ -2,7 +2,7 @@ import * as React from 'react'
 import {Component} from 'react'
 import * as classnames from 'classnames'
 
-import connectToStores from '../../utils/connectToStores'
+import connectToStores from '../../utils/Flux/connectToStores'
 import {default as EditorStateStore, NotificationEntries as NotificationEntries} from '../../stores/EditorStateStore'
 
 import * as s from './style.styl'

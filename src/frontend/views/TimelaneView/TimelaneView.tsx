@@ -5,7 +5,7 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as ReactDOM from 'react-dom'
 import * as Delir from 'delir-core'
-import connectToStores from '../../utils/connectToStores'
+import connectToStores from '../../utils/Flux/connectToStores'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import AppActions from '../../actions/App'

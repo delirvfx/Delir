@@ -9,7 +9,7 @@ import RendererService from '../../services/renderer'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 import TimePixelConversion from '../../utils/TimePixelConversion'
-import connectToStores from '../../utils/connectToStores'
+import connectToStores from '../../utils/Flux/connectToStores'
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 
 import Clip from './_Clip'

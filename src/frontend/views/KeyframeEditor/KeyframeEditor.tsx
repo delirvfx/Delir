@@ -4,7 +4,7 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
-import connectToStores from '../../utils/connectToStores'
+import connectToStores from '../../utils/Flux/connectToStores'
 import {MeasurePoint} from '../../utils/TimePixelConversion'
 
 import Workspace from '../components/workspace'

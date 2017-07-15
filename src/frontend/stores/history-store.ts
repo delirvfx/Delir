@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
 
-import dispatcher from '../dispatcher'
+import dispatcher from '../utils/Flux/Dispatcher'
 import ActionTypes from '../action-types'
 
 class HistoryStore extends ReduceStore<Object>
