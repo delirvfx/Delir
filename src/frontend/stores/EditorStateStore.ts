@@ -12,7 +12,14 @@ import {DispatchTypes as AppActionsDispatchTypes, DragEntity} from '../actions/A
 
 type StateRecord = Record<EditorState>
 
-export type NotificationEntry = {id: string, title?: string, message: string, level: 'info'|'error', detail?: string}
+export interface NotificationEntry {
+    id: string
+    title?: string
+    message: string
+    level: 'info'|'error'
+    detail?: string
+}
+
 export type NotificationEntries = Immutable.List<NotificationEntry>
 
 export interface EditorState {
