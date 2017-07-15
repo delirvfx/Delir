@@ -11,30 +11,29 @@ import Portal from '../Portal'
 
 import * as s from './ModalWindow.styl'
 
-const appPath = remote.app.getAppPath()
-const buildUrl = (filepath: string, query: Object) => {
-    return URL.format({
-        protocol: 'file',
-        host: '',
-        pathname: `${path.join(appPath, '/renderer/', filepath)}`,
-        query: query ? {query: JSON.stringify(query)} : null,
-    })
+interface ModalWindowProps {
+    show?: boolean
+    url?: string
+    width?: number
+    height?: number
+    closable?: boolean
+    query?: {[name: string]: string|number}
+    onHide?: () => any
+    onResponse?: (param: {[name: string]: string|number}) => any
 }
 
-export interface ModalWindowProps {
-    show?: boolean,
-    url?: string,
-    width?: number,
-    height?: number,
-    closable?: boolean,
-    query?: {[name: string]: string|number},
-    onHide?: () => any,
-    onResponse?: (param: {[name: string]: string|number}) => any,
+interface ModalWindowState {
+    show: boolean
+    onTransitionEnd?: () => void
 }
 
-export default class WindowComponent extends React.Component<ModalWindowProps, any>
+export const show = <T extends JSX.Element = any>(component: T, props: ModalWindowProps = {show: true}): Portal => {
+    return Portal.mount(<ModalWindow {...props}>{component}</ModalWindow>)
+}
+
+export default class ModalWindow extends React.Component<ModalWindowProps, ModalWindowState>
 {
-    static propTypes = {
+    public static propTypes = {
         // children: PropTypes.element.isRequired,
         show: PropTypes.bool.isRequired,
         url: PropTypes.string.isRequired,
@@ -46,13 +45,13 @@ export default class WindowComponent extends React.Component<ModalWindowProps, a
         onResponse: PropTypes.func,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         show: false,
         url: 'about:blank',
         closable: true,
     }
 
-    window: Electron.BrowserWindow
+    private window: Electron.BrowserWindow
 
     constructor(props: ModalWindowProps, context: any)
     {
@@ -63,65 +62,22 @@ export default class WindowComponent extends React.Component<ModalWindowProps, a
         }
     }
 
-    componentDidMount()
-    {
+    private transitionEnd = () => {
+        const {onTransitionEnd} = this.state
+
+        if (typeof onTransitionEnd === 'function') {
+            onTransitionEnd()
+        }
     }
 
-    componentWillUnmount()
-    {
-        // this.window.destroy()
-    }
-
-    render()
+    public render()
     {
         const {children, url, width, height} = this.props
-        const {show} = this.state
-
-        console.log('state:', show)
 
         return (
-            <div className={classnames(s.root, {[s['--show']]: show})}>
+            <div className={classnames(s.root, {[s['--show']]: this.state.show})} onTransitionEnd={this.transitionEnd}>
                 {children ? children : <webview className={s.webview} src={url} autosize='on' style={{width, height}} />}
             </div>
         )
     }
 }
-
-export class Modal {
-    private portal: Portal|null
-    private modalView: WindowComponent|null
-
-    constructor()
-    {
-        this.portal = new Portal()
-    }
-
-    mount(element: JSX.Element)
-    {
-        this.modalView = this.portal!.mount(<WindowComponent show={false}>{element}</WindowComponent>) as WindowComponent
-    }
-
-    dispose()
-    {
-        this.portal!.unmount()
-        this.portal = null
-        this.modalView = null
-    }
-
-    show()
-    {
-        this.modalView!.setState({show: true})
-    }
-
-    hide()
-    {
-        this.modalView!.setState({show: false})
-    }
-}
-
-
-export const show =  (component: JSX.Element, options: ModalWindowProps = {show: true}): Portal => {
-    return Portal.mount(<WindowComponent {...options}>{component}</WindowComponent>)
-}
-
-export const create = () => new Modal()

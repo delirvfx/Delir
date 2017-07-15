@@ -3,34 +3,60 @@ import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import * as serialize from 'form-serialize'
 
-import FormStyle from '../components/Form'
-import * as s from './style.styl'
+import　ModalWindow from '../../modules/ModalWindow/Controller'
+import FormStyle from '../../views/components/Form'
+import * as s from './CompositionSettingModal.styl'
 
-export default class CompositionSettingModal extends React.PureComponent<{
+type SettingResult = {[props: string]: string} | void
+
+export const show = (props: {composition: Delir.Project.Composition}): Promise<SettingResult> => {
+    return new Promise((resolve) => {
+        const resolver = async (result?: SettingResult) => {
+            await modal.hide()
+            modal.dispose()
+            resolve(result)
+        }
+
+        const modal = new ModalWindow()
+
+        modal.mount(
+            <CompositionSettingModal
+                composition={props.composition}
+                onConfirm={resolver}
+                onCancel={resolver}
+            />
+        )
+
+        modal.show()
+    })
+}
+
+interface Props {
     composition?: Delir.Project.Composition,
     onConfirm: (opts: {[props: string]: string}) => void,
     onCancel: () => void
-}, any>
+}
+
+class CompositionSettingModal extends React.PureComponent<Props, any>
 {
-    static propTypes = {
+    public static propTypes = {
         composition: PropTypes.object,
         onConfirm: PropTypes.func.isRequired,
         onCancel: PropTypes.func.isRequired,
     }
 
-    onConfirm = () =>
+    private onConfirm = () =>
     {
         const opts = serialize((this.refs.form as HTMLFormElement), {hash: true})
-        console.log(opts)
         this.props.onConfirm(opts as {[p: string]: string})
     }
 
-    onCancel = () =>
+    private onCancel = () =>
     {
         this.props.onCancel()
     }
 
-    render()
+    public render()
     {
         const {composition: comp} = this.props
 

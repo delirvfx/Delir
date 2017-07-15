@@ -20,7 +20,7 @@ import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components
 import { ContextMenu, MenuItem } from '../components/ContextMenu'
 
 import * as Modal from '../../modules/ModalWindow'
-import CompositionSettingModal from '../../modules/CompositionSettingModal'
+import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
 
 import connectToStores from '../../utils/Flux/connectToStores'
 
@@ -138,19 +138,14 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
         const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
 
-        const modal = Modal.create()
-        const req = (await new Promise<{[p: string]: string}|void>(resolve => {
-            modal.mount(<CompositionSettingModal composition={comp} onConfirm={resolve} onCancel={resolve} />)
-            modal.show()
-        })) as CompositionProps|void
 
-        modal.dispose()
+        const req = await CompositionSettingModal.show({composition: comp})
 
         if (!req) {
             return
         }
 
-        ProjectModActions.modifyComposition(compId, castToCompositionPropTypes(req))
+        ProjectModActions.modifyComposition(compId, castToCompositionPropTypes(req as any))
     }
 
     openNewCompositionWindow =  async () =>
