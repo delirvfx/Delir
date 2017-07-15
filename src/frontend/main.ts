@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom'
 import * as os from 'os'
 
 import AppComponent from './views/AppView'
-import './utils/Monaco'
+import Monaco from './utils/Monaco'
 
 import AppActions from './actions/App'
 
@@ -15,6 +15,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // initialize app
     await RendererService.initialize()
     AppActions.setActiveProject(new Delir.Project.Project())
+    await Monaco.setup()
 
     // Attach platform class to body element
     switch (os.type()) {
