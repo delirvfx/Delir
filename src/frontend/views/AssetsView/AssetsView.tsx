@@ -19,7 +19,7 @@ import LabelInput from '../components/label-input'
 import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components/table'
 import { ContextMenu, MenuItem } from '../components/ContextMenu'
 
-import * as Modal from '../components/modal-window'
+import * as Modal from '../../modules/ModalWindow'
 import CompositionSettingModal from '../CompositionSettingModal'
 
 import connectToStores from '../../utils/connectToStores'

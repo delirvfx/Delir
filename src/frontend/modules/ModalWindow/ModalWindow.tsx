@@ -7,9 +7,9 @@ import * as qs from 'querystring'
 import {remote} from 'electron'
 import * as classnames from 'classnames'
 
-import Portal from '../../utils/portal'
+import Portal from '../Portal'
 
-import * as s from './modal-window.styl'
+import * as s from './ModalWindow.styl'
 
 const appPath = remote.app.getAppPath()
 const buildUrl = (filepath: string, query: Object) => {
