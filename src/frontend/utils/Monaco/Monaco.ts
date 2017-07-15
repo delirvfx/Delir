@@ -40,7 +40,7 @@ const loaderLoadedHandler = () => {
             ['lib.es2015.symbol.d.ts', require('!raw-loader!typescript/lib/lib.es2015.symbol.d.ts')],
             ['lib.es2015.symbol.wellknown.d.ts', require('!raw-loader!typescript/lib/lib.es2015.symbol.wellknown.d.ts')],
             ['lib.es2016.array.include.d.ts', require('!raw-loader!typescript/lib/lib.es2016.array.include.d.ts')],
-            ['console.d.ts', require('!raw-loader!./console.d.ts')],
+            ['console.d.ts', require('!raw-loader!./console.d.ts.txt')],
         ].forEach(([fileName, typeDef]) => {
             monaco.languages.typescript.typescriptDefaults.addExtraLib(typeDef, fileName)
         })

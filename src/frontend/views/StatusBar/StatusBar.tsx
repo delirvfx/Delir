@@ -2,10 +2,10 @@ import React from 'react'
 import * as PropTypes from 'prop-types'
 import {remote} from 'electron'
 
-import EditorStateStore from '../stores/EditorStateStore'
-import AppActions from '../actions/App'
+import EditorStateStore from '../../stores/EditorStateStore'
+import AppActions from '../../actions/App'
 
-import Pane from './components/pane'
+import Pane from '../components/pane'
 
 interface State {
     stateText: string
