@@ -1,3 +1,4 @@
 {
+    "main": "./Notifications.tsx",
     "typings": "./Notifications.tsx"
 }
