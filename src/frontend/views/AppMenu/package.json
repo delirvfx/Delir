@@ -1,3 +1,4 @@
 {
-    "main": "./AppMenu.tsx"
+    "main": "./AppMenu.tsx",
+    "typings": "./AppMenu.tsx"
 }
