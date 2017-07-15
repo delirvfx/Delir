@@ -7,7 +7,7 @@ import * as Delir from 'delir-core'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import AppActions from '../../actions/App'
-import ProjectModifyActions from '../../actions/project-modify-actions'
+import ProjectModActions from '../../actions/ProjectMod'
 
 import * as s from './KeyframeGraph.styl'
 
@@ -107,7 +107,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 const keyframe = keyframes.find(kf => kf.id === this._selectedKeyframeId)!
                 const movedFrame = this._pxToFrame(keyframeMovement.x)
 
-                ProjectModifyActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframe.frameOnClip, {
+                ProjectModActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframe.frameOnClip, {
                     frameOnClip: keyframe.frameOnClip + movedFrame
                 })
 
@@ -126,11 +126,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 const position = {x: data.element.cx.baseVal.value, y: data.element.cy.baseVal.value}
 
                 if (data.type === 'ease-in') {
-                    ProjectModifyActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframes[keyframeIdx + 1].frameOnClip, {
+                    ProjectModActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframes[keyframeIdx + 1].frameOnClip, {
                         easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 } else if (data.type === 'ease-out') {
-                    ProjectModifyActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframes[keyframeIdx].frameOnClip, {
+                    ProjectModActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframes[keyframeIdx].frameOnClip, {
                         easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 }
@@ -153,7 +153,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         console.log(e)
 
         if ((e.key === 'Delete' || e.key === 'Backspace') && activeKeyframeId) {
-            ProjectModifyActions.removeKeyframe(activeKeyframeId)
+            ProjectModActions.removeKeyframe(activeKeyframeId)
             this._selectedKeyframeId = null
         }
     }

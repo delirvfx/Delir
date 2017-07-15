@@ -9,7 +9,7 @@ import dispatcher from '../dispatcher'
 import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as AppActionsDispatchTypes} from '../actions/App'
-import {DispatchTypes as ProjectModifyDispatchTypes} from '../actions/project-modify-actions'
+import {DispatchTypes as ProjectModDispatchTypes} from '../actions/ProjectMod'
 
 type StateRecord = Record<ProjectStoreState>
 
@@ -47,30 +47,30 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
             case AppActionsDispatchTypes.ClearActiveProject:
                 return state.set('project', null)
 
-            case ProjectModifyDispatchTypes.CreateComposition:
+            case ProjectModDispatchTypes.CreateComposition:
                 const newLayer = new Delir.Project.Layer()
                 ProjectHelper.addComposition(project!, payload.entity.composition)
                 ProjectHelper.addLayer(project!, payload.entity.composition, newLayer)
                 break
 
-            case ProjectModifyDispatchTypes.CreateLayer:
+            case ProjectModDispatchTypes.CreateLayer:
                 ProjectHelper.addLayer(project!, payload.entity.targetCompositionId, payload.entity.layer)
                 break
 
-            case ProjectModifyDispatchTypes.CreateClip:
+            case ProjectModDispatchTypes.CreateClip:
                 ProjectHelper.addClip(project!, payload.entity.targetLayerId, payload.entity.newClip)
                 break
 
-            case ProjectModifyDispatchTypes.AddClip:
+            case ProjectModDispatchTypes.AddClip:
                 const {targetLayer, newClip} = payload.entity
                 ProjectHelper.addClip(project, targetLayer, newClip)
                 break
 
-            case ProjectModifyDispatchTypes.AddLayer:
+            case ProjectModDispatchTypes.AddLayer:
                 ProjectHelper.addLayer(project!, payload.entity.targetComposition, payload.entity.layer)
                 break
 
-            case ProjectModifyDispatchTypes.AddLayerWithAsset:
+            case ProjectModDispatchTypes.AddLayerWithAsset:
                 (() => {
                     const {targetComposition, clip, asset: registeredAsset} = payload.entity
                     const propName = Delir.Renderer.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
@@ -87,16 +87,16 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 })()
                 break
 
-            case ProjectModifyDispatchTypes.AddAsset:
+            case ProjectModDispatchTypes.AddAsset:
                 ProjectHelper.addAsset(project!, payload.entity.asset)
                 break
 
-            case ProjectModifyDispatchTypes.AddKeyframe: {
+            case ProjectModDispatchTypes.AddKeyframe: {
                 const {targetClip, propName, keyframe} = payload.entity
                 ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
             }
 
-            case ProjectModifyDispatchTypes.MoveClipToLayer: {
+            case ProjectModDispatchTypes.MoveClipToLayer: {
                 const targetClip = ProjectHelper.findClipById(project!, payload.entity.clipId)
                 const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.entity.clipId)
                 const destLane = ProjectHelper.findLayerById(project!, payload.entity.targetLayerId)
@@ -108,45 +108,45 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
             }
 
-            case ProjectModifyDispatchTypes.ModifyComposition:
+            case ProjectModDispatchTypes.ModifyComposition:
                 ProjectHelper.modifyComposition(project!, payload.entity.targetCompositionId, payload.entity.patch)
                 break
 
-            case ProjectModifyDispatchTypes.ModifyLayer:
+            case ProjectModDispatchTypes.ModifyLayer:
                 ProjectHelper.modifyLayer(project!, payload.entity.targetLayerId, payload.entity.patch)
                 break
 
-            case ProjectModifyDispatchTypes.ModifyClip:
+            case ProjectModDispatchTypes.ModifyClip:
                 ProjectHelper.modifyClip(project!, payload.entity.targetClipId, payload.entity.patch)
                 break
 
-            case ProjectModifyDispatchTypes.ModifyClipExpression: {
+            case ProjectModDispatchTypes.ModifyClipExpression: {
                 const {targetClipId, targetProperty, expr} = payload.entity
                 ProjectHelper.modifyClipExpression(project!, targetClipId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
                 break
             }
 
-            case ProjectModifyDispatchTypes.ModifyKeyframe:
+            case ProjectModDispatchTypes.ModifyKeyframe:
                 ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
                 break
 
-            case ProjectModifyDispatchTypes.RemoveComposition:
+            case ProjectModDispatchTypes.RemoveComposition:
                 ProjectHelper.deleteComposition(project!, payload.entity.targetCompositionId)
                 break
 
-            case ProjectModifyDispatchTypes.RemoveLayer:
+            case ProjectModDispatchTypes.RemoveLayer:
                 ProjectHelper.deleteLayer(project!, payload.entity.targetClipId)
                 break
 
-            case ProjectModifyDispatchTypes.RemoveClip:
+            case ProjectModDispatchTypes.RemoveClip:
                 ProjectHelper.deleteClip(project!, payload.entity.targetClipId)
                 break
 
-            case ProjectModifyDispatchTypes.RemoveAsset:
+            case ProjectModDispatchTypes.RemoveAsset:
                 ProjectHelper.deleteAsset(project!, payload.entity.targetAssetId)
                 break
 
-            case ProjectModifyDispatchTypes.RemoveKeyframe:
+            case ProjectModDispatchTypes.RemoveKeyframe:
                 ProjectHelper.deleteKeyframe(project!, payload.entity.targetKeyframeId)
                 break
 

@@ -15,7 +15,7 @@ import DelirValueInput from './_DelirValueInput'
 import KeyframeGraph from './KeyframeGraph'
 
 import AppActions from '../../actions/App'
-import ProjectModifyActions from '../../actions/project-modify-actions'
+import ProjectModActions from '../../actions/ProjectMod'
 
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
@@ -100,7 +100,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         if (!activeClip || !activePropName) return
 
         try {
-            ProjectModifyActions.modifyClipExpression(activeClip.id, activePropName, {
+            ProjectModActions.modifyClipExpression(activeClip.id, activePropName, {
                 language: 'typescript',
                 code: this._editor.getValue(),
             })
@@ -139,7 +139,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        ProjectModifyActions.createOrModifyKeyframeForClip(activeClip.id!, desc.propName, frameOnClip, {value})
+        ProjectModActions.createOrModifyKeyframeForClip(activeClip.id!, desc.propName, frameOnClip, {value})
         AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 

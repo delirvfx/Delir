@@ -5,7 +5,7 @@ import * as classnames from 'classnames'
 
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import AppActions from '../../actions/App'
-import ProjectModifyActions from '../../actions/project-modify-actions'
+import ProjectModActions from '../../actions/ProjectMod'
 
 import * as s from './Clip.styl'
 
@@ -93,7 +93,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
     removeClip = clipId =>
     {
-        ProjectModifyActions.removeClip(clipId)
+        ProjectModActions.removeClip(clipId)
     }
 
     resizeStart = (e: React.MouseEvent<HTMLDivElement>) =>

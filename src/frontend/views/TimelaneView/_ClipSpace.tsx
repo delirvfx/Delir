@@ -7,7 +7,7 @@ import * as Delir from 'delir-core'
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import RendererService from '../../services/renderer'
 import AppActions from '../../actions/App'
-import ProjectModifyActions from '../../actions/project-modify-actions'
+import ProjectModActions from '../../actions/ProjectMod'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import connectToStores from '../../utils/connectToStores'
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
@@ -72,7 +72,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             const {asset} = dragEntity
             const {props:{framerate, pxPerSec, scale}} = this
             const placedFrame = TimePixelConversion.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
-            ProjectModifyActions.createClipWithAsset(this.props.layer, asset, placedFrame)
+            ProjectModActions.createClipWithAsset(this.props.layer, asset, placedFrame)
         }
         else if (dragEntity.type === 'clip') {
             // Drop Clip into ClipSpace
@@ -86,9 +86,9 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                     pixel: e.pageX - e.currentTarget.getBoundingClientRect().left - (e.nativeEvent as DragEvent).offsetX,
                     scale: this.props.scale,
                 })
-                ProjectModifyActions.modifyClip(dragEntity.clip.id!, {placedFrame: placedFrame})
+                ProjectModActions.modifyClip(dragEntity.clip.id!, {placedFrame: placedFrame})
             } else {
-                ProjectModifyActions.moveClipToLayer(clip.id!, this.props.layer.id!)
+                ProjectModActions.moveClipToLayer(clip.id!, this.props.layer.id!)
             }
         } else {
             return
@@ -126,14 +126,14 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             scale: this.props.scale,
         })
 
-        ProjectModifyActions.modifyClip(clip.id, {
+        ProjectModActions.modifyClip(clip.id, {
             durationFrames: newDurationFrames,
         })
     }
 
     addNewClip = (clipRendererId) =>
     {
-        ProjectModifyActions.createClip(this.props.layer.id!, clipRendererId, 0, 100)
+        ProjectModActions.createClip(this.props.layer.id!, clipRendererId, 0, 100)
     }
 
     render()

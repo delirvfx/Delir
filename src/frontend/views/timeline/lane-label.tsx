@@ -6,7 +6,7 @@ import connectToStores from '../../utils/connectToStores'
 
 import RendererService from '../../services/renderer'
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
-import ProjectModifyActions from '../../actions/project-modify-actions'
+import ProjectModActions from '../../actions/ProjectMod'
 
 import LabelInput from '../components/label-input'
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
@@ -39,7 +39,7 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
     layerNameChanged = (value: string) =>
     {
         const {layer} = this.props
-        ProjectModifyActions.modifyLayer(layer.id!, {name: value})
+        ProjectModActions.modifyLayer(layer.id!, {name: value})
     }
 
     render()

@@ -9,7 +9,7 @@ import * as Delir from 'delir-core'
 import {ProjectHelper, ColorRGB} from 'delir-core'
 
 import AppActions from '../../actions/App'
-import ProjectModifyActions from '../../actions/project-modify-actions'
+import ProjectModActions from '../../actions/ProjectMod'
 
 import { default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
 import ProjectStore from '../../stores/ProjectStore'
@@ -87,7 +87,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         _.each(e.dataTransfer.files, (file, idx) => {
             if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
 
-            ProjectModifyActions.addAsset({
+            ProjectModActions.addAsset({
                 name: file.name,
                 fileType: path.extname(file.name).slice(1),
                 path: file.path,
@@ -98,7 +98,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
     removeAsset = (assetId: string) =>
     {
         // TODO: Check references
-        ProjectModifyActions.removeAsset(assetId)
+        ProjectModActions.removeAsset(assetId)
     }
 
     changeComposition = (compId: string) =>
@@ -108,12 +108,12 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
     removeComposition = (compId: string) =>
     {
-        ProjectModifyActions.removeComposition(compId)
+        ProjectModActions.removeComposition(compId)
     }
 
     modifyCompName = (compId, newName) =>
     {
-        ProjectModifyActions.modifyComposition(compId, { name: newName })
+        ProjectModActions.modifyComposition(compId, { name: newName })
     }
 
     selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
@@ -122,7 +122,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         const files = Array.from(target.files!)
 
         files.forEach(file => {
-            ProjectModifyActions.addAsset({
+            ProjectModActions.addAsset({
                 name: file.name,
                 fileType: path.extname(file.name).slice(1),
                 path: file.path,
@@ -150,7 +150,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
             return
         }
 
-        ProjectModifyActions.modifyComposition(compId, castToCompositionPropTypes(req))
+        ProjectModActions.modifyComposition(compId, castToCompositionPropTypes(req))
     }
 
     openNewCompositionWindow =  async () =>
@@ -167,7 +167,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
             return
         }
 
-        ProjectModifyActions.createComposition(castToCompositionPropTypes(req))
+        ProjectModActions.createComposition(castToCompositionPropTypes(req))
     }
 
     onAssetsDragStart = ({target}: {target: HTMLElement}) =>

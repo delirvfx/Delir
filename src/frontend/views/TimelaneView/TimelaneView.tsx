@@ -9,7 +9,7 @@ import connectToStores from '../../utils/connectToStores'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import AppActions from '../../actions/App'
-import ProjectModifyActions from '../../actions/project-modify-actions'
+import ProjectModActions from '../../actions/ProjectMod'
 
 import RendererService from '../../services/renderer'
 
@@ -114,7 +114,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     {
         if (!this.props.editor.activeComp) return
 
-        ProjectModifyActions.addLayer(
+        ProjectModActions.addLayer(
             this.props.editor.activeComp,
             new Delir.Project.Layer
         )
@@ -123,7 +123,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     private _removeLayer = layerId =>
     {
         if (!this.props.editor.activeComp) return
-        ProjectModifyActions.removeLayer(layerId)
+        ProjectModActions.removeLayer(layerId)
     }
 
     private _scaleTimeline = e =>
@@ -155,7 +155,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
         if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
         const {asset} = dragEntity
-        ProjectModifyActions.addLayerWithAsset(activeComp, asset)
+        ProjectModActions.addLayerWithAsset(activeComp, asset)
     }
 
     private _onSeeked = (frame: number) =>
