@@ -8,7 +8,7 @@ import AssetsView from '../AssetsView'
 import PreviewView from '../PreviewView/'
 import TimelineView from '../TimelineView'
 import NavigationView from '../NavigationView'
-import StatusView from '../status-view'
+import StatusBar from '../StatusBar'
 import Notifications from '../Notifications'
 
 // import style from './style.styl'
@@ -40,7 +40,7 @@ export default class AppView extends React.Component<null, null>
                     </Pane>
                     <TimelineView />
                 </Workspace>
-                <StatusView />
+                <StatusBar />
                 <Notifications />
             </div>
         )

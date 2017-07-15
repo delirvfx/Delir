@@ -11,7 +11,7 @@ interface State {
     stateText: string
 }
 
-export default class StatusView extends React.Component<void, State>
+export default class StatusBar extends React.Component<void, State>
 {
     constructor(...args)
     {
