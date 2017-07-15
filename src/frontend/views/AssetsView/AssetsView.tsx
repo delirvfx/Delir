@@ -12,7 +12,7 @@ import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import { default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
-import { default as ProjectModifyStore } from '../../stores/project-modify-store'
+import ProjectStore from '../../stores/ProjectStore'
 
 import Pane from '../components/pane'
 import LabelInput from '../components/label-input'
@@ -62,7 +62,7 @@ const castToCompositionPropTypes = (req: CompositionProps) => {
     }
 }
 
-@connectToStores([EditorStateStore, ProjectModifyStore], (context, props) => ({
+@connectToStores([EditorStateStore, ProjectStore], (context, props) => ({
     editor: EditorStateStore.getState(),
 }))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>

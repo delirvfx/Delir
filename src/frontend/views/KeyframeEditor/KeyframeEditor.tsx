@@ -18,7 +18,7 @@ import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
-import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
+import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
 import RendererService from '../../services/renderer'
 
 import * as s from './style.styl'
@@ -27,7 +27,7 @@ interface KeyframeViewProps {
     activeComposition: Delir.Project.Composition|null
     activeClip: Delir.Project.Clip|null
     editor: EditorState
-    project: ProjectModifyState
+    project: ProjectStoreState
     scrollLeft: number
     scale: number
     pxPerSec: number
@@ -44,7 +44,7 @@ interface KeyframeViewState {
 
 @connectToStores([EditorStateStore], () => ({
     editor: EditorStateStore.getState(),
-    project: ProjectModifyStore.getState()
+    project: ProjectStore.getState()
 }))
 export default class KeyframeView extends React.Component<KeyframeViewProps, KeyframeViewState> {
     public static propTypes = {

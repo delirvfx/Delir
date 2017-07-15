@@ -11,13 +11,14 @@ import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
 import {DispatchTypes as ProjectModifyDispatchTypes} from '../actions/project-modify-actions'
 
-type StateRecord = Record<ProjectModifyState>
-export interface ProjectModifyState {
+type StateRecord = Record<ProjectStoreState>
+
+export interface ProjectStoreState {
     project: Delir.Project.Project|null,
     lastChangeTime: number,
 }
 
-class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
+class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
 {
     getInitialState(): StateRecord
     {
@@ -158,6 +159,6 @@ class ProjectModifyStore extends ReduceStore<StateRecord, KnownPayload>
     }
 }
 
-const store = new ProjectModifyStore(dispatcher)
+const store = new ProjectStore(dispatcher)
 _.set(window, 'app.store.ProjectModifyStore', store)
 export default store

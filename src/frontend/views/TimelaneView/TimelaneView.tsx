@@ -14,7 +14,7 @@ import ProjectModifyActions from '../../actions/project-modify-actions'
 import RendererService from '../../services/renderer'
 
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
-import {default as ProjectModifyStore, ProjectModifyState} from '../../stores/project-modify-store'
+import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
 
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
@@ -32,7 +32,7 @@ import * as s from './style.styl'
 
 interface TimelineViewProps {
     editor: EditorState,
-    project: ProjectModifyState,
+    project: ProjectStore,
 }
 
 interface TimelineViewState {
@@ -54,7 +54,7 @@ const PX_PER_SEC = 30
  *     └ ClipSpace
  *       └ Clip
  */
-@connectToStores([EditorStateStore, ProjectModifyStore], context => ({
+@connectToStores([EditorStateStore, ProjectStore], context => ({
     editor: EditorStateStore.getState(),
 }))
 export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>

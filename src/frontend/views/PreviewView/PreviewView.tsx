@@ -8,7 +8,7 @@ import Pane from '../components/pane'
 import DropDown from '../components/dropdown'
 
 import EditorStateStore from '../../stores/EditorStateStore'
-import ProjectModifyStore from '../../stores/project-modify-store'
+import ProjectStore from '../../stores/ProjectStore'
 import RendererService from '../../services/renderer'
 
 import * as s from './style.styl'

@@ -8,7 +8,7 @@ import dispatcher from '../dispatcher'
 import Payload from '../utils/payload'
 // import deprecated from '../utils/deprecated'
 import RendererService from '../services/renderer'
-import ProjectModifyStore from '../stores/project-modify-store'
+import ProjectStore from '../stores/ProjectStore'
 import RendererService from '../services/renderer'
 
 import EditorStateActions from './editor-state-actions'
@@ -147,7 +147,7 @@ export default {
         placedFrame = 0,
         durationFrames = 100,
     ) {
-        const project = ProjectModifyStore.getState().get('project')
+        const project = ProjectStore.getState().get('project')
 
         if (!project) return
 
@@ -179,7 +179,7 @@ export default {
 
     createOrModifyKeyframeForClip(clipId: string, propName: string, frameOnClip: number, patch: Partial<Delir.Project.Keyframe>)
     {
-        const project = ProjectModifyStore.getState().get('project')
+        const project = ProjectStore.getState().get('project')
 
         if (!project) return
         const clip = ProjectHelper.findClipById(project, clipId)
