@@ -11,8 +11,6 @@ import NavigationView from '../NavigationView'
 import StatusBar from '../StatusBar'
 import Notifications from '../Notifications'
 
-// import style from './style.styl'
-
 export default class AppView extends React.Component<null, null>
 {
     componentDidMount()
