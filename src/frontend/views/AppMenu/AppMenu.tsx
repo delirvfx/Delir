@@ -8,7 +8,7 @@ import EditorStateStore from '../../stores/EditorStateStore'
 
 export default class AppMenu extends React.Component<any, any>
 {
-    render()
+    public render()
     {
         remote.Menu.setApplicationMenu(
             remote.Menu.buildFromTemplate(this._buildMenu())
@@ -17,7 +17,7 @@ export default class AppMenu extends React.Component<any, any>
         return null
     }
 
-    private _buildMenu(): Electron.MenuItemOptions[]
+    private _buildMenu(): Electron.MenuItemConstructorOptions[]
     {
         const menu = []
 
