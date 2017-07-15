@@ -11,7 +11,7 @@ import RendererService from '../services/renderer'
 import ProjectStore from '../stores/ProjectStore'
 import RendererService from '../services/renderer'
 
-import EditorStateActions from './editor-state-actions'
+import AppActions from './App'
 
 export type CreateCompositionPayload = Payload<'CreateComposition', {composition: Delir.Project.Composition}>
 export type CreateLayerPayload = Payload<'CreateLayer', {targetCompositionId: string, layer: Delir.Project.Layer}>
@@ -103,7 +103,7 @@ export default {
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
-            EditorStateActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 5000)
+            AppActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 5000)
             return
         }
 
@@ -155,7 +155,7 @@ export default {
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
-            EditorStateActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 3000)
+            AppActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 3000)
             return
         }
 

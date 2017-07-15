@@ -12,7 +12,7 @@ import {
     AddMessagePayload,
     RemoveMessagePayload,
     SeekPreviewFramePayload,
-} from './editor-state-actions'
+} from './App'
 
 import {
     CreateCompositionPayload,
@@ -34,7 +34,7 @@ import {
     RemoveClipPayload,
     RemoveAssetPayload,
     RemoveKeyframePayload,
-} from './project-modify-actions'
+} from './ProjectMod'
 
 export type EditorStateActionPayload =
     SetActiveProjectPayload
