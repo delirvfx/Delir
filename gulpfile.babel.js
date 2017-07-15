@@ -312,13 +312,13 @@ export function compileStyles() {
 }
 
 export function copyFonts() {
-    return g.src(join(paths.src.renderer, "fonts/*"))
-        .pipe(g.dest(join(paths.compiled.frontend, "fonts")));
+    return g.src(join(paths.src.renderer, "assets/fonts/*"))
+        .pipe(g.dest(join(paths.compiled.frontend, "assets/fonts")));
 }
 
 export function copyImage() {
-    return g.src(join(paths.src.renderer, "images/**/*"), {since: g.lastRun('copyImage')})
-        .pipe(g.dest(join(paths.compiled.frontend, "images")));
+    return g.src(join(paths.src.renderer, "assets/images/**/*"), {since: g.lastRun('copyImage')})
+        .pipe(g.dest(join(paths.compiled.frontend, "assets/images")));
 }
 
 export function makeIcon() {
