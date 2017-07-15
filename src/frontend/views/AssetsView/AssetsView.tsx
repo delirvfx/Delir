@@ -20,7 +20,7 @@ import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components
 import { ContextMenu, MenuItem } from '../components/ContextMenu'
 
 import * as Modal from '../../modules/ModalWindow'
-import CompositionSettingModal from '../CompositionSettingModal'
+import CompositionSettingModal from '../../modules/CompositionSettingModal'
 
 import connectToStores from '../../utils/Flux/connectToStores'
 
