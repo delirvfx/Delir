@@ -33,7 +33,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
 
     if (__DEV__) {
-        require('./devel/example-project/ExampleProject1')
+        require('./utils/Dev/example-project/ExampleProject1')
         AppActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 <DEV MODE> Hello, welcome to Delir', 'info')
     }
 

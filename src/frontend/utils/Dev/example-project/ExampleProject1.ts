@@ -1,7 +1,7 @@
 import * as Delir from 'delir-core'
 import {ProjectHelper, ColorRGB, Values} from 'delir-core'
 import {join} from 'path'
-import AppActions from '../../actions/App'
+import AppActions from '../../../actions/App'
 
 const fps = 60
 const durationFrames = fps * 10
