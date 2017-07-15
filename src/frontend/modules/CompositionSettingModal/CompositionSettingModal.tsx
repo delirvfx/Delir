@@ -9,7 +9,7 @@ import * as s from './CompositionSettingModal.styl'
 
 type SettingResult = {[props: string]: string} | void
 
-export const show = (props: {composition: Delir.Project.Composition}): Promise<SettingResult> => {
+export const show = (props: {composition?: Delir.Project.Composition} = {}): Promise<SettingResult> => {
     return new Promise((resolve) => {
         const resolver = async (result?: SettingResult) => {
             await modal.hide()

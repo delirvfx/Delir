@@ -67,7 +67,7 @@ const castToCompositionPropTypes = (req: CompositionProps) => {
 }))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
 {
-    static propTypes = {
+    public static propTypes = {
         editor: PropTypes.object.isRequired,
     }
 
@@ -82,7 +82,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         }
     }
 
-    addAsset = (e: React.DragEvent<HTMLDivElement>) =>
+    private addAsset = (e: React.DragEvent<HTMLDivElement>) =>
     {
         _.each(e.dataTransfer.files, (file, idx) => {
             if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
@@ -95,28 +95,28 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         })
     }
 
-    removeAsset = (assetId: string) =>
+    private removeAsset = (assetId: string) =>
     {
         // TODO: Check references
         ProjectModActions.removeAsset(assetId)
     }
 
-    changeComposition = (compId: string) =>
+    private changeComposition = (compId: string) =>
     {
         AppActions.changeActiveComposition(compId)
     }
 
-    removeComposition = (compId: string) =>
+    private removeComposition = (compId: string) =>
     {
         ProjectModActions.removeComposition(compId)
     }
 
-    modifyCompName = (compId, newName) =>
+    private modifyCompName = (compId, newName) =>
     {
         ProjectModActions.modifyComposition(compId, { name: newName })
     }
 
-    selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
+    private selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
     {
         const target = e.target as HTMLInputElement
         const files = Array.from(target.files!)
@@ -132,40 +132,26 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         target.value = ''
     }
 
-    openCompositionSetting = async (compId: string) =>
+    private openCompositionSetting = async (compId: string) =>
     {
         if (!this.props.editor.project) return
 
         const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
-
-
         const req = await CompositionSettingModal.show({composition: comp})
 
-        if (!req) {
-            return
-        }
-
+        if (!req) return
         ProjectModActions.modifyComposition(compId, castToCompositionPropTypes(req as any))
     }
 
-    openNewCompositionWindow =  async () =>
+    private openNewCompositionWindow =  async () =>
     {
-        const modal = Modal.create()
-        const req = (await new Promise<{[p: string]: string}|void>(resolve => {
-            modal.mount(<CompositionSettingModal onConfirm={resolve} onCancel={resolve} />)
-            modal.show()
-        })) as CompositionProps|void
+        const req = CompositionSettingModal.show()
 
-        modal.dispose()
-
-        if (!req) {
-            return
-        }
-
+        if (!req) return
         ProjectModActions.createComposition(castToCompositionPropTypes(req))
     }
 
-    onAssetsDragStart = ({target}: {target: HTMLElement}) =>
+    private onAssetsDragStart = ({target}: {target: HTMLElement}) =>
     {
         const {editor: {project}} = this.props
         if (!project) return
@@ -176,11 +162,12 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         })
     }
 
-    onAssetDragEnd = () => {
+    private onAssetDragEnd = () =>
+    {
         AppActions.clearDragEntity()
     }
 
-    render()
+    public render()
     {
         const {editor: {project}} = this.props
         const assets = project ? Array.from(project.assets) : []
