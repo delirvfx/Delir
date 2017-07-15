@@ -31,8 +31,7 @@ import Gradations from './_Gradations'
 import * as s from './style.styl'
 
 interface TimelineViewProps {
-    editor: EditorState,
-    project: ProjectStore,
+    editor?: EditorState,
 }
 
 interface TimelineViewState {
