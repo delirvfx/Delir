@@ -4,7 +4,7 @@ import * as Delir from 'delir-core'
 import * as classnames from 'classnames'
 
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import * as s from './Clip.styl'
@@ -52,7 +52,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     }
 
     selectClip = e => {
-        EditorStateActions.changeActiveClip(this.props.clip.id!)
+        AppActions'.changeActiveClip(this.props.clip.id!)
     }
 
     dragStart = e => {
@@ -63,7 +63,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
             }
         })
 
-        EditorStateActions.setDragEntity({type: 'clip', clip: this.props.clip})
+        AppActions'.setDragEntity({type: 'clip', clip: this.props.clip})
     }
 
     drag = (e) => {
@@ -79,7 +79,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     }
 
     dragEnd = (e) => {
-        EditorStateActions.clearDragEntity()
+        AppActions'.clearDragEntity()
 
         this.setState({
             draggedPxX: 0,

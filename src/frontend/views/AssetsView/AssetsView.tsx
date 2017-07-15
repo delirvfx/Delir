@@ -8,7 +8,7 @@ import * as path from 'path'
 import * as Delir from 'delir-core'
 import {ProjectHelper, ColorRGB} from 'delir-core'
 
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import { default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
@@ -103,7 +103,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
     changeComposition = (compId: string) =>
     {
-        EditorStateActions.changeActiveComposition(compId)
+        AppActions.changeActiveComposition(compId)
     }
 
     removeComposition = (compId: string) =>
@@ -175,14 +175,14 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         const {editor: {project}} = this.props
         if (!project) return
 
-        EditorStateActions.setDragEntity({
+        AppActions.setDragEntity({
             type: 'asset',
             asset: ProjectHelper.findAssetById(project, target.dataset.assetId)!,
         })
     }
 
     onAssetDragEnd = () => {
-        EditorStateActions.clearDragEntity()
+        AppActions.clearDragEntity()
     }
 
     render()

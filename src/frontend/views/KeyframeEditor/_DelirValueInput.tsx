@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import {ChromePicker} from 'react-color'
 
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 
 import DragNumberInput from '../components/drag-number-input'
 import Dropdown from '../components/dropdown'

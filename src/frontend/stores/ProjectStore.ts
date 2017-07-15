@@ -8,7 +8,7 @@ import {ProjectHelper} from 'delir-core'
 import dispatcher from '../dispatcher'
 import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
-import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
+import {DispatchTypes as AppActionsDispatchTypes} from '../actions/App'
 import {DispatchTypes as ProjectModifyDispatchTypes} from '../actions/project-modify-actions'
 
 type StateRecord = Record<ProjectStoreState>
@@ -38,13 +38,13 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
     reduce(state: StateRecord, payload: KnownPayload)
     {
         const project: Delir.Project.Project = state.get('project')!
-        if (payload.type !== EditorStateDispatchTypes.SetActiveProject && project == null) return state
+        if (payload.type !== AppActionsDispatchTypes.SetActiveProject && project == null) return state
 
         switch (payload.type) {
-            case EditorStateDispatchTypes.SetActiveProject:
+            case AppActionsDispatchTypes.SetActiveProject:
                 return state.set('project', payload.entity.project)
 
-            case EditorStateDispatchTypes.ClearActiveProject:
+            case AppActionsDispatchTypes.ClearActiveProject:
                 return state.set('project', null)
 
             case ProjectModifyDispatchTypes.CreateComposition:

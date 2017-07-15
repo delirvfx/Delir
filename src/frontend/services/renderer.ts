@@ -9,8 +9,8 @@ import dispatcher from '../dispatcher'
 import {KnownPayload} from '../actions/PayloadTypes'
 
 import EditorStateStore from '../stores/EditorStateStore'
-import EditorStateActions from '../actions/editor-state-actions'
-import {DispatchTypes as EditorStateDispatchTypes} from '../actions/editor-state-actions'
+import AppActions from '../actions/App'
+import {DispatchTypes as EditorStateDispatchTypes} from '../actions/App'
 
 let pluginRegistry: Delir.PluginRegistry|null = null
 let pluginLoader: Delir.Services.PluginLoader|null = null
@@ -80,7 +80,7 @@ const handlePayload = (payload: KnownPayload) => {
             })
 
             promise.progress(progress => {
-                EditorStateActions.updateProcessingState(`Preview: ${progress.state}`)
+                AppActions.updateProcessingState(`Preview: ${progress.state}`)
 
                 if (!audioBufferSource) return
 
@@ -104,7 +104,7 @@ const handlePayload = (payload: KnownPayload) => {
 
             promise.catch(e => {
                 if (e instanceof Delir.Exceptions.RenderingAbortedException) {
-                    EditorStateActions.updateProcessingState(`Stop.`)
+                    AppActions.updateProcessingState(`Stop.`)
                     return
                 }
                 console.error(e)
@@ -173,11 +173,11 @@ const handlePayload = (payload: KnownPayload) => {
 
             if (! file) return
 
-            setTimeout(() => EditorStateActions.updateProcessingState(`Rendering: Initializing`), 0)
+            setTimeout(() => AppActions.updateProcessingState(`Rendering: Initializing`), 0)
 
             const activeComp = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
             if (! activeComp) {
-                setTimeout(() => EditorStateActions.updateProcessingState(`Rendering: Composition not selected`), 0)
+                setTimeout(() => AppActions.updateProcessingState(`Rendering: Composition not selected`), 0)
             } else {
                 renderer.export({
                     exportPath: file,
@@ -187,9 +187,9 @@ const handlePayload = (payload: KnownPayload) => {
                 })
                 .progress(progress => {
                     if (progress.isRendering) {
-                        EditorStateActions.updateProcessingState(`Rendering: ${Math.floor(progress.finished * 100)}% ${progress.state}`)
+                        AppActions.updateProcessingState(`Rendering: ${Math.floor(progress.finished * 100)}% ${progress.state}`)
                     } else {
-                        EditorStateActions.updateProcessingState(`Rendering: ${progress.state}`)
+                        AppActions.updateProcessingState(`Rendering: ${progress.state}`)
                     }
                 })
                 .catch(e => console.error(e.stack))
@@ -219,7 +219,7 @@ const rendererService = {
         if (fails.length > 0) {
             const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
             const message = fails.map((fail: any) => fail.reason).join('\n\n')
-            EditorStateActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
+            AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
         }
 
         console.log('Plugin loaded', successes, 'Failed:', fails)

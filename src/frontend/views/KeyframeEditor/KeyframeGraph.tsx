@@ -6,7 +6,7 @@ import * as Delir from 'delir-core'
 
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import * as s from './KeyframeGraph.styl'
@@ -182,7 +182,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         const {clip} = this.props
         if (!clip) return
 
-        EditorStateActions.seekPreviewFrame(clip.placedFrame + (currentTarget.dataset.frame | 0))
+        AppActions.seekPreviewFrame(clip.placedFrame + (currentTarget.dataset.frame | 0))
     }
 
     public render()

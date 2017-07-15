@@ -5,7 +5,7 @@ import * as path from 'path'
 import connectToStores from '../../utils/connectToStores'
 
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 
 import Pane from '../components/pane'
 
@@ -29,17 +29,17 @@ export default class NavigationView extends React.Component<NavigationViewProps,
         const {activeComp} = this.props.editor
 
         if (! activeComp) return
-        EditorStateActions.startPreview(activeComp.id!)
+        AppActions.startPreview(activeComp.id!)
     }
 
     private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
-        EditorStateActions.stopPreview()
+        AppActions.stopPreview()
     }
 
     private onClickDest = action =>
     {
         const {activeComp} = this.props.editor
-        activeComp && EditorStateActions.renderDestinate(activeComp.id!)
+        activeComp && AppActions.renderDestinate(activeComp.id!)
     }
 
     private titleBarDoubleClicked = e =>

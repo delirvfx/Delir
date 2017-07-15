@@ -3,7 +3,7 @@ import * as Electron from 'electron'
 import {remote} from 'electron'
 import * as Platform from '../../utils/platform'
 
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 import EditorStateStore from '../../stores/EditorStateStore'
 
 export default class AppMenu extends React.Component<any, any>
@@ -32,7 +32,7 @@ export default class AppMenu extends React.Component<any, any>
                     {type: 'separator'},
                     {
                         label: 'Open plugins directory',
-                        click: () => EditorStateActions.openPluginDirectory()
+                        click: () => AppActions.openPluginDirectory()
                     },
                     {type: 'separator'},
                     {
@@ -50,22 +50,22 @@ export default class AppMenu extends React.Component<any, any>
                 {
                     label: 'Open',
                     accelerator: 'CmdOrCtrl+O',
-                    click: () => EditorStateActions.openProject()
+                    click: () => AppActions.openProject()
                 },
                 {
                     label: 'New Project',
-                    click: () => EditorStateActions.newProject()
+                    click: () => AppActions.newProject()
                 },
                 {type: 'separator'},
                 {
                     label: 'Save',
                     accelerator: 'CmdOrCtrl+S',
-                    click: () => EditorStateActions.overwriteProject()
+                    click: () => AppActions.overwriteProject()
                 },
                 {
                     label: 'Save as ...',
                     accelerator: 'CmdOrCtrl+Shift+S',
-                    click: () => EditorStateActions.saveProject()
+                    click: () => AppActions.saveProject()
                 },
                 {type: 'separator'},
                 {
@@ -74,7 +74,7 @@ export default class AppMenu extends React.Component<any, any>
                     click() {
                         const comp = EditorStateStore.getState().get('activeComp')
                         if (!comp) return
-                        EditorStateActions.renderDestinate(comp.id!)
+                        AppActions.renderDestinate(comp.id!)
                     }
                 },
             ]

@@ -8,7 +8,7 @@ import {ProjectHelper} from 'delir-core'
 import dispatcher from '../dispatcher'
 import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
-import {DispatchTypes as EditorStateDispatchTypes, DragEntity} from '../actions/editor-state-actions'
+import {DispatchTypes as AppActionsDispatchTypes, DragEntity} from '../actions/App'
 
 type StateRecord = Record<EditorState>
 
@@ -49,7 +49,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
         const project = state.get('project') as Delir.Project.Project
 
         switch (payload.type) {
-            case EditorStateDispatchTypes.SetActiveProject:
+            case AppActionsDispatchTypes.SetActiveProject:
                 console.log('✨ Project activated', payload.entity.project)
 
                 return state
@@ -58,7 +58,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                     .set('activeComp', null)
                     .set('activeClip', null)
 
-            case EditorStateDispatchTypes.ClearActiveProject:
+            case AppActionsDispatchTypes.ClearActiveProject:
                 __DEV__ && console.log('💥 Project deactivated')
 
                 return state
@@ -66,37 +66,37 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                     .set('activeComp', null)
                     .set('activeClip', null)
 
-            case EditorStateDispatchTypes.SetDragEntity:
+            case AppActionsDispatchTypes.SetDragEntity:
                 return state.set('dragEntity', payload.entity)
 
-            case EditorStateDispatchTypes.ClearDragEntity:
+            case AppActionsDispatchTypes.ClearDragEntity:
                 return state.set('dragEntity', null)
 
-            case EditorStateDispatchTypes.ChangeActiveComposition:
+            case AppActionsDispatchTypes.ChangeActiveComposition:
                 if (project == null) return state
 
                 const comp = ProjectHelper.findCompositionById(project, payload.entity.compositionId)
                 return state.set('activeComp', comp).set('activeClip', null)
 
-            case EditorStateDispatchTypes.ChangeActiveClip:
+            case AppActionsDispatchTypes.ChangeActiveClip:
                 if (project == null) return state
 
                 const clip = ProjectHelper.findClipById(project, payload.entity.clipId)
                 return state.set('activeClip', clip)
 
-            case EditorStateDispatchTypes.UpdateProcessingState:
+            case AppActionsDispatchTypes.UpdateProcessingState:
                 return state.set('processingState', payload.entity.stateText)
 
-            case EditorStateDispatchTypes.StartPreview:
+            case AppActionsDispatchTypes.StartPreview:
                 return state.set('previewPlayed', true)
 
-            case EditorStateDispatchTypes.StopPreview:
+            case AppActionsDispatchTypes.StopPreview:
                 return state.set('previewPlayed', false)
 
-            case EditorStateDispatchTypes.SeekPreviewFrame:
+            case AppActionsDispatchTypes.SeekPreviewFrame:
                 return state.set('currentPreviewFrame', payload.entity.frame)
 
-            case EditorStateDispatchTypes.AddMessage:
+            case AppActionsDispatchTypes.AddMessage:
                 return state.set('notifications', state.get('notifications').push({
                     id: payload.entity.id,
                     title: payload.entity.title,
@@ -105,7 +105,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                     detail: payload.entity.detail,
                 }))
 
-            case EditorStateDispatchTypes.RemoveMessage: {
+            case AppActionsDispatchTypes.RemoveMessage: {
                 const notifications = state.get('notifications')
                 const idx = notifications.findIndex(entry => entry!.id === payload.entity.id)
                 return state.set('notifications', notifications.remove(idx))

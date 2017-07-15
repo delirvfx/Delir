@@ -5,7 +5,7 @@ import * as os from 'os'
 import AppComponent from './views/AppView'
 import './monaco'
 
-import EditorStateActions from './actions/editor-state-actions'
+import AppActions from './actions/App'
 
 import * as Delir from 'delir-core'
 
@@ -14,7 +14,7 @@ import RendererService from './services/renderer'
 window.addEventListener('DOMContentLoaded', async () => {
     // initialize app
     await RendererService.initialize()
-    EditorStateActions.setActiveProject(new Delir.Project.Project())
+    AppActions.setActiveProject(new Delir.Project.Project())
 
     // Attach platform class to body element
     switch (os.type()) {
@@ -34,17 +34,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (__DEV__) {
         require('./devel/example-project/ExampleProject1')
-        EditorStateActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 <DEV MODE> Hello, welcome to Delir', 'info')
+        AppActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 <DEV MODE> Hello, welcome to Delir', 'info')
     }
 
     process.on('uncaughtException', (e: Error) => {
         console.error(e)
-         EditorStateActions.notify(e.message, '😱Uncaught Exception😱', 'error', 5000, e.stack)
+         AppActions.notify(e.message, '😱Uncaught Exception😱', 'error', 5000, e.stack)
     })
 
     process.on('uncaughtRejection', (e: Error) => {
         console.error(e)
-         EditorStateActions.notify(e.message, '😱Uncaught Rejection😱', 'error', 5000, e.stack)
+         AppActions.notify(e.message, '😱Uncaught Rejection😱', 'error', 5000, e.stack)
     })
 
     // RendererService.renderer.setDestinationAudioNode(audioContext.destination)

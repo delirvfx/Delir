@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types'
 import {remote} from 'electron'
 
 import EditorStateStore from '../stores/EditorStateStore'
-import EditorStateActions from '../actions/editor-state-actions'
+import AppActions from '../actions/App'
 
 import Pane from './components/pane'
 

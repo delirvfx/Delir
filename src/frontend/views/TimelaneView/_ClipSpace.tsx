@@ -6,7 +6,7 @@ import * as Delir from 'delir-core'
 
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import RendererService from '../../services/renderer'
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import connectToStores from '../../utils/connectToStores'
@@ -94,7 +94,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             return
         }
 
-        EditorStateActions.clearDragEntity()
+        AppActions.clearDragEntity()
         this.setState({dragovered: false})
 
         e.preventDefault()

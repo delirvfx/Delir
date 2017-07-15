@@ -8,7 +8,7 @@ import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import RendererService from '../../services/renderer'
@@ -149,7 +149,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         const {dragEntity, activeComp} = this.props.editor
 
         if (!activeComp) {
-            EditorStateActions.notify('Must be select any composition before add assets to timeline', 'Woops', 'error', 1000)
+            AppActions.notify('Must be select any composition before add assets to timeline', 'Woops', 'error', 1000)
             return
         }
 
@@ -160,7 +160,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     private _onSeeked = (frame: number) =>
     {
-        EditorStateActions.seekPreviewFrame(frame)
+        AppActions.seekPreviewFrame(frame)
     }
 
     protected render()

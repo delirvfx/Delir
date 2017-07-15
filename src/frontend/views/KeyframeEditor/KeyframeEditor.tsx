@@ -14,7 +14,7 @@ import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import DelirValueInput from './_DelirValueInput'
 import KeyframeGraph from './KeyframeGraph'
 
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 import ProjectModifyActions from '../../actions/project-modify-actions'
 
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
@@ -140,7 +140,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
         ProjectModifyActions.createOrModifyKeyframeForClip(activeClip.id!, desc.propName, frameOnClip, {value})
-        EditorStateActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+        AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 
     private _openExpressionEditor = (propName: string) => {

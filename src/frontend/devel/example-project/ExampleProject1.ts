@@ -1,7 +1,7 @@
 import * as Delir from 'delir-core'
 import {ProjectHelper, ColorRGB, Values} from 'delir-core'
 import {join} from 'path'
-import EditorStateActions from '../../actions/editor-state-actions'
+import AppActions from '../../actions/App'
 
 const fps = 60
 const durationFrames = fps * 10
@@ -156,6 +156,6 @@ ProjectHelper.addClip(p, c2_t1, c2_t1_l2)
 // ProjectHelper.addKeyframe(p, c1_t1_l1, new Delir.Project.Keyframe)
 
 
-EditorStateActions.setActiveProject(p);
-EditorStateActions.changeActiveComposition(c1.id!)
-EditorStateActions.changeActiveClip(c1_t1_cl1.id)
+AppActions.setActiveProject(p);
+AppActions.changeActiveComposition(c1.id!)
+AppActions.changeActiveClip(c1_t1_cl1.id)
