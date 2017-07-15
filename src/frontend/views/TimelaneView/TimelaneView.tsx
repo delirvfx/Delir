@@ -6,7 +6,7 @@ import * as PropTypes from 'prop-types'
 import * as ReactDOM from 'react-dom'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
-import TimelineHelper from '../../helpers/timeline-helper'
+import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
@@ -170,7 +170,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
 
-        const measures = !activeComp ? [] : TimelineHelper.buildMeasures({
+        const measures = !activeComp ? [] : TimePixelConversion.buildMeasures({
             durationFrames      : activeComp.durationFrames,
             pxPerSec            : PX_PER_SEC,
             framerate           : activeComp.framerate,

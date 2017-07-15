@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
-import {default as TimelineHelper} from '../../helpers/timeline-helper'
+import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
@@ -421,7 +421,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
     {
         const {pxPerSec, zoomScale, composition} = this.props
 
-        return TimelineHelper.framesToPixel({
+        return TimePixelConversion.framesToPixel({
             pxPerSec,
             framerate: composition!.framerate,
             durationFrames: frame,
@@ -434,7 +434,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         // const {props: {pxPerSec, scale, editor: {activeComp}}} = this
         const {pxPerSec, zoomScale, composition} = this.props
 
-        return TimelineHelper.pixelToFrames({
+        return TimePixelConversion.pixelToFrames({
             framerate: composition!.framerate,
             pixel: x,
             pxPerSec,

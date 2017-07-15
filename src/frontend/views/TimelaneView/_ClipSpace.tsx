@@ -8,7 +8,7 @@ import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import RendererService from '../../services/renderer'
 import EditorStateActions from '../../actions/editor-state-actions'
 import ProjectModifyActions from '../../actions/project-modify-actions'
-import TimelineHelper from '../../helpers/timeline-helper'
+import TimePixelConversion from '../../utils/TimePixelConversion'
 import connectToStores from '../../utils/connectToStores'
 import {default as EditorStateStore, EditorState} from '../../stores/editor-state-store'
 
@@ -71,7 +71,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             // Drop asset into ClipSpace
             const {asset} = dragEntity
             const {props:{framerate, pxPerSec, scale}} = this
-            const placedFrame = TimelineHelper.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
+            const placedFrame = TimePixelConversion.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
             ProjectModifyActions.createClipWithAsset(this.props.layer, asset, placedFrame)
         }
         else if (dragEntity.type === 'clip') {
@@ -80,7 +80,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             const isChildClip = !! _.find(this.props.layer.clips, {id: clip.id})
 
             if (isChildClip) {
-                const placedFrame = TimelineHelper.pixelToFrames({
+                const placedFrame = TimePixelConversion.pixelToFrames({
                     pxPerSec: this.props.pxPerSec,
                     framerate: this.props.framerate,
                     pixel: e.pageX - e.currentTarget.getBoundingClientRect().left - (e.nativeEvent as DragEvent).offsetX,
@@ -119,7 +119,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
     changeClipDuration = (clip: Delir.Project.Clip, newWidth: number) =>
     {
 
-        const newDurationFrames = TimelineHelper.pixelToFrames({
+        const newDurationFrames = TimePixelConversion.pixelToFrames({
             pxPerSec: this.props.pxPerSec,
             framerate: this.props.framerate,
             pixel: newWidth,
@@ -173,11 +173,11 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                             framerate: framerate,
                             scale: scale,
                         };
-                        const width = TimelineHelper.framesToPixel({
+                        const width = TimePixelConversion.framesToPixel({
                             durationFrames: clip.durationFrames|0,
                             ...opt,
                         })
-                        const left = TimelineHelper.framesToPixel({
+                        const left = TimePixelConversion.framesToPixel({
                             durationFrames: clip.placedFrame|0,
                             ...opt,
                         })

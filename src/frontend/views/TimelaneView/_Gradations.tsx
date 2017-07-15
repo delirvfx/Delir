@@ -5,7 +5,7 @@ import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
-import {default as TimelineHelper, MeasurePoint} from '../../helpers/timeline-helper'
+import {default as TimePixelConversion, MeasurePoint} from '../../utils/TimePixelConversion'
 import RendererService from '../../services/renderer'
 
 import * as s from './Gradations.styl'
@@ -76,7 +76,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         if (activeComposition) {
             // Reactの仕組みを使うとrenderMeasureが走りまくってCPUがヤバいので
             // Reactのライフサイクルから外す
-            const cursorLeft = TimelineHelper.framesToPixel({
+            const cursorLeft = TimePixelConversion.framesToPixel({
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
                 durationFrames: currentFrame,
@@ -107,7 +107,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
 
         if (! activeComposition) return
 
-        const frame = TimelineHelper.pixelToFrames({
+        const frame = TimePixelConversion.pixelToFrames({
             pxPerSec,
             framerate: activeComposition.framerate,
             scale,

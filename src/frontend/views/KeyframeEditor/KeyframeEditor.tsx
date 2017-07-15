@@ -5,7 +5,7 @@ import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/connectToStores'
-import {MeasurePoint} from '../../helpers/timeline-helper'
+import {MeasurePoint} from '../../utils/TimePixelConversion'
 
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
