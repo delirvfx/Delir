@@ -1,3 +1,4 @@
 {
-    "main": "./PreviewView.tsx"
+    "main": "./PreviewView.tsx",
+    "typings": "./PreviewView.tsx"
 }

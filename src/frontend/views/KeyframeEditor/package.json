@@ -1,3 +1,4 @@
 {
-    "main": "./KeyframeEditor.tsx"
+    "main": "./KeyframeEditor.tsx",
+    "typings": "./KeyframeEditor.tsx"
 }

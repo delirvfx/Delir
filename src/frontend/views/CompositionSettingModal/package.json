@@ -1,3 +1,4 @@
 {
-    "main": "./CompositionSettingModal.tsx"
+    "main": "./CompositionSettingModal.tsx",
+    "typings": "./CompositionSettingModal.tsx"
 }

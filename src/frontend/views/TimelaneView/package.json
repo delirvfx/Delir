@@ -1,3 +1,4 @@
 {
-    "main": "./TimelaneView.tsx"
+    "main": "./TimelaneView.tsx",
+    "typings": "./TimelaneView.tsx"
 }

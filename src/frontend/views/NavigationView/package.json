@@ -1,3 +1,4 @@
 {
-    "main": "./NavigationView.tsx"
+    "main": "./NavigationView.tsx",
+    "typings": "./NavigationView.tsx"
 }
