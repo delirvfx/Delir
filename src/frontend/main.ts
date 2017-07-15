@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom'
 import * as os from 'os'
 
 import AppComponent from './views/AppView'
-import './monaco'
+import './utils/Monaco'
 
 import AppActions from './actions/App'
 
