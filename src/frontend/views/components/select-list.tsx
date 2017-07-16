@@ -6,27 +6,28 @@ import * as classnames from 'classnames'
 
 export default class SelectList extends React.Component<any, any>
 {
-    static propTypes = {
+    public static propTypes = {
         className: PropTypes.string,
         multiple: PropTypes.bool.isRequired,
         onSelectionChanged: PropTypes.func,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         multiple: false,
     }
 
-    state = {
+    public state = {
         lastSelectedIdx: null,
         selected: [],
     }
 
-    clearSelection()
+    private clearSelection()
     {
 
     }
 
-    onClickItem = (idx, e) => {
+    private onClickItem = (idx, e) =>
+    {
         e.preventDefault()
         e.stopPropagation()
 
@@ -56,10 +57,12 @@ export default class SelectList extends React.Component<any, any>
             })
         }
 
-        this.props.onSelectionChanged && this.props.onSelectionChanged(this.state.selected)
+        if (this.props.onSelectionChanged) {
+            this.props.onSelectionChanged(this.state.selected)
+        }
     }
 
-    render()
+    public render()
     {
         const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
 

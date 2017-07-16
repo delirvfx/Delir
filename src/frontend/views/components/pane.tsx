@@ -3,7 +3,7 @@ import {Component, Children} from 'react'
 import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 
-export interface PaneProps {
+interface PaneProps {
     resizable?: boolean,
     allowFocus?: boolean,
     className?: string,
@@ -11,19 +11,19 @@ export interface PaneProps {
 
 export default class Pane extends Component<PaneProps, any>
 {
-    static propTypes = {
+    public static propTypes = {
         children: PropTypes.element,
         resizable: PropTypes.bool,
         allowFocus: PropTypes.bool,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         allowFocus: false,
         resizable: true,
         draggable: false,
     }
 
-    render()
+    public render()
     {
         const {
             className,

@@ -12,7 +12,7 @@ export interface WorkspaceProps extends React.DOMAttributes<HTMLDivElement> {
 
 export default class Workspace extends Component<WorkspaceProps, any>
 {
-    static propTypes = {
+    public static propTypes = {
         children: PropTypes.oneOfType([
             PropTypes.element,
             PropTypes.arrayOf(PropTypes.element),
@@ -22,11 +22,11 @@ export default class Workspace extends Component<WorkspaceProps, any>
         direction: PropTypes.oneOf(['vertical', 'horizontal']).isRequired
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         acceptPaneDragIn: false,
     }
 
-    render()
+    public render()
     {
         const props = _.omit(this.props, ['children', 'className', 'acceptPaneDragIn', 'direction'])
 

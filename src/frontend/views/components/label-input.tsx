@@ -18,7 +18,7 @@ interface LabelInputState {
 
 export default class LabelInput extends React.Component<LabelInputProps, LabelInputState>
 {
-    static propTypes = {
+    public static propTypes = {
         className: PropTypes.string,
         name: PropTypes.string,
         defaultValue: PropTypes.string,
@@ -27,27 +27,27 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         doubleClickToEdit: PropTypes.bool,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         doubleClickToEdit: false,
     }
 
-    refs: {
+    public refs: {
         input: HTMLInputElement,
     }
 
-    state = {
+    public state = {
         readOnly: true,
         value: this.props.defaultValue,
     }
 
-    enableAndFocus()
+    private enableAndFocus()
     {
         this.setState({readOnly: false})
         this.refs.input.focus()
         this.refs.input.select()
     }
 
-    onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>
+    private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>
     {
         const {refs: {input}, props: {onChange, defaultValue}} = this
 
@@ -64,7 +64,7 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         }
     }
 
-    onBlur = (e: React.MouseEvent<HTMLInputElement>) =>
+    private onBlur = (e: React.MouseEvent<HTMLInputElement>) =>
     {
         if (this.state.readOnly) return
 
@@ -72,7 +72,7 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         this.setState({readOnly: true})
     }
 
-    onDoubleClick = (e: React.MouseEvent<HTMLInputElement>) =>
+    private onDoubleClick = (e: React.MouseEvent<HTMLInputElement>) =>
     {
         if (!this.props.doubleClickToEdit) return
 
@@ -84,12 +84,12 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         this.refs.input.select()
     }
 
-    valueChanged = e =>
+    private valueChanged = e =>
     {
         this.setState({value: this.refs.input.value})
     }
 
-    render()
+    public render()
     {
         const {
             props: {className, name, placeholder},

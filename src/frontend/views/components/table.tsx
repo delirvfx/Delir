@@ -9,7 +9,7 @@ interface TableProps {
 }
 export class Table extends React.Component<TableProps, any>
 {
-    static propTypes = {
+    public static propTypes = {
         className: PropTypes.string,
     }
 
@@ -37,13 +37,14 @@ export class Table extends React.Component<TableProps, any>
         }
     }
 
-    handleCellResizing = (cellIdx: number, width: number) => {
+    private handleCellResizing = (cellIdx: number, width: number) =>
+    {
         const _widths = this.state.columnWidths.slice(0)
         _widths[cellIdx] = width
         this.setState({columnWidths: _widths})
     }
 
-    render()
+    public render()
     {
         const {className, children, ...props} = this.props
         return (
@@ -75,12 +76,12 @@ interface TableHeaderProps {
 }
 export class TableHeader extends React.Component<TableHeaderProps, any>
 {
-    static propTypes = {
+    public static propTypes = {
         _notifyCellResizing: PropTypes.func,
         className: PropTypes.string,
     }
 
-    render()
+    public render()
     {
         return (
             <div className={classnames('table-header', this.props.className)}>
@@ -105,7 +106,7 @@ interface TableBodyProps {
 }
 export class TableBody extends React.Component<TableBodyProps, any>
 {
-    static propTypes = {
+    public static propTypes = {
         _widths: PropTypes.arrayOf(
             PropTypes.oneOfType([
                 PropTypes.number,
@@ -115,7 +116,7 @@ export class TableBody extends React.Component<TableBodyProps, any>
         className: PropTypes.string,
     }
 
-    render()
+    public render()
     {
         return (
             <div className={classnames('table-body', this.props.className)}>
@@ -145,7 +146,7 @@ interface TableBodySelectListState {
 }
 export class TableBodySelectList extends React.Component<TableBodySelectListProps, TableBodySelectListState>
 {
-    static propTypes = {
+    public static propTypes = {
         _widths: PropTypes.arrayOf(
             PropTypes.oneOfType([
                 PropTypes.number,
@@ -157,21 +158,22 @@ export class TableBodySelectList extends React.Component<TableBodySelectListProp
         onSelectionChanged: PropTypes.func,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         multiple: false,
     }
 
-    state = {
+    public state = {
         lastSelectedIdx: null,
         selected: [],
     }
 
-    clearSelection()
+    private clearSelection()
     {
 
     }
 
-    onClickItem = (idx: number, e: MouseEvent) => {
+    private onClickItem = (idx: number, e: MouseEvent) =>
+    {
         const {lastSelectedIdx, selected} = this.state
 
         if (lastSelectedIdx == null) {
@@ -203,7 +205,7 @@ export class TableBodySelectList extends React.Component<TableBodySelectListProp
         this.props.onSelectionChanged && this.props.onSelectionChanged(this.state.selected)
     }
 
-    render()
+    public render()
     {
         let rowIdx = 0
 
@@ -237,13 +239,13 @@ export class TableBodySelectList extends React.Component<TableBodySelectListProp
     }
 }
 
-export class TableFooter extends React.Component
+export class TableFooter extends React.Component<{className: string}, null>
 {
-    static propTypes = {
+    public static propTypes = {
         className: PropTypes.string,
     }
 
-    render()
+    public render()
     {
         return (
             <div className={classnames('table-footer', this,props.className)}>
@@ -255,7 +257,7 @@ export class TableFooter extends React.Component
 
 export class Row extends React.Component
 {
-    static propTypes = {
+    public static propTypes = {
         _inHeader: PropTypes.bool,
         _notifyCellResizing: PropTypes.func,
         _widths: PropTypes.arrayOf(
@@ -267,7 +269,7 @@ export class Row extends React.Component
         className: PropTypes.string,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         _inHeader: false,
     }
 
@@ -276,7 +278,7 @@ export class Row extends React.Component
         super(...args)
     }
 
-    render()
+    public render()
     {
         const {_widths} = this.props
         const childProps = _.omit(this.props, ['_inHeader', '_widths', '_notifyCellResizing', '_widths'])
@@ -311,7 +313,7 @@ export class Row extends React.Component
 
 export class Col extends React.Component<any, any>
 {
-    static propTypes = {
+    public static propTypes = {
         _inHeader: PropTypes.bool,
         _notifyCellResizing: PropTypes.func,
         className: PropTypes.string,
@@ -321,7 +323,7 @@ export class Col extends React.Component<any, any>
         resizable: PropTypes.bool,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         _inHeader: false,
         defaultWidth: 0,
         resizable: true,
@@ -337,12 +339,13 @@ export class Col extends React.Component<any, any>
         }
     }
 
-    onResizeEnd = e => {
+    private onResizeEnd = e =>
+    {
         this.props._notifyCellResizing && this.props._notifyCellResizing(e.clientX)
         this.setState({width: e.clientX})
     }
 
-    render()
+    public render()
     {
         const {width} = this.state
         const {resizable, _notifyCellResizing} = this.props
