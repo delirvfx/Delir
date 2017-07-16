@@ -87,7 +87,7 @@ const install = async () => {
             },
         })
 
-        window.loadURL(`file://${path.join(__dirname, '/../renderer/index.html')}`)
+        window.loadURL(`file://${path.join(__dirname, '/../frontend/index.html')}`)
         window.show()
         args.devMode && window.webContents.openDevTools()
     }

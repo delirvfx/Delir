@@ -1,0 +1,4 @@
+{
+    "main": "./Portal.tsx",
+    "typings": "./Portal.tsx"
+}

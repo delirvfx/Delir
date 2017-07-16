@@ -1,0 +1,63 @@
+@import '../../assets/styles/_variables'
+
+.assetsView
+    display flex
+    flex-direction column
+    align-items flex-start
+    width 300px
+    flex none
+
+.assetList
+.compositionList
+    width 100%
+    flex 1
+
+    border-top 1px solid rgba(255, 255, 255, 0.2)
+
+    // tbody, thead, tr, td, th
+    //     display block
+
+    th
+        border-bottom 1px solid rgba(#fff, .3)
+
+    td
+        border-bottom 1px solid rgba(#fff, .2)
+
+    th, td
+        padding 4px
+        font-size 12px
+
+
+    :global
+        ._label-input
+            width 100%
+
+        .table-body
+            overflow auto
+
+        .table-row, .table-col
+            border-right none
+            border-bottom none
+
+.compositionsHeading
+.assetsHeading
+    width 100%
+    padding 4px 8px
+    font-size 12px
+    line-height 14px
+
+.assetsHeading
+    border-top 1px solid rgba(255, 255, 255, 0.2)
+
+.addAssetPlusSign
+    margin-left 8px
+    margin-bottom -1px
+    filter invert(100%)
+    cursor pointer
+
+    &:hover
+        background-color rgba(invert(#fff), .2) // inverted, it appear as white
+
+
+// .assetList
+//     margin-top 16px

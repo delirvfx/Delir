@@ -80,6 +80,7 @@
     "webpack": "2.6.1"
   },
   "dependencies": {
+    "@types/keymirror": "0.1.1",
     "@types/prop-types": "^15.5.1",
     "aac": "^0.1.3",
     "alac": "^0.1.0",

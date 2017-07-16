@@ -1,0 +1,57 @@
+@require 'nib'
+
+.root
+    position fixed
+    font-size 12px
+
+.list
+    width 200px
+    margin 0
+    padding 4px 0
+    list-style none
+
+    color #000
+    background-color rgba(#e0e0e0, .9)
+    border-radius 3px
+    box-shadow 2px 2px 4px rgba(#000, .8)
+    backdrop-filter blur(5px)
+
+.item
+    padding 4px
+    font-size 12px
+    line-height 12px
+
+    &.type--normal
+        &:hover
+            color #fff
+            background-color #2aa1ff
+
+    &.hasSubmenu
+        position relative
+        display flex
+        justify-content space-between
+
+
+        &::after
+            content '▶'
+
+        > .list
+            position absolute
+            top 0
+            right 0
+
+            display none
+            transform translateX(100%)
+
+        &:hover
+            .list
+                display block
+
+    &.type--separator
+        width 100%
+        padding 0
+        margin 4px 0
+        border-width 0
+        border-top-width 1px
+        border-style solid
+        border-color rgba(#444, .3)
