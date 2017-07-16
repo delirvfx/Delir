@@ -17,30 +17,39 @@ interface DropdownState {
 }
 
 export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
-    static propTypes = {
+    public static propTypes = {
         shownInitial: PropTypes.bool,
         className: PropTypes.string,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         shownInitial: false,
     }
 
-    refs: {
+    public refs: {
         inspector: HTMLDivElement
     }
 
-    state = {
+    public state = {
         show: this.props.shownInitial
     }
 
     private _portal: Portal = new Portal()
 
-    show = () => this.setState({show: true})
+    public show = () =>
+    {
+        this.setState({show: true})
+    }
 
-    hide = () => this.setState({show: false})
+    public hide = () =>
+    {
+        this.setState({show: false})
+    }
 
-    toggle = () => this.setState({show: !this.state.show})
+    public toggle = () =>
+    {
+        this.setState({show: !this.state.show})
+    }
 
     private hideOnOutsideClicked = (e: MouseEvent) =>
     {
@@ -52,18 +61,18 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         }
     }
 
-    componentDidMount = () =>
+    public componentDidMountg()
     {
         window.addEventListener('click', this.hideOnOutsideClicked, true)
     }
 
-    componentWillUnmount = () =>
+    public componentWillUnmountg()
     {
         window.removeEventListener('click', this.hideOnOutsideClicked, true)
         this._portal.unmount()
     }
 
-    componentDidUpdate = () =>
+    public componentDidUpdateg()
     {
         const {props: {className, children}, state: {show}} = this
         const {left, top} = this.refs.inspector.getBoundingClientRect()
@@ -80,7 +89,7 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         ))
     }
 
-    render()
+    public render()
     {
         return (
             <div ref='inspector' className={s.dropdownInspector} />

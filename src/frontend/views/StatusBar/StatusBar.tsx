@@ -27,13 +27,13 @@ export default class StatusBar extends React.Component<null, State>
         })
     }
 
-    openFeedback = (e) =>
+    public openFeedback = (e) =>
     {
         remote.shell.openExternal('https://goo.gl/forms/dDy7HWgPuAiOFaSn1')
         e.preventDefault()
     }
 
-    render()
+    public render()
     {
         return (
             <Pane className='view-status' resizable={false} allowFocus={false}>

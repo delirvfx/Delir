@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 export default class Portal {
-    private root: Element
+    public root: Element
     private mounted: boolean = false
     private mountedComponent: React.Component<any, any>|null
 

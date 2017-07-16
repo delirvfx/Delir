@@ -23,7 +23,7 @@ interface DragNumberInputState {
 
 export default class DragNumberInput extends React.Component<DragNumberInputProps, DragNumberInputState>
 {
-    static propTypes = {
+    public static propTypes = {
         className: PropTypes.string,
         data: PropTypes.object,
         min: PropTypes.number,
@@ -36,34 +36,35 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         doubleClickToEdit: PropTypes.bool,
     }
 
-    static defaultProps = {
+    public static defaultProps = {
         allowFloat: false,
         disabled: false,
         doubleClickToEdit: false,
     }
 
-    refs: {
+    public refs: {
         input: HTMLInputElement
     }
 
-    state = {
+    public state = {
         value: this.props.value != null ? this.props.value : 0,
         valueChanged: false,
     }
 
-    get value(): number { return +this.state.value }
+    public get value(): number { return +this.state.value }
 
-    componentDidMount()
+    public componentDidMount()
     {
         this.refs.input.onpointerlockerror = e => console.error(e)
     }
 
-    componentWillReceiveProps(nextProps: DragNumberInputProps)
+    public componentWillReceiveProps(nextProps: DragNumberInputProps)
     {
         this.setState({value: nextProps.value})
     }
 
-    onKeyDown = (e: KeyboardEvent) => {
+    private onKeyDown = (e: KeyboardEvent) =>
+    {
         const {onChange} = this.props
         const {input} = this.refs
 
@@ -84,14 +85,14 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         }
     }
 
-    onBlur = (e: FocusEvent) =>
+    private onBlur = (e: FocusEvent) =>
     {
         const value = this._parseValue(this.refs.input.value)
         this.props.onChange && this.props.onChange(value)
         this.setState({value})
     }
 
-    onMouseDown = (e: React.MouseEvent<HTMLSpanElement>) =>
+    private onMouseDown = (e: React.MouseEvent<HTMLSpanElement>) =>
     {
         // MouseEvent#movement is buggy on Windows. Disable modification by drag.
         if (Platform.isWindows()) return
@@ -99,7 +100,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         e.currentTarget.requestPointerLock()
     }
 
-    onMouseMove = (event: React.MouseEvent<HTMLSpanElement>) =>
+    private onMouseMove = (event: React.MouseEvent<HTMLSpanElement>) =>
     {
         // MouseEvent#movement is buggy on Windows. Disable modification by drag.
         if (Platform.isWindows()) return
@@ -119,7 +120,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         this.setState({value: this._parseValue(value)})
     }
 
-    onMouseUp = (e: React.MouseEvent<HTMLSpanElement>) =>
+    private onMouseUp = (e: React.MouseEvent<HTMLSpanElement>) =>
     {
         // MouseEvent#movement is buggy on Windows. Disable modification by drag.
         if (Platform.isWindows()) return
@@ -132,7 +133,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
     }
 
     // TODO: parse and calculate expression
-    valueChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
+    private valueChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
     {
         this.setState({value: e.target.value})
     }
@@ -151,7 +152,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         return value
     }
 
-    render()
+    public render()
     {
         return (
             <input

@@ -20,7 +20,7 @@ interface DelirValueInputProps {
 
 export default class DelirValueInput extends Component<DelirValueInputProps, any>
 {
-    static propTypes = {
+    public static propTypes = {
         descriptors: PropTypes.arrayOf(
             PropTypes.instanceOf(Delir.TypeDescriptor)
         ),
@@ -28,7 +28,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         onChange: PropTypes.func.isRequired,
     }
 
-    refs: {
+    public refs: {
         input: DragNumberInput,
         propX: DragNumberInput,
         propY: DragNumberInput,
@@ -48,18 +48,18 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         colorPickerDropdown: Dropdown
     }
 
-    state = {
+    public state = {
         value: this.props.value,
     }
 
-    componentWillReceiveProps(nextProps: Readonly<DelirValueInputProps>, nextContext: any)
+    public componentWillReceiveProps(nextProps: Readonly<DelirValueInputProps>, nextContext: any)
     {
         if (this.props.value !== nextProps.value) {
             setTimeout(() => this.setState({value: nextProps.value}), 0)
         }
     }
 
-    valueChanged = () =>
+    private valueChanged = () =>
     {
         const {descriptor} = this.props
 
@@ -137,21 +137,24 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         }
     }
 
-    onFocusTextInput = (e: React.FocusEvent<HTMLInputElement>) => {
+    private onFocusTextInput = (e: React.FocusEvent<HTMLInputElement>) =>
+    {
         e.preventDefault()
         e.stopPropagation()
         this.refs.textInputDropdown.show()
         this.refs.textArea.focus()
     }
 
-    onKeydownTextArea = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    private onKeydownTextArea = (e: React.KeyboardEvent<HTMLTextAreaElement>) =>
+    {
         if ((e.metaKey === true || e.ctrlKey === true) && e.key === 'Enter') {
             this.refs.textInputDropdown.hide()
             this.valueChanged()
         }
     }
 
-    openColorPicker = (e: React.MouseEvent<HTMLButtonElement>) => {
+    private openColorPicker = (e: React.MouseEvent<HTMLButtonElement>) =>
+    {
         const {colorPickerDropdown} = this.refs
         colorPickerDropdown.show()
 
@@ -159,7 +162,8 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         e.stopPropagation()
     }
 
-    closeColorPicker = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    private closeColorPicker = (e: React.KeyboardEvent<HTMLDivElement>) =>
+    {
         const {colorPickerDropdown} = this.refs
         colorPickerDropdown.hide()
         this.valueChanged()
@@ -168,7 +172,7 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
         e.stopPropagation()
     }
 
-    render()
+    public render()
     {
         const {props: {descriptor, assets}, state: {value}} = this
         let component: JSX.Element[] = []
