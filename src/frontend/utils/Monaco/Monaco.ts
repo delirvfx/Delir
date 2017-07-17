@@ -15,6 +15,11 @@ type AvailableLibrary =
     | 'lib.es2016.array.include.d.ts'
     | 'console.d.ts'
 
+interface LibraryEntry {
+    name: string
+    typedef: string
+}
+
 // Load EcmaScript TypeDefinitions
 const typeDefinitionLibs = {
     'lib.es5.d.ts'                      : require('!raw-loader!typescript/lib/lib.es5.d.ts'),
@@ -32,7 +37,7 @@ const typeDefinitionLibs = {
 }
 
 export default class Monaco {
-    private static librarySet: {[setName: string]: AvailableLibrary[]} = Object.create(null)
+    private static librarySet: {[setName: string]: (AvailableLibrary|LibraryEntry)[]} = Object.create(null)
     private static activeLibrarySetDisposer: () => void|null
 
     public static setup(): Promise<void>
@@ -80,7 +85,7 @@ export default class Monaco {
         })
     }
 
-    public static registerLibrarySet(name: string, libs: AvailableLibrary[])
+    public static registerLibrarySet(name: string, libs: (AvailableLibrary|LibraryEntry)[])
     {
         this.librarySet[name] = libs
     }
@@ -92,7 +97,11 @@ export default class Monaco {
         }
 
         const disposables = this.librarySet[name].map(lib => {
-            return monaco.languages.typescript.typescriptDefaults.addExtraLib(typeDefinitionLibs[lib], lib)
+            if (typeof lib === 'string') {
+                return monaco.languages.typescript.javascriptDefaults.addExtraLib(typeDefinitionLibs[lib], lib)
+            } else {
+                return monaco.languages.typescript.javascriptDefaults.addExtraLib(lib.typedef, lib.name)
+            }
         })
 
         this.activeLibrarySetDisposer = () => disposables.forEach(d => d.dispose())
