@@ -94,7 +94,7 @@ export default class Pipeline
 
             const request = this._initStage(compositionId, beginFrame)
 
-            const renderTasks = await this._setupStage(request)
+            const renderTasks = await this._taskingStage(request)
             await this._renderStage(request, renderTasks)
 
             const destCanvasCtx = this.destinationCanvas.getContext('2d')!
@@ -123,7 +123,7 @@ export default class Pipeline
             })
 
             let request = this._initStage(compositionId, _options.beginFrame)
-            const renderTasks = await this._setupStage(request)
+            const renderTasks = await this._taskingStage(request)
             this._fpsCounter.reset()
 
             // const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
@@ -240,7 +240,7 @@ export default class Pipeline
         })
     }
 
-    private async _setupStage(this: Pipeline, req: RenderingRequest): Promise<ILayerRenderTask[]>
+    private async _taskingStage(this: Pipeline, req: RenderingRequest): Promise<ILayerRenderTask[]>
     {
         const layerTasks: ILayerRenderTask[] = []
 
