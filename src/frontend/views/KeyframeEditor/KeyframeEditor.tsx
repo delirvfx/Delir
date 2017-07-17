@@ -128,6 +128,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     private _openExpressionEditor = (propName: string) => {
         const {activeClip} = this.props
         this.setState({editorOpened: true, activePropName: propName})
+        this.forceUpdate()
     }
 
     public render()
