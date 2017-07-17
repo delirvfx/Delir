@@ -50,9 +50,9 @@
   version "2.0.32"
   resolved "https://registry.yarnpkg.com/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
 
-"@types/flux@3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.0.tgz#5fcb3750219576e5e38a2cdb4fe7735cea861c55"
+"@types/flux@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.1.tgz#fd4dd48d5d3891b62fde5923bd7a6295a2043311"
   dependencies:
     "@types/fbemitter" "*"
     "@types/react" "*"
@@ -68,9 +68,9 @@
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.1.tgz#1fe48e6e5e2a969cafecf0f24485ae23c72abd30"
 
-"@types/lodash@4.14.65":
-  version "4.14.65"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.65.tgz#a0f78d71ffcd3c02628d5f616410c98c424326d5"
+"@types/lodash@4.14.69":
+  version "4.14.69"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.69.tgz#2bbd48c1565e02506f48ed8d1e8e53ea493fd0e6"
 
 "@types/mz@*", "@types/mz@0.0.31":
   version "0.0.31"
@@ -86,25 +86,25 @@
   version "15.5.1"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.1.tgz#1ecf52621299e65b855374337fb11fd2d1066fc1"
 
-"@types/react-color@2.11.2":
-  version "2.11.2"
-  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.11.2.tgz#540bf79956e290b26d36b7cba96fcc2b2d8afe8d"
+"@types/react-color@2.11.4":
+  version "2.11.4"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.11.4.tgz#55d8a94bbb521837b2b2af404a3b86477a1a03af"
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@15.5.0":
-  version "15.5.0"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-15.5.0.tgz#7f4fb9613d4051141773242f7b6b5f1a46b34bd9"
+"@types/react-dom@15.5.1":
+  version "15.5.1"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-15.5.1.tgz#f3c3e14c682785923c7d64583537df319442dec1"
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@15.0.27":
-  version "15.0.27"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-15.0.27.tgz#d64ad424aa24a101fd50cdeae6eab3d53e65513d"
+"@types/react@*", "@types/react@15.0.38":
+  version "15.0.38"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-15.0.38.tgz#6afea31a9fe66304af474106ba372ddaba449995"
 
-"@types/semver@^5.3.31":
-  version "5.3.31"
-  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.3.31.tgz#b999d7d935f43f5207b01b00d3de20852f4ca75f"
+"@types/semver@5.3.32":
+  version "5.3.32"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.3.32.tgz#a7afdc4bee713c081114cd811b51be10907d7bae"
 
 "@types/typescript@^2.0.0":
   version "2.0.0"
@@ -112,9 +112,9 @@
   dependencies:
     typescript "*"
 
-"@types/uuid@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.0.0.tgz#be93b14bcf97f59c079a9e58754960b5efd946c3"
+"@types/uuid@3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.0.tgz#91639516fbb892ed3737a2bdc1b030d02b4a09c1"
   dependencies:
     "@types/node" "*"
 
@@ -2110,15 +2110,7 @@ electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.11:
   version "1.3.14"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.14.tgz#64af0f9efd3c3c6acd57d71f83b49ca7ee9c4b43"
 
-electron@*:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-1.7.3.tgz#839cab0a0598835a100dceede215988ba99c325b"
-  dependencies:
-    "@types/node" "^7.0.18"
-    electron-download "^3.0.1"
-    extract-zip "^1.0.3"
-
-electron@1.7.4:
+electron@*, electron@1.7.4:
   version "1.7.4"
   resolved "https://registry.yarnpkg.com/electron/-/electron-1.7.4.tgz#db8b85ae98dffb7a82938e5ea6eed3cb66f62a65"
   dependencies:
