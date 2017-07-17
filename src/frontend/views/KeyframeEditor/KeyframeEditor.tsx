@@ -13,6 +13,7 @@ import SelectList from '../components/select-list'
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import DelirValueInput from './_DelirValueInput'
 import KeyframeGraph from './KeyframeGraph'
+import ExpressionEditor from './ExpressionEditor'
 
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
@@ -69,31 +70,18 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         svgParent: HTMLDivElement
     }
 
-    private _editor: monaco.editor.IStandaloneCodeEditor
-    private editorElement: HTMLDivElement
-
     protected componentDidMount()
     {
         this._syncGraphHeight()
         window.addEventListener('resize', _.debounce(this._syncGraphHeight, 1000 / 30))
-
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(Delir.Renderer.expressionContextTypeDefinition, 'ExpressionAPI.ts')
-
-        this._editor = monaco.editor.create(this.editorElement, {
-            language: 'typescript',
-            codeLens: true,
-            automaticLayout: true,
-            theme: 'vs-dark',
-            minimap: {enabled: false},
-        })
-
-        this._editor.createContextKey('cond1', true)
-        this._editor.createContextKey('cond2', true)
-        this._editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleEditorSave, 'cond1')
-        this._editor.addCommand(monaco.KeyCode.Escape, this.closeEditor, 'cond2')
     }
 
-    private handleEditorSave = () => {
+    private onCloseEditor = (result: ExpressionEditor.EditorResult) => {
+        if (!result.saved) {
+            this.setState({editorOpened: false})
+            return
+        }
+
         const {activeClip} = this.props
         const {activePropName} = this.state
 
@@ -102,18 +90,13 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         try {
             ProjectModActions.modifyClipExpression(activeClip.id, activePropName, {
                 language: 'typescript',
-                code: this._editor.getValue(),
+                code: result.code,
             })
 
-            this.setState({editorOpened: false, activePropName: null})
+            this.setState({editorOpened: false})
         } catch (e) {
             console.log(e)
         }
-    }
-
-    private closeEditor = () => {
-        this._editor.setValue('')
-        this.setState({editorOpened: false, activePropName: null})
     }
 
     private _syncGraphHeight = () =>
@@ -145,9 +128,6 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private _openExpressionEditor = (propName: string) => {
         const {activeClip} = this.props
-        const expression = activeClip!.expressions[propName]
-
-        this._editor.setValue(expression ? expression.code : '')
         this.setState({editorOpened: true, activePropName: propName})
     }
 
@@ -159,6 +139,12 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const descriptors = activeClip
             ? Delir.Renderer.Renderers.getInfo(activeClip.renderer).parameter.properties || []
             : []
+
+        const expressionCode = (!editorOpened && !activePropName) ? null : (
+            activeClip.expressions[activePropName]
+                ? activeClip.expressions[activePropName].code
+                : null
+        )
 
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
@@ -202,7 +188,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 </Pane>
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
-                        <div ref={el => { this.editorElement = el }} className={s.expressionEditor} style={{display: editorOpened ? null : 'none'}} />
+                        {editorOpened && <ExpressionEditor className={s.expressionEditor} code={expressionCode} onClose={this.onCloseEditor} />}
                         <div className={s.measureContainer}>
                             <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
                                 {...this._renderMeasure()}
