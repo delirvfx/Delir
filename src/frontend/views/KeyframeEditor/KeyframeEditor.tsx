@@ -1,4 +1,3 @@
-import * as _monaco from 'monaco-editor'
 import * as _ from 'lodash'
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
@@ -13,6 +12,7 @@ import SelectList from '../components/select-list'
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import DelirValueInput from './_DelirValueInput'
 import KeyframeGraph from './KeyframeGraph'
+import ExpressionEditor from './ExpressionEditor'
 
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
@@ -21,7 +21,7 @@ import {default as EditorStateStore, EditorState} from '../../stores/EditorState
 import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
 import RendererService from '../../services/renderer'
 
-import * as s from './style.styl'
+import * as s from './KeyframeEditor.styl'
 
 interface KeyframeViewProps {
     activeComposition: Delir.Project.Composition|null
@@ -69,31 +69,18 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         svgParent: HTMLDivElement
     }
 
-    private _editor: monaco.editor.IStandaloneCodeEditor
-    private editorElement: HTMLDivElement
-
     protected componentDidMount()
     {
         this._syncGraphHeight()
         window.addEventListener('resize', _.debounce(this._syncGraphHeight, 1000 / 30))
-
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(Delir.Renderer.expressionContextTypeDefinition, 'ExpressionAPI.ts')
-
-        this._editor = monaco.editor.create(this.editorElement, {
-            language: 'typescript',
-            codeLens: true,
-            automaticLayout: true,
-            theme: 'vs-dark',
-            minimap: {enabled: false},
-        })
-
-        this._editor.createContextKey('cond1', true)
-        this._editor.createContextKey('cond2', true)
-        this._editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleEditorSave, 'cond1')
-        this._editor.addCommand(monaco.KeyCode.Escape, this.closeEditor, 'cond2')
     }
 
-    private handleEditorSave = () => {
+    private onCloseEditor = (result: ExpressionEditor.EditorResult) => {
+        if (!result.saved) {
+            this.setState({editorOpened: false})
+            return
+        }
+
         const {activeClip} = this.props
         const {activePropName} = this.state
 
@@ -102,18 +89,13 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         try {
             ProjectModActions.modifyClipExpression(activeClip.id, activePropName, {
                 language: 'typescript',
-                code: this._editor.getValue(),
+                code: result.code,
             })
 
-            this.setState({editorOpened: false, activePropName: null})
+            this.setState({editorOpened: false})
         } catch (e) {
             console.log(e)
         }
-    }
-
-    private closeEditor = () => {
-        this._editor.setValue('')
-        this.setState({editorOpened: false, activePropName: null})
     }
 
     private _syncGraphHeight = () =>
@@ -145,10 +127,8 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
 
     private _openExpressionEditor = (propName: string) => {
         const {activeClip} = this.props
-        const expression = activeClip!.expressions[propName]
-
-        this._editor.setValue(expression ? expression.code : '')
         this.setState({editorOpened: true, activePropName: propName})
+        this.forceUpdate()
     }
 
     public render()
@@ -160,49 +140,55 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
             ? Delir.Renderer.Renderers.getInfo(activeClip.renderer).parameter.properties || []
             : []
 
+        const expressionCode = (!editorOpened && !activePropName) ? null : (
+            activeClip.expressions[activePropName]
+                ? activeClip.expressions[activePropName].code
+                : null
+        )
+
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
                 <Pane className={s.propList}>
-                    <SelectList>
-                        {descriptors.map(desc => {
-                            const value = activeClip
-                                ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, desc, activeClip.keyframes[desc.propName] || [])
-                                : undefined
+                    {descriptors.map(desc => {
+                        const value = activeClip
+                            ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, desc, activeClip.keyframes[desc.propName] || [])
+                            : undefined
 
-                            const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.propName] || []).length !== 0
+                        const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.propName] || []).length !== 0
 
-                            return (
-                                <div
-                                    key={activeClip!.id + desc.propName}
-                                    className={s.propItem}
-                                    data-prop-name={desc.propName}
-                                    onClick={this.selectProperty}
+                        return (
+                            <div
+                                key={activeClip!.id + desc.propName}
+                                className={classnames(s.propItem, {
+                                    [s['propItem--active']]: activePropName === desc.propName,
+                                })}
+                                data-prop-name={desc.propName}
+                                onClick={this.selectProperty}
+                            >
+                                <ContextMenu>
+                                    <MenuItem label='エクスプレッション' onClick={() => this._openExpressionEditor(desc.propName) } />
+                                </ContextMenu>
+                                <span className={classnames(
+                                        s.propKeyframeIndicator,
+                                        {
+                                            [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                            [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                        })
+                                    }
                                 >
-                                    <ContextMenu>
-                                        <MenuItem label='エクスプレッション' onClick={() => this._openExpressionEditor(desc.propName) } />
-                                    </ContextMenu>
-                                    <span className={classnames(
-                                            s.propKeyframeIndicator,
-                                            {
-                                                [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                                [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
-                                            })
-                                        }
-                                    >
-                                        {desc.animatable && (<i className='twa twa-clock12'></i>)}
-                                    </span>
-                                    <span className={s.propItemName}>{desc.label}</span>
-                                    <div className={s.propItemInput}>
-                                        <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.valueChanged} />
-                                    </div>
+                                    {desc.animatable && (<i className='twa twa-clock12'></i>)}
+                                </span>
+                                <span className={s.propItemName}>{desc.label}</span>
+                                <div className={s.propItemInput}>
+                                    <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.valueChanged} />
                                 </div>
-                            )
-                        })}
-                    </SelectList>
+                            </div>
+                        )
+                    })}
                 </Pane>
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
-                        <div ref={el => { this.editorElement = el }} className={s.expressionEditor} style={{display: editorOpened ? null : 'none'}} />
+                        {editorOpened && <ExpressionEditor className={s.expressionEditor} code={expressionCode} onClose={this.onCloseEditor} />}
                         <div className={s.measureContainer}>
                             <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
                                 {...this._renderMeasure()}

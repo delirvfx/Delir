@@ -36,7 +36,7 @@ export interface EditorState {
 
 class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 {
-    getInitialState(): StateRecord
+    public getInitialState(): StateRecord
     {
         return new Record<EditorState>({
             project: null,

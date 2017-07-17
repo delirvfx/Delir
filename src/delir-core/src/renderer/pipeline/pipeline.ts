@@ -1,5 +1,6 @@
 import Project from '../../project/project'
 import Clip from '../../project/clip'
+import Expression from '../../values/expression'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
 import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import {IRenderer} from '../renderer/renderer-base'
@@ -66,7 +67,7 @@ export default class Pipeline
     private _pluginRegistry: PluginRegistry
     private _destinationCanvas: HTMLCanvasElement
     private _destinationAudioNode: AudioNode
-    private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap();
+    private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
 
     get project() { return this._project }
     set project(project: Project) { this._project = project }
@@ -94,7 +95,7 @@ export default class Pipeline
 
             const request = this._initStage(compositionId, beginFrame)
 
-            const renderTasks = await this._setupStage(request)
+            const renderTasks = await this._taskingStage(request)
             await this._renderStage(request, renderTasks)
 
             const destCanvasCtx = this.destinationCanvas.getContext('2d')!
@@ -123,7 +124,7 @@ export default class Pipeline
             })
 
             let request = this._initStage(compositionId, _options.beginFrame)
-            const renderTasks = await this._setupStage(request)
+            const renderTasks = await this._taskingStage(request)
             this._fpsCounter.reset()
 
             // const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
@@ -240,7 +241,7 @@ export default class Pipeline
         })
     }
 
-    private async _setupStage(this: Pipeline, req: RenderingRequest): Promise<ILayerRenderTask[]>
+    private async _taskingStage(this: Pipeline, req: RenderingRequest): Promise<ILayerRenderTask[]>
     {
         const layerTasks: ILayerRenderTask[] = []
 
@@ -271,11 +272,11 @@ export default class Pipeline
                     rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
                 })
 
-                const rendererExpressions = _.mapValues(clip.expressions, expr => {
+                const rendererExpressions = _(clip.expressions).mapValues((expr: Expression) => {
                     const code = expr.language === 'typescript' ? TypeScript.transpile(expr.code, tsCompileOption) : expr.code
                     const script = new vm.Script(code, {filename: `${layer.name}.${clip.id}.expression.ts`})
                     return (exposes: ExpressionContext.Exposes) => script.runInNewContext(ExpressionContext.makeContext(exposes))
-                })
+                }).pickBy(value => value !== null).value()
 
                 // Initialize effects
                 const effects: IEffectRenderTask[] = []
@@ -297,11 +298,11 @@ export default class Pipeline
                         effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
                     })
 
-                    const effectExpressions = _.mapValues(clip.expressions, expr => {
+                    const effectExpressions = _(effect.expressions).mapValues((expr: Expression) => {
                         const code = expr.language === 'typescript' ? TypeScript.transpile(expr.code, tsCompileOption) : expr.code
                         const script = new vm.Script(code, {filename: `${layer.name}.${clip.id}.effect.expression.ts`})
                         return (exposes: ExpressionContext.Exposes) => script.runInNewContext(ExpressionContext.makeContext(exposes))
-                    })
+                    }).pickBy(value => value !== null).value()
 
                     effects.push({
                         effectEntityId: effect.id,
@@ -382,11 +383,13 @@ export default class Pipeline
                 const afterExpressionParams = _.mapValues(beforeExpressionParams, (value, propName) => {
                     if (clipTask.expressions[propName!]) {
                         // TODO: Value type Validation
-                        return clipTask.expressions[propName!]({
+                        const result = clipTask.expressions[propName!]({
                             req: renderReq,
                             clipProperties: beforeExpressionParams,
                             currentValue: value
                         })
+
+                        return result === void 0 ? value : result
                     }
 
                     return value
