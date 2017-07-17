@@ -13,31 +13,37 @@ export const makeContext = (exposes: Exposes) => {
         set: () => { throw new Error(`Illegal property setting in expression`) }
     })
 
-    const context = {
-        get time() { return exposes.req.time },
-        get frame() { return exposes.req.frame },
-        get timeOnComposition() { return exposes.req.timeOnComposition },
-        get frameOnComposition() { return exposes.req.frameOnComposition },
-        get width() { return exposes.req.width },
-        get height() { return exposes.req.height },
-        get audioBuffer() { return exposes.req.destAudioBuffer },
-        get duration() { return exposes.req.durationFrames / exposes.req.framerate },
-        get durationFrames() { return exposes.req.durationFrames },
-        get clipProp() { return clipPropertyProxy },
-        get currentValue() { return exposes.currentValue },
+    const PROP_PROXIES = {
+        time                : {enumerable: true, get: () => exposes.req.time },
+        frame               : {enumerable: true, get: () => exposes.req.frame },
+        timeOnComposition   : {enumerable: true, get: () => exposes.req.timeOnComposition },
+        frameOnComposition  : {enumerable: true, get: () => exposes.req.frameOnComposition },
+        width               : {enumerable: true, get: () => exposes.req.width },
+        height              : {enumerable: true, get: () => exposes.req.height },
+        audioBuffer         : {enumerable: true, get: () => exposes.req.destAudioBuffer },
+        duration            : {enumerable: true, get: () => exposes.req.durationFrames / exposes.req.framerate },
+        durationFrames      : {enumerable: true, get: () => exposes.req.durationFrames },
+        clipProp            : {enumerable: true, get: () => clipPropertyProxy },
+        currentValue        : {enumerable: true, get: () => exposes.currentValue },
     }
 
-    return {
-        console,
-        get self() { return this },
-        ...context
-    }
+    const expressionContext = {}
+    Object.defineProperties(expressionContext, PROP_PROXIES)
+
+    const context = {}
+    Object.defineProperties(context, PROP_PROXIES)
+    Object.defineProperties(context, {
+        console : {get: () => console},
+        ctx     : {get: () => expressionContext},
+    })
+
+    return context
 }
 
 export const expressionContextTypeDefinition = `
 interface Clip {}
 
-declare const self: {
+declare const ctx: {
     time: number
     time: number
     frame: number
