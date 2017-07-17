@@ -21,7 +21,7 @@ import {default as EditorStateStore, EditorState} from '../../stores/EditorState
 import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
 import RendererService from '../../services/renderer'
 
-import * as s from './style.styl'
+import * as s from './KeyframeEditor.styl'
 
 interface KeyframeViewProps {
     activeComposition: Delir.Project.Composition|null
@@ -148,42 +148,42 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
                 <Pane className={s.propList}>
-                    <SelectList>
-                        {descriptors.map(desc => {
-                            const value = activeClip
-                                ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, desc, activeClip.keyframes[desc.propName] || [])
-                                : undefined
+                    {descriptors.map(desc => {
+                        const value = activeClip
+                            ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, desc, activeClip.keyframes[desc.propName] || [])
+                            : undefined
 
-                            const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.propName] || []).length !== 0
+                        const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.propName] || []).length !== 0
 
-                            return (
-                                <div
-                                    key={activeClip!.id + desc.propName}
-                                    className={s.propItem}
-                                    data-prop-name={desc.propName}
-                                    onClick={this.selectProperty}
+                        return (
+                            <div
+                                key={activeClip!.id + desc.propName}
+                                className={classnames(s.propItem, {
+                                    [s['propItem--active']]: activePropName === desc.propName,
+                                })}
+                                data-prop-name={desc.propName}
+                                onClick={this.selectProperty}
+                            >
+                                <ContextMenu>
+                                    <MenuItem label='エクスプレッション' onClick={() => this._openExpressionEditor(desc.propName) } />
+                                </ContextMenu>
+                                <span className={classnames(
+                                        s.propKeyframeIndicator,
+                                        {
+                                            [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                            [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                        })
+                                    }
                                 >
-                                    <ContextMenu>
-                                        <MenuItem label='エクスプレッション' onClick={() => this._openExpressionEditor(desc.propName) } />
-                                    </ContextMenu>
-                                    <span className={classnames(
-                                            s.propKeyframeIndicator,
-                                            {
-                                                [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                                [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
-                                            })
-                                        }
-                                    >
-                                        {desc.animatable && (<i className='twa twa-clock12'></i>)}
-                                    </span>
-                                    <span className={s.propItemName}>{desc.label}</span>
-                                    <div className={s.propItemInput}>
-                                        <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.valueChanged} />
-                                    </div>
+                                    {desc.animatable && (<i className='twa twa-clock12'></i>)}
+                                </span>
+                                <span className={s.propItemName}>{desc.label}</span>
+                                <div className={s.propItemInput}>
+                                    <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.valueChanged} />
                                 </div>
-                            )
-                        })}
-                    </SelectList>
+                            </div>
+                        )
+                    })}
                 </Pane>
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
