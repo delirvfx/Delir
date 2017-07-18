@@ -4,7 +4,7 @@ import {join} from 'path'
 import AppActions from '../../../actions/App'
 
 const fps = 60
-const durationFrames = fps * 10
+const durationFrames = fps * 300
 const p = (window as any).app.project = new Delir.Project.Project()
 
 const movieAsset = new Delir.Project.Asset
@@ -18,7 +18,12 @@ audioAsset.name = 'Audio'
 audioAsset.fileType = 'mp3'
 audioAsset.path = '/Users/ragg/workspace/delir/comouflage.mp3'
 
-;[movieAsset, audioAsset].forEach(a => ProjectHelper.addAsset(p, a))
+const audioAsset2 = new Delir.Project.Asset
+audioAsset.name = 'Audio'
+audioAsset.fileType = 'mp3'
+audioAsset.path = '/Users/ragg/workspace/delir/comouflage.mp3'
+
+;[movieAsset, audioAsset, audioAsset2].forEach(a => ProjectHelper.addAsset(p, a))
 
 // Maser Composition
 const c1 = new Delir.Project.Composition
@@ -69,10 +74,25 @@ c1_t1_cl1.expressions = {
     'text': new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`')
 }
 
-const c1_t2_cl1 = Object.assign(new Delir.Project.Clip, {
+const audioClip = Object.assign(new Delir.Project.Clip, {
     // renderer: 'video'
     renderer: 'audio',
     placedFrame: 0,
+    durationFrames: durationFrames,
+    keyframes: {
+        'source': [
+            Object.assign(new Delir.Project.Keyframe(), {
+                value: {assetId: audioAsset.id},
+                frameOnClip: 0
+            }),
+        ]
+    }
+})
+
+const audioClip2 = Object.assign(new Delir.Project.Clip, {
+    // renderer: 'video'
+    renderer: 'audio',
+    placedFrame: 20,
     durationFrames: durationFrames,
     keyframes: {
         'source': [
@@ -99,8 +119,9 @@ ProjectHelper.addComposition(p, c1)
 ;[c1_t1, c1_t2, c1_t3, c1_t4].forEach(lane => ProjectHelper.addLayer(p, c1, lane))
 
 // console.log(ProjectHelper.addClip())
-ProjectHelper.addClip(p, c1_t1, c1_t1_cl1)
-// ProjectHelper.addClip(p, c1_t2, c1_t2_cl1)
+// ProjectHelper.addClip(p, c1_t1, c1_t1_cl1)
+ProjectHelper.addClip(p, c1_t1, audioClip2)
+ProjectHelper.addClip(p, c1_t2, audioClip)
 // ProjectHelper.addClip(p, c1_t3, c1_t3_l1)
 // ProjectHelper.addClip(p, c1_t3, c1_t4_l1)
 
