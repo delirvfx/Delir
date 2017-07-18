@@ -124,10 +124,11 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         return await this.renderAudio(req)
     }
 
-    public async renderAudio(req: RenderingRequest)
+    public async renderAudio(req: RenderingRequest<AudioRendererParam>)
     {
         if (!req.isAudioBufferingNeeded) return
 
+        const volume = req.parameters.volume / 100
         const destBuffers = req.destAudioBuffer
         const begin = (req.seconds|0) * req.samplingRate
         const end = begin + req.neededSamples
@@ -146,6 +147,12 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
             req.neededSamples
         )
 
-        resampled.forEach((buffer, ch) => destBuffers[ch] = buffer)
+        resampled.forEach((buffer, ch) => {
+            for (let idx = 0, l = buffer.length; idx < l; idx++) {
+                buffer[idx] = buffer[idx] * volume
+            }
+
+            destBuffers[ch] = buffer
+        })
     }
 }
