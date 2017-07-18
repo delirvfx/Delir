@@ -53,6 +53,8 @@ interface RenderingOption {
 
 interface RenderProgression {
     state: string
+    isAudioBuffered: boolean
+    audioBuffer: Float32Array[]
     currentFrame: number
     rangeEndFrame: number
 }
@@ -187,7 +189,9 @@ export default class Pipeline
                 notifier({
                     state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${request.framerate} fps)`,
                     currentFrame: request.frame,
-                    rangeEndFrame: _options.endFrame
+                    rangeEndFrame: _options.endFrame,
+                    isAudioBuffered: isAudioBufferingNeeded,
+                    audioBuffer: request.destAudioBuffer,
                 })
 
                 this._fpsCounter.increase()
