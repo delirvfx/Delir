@@ -440,7 +440,6 @@ export default class Pipeline
                 layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
 
                 if (req.isAudioBufferingNeeded) {
-                    console.log('merging...');
                     req.destAudioBuffer.forEach((buffer, ch) => {
                         buffer.forEach((_, idx) => {
                             buffer[idx] += channelAudioBuffers[ch][idx]
