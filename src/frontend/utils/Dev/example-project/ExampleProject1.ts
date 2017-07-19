@@ -4,29 +4,24 @@ import {join} from 'path'
 import AppActions from '../../../actions/App'
 
 const fps = 60
-const durationFrames = fps * 300
+const durationFrames = fps * 10
 const p = (window as any).app.project = new Delir.Project.Project()
 
-const movieAsset = new Delir.Project.Asset()
+const movieAsset = new Delir.Project.Asset
 movieAsset.name = 'Movie'
 movieAsset.fileType = 'mp4'
-movieAsset.path = '/Users/ragg/workspace/delir/_sample.mp4'
+movieAsset.path = '/Users/ragg/workspace/delir/sample.mp4'
 ProjectHelper.addAsset(p, movieAsset)
 
-const audioAsset = new Delir.Project.Asset()
+const audioAsset = new Delir.Project.Asset
 audioAsset.name = 'Audio'
 audioAsset.fileType = 'mp3'
 audioAsset.path = '/Users/ragg/workspace/delir/comouflage.mp3'
 
-const audioAsset2 = new Delir.Project.Asset()
-audioAsset.name = 'Audio'
-audioAsset.fileType = 'mp3'
-audioAsset.path = '/Users/ragg/workspace/delir/comouflage.mp3'
-
-;[movieAsset, audioAsset, audioAsset2].forEach(a => ProjectHelper.addAsset(p, a))
+;[movieAsset, audioAsset].forEach(a => ProjectHelper.addAsset(p, a))
 
 // Maser Composition
-const c1 = new Delir.Project.Composition()
+const c1 = new Delir.Project.Composition
 c1.name = 'Master Composition'
 c1.width = 640
 c1.height = 360
@@ -36,67 +31,51 @@ c1.audioChannels = 2
 c1.samplingRate = 48000
 c1.backgroundColor = new ColorRGB(0, 188, 255)
 
-const c1_t1 = Object.assign(new Delir.Project.Layer(), {
-    name: 'Audio',
-})
+const c1_t1 = new Delir.Project.Layer
+c1_t1.name = 'Audio'
 
-const c1_t2 = Object.assign(new Delir.Project.Layer(), {
-    name: '🔥 FIRE 🔥',
-})
+const c1_t2 = new Delir.Project.Layer
+c1_t2.name = '🔥 FIRE 🔥'
 
-const c1_t3 = Object.assign(new Delir.Project.Layer(), {
-    name: 'NYAN = ^ . ^ = CAT',
-})
+const c1_t3 = new Delir.Project.Layer
+c1_t3.name = 'NYAN = ^ . ^ = CAT'
 
-const c1_t4 = Object.assign(new Delir.Project.Layer(), {
-    name: 'video',
-})
+const c1_t4 = new Delir.Project.Layer
+c1_t4.name = 'video'
 
-const movieClip = Object.assign(new Delir.Project.Clip(), {
-    renderer: 'video',
-    placedFrame: 0,
-    durationFrames,
-    keyframes: {
-        source: [
-            Object.assign(new Delir.Project.Keyframe(), {
-                value: {assetId: movieAsset.id},
-                frameOnClip: 0,
-            })
-        ]
-    }
-})
+const c1_t1_cl1 = new Delir.Project.Clip
+// c1_t1_l1.renderer = 'audio-layer'
+// c1_t1_l1.renderer = 'video'
+c1_t1_cl1.renderer = 'text'
+// c1_t1_l1.renderer = 'plane'
+c1_t1_cl1.placedFrame = 0
+c1_t1_cl1.durationFrames = durationFrames
+c1_t1_cl1.keyframes = {
+    'text': [
+        Object.assign(new Delir.Project.Keyframe(), {value: 'test', frameOnClip: 0})
+    ]
+    'source': [
+        Object.assign(new Delir.Project.Keyframe(), {value: {assetId: movieAsset.id}, frameOnClip: 0})
+    ],
+    'loop': [
+        Object.assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
+    ],
+    'x': [
+        Object.assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
+        Object.assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
+    ],
+}
+c1_t1_cl1.expressions = {
+    'text': new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`')
+}
 
-const textClip = Object.assign(new Delir.Project.Clip(), {
-    renderer: 'text',
-    placedFrame: 0,
-    durationFrames,
-    keyframes: {
-        text: [
-            Object.assign(new Delir.Project.Keyframe(), {value: 'test', frameOnClip: 0})
-        ],
-        source: [
-            Object.assign(new Delir.Project.Keyframe(), {value: {assetId: movieAsset.id}, frameOnClip: 0})
-        ],
-        loop: [
-            Object.assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
-        ],
-        x: [
-            Object.assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
-            Object.assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
-        ],
-    },
-    expressions: {
-        text: new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`')
-    },
-})
-
-const audioClip = Object.assign(new Delir.Project.Clip(), {
+const c1_t2_cl1 = Object.assign(new Delir.Project.Clip, {
     // renderer: 'video'
     renderer: 'audio',
     placedFrame: 0,
-    durationFrames,
+    durationFrames: durationFrames,
     keyframes: {
-        source: [
+        'source': [
             Object.assign(new Delir.Project.Keyframe(), {
                 value: {assetId: audioAsset.id},
                 frameOnClip: 0
@@ -105,27 +84,12 @@ const audioClip = Object.assign(new Delir.Project.Clip(), {
     }
 })
 
-const audioClip2 = Object.assign(new Delir.Project.Clip(), {
-    // renderer: 'video'
-    renderer: 'audio',
-    placedFrame: 20,
-    durationFrames,
-    keyframes: {
-        source: [
-            Object.assign(new Delir.Project.Keyframe(), {
-                value: {assetId: audioAsset.id},
-                frameOnClip: 0
-            }),
-        ]
-    }
-})
-
-const c1_t3_cl1 = Object.assign(new Delir.Project.Clip(), {
+const c1_t3_cl1 = Object.assign(new Delir.Project.Clip, {
     renderer: 'plane',
     placedFrame: 0,
     durationFrames: 30 * 10,
 })
-const c1_t4_cl1 = Object.assign(new Delir.Project.Clip(), {
+const c1_t4_cl1 = Object.assign(new Delir.Project.Clip, {
     renderer: 'video',
     placedFrame: 0,
     durationFrames: 30 * 10,
@@ -135,10 +99,9 @@ ProjectHelper.addComposition(p, c1)
 ;[c1_t1, c1_t2, c1_t3, c1_t4].forEach(lane => ProjectHelper.addLayer(p, c1, lane))
 
 // console.log(ProjectHelper.addClip())
-// ProjectHelper.addClip(p, c1_t1, c1_t1_cl1)
-// ProjectHelper.addClip(p, c1_t1, audioClip2)
-// ProjectHelper.addClip(p, c1_t2, audioClip)
-ProjectHelper.addClip(p, c1_t3, movieClip)
+ProjectHelper.addClip(p, c1_t1, c1_t1_cl1)
+// ProjectHelper.addClip(p, c1_t2, c1_t2_cl1)
+// ProjectHelper.addClip(p, c1_t3, c1_t3_l1)
 // ProjectHelper.addClip(p, c1_t3, c1_t4_l1)
 
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'x', [
