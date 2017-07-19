@@ -45,7 +45,7 @@ const handlePayload = (payload: KnownPayload) => {
 
         case EditorStateDispatchTypes.StartPreview: {
             if (!state.project || !state.composition) break
-            if (!pipeline || !audioContext) break
+            if (!pipeline) break
 
             const targetComposition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
             if (! targetComposition) break
@@ -55,6 +55,11 @@ const handlePayload = (payload: KnownPayload) => {
             //     break
             // }
 
+            if (audioContext) {
+                audioContext.close()
+            }
+
+            audioContext = new AudioContext()
             audioBuffer = audioContext.createBuffer(
                 targetComposition.audioChannels,
                 /* length */targetComposition.samplingRate,
@@ -68,16 +73,17 @@ const handlePayload = (payload: KnownPayload) => {
             // renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
             pipeline.destinationAudioNode = audioContext.destination
 
-            // let promise = pipeline.renderFrame({
-            //     beginFrame: 0,
-            //     targetCompositionId: state.composition.id,
-            //     throttle: true,
-            // })
-
             const promise = pipeline.renderSequencial(targetComposition.id, {
                 beginFrame: payload.entity.beginFrame,
                 loop: true,
             })
+
+            const finalize = () => {
+                audioBufferSource.stop()
+                audioBufferSource.disconnect(audioContext!.destination)
+                audioBufferSource = null
+                audioBuffer = null
+            }
 
             promise.progress(progress => {
                 AppActions.updateProcessingState(`Preview: ${progress.state}`)
@@ -85,6 +91,10 @@ const handlePayload = (payload: KnownPayload) => {
                 if (!audioBufferSource) return
 
                 if (progress.isAudioBuffered) {
+                    for (let idx = 0, l = progress.audioBuffers.length; idx < l; idx++) {
+                        audioBuffer.copyToChannel(progress.audioBuffers[idx], idx)
+                    }
+
                     audioBufferSource.stop()
                     audioBufferSource.disconnect(audioContext!.destination)
 
@@ -93,20 +103,18 @@ const handlePayload = (payload: KnownPayload) => {
                     audioBufferSource.connect(audioContext!.destination)
                     audioBufferSource.start(0)
                 }
-
-                if (progress.isCompleted) {
-                    audioBufferSource.stop()
-                    audioBufferSource.disconnect(audioContext!.destination)
-                    audioBufferSource = null
-                    audioBuffer = null
-                }
             })
 
+            promise.then(finalize)
+
             promise.catch(e => {
+                finalize()
+
                 if (e instanceof Delir.Exceptions.RenderingAbortedException) {
                     AppActions.updateProcessingState(`Stop.`)
                     return
                 }
+
                 console.error(e)
             })
 
