@@ -91,8 +91,8 @@ const handlePayload = (payload: KnownPayload) => {
                 if (!audioBufferSource) return
 
                 if (progress.isAudioBuffered) {
-                    for (let idx = 0, l = progress.audioBuffer.length; idx < l; idx++) {
-                        audioBuffer.copyToChannel(progress.audioBuffer[idx], idx)
+                    for (let idx = 0, l = progress.audioBuffers.length; idx < l; idx++) {
+                        audioBuffer.copyToChannel(progress.audioBuffers[idx], idx)
                     }
 
                     audioBufferSource.stop()
