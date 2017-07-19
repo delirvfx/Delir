@@ -55,7 +55,10 @@ const handlePayload = (payload: KnownPayload) => {
             //     break
             // }
 
-            audioContext && audioContext.close()
+            if (audioContext) {
+                audioContext.close()
+            }
+
             audioContext = new AudioContext()
             audioBuffer = audioContext.createBuffer(
                 targetComposition.audioChannels,
