@@ -21,6 +21,7 @@ import * as KeyframeHelper from '../../helper/keyframe-helper'
 import defaults from '../../helper/defaults'
 import FPSCounter from '../../helper/FPSCounter'
 import * as ExpressionContext from './ExpressionContext'
+import {mergeInto as mergeAudioBufferInto, arraysToAudioBuffer} from '../../helper/Audio'
 
 interface IEffectRenderTask {
     effectEntityId: string
@@ -440,11 +441,12 @@ export default class Pipeline
                 layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
 
                 if (req.isAudioBufferingNeeded) {
-                    req.destAudioBuffer.forEach((buffer, ch) => {
-                        buffer.forEach((_, idx) => {
-                            buffer[idx] += channelAudioBuffers[ch][idx]
-                        })
-                    })
+                    await mergeAudioBufferInto(
+                        req.destAudioBuffer,
+                        channelAudioBuffers,
+                        req.audioChannels,
+                        req.samplingRate
+                    )
                 }
             }
 
