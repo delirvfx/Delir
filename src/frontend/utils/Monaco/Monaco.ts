@@ -1,4 +1,4 @@
-import * as __ from 'monaco-editor'
+import {} from 'monaco-editor'
 import {join} from 'path'
 
 type AvailableLibrary =
