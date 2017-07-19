@@ -1,9 +1,7 @@
-import * as _ from 'lodash'
-
 import {IRenderer} from './renderer-base'
 import Type from '../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
-import PreRenderingRequest from '../pipeline/pre-rendering-request'
+import PreRenderingRequest from '../pipeline/pre-render-request'
 import RenderingRequest from '../pipeline/render-request'
 
 import Asset from '../../project/asset'
@@ -49,37 +47,25 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
             })
     }
 
-    private _audio: {
-        source: string
-        format: {
-            bitrate: number
-            channelsPerFrame: number
-            floatingPoint: boolean
-            formatID: string,
-            sampleRate: number
-        }
-        buffers: Float32Array[]
-    }
+    private _audio: any = {}
 
     public async beforeRender(req: PreRenderingRequest<AudioRendererParam>)
     {
         const params = req.parameters
 
-        if ((this._audio || {} as any).source === params.source.path) {
+        if (this._audio.source === params.source.path) {
             return
         }
 
-        let format
-        const buffers = await new Promise<Float32Array[]>((resolve, reject) => {
+        const buffer = await new Promise((resolve, reject) => {
             const fileBuffer = fs.readFileSync(params.source.path)
             const asset = AV.Asset.fromBuffer(fileBuffer)
 
             asset.on('error', (e: string) => reject(new Error(e)))
             asset.decodeToBuffer(decoded => {
-                format = asset.format
                 const numOfChannels: number = asset.format.channelsPerFrame
                 const length = (decoded.length / numOfChannels)
-                const buffers: Float32Array[] = []
+                const buffers = []
 
                 for (let ch = 0; ch < numOfChannels; ch++) {
                     const chBuffer: Float32Array = new Float32Array(length)
@@ -97,8 +83,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
         this._audio = {
             source: params.source.path,
-            format,
-            buffers,
+            buffer,
         }
     }
 
@@ -107,42 +92,17 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         return await this.renderAudio(req)
     }
 
-    public async renderAudio(req: RenderingRequest<AudioRendererParam>)
+    public async renderAudio(req: RenderingRequest)
     {
         if (!req.isAudioBufferingNeeded) return
 
-        const volume = _.clamp(req.parameters.volume / 100, 0, 1)
-
-        const source = this._audio
         const destBuffers = req.destAudioBuffer
-
-        // Slice from source
         const begin = (req.seconds|0) * req.samplingRate
         const end = begin + req.neededSamples
 
-        const slices: Float32Array[] = new Array(req.audioChannels)
-
-        for (let ch = 0, l = source.format.channelsPerFrame; ch < l; ch++) {
-            const buffer = source.buffers[ch]
-            slices[ch] = buffer.slice(begin, end)
+        for (let ch = 0, l = req.audioChannels; ch < l; ch++) {
+            const buffer = this._audio.buffer[ch]
+            destBuffers[ch].set(buffer.slice(begin, end))
         }
-
-        // Resampling & gaining
-        const context = new OfflineAudioContext(req.audioChannels, req.neededSamples, req.samplingRate)
-
-        const inputBuffer = context.createBuffer(source.format.channelsPerFrame, req.neededSamples, source.format.sampleRate)
-        _.times(source.format.channelsPerFrame, ch => inputBuffer.copyToChannel(slices[ch], ch))
-
-        const gain = context.createGain()
-        gain.gain.value = volume
-        gain.connect(context.destination)
-
-        const bufferSource = context.createBufferSource()
-        bufferSource.buffer = inputBuffer
-        bufferSource.connect(gain)
-        bufferSource.start(0)
-
-        const result = await context.startRendering()
-        _.times(req.audioChannels, ch => destBuffers[ch].set(result.getChannelData(ch)))
     }
 }

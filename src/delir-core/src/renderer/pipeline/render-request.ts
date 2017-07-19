@@ -27,7 +27,7 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
         'samplingRate',
         'neededSamples',
         'audioChannels',
-        'isAudioBufferingNeeded',
+        'isBufferingFrame',
 
         // 'rootComposition', // not permitted
         'parentComposition',

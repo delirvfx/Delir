@@ -21,7 +21,6 @@ import * as KeyframeHelper from '../../helper/keyframe-helper'
 import defaults from '../../helper/defaults'
 import FPSCounter from '../../helper/FPSCounter'
 import * as ExpressionContext from './ExpressionContext'
-import {mergeInto as mergeAudioBufferInto, arraysToAudioBuffer} from '../../helper/Audio'
 
 interface IEffectRenderTask {
     effectEntityId: string
@@ -54,8 +53,6 @@ interface RenderingOption {
 
 interface RenderProgression {
     state: string
-    isAudioBuffered: boolean
-    audioBuffer: Float32Array[]
     currentFrame: number
     rangeEndFrame: number
 }
@@ -84,8 +81,7 @@ export default class Pipeline
     get destinationAudioNode() { return this._destinationAudioNode }
     set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
 
-    public stopCurrentRendering()
-    {
+    public stopCurrentRendering() {
         if (this._seqRenderPromise) {
             this._seqRenderPromise.abort()
         }
@@ -111,7 +107,7 @@ export default class Pipeline
 
     public renderSequencial(compositionId: string, options: Partial<RenderingOption> = {}): ProgressPromise<void, RenderProgression>
     {
-        const _options: RenderingOption = defaults(options, {
+        const _options: RenderingOption  = defaults(options, {
             beginFrame: 0,
             loop: false,
             endFrame: -1,
@@ -135,30 +131,21 @@ export default class Pipeline
             const framerate = request.rootComposition.framerate
             const lastFrame = request.rootComposition.durationFrames
             let animationFrameId: number
-            let renderedFrames = 0
-            let lastAudioBufferTime = -1
+            let rendereredFrames = 0
 
             const render = _.throttle(async () => {
-                const currentFrame = _options.beginFrame + renderedFrames
+                const currentFrame = _options.beginFrame + rendereredFrames
                 const currentTime = currentFrame / framerate
 
-                // 最後のバッファリングから１秒経過 & 次のフレームがレンダリングの終わりでなければバッファリング
-                const isAudioBufferingNeeded = lastAudioBufferTime !== (currentTime|0) && (renderedFrames + 1) <= request.durationFrames
-
-                if (isAudioBufferingNeeded) {
-                    lastAudioBufferTime = currentTime|0
-
-                    for (const buffer of request.destAudioBuffer) {
-                        buffer.fill(0)
-                    }
-                }
+                const previousFrameTime = request.time | 0
+                const isAudioBufferingNeeded = previousFrameTime !== currentTime && (currentFrame + 1) <= request.rootComposition.durationFrames
 
                 request = request.clone({
                     frame: currentFrame,
                     time: currentTime,
                     frameOnComposition: currentFrame,
                     timeOnComposition: currentTime,
-                    isAudioBufferingNeeded,
+                    isAudioBufferingNeeded
                 })
 
                 // reqDestCanvasCtx.clearRect(0, 0, request.width, request.height)
@@ -167,17 +154,16 @@ export default class Pipeline
                 const destCanvasCtx = this.destinationCanvas.getContext('2d')!
                 destCanvasCtx.drawImage(request.destCanvas, 0, 0)
 
-                if (_options.beginFrame + renderedFrames >= lastFrame) {
+                if (_options.beginFrame + rendereredFrames >= lastFrame) {
                     if (_options.loop) {
-                        renderedFrames = 0
-                        lastAudioBufferTime = -1
+                        rendereredFrames = 0
                     } else {
                         cancelAnimationFrame(animationFrameId)
                         reject(new RenderingAbortedException('Rendering aborted.'))
                         return
                     }
                 } else {
-                    renderedFrames++
+                    rendereredFrames++
                 }
 
                 if (aborted) {
@@ -190,9 +176,7 @@ export default class Pipeline
                 notifier({
                     state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${request.framerate} fps)`,
                     currentFrame: request.frame,
-                    rangeEndFrame: _options.endFrame,
-                    isAudioBuffered: isAudioBufferingNeeded,
-                    audioBuffer: request.destAudioBuffer,
+                    rangeEndFrame: _options.endFrame
                 })
 
                 this._fpsCounter.increase()
@@ -441,12 +425,12 @@ export default class Pipeline
                 layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
 
                 if (req.isAudioBufferingNeeded) {
-                    await mergeAudioBufferInto(
-                        req.destAudioBuffer,
-                        channelAudioBuffers,
-                        req.audioChannels,
-                        req.samplingRate
-                    )
+                    console.log('merging...');
+                    req.destAudioBuffer.forEach((buffer, ch) => {
+                        buffer.forEach((_, idx) => {
+                            buffer[idx] += channelAudioBuffers[ch][idx]
+                        })
+                    })
                 }
             }
 
