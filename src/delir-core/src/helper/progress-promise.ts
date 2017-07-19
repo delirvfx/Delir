@@ -62,9 +62,9 @@ export default class ProgressPromise<T, PT = any>
         }
     }
 
-    then(onFulfilled: (value: any) => void, onFailed: (value: Error) => void): this
+    then(onFulfilled: (value: any) => void, onFailed?: (value: Error) => void): this
     {
-        this._promise.promise.then(onFulfilled, onFailed);
+        this._promise.promise.then(onFulfilled, onFailed)
         return this
     }
 
