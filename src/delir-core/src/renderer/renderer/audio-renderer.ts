@@ -144,6 +144,5 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
         const result = await context.startRendering()
         _.times(req.audioChannels, ch => destBuffers[ch].set(result.getChannelData(ch)))
-        context.close()
     }
 }
