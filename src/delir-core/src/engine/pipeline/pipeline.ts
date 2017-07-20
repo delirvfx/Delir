@@ -194,8 +194,8 @@ export default class Pipeline
                     }
 
                     this._streamObservers.forEach(observer => {
-                        if (!observer.onFrame) return
-                        observer.onFrame(request.destCanvas, status)
+                        if (observer.onStateChanged) observer.onStateChanged(status)
+                        if (observer.onFrame) observer.onFrame(request.destCanvas, status)
                     })
 
                     if (isAudioBufferingNeeded) {
