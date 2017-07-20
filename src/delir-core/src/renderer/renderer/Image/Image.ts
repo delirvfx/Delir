@@ -1,11 +1,11 @@
 import * as _ from 'lodash'
-import {IRenderer} from './renderer-base'
-import Type from '../../plugin-support/type-descriptor'
-import {TypeDescriptor} from '../../plugin-support/type-descriptor'
-import PreRenderingRequest from '../pipeline/pre-render-request'
-import RenderingRequest from '../pipeline/render-request'
+import {IRenderer} from '../renderer-base'
+import Type from '../../../plugin-support/type-descriptor'
+import {TypeDescriptor} from '../../../plugin-support/type-descriptor'
+import PreRenderingRequest from '../../pipeline/pre-rendering-request'
+import RenderingRequest from '../../pipeline/render-request'
 
-import Asset from '../../project/asset'
+import Asset from '../../../project/asset'
 
 interface ImageRendererParams {
     source: Asset
