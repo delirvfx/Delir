@@ -4,6 +4,7 @@ import Expression from '../../values/expression'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
 import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import {IRenderer} from '../renderer/renderer-base'
+import {IRenderingStreamObserver, RenderingStatus} from './IRenderingStreamObserver'
 
 import PluginRegistry from '../../plugin-support/plugin-registry'
 
@@ -71,6 +72,7 @@ export default class Pipeline
     private _destinationCanvas: HTMLCanvasElement
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
+    private _streamObservers: IRenderingStreamObserver[]
 
     get project() { return this._project }
     set project(project: Project) { this._project = project }
@@ -78,11 +80,21 @@ export default class Pipeline
     get pluginRegistry() { return this._pluginRegistry }
     set pluginRegistry(pluginRegistry: PluginRegistry) { this._pluginRegistry = pluginRegistry }
 
-    get destinationCanvas() { return this._destinationCanvas }
-    set destinationCanvas(destinationCanvas: HTMLCanvasElement) { this._destinationCanvas = destinationCanvas }
+    // get destinationCanvas() { return this._destinationCanvas }
+    // set destinationCanvas(destinationCanvas: HTMLCanvasElement) { this._destinationCanvas = destinationCanvas }
 
-    get destinationAudioNode() { return this._destinationAudioNode }
-    set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
+    // get destinationAudioNode() { return this._destinationAudioNode }
+    // set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
+
+    public addStreamObserver(observer: IRenderingStreamObserver)
+    {
+        this._streamObservers.push(observer)
+    }
+
+    public removeStreamObserver(observer: IRenderingStreamObserver)
+    {
+        _.remove(this._streamObservers, observer)
+    }
 
     public stopCurrentRendering()
     {
@@ -102,8 +114,17 @@ export default class Pipeline
             const renderTasks = await this._taskingStage(request)
             await this._renderStage(request, renderTasks)
 
-            const destCanvasCtx = this.destinationCanvas.getContext('2d')!
-            destCanvasCtx.drawImage(request.destCanvas, 0, 0)
+            // const destCanvasCtx = this.destinationCanvas.getContext('2d')!
+            // destCanvasCtx.drawImage(request.destCanvas, 0, 0)
+            this._streamObservers.forEach(observer => {
+                if (!observer.onFrame) return
+
+                observer.onFrame(request.destCanvas, {
+                    frame: request.frame,
+                    time: request.time,
+                    durationFrame: request.durationFrames,
+                })
+            })
 
             resolve()
         })
@@ -131,7 +152,7 @@ export default class Pipeline
             const renderTasks = await this._taskingStage(request)
             this._fpsCounter.reset()
 
-            // const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
+            const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
             const framerate = request.rootComposition.framerate
             const lastFrame = request.rootComposition.durationFrames
             let animationFrameId: number
@@ -161,11 +182,29 @@ export default class Pipeline
                     isAudioBufferingNeeded,
                 })
 
-                // reqDestCanvasCtx.clearRect(0, 0, request.width, request.height)
+                reqDestCanvasCtx.clearRect(0, 0, request.width, request.height)
                 await this._renderStage(request, renderTasks)
 
-                const destCanvasCtx = this.destinationCanvas.getContext('2d')!
-                destCanvasCtx.drawImage(request.destCanvas, 0, 0)
+                if (!aborted) {
+                    const status: RenderingStatus = {
+                        frame: request.frame,
+                        time: request.time,
+                        durationFrame: request.durationFrames,
+                        samplingRate: request.samplingRate,
+                    }
+
+                    this._streamObservers.forEach(observer => {
+                        if (!observer.onFrame) return
+                        observer.onFrame(request.destCanvas, status)
+                    })
+
+                    if (isAudioBufferingNeeded) {
+                        this._streamObservers.forEach(observer => {
+                            if (!observer.onAudioBuffered) return
+                            observer.onAudioBuffered(request.destAudioBuffer, status)
+                        })
+                    }
+                }
 
                 if (_options.beginFrame + renderedFrames >= lastFrame) {
                     if (_options.loop) {
