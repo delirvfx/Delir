@@ -159,7 +159,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                 <ContextMenu>
                     <MenuItem type='separator' />
                     <MenuItem label='クリップを作成' enabled={!!plugins.length}>
-                        {_.map(Delir.Renderer.Renderers.RENDERERS, (renderer, idx) =>
+                        {_.map(Delir.Engine.Renderers.RENDERERS, (renderer, idx) =>
                             <MenuItem keys={idx} label={renderer.rendererId} onClick={this.addNewClip.bind(null, renderer.rendererId)} />
                         )}
                     </MenuItem>

@@ -99,7 +99,7 @@ export default {
         targetComposition: Delir.Project.Composition,
         asset: Delir.Project.Asset
     ) {
-        const processablePlugins = Delir.Renderer.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
+        const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
@@ -151,7 +151,7 @@ export default {
 
         if (!project) return
 
-        const processablePlugins = Delir.Renderer.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
+        const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
 
         // TODO: Support selection
         if (processablePlugins.length === 0) {
@@ -166,7 +166,7 @@ export default {
             durationFrames,
         })
 
-        const propName = Delir.Renderer.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
+        const propName = Delir.Engine.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
 
         if (!propName) return
 
@@ -186,7 +186,7 @@ export default {
 
         if (!clip) return
 
-        const props = Delir.Renderer.Renderers.getInfo(clip.renderer!).parameter.properties
+        const props = Delir.Engine.Renderers.getInfo(clip.renderer!).parameter.properties
         const propDesc = props ? props.find(prop => prop.propName === propName) : null
         if (!propDesc) return
 

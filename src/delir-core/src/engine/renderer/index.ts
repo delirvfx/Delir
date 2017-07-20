@@ -4,10 +4,10 @@ import {TypeDescriptor} from '../../plugin-support/type-descriptor'
 import * as _ from 'lodash'
 import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
 
-import VideoRenderer from './video-renderer'
-import ImageRenderer from './image-renderer'
-import TextRenderer from './text-renderer'
-import AudioRenderer from './audio-renderer'
+import VideoRenderer from './Video/Video'
+import ImageRenderer from './Image/Image'
+import TextRenderer from './Text/Text'
+import AudioRenderer from './Audio/Audio'
 
 export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text'
 

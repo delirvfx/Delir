@@ -1,13 +1,13 @@
 import * as _ from 'lodash'
 import * as FontManager from 'font-manager'
 
-import {IRenderer} from './renderer-base'
-import Type from '../../plugin-support/type-descriptor'
-import {TypeDescriptor} from '../../plugin-support/type-descriptor'
-import PreRenderingRequest from '../pipeline/pre-render-request'
-import RenderingRequest from '../pipeline/render-request'
+import {IRenderer} from '../renderer-base'
+import Type from '../../../plugin-support/type-descriptor'
+import {TypeDescriptor} from '../../../plugin-support/type-descriptor'
+import PreRenderingRequest from '../../pipeline/pre-rendering-request'
+import RenderingRequest from '../../pipeline/render-request'
 
-import ColorRGBA from '../../values/color-rgba'
+import ColorRGBA from '../../../values/color-rgba'
 
 interface TextRendererParam {
     text: string

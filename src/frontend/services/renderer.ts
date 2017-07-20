@@ -14,8 +14,8 @@ import {DispatchTypes as EditorStateDispatchTypes} from '../actions/App'
 
 let pluginRegistry: Delir.PluginRegistry|null = null
 let pluginLoader: Delir.Services.PluginLoader|null = null
-// let renderer: Delir.Renderer.Renderer|null = null
-let pipeline: Delir.Renderer.Pipeline|null = null
+// let renderer: Delir.Engine.Renderer|null = null
+let pipeline: Delir.Engine.Pipeline|null = null
 let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
 let audioBufferSource: AudioBufferSourceNode|null = null
@@ -233,13 +233,13 @@ const rendererService = {
         console.log('Plugin loaded', successes, 'Failed:', fails)
         loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
 
-        // renderer = new Delir.Renderer.Renderer({
+        // renderer = new Delir.Engine.Renderer({
         //     pluginRegistry: pluginRegistry,
         // })
 
         // renderer.setAudioContext(audioContext)
 
-        pipeline = new Delir.Renderer.Pipeline()
+        pipeline = new Delir.Engine.Pipeline()
         pipeline.pluginRegistry = pluginRegistry
 
         dispatcher.register(handlePayload)
@@ -249,7 +249,7 @@ const rendererService = {
         return pluginRegistry
     },
 
-    get renderer(): Delir.Renderer.Pipeline {
+    get renderer(): Delir.Engine.Pipeline {
         return pipeline
         return renderer
     }

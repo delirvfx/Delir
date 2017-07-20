@@ -10,7 +10,7 @@ import * as s from './ExpressionEditor.styl'
 
 const expressionAPITypeDef = {
     name: 'ExpressionAPI.d.ts',
-    typedef: Delir.Renderer.expressionContextTypeDefinition,
+    typedef: Delir.Engine.expressionContextTypeDefinition,
 }
 
 interface Props {
