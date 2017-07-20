@@ -73,7 +73,7 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
             case ProjectModDispatchTypes.AddLayerWithAsset:
                 (() => {
                     const {targetComposition, clip, asset: registeredAsset} = payload.entity
-                    const propName = Delir.Renderer.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
+                    const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
 
                     if (propName == null) return
                     ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {

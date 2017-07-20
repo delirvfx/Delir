@@ -137,7 +137,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         const {activePropName, keyframeViewViewBox, graphWidth, graphHeight, editorOpened} = this.state
         const activePropDescriptor = this._getDescriptorByPropName(activePropName)
         const descriptors = activeClip
-            ? Delir.Renderer.Renderers.getInfo(activeClip.renderer).parameter.properties || []
+            ? Delir.Engine.Renderers.getInfo(activeClip.renderer).parameter.properties || []
             : []
 
         const expressionCode = (!editorOpened && !activePropName) ? null : (
@@ -245,7 +245,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
     {
         const {activeClip} = this.props
         const descriptors = activeClip
-            ? Delir.Renderer.Renderers.getInfo(activeClip.renderer)
+            ? Delir.Engine.Renderers.getInfo(activeClip.renderer)
             : {parameter: {properties: ([] as Delir.AnyParameterTypeDescriptor[])}}
 
         return descriptors.parameter.properties.find(desc => desc.propName === propName) || null
