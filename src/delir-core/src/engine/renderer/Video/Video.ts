@@ -98,7 +98,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
         })
     }
 
-    public async render(req:  RenderingRequest<VideoRendererParam>)
+    public async render(req: RenderingRequest<VideoRendererParam>)
     {
         const param = req.parameters
         const ctx = req.destCanvas.getContext('2d')!
@@ -109,7 +109,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
             video.addEventListener('seeked', waiter, {once: true} as any)
             setTimeout(waiter, 1000)
 
-            const time = param.offsetTime +  req.timeOnClip
+            const time = param.offsetTime + req.timeOnClip
             video.currentTime = param.loop ? time % video.duration : time
         })
 
