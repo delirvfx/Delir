@@ -8,5 +8,5 @@ export interface RenderingStatus {
 export interface IRenderingStreamObserver {
     onStateChanged?: (status: RenderingStatus) => void
     onFrame?: (canvas: Readonly<HTMLCanvasElement>, status: RenderingStatus) => void
-    onAudioBuffered?: (buffers: Readonly<Readonly<Float32Array>[]>, status: RenderingStatus) => void
+    onAudioBuffered?: (buffers: Float32Array[], status: RenderingStatus) => void
 }

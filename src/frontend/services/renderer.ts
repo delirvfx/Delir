@@ -16,9 +16,12 @@ let pluginRegistry: Delir.PluginRegistry|null = null
 let pluginLoader: Delir.Services.PluginLoader|null = null
 // let renderer: Delir.Engine.Renderer|null = null
 let pipeline: Delir.Engine.Pipeline|null = null
+
+let destCanvas: HTMLCanvasElement
+let canvasContext: CanvasRenderingContext2D
+
 let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
-let audioBufferSource: AudioBufferSourceNode|null = null
 
 let state: {
     project: Delir.Project.Project|null,
@@ -60,18 +63,33 @@ const handlePayload = (payload: KnownPayload) => {
             }
 
             audioContext = new AudioContext()
+
             audioBuffer = audioContext.createBuffer(
                 targetComposition.audioChannels,
                 /* length */targetComposition.samplingRate,
                 /* sampleRate */targetComposition.samplingRate,
             )
-            audioBufferSource = audioContext.createBufferSource()
-            audioBufferSource.buffer = audioBuffer
-            audioBufferSource.connect(audioContext.destination)
-            audioBufferSource.start(0)
 
-            // renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
-            pipeline.destinationAudioNode = audioContext.destination
+            pipeline.setStreamObserver({
+                onFrame: canvas => {
+                    canvasContext.drawImage(canvas, 0, 0)
+                },
+                onAudioBuffered: buffers => {
+                    for (let idx = 0, l = buffers.length; idx < l; idx++) {
+                        audioBuffer.copyToChannel(buffers[idx], idx)
+                    }
+
+                    const audioBufferSource = audioContext!.createBufferSource()
+                    audioBufferSource.buffer = audioBuffer
+                    audioBufferSource.connect(audioContext!.destination)
+
+                    audioBufferSource.start(0, 0, 1)
+                    audioBufferSource.stop(audioContext.currentTime + 1)
+                    audioBufferSource.onended = () => {
+                        audioBufferSource.disconnect(audioContext!.destination)
+                    }
+                },
+            })
 
             const promise = pipeline.renderSequencial(targetComposition.id, {
                 beginFrame: payload.entity.beginFrame,
@@ -87,22 +105,6 @@ const handlePayload = (payload: KnownPayload) => {
 
             promise.progress(progress => {
                 AppActions.updateProcessingState(`Preview: ${progress.state}`)
-
-                if (!audioBufferSource) return
-
-                if (progress.isAudioBuffered) {
-                    for (let idx = 0, l = progress.audioBuffers.length; idx < l; idx++) {
-                        audioBuffer.copyToChannel(progress.audioBuffers[idx], idx)
-                    }
-
-                    audioBufferSource.stop()
-                    audioBufferSource.disconnect(audioContext!.destination)
-
-                    audioBufferSource = audioContext!.createBufferSource()
-                    audioBufferSource.buffer = audioBuffer
-                    audioBufferSource.connect(audioContext!.destination)
-                    audioBufferSource.start(0)
-                }
             })
 
             promise.then(finalize)
@@ -245,13 +247,17 @@ const rendererService = {
         dispatcher.register(handlePayload)
     },
 
+    setDestCanvas: (canvas: HTMLCanvasElement) => {
+        destCanvas = canvas
+        canvasContext = canvas.getContext('2d')!
+    }
+
     get pluginRegistry() {
         return pluginRegistry
     },
 
     get renderer(): Delir.Engine.Pipeline {
         return pipeline
-        return renderer
     }
 }
 window.app.renderer = rendererService

@@ -40,7 +40,7 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
     protected componentDidMount()
     {
         // RendererService.renderer!.setDestinationCanvas(this.refs.canvas)
-        RendererService.renderer!.destinationCanvas = this.refs.canvas
+        RendererService.setDestCanvas(this.refs.canvas)
     }
 
     selectScale = (e: React.MouseEvent<HTMLLIElement>) =>

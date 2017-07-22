@@ -69,10 +69,9 @@ export default class Pipeline
     private _seqRenderPromise: ProgressPromise<void>|null = null
     private _project: Project
     private _pluginRegistry: PluginRegistry
-    private _destinationCanvas: HTMLCanvasElement
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
-    private _streamObservers: IRenderingStreamObserver[]
+    private _streamObserver: IRenderingStreamObserver|null = null
 
     get project() { return this._project }
     set project(project: Project) { this._project = project }
@@ -80,20 +79,17 @@ export default class Pipeline
     get pluginRegistry() { return this._pluginRegistry }
     set pluginRegistry(pluginRegistry: PluginRegistry) { this._pluginRegistry = pluginRegistry }
 
-    // get destinationCanvas() { return this._destinationCanvas }
-    // set destinationCanvas(destinationCanvas: HTMLCanvasElement) { this._destinationCanvas = destinationCanvas }
-
     // get destinationAudioNode() { return this._destinationAudioNode }
     // set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
 
-    public addStreamObserver(observer: IRenderingStreamObserver)
+    public setStreamObserver(observer: IRenderingStreamObserver)
     {
-        this._streamObservers.push(observer)
+        this._streamObserver = observer
     }
 
     public removeStreamObserver(observer: IRenderingStreamObserver)
     {
-        _.remove(this._streamObservers, observer)
+        this._streamObserver = null
     }
 
     public stopCurrentRendering()
@@ -116,7 +112,7 @@ export default class Pipeline
 
             // const destCanvasCtx = this.destinationCanvas.getContext('2d')!
             // destCanvasCtx.drawImage(request.destCanvas, 0, 0)
-            this._streamObservers.forEach(observer => {
+            this._streamObserver.forEach(observer => {
                 if (!observer.onFrame) return
 
                 observer.onFrame(request.destCanvas, {
@@ -193,16 +189,13 @@ export default class Pipeline
                         samplingRate: request.samplingRate,
                     }
 
-                    this._streamObservers.forEach(observer => {
-                        if (observer.onStateChanged) observer.onStateChanged(status)
-                        if (observer.onFrame) observer.onFrame(request.destCanvas, status)
-                    })
+                    if (this._streamObserver) {
+                        if (this._streamObserver.onStateChanged) this._streamObserver.onStateChanged(status)
+                        if (this._streamObserver.onFrame) this._streamObserver.onFrame(request.destCanvas, status)
 
-                    if (isAudioBufferingNeeded) {
-                        this._streamObservers.forEach(observer => {
-                            if (!observer.onAudioBuffered) return
-                            observer.onAudioBuffered(request.destAudioBuffer, status)
-                        })
+                        if (isAudioBufferingNeeded) {
+                            if (this._streamObserver.onAudioBuffered) this._streamObserver.onAudioBuffered(request.destAudioBuffer, status)
+                        }
                     }
                 }
 
@@ -246,7 +239,6 @@ export default class Pipeline
     {
         if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
         if (!this._pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
-        if (!this._destinationCanvas) throw new RenderingFailedException('Destination canvas not set')
 
         const rootComposition = ProjectHelper.findCompositionById(this._project, compositionId)
         if (!rootComposition) throw new RenderingFailedException('Specified composition not found')
