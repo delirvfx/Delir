@@ -78,11 +78,11 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
             const asset = AV.Asset.fromBuffer(fileBuffer)
 
             asset.on('error', (e: string) => reject(new Error(e)))
-            asset.decodeToBuffer(decoded => {
+            asset.decodeToBuffer(async decoded => {
                 format = asset.format
                 const numOfChannels: number = asset.format.channelsPerFrame
                 const length = (decoded.length / numOfChannels)
-                const buffers: Float32Array[] = []
+                let buffers: Float32Array[] = []
 
                 for (let ch = 0; ch < numOfChannels; ch++) {
                     const chBuffer: Float32Array = new Float32Array(length)
@@ -93,6 +93,8 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
                     buffers.push(chBuffer)
                 }
+
+                buffers = await resampling(format.sampleRate, req.samplingRate, buffers)
 
                 resolve(buffers)
             })
@@ -133,7 +135,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         // Resampling & gaining
         const context = new OfflineAudioContext(req.audioChannels, req.neededSamples, req.samplingRate)
 
-        const inputBuffer = context.createBuffer(source.format.channelsPerFrame, req.neededSamples, source.format.sampleRate)
+        const inputBuffer = context.createBuffer(source.format.channelsPerFrame, req.neededSamples, req.samplingRate)
         _.times(source.format.channelsPerFrame, ch => inputBuffer.copyToChannel(slices[ch], ch))
 
         const gain = context.createGain()
