@@ -122,7 +122,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         const destBuffers = req.destAudioBuffer
 
         // Slice from source
-        const begin = (req.seconds|0) * req.samplingRate
+        const begin = (req.timeOnClip * req.samplingRate) | 0
         const end = begin + req.neededSamples
 
         const slices: Float32Array[] = new Array(req.audioChannels)
