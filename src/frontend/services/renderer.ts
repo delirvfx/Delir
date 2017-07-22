@@ -3,6 +3,7 @@ import {remote} from 'electron'
 import {join, dirname} from 'path'
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
+import deream from '../../deream'
 
 import * as Platform from '../utils/platform'
 import dispatcher from '../utils/Flux/Dispatcher'
@@ -16,9 +17,12 @@ let pluginRegistry: Delir.PluginRegistry|null = null
 let pluginLoader: Delir.Services.PluginLoader|null = null
 // let renderer: Delir.Engine.Renderer|null = null
 let pipeline: Delir.Engine.Pipeline|null = null
+
+let destCanvas: HTMLCanvasElement
+let canvasContext: CanvasRenderingContext2D
+
 let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
-let audioBufferSource: AudioBufferSourceNode|null = null
 
 let state: {
     project: Delir.Project.Project|null,
@@ -28,7 +32,7 @@ let state: {
     composition: null,
 }
 
-const handlePayload = (payload: KnownPayload) => {
+const handlePayload = async (payload: KnownPayload) => {
     switch (payload.type) {
         case EditorStateDispatchTypes.SetActiveProject:
             // renderer.setProject(payload.entity.project)
@@ -60,18 +64,33 @@ const handlePayload = (payload: KnownPayload) => {
             }
 
             audioContext = new AudioContext()
+
             audioBuffer = audioContext.createBuffer(
                 targetComposition.audioChannels,
                 /* length */targetComposition.samplingRate,
                 /* sampleRate */targetComposition.samplingRate,
             )
-            audioBufferSource = audioContext.createBufferSource()
-            audioBufferSource.buffer = audioBuffer
-            audioBufferSource.connect(audioContext.destination)
-            audioBufferSource.start(0)
 
-            // renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
-            pipeline.destinationAudioNode = audioContext.destination
+            pipeline.setStreamObserver({
+                onFrame: canvas => {
+                    canvasContext.drawImage(canvas, 0, 0)
+                },
+                onAudioBuffered: buffers => {
+                    for (let idx = 0, l = buffers.length; idx < l; idx++) {
+                        audioBuffer.copyToChannel(buffers[idx], idx)
+                    }
+
+                    const audioBufferSource = audioContext!.createBufferSource()
+                    audioBufferSource.buffer = audioBuffer
+                    audioBufferSource.connect(audioContext!.destination)
+
+                    audioBufferSource.start(0, 0, 1)
+                    audioBufferSource.stop(audioContext.currentTime + 1)
+                    audioBufferSource.onended = () => {
+                        audioBufferSource.disconnect(audioContext!.destination)
+                    }
+                },
+            })
 
             const promise = pipeline.renderSequencial(targetComposition.id, {
                 beginFrame: payload.entity.beginFrame,
@@ -87,22 +106,6 @@ const handlePayload = (payload: KnownPayload) => {
 
             promise.progress(progress => {
                 AppActions.updateProcessingState(`Preview: ${progress.state}`)
-
-                if (!audioBufferSource) return
-
-                if (progress.isAudioBuffered) {
-                    for (let idx = 0, l = progress.audioBuffers.length; idx < l; idx++) {
-                        audioBuffer.copyToChannel(progress.audioBuffers[idx], idx)
-                    }
-
-                    audioBufferSource.stop()
-                    audioBufferSource.disconnect(audioContext!.destination)
-
-                    audioBufferSource = audioContext!.createBufferSource()
-                    audioBufferSource.buffer = audioBuffer
-                    audioBufferSource.connect(audioContext!.destination)
-                    audioBufferSource.start(0)
-                }
             })
 
             promise.then(finalize)
@@ -131,37 +134,17 @@ const handlePayload = (payload: KnownPayload) => {
             const {frame} = payload.entity
             const targetComposition = state.composition!
 
-            // if (!renderer || !audioContext) return
-            // たぶんプレビュー中
-            // TODO: Seek in preview
-            // if (renderer.isPlaying) return
+            pipeline.setStreamObserver({
+                onFrame: canvas => canvasContext.drawImage(canvas, 0, 0)
+            })
 
-            // audioBuffer = audioContext.createBuffer(
-            //     targetComposition.audioChannels,
-            //     /* length */targetComposition.samplingRate,
-            //     /* sampleRate */targetComposition.samplingRate,
-            // )
-            // audioBufferSource = audioContext.createBufferSource()
-            // audioBufferSource.buffer = audioBuffer
-            // audioBufferSource.connect(audioContext.destination)
-            // audioBufferSource.start(0)
-
-            // renderer.setDestinationAudioBuffer(_.times(targetComposition.audioChannels, idx => audioBuffer!.getChannelData(idx)))
-
-            // renderer!.render({
-            //     beginFrame: frame,
-            //     endFrame: frame,
-            //     targetCompositionId: state.composition!.id!,
-            // })
-            // .catch((e: Error) => console.error(e.stack))
             pipeline!.renderFrame(targetComposition.id, frame)
             .catch(e => console.error(e))
-
 
             break
         }
 
-        case EditorStateDispatchTypes.RenderDestinate: (() => {
+        case EditorStateDispatchTypes.RenderDestinate: {
             const appPath = dirname(remote.app.getPath('exe'))
             const ffmpegBin = __DEV__ ? 'ffmpeg' : require('path').resolve(
                 appPath,
@@ -181,29 +164,29 @@ const handlePayload = (payload: KnownPayload) => {
 
             if (! file) return
 
-            setTimeout(() => AppActions.updateProcessingState(`Rendering: Initializing`), 0)
+            // deream() の前に一瞬待たないとフリーズしてしまうので
+            // awaitを噛ませてステータスを確実に出す
+            await new Promise(resolve => {
+                setImmediate(() => {
+                    AppActions.updateProcessingState(`Rendering: Initializing`)
+                    resolve()
+                })
+            })
 
-            const activeComp = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
-            if (! activeComp) {
-                setTimeout(() => AppActions.updateProcessingState(`Rendering: Composition not selected`), 0)
-            } else {
-                renderer.export({
-                    exportPath: file,
-                    tmpDir: remote.app.getPath('temp'),
-                    targetCompositionId: activeComp.id,
-                    ffmpegBin
-                })
-                .progress(progress => {
-                    if (progress.isRendering) {
-                        AppActions.updateProcessingState(`Rendering: ${Math.floor(progress.finished * 100)}% ${progress.state}`)
-                    } else {
-                        AppActions.updateProcessingState(`Rendering: ${progress.state}`)
-                    }
-                })
-                .catch(e => console.error(e.stack))
-            }
-            })()
+            await deream({
+                project: state.project,
+                rootCompId: state.composition.id,
+                exportPath: file,
+                pluginRegistry,
+                temporaryDir: remote.app.getPath('temp'),
+                ffmpegBin,
+                onProgress: progress => {
+                    setTimeout(() => { AppActions.updateProcessingState(progress.state) }, 0)
+                }
+            })
+
             break
+        }
     }
 }
 
@@ -245,13 +228,17 @@ const rendererService = {
         dispatcher.register(handlePayload)
     },
 
+    setDestCanvas: (canvas: HTMLCanvasElement) => {
+        destCanvas = canvas
+        canvasContext = canvas.getContext('2d')!
+    }
+
     get pluginRegistry() {
         return pluginRegistry
     },
 
     get renderer(): Delir.Engine.Pipeline {
         return pipeline
-        return renderer
     }
 }
 window.app.renderer = rendererService

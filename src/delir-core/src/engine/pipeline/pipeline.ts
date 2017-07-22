@@ -4,6 +4,7 @@ import Expression from '../../values/expression'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
 import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import {IRenderer} from '../renderer/renderer-base'
+import {IRenderingStreamObserver, RenderingStatus} from './IRenderingStreamObserver'
 
 import PluginRegistry from '../../plugin-support/plugin-registry'
 
@@ -68,9 +69,9 @@ export default class Pipeline
     private _seqRenderPromise: ProgressPromise<void>|null = null
     private _project: Project
     private _pluginRegistry: PluginRegistry
-    private _destinationCanvas: HTMLCanvasElement
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
+    private _streamObserver: IRenderingStreamObserver|null = null
 
     get project() { return this._project }
     set project(project: Project) { this._project = project }
@@ -78,11 +79,18 @@ export default class Pipeline
     get pluginRegistry() { return this._pluginRegistry }
     set pluginRegistry(pluginRegistry: PluginRegistry) { this._pluginRegistry = pluginRegistry }
 
-    get destinationCanvas() { return this._destinationCanvas }
-    set destinationCanvas(destinationCanvas: HTMLCanvasElement) { this._destinationCanvas = destinationCanvas }
+    // get destinationAudioNode() { return this._destinationAudioNode }
+    // set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
 
-    get destinationAudioNode() { return this._destinationAudioNode }
-    set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
+    public setStreamObserver(observer: IRenderingStreamObserver)
+    {
+        this._streamObserver = observer
+    }
+
+    public removeStreamObserver(observer: IRenderingStreamObserver)
+    {
+        this._streamObserver = null
+    }
 
     public stopCurrentRendering()
     {
@@ -102,8 +110,19 @@ export default class Pipeline
             const renderTasks = await this._taskingStage(request)
             await this._renderStage(request, renderTasks)
 
-            const destCanvasCtx = this.destinationCanvas.getContext('2d')!
-            destCanvasCtx.drawImage(request.destCanvas, 0, 0)
+            // const destCanvasCtx = this.destinationCanvas.getContext('2d')!
+            // destCanvasCtx.drawImage(request.destCanvas, 0, 0)
+            if (this._streamObserver) {
+
+                if (this._streamObserver.onFrame) {
+                    this._streamObserver.onFrame(request.destCanvas, {
+                        frame: request.frame,
+                        time: request.time,
+                        durationFrame: request.durationFrames,
+                        samplingRate: request.samplingRate,
+                    })
+                }
+            }
 
             resolve()
         })
@@ -131,7 +150,7 @@ export default class Pipeline
             const renderTasks = await this._taskingStage(request)
             this._fpsCounter.reset()
 
-            // const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
+            const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
             const framerate = request.rootComposition.framerate
             const lastFrame = request.rootComposition.durationFrames
             let animationFrameId: number
@@ -161,11 +180,26 @@ export default class Pipeline
                     isAudioBufferingNeeded,
                 })
 
-                // reqDestCanvasCtx.clearRect(0, 0, request.width, request.height)
+                reqDestCanvasCtx.clearRect(0, 0, request.width, request.height)
                 await this._renderStage(request, renderTasks)
 
-                const destCanvasCtx = this.destinationCanvas.getContext('2d')!
-                destCanvasCtx.drawImage(request.destCanvas, 0, 0)
+                if (!aborted) {
+                    const status: RenderingStatus = {
+                        frame: request.frame,
+                        time: request.time,
+                        durationFrame: request.durationFrames,
+                        samplingRate: request.samplingRate,
+                    }
+
+                    if (this._streamObserver) {
+                        if (this._streamObserver.onStateChanged) this._streamObserver.onStateChanged(status)
+                        if (this._streamObserver.onFrame) this._streamObserver.onFrame(request.destCanvas, status)
+
+                        if (isAudioBufferingNeeded) {
+                            if (this._streamObserver.onAudioBuffered) this._streamObserver.onAudioBuffered(request.destAudioBuffer, status)
+                        }
+                    }
+                }
 
                 if (_options.beginFrame + renderedFrames >= lastFrame) {
                     if (_options.loop) {
@@ -173,7 +207,7 @@ export default class Pipeline
                         lastAudioBufferTime = -1
                     } else {
                         cancelAnimationFrame(animationFrameId)
-                        reject(new RenderingAbortedException('Rendering aborted.'))
+                        resolve()
                         return
                     }
                 } else {
@@ -207,7 +241,6 @@ export default class Pipeline
     {
         if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
         if (!this._pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
-        if (!this._destinationCanvas) throw new RenderingFailedException('Destination canvas not set')
 
         const rootComposition = ProjectHelper.findCompositionById(this._project, compositionId)
         if (!rootComposition) throw new RenderingFailedException('Specified composition not found')

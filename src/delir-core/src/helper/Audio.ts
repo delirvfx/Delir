@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 
-export const resampling = async (sourceSamplingRate: number, destSamplingRate: number, inputs: Float32Array[]|AudioBuffer, length?: number): Promise<Float32Array[]> => {
+export const resampling = async (sourceSamplingRate: number, destSamplingRate: number, inputs: Float32Array[], length?: number): Promise<Float32Array[]> => {
     const chs = Array.isArray(inputs) ? inputs.length : inputs.numberOfChannels
     length = length == null ? (Array.isArray(inputs) ? inputs[0].length : inputs.length) : length
 

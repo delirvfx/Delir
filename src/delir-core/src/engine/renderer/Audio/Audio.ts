@@ -5,6 +5,7 @@ import Type from '../../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../../plugin-support/type-descriptor'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'
 import RenderingRequest from '../../pipeline/render-request'
+import {resampling} from '../../../helper/Audio'
 
 import Asset from '../../../project/asset'
 
@@ -14,6 +15,14 @@ import 'mp3'
 import 'flac'
 import 'alac'
 import 'aac'
+
+interface AVFormat {
+    bitrate: number
+    channelsPerFrame: number
+    floatingPoint: boolean
+    formatID: string,
+    sampleRate: number
+}
 
 interface AudioRendererParam {
     source: Asset
@@ -51,13 +60,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
     private _audio: {
         source: string
-        format: {
-            bitrate: number
-            channelsPerFrame: number
-            floatingPoint: boolean
-            formatID: string,
-            sampleRate: number
-        }
+        format: AVFormat
         buffers: Float32Array[]
     }
 
@@ -69,17 +72,17 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
             return
         }
 
-        let format
+        let format: AVFormat
         const buffers = await new Promise<Float32Array[]>((resolve, reject) => {
             const fileBuffer = fs.readFileSync(params.source.path)
             const asset = AV.Asset.fromBuffer(fileBuffer)
 
             asset.on('error', (e: string) => reject(new Error(e)))
-            asset.decodeToBuffer(decoded => {
+            asset.decodeToBuffer(async decoded => {
                 format = asset.format
                 const numOfChannels: number = asset.format.channelsPerFrame
                 const length = (decoded.length / numOfChannels)
-                const buffers: Float32Array[] = []
+                let buffers: Float32Array[] = []
 
                 for (let ch = 0; ch < numOfChannels; ch++) {
                     const chBuffer: Float32Array = new Float32Array(length)
@@ -90,6 +93,8 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
                     buffers.push(chBuffer)
                 }
+
+                buffers = await resampling(format.sampleRate, req.samplingRate, buffers)
 
                 resolve(buffers)
             })
@@ -117,7 +122,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         const destBuffers = req.destAudioBuffer
 
         // Slice from source
-        const begin = (req.seconds|0) * req.samplingRate
+        const begin = (req.timeOnClip * req.samplingRate) | 0
         const end = begin + req.neededSamples
 
         const slices: Float32Array[] = new Array(req.audioChannels)
@@ -130,7 +135,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         // Resampling & gaining
         const context = new OfflineAudioContext(req.audioChannels, req.neededSamples, req.samplingRate)
 
-        const inputBuffer = context.createBuffer(source.format.channelsPerFrame, req.neededSamples, source.format.sampleRate)
+        const inputBuffer = context.createBuffer(source.format.channelsPerFrame, req.neededSamples, req.samplingRate)
         _.times(source.format.channelsPerFrame, ch => inputBuffer.copyToChannel(slices[ch], ch))
 
         const gain = context.createGain()
