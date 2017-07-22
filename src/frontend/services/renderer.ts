@@ -156,9 +156,13 @@ const handlePayload = (payload: KnownPayload) => {
             //     targetCompositionId: state.composition!.id!,
             // })
             // .catch((e: Error) => console.error(e.stack))
+
+            pipeline.setStreamObserver({
+                onFrame: canvas => canvasContext.drawImage(canvas, 0, 0)
+            })
+
             pipeline!.renderFrame(targetComposition.id, frame)
             .catch(e => console.error(e))
-
 
             break
         }

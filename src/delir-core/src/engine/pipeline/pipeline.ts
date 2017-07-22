@@ -112,15 +112,17 @@ export default class Pipeline
 
             // const destCanvasCtx = this.destinationCanvas.getContext('2d')!
             // destCanvasCtx.drawImage(request.destCanvas, 0, 0)
-            this._streamObserver.forEach(observer => {
-                if (!observer.onFrame) return
+            if (this._streamObserver) {
 
-                observer.onFrame(request.destCanvas, {
-                    frame: request.frame,
-                    time: request.time,
-                    durationFrame: request.durationFrames,
-                })
-            })
+                if (this._streamObserver.onFrame) {
+                    this._streamObserver.onFrame(request.destCanvas, {
+                        frame: request.frame,
+                        time: request.time,
+                        durationFrame: request.durationFrames,
+                        samplingRate: request.samplingRate,
+                    })
+                }
+            }
 
             resolve()
         })
