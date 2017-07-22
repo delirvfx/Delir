@@ -207,7 +207,7 @@ export default class Pipeline
                         lastAudioBufferTime = -1
                     } else {
                         cancelAnimationFrame(animationFrameId)
-                        reject(new RenderingAbortedException('Rendering aborted.'))
+                        resolve()
                         return
                     }
                 } else {
