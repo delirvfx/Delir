@@ -5,6 +5,7 @@ import Type from '../../../plugin-support/type-descriptor'
 import {TypeDescriptor} from '../../../plugin-support/type-descriptor'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'
 import RenderingRequest from '../../pipeline/render-request'
+import {resampling} from '../../../helper/Audio'
 
 import Asset from '../../../project/asset'
 
@@ -14,6 +15,14 @@ import 'mp3'
 import 'flac'
 import 'alac'
 import 'aac'
+
+interface AVFormat {
+    bitrate: number
+    channelsPerFrame: number
+    floatingPoint: boolean
+    formatID: string,
+    sampleRate: number
+}
 
 interface AudioRendererParam {
     source: Asset
@@ -51,13 +60,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
     private _audio: {
         source: string
-        format: {
-            bitrate: number
-            channelsPerFrame: number
-            floatingPoint: boolean
-            formatID: string,
-            sampleRate: number
-        }
+        format: AVFormat
         buffers: Float32Array[]
     }
 
@@ -69,7 +72,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
             return
         }
 
-        let format
+        let format: AVFormat
         const buffers = await new Promise<Float32Array[]>((resolve, reject) => {
             const fileBuffer = fs.readFileSync(params.source.path)
             const asset = AV.Asset.fromBuffer(fileBuffer)
