@@ -9,6 +9,7 @@ import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
 
+// import PromiseQueue from './utils/PromiseQueue'
 import * as Exporter from './exporter'
 
 interface ExportOptions {
@@ -70,13 +71,28 @@ export default (
         //     requestAnimationFrame: window.requestAnimationFrame.bind(window),
         // })
 
+        // const queue = new PromiseQueue()
+
         const pipeline = new Delir.Engine.Pipeline()
         pipeline.project = project
         pipeline.pluginRegistry = pluginRegistry
 
         pipeline.setStreamObserver({
-            onFrame: canvas => {
-                exporter.write(canvasToBuffer(canvas, 'image/png'))
+            onFrame: (canvas, status) => {
+                // toBlob() を使うと 4-10ms くらいで１フレームを書き出せるけど
+                // 処理が非同期になってしまってフレーム順序が守れなくなるのであとからいい感じにしたい
+                // queue.add(async () => {
+                //     const buffer = await new Promise<Buffer>(resolve => {
+                //         canvas.toBlob(result => {
+                //             const reader = new FileReader()
+                //             reader.onload = e => resolve(Buffer.from(reader.result as ArrayBuffer))
+                //             reader.readAsArrayBuffer(result)
+                //         }, 'image/png')
+                //     })
+
+                //     await new Promise(resolve => exporter.write(buffer, resolve))
+                // })
+                exporter.write(canvasToBuffer(canvas))
             },
             onAudioBuffered: buffers => {
                 for (let ch = 0, l = comp.audioChannels; ch < l; ch++) {
@@ -91,7 +107,11 @@ export default (
             }
         })
 
+        // queue.run()
         await pipeline.renderSequencial(rootCompId, {loop: false})
+        // await queue.waitEmpty()
+
+        // queue.stop()
         exporter.end()
 
         onProgress({state: 'Encoding video/audio'})

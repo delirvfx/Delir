@@ -4,7 +4,7 @@ import * as uuid from 'uuid'
 import Keyframe from './keyframe'
 import Effect from './effect'
 import {ClipScheme, ClipConfigScheme} from './scheme/clip'
-import {AvailableRenderer} from '../renderer/renderer'
+import {AvailableRenderer} from '../engine/renderer'
 import Expression from '../values/expression'
 
 export default class Clip
