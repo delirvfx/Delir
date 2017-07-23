@@ -424,10 +424,6 @@ export default class Pipeline
                 clipBufferCanvas.width = req.width
                 clipBufferCanvas.height = req.height
 
-                for (const chBuffer of channelAudioBuffers) {
-                    chBuffer.fill(0)
-                }
-
                 let renderReq = req.clone({
                     timeOnClip: req.time - (clipTask.clipPlacedFrame / req.framerate),
                     frameOnClip: req.frame - clipTask.clipPlacedFrame,
@@ -491,6 +487,10 @@ export default class Pipeline
                         req.audioChannels,
                         req.samplingRate
                     )
+
+                    for (const chBuffer of channelAudioBuffers) {
+                        chBuffer.fill(0)
+                    }
                 }
             }
 
