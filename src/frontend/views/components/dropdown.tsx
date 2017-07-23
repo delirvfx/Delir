@@ -61,18 +61,18 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         }
     }
 
-    public componentDidMountg()
+    public componentDidMount()
     {
-        window.addEventListener('click', this.hideOnOutsideClicked, true)
+        window.addEventListener('click', this.hideOnOutsideClicked, {capture: true})
     }
 
-    public componentWillUnmountg()
+    public componentWillUnmount()
     {
-        window.removeEventListener('click', this.hideOnOutsideClicked, true)
+        window.removeEventListener('click', this.hideOnOutsideClicked, {capture: true})
         this._portal.unmount()
     }
 
-    public componentDidUpdateg()
+    public componentDidUpdate()
     {
         const {props: {className, children}, state: {show}} = this
         const {left, top} = this.refs.inspector.getBoundingClientRect()
