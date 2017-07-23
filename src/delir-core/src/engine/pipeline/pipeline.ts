@@ -24,12 +24,16 @@ import FPSCounter from '../../helper/FPSCounter'
 import * as ExpressionContext from './ExpressionContext'
 import {mergeInto as mergeAudioBufferInto, arraysToAudioBuffer} from '../../helper/Audio'
 
+interface ExpressionExecuters {
+    [propName: string]: (exposes: ExpressionContext.Exposes) => void
+}
+
 interface IEffectRenderTask {
     effectEntityId: string
     instance: EffectPluginBase
     effectorProps: TypeDescriptor
     keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
-    expressions: {[propName: string]: (exposes: ExpressionContext.Exposes) => void}
+    expressions: ExpressionExecuters
 }
 
 interface IClipRenderTask {
@@ -38,7 +42,7 @@ interface IClipRenderTask {
     clipPlacedFrame: number
     clipDurationFrames: number
     keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
-    expressions: {[propName: string]: (exposes: ExpressionContext.Exposes) => void}
+    expressions: ExpressionExecuters
     effects: IEffectRenderTask[]
 }
 
@@ -325,7 +329,7 @@ export default class Pipeline
                     const code = expr.language === 'typescript' ? TypeScript.transpile(expr.code, tsCompileOption) : expr.code
                     const script = new vm.Script(code, {filename: `${layer.name}.${clip.id}.expression.ts`})
                     return (exposes: ExpressionContext.Exposes) => script.runInNewContext(ExpressionContext.makeContext(exposes))
-                }).pickBy(value => value !== null).value()
+                }).pickBy(value => value !== null).value() as ExpressionExecuters
 
                 // Initialize effects
                 const effects: IEffectRenderTask[] = []
@@ -351,7 +355,7 @@ export default class Pipeline
                         const code = expr.language === 'typescript' ? TypeScript.transpile(expr.code, tsCompileOption) : expr.code
                         const script = new vm.Script(code, {filename: `${layer.name}.${clip.id}.effect.expression.ts`})
                         return (exposes: ExpressionContext.Exposes) => script.runInNewContext(ExpressionContext.makeContext(exposes))
-                    }).pickBy(value => value !== null).value()
+                    }).pickBy(value => value !== null).value() as ExpressionExecuters
 
                     effects.push({
                         effectEntityId: effect.id,
