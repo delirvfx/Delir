@@ -39,6 +39,7 @@ interface IEffectRenderTask {
 interface IClipRenderTask {
     renderer: IRenderer<any>
     rendererProps: TypeDescriptor
+    rendererType: RendererFactory.AvailableRenderer
     clipPlacedFrame: number
     clipDurationFrames: number
     keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
@@ -114,10 +115,7 @@ export default class Pipeline
             const renderTasks = await this._taskingStage(request)
             await this._renderStage(request, renderTasks)
 
-            // const destCanvasCtx = this.destinationCanvas.getContext('2d')!
-            // destCanvasCtx.drawImage(request.destCanvas, 0, 0)
             if (this._streamObserver) {
-
                 if (this._streamObserver.onFrame) {
                     this._streamObserver.onFrame(request.destCanvas, {
                         frame: request.frame,
@@ -370,6 +368,7 @@ export default class Pipeline
                     renderer,
                     // rendererInfo: RendererFactory.getInfo(clip.renderer),
                     rendererProps,
+                    rendererType: clip.renderer,
                     clipPlacedFrame: clip.placedFrame,
                     clipDurationFrames: clip.durationFrames,
                     keyframeLUT: rendererKeyframeLUT,
@@ -399,6 +398,9 @@ export default class Pipeline
             return new Float32Array(new ArrayBuffer(4 /* bytes */ * req.rootComposition.samplingRate))
         })
 
+        const audioBufferingSizeTime = req.neededSamples / req.samplingRate
+        const audioRenderStartRangeFrame = audioBufferingSizeTime * req.framerate
+
         for (const layerTask of layerRenderTasks) {
             const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
             layerBufferCanvas.width = req.width
@@ -407,6 +409,11 @@ export default class Pipeline
             const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
 
             const renderTargetClips = layerTask.clips.filter(clip => {
+                if (req.isAudioBufferingNeeded && clip.rendererType === 'audio') {
+                    return clip.clipPlacedFrame <= (req.frameOnComposition + audioRenderStartRangeFrame)
+                        && clip.clipPlacedFrame + clip.clipDurationFrames >= req.frameOnComposition
+                }
+
                 return clip.clipPlacedFrame <= req.frameOnComposition
                     && clip.clipPlacedFrame + clip.clipDurationFrames >= req.frameOnComposition
             })
