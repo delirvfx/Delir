@@ -3,7 +3,7 @@ import I18n from '../../utils/I18n'
 export default I18n({
     ja: {
         compositions: {
-            name: 'コンポジション名',
+            name: '名前',
             namePlaceHolder: '名称未設定コンポジション',
             contextMenu: {
                 create: '新規コンポジション',
