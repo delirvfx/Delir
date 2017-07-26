@@ -28,6 +28,7 @@ import KeyframeEditor from '../KeyframeEditor'
 import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
 
+import t from './Timelane.i18n'
 import * as s from './style.styl'
 
 interface TimelineViewProps {
@@ -203,7 +204,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync.bind(this)}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label='レイヤーを追加' onClick={this._addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && (
@@ -231,7 +232,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label='レイヤーを追加' onClick={this._addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && timelineLanes.map(layer => (

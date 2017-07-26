@@ -5,6 +5,8 @@ import * as serialize from 'form-serialize'
 
 import　ModalWindow from '../../modules/ModalWindow/Controller'
 import FormStyle from '../../views/components/Form'
+
+import t from './CompositionSettingModal.i18n'
 import * as s from './CompositionSettingModal.styl'
 
 type SettingResult = {[props: string]: string} | void
@@ -76,7 +78,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
             <div className={s.newCompModalRoot}>
                 <form ref='form' className={FormStyle.formHorizontal}>
                     <div className='formGroup'>
-                        <label className="label">Composition name:</label>
+                        <label className="label">{t('fields.compositionName')}:</label>
                         <div className="input">
                             <div className='formControl'>
                                 <input name="name" type="text" defaultValue={values.name} required autoFocus />
@@ -84,23 +86,19 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         </div>
                     </div>
                     <div className='formGroup'>
-                        <label className="label">width:</label>
+                        <label className="label">{t('fields.dimensions')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
                                 <input name="width" type="number" min="1" defaultValue={values.width} required />
-                            </div><span className="unit">px</span>
-                        </div>
-                    </div>
-                    <div className='formGroup'>
-                        <label className="label">height:</label>
-                        <div className="inputs">
+                            </div>
+                            <span className="unit"> x </span>
                             <div className='formControl'>
                                 <input name="height" type="number" min="1" defaultValue={values.height} required />
-                            </div><span className="unit">px</span>
+                            </div>
                         </div>
                     </div>
                     <div className='formGroup'>
-                        <label className="label">background color:</label>
+                        <label className="label">{t('fields.backgroundColor')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
                                 <input name="backgroundColor" type="color" defaultValue={values.backgroundColor} required />
@@ -108,7 +106,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         </div>
                     </div>
                     <div className='formGroup'>
-                        <label className="label">framerate:</label>
+                        <label className="label">{t('fields.framerate')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
                                 <input name="framerate" type="number" min="1" defaultValue={values.framerate} required />
@@ -116,7 +114,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         </div>
                     </div>
                     <div className='formGroup'>
-                        <label className="label">duration(sec):</label>
+                        <label className="label">{t('fields.durationSec')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
                                 <input name="durationSeconds" type="number" min="1" defaultValue={values.durationSeconds} required />
@@ -124,7 +122,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         </div>
                     </div>
                     <div className='formGroup'>
-                        <label className="label">Sampling rate:</label>
+                        <label className="label">{t('fields.samplingRate')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
                                 <select name="samplingRate" defaultValue={values.samplingRate} required>
@@ -135,20 +133,20 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         </div>
                     </div>
                     <div className='formGroup'>
-                        <label className="label">Channels:</label>
+                        <label className="label">{t('fields.audioChannels')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
                                 <select name="audioChannels" defaultValue={values.audioChannels} required>
-                                    <option value="2">Stereo (2ch)</option>
-                                    <option value="1">Mono (1ch)</option>
+                                    <option value="2">{t('values.audioChannels.stereo')}</option>
+                                    <option value="1">{t('values.audioChannels.mono')}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <div className={s.modalFooter}>
-                        <button id="cancel" className="button" type='button' onClick={this.onCancel}>キャンセル</button>
-                        <button className="button primary" type='button' onClick={this.onConfirm}>{comp ? '適用' : '作成'}</button>
+                        <button id="cancel" className="button" type='button' onClick={this.onCancel}>{t('cancel')}</button>
+                        <button className="button primary" type='button' onClick={this.onConfirm}>{comp ? t('apply') : t('create')}</button>
                     </div>
                 </form>
             </div>

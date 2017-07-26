@@ -11,6 +11,7 @@ import EditorStateStore from '../../stores/EditorStateStore'
 import ProjectStore from '../../stores/ProjectStore'
 import RendererService from '../../services/renderer'
 
+import t from './PreviewView.i18n'
 import * as s from './style.styl'
 
 interface PreviewViewProps {
@@ -81,7 +82,7 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
                     </div>
                     <div className={s.footer}>
                         <label className={s.scaleLabel} onClick={this.toggleScaleList}>
-                            Scale:
+                            {t('scale')}:
                             <span className={s.currentScale}>{currentScale}%</span>
                             <DropDown ref='scaleList' className={s.dropdown} shownInitial={scaleListShown}>
                                 <li data-value="50" onClick={this.selectScale}>50%</li>

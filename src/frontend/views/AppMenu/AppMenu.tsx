@@ -6,6 +6,8 @@ import * as Platform from '../../utils/platform'
 import AppActions from '../../actions/App'
 import EditorStateStore from '../../stores/EditorStateStore'
 
+import t from './AppMenu.i18n'
+
 export default class AppMenu extends React.Component<any, any>
 {
     public render()
@@ -26,17 +28,17 @@ export default class AppMenu extends React.Component<any, any>
                 label: remote.app.getName(),
                 submenu: [
                     {
-                        label: 'About Delir',
+                        label: t('appMenu.about'),
                         role: 'about',
                     },
                     {type: 'separator'},
                     {
-                        label: 'Open plugins directory',
+                        label: t('appMenu.openPluginDir'),
                         click: () => AppActions.openPluginDirectory()
                     },
                     {type: 'separator'},
                     {
-                        label: 'Quit Delir',
+                        label: t('appMenu.quit'),
                         accelerator: 'CmdOrCtrl+Q',
                         role: 'quit',
                     }
@@ -45,31 +47,33 @@ export default class AppMenu extends React.Component<any, any>
         }
 
         menu.push({
-            label: 'File',
+            label: t('file.label'),
             submenu: [
                 {
-                    label: 'Open',
-                    accelerator: 'CmdOrCtrl+O',
-                    click: () => AppActions.openProject()
-                },
-                {
-                    label: 'New Project',
+                    label: t('file.newProject'),
+                    accelerator: 'CmdOrCtrl+N',
                     click: () => AppActions.newProject()
                 },
                 {type: 'separator'},
                 {
-                    label: 'Save',
+                    label: t('file.openProject'),
+                    accelerator: 'CmdOrCtrl+O',
+                    click: () => AppActions.openProject()
+                },
+                {type: 'separator'},
+                {
+                    label: t('file.save'),
                     accelerator: 'CmdOrCtrl+S',
                     click: () => AppActions.overwriteProject()
                 },
                 {
-                    label: 'Save as ...',
+                    label: t('file.saveAs'),
                     accelerator: 'CmdOrCtrl+Shift+S',
                     click: () => AppActions.saveProject()
                 },
                 {type: 'separator'},
                 {
-                    label: 'Rendering',
+                    label: t('file.rendering'),
                     accelerator: 'CmdOrCtrl+Shift+R',
                     click() {
                         const comp = EditorStateStore.getState().get('activeComp')
@@ -79,27 +83,33 @@ export default class AppMenu extends React.Component<any, any>
                 },
             ]
         }, {
-            label: 'Edit',
+            label: t('edit.label'),
             submenu: [
                 {
+                    label: t('edit.undo'),
                     role: 'undo'
                 },
                 {
+                    label: t('edit.redo'),
                     role: 'redo'
                 },
                 {
                     type: 'separator'
                 },
                 {
+                    label: t('edit.cut'),
                     role: 'cut'
                 },
                 {
+                    label: t('edit.copy'),
                     role: 'copy'
                 },
                 {
+                    label: t('edit.paste'),
                     role: 'paste'
                 },
                 {
+                    label: t('edit.selectAll'),
                     role: 'selectall'
                 },
             ],
@@ -107,17 +117,17 @@ export default class AppMenu extends React.Component<any, any>
 
         if (/* __DEV__ */ true) {
             menu.push({
-                label: 'Develop',
+                label: t('develop.label'),
                 submenu: [
                     {
-                        label: 'Reload',
+                        label: t('develop.reload'),
                         accelerator: 'CmdOrCtrl+R',
                         click(item, focusedWindow) {
                             if (focusedWindow) focusedWindow.reload()
                         }
                     },
                     {
-                        label: 'Toggle DevToolds',
+                        label: t('develop.toggleDevTool'),
                         accelerator: 'CmdOrCtrl+Alt+I',
                         click(item, focusedWindow) {
                             if (focusedWindow) focusedWindow.webContents.toggleDevTools()

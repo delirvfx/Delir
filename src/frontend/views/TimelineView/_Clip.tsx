@@ -7,6 +7,7 @@ import {ContextMenu, MenuItem} from '../components/ContextMenu'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
+import t from './_Clip.i18n'
 import * as s from './Clip.styl'
 
 interface TimelaneClipProps {
@@ -152,10 +153,10 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
                 <ContextMenu>
                     <MenuItem type='separator' />
                     {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
-                    <MenuItem label='クリップを削除 ' onClick={this.removeClip.bind(null, clip.id)} />
+                    <MenuItem label={t('contextMenu.remove')} onClick={this.removeClip.bind(null, clip.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
-                <span className={s.clipNameLabel}>{clip.renderer}</span>
+                <span className={s.clipNameLabel}>{t(['renderers', clip.renderer])}</span>
                 <span className={s.clipIdLabel}>#{clip.id.substring(0, 4)}</span>
                 <div
                     className={s.resizeHandle}

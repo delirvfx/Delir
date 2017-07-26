@@ -12,6 +12,7 @@ import TimePixelConversion from '../../utils/TimePixelConversion'
 import connectToStores from '../../utils/Flux/connectToStores'
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 
+import t from './_ClipSpace.i18n'
 import Clip from './_Clip'
 
 interface TimelaneClipSpaceProps {
@@ -158,9 +159,9 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label='クリップを作成' enabled={!!plugins.length}>
+                    <MenuItem label={t('contextMenu.createClip')} enabled={!!plugins.length}>
                         {_.map(Delir.Engine.Renderers.RENDERERS, (renderer, idx) =>
-                            <MenuItem keys={idx} label={renderer.rendererId} onClick={this.addNewClip.bind(null, renderer.rendererId)} />
+                            <MenuItem keys={idx} label={t(['renderers', renderer.rendererId])} onClick={this.addNewClip.bind(null, renderer.rendererId)} />
                         )}
                     </MenuItem>
                     <MenuItem type='separator' />
