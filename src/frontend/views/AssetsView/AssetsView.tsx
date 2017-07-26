@@ -24,6 +24,7 @@ import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
 
 import connectToStores from '../../utils/Flux/connectToStores'
 
+import t from './AssetsView.i18n'
 import * as s from './style.styl'
 
 export interface AssetsViewProps {
@@ -186,22 +187,22 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     <TableHeader>
                         <Row>
                             <Col resizable={false} defaultWidth='2rem'></Col>
-                            <Col defaultWidth='10rem'>名前</Col>
+                            <Col defaultWidth='10rem'>{t('compositions.name')}</Col>
                         </Row>
                     </TableHeader>
                     <TableBodySelectList onSelectionChanged={() => {}}>
                         <ContextMenu>
                             <MenuItem type='separator' />
-                            <MenuItem label='新規コンポジションを作成' onClick={this.openNewCompositionWindow} />
+                            <MenuItem label={t('compositions.contextMenu.create')} onClick={this.openNewCompositionWindow} />
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
                             <Row key={comp.id} onDoubleClick={this.changeComposition.bind(null, comp.id)}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label='名前を変更' onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
-                                    <MenuItem label='削除' onClick={this.removeComposition.bind(null, comp.id)} />
-                                    <MenuItem label='コンポジション設定' onClick={this.openCompositionSetting.bind(null, comp.id)} />
+                                    <MenuItem label={t('compositions.contextMenu.rename')} onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
+                                    <MenuItem label={t('compositions.contextMenu.remove')} onClick={this.removeComposition.bind(null, comp.id)} />
+                                    <MenuItem label={t('compositions.contextMenu.preference')} onClick={this.openCompositionSetting.bind(null, comp.id)} />
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
@@ -210,7 +211,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                     <LabelInput
                                         ref={`comp_name_input#${comp.id}`}
                                         defaultValue={comp.name}
-                                        placeholder='Unnamed Coposition'
+                                        placeholder={t('compositions.namePlaceHolder')}
                                         onChange={this.modifyCompName.bind(this, comp.id)}
                                     />
                                 </Col>
@@ -228,8 +229,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                     <TableHeader>
                         <Row>
                             {/* <Col resizable={false} defaultWidth='2rem'></Col> */}
-                            <Col defaultWidth='10rem'>名前</Col>
-                            <Col defaultWidth='5rem'>種類</Col>
+                            <Col defaultWidth='10rem'>{t('assets.name')}</Col>
+                            <Col defaultWidth='5rem'>{t('assets.fileType')}</Col>
                         </Row>
                     </TableHeader>
                     <TableBodySelectList>
@@ -237,9 +238,9 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                             <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label='名前を変更' onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
+                                    <MenuItem label={t('assets.contextMenu.rename')} onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
                                     {/*<MenuItem label='Reload' onClick={() => {}} />*/}
-                                    <MenuItem label='削除' onClick={this.removeAsset.bind(null, asset.id!)}/>
+                                    <MenuItem label={t('assets.contextMenu.remove')} onClick={this.removeAsset.bind(null, asset.id!)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 

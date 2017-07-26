@@ -21,6 +21,7 @@ import {default as EditorStateStore, EditorState} from '../../stores/EditorState
 import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
 import RendererService from '../../services/renderer'
 
+import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
 interface KeyframeViewProps {
@@ -166,7 +167,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                                 onClick={this.selectProperty}
                             >
                                 <ContextMenu>
-                                    <MenuItem label='エクスプレッション' onClick={() => this._openExpressionEditor(desc.propName) } />
+                                    <MenuItem label={t('contextMenu.expression')} onClick={() => this._openExpressionEditor(desc.propName) } />
                                 </ContextMenu>
                                 <span className={classnames(
                                         s.propKeyframeIndicator,

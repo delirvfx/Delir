@@ -11,6 +11,8 @@ import ProjectModActions from '../../actions/ProjectMod'
 import LabelInput from '../components/label-input'
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
 
+import t from './LaneLabel.i18n'
+
 interface LaneLabelProps {
     editor: EditorState
     layer: Delir.Project.Layer
@@ -58,7 +60,7 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
                 <ContextMenu>
                     <MenuItem type='separator' />
                     {/*<MenuItem label='複製' onClick={() => {}} />*/}
-                    <MenuItem label='レイヤーを削除' onClick={onRemove.bind(null, layer.id)} />
+                    <MenuItem label={t('contextMenu.removeLayer')} onClick={onRemove.bind(null, layer.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
 
