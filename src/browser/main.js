@@ -10,10 +10,10 @@ process.on('uncaughtException', e => {
     }
 })
 
-import fs  from 'fs-promise'
-import path  from 'path'
+import mkdirp from 'mkdirp-promise'
+import path from 'path'
 import yargs from 'yargs'
-import  {BrowserWindow, Menu, app} from 'electron'
+import {BrowserWindow, Menu, app} from 'electron'
 
 const parseCommandLine = () => {
     const parser = yargs
@@ -41,19 +41,9 @@ const install = async () => {
     const userDir = app.getPath('appData')
 
     try {
-        await fs.mkdir(path.join(userDir, 'delir'))
+        await mkdirp(path.join(userDir, 'delir/plugins'))
     } catch (e) {
-        if (e.code !== 'EEXIST') {
-            throw e
-        }
-    }
-
-    try {
-        await fs.mkdir(path.join(userDir, 'delir/plugins'))
-    } catch (e) {
-        if (e.code !== 'EEXIST') {
-            throw e
-        }
+        throw e
     }
 }
 
