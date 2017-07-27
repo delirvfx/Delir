@@ -4,7 +4,7 @@ import * as fs from 'fs-promise'
 import * as path from 'path'
 import * as _ from 'lodash'
 
-import * as Validators from './validators'
+import {validatePluginPackageJSON} from '../plugin-support/plugin-registry'
 import {PluginLoadFailException} from '../exceptions/'
 
 export default class PluginLoader
@@ -41,7 +41,10 @@ export default class PluginLoader
                     entryPath = path.join(packageRoot, json.main)
                 }
 
-                Validators.delirPackageJson(json)
+                const validate = validatePluginPackageJSON(json)
+                if (!validate.valid) {
+                    throw new PluginLoadFailException(`Invalid package.json for \`${json.name}\` (${validate.errors[0]}${validate.errors[1] ? '. and more...' : ''})`)
+                }
 
                 if (packages[json.name]) {
                     throw new PluginLoadFailException(`Duplicate plugin ${json.name}`)
@@ -49,6 +52,7 @@ export default class PluginLoader
 
                 packages[json.name] = {
                     id: json.name,
+                    type: json.delir.type,
                     packageJson: json,
                     pluginInfo: json.delir,
                     packageRoot,

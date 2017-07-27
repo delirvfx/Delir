@@ -1,11 +1,30 @@
-import {PluginEntry, PluginFeatures, PluginSummary} from './types'
+import * as _ from 'lodash'
+import * as PropTypes from 'prop-types'
+import * as semver from 'semver'
+
+import checkPropTypes from '../helper/checkPropTypes'
+import {PluginEntry, PluginTypes, PluginSummary, DelirPluginPackageJson} from './types'
 import PluginBase from './plugin-base'
 import {AnyParameterTypeDescriptor} from './type-descriptor'
 
-import * as _ from 'lodash'
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
 import UnknownPluginReferenceException from '../exceptions/plugin-load-fail-exception'
+
+export const validatePluginPackageJSON = (packageJson: any)=> {
+    return checkPropTypes({
+        name: PropTypes.string.isRequired,
+        version: (props, propName) => { if (!semver.valid(props[propName])) return new Error('Invalid version specified.') },
+        main: PropTypes.string,
+        engines: PropTypes.shape({
+            delir: (props, propName) => { if (!semver.valid(props[propName])) return new Error('Invalid engines.delir version specified.') },
+        }),
+        delir: PropTypes.shape({
+            type: PropTypes.oneOf(['post-effect']),
+            acceptFileTypes: (props, propName) => { if (!_.values(props[propName]).every(v => typeof v === 'string')) throw new Error('Invalid file type handler definition.') },
+        }).isRequired
+    }, packageJson, packageJson.name)
+}
 
 export default class PluginRegister {
     private _plugins: {[packageName: string]: Readonly<PluginEntry>} = {}
@@ -15,6 +34,11 @@ export default class PluginRegister {
         for (let entry of entries) {
             if (this._plugins[entry.id] != null) {
                 throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
+            }
+
+            const result = validatePluginPackageJSON(entry.packageJson)
+            if (!result.valid) {
+                throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
             }
 
             entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
