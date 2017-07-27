@@ -13,7 +13,7 @@ export interface DelirPluginPackageJson {
     version: string
     author: string|string[]
     main?: string
-    engines: {
+    engines?: {
         delir: string
     },
     delir: PackageJSONDelirSection
