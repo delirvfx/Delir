@@ -7,7 +7,7 @@ import * as _ from 'lodash'
 import {validatePluginPackageJSON} from '../plugin-support/plugin-registry'
 import {PluginLoadFailException} from '../exceptions/'
 
-export default class PluginLoader
+export default class FSPluginLoader
 {
     /**
      * Load packages from packages directory
