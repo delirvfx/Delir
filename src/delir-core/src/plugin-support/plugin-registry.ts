@@ -30,7 +30,7 @@ export const validatePluginPackageJSON = (packageJson: any)=> {
 export default class PluginRegistry {
     private _plugins: {[packageName: string]: Readonly<PluginEntry>} = {}
 
-    addEntries(entries: PluginEntry[])
+    public addEntries(entries: PluginEntry[])
     {
         for (const entry of entries) {
             if (this._plugins[entry.id] != null) {
@@ -52,7 +52,7 @@ export default class PluginRegistry {
      * @param   {string}    target plugin ID
      * @throws UnknownPluginReferenceException
      */
-    requireById(id: string): typeof PluginBase
+    public requireById(id: string): typeof PluginBase
     {
         if (! this._plugins[id]) {
             throw new UnknownPluginReferenceException(`Plugin '${id}' doesn't loaded`)
@@ -67,7 +67,7 @@ export default class PluginRegistry {
      * @throws UnknownPluginReferenceException
      * @throws PluginAssertionFailedException
      */
-    getParametersById(id: string): AnyParameterTypeDescriptor[]|null
+    public getParametersById(id: string): AnyParameterTypeDescriptor[]|null
     {
         const entry = this._plugins[id]
 
@@ -87,7 +87,7 @@ export default class PluginRegistry {
      * @param   {string}    id      target plugin ID
      * @throws UnknownPluginReferenceException
      */
-    getPlugin(id: string): Readonly<PluginEntry>
+    public getPlugin(id: string): Readonly<PluginEntry>
     {
         if (this._plugins[id] == null) {
             throw new UnknownPluginReferenceException(`plugin ${id} doesn't loaded`)
@@ -99,7 +99,7 @@ export default class PluginRegistry {
     /**
      * get registered plugins as array
      */
-    getPlugins(): PluginSummary[]
+    public getPlugins(): PluginSummary[]
     {
         return _.map(this._plugins, (entry, id) => {
             return {

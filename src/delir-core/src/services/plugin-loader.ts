@@ -13,7 +13,7 @@ export default class PluginLoader
      * Load packages from packages directory
      * @param {string} packageDir
      */
-    async loadPackageDir(packageDir: string): Promise<{loaded: PluginEntry[], failed: {package: string, reason: string}[]}>
+    public async loadPackageDir(packageDir: string): Promise<{loaded: PluginEntry[], failed: {package: string, reason: string}[]}>
     {
         const entries = await Promise.all(
             (await fs.readdir(packageDir))
