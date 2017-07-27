@@ -25,13 +25,7 @@ export {
     Engine,
     PluginSupport,
     Exceptions,
-
-    // Value Structure
     Values,
-    /** @deprecated deprecated reference */
-    ColorRGB,
-    /** @deprecated deprecated reference */
-    ColorRGBA,
 
     // Plugins
     Type,
