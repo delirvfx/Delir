@@ -49,7 +49,7 @@ export default class PluginLoader
 
                 packages[json.name] = {
                     id: json.name,
-                    package: json,
+                    packageJson: json,
                     pluginInfo: json.delir,
                     packageRoot,
                     entryPath,

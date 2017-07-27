@@ -81,7 +81,7 @@ export default class PluginRegister {
                 id: entry.id,
                 type: entry.pluginInfo.feature,
                 path: entry.packageRoot,
-                package: _.cloneDeep(entry.package),
+                package: _.cloneDeep(entry.packageJson),
             }
         })
     }
