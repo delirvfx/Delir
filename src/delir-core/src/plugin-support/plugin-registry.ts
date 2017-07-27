@@ -27,7 +27,7 @@ export const validatePluginPackageJSON = (packageJson: any)=> {
     }, packageJson, packageJson.name)
 }
 
-export default class PluginRegister {
+export default class PluginRegistry {
     private _plugins: {[packageName: string]: Readonly<PluginEntry>} = {}
 
     addEntries(entries: PluginEntry[])
