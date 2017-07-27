@@ -13,7 +13,6 @@ import Type, {TypeDescriptor, AnyParameterTypeDescriptor} from './plugin-support
 import PluginBase from './plugin-support/plugin-base'
 import RenderRequest from './engine/pipeline/render-request'
 import PluginPreRenderRequest from './engine/pipeline/plugin-pre-rendering-request'
-import LayerPluginBase from './plugin-support/layer-plugin-base'
 import EffectPluginBase from './plugin-support/effect-plugin-base'
 import PluginRegistry from './plugin-support/plugin-registry'
 
@@ -38,7 +37,6 @@ export {
     Type,
     TypeDescriptor,
     PluginBase,
-    LayerPluginBase,
     EffectPluginBase,
     PluginPreRenderRequest,
     RenderRequest,

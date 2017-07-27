@@ -3,7 +3,6 @@ import PluginBase from './plugin-base'
 import {AnyParameterTypeDescriptor} from './type-descriptor'
 
 import * as _ from 'lodash'
-import LayerPluginBase from './layer-plugin-base'
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
 import UnknownPluginReferenceException from '../exceptions/plugin-load-fail-exception'
