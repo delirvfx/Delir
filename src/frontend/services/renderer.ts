@@ -181,8 +181,8 @@ const rendererService = {
         audioContext = new AudioContext
         // scriptProcessor
 
-        // const userDir = remote.app.getPath('appData')
-        pluginLoader = new Delir.Services.PluginLoader()
+        const userDir = remote.app.getPath('appData')
+        pluginLoader = new Delir.PluginSupport.FSPluginLoader()
         pluginRegistry = new Delir.PluginRegistry()
 
         // const loaded = [
