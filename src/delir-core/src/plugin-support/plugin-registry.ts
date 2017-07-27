@@ -32,7 +32,7 @@ export default class PluginRegistry {
 
     addEntries(entries: PluginEntry[])
     {
-        for (let entry of entries) {
+        for (const entry of entries) {
             if (this._plugins[entry.id] != null) {
                 throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
             }
