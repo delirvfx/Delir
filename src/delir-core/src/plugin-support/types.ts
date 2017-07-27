@@ -1,9 +1,9 @@
 import PluginBase from './plugin-base'
 
-export type PluginFeatures = 'Effect' | 'CustomLayer' | 'ExpressionExtension'
+export type PluginTypes = 'post-effect'
 
 export interface PackageJSONDelirSection {
-    feature: PluginFeatures,
+    type: PluginTypes
     /** Accept file types by mimeType:propName */
     acceptFileTypes: {[mimeType: string]: string}
 }
@@ -32,6 +32,7 @@ export interface PluginEntryFragment {
 
 export interface PluginEntry {
     id: string
+    type: PluginTypes
     package: DelirPluginPackageJson
     pluginInfo: PackageJSONDelirSection
     packageRoot: string
@@ -42,7 +43,7 @@ export interface PluginEntry {
 
 export interface PluginSummary {
     id: string
-    type: PluginFeatures
+    type: PluginTypes
     path: string
     package: DelirPluginPackageJson
 }
