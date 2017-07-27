@@ -5,6 +5,7 @@ import * as semver from 'semver'
 import checkPropTypes from '../helper/checkPropTypes'
 import {PluginEntry, PluginTypes, PluginSummary, DelirPluginPackageJson} from './types'
 import PluginBase from './plugin-base'
+import EffectPluginBase from './effect-plugin-base'
 import {AnyParameterTypeDescriptor} from './type-descriptor'
 
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
@@ -74,8 +75,8 @@ export default class PluginRegister {
             throw new UnknownPluginReferenceException(`Plugin ${id} doesn't loaded`)
         }
 
-        if (entry.class.prototype instanceof LayerPluginBase) {
-            return (entry.class as typeof LayerPluginBase).provideParameters().properties
+        if (entry.class.prototype instanceof EffectPluginBase) {
+            return (entry.class as typeof EffectPluginBase).provideParameters().properties
         }
 
         throw new PluginAssertionFailedException(`plugin ${id} can't provide parameters`)
