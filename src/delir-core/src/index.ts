@@ -4,7 +4,6 @@ Symbol.asyncIterator = Symbol.asyncIterator || Symbol.for('asyncIterator')
 import * as Project from './project/index'
 import * as Engine from './engine/index'
 // export {default as Pipeline} from './engine/pipeline/pipeline'
-import * as Services from './services'
 import * as Exceptions from './exceptions'
 import * as Values from './values'
 import {ColorRGB, ColorRGBA} from './values'
@@ -23,7 +22,6 @@ export {
     // Core
     Project,
     Engine,
-    Services,
     Exceptions,
 
     // Value Structure
