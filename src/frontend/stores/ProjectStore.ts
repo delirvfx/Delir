@@ -135,7 +135,7 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
 
             case ProjectModDispatchTypes.RemoveLayer:
-                ProjectHelper.deleteLayer(project!, payload.entity.targetClipId)
+                ProjectHelper.deleteLayer(project!, payload.entity.targetLayerId)
                 break
 
             case ProjectModDispatchTypes.RemoveClip:
