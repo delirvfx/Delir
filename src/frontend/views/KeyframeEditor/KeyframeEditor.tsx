@@ -24,7 +24,7 @@ import RendererService from '../../services/renderer'
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
-interface KeyframeViewProps {
+interface KeyframeEditorProps {
     activeComposition: Delir.Project.Composition|null
     activeClip: Delir.Project.Clip|null
     editor: EditorState
@@ -35,7 +35,7 @@ interface KeyframeViewProps {
     measures: MeasurePoint[]
 }
 
-interface KeyframeViewState {
+interface KeyframeEditorState {
     activePropName: string|null
     graphWidth: number
     graphHeight: number
@@ -47,18 +47,18 @@ interface KeyframeViewState {
     editor: EditorStateStore.getState(),
     project: ProjectStore.getState()
 }))
-export default class KeyframeView extends React.Component<KeyframeViewProps, KeyframeViewState> {
+export default class KeyframeEditor extends React.Component<KeyframeEditorProps, KeyframeEditorState> {
     public static propTypes = {
         activeClip: PropTypes.instanceOf(Delir.Project.Clip),
         scrollLeft: PropTypes.number,
         measures: PropTypes.array.isRequired
     }
 
-    public static defaultProps: Partial<KeyframeViewProps> = {
+    public static defaultProps: Partial<KeyframeEditorProps> = {
         scrollLeft: 0
     }
 
-    public state: KeyframeViewState = {
+    public state: KeyframeEditorState = {
         activePropName: null,
         graphWidth: 0,
         graphHeight: 0,
