@@ -14,6 +14,7 @@ const expressionAPITypeDef = {
 }
 
 interface Props {
+    title: string| null
     code: string|null
     onClose: (result: ExpressionEditor.EditorResult) => void
 }
@@ -29,6 +30,7 @@ namespace ExpressionEditor {
 
 class ExpressionEditor extends React.Component<Props, null> {
     public static propTypes = {
+        title: PropTypes.string.isRequired,
         show: PropTypes.bool.isRequired,
         code: PropTypes.string,
         onClose: PropTypes.func.isRequired
@@ -96,9 +98,12 @@ class ExpressionEditor extends React.Component<Props, null> {
 
     public render()
     {
+        const {title} = this.props
+
         return (
             <div className={s.ExpressionEditor}>
                 <div className={s.ExpressionEditor__Toolbar}>
+                    <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
                     <Button type='normal' onClick={this.closeWithoutSave}>変更を破棄</Button>
                     <Button type='primary' onClick={this.closeWithSave}>保存</Button>
                 </div>

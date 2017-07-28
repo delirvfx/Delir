@@ -196,7 +196,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                 </Pane>
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
-                        {editorOpened && <ExpressionEditor className={s.expressionEditor} code={expressionCode} onClose={this.onCloseEditor} />}
+                        {editorOpened && <ExpressionEditor className={s.expressionEditor} title={activePropDescriptor.label} code={expressionCode} onClose={this.onCloseEditor} />}
                         <div className={s.measureContainer}>
                             <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
                                 {...this._renderMeasure()}
