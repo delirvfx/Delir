@@ -24,7 +24,7 @@ export default I18n({
     en: {
         fields: {
             compositionName: 'Composition Name',
-            dimensions: '解像度(px)',
+            dimensions: 'Resolution(px)',
             backgroundColor: 'Background Color',
             framerate: 'Framerate',
             durationSec: 'Duration (sec)',
