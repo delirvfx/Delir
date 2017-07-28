@@ -70,7 +70,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         svgParent: HTMLDivElement
     }
 
-    protected componentDidMount()
+    public componentDidMount()
     {
         this._syncGraphHeight()
         window.addEventListener('resize', _.debounce(this._syncGraphHeight, 1000 / 30))
