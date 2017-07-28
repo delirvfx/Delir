@@ -308,7 +308,9 @@ export default class Pipeline
                 const rendererAssetProps = rendererProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
                 const rendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, rendererProps, clip.keyframes)
                 rendererAssetProps.forEach(propName => {
-                    rendererInitParam[propName] = req.resolver.resolveAsset(rendererInitParam[propName].assetId)!
+                    rendererInitParam[propName] = rendererInitParam[propName]
+                        ? req.resolver.resolveAsset(rendererInitParam[propName].assetId)
+                        : null
                 })
 
                 let renderer = this._rendererCache.get(clip)
