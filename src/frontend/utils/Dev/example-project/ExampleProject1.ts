@@ -1,5 +1,5 @@
 import * as Delir from 'delir-core'
-import {ProjectHelper, ColorRGB, Values} from 'delir-core'
+import {ProjectHelper, Values} from 'delir-core'
 import {join} from 'path'
 import AppActions from '../../../actions/App'
 
@@ -34,7 +34,7 @@ c1.framerate = fps
 c1.durationFrames = durationFrames
 c1.audioChannels = 2
 c1.samplingRate = 48000
-c1.backgroundColor = new ColorRGB(0, 188, 255)
+c1.backgroundColor = new Values.ColorRGB(0, 188, 255)
 
 const c1_t1 = Object.assign(new Delir.Project.Layer(), {
     name: 'Audio',
