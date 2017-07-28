@@ -77,7 +77,7 @@ export default class TextLayer implements IRenderer<TextRendererParam>
                 label: 'Position Y',
                 animatable: true,
             })
-            .number('rotate', {
+            .float('rotate', {
                 label: 'Rotate',
                 animatable: true,
             })
