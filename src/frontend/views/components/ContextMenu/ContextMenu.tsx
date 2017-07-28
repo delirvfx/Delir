@@ -151,7 +151,7 @@ interface MenuItemProps {
     context?: any
 }
 
-export class MenuItem extends React.Component<MenuItemProps, void>
+export class MenuItem extends React.Component<MenuItemProps, null>
 {
     protected static propTypes = {
         label: PropTypes.string,
@@ -167,7 +167,7 @@ export class MenuItem extends React.Component<MenuItemProps, void>
     }
 }
 
-export class ContextMenu extends React.Component<any, void>
+export class ContextMenu extends React.Component<any, null>
 {
     componentDidMount()
     {
