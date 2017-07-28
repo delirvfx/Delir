@@ -17,9 +17,9 @@ export default I18n({
                 mono: 'モノラル(1ch)',
             },
         },
-        cancel: 'Cancel',
-        apply: 'Apply',
-        create: 'Create',
+        cancel: 'キャンセル',
+        apply: '適用',
+        create: '作成',
     },
     en: {
         fields: {
