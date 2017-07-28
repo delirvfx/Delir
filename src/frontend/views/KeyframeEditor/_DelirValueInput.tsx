@@ -9,10 +9,11 @@ import AppActions from '../../actions/App'
 import DragNumberInput from '../components/drag-number-input'
 import Dropdown from '../components/dropdown'
 
+import t from './_DelirValueInput.i18n'
 import * as s from './delir-value-input.styl'
 
 interface DelirValueInputProps {
-    assets: Set<Delir.Project.Asset>|null
+    assets: Delir.Project.Asset[]|null
     descriptor: Delir.AnyParameterTypeDescriptor,
     value: string|number|boolean|{assetId: string}|Delir.Values.Point2D|Delir.Values.Point3D|Delir.Values.ColorRGB|Delir.Values.ColorRGBA
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
@@ -185,7 +186,8 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
 
     public render()
     {
-        const {props: {descriptor, assets}, state: {value}} = this
+        const {descriptor, assets} = this.props
+        const {value} = this.state
         let component: JSX.Element[] = []
 
         switch (descriptor.type) {
@@ -272,16 +274,22 @@ export default class DelirValueInput extends Component<DelirValueInputProps, any
                 ]
                 break
 
-            case 'ASSET':
+            case 'ASSET': {
+                const acceptedAssets = assets.filter(asset => descriptor.extensions.includes(asset.fileType))
+
                 component = [
                     <select ref={this.bindAssetSelect} value={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
-                        <option></option>
-                        {!assets ? [] : Array.from(assets).map(asset => (
-                            <option value={asset.id as string}>{asset.name}</option>
-                        ))}
+                        {acceptedAssets.length === 0 && (
+                            <option selected disabled>{t('asset.empty')}</option>
+                        )}
+                        {acceptedAssets.length > 0 && ([
+                            <option />,
+                            ...acceptedAssets.map(asset => (<option value={asset.id as string}>{asset.name}</option>))
+                        ])}
                     </select>
                 ]
                 break
+            }
 
             case 'ARRAY':
             default:
