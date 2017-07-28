@@ -76,6 +76,13 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         window.addEventListener('resize', _.debounce(this._syncGraphHeight, 1000 / 30))
     }
 
+    public componentWillReceiveProps(nextProps: KeyframeEditorProps)
+    {
+        if (!nextProps.activeClip) {
+            this.setState({activePropName: null, editorOpened: false})
+        }
+    }
+
     private onCloseEditor = (result: ExpressionEditor.EditorResult) => {
         if (!result.saved) {
             this.setState({editorOpened: false})
