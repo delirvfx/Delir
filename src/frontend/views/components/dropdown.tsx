@@ -8,8 +8,8 @@ import Portal from '../../modules/Portal'
 import * as s from './dropdown.styl'
 
 interface DropdownProps {
-    shownInitial: boolean
-    className: string
+    shownInitial?: boolean
+    className?: string
 }
 
 interface DropdownState {
@@ -36,14 +36,14 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
     private _portal: Portal = new Portal()
 
-    public show = () =>
+    public show = (callback: () => void) =>
     {
-        this.setState({show: true})
+        this.setState({show: true}, callback)
     }
 
-    public hide = () =>
+    public hide = (callback: () => void) =>
     {
-        this.setState({show: false})
+        this.setState({show: false}, callback)
     }
 
     public toggle = () =>
