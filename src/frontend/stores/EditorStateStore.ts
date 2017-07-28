@@ -9,6 +9,7 @@ import dispatcher from '../utils/Flux/Dispatcher'
 import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as AppActionsDispatchTypes, DragEntity} from '../actions/App'
+import {DispatchTypes as ProjectModDispatchTypes} from '../actions/ProjectMod'
 
 type StateRecord = Record<EditorState>
 
@@ -72,6 +73,12 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                     .set('project', null)
                     .set('activeComp', null)
                     .set('activeClip', null)
+
+            case ProjectModDispatchTypes.RemoveClip: {
+                if (state.get('activeClip').id === payload.entity.targetClipId) {
+                    return state.set('activeClip', null)
+                }
+            }
 
             case AppActionsDispatchTypes.SetDragEntity:
                 return state.set('dragEntity', payload.entity)
