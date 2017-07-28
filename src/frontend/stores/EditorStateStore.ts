@@ -78,6 +78,25 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                 if (state.get('activeClip').id === payload.entity.targetClipId) {
                     return state.set('activeClip', null)
                 }
+
+                break
+            }
+
+            case ProjectModDispatchTypes.RemoveLayer: {
+                const activeClip = state.get('activeClip')
+                if (!activeClip) break
+
+                const clipContainedLayer = ProjectHelper.findParentLayerByClipId(project, activeClip.id)
+                if (!clipContainedLayer) {
+                    return state.set('activeClip', null)
+                }
+
+                const contains = !!clipContainedLayer.clips.find(clip => clip.id === activeClip.id)
+                if (contains) {
+                    return state.set('activeClip', null)
+                }
+
+                break
             }
 
             case AppActionsDispatchTypes.SetDragEntity:
