@@ -37,7 +37,7 @@ interface TimelaneClipSpaceState {
 }))
 export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, TimelaneClipSpaceState>
 {
-    static propTypes = {
+    public static propTypes = {
         editor: PropTypes.object.isRequired,
         layer: PropTypes.object.isRequired,
         framerate: PropTypes.number.isRequired,
@@ -46,7 +46,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         activeClip: PropTypes.object,
     }
 
-    _plugins: {id: string, packageName: string}[]
+    private _plugins: {id: string, packageName: string}[]
 
     constructor()
     {
@@ -117,7 +117,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         console.log(movedX)
     }
 
-    changeClipDuration = (clip: Delir.Project.Clip, newWidth: number) =>
+    private changeClipDuration = (clip: Delir.Project.Clip, newWidth: number) =>
     {
 
         const newDurationFrames = TimePixelConversion.pixelToFrames({
@@ -132,12 +132,12 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         })
     }
 
-    addNewClip = (clipRendererId) =>
+    private addNewClip = (clipRendererId) =>
     {
         ProjectModActions.createClip(this.props.layer.id!, clipRendererId, 0, 100)
     }
 
-    render()
+    public render()
     {
         const {layer, activeClip, framerate, pxPerSec, scale} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
