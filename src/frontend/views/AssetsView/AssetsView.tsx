@@ -235,7 +235,6 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                         defaultValue={comp.name}
                                         placeholder={t('compositions.namePlaceHolder')}
                                         onChange={this.modifyCompName.bind(this, comp.id)}
-                                        doubleClickToEdit
                                     />
                                 </Col>
                             </Row>
