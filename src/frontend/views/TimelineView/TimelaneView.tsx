@@ -201,7 +201,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                     </div>
                                 </div>
 
-                                <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync.bind(this)}>
+                                <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
                                         <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
