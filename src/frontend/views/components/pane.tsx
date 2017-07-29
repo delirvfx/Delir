@@ -3,7 +3,7 @@ import {Component, Children} from 'react'
 import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 
-interface PaneProps {
+interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
     resizable?: boolean,
     allowFocus?: boolean,
     className?: string,
