@@ -141,7 +141,13 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         const {clip, active} = this.props
 
         return (
-            <div className={classnames(s.clip, {[s['clip--active']]: active})}
+            <div className={classnames(s.Clip, {
+                    [s['Clip--active']]: active,
+                    [s['Clip--video']]: clip.renderer === 'video',
+                    [s['Clip--audio']]: clip.renderer === 'audio',
+                    [s['Clip--text']]: clip.renderer === 'text',
+                    [s['Clip--image']]: clip.renderer === 'image',
+                })}
                 style={{
                     left: this.props.left,
                     width: this.props.width + this.state.resizeMovedX,
@@ -159,8 +165,8 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
                     <MenuItem label={t('contextMenu.remove')} onClick={this.removeClip.bind(null, clip.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
-                <span className={s.clipNameLabel}>{t(['renderers', clip.renderer])}</span>
-                <span className={s.clipIdLabel}>#{clip.id.substring(0, 4)}</span>
+                <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>
+                <span className={s.Clip__IdLabel}>#{clip.id.substring(0, 4)}</span>
                 <div
                     className={s.resizeHandle}
                     draggable
