@@ -65,6 +65,12 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         cancelAnimationFrame(this.intervalId)
     }
 
+    private handleGlobalMouseUp = () => {
+        window.addEventListener('mouseup', e => {
+            this.setState({dragSeekEnabled: false})
+        }, {once: true})
+    }
+
     private _updateCursor = () =>
     {
         const renderer = RendererService.renderer
@@ -96,9 +102,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
     {
         if (e.type === 'mousedown') {
             this.setState({dragSeekEnabled: true})
-        } else if (e.type === 'mouseup') {
-            this.setState({dragSeekEnabled: false})
-            return
+            this.handleGlobalMouseUp()
         }
 
         if (!this.state.dragSeekEnabled) return
