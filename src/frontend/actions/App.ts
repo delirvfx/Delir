@@ -12,8 +12,9 @@ import Payload from '../utils/Flux/Payload'
 import EditorStateStore from '../stores/EditorStateStore'
 
 export type DragEntity =
-    {type: 'asset', asset: Delir.Project.Asset}
+    | {type: 'asset', asset: Delir.Project.Asset}
     | {type: 'clip', clip: Delir.Project.Clip}
+    | {type: 'clip-resizing', clip: Delir.Project.Clip}
 
 export type SetActiveProjectPayload = Payload<'SetActiveProject', {project: Delir.Project.Project, path?: string}>
 export type ClearActiveProjectPayload = Payload<'ClearActiveProject', null>

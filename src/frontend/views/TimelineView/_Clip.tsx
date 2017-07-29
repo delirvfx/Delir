@@ -99,9 +99,9 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         ProjectModActions.removeClip(clipId)
     }
 
-    private resizeStart = (e: React.MouseEvent<HTMLDivElement>) =>
+    private resizeStart = (e: React.DragEvent<HTMLDivElement>) =>
     {
-        console.log('resize start')
+        AppActions.setDragEntity({type: 'clip-resizing', clip: this.props.clip})
 
         this.setState({
             resizeStartPosition: {clientX: e.clientX},
@@ -122,17 +122,18 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         e.stopPropagation()
     }
 
-    private resizeEnd = (e: React.MouseEvent<HTMLDivElement>) =>
+    private resizeEnd = (e: React.DragEvent<HTMLDivElement>) =>
     {
+        e.stopPropagation()
+        AppActions.clearDragEntity()
+        this.setState({resizeStartPosition: null, resizeMovedX: 0})
+
         const newWidth = this.props.width + this.state.resizeMovedX
 
-        this.setState({
-            resizeStartPosition: null,
-            resizeMovedX: 0,
-        })
+        // if handle dropped to out of window, `newWidth` becomes negative value.
+        if (newWidth < 0) return
 
         this.props.onChangeDuration(newWidth)
-        e.stopPropagation()
     }
 
     public render()
