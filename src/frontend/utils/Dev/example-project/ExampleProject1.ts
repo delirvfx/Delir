@@ -3,27 +3,38 @@ import {ProjectHelper, Values} from 'delir-core'
 import {join} from 'path'
 import AppActions from '../../../actions/App'
 
-const fps = 60
-const durationFrames = fps * 300
+
+const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest as any, ...sources)
+
+const fps = 30
+const durationFrames = fps * 10
 const p = (window as any).app.project = new Delir.Project.Project()
 
-const movieAsset = new Delir.Project.Asset()
-movieAsset.name = 'Movie'
-movieAsset.fileType = 'mp4'
-movieAsset.path = '/Users/ragg/workspace/delir/_sample.mp4'
-ProjectHelper.addAsset(p, movieAsset)
+const movieAsset = assign(new Delir.Project.Asset(), {
+    name: 'Movie',
+    fileType: 'mp4',
+    path: join(process.cwd(), 'video.mp4'),
+})
 
-const audioAsset = new Delir.Project.Asset()
-audioAsset.name = 'Audio'
-audioAsset.fileType = 'mp3'
-audioAsset.path = '/Users/ragg/workspace/delir/comouflage.mp3'
+const audioAsset = assign(new Delir.Project.Asset(), {
+    name: 'Audio',
+    fileType: 'mp3',
+    path: join(process.cwd(), 'audio.mp3'),
+})
 
-const audioAsset2 = new Delir.Project.Asset()
-audioAsset.name = 'Audio'
-audioAsset.fileType = 'mp3'
-audioAsset.path = '/Users/ragg/workspace/delir/comouflage.mp3'
+const audioAsset2 = assign(new Delir.Project.Asset(), {
+    name: 'Audio',
+    fileType: 'mp3',
+    path: join(process.cwd(), 'audio.mp3'),
+})
 
-;[movieAsset, audioAsset, audioAsset2].forEach(a => ProjectHelper.addAsset(p, a))
+const imageAsset = assign(new Delir.Project.Asset(), {
+    name: 'Image',
+    fileType: 'jpg',
+    path: join(process.cwd(), 'image.jpg'),
+})
+
+;[movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => ProjectHelper.addAsset(p, a))
 
 // Maser Composition
 const c1 = new Delir.Project.Composition()
@@ -36,29 +47,29 @@ c1.audioChannels = 2
 c1.samplingRate = 48000
 c1.backgroundColor = new Values.ColorRGB(0, 188, 255)
 
-const c1_t1 = Object.assign(new Delir.Project.Layer(), {
+const c1_t1 = assign(new Delir.Project.Layer(), {
     name: 'Audio',
 })
 
-const c1_t2 = Object.assign(new Delir.Project.Layer(), {
+const c1_t2 = assign(new Delir.Project.Layer(), {
     name: '🔥 FIRE 🔥',
 })
 
-const c1_t3 = Object.assign(new Delir.Project.Layer(), {
+const c1_t3 = assign(new Delir.Project.Layer(), {
     name: 'NYAN = ^ . ^ = CAT',
 })
 
-const c1_t4 = Object.assign(new Delir.Project.Layer(), {
+const c1_t4 = assign(new Delir.Project.Layer(), {
     name: 'video',
 })
 
-const movieClip = Object.assign(new Delir.Project.Clip(), {
+const movieClip = assign(new Delir.Project.Clip(), {
     renderer: 'video',
     placedFrame: 0,
     durationFrames,
     keyframes: {
         source: [
-            Object.assign(new Delir.Project.Keyframe(), {
+            assign(new Delir.Project.Keyframe(), {
                 value: {assetId: movieAsset.id},
                 frameOnClip: 0,
             })
@@ -66,23 +77,23 @@ const movieClip = Object.assign(new Delir.Project.Clip(), {
     }
 })
 
-const textClip = Object.assign(new Delir.Project.Clip(), {
+const textClip = assign(new Delir.Project.Clip(), {
     renderer: 'text',
     placedFrame: 0,
     durationFrames,
     keyframes: {
         text: [
-            Object.assign(new Delir.Project.Keyframe(), {value: 'test', frameOnClip: 0})
+            assign(new Delir.Project.Keyframe(), {value: 'test', frameOnClip: 0})
         ],
         source: [
-            Object.assign(new Delir.Project.Keyframe(), {value: {assetId: movieAsset.id}, frameOnClip: 0})
+            assign(new Delir.Project.Keyframe(), {value: {assetId: movieAsset.id}, frameOnClip: 0})
         ],
         loop: [
-            Object.assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
+            assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
         ],
         x: [
-            Object.assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
-            Object.assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
+            assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
+            assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
         ],
     },
     expressions: {
@@ -90,14 +101,14 @@ const textClip = Object.assign(new Delir.Project.Clip(), {
     },
 })
 
-const audioClip = Object.assign(new Delir.Project.Clip(), {
+const audioClip = assign(new Delir.Project.Clip(), {
     // renderer: 'video'
     renderer: 'audio',
     placedFrame: 0,
     durationFrames,
     keyframes: {
         source: [
-            Object.assign(new Delir.Project.Keyframe(), {
+            assign(new Delir.Project.Keyframe(), {
                 value: {assetId: audioAsset.id},
                 frameOnClip: 0
             }),
@@ -105,14 +116,14 @@ const audioClip = Object.assign(new Delir.Project.Clip(), {
     }
 })
 
-const audioClip2 = Object.assign(new Delir.Project.Clip(), {
+const audioClip2 = assign(new Delir.Project.Clip(), {
     // renderer: 'video'
     renderer: 'audio',
     placedFrame: 20,
     durationFrames,
     keyframes: {
         source: [
-            Object.assign(new Delir.Project.Keyframe(), {
+            assign(new Delir.Project.Keyframe(), {
                 value: {assetId: audioAsset.id},
                 frameOnClip: 0
             }),
@@ -120,12 +131,27 @@ const audioClip2 = Object.assign(new Delir.Project.Clip(), {
     }
 })
 
-const c1_t3_cl1 = Object.assign(new Delir.Project.Clip(), {
-    renderer: 'plane',
-    placedFrame: 0,
-    durationFrames: 30 * 10,
+const imageClip = assign(new Delir.Project.Clip(), {
+    renderer: 'image',
+    placedFrame: 20,
+    durationFrames,
+    keyframes: {
+        source: [
+            assign(new Delir.Project.Keyframe(), {
+                value: {assetId: imageAsset.id},
+                frameOnClip: 0,
+            })
+        ]
+    }
 })
-const c1_t4_cl1 = Object.assign(new Delir.Project.Clip(), {
+
+// const c1_t3_cl1 = assign(new Delir.Project.Clip(), {
+//     // renderer: 'plane',
+//     // placedFrame: 0,
+//     // durationFrames: 30 * 10,
+// })
+
+const c1_t4_cl1 = assign(new Delir.Project.Clip(), {
     renderer: 'video',
     placedFrame: 0,
     durationFrames: 30 * 10,
@@ -137,23 +163,25 @@ ProjectHelper.addComposition(p, c1)
 // console.log(ProjectHelper.addClip())
 // ProjectHelper.addClip(p, c1_t1, c1_t1_cl1)
 // ProjectHelper.addClip(p, c1_t1, audioClip2)
-// ProjectHelper.addClip(p, c1_t2, audioClip)
+ProjectHelper.addClip(p, c1_t1, imageClip)
+ProjectHelper.addClip(p, c1_t2, audioClip)
 ProjectHelper.addClip(p, c1_t3, movieClip)
-// ProjectHelper.addClip(p, c1_t3, c1_t4_l1)
+ProjectHelper.addClip(p, c1_t4, textClip)
+
 
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'x', [
-//     Object.assign(new Delir.Project.Keyframe, {
+//     assign(new Delir.Project.Keyframe, {
 //         frameOnClip: 0,
 //         value: 0,
 //         easeOutParam: [1, -0.03],
 //     }),
-//     Object.assign(new Delir.Project.Keyframe, {
+//     assign(new Delir.Project.Keyframe, {
 //         frameOnClip: fps * 5,
 //         value: 900,
 //         easeInParam: [1, .09],
 //         easeOutParam: [1, -0.03],
 //     }),
-//     Object.assign(new Delir.Project.Keyframe, {
+//     assign(new Delir.Project.Keyframe, {
 //         frameOnClip: durationFrames,
 //         value: 0,
 //         easeInParam: [1, .09],
@@ -161,11 +189,11 @@ ProjectHelper.addClip(p, c1_t3, movieClip)
 // ])
 //
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'y', [
-//     Object.assign(new Delir.Project.Keyframe, {frameOnClip: 0, value: -300})
+//     assign(new Delir.Project.Keyframe, {frameOnClip: 0, value: -300})
 // ])
 //
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'loop', [
-//     Object.assign(new Delir.Project.Keyframe, {frameOnClip: 0, value: true})
+//     assign(new Delir.Project.Keyframe, {frameOnClip: 0, value: true})
 // ])
 
 
