@@ -241,5 +241,5 @@ const rendererService = {
         return pipeline
     }
 }
-window.app.renderer = rendererService
+;((window as any).app = (window as any).app || {}).renderer = rendererService
 export default rendererService
