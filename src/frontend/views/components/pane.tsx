@@ -41,7 +41,7 @@ export default class Pane extends Component<PaneProps, any>
                 tabIndex={allowFocus ? -1 : void 0}
                 {...props}
             >
-                {(() => resizable ? <div className='_workspace-pane-handle' /> : null)()}
+                {resizable ? <div className='_workspace-pane-handle' /> : null}
                 {Children.map(children, child => child)}
             </div>
         )
