@@ -15,8 +15,8 @@ import {DispatchTypes as EditorStateDispatchTypes} from '../actions/App'
 
 let pluginRegistry: Delir.PluginRegistry|null = null
 let pluginLoader: Delir.Services.PluginLoader|null = null
-// let renderer: Delir.Engine.Renderer|null = null
 let pipeline: Delir.Engine.Pipeline|null = null
+let renderState: {currentFrame: number}|null = null
 
 let destCanvas: HTMLCanvasElement
 let canvasContext: CanvasRenderingContext2D
@@ -24,7 +24,7 @@ let canvasContext: CanvasRenderingContext2D
 let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
 
-let state: {
+const state: {
     project: Delir.Project.Project|null,
     composition: Delir.Project.Composition|null,
 } = {
@@ -72,7 +72,8 @@ const handlePayload = async (payload: KnownPayload) => {
             )
 
             pipeline.setStreamObserver({
-                onFrame: canvas => {
+                onFrame: (canvas, status) => {
+                    renderState = {currentFrame: status.frame}
                     canvasContext.drawImage(canvas, 0, 0)
                 },
                 onAudioBuffered: buffers => {
@@ -126,6 +127,7 @@ const handlePayload = async (payload: KnownPayload) => {
 
         case EditorStateDispatchTypes.StopPreview: {
             if (pipeline) {
+                renderState = null
                 pipeline.stopCurrentRendering()
             }
         }
@@ -239,6 +241,10 @@ const rendererService = {
 
     get renderer(): Delir.Engine.Pipeline {
         return pipeline
+    },
+
+    get lastRenderState() {
+        return renderState
     }
 }
 ;((window as any).app = (window as any).app || {}).renderer = rendererService

@@ -166,7 +166,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     public render()
     {
         const {scale, timelineScrollLeft} = this.state
-        const {activeComp, activeClip, currentPreviewFrame} = this.props.editor
+        const {activeComp, activeClip, currentPreviewFrame, previewPlayed} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
 
@@ -221,6 +221,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <Gradations
                                     activeComposition={activeComp}
                                     measures={measures}
+                                    previewPlayed={previewPlayed}
                                     currentFrame={currentPreviewFrame}
                                     cursorHeight={this.state.cursorHeight}
                                     scale={this.state.scale}

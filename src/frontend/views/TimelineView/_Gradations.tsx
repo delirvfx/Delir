@@ -13,6 +13,7 @@ import * as s from './Gradations.styl'
 interface GradationsProps {
     currentFrame: number
     measures: MeasurePoint[]
+    previewPlayed: boolean
     activeComposition: Delir.Project.Composition|null,
     cursorHeight: number,
     scrollLeft: number,
@@ -31,6 +32,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
     protected static propTypes = {
         currentFrame: PropTypes.number.isRequired,
         measures: PropTypes.array.isRequired,
+        previewPlayed: PropTypes.bool.isRequired,
         activeComposition: PropTypes.object.isRequired,
         cursorHeight: PropTypes.number.isRequired,
         scrollLeft: PropTypes.number,
@@ -73,11 +75,11 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
 
     private _updateCursor = () =>
     {
-        const renderer = RendererService.renderer
-        const {activeComposition, scrollLeft, scale, currentFrame} = this.props
+        const {activeComposition, scrollLeft, scale, previewPlayed, currentFrame} = this.props
+        const lastRenderState = RendererService.lastRenderState
         const {cursor, measureLayer} = this.refs
 
-        if (!renderer) return
+        const usingCurrentFrame = (previewPlayed && lastRenderState) ? lastRenderState.currentFrame : currentFrame
 
         if (activeComposition) {
             // Reactの仕組みを使うとrenderMeasureが走りまくってCPUがヤバいので
@@ -85,7 +87,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
             const cursorLeft = TimePixelConversion.framesToPixel({
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
-                durationFrames: currentFrame,
+                durationFrames: usingCurrentFrame
                 scale,
             })
 
