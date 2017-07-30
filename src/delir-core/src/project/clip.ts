@@ -18,6 +18,7 @@ export default class Clip
             'placedFrame',
             'durationFrames',
             'keyframeInterpolationMethod',
+            'expressions',
         ]) as ClipConfigScheme
 
         const keyframes = _.mapValues(clipJson.keyframes, keyframeSet => {
@@ -87,6 +88,7 @@ export default class Clip
             keyframes: _.mapValues(this.keyframes, (keyframes, propName) => {
                 return keyframes.map(keyframe => keyframe.toPreBSON())
             }) as any,
+            expressions: _.mapValues(this.expressions, expr => expr.toJSON())
         }
     }
 
@@ -99,6 +101,7 @@ export default class Clip
             keyframes: _.mapValues(this.keyframes, (keyframes, propName) => {
                 return keyframes.map(keyframe => keyframe.toJSON())
             }) as any,
+            expressions: _.mapValues(this.expressions, expr => expr.toJSON())
         }
     }
 }
