@@ -76,13 +76,13 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         const height = activeComp ? activeComp.height : 360
 
         return (
-            <Pane className='view-preview' allowFocus>
-                <div className='inner'>
-                    <div className='header'>{activeComp && activeComp.name}</div>
-                    <div className='view' onWheel={this.onWheel}>
-                        <canvas ref='canvas' className='canvas' width={width} height={height} style={{transform:`scale(${this.state.scale})`}}/>
+            <Pane className={s.Preview} allowFocus>
+                <div className={s.Preview_Inner}>
+                    <div className={s.Preview_Header}>{activeComp && activeComp.name}</div>
+                    <div className={s.Preview_View} onWheel={this.onWheel}>
+                        <canvas ref='canvas' className={s.PreviewView_Canvas} width={width} height={height} style={{transform:`scale(${this.state.scale})`}}/>
                     </div>
-                    <div className={s.footer}>
+                    <div className={s.Preview_Footer}>
                         <label className={s.scaleLabel} onClick={this.toggleScaleList}>
                             {t('scale')}:
                             <span className={s.currentScale}>{currentScale}%</span>
