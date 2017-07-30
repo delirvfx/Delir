@@ -462,13 +462,24 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         const clipPlacedPositionX = this._frameToPx(clip.placedFrame)
 
         if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
-            const maxValue = orderedKeyframes.reduce((memo, kf) => Math.max(memo, kf.value as number), -Infinity) + 10
-            const minValue = orderedKeyframes.reduce((memo, kf) => Math.min(memo, kf.value as number), +Infinity) + -10
+            const maxValue = orderedKeyframes.reduce((memo, kf, idx, list) => {
+                // const prev = list[idx - 1]
+                // const next = list[idx + 1]
+                // const prevValue = (prev && kf.easeInParam[1] > 1) ? (prev.value as number) * kf.easeInParam[1] : -Infinity
+                // const nextValue = (next && kf.easeOutParam[1] > 1) ? (next.value as number) * kf.easeOutParam[1] : -Infinity
+
+                return Math.max(memo, kf.value as number) // , prevValue, nextValue)
+            }, -Infinity) + 10
+            const minValue = orderedKeyframes.reduce((memo, kf, idx, list) => {
+                // const prev = list[idx - 1]
+                // const next = list[idx + 1]
+                // const prevValue = (prev && kf.easeInParam[1] < 0) ? (prev.value as number) * kf.easeInParam[1] : +Infinity
+                // const nextValue = (next && kf.easeOutParam[1] < 0) ? (next.value as number) * kf.easeOutParam[1] : +Infinity
+
+                return Math.min(memo, kf.value as number) // , prevValue, nextValue)
+            }, +Infinity) + -10
             const absMinValue = Math.abs(minValue)
             const minMaxRange = maxValue - minValue
-
-            console.log(maxValue, minValue)
-            console.log(absMinValue, minMaxRange)
 
             // Calc keyframe and handle points
             return orderedKeyframes.map((keyframe, idx) => {
