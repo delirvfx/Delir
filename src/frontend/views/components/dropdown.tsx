@@ -36,12 +36,12 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
 
     private _portal: Portal = new Portal()
 
-    public show = (callback: () => void) =>
+    public show = (callback?: () => void) =>
     {
         this.setState({show: true}, callback)
     }
 
-    public hide = (callback: () => void) =>
+    public hide = (callback?: () => void) =>
     {
         this.setState({show: false}, callback)
     }
