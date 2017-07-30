@@ -141,6 +141,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     private _selectScale = ({nativeEvent: e}: React.MouseEvent<HTMLLIElement>) => {
         const scale = +(e.target as HTMLLIElement).dataset.value! / 100
+        this.refs.scaleList.hide()
         this.setState({scale: scale})
     }
 
