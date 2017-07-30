@@ -8,6 +8,9 @@ import * as Delir from 'delir-core'
 import {default as TimePixelConversion, MeasurePoint} from '../../utils/TimePixelConversion'
 import RendererService from '../../services/renderer'
 
+import {ContextMenu, MenuItem} from '../components/ContextMenu'
+
+import t from './_Gradations.i18n'
 import * as s from './Gradations.styl'
 
 interface GradationsProps {
@@ -102,6 +105,9 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
 
     private _seeking = ({nativeEvent: e}: React.MouseEvent<HTMLDivElement>) =>
     {
+        // Accepy only "left only" click
+        if (e.buttons !== 1) return
+
         if (e.type === 'mousedown') {
             this.setState({dragSeekEnabled: true})
             this.handleGlobalMouseUp()
@@ -123,6 +129,11 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         this.props.onSeeked(frame)
     }
 
+    private seekToHead = () =>
+    {
+        this.props.onSeeked(0)
+    }
+
     protected render()
     {
         return (
@@ -133,6 +144,9 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
                 onMouseUp={this._seeking}
                 onClick={this._seeking}
             >
+                <ContextMenu>
+                    <MenuItem label={t('contextMenu.seekToHead')} onClick={this.seekToHead} />
+                </ContextMenu>
                 <div className={s.measureLayerTrimer}>
                     <div ref='measureLayer' className={s.measureLayer}>
                         {this._renderMeasure()}
