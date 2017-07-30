@@ -98,22 +98,11 @@ const handlePayload = async (payload: KnownPayload) => {
                 loop: true,
             })
 
-            const finalize = () => {
-                audioBufferSource.stop()
-                audioBufferSource.disconnect(audioContext!.destination)
-                audioBufferSource = null
-                audioBuffer = null
-            }
-
             promise.progress(progress => {
                 AppActions.updateProcessingState(`Preview: ${progress.state}`)
             })
 
-            promise.then(finalize)
-
             promise.catch(e => {
-                finalize()
-
                 if (e instanceof Delir.Exceptions.RenderingAbortedException) {
                     AppActions.updateProcessingState(`Stop.`)
                     return
