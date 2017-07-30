@@ -32,7 +32,7 @@ interface GradationsState {
 
 export default class Gradations extends Component<GradationsProps, GradationsState>
 {
-    protected static propTypes = {
+    public static propTypes = {
         currentFrame: PropTypes.number.isRequired,
         measures: PropTypes.array.isRequired,
         previewPlayed: PropTypes.bool.isRequired,
@@ -44,28 +44,28 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         onSeeked: PropTypes.func.isRequired
     }
 
-    protected static defaultProps = {
+    public static defaultProps = {
         scrollLeft: 0,
     }
 
     private intervalId: number = -1
 
-    private refs: {
+    public refs: {
         cursor: HTMLDivElement
         measureLayer: HTMLDivElement
     }
 
-    private state = {
+    public state = {
         left: 0,
         dragSeekEnabled: false,
     }
 
-    protected componentDidMount()
+    public componentDidMount()
     {
         this.intervalId = requestAnimationFrame(this._updateCursor)
     }
 
-    protected componentWillUnmount()
+    public componentWillUnmount()
     {
         cancelAnimationFrame(this.intervalId)
     }
@@ -134,7 +134,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         this.props.onSeeked(0)
     }
 
-    protected render()
+    public render()
     {
         return (
             <div

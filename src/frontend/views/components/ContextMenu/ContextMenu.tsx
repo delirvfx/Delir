@@ -151,7 +151,7 @@ interface MenuItemProps {
     context?: any
 }
 
-export class MenuItem extends React.Component<MenuItemProps, null>
+export class MenuItem extends React.Component<MenuItemProps, {}>
 {
     protected static propTypes = {
         label: PropTypes.string,
@@ -167,25 +167,25 @@ export class MenuItem extends React.Component<MenuItemProps, null>
     }
 }
 
-export class ContextMenu extends React.Component<any, null>
+export class ContextMenu extends React.Component
 {
-    componentDidMount()
+    public componentDidMount()
     {
         const items = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
         manager.register(this.refs.root.parentElement, items.map(item => this.toMenuItem(item)))
     }
 
-    componentWillUnMount()
+    public componentWillUnMount()
     {
         manager.unregister(this.refs.root)
     }
 
-    toMenuItem(item)
+    public toMenuItem(item: MenuItem)
     {
         return new Electron.remote.MenuItem(this.toMenuItemJSON(item))
     }
 
-    toMenuItemJSON(item: MenuItem)
+    public toMenuItemJSON(item: MenuItem)
     {
         const menuItem: any = {
             label: item.props.label,
@@ -203,7 +203,7 @@ export class ContextMenu extends React.Component<any, null>
         return menuItem
     }
 
-    render()
+    public render()
     {
         return <div ref='root' style={{display:'none'}} />
     }
