@@ -218,6 +218,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
             case 'COLOR_RGBA':
                 return this._renderColorKeyframes(keyframes)
 
+            case 'FLOAT':
             case 'NUMBER':
                 return this._renderNumberKeyframes(keyframes)
 
