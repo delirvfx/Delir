@@ -462,10 +462,13 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         const clipPlacedPositionX = this._frameToPx(clip.placedFrame)
 
         if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
-            const maxValue = orderedKeyframes.reduce((memo, kf) => Math.max(memo, kf.value as number), 0) + 10
-            const minValue = orderedKeyframes.reduce((memo, kf) => Math.min(memo, kf.value as number), 0) + -10
+            const maxValue = orderedKeyframes.reduce((memo, kf) => Math.max(memo, kf.value as number), -Infinity) + 10
+            const minValue = orderedKeyframes.reduce((memo, kf) => Math.min(memo, kf.value as number), +Infinity) + -10
             const absMinValue = Math.abs(minValue)
             const minMaxRange = maxValue - minValue
+
+            console.log(maxValue, minValue)
+            console.log(absMinValue, minMaxRange)
 
             // Calc keyframe and handle points
             return orderedKeyframes.map((keyframe, idx) => {
@@ -484,12 +487,12 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 let nextKeyframeEiY = 0
 
                 const beginX = clipPlacedPositionX + this._frameToPx(keyframe.frameOnClip) - scrollLeft
-                const beginY = height - height * (((keyframe.value as number) + absMinValue) / minMaxRange)
+                const beginY = height - height * (((keyframe.value as number) - minValue) / minMaxRange)
 
                 if (nextKeyframe) {
                     // Next keyframe position
                     nextX = clipPlacedPositionX + this._frameToPx(nextKeyframe.frameOnClip) - scrollLeft
-                    nextY = height - height * (((nextKeyframe.value as number) + absMinValue) / minMaxRange)
+                    nextY = height - height * (((nextKeyframe.value as number) - minValue) / minMaxRange)
 
                     // Handle of control transition to next keyframe
                     handleEoX = ((nextX - beginX) * keyframe.easeOutParam[0]) + beginX
