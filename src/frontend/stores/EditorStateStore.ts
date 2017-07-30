@@ -24,14 +24,14 @@ export interface NotificationEntry {
 export type NotificationEntries = Immutable.List<NotificationEntry>
 
 export interface EditorState {
-    project: Delir.Project.Project|null,
-    projectPath: string|null,
-    activeComp: Delir.Project.Composition|null,
-    activeClip: Delir.Project.Clip|null,
-    dragEntity: DragEntity|null,
-    processingState: string|null,
-    previewPlayed: boolean,
-    currentPreviewFrame: number,
+    project: Delir.Project.Project|null
+    projectPath: string|null
+    activeComp: Delir.Project.Composition|null
+    activeClip: Delir.Project.Clip|null
+    dragEntity: DragEntity|null
+    processingState: string|null
+    previewPlayed: boolean
+    currentPreviewFrame: number
     notifications: NotificationEntries
 }
 
