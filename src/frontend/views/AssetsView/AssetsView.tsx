@@ -168,7 +168,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
     private openNewCompositionWindow =  async () =>
     {
-        const req = CompositionSettingModal.show()
+        const req = await CompositionSettingModal.show()
 
         if (!req) return
         ProjectModActions.createComposition(castToCompositionPropTypes(req))
