@@ -44,20 +44,22 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         RendererService.setDestCanvas(this.refs.canvas)
     }
 
-    selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
+    private selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
     {
+        this.refs.scaleList.hide()
+
         this.setState({
             scale: parseInt(e.target.dataset.value, 10) / 100,
             scaleListShown: false,
         })
     }
 
-    toggleScaleList = (e) =>
+    private toggleScaleList = (e) =>
     {
         this.refs.scaleList.toggle()
     }
 
-    onWheel = e => {
+    private onWheel = e => {
         if (!e.altKey) return
 
         this.setState({
@@ -65,7 +67,7 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         })
     }
 
-    render()
+    public render()
     {
         const {activeComp} = this.props
         const {scale, scaleListShown} = this.state
