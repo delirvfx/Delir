@@ -24,6 +24,11 @@ export default I18n({
             paste: '貼り付け',
             selectAll: 'すべて選択',
         },
+        preview: {
+            label: 'プレビュー',
+            play: '再生',
+            pause: '停止',
+        },
         develop: {
             label: '開発',
             reload: 'リロード',
@@ -52,6 +57,11 @@ export default I18n({
             copy: 'Copy',
             paste: 'Paste',
             selectAll: 'Select All',
+        },
+        preview: {
+            label: 'Preview',
+            play: 'Play',
+            pause: 'Pause',
         },
         develop: {
             label: 'Development',
