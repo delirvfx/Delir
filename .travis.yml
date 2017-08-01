@@ -10,6 +10,10 @@ install:
     - npm i -g yarn
     - yarn install
 
+script:
+    - yarn test-front
+    - yarn test-core
+
 addons:
     apt:
         sources:
