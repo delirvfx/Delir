@@ -391,4 +391,17 @@ describe('TimePixelConversion', () => {
             expect(actual).to.be(132 * (60 / 45) * 3.5)
         })
     })
+
+    describe('#buildMeasures', () => {
+        it('Should works without any Error', () => {
+            TimePixelConversion.buildMeasures({
+                durationFrames: 1000,
+                framerate: 60,
+                maxMeasures: 100,
+                placeIntervalWidth: 30,
+                pxPerSec: 30,
+                scale: 1,
+            })
+        })
+    })
 })
