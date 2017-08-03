@@ -1,8 +1,12 @@
 sudo: false
 language: node_js
 
+cache:
+    yarn: true
+
 node_js:
     - "6.1.0"
+
 env:
     - CXX=g++-4.8
 
