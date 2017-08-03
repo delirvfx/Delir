@@ -14,7 +14,7 @@ env:
 
 install:
     - npm i -g yarn
-    - yarn install
+    - yarn install -s
 
 script:
     - yarn test-front
