@@ -1,4 +1,4 @@
-import * as Delir from '../../src/index'
+import * as Delir from '../index'
 
 describe('Check exportings', () => {
     it('Delir (with import)', () => {
@@ -61,8 +61,8 @@ describe('Check exportings', () => {
         })
     })
 
-    it('Delir.Renderer', () => {
-        expect(Delir.Renderer).to.be.an('function')
+    it('Delir.Engine', () => {
+        expect(Delir.Engine).to.be.an('object')
     })
 
     it('Delir.LayerPluginBase', () => {

@@ -1,6 +1,6 @@
 // @flow
-import path from 'path';
-import PluginRegistry from '../../src/services/plugin-registry'
+import path from 'path'
+import PluginRegistry from '../plugin-registry'
 
 describe('PluginRegistry', () => {
     it('exporting: PluginFeatures', () => {

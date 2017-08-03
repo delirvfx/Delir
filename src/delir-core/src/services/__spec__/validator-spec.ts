@@ -1,7 +1,6 @@
-import * as Validators from '../../src/services/validators'
+import * as Validators from '../validators'
 
 describe('Assert Plugin package.json', () => {
-
     it('Should passing assertion with valid package.json', () => {
         (() => {
             Validators.delirPackageJson({
