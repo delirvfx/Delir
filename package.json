@@ -11,9 +11,8 @@
     "rebuild": "cross-env electron-rebuild",
     "build": "cross-env DELIR_ENV=production gulp publish",
     "declare": "cross-env tsc -p src/delir-core -d --declarationDir src/delir-core/types",
-    "test-core": "cross-env mocha --compilers babel-register --colors --reporter spec --require ./src/delir-core/tests/bootstrap.js ./src/delir-core/tests/**/*-spec.js",
-    "test-front": "cross-env mocha --colors --reporter spec --watch-extensions ts --require ./src/frontend/__spec-bootstrap.js ./src/frontend/**/__spec__/*-spec.{ts,tsx}",
-    "watch-test": "cross-env mocha --watch --compilers babel-register --colors --reporter spec --require ./src/delir-core/tests/bootstrap.js ./src/delir-core/tests/**/*-spec.js"
+    "test-core": "cross-env mocha --colors --reporter spec --watch-extensions ts --require ./src/delir-core/src/__spec__/__bootstrap__.js './src/delir-core/\\*\\*/__spec__/\\*-spec.{js,ts}'",
+    "test-front": "cross-env mocha --colors --reporter spec --watch-extensions ts --require ./src/frontend/__spec-bootstrap.js './src/frontend/\\*\\*/__spec__/\\*-spec.{ts,tsx}'"
   },
   "devDependencies": {
     "@types/bson": "1.0.3",
