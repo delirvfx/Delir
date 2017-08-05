@@ -1,4 +1,5 @@
 global.expect = require('expect.js')
+
 require('ts-node').register({
     fast: true,
     compilerOptions: {
