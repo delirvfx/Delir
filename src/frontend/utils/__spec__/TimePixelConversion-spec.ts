@@ -137,7 +137,7 @@ describe('TimePixelConversion', () => {
             expect(actual3).to.be(0)
         })
 
-        it('Should returns correc value with `pixels', () => {
+        it('Should returns correct value with `pixels', () => {
             const actual = TimePixelConversion.pixelToFrames({
                 pixel: 20,
                 framerate: 30,
@@ -146,10 +146,10 @@ describe('TimePixelConversion', () => {
             })
 
             // (pixel / scale) * (pixelPerSec / framerate)
-            expect(actual).to.be((20 / 1) * (30 / 30))
+            expect(actual).to.be(Math.round((20 / 1) * (30 / 30)))
         })
 
-        it('Should returns correc value with `framerate`', () => {
+        it('Should returns correct value with `framerate`', () => {
             const actual = TimePixelConversion.pixelToFrames({
                 pixel: 1,
                 framerate: 60,
@@ -158,10 +158,10 @@ describe('TimePixelConversion', () => {
             })
 
             // (pixel / scale) * (pixelPerSec / framerate)
-            expect(actual).to.be((1 / 1) * (30 / 60))
+            expect(actual).to.be(Math.round((1 / 1) * (30 / 60)))
         })
 
-        it('Should returns correc value with `pxPerSec`', () => {
+        it('Should returns correct value with `pxPerSec`', () => {
             const actual = TimePixelConversion.pixelToFrames({
                 pixel: 1,
                 framerate: 30,
@@ -170,10 +170,10 @@ describe('TimePixelConversion', () => {
             })
 
             // (pixel / scale) * (pixelPerSec / framerate)
-            expect(actual).to.be((1 / 1) * (45 / 30))
+            expect(actual).to.be(Math.round((1 / 1) * (45 / 30)))
         })
 
-        it('Should returns correc value with `scale`', () => {
+        it('Should returns correct value with `scale`', () => {
             const actual = TimePixelConversion.pixelToFrames({
                 pixel: 1,
                 framerate: 30,
@@ -182,10 +182,10 @@ describe('TimePixelConversion', () => {
             })
 
             // (pixel / scale) * (pixelPerSec / framerate)
-            expect(actual).to.be((1 / 2) * (35 / 30))
+            expect(actual).to.be(Math.round((1 / 2) * (35 / 30)))
         })
 
-        it('Should returns correc value with complex params', () => {
+        it('Should returns correct value with complex params', () => {
             const actual = TimePixelConversion.pixelToFrames({
                 pixel: 13,
                 framerate: 60,
@@ -194,7 +194,20 @@ describe('TimePixelConversion', () => {
             })
 
             // (pixel / scale) * (pixelPerSec / framerate)
-            expect(actual).to.be((13 / 2.2) * (45 / 60))
+            expect(actual).to.be(Math.round((13 / 2.2) * (45 / 60)))
+        })
+
+        it('Should returns integer (not float)', () => {
+            // There is no concept of decimal in the number of frames
+
+            const actual = TimePixelConversion.pixelToFrames({
+                pixel: 13,
+                framerate: 60,
+                pxPerSec: 45,
+                scale: 2.2,
+            })
+
+            expect(actual).to.be(actual | 0)
         })
     })
 

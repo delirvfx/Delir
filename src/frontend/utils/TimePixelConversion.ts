@@ -36,7 +36,7 @@ export default {
         pixel: number,
         scale: number,
     }) {
-        return (pixel / (scale || 1)) * (pxPerSec / framerate)
+        return Math.round((pixel / (scale || 1)) * (pxPerSec / framerate))
     },
 
     secondsToPx({
