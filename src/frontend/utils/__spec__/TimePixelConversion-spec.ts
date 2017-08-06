@@ -37,15 +37,23 @@ describe('TimePixelConversion', () => {
         })
 
         it('Should returns correc value with `durationFrames', () => {
-            const actual = TimePixelConversion.framesToPixel({
+            const actual1 = TimePixelConversion.framesToPixel({
                 durationFrames: 20,
                 framerate: 30,
                 pxPerSec: 30,
                 scale: 1,
             })
 
+            const actual2 = TimePixelConversion.framesToPixel({
+                durationFrames: -20,
+                framerate: 60,
+                pxPerSec: 30,
+                scale: 1,
+            })
+
             // frame * (pixelPerSec / framerate) * scale
-            expect(actual).to.be(20 * (30 / 30) * 1)
+            expect(actual1).to.be(20 * (30 / 30) * 1)
+            expect(actual2).to.be(-(20 * (30 / 60) * 1))
         })
 
         it('Should returns correc value with `framerate`', () => {
