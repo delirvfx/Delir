@@ -236,5 +236,8 @@ const rendererService = {
         return renderState
     }
 }
-;((window as any).app = (window as any).app || {}).renderer = rendererService
+
+if (__DEV__) {
+    (window.app = window.app || {}).renderer = rendererService
+}
 export default rendererService

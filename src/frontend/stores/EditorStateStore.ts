@@ -150,5 +150,9 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 }
 
 const store = new EditorStateStore(dispatcher)
-_.set(window, 'app.store.EditorStateStore', store)
+
+if (__DEV__) {
+    _.set(window, 'app.store.EditorStateStore', store)
+}
+
 export default store
