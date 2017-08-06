@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import keyMirror from 'keymirror'
+import * as keyMirror from 'keymirror'
 import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'

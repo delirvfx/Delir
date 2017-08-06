@@ -222,7 +222,7 @@ const rendererService = {
     setDestCanvas: (canvas: HTMLCanvasElement) => {
         destCanvas = canvas
         canvasContext = canvas.getContext('2d')!
-    }
+    },
 
     get pluginRegistry() {
         return pluginRegistry

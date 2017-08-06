@@ -12,7 +12,7 @@
     "build": "cross-env DELIR_ENV=production gulp publish",
     "declare": "cross-env tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "test-core": "cross-env mocha --colors --reporter spec --watch-extensions ts --require ./src/delir-core/src/__spec__/__bootstrap__.js './src/delir-core/\\*\\*/__spec__/\\*-spec.{js,ts}'",
-    "test-front": "cross-env mocha --colors --reporter spec --watch-extensions ts --require ./src/frontend/__spec__/__bootstrap__.js './src/frontend/\\*\\*/__spec__/\\*-spec.{ts,tsx}'"
+    "test-front": "cross-env mocha --colors --reporter spec --watch-extensions ts,tsx --require ./src/frontend/__spec__/__bootstrap__.js './src/frontend/\\*\\*/__spec__/\\*-spec.{ts,tsx}'"
   },
   "devDependencies": {
     "@types/bson": "1.0.3",
@@ -28,6 +28,7 @@
     "@types/react": "15.0.38",
     "@types/react-color": "2.11.4",
     "@types/react-dom": "15.5.1",
+    "@types/react-test-renderer": "15.5.2",
     "@types/semver": "5.3.32",
     "@types/typescript": "^2.0.0",
     "@types/uuid": "3.4.0",
@@ -49,6 +50,7 @@
     "clean-webpack-plugin": "^0.1.16",
     "cross-env": "^4.0.0",
     "css-loader": "0.28.4",
+    "css-modules-require-hook": "4.0.6",
     "devtron": "^1.4.0",
     "electron": "1.7.4",
     "electron-builder": "18.6.2",
@@ -67,10 +69,13 @@
     "gulp-pug": "^3.3.0",
     "gulp-stylus": "^2.5.0",
     "gulp-typescript": "3.1.7",
+    "jsdom": "11.1.0",
+    "jsdom-global": "3.0.2",
     "mocha": "^3.2.0",
     "nib": "^1.1.0",
     "node-notifier": "^5.1.2",
     "raw-loader": "0.5.1",
+    "react-test-renderer": "16.0.0-alpha.13",
     "rimraf-promise": "^2.0.0",
     "style-loader": "0.18.2",
     "stylus": "^0.54.5",
