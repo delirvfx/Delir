@@ -19,7 +19,7 @@ interface Props {
     composition: Delir.Project.Composition
     clip: Delir.Project.Clip,
     propName: string,
-    descriptor: Delir.AnyParameterTypeDescriptor
+    descriptor?: Delir.AnyParameterTypeDescriptor
     keyframes: Delir.Project.Keyframe[]
     pxPerSec: number
     zoomScale: number
@@ -37,11 +37,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         height: PropTypes.number.isRequired,
         viewBox: PropTypes.string.isRequired,
         scrollLeft: PropTypes.number.isRequired,
-        composition: PropTypes.instanceOf(Delir.Project.Composition),
-        clip: PropTypes.instanceOf(Delir.Project.Clip),
+        composition: PropTypes.instanceOf(Delir.Project.Composition).isRequired,
+        clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
         propName: PropTypes.string.isRequired,
         descriptor: PropTypes.instanceOf(Delir.TypeDescriptor),
-        keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)),
+        keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)).isRequired,
         pxPerSec: PropTypes.number.isRequired,
         zoomScale: PropTypes.number.isRequired,
     }
