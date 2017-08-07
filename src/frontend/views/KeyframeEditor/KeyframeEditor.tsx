@@ -159,7 +159,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                 <Pane className={s.propList}>
                     {descriptors.map(desc => {
                         const value = activeClip
-                            ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, desc, activeClip.keyframes[desc.propName] || [])
+                            ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, activeClip.keyframes[desc.propName] || [])
                             : undefined
 
                         const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.propName] || []).length !== 0
