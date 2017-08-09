@@ -190,6 +190,8 @@ export default {
         const propDesc = props ? props.find(prop => prop.propName === propName) : null
         if (!propDesc) return
 
+        frameOnClip = Math.round(frameOnClip)
+
         if (propDesc.animatable === false) {
             frameOnClip = 0
         }
