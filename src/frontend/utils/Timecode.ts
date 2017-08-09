@@ -1,5 +1,3 @@
-
-
 export const frameToTimeCode = (frame: number, frameRate: number) => {
     const seconds = frame / frameRate
     const timeFrame = (frame % frameRate).toString().padStart(2, '0')

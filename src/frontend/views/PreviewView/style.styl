@@ -40,17 +40,18 @@
         position absolute
         bottom 0
         z-index 1
+        display flex
         width 100%
         padding 4px
         border-top 1px solid rgba(#000, .2)
+        font-size 12px
         background-color $_overlay-bg
 
-.scaleLabel
-    position relative
-    font-size 12px
+    .FooterItem + .FooterItem
+        margin-left 8px
 
 .currentScale
-    margin-left .5em
+    margin-left 4px
     border-bottom 1px dotted var(--accent-color)
 
 .dropdown
