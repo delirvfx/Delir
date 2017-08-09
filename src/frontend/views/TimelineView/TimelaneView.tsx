@@ -126,11 +126,12 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         ProjectModActions.removeLayer(layerId)
     }
 
-    private _scaleTimeline = e =>
+    private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) =>
     {
         if (e.altKey) {
             const newScale = this.state.scale + (e.deltaY * .05)
             this.setState({scale: Math.max(newScale, .1)})
+            e.preventDefault()
         }
     }
 
