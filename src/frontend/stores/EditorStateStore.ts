@@ -127,7 +127,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                 return state.set('previewPlayed', false)
 
             case AppActionsDispatchTypes.SeekPreviewFrame:
-                return state.set('currentPreviewFrame', payload.entity.frame)
+                return state.set('currentPreviewFrame', Math.round(payload.entity.frame))
 
             case AppActionsDispatchTypes.AddMessage:
                 return state.set('notifications', state.get('notifications').push({
