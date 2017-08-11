@@ -18,7 +18,6 @@
     "@types/bson": "1.0.3",
     "@types/classnames": "2.2.0",
     "@types/electron": "1.6.10",
-    "@types/event-kit": "^1.2.30",
     "@types/expect.js": "0.3.29",
     "@types/flux": "^3.1.2",
     "@types/fs-promise": "1.0.3",
