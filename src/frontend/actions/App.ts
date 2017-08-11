@@ -174,7 +174,6 @@ const actions = {
 
         if (! path.length) return
 
-        const bson = new BSON
         const projectBson = await fs.readFile(path[0])
         actions.setActiveProject(Delir.Project.Project.deserialize(projectBson), path[0])
     },
