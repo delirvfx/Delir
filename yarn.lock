@@ -54,9 +54,9 @@
   version "2.0.32"
   resolved "https://registry.yarnpkg.com/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
 
-"@types/flux@3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.1.tgz#fd4dd48d5d3891b62fde5923bd7a6295a2043311"
+"@types/flux@^3.1.2":
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.2.tgz#a73638438ecef59f55339588b704351c3f4bbf10"
   dependencies:
     "@types/fbemitter" "*"
     "@types/react" "*"
@@ -72,9 +72,9 @@
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.1.tgz#1fe48e6e5e2a969cafecf0f24485ae23c72abd30"
 
-"@types/lodash@4.14.69":
-  version "4.14.69"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.69.tgz#2bbd48c1565e02506f48ed8d1e8e53ea493fd0e6"
+"@types/lodash@^4.14.72":
+  version "4.14.72"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.72.tgz#f090cf6eb1fee1647a0efa1ebe18b0b78ed551c6"
 
 "@types/mocha@2.2.41":
   version "2.2.41"
@@ -98,16 +98,17 @@
   version "15.5.1"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.1.tgz#1ecf52621299e65b855374337fb11fd2d1066fc1"
 
-"@types/react-color@2.11.4":
-  version "2.11.4"
-  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.11.4.tgz#55d8a94bbb521837b2b2af404a3b86477a1a03af"
+"@types/react-color@^2.13.0":
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.13.0.tgz#88d8e94c556ac90f3169633bda6b47eecbf61ed4"
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@15.5.1":
-  version "15.5.1"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-15.5.1.tgz#f3c3e14c682785923c7d64583537df319442dec1"
+"@types/react-dom@^15.5.2":
+  version "15.5.2"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-15.5.2.tgz#f7203c75a1728812355f037ea112611d082555e6"
   dependencies:
+    "@types/node" "*"
     "@types/react" "*"
 
 "@types/react-test-renderer@15.5.2":
@@ -116,13 +117,17 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@15.0.38":
+"@types/react@*":
   version "15.0.38"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-15.0.38.tgz#6afea31a9fe66304af474106ba372ddaba449995"
 
-"@types/semver@5.3.32":
-  version "5.3.32"
-  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.3.32.tgz#a7afdc4bee713c081114cd811b51be10907d7bae"
+"@types/react@^16.0.2":
+  version "16.0.2"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.2.tgz#0b31a73cdde6272b719e5b05a7df6d1e2654a804"
+
+"@types/semver@^5.3.33":
+  version "5.3.33"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.3.33.tgz#58ebb6c8c48e161e24f8901915e7184900d341f7"
 
 "@types/typescript@^2.0.0":
   version "2.0.0"
