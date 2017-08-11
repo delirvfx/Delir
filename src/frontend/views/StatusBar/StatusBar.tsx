@@ -27,33 +27,11 @@ export default class StatusBar extends React.Component<null, State>
         })
     }
 
-    public openFeedback = (e) =>
-    {
-        remote.shell.openExternal('https://goo.gl/forms/dDy7HWgPuAiOFaSn1')
-        e.preventDefault()
-    }
-
     public render()
     {
         return (
             <Pane className='view-status' resizable={false} allowFocus={false}>
-                <style scoped>
-                    {`
-                        a {
-                            color:white;
-                            textDecoration:none;
-                            float:right;
-                            padding: 0 4px;
-                        }
-                        a:hover {
-                            background-color: rgba(255, 255, 255, .2);
-                        }
-                    `}
-                </style>
                 <div>{this.state.stateText}</div>
-                <div>
-                    <a href='#' target='_blank' onClick={this.openFeedback}>Feedback</a>
-                </div>
             </Pane>
         )
     }
