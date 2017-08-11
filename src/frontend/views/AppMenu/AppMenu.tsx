@@ -18,15 +18,12 @@ interface Props {
 }))
 export default class AppMenu extends React.PureComponent<Props>
 {
-    public componentDidUpdate()
+    public render()
     {
         remote.Menu.setApplicationMenu(
             remote.Menu.buildFromTemplate(this._buildMenu())
         )
-    }
 
-    public render()
-    {
         return null
     }
 
