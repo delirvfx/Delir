@@ -49,6 +49,11 @@ declare module '*.styl' {
     export = _
 }
 
+declare module '*.json' {
+    const _ : {[key: string]: any}
+    export = _
+}
+
 declare module 'devtron' {
     export function install(): void
 }

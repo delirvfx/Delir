@@ -6,6 +6,7 @@ import * as Platform from '../../utils/platform'
 import connectToStores from '../../utils/Flux/connectToStores'
 import AppActions from '../../actions/App'
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
+import * as AboutModal from '../../modules/AboutModal'
 
 import t from './AppMenu.i18n'
 
@@ -18,6 +19,10 @@ interface Props {
 }))
 export default class AppMenu extends React.PureComponent<Props>
 {
+    private openAbout = () => {
+        AboutModal.show()
+    }
+
     public render()
     {
         remote.Menu.setApplicationMenu(
@@ -38,7 +43,7 @@ export default class AppMenu extends React.PureComponent<Props>
                 submenu: [
                     {
                         label: t('appMenu.about'),
-                        role: 'about',
+                        click: this.openAbout,
                     },
                     {type: 'separator'},
                     {
