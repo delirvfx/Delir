@@ -125,7 +125,7 @@
   version "5.3.33"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.3.33.tgz#58ebb6c8c48e161e24f8901915e7184900d341f7"
 
-"@types/typescript@^2.0.0":
+"@types/typescript@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/typescript/-/typescript-2.0.0.tgz#c433539c98bae28682b307eaa7a0fd2115b83c28"
   dependencies:

@@ -31,7 +31,7 @@
     "@types/react-dom": "15.5.2",
     "@types/react-test-renderer": "15.5.2",
     "@types/semver": "5.3.33",
-    "@types/typescript": "^2.0.0",
+    "@types/typescript": "2.0.0",
     "@types/uuid": "3.4.0",
     "babel-core": "6.25.0",
     "babel-plugin-transform-class-properties": "6.24.1",
