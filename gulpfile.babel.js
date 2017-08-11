@@ -205,16 +205,6 @@ export function compileRendererJs(done) {
 }
 
 export async function compilePlugins(done) {
-
-    // const project = $.typescript.createProject('tsconfig.json')
-
-    // return g.src(join(paths.src.root, 'plugins/**/*.ts'), {base: join(paths.src.root,　'src/')})
-    //     .pipe($.plumber())
-    //     .pipe(project({
-    //         moduleResolution: "commonjs"
-    //     }))
-    //     .js.pipe(g.dest(join(paths.compiled.root, 'plugins')))
-
     webpack({
         target: "electron",
         watch: DELIR_ENV === 'dev',
