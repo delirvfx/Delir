@@ -135,6 +135,18 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         }
     }
 
+    private handleKeyframeEditorScaling = (scale: number) =>
+    {
+        this.setState({scale})
+    }
+
+    private handleKeyframeEditorScroll = (dx: number, dy: number) =>
+    {
+        const {timelineLanes} = this.refs
+        timelineLanes.scrollLeft += dx
+        this.setState({timelineScrollLeft: timelineLanes.scrollLeft})
+    }
+
     private _toggleScaleList = () =>
     {
         this.refs.scaleList.toggle()
@@ -261,6 +273,8 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             scale={scale}
                             scrollLeft={timelineScrollLeft}
                             measures={measures}
+                            onScroll={this.handleKeyframeEditorScroll}
+                            onScaled={this.handleKeyframeEditorScaling}
                         />
                     </Pane>
                 </Workspace>

@@ -3,6 +3,7 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
+import * as mouseWheel from 'mouse-wheel'
 import connectToStores from '../../utils/Flux/connectToStores'
 import {MeasurePoint} from '../../utils/TimePixelConversion'
 
@@ -33,6 +34,8 @@ interface KeyframeEditorProps {
     scale: number
     pxPerSec: number
     measures: MeasurePoint[]
+    onScroll: (dx: number, dy: number) => void
+    onScaled: (scale: number) => void
 }
 
 interface KeyframeEditorState {
@@ -74,6 +77,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
     {
         this._syncGraphHeight()
         window.addEventListener('resize', _.debounce(this._syncGraphHeight, 1000 / 30))
+        mouseWheel(this.refs.svgParent, this.handleScrolling)
     }
 
     public componentWillReceiveProps(nextProps: KeyframeEditorProps)
@@ -115,6 +119,20 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
             graphHeight: box.height,
             keyframeViewViewBox: `0 0 ${box.width} ${box.height}`,
         })
+    }
+
+    private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) =>
+    {
+        if (e.altKey) {
+            const newScale = this.props.scale + (e.deltaY * .05)
+            this.props.onScaled(Math.max(newScale, .1))
+            e.preventDefault()
+        }
+    }
+
+    private handleScrolling = (dx: number, dy: number) =>
+    {
+        this.props.onScroll(dx, dy)
     }
 
     private selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
@@ -195,7 +213,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                     })}
                 </Pane>
                 <Pane>
-                    <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
+                    <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph} onWheel={this._scaleTimeline}>
                         {editorOpened && <ExpressionEditor className={s.expressionEditor} title={activePropDescriptor.label} code={expressionCode} onClose={this.onCloseEditor} />}
                         <div className={s.measureContainer}>
                             <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
