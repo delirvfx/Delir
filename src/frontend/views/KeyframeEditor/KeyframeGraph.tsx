@@ -19,7 +19,7 @@ interface Props {
     composition: Delir.Project.Composition
     clip: Delir.Project.Clip,
     propName: string,
-    descriptor: Delir.AnyParameterTypeDescriptor
+    descriptor?: Delir.AnyParameterTypeDescriptor
     keyframes: Delir.Project.Keyframe[]
     pxPerSec: number
     zoomScale: number
@@ -37,11 +37,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         height: PropTypes.number.isRequired,
         viewBox: PropTypes.string.isRequired,
         scrollLeft: PropTypes.number.isRequired,
-        composition: PropTypes.instanceOf(Delir.Project.Composition),
-        clip: PropTypes.instanceOf(Delir.Project.Clip),
+        composition: PropTypes.instanceOf(Delir.Project.Composition).isRequired,
+        clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
         propName: PropTypes.string.isRequired,
         descriptor: PropTypes.instanceOf(Delir.TypeDescriptor),
-        keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)),
+        keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)).isRequired,
         pxPerSec: PropTypes.number.isRequired,
         zoomScale: PropTypes.number.isRequired,
     }
@@ -218,6 +218,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
             case 'COLOR_RGBA':
                 return this._renderColorKeyframes(keyframes)
 
+            case 'FLOAT':
             case 'NUMBER':
                 return this._renderNumberKeyframes(keyframes)
 
@@ -462,8 +463,22 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         const clipPlacedPositionX = this._frameToPx(clip.placedFrame)
 
         if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
-            const maxValue = orderedKeyframes.reduce((memo, kf) => Math.max(memo, kf.value as number), 0) + 10
-            const minValue = orderedKeyframes.reduce((memo, kf) => Math.min(memo, kf.value as number), 0) + -10
+            const maxValue = orderedKeyframes.reduce((memo, kf, idx, list) => {
+                // const prev = list[idx - 1]
+                // const next = list[idx + 1]
+                // const prevValue = (prev && kf.easeInParam[1] > 1) ? (prev.value as number) * kf.easeInParam[1] : -Infinity
+                // const nextValue = (next && kf.easeOutParam[1] > 1) ? (next.value as number) * kf.easeOutParam[1] : -Infinity
+
+                return Math.max(memo, kf.value as number) // , prevValue, nextValue)
+            }, -Infinity) + 10
+            const minValue = orderedKeyframes.reduce((memo, kf, idx, list) => {
+                // const prev = list[idx - 1]
+                // const next = list[idx + 1]
+                // const prevValue = (prev && kf.easeInParam[1] < 0) ? (prev.value as number) * kf.easeInParam[1] : +Infinity
+                // const nextValue = (next && kf.easeOutParam[1] < 0) ? (next.value as number) * kf.easeOutParam[1] : +Infinity
+
+                return Math.min(memo, kf.value as number) // , prevValue, nextValue)
+            }, +Infinity) + -10
             const absMinValue = Math.abs(minValue)
             const minMaxRange = maxValue - minValue
 
@@ -484,12 +499,12 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 let nextKeyframeEiY = 0
 
                 const beginX = clipPlacedPositionX + this._frameToPx(keyframe.frameOnClip) - scrollLeft
-                const beginY = height - height * (((keyframe.value as number) + absMinValue) / minMaxRange)
+                const beginY = height - height * (((keyframe.value as number) - minValue) / minMaxRange)
 
                 if (nextKeyframe) {
                     // Next keyframe position
                     nextX = clipPlacedPositionX + this._frameToPx(nextKeyframe.frameOnClip) - scrollLeft
-                    nextY = height - height * (((nextKeyframe.value as number) + absMinValue) / minMaxRange)
+                    nextY = height - height * (((nextKeyframe.value as number) - minValue) / minMaxRange)
 
                     // Handle of control transition to next keyframe
                     handleEoX = ((nextX - beginX) * keyframe.easeOutParam[0]) + beginX

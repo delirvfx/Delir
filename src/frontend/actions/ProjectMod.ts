@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import keyMirror from 'keymirror'
+import * as keyMirror from 'keymirror'
 import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
 import {ProjectHelper} from 'delir-core'
@@ -32,7 +32,7 @@ export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, pat
 export type ModifyClipExpression = Payload<'ModifyClipExpression', {targetClipId: string, targetProperty: string, expr: {language: string, code: string}}>
 export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
-export type RemoveLayerPayload = Payload<'RemoveLayer', {targetClipId: string}>
+export type RemoveLayerPayload = Payload<'RemoveLayer', {targetLayerId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
 export type RemoveAssetPayload = Payload<'RemoveAsset', {targetAssetId: string}>
 export type RemoveKeyframePayload = Payload<'RemoveKeyframe', {targetKeyframeId: string}>
@@ -190,6 +190,8 @@ export default {
         const propDesc = props ? props.find(prop => prop.propName === propName) : null
         if (!propDesc) return
 
+        frameOnClip = Math.round(frameOnClip)
+
         if (propDesc.animatable === false) {
             frameOnClip = 0
         }
@@ -294,7 +296,7 @@ export default {
 
     removeLayer(clipId: string)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveLayer, {targetClipId: clipId}))
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveLayer, {targetLayerId: clipId}))
     },
 
     removeClip(clipId: string)

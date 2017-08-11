@@ -27,6 +27,7 @@ interface AVFormat {
 interface AudioRendererParam {
     source: Asset
     volume: number
+    startTime: number
 }
 
 export default class AudioRenderer implements IRenderer<AudioRendererParam>
@@ -55,6 +56,11 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
                 label: 'Volume',
                 defaultValue: 100,
                 animatable: true,
+            })
+            .float('startTime', {
+                label: 'Start time(sec)',
+                animatable: false,
+                defaultValue: 0,
             })
     }
 
@@ -122,7 +128,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         const destBuffers = req.destAudioBuffer
 
         // Slice from source
-        const begin = (req.timeOnClip * req.samplingRate) | 0
+        const begin = ((req.parameters.startTime * req.samplingRate) + (req.timeOnClip * req.samplingRate)) | 0
         const end = begin + req.neededSamples
 
         const slices: Float32Array[] = new Array(req.audioChannels)

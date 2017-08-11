@@ -40,7 +40,7 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         value: this.props.defaultValue,
     }
 
-    private enableAndFocus()
+    public enableAndFocus()
     {
         this.setState({readOnly: false})
         this.refs.input.focus()

@@ -9,6 +9,7 @@ import dispatcher from '../utils/Flux/Dispatcher'
 import Record from '../utils/Record'
 import {KnownPayload} from '../actions/PayloadTypes'
 import {DispatchTypes as AppActionsDispatchTypes, DragEntity} from '../actions/App'
+import {DispatchTypes as ProjectModDispatchTypes} from '../actions/ProjectMod'
 
 type StateRecord = Record<EditorState>
 
@@ -23,14 +24,14 @@ export interface NotificationEntry {
 export type NotificationEntries = Immutable.List<NotificationEntry>
 
 export interface EditorState {
-    project: Delir.Project.Project|null,
-    projectPath: string|null,
-    activeComp: Delir.Project.Composition|null,
-    activeClip: Delir.Project.Clip|null,
-    dragEntity: DragEntity|null,
-    processingState: string|null,
-    previewPlayed: boolean,
-    currentPreviewFrame: number,
+    project: Delir.Project.Project|null
+    projectPath: string|null
+    activeComp: Delir.Project.Composition|null
+    activeClip: Delir.Project.Clip|null
+    dragEntity: DragEntity|null
+    processingState: string|null
+    previewPlayed: boolean
+    currentPreviewFrame: number
     notifications: NotificationEntries
 }
 
@@ -73,6 +74,31 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                     .set('activeComp', null)
                     .set('activeClip', null)
 
+            case ProjectModDispatchTypes.RemoveClip: {
+                if (state.get('activeClip').id === payload.entity.targetClipId) {
+                    return state.set('activeClip', null)
+                }
+
+                break
+            }
+
+            case ProjectModDispatchTypes.RemoveLayer: {
+                const activeClip = state.get('activeClip')
+                if (!activeClip) break
+
+                const clipContainedLayer = ProjectHelper.findParentLayerByClipId(project, activeClip.id)
+                if (!clipContainedLayer) {
+                    return state.set('activeClip', null)
+                }
+
+                const contains = !!clipContainedLayer.clips.find(clip => clip.id === activeClip.id)
+                if (contains) {
+                    return state.set('activeClip', null)
+                }
+
+                break
+            }
+
             case AppActionsDispatchTypes.SetDragEntity:
                 return state.set('dragEntity', payload.entity)
 
@@ -101,7 +127,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                 return state.set('previewPlayed', false)
 
             case AppActionsDispatchTypes.SeekPreviewFrame:
-                return state.set('currentPreviewFrame', payload.entity.frame)
+                return state.set('currentPreviewFrame', Math.round(payload.entity.frame))
 
             case AppActionsDispatchTypes.AddMessage:
                 return state.set('notifications', state.get('notifications').push({
@@ -124,5 +150,9 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
 }
 
 const store = new EditorStateStore(dispatcher)
-_.set(window, 'app.store.EditorStateStore', store)
+
+if (__DEV__) {
+    _.set(window, 'app.store.EditorStateStore', store)
+}
+
 export default store

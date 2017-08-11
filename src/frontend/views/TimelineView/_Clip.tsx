@@ -30,7 +30,7 @@ interface TimelaneClipState {
 
 export default class TimelaneClip extends React.Component<TimelaneClipProps, TimelaneClipState>
 {
-    static propTypes = {
+    public static propTypes = {
         clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
         left: PropTypes.number.isRequired,
         width: PropTypes.number.isRequired,
@@ -52,11 +52,13 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         clipRoot: HTMLDivElement
     }
 
-    selectClip = e => {
+    private selectClip = e =>
+    {
         AppActions.changeActiveClip(this.props.clip.id!)
     }
 
-    dragStart = e => {
+    private dragStart = e =>
+    {
         this.setState({
             dragStartPosition: {
                 clientX: e.clientX,
@@ -67,7 +69,8 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         AppActions.setDragEntity({type: 'clip', clip: this.props.clip})
     }
 
-    drag = (e) => {
+    private drag = (e) =>
+    {
         const movedX = e.clientX - this.state.dragStartPosition.clientX
         const movedY = e.clientY - this.state.dragStartPosition.clientY
 
@@ -79,7 +82,8 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         })
     }
 
-    dragEnd = (e) => {
+    private dragEnd = (e: React.DragEvent<HTMLDivElement>) =>
+    {
         AppActions.clearDragEntity()
 
         this.setState({
@@ -88,18 +92,16 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         })
     }
 
-    makeAlias = clipId =>
-    {
-    }
+    private makeAlias = clipId => { return }
 
-    removeClip = clipId =>
+    private removeClip = clipId =>
     {
         ProjectModActions.removeClip(clipId)
     }
 
-    resizeStart = (e: React.MouseEvent<HTMLDivElement>) =>
+    private resizeStart = (e: React.DragEvent<HTMLDivElement>) =>
     {
-        console.log('resize start')
+        AppActions.setDragEntity({type: 'clip-resizing', clip: this.props.clip})
 
         this.setState({
             resizeStartPosition: {clientX: e.clientX},
@@ -108,7 +110,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         e.stopPropagation()
     }
 
-    resizeMove = (e: React.MouseEvent<HTMLDivElement>) =>
+    private resizeMove = (e: React.DragEvent<HTMLDivElement>) =>
     {
         const {resizeStartPosition} = this.state
         if (!resizeStartPosition) return
@@ -120,25 +122,32 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         e.stopPropagation()
     }
 
-    resizeEnd = (e: React.MouseEvent<HTMLDivElement>) =>
+    private resizeEnd = (e: React.DragEvent<HTMLDivElement>) =>
     {
+        e.stopPropagation()
+        AppActions.clearDragEntity()
+        this.setState({resizeStartPosition: null, resizeMovedX: 0})
+
         const newWidth = this.props.width + this.state.resizeMovedX
 
-        this.setState({
-            resizeStartPosition: null,
-            resizeMovedX: 0,
-        })
+        // if handle dropped to out of window, `newWidth` becomes negative value.
+        if (newWidth < 0) return
 
         this.props.onChangeDuration(newWidth)
-        e.stopPropagation()
     }
 
-    render()
+    public render()
     {
         const {clip, active} = this.props
 
         return (
-            <div className={classnames(s.clip, {[s['clip--active']]: active})}
+            <div className={classnames(s.Clip, {
+                    [s['Clip--active']]: active,
+                    [s['Clip--video']]: clip.renderer === 'video',
+                    [s['Clip--audio']]: clip.renderer === 'audio',
+                    [s['Clip--text']]: clip.renderer === 'text',
+                    [s['Clip--image']]: clip.renderer === 'image',
+                })}
                 style={{
                     left: this.props.left,
                     width: this.props.width + this.state.resizeMovedX,
@@ -156,8 +165,8 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
                     <MenuItem label={t('contextMenu.remove')} onClick={this.removeClip.bind(null, clip.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
-                <span className={s.clipNameLabel}>{t(['renderers', clip.renderer])}</span>
-                <span className={s.clipIdLabel}>#{clip.id.substring(0, 4)}</span>
+                <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>
+                <span className={s.Clip__IdLabel}>#{clip.id.substring(0, 4)}</span>
                 <div
                     className={s.resizeHandle}
                     draggable

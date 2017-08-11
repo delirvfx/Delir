@@ -311,7 +311,15 @@ export class Row extends React.Component
     }
 }
 
-export class Col extends React.Component<any, any>
+interface ColProps {
+    className?: string
+    defaultWidth?: string|number
+    minWidth?: string|number
+    maxWidth?: string|number
+    resizable?: boolean
+}
+
+export class Col extends React.Component<ColProps, any>
 {
     public static propTypes = {
         _inHeader: PropTypes.bool,

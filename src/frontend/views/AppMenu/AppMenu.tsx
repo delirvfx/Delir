@@ -3,13 +3,26 @@ import * as Electron from 'electron'
 import {remote} from 'electron'
 import * as Platform from '../../utils/platform'
 
+import connectToStores from '../../utils/Flux/connectToStores'
 import AppActions from '../../actions/App'
-import EditorStateStore from '../../stores/EditorStateStore'
+import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
+import * as AboutModal from '../../modules/AboutModal'
 
 import t from './AppMenu.i18n'
 
-export default class AppMenu extends React.Component<any, any>
+interface Props {
+    editor: EditorState
+}
+
+@connectToStores([EditorStateStore], () => ({
+    editor: EditorStateStore.getState()
+}))
+export default class AppMenu extends React.PureComponent<Props>
 {
+    private openAbout = () => {
+        AboutModal.show()
+    }
+
     public render()
     {
         remote.Menu.setApplicationMenu(
@@ -21,7 +34,8 @@ export default class AppMenu extends React.Component<any, any>
 
     private _buildMenu(): Electron.MenuItemConstructorOptions[]
     {
-        const menu = []
+        const {previewPlayed, activeComp, currentPreviewFrame} = this.props.editor
+        const menu: Electron.MenuItemConstructorOptions[] = []
 
         if (Platform.isMacOS()) {
             menu.push({
@@ -29,7 +43,7 @@ export default class AppMenu extends React.Component<any, any>
                 submenu: [
                     {
                         label: t('appMenu.about'),
-                        role: 'about',
+                        click: this.openAbout,
                     },
                     {type: 'separator'},
                     {
@@ -113,6 +127,22 @@ export default class AppMenu extends React.Component<any, any>
                     role: 'selectall'
                 },
             ],
+        })
+
+        menu.push({
+            label: t('preview.label'),
+            submenu: [
+                {
+                    label: previewPlayed ? t('preview.pause') : t('preview.play'),
+                    accelerator: 'Space',
+                    enabled: !!activeComp,
+                    click: () => {
+                        previewPlayed
+                            ? AppActions.stopPreview()
+                            : AppActions.startPreview(activeComp!.id, currentPreviewFrame)
+                    } ,
+                },
+            ]
         })
 
         if (/* __DEV__ */ true) {

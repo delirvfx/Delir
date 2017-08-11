@@ -135,7 +135,7 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
 
             case ProjectModDispatchTypes.RemoveLayer:
-                ProjectHelper.deleteLayer(project!, payload.entity.targetClipId)
+                ProjectHelper.deleteLayer(project!, payload.entity.targetLayerId)
                 break
 
             case ProjectModDispatchTypes.RemoveClip:
@@ -160,5 +160,9 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
 }
 
 const store = new ProjectStore(dispatcher)
-_.set(window, 'app.store.ProjectModifyStore', store)
+
+if (__DEV__) {
+    _.set(window, 'app.store.ProjectModifyStore', store)
+}
+
 export default store

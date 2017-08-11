@@ -38,13 +38,23 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
         onRemove: PropTypes.func.isRequired,
     }
 
-    layerNameChanged = (value: string) =>
+    private layerNameInput: LabelInput
+
+    private layerNameChanged = (value: string) =>
     {
         const {layer} = this.props
         ProjectModActions.modifyLayer(layer.id!, {name: value})
     }
 
-    render()
+    private focusToLayerNameInput = () =>
+    {
+        this.layerNameInput.enableAndFocus()
+    }
+
+
+    private bindLayerNameInput = el => this.layerNameInput = el
+
+    public render()
     {
         const {layer, editor: {activeLayer}, onSelect, onRemove} = this.props
         const clips = Array.from(layer.clips)
@@ -60,12 +70,13 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
                 <ContextMenu>
                     <MenuItem type='separator' />
                     {/*<MenuItem label='複製' onClick={() => {}} />*/}
+                    <MenuItem label={t('contextMenu.renameLayer')} onClick={this.focusToLayerNameInput} />
                     <MenuItem label={t('contextMenu.removeLayer')} onClick={onRemove.bind(null, layer.id)} />
                     <MenuItem type='separator' />
                 </ContextMenu>
 
                 <li className='timeline_lane-label_col --col-name' onClick={onSelect.bind(this, layer.id)}>
-                    <LabelInput defaultValue={layer.name} placeholder='Layer name' onChange={this.layerNameChanged} />
+                    <LabelInput ref={this.bindLayerNameInput} defaultValue={layer.name} placeholder='Layer name' onChange={this.layerNameChanged} />
                 </li>
                 <li className='timeline_lane-label_col --col-visibility'>
                     <i className="twa twa-eye"></i>

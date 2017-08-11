@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
+import {frameToTimeCode} from '../../utils/Timecode'
 
 import connectToStores from '../../utils/Flux/connectToStores'
 
@@ -15,7 +16,8 @@ import t from './PreviewView.i18n'
 import * as s from './style.styl'
 
 interface PreviewViewProps {
-    activeComp: Delir.Project.Composition
+    activeComp?: Delir.Project.Composition
+    currentPreviewFrame?: number
 }
 
 interface PreviewViewState {
@@ -24,7 +26,8 @@ interface PreviewViewState {
 }
 
 @connectToStores([EditorStateStore], () => ({
-    activeComp: EditorStateStore.getState().get('activeComp')
+    activeComp: EditorStateStore.getState().get('activeComp'),
+    currentPreviewFrame: EditorStateStore.getState().get('currentPreviewFrame')
 }))
 export default class PreviewView extends React.Component<PreviewViewProps, PreviewViewState>
 {
@@ -44,20 +47,22 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         RendererService.setDestCanvas(this.refs.canvas)
     }
 
-    selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
+    private selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
     {
+        this.refs.scaleList.hide()
+
         this.setState({
             scale: parseInt(e.target.dataset.value, 10) / 100,
             scaleListShown: false,
         })
     }
 
-    toggleScaleList = (e) =>
+    private toggleScaleList = (e) =>
     {
         this.refs.scaleList.toggle()
     }
 
-    onWheel = e => {
+    private onWheel = e => {
         if (!e.altKey) return
 
         this.setState({
@@ -65,24 +70,25 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         })
     }
 
-    render()
+    public render()
     {
-        const {activeComp} = this.props
+        const {activeComp, currentPreviewFrame} = this.props
         const {scale, scaleListShown} = this.state
         const currentScale = Math.round(scale * 100)
         const width = activeComp ? activeComp.width : 640
         const height = activeComp ? activeComp.height : 360
+        const timecode = activeComp ? frameToTimeCode(currentPreviewFrame!, activeComp!.framerate) : '--:--:--:--'
 
         return (
-            <Pane className='view-preview' allowFocus>
-                <div className='inner'>
-                    <div className='header'>{activeComp && activeComp.name}</div>
-                    <div className='view' onWheel={this.onWheel}>
-                        <canvas ref='canvas' className='canvas' width={width} height={height} style={{transform:`scale(${this.state.scale})`}}/>
+            <Pane className={s.Preview} allowFocus>
+                <div className={s.Preview_Inner}>
+                    <div className={s.Preview_Header}>{activeComp && activeComp.name}</div>
+                    <div className={s.Preview_View} onWheel={this.onWheel}>
+                        <canvas ref='canvas' className={s.PreviewView_Canvas} width={width} height={height} style={{transform:`scale(${this.state.scale})`}}/>
                     </div>
-                    <div className={s.footer}>
-                        <label className={s.scaleLabel} onClick={this.toggleScaleList}>
-                            {t('scale')}:
+                    <div className={s.Preview_Footer}>
+                        <label className={s.FooterItem} onClick={this.toggleScaleList}>
+                            <i className='fa fa-search' />
                             <span className={s.currentScale}>{currentScale}%</span>
                             <DropDown ref='scaleList' className={s.dropdown} shownInitial={scaleListShown}>
                                 <li data-value="50" onClick={this.selectScale}>50%</li>
@@ -93,6 +99,9 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
                                 <li data-value="300" onClick={this.selectScale}>300%</li>
                             </DropDown>
                         </label>
+                        <div className={s.FooterItem}>
+                           {timecode}
+                        </div>
                     </div>
                 </div>
             </Pane>

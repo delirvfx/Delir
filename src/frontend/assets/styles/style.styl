@@ -36,6 +36,13 @@ html, body
     background var(--background)
     color var(--text-color)
 
+a
+    color #6acfff
+    text-decoration none
+
+    &:hover
+        text-decoration underline
+
 #loading
     position fixed
     top 0
@@ -81,7 +88,7 @@ html, body
         & > ._workspace-pane-handle
             width $pane-border-width
             height calc(100% +1px)
-            cursor ew-resize
+            // cursor ew-resize
 
 ._workspace--horizontal > ._workspace-pane + ._workspace-pane > ._workspace-pane-handle
     position absolute
@@ -100,7 +107,7 @@ html, body
         & > ._workspace-pane-handle
             width 100%
             height $pane-border-width
-            cursor ns-resize
+            // cursor ns-resize
 
 ._workspace--vertical > ._workspace-pane + ._workspace-pane >._workspace-pane-handle
     position absolute
@@ -117,9 +124,9 @@ html, body
     // border 1px solid transparent
     transition border-color .1s
 
-    &._workspace-pane--allow-focus
-        &:active, &:focus
-            box-shadow 0 0 0 1px var(--active-pane-border)
+    // &._workspace-pane--allow-focus
+    //     &:active, &:focus
+    //         box-shadow 0 0 0 1px var(--active-pane-border)
 
 ._workspace-pane-handle
     display none
@@ -213,37 +220,6 @@ body.platform-win
 .body-pane
     flex 1
     overflow hidden
-
-.view-preview
-    width 100%
-    height 100%
-
-    .inner
-        display flex
-        width 100%
-        height 100%
-        flex-direction column
-
-    .header
-        display flex
-        height 30px
-        padding 8px
-        align-items center
-        border-bottom 1px solid #333
-
-    .view
-        display flex
-        flex-direction column
-        align-items center
-        justify-content center
-        overflow hidden
-
-        flex 1
-
-        .canvas
-            display block
-            background-color #000
-            box-shadow 0 0 5px rgba(0,0,0,.5)
 
 .view-status
     flex none

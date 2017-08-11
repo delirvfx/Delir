@@ -8,11 +8,15 @@ import * as Delir from 'delir-core'
 import {default as TimePixelConversion, MeasurePoint} from '../../utils/TimePixelConversion'
 import RendererService from '../../services/renderer'
 
+import {ContextMenu, MenuItem} from '../components/ContextMenu'
+
+import t from './_Gradations.i18n'
 import * as s from './Gradations.styl'
 
 interface GradationsProps {
     currentFrame: number
     measures: MeasurePoint[]
+    previewPlayed: boolean
     activeComposition: Delir.Project.Composition|null,
     cursorHeight: number,
     scrollLeft: number,
@@ -28,9 +32,10 @@ interface GradationsState {
 
 export default class Gradations extends Component<GradationsProps, GradationsState>
 {
-    protected static propTypes = {
+    public static propTypes = {
         currentFrame: PropTypes.number.isRequired,
         measures: PropTypes.array.isRequired,
+        previewPlayed: PropTypes.bool.isRequired,
         activeComposition: PropTypes.object.isRequired,
         cursorHeight: PropTypes.number.isRequired,
         scrollLeft: PropTypes.number,
@@ -39,39 +44,45 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         onSeeked: PropTypes.func.isRequired
     }
 
-    protected static defaultProps = {
+    public static defaultProps = {
         scrollLeft: 0,
     }
 
     private intervalId: number = -1
 
-    private refs: {
+    public refs: {
         cursor: HTMLDivElement
         measureLayer: HTMLDivElement
     }
 
-    private state = {
+    public state = {
         left: 0,
         dragSeekEnabled: false,
     }
 
-    protected componentDidMount()
+    public componentDidMount()
     {
         this.intervalId = requestAnimationFrame(this._updateCursor)
     }
 
-    protected componentWillUnmount()
+    public componentWillUnmount()
     {
         cancelAnimationFrame(this.intervalId)
     }
 
+    private handleGlobalMouseUp = () => {
+        window.addEventListener('mouseup', e => {
+            this.setState({dragSeekEnabled: false})
+        }, {once: true})
+    }
+
     private _updateCursor = () =>
     {
-        const renderer = RendererService.renderer
-        const {activeComposition, scrollLeft, scale, currentFrame} = this.props
+        const {activeComposition, scrollLeft, scale, previewPlayed, currentFrame} = this.props
+        const lastRenderState = RendererService.lastRenderState
         const {cursor, measureLayer} = this.refs
 
-        if (!renderer) return
+        const usingCurrentFrame = (previewPlayed && lastRenderState) ? lastRenderState.currentFrame : currentFrame
 
         if (activeComposition) {
             // Reactの仕組みを使うとrenderMeasureが走りまくってCPUがヤバいので
@@ -79,7 +90,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
             const cursorLeft = TimePixelConversion.framesToPixel({
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
-                durationFrames: currentFrame,
+                durationFrames: usingCurrentFrame
                 scale,
             })
 
@@ -94,11 +105,12 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
 
     private _seeking = ({nativeEvent: e}: React.MouseEvent<HTMLDivElement>) =>
     {
+        // Accepy only "left only" click
+        if (e.buttons !== 1) return
+
         if (e.type === 'mousedown') {
             this.setState({dragSeekEnabled: true})
-        } else if (e.type === 'mouseup') {
-            this.setState({dragSeekEnabled: false})
-            return
+            this.handleGlobalMouseUp()
         }
 
         if (!this.state.dragSeekEnabled) return
@@ -117,7 +129,12 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         this.props.onSeeked(frame)
     }
 
-    protected render()
+    private seekToHead = () =>
+    {
+        this.props.onSeeked(0)
+    }
+
+    public render()
     {
         return (
             <div
@@ -127,6 +144,9 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
                 onMouseUp={this._seeking}
                 onClick={this._seeking}
             >
+                <ContextMenu>
+                    <MenuItem label={t('contextMenu.seekToHead')} onClick={this.seekToHead} />
+                </ContextMenu>
                 <div className={s.measureLayerTrimer}>
                     <div ref='measureLayer' className={s.measureLayer}>
                         {this._renderMeasure()}

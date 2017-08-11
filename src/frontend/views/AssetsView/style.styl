@@ -1,4 +1,5 @@
 @import '../../assets/styles/_variables'
+@import '../../assets/styles/_mixins'
 
 .assetsView
     display flex
@@ -10,27 +11,15 @@
 .assetList
 .compositionList
     width 100%
+    padding-bottom 8px
     flex 1
 
     border-top 1px solid rgba(255, 255, 255, 0.2)
 
-    // tbody, thead, tr, td, th
-    //     display block
-
-    th
-        border-bottom 1px solid rgba(#fff, .3)
-
-    td
-        border-bottom 1px solid rgba(#fff, .2)
-
-    th, td
-        padding 4px
-        font-size 12px
-
-
     :global
         ._label-input
             width 100%
+            line-height 12px
 
         .table-body
             overflow auto
@@ -38,6 +27,17 @@
         .table-row, .table-col
             border-right none
             border-bottom none
+
+        .table-header
+            .table-col
+                font-size: 10px
+
+        .table-body-selectlist
+            thin-scrollbar()
+            overflow-y scroll
+
+            .table-col
+                line-height 12px
 
 .compositionsHeading
 .assetsHeading
@@ -58,6 +58,5 @@
     &:hover
         background-color rgba(invert(#fff), .2) // inverted, it appear as white
 
-
-// .assetList
-//     margin-top 16px
+.IconField
+    text-align center

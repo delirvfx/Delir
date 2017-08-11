@@ -3,6 +3,7 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
+import * as mouseWheel from 'mouse-wheel'
 import connectToStores from '../../utils/Flux/connectToStores'
 import {MeasurePoint} from '../../utils/TimePixelConversion'
 
@@ -24,7 +25,7 @@ import RendererService from '../../services/renderer'
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
-interface KeyframeViewProps {
+interface KeyframeEditorProps {
     activeComposition: Delir.Project.Composition|null
     activeClip: Delir.Project.Clip|null
     editor: EditorState
@@ -33,9 +34,11 @@ interface KeyframeViewProps {
     scale: number
     pxPerSec: number
     measures: MeasurePoint[]
+    onScroll: (dx: number, dy: number) => void
+    onScaled: (scale: number) => void
 }
 
-interface KeyframeViewState {
+interface KeyframeEditorState {
     activePropName: string|null
     graphWidth: number
     graphHeight: number
@@ -47,18 +50,18 @@ interface KeyframeViewState {
     editor: EditorStateStore.getState(),
     project: ProjectStore.getState()
 }))
-export default class KeyframeView extends React.Component<KeyframeViewProps, KeyframeViewState> {
+export default class KeyframeEditor extends React.Component<KeyframeEditorProps, KeyframeEditorState> {
     public static propTypes = {
         activeClip: PropTypes.instanceOf(Delir.Project.Clip),
         scrollLeft: PropTypes.number,
         measures: PropTypes.array.isRequired
     }
 
-    public static defaultProps: Partial<KeyframeViewProps> = {
+    public static defaultProps: Partial<KeyframeEditorProps> = {
         scrollLeft: 0
     }
 
-    public state: KeyframeViewState = {
+    public state: KeyframeEditorState = {
         activePropName: null,
         graphWidth: 0,
         graphHeight: 0,
@@ -70,10 +73,18 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
         svgParent: HTMLDivElement
     }
 
-    protected componentDidMount()
+    public componentDidMount()
     {
         this._syncGraphHeight()
         window.addEventListener('resize', _.debounce(this._syncGraphHeight, 1000 / 30))
+        mouseWheel(this.refs.svgParent, this.handleScrolling)
+    }
+
+    public componentWillReceiveProps(nextProps: KeyframeEditorProps)
+    {
+        if (!nextProps.activeClip) {
+            this.setState({activePropName: null, editorOpened: false})
+        }
     }
 
     private onCloseEditor = (result: ExpressionEditor.EditorResult) => {
@@ -108,6 +119,20 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
             graphHeight: box.height,
             keyframeViewViewBox: `0 0 ${box.width} ${box.height}`,
         })
+    }
+
+    private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) =>
+    {
+        if (e.altKey) {
+            const newScale = this.props.scale + (e.deltaY * .05)
+            this.props.onScaled(Math.max(newScale, .1))
+            e.preventDefault()
+        }
+    }
+
+    private handleScrolling = (dx: number, dy: number) =>
+    {
+        this.props.onScroll(dx, dy)
     }
 
     private selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
@@ -152,7 +177,7 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                 <Pane className={s.propList}>
                     {descriptors.map(desc => {
                         const value = activeClip
-                            ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, desc, activeClip.keyframes[desc.propName] || [])
+                            ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, activeClip.keyframes[desc.propName] || [])
                             : undefined
 
                         const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.propName] || []).length !== 0
@@ -188,8 +213,8 @@ export default class KeyframeView extends React.Component<KeyframeViewProps, Key
                     })}
                 </Pane>
                 <Pane>
-                    <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph}>
-                        {editorOpened && <ExpressionEditor className={s.expressionEditor} code={expressionCode} onClose={this.onCloseEditor} />}
+                    <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph} onWheel={this._scaleTimeline}>
+                        {editorOpened && <ExpressionEditor className={s.expressionEditor} title={activePropDescriptor.label} code={expressionCode} onClose={this.onCloseEditor} />}
                         <div className={s.measureContainer}>
                             <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
                                 {...this._renderMeasure()}

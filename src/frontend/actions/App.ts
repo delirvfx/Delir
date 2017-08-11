@@ -1,5 +1,5 @@
 import * as Delir from 'delir-core'
-import keyMirror from 'keymirror'
+import * as keyMirror from 'keymirror'
 import * as _ from 'lodash'
 import {remote} from 'electron'
 import {BSON} from 'bson'
@@ -12,8 +12,9 @@ import Payload from '../utils/Flux/Payload'
 import EditorStateStore from '../stores/EditorStateStore'
 
 export type DragEntity =
-    {type: 'asset', asset: Delir.Project.Asset}
+    | {type: 'asset', asset: Delir.Project.Asset}
     | {type: 'clip', clip: Delir.Project.Clip}
+    | {type: 'clip-resizing', clip: Delir.Project.Clip}
 
 export type SetActiveProjectPayload = Payload<'SetActiveProject', {project: Delir.Project.Project, path?: string}>
 export type ClearActiveProjectPayload = Payload<'ClearActiveProject', null>
@@ -173,7 +174,6 @@ const actions = {
 
         if (! path.length) return
 
-        const bson = new BSON
         const projectBson = await fs.readFile(path[0])
         actions.setActiveProject(Delir.Project.Project.deserialize(projectBson), path[0])
     },

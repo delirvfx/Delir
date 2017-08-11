@@ -26,7 +26,8 @@
         "baseUrl": "."
     },
     "files": [
-        "./src/renderer/main.ts"
+        "./src/declarations.d.ts",
+        "./src/frontend/main.ts"
     ],
     "awesomeTypescriptLoaderOptions": {
         "ignoreDiagnostics": [8010, 8011]

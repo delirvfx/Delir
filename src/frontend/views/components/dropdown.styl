@@ -1,9 +1,12 @@
+@require '../../assets/styles/_variables'
+
 .dropdownInspector
     width 0
     height 0
 
 .dropdown
     position fixed
+    z-index: $z-index-dropdown
     opacity 0
     pointer-events none
     box-shadow 0 0 4px rgba(#112, .5)

@@ -17,14 +17,14 @@ export default I18n({
                 mono: 'モノラル(1ch)',
             },
         },
-        cancel: 'Cancel',
-        apply: 'Apply',
-        create: 'Create',
+        cancel: 'キャンセル',
+        apply: '適用',
+        create: '作成',
     },
     en: {
         fields: {
             compositionName: 'Composition Name',
-            dimensions: '解像度(px)',
+            dimensions: 'Resolution(px)',
             backgroundColor: 'Background Color',
             framerate: 'Framerate',
             durationSec: 'Duration (sec)',

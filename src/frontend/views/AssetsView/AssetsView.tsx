@@ -63,6 +63,28 @@ const castToCompositionPropTypes = (req: CompositionProps) => {
     }
 }
 
+const fileIconFromExtension = (ext: string) => {
+    switch (ext) {
+        case 'mp4':
+        case 'webm':
+            return (<i className='fa fa-file-movie-o' />)
+
+        case 'webp':
+        case 'png':
+        case 'gif':
+        case 'jpg':
+        case 'jpeg':
+            return (<i className='fa fa-file-image-o' />)
+
+        case 'mp3':
+        case 'wav':
+            return (<i className='fa fa-file-audio-o' />)
+
+        default:
+            return (<i className='fa fa-file-o' />)
+    }
+}
+
 @connectToStores([EditorStateStore, ProjectStore], (context, props) => ({
     editor: EditorStateStore.getState(),
 }))
@@ -146,7 +168,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
 
     private openNewCompositionWindow =  async () =>
     {
-        const req = CompositionSettingModal.show()
+        const req = await CompositionSettingModal.show()
 
         if (!req) return
         ProjectModActions.createComposition(castToCompositionPropTypes(req))
@@ -206,7 +228,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <Col><i className="twa twa-clapper"></i></Col>
+                                <Col className={s.IconField}><i className='fa fa-film'></i></Col>
                                 <Col>
                                     <LabelInput
                                         ref={`comp_name_input#${comp.id}`}
@@ -228,7 +250,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                 <Table className={s.assetList} onDrop={this.addAsset}>
                     <TableHeader>
                         <Row>
-                            {/* <Col resizable={false} defaultWidth='2rem'></Col> */}
+                            <Col resizable={false} defaultWidth='2rem'></Col>
                             <Col defaultWidth='10rem'>{t('assets.name')}</Col>
                             <Col defaultWidth='5rem'>{t('assets.fileType')}</Col>
                         </Row>
@@ -238,17 +260,21 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                             <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
-                                    <MenuItem label={t('assets.contextMenu.rename')} onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
                                     {/*<MenuItem label='Reload' onClick={() => {}} />*/}
                                     <MenuItem label={t('assets.contextMenu.remove')} onClick={this.removeAsset.bind(null, asset.id!)}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
+                                <Col className={s.IconField}>{fileIconFromExtension(asset.fileType)}</Col>
                                 <Col>
+                                    <ContextMenu>
+                                        <MenuItem label={t('assets.contextMenu.rename')} onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
+                                    </ContextMenu>
                                     <LabelInput
                                         ref={`asset_name_input#${asset.id}`}
                                         defaultValue={asset.name}
                                         placeholder='Unnamed Asset'
+                                        doubleClickToEdit
                                     />
                                 </Col>
                                 <Col>{asset.fileType}</Col>

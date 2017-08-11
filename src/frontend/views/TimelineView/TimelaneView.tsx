@@ -126,12 +126,25 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         ProjectModActions.removeLayer(layerId)
     }
 
-    private _scaleTimeline = e =>
+    private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) =>
     {
         if (e.altKey) {
             const newScale = this.state.scale + (e.deltaY * .05)
             this.setState({scale: Math.max(newScale, .1)})
+            e.preventDefault()
         }
+    }
+
+    private handleKeyframeEditorScaling = (scale: number) =>
+    {
+        this.setState({scale})
+    }
+
+    private handleKeyframeEditorScroll = (dx: number, dy: number) =>
+    {
+        const {timelineLanes} = this.refs
+        timelineLanes.scrollLeft += dx
+        this.setState({timelineScrollLeft: timelineLanes.scrollLeft})
     }
 
     private _toggleScaleList = () =>
@@ -141,6 +154,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     private _selectScale = ({nativeEvent: e}: React.MouseEvent<HTMLLIElement>) => {
         const scale = +(e.target as HTMLLIElement).dataset.value! / 100
+        this.refs.scaleList.hide()
         this.setState({scale: scale})
     }
 
@@ -166,7 +180,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     public render()
     {
         const {scale, timelineScrollLeft} = this.state
-        const {activeComp, activeClip, currentPreviewFrame} = this.props.editor
+        const {activeComp, activeClip, currentPreviewFrame, previewPlayed} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
         const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
 
@@ -201,7 +215,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                     </div>
                                 </div>
 
-                                <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync.bind(this)}>
+                                <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
                                         <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
@@ -221,6 +235,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <Gradations
                                     activeComposition={activeComp}
                                     measures={measures}
+                                    previewPlayed={previewPlayed}
                                     currentFrame={currentPreviewFrame}
                                     cursorHeight={this.state.cursorHeight}
                                     scale={this.state.scale}
@@ -258,6 +273,8 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             scale={scale}
                             scrollLeft={timelineScrollLeft}
                             measures={measures}
+                            onScroll={this.handleKeyframeEditorScroll}
+                            onScaled={this.handleKeyframeEditorScaling}
                         />
                     </Pane>
                 </Workspace>

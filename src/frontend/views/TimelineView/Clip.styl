@@ -1,27 +1,50 @@
 @require '../../assets/styles/_variables'
 
-.clip
+.Clip
     position absolute
     display inline-flex
     align-items flex-start
     width 300px
-    height 21px
+    height 20px
     padding 4px
-    background-color #4d1eb0
-    bottom 1px solid #3d157d
-    box-shadow 0 0 3px rgba(0, 0, 0, .8)
+    border-radius 2px
+    filter: saturate(90%)
 
-    transition-property filter
+    transition-property background-color, box-shadow
     transition-duration $animate-bgcolor-duration
     transition-timing-function $animate-function
 
-    &.clip--active
-        filter brightness(140%)
+    &.Clip--video
+        background-color #6034bd
 
-.clipNameLabel
+    &.Clip--audio
+        background-color #905313
+
+    &.Clip--text
+        background-color #214c8c
+
+    &.Clip--image
+        background-color #7a1d55
+
+    &.Clip--active
+        z-index 1
+
+        &.Clip--video
+            background-color #7e50e1
+
+        &.Clip--audio
+            background-color #da8124
+
+        &.Clip--text
+            background-color #2f69bf
+
+        &.Clip--image
+            background-color #d03760
+
+.Clip__NameLabel
     color #fff
 
-.clipIdLabel
+.Clip__IdLabel
     margin-left 3px
     color rgba(#000, .5)
 

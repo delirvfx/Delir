@@ -11,7 +11,7 @@ import Portal from '../Portal'
 
 import * as s from './ModalWindow.styl'
 
-interface ModalWindowProps {
+export interface ModalWindowProps {
     show?: boolean
     url?: string
     width?: number

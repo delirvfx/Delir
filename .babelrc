@@ -6,8 +6,7 @@
                 "node": true
             }
         }],
-        "react",
-        "flow"
+        "react"
     ],
     "plugins": [
         "transform-decorators-legacy",

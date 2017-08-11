@@ -1,16 +1,58 @@
 @require '../../assets/styles/_variables'
 
-.scaleLabel
-    position relative
-    font-size 12px
+.Preview
+    $_overlay-bg = rgba($color-app-bg, .7)
+    width 100%
+    height 100%
+
+    .Preview_Inner
+        display flex
+        width 100%
+        height 100%
+        flex-direction column
+
+    .Preview_Header
+        position absolute
+        z-index 1
+        display flex
+        width 100%
+        height 30px
+        padding 8px
+        align-items center
+        border-bottom 1px solid #333
+        background-color $_overlay-bg
+
+    .Preview_View
+        display flex
+        flex-direction column
+        align-items center
+        justify-content center
+        overflow hidden
+
+        flex 1
+
+        .PreviewView_Canvas
+            display block
+            background-color #000
+            box-shadow 0 0 5px rgba(0,0,0,.5)
+
+    .Preview_Footer
+        position absolute
+        bottom 0
+        z-index 1
+        display flex
+        width 100%
+        padding 4px
+        border-top 1px solid rgba(#000, .2)
+        font-size 12px
+        background-color $_overlay-bg
+
+    .FooterItem + .FooterItem
+        margin-left 8px
 
 .currentScale
-    margin-left .5em
+    margin-left 4px
     border-bottom 1px dotted var(--accent-color)
-
-.footer
-    padding 4px
-    border-top 1px solid rgba(#000, .2)
 
 .dropdown
     width 200px

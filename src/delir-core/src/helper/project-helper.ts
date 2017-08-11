@@ -23,6 +23,16 @@ function _generateAndReserveSymbolId(project: Project): string
     return uuid.v4()
 }
 
+export function normalizeClip(clip: Clip) {
+    clip.placedFrame = Math.round(clip.placedFrame)
+    return clip
+}
+
+export function normalizeKeyframe(kf: Keyframe) {
+    kf.frameOnClip = Math.round(kf.frameOnClip)
+    return kf
+}
+
 //
 // Add
 //
@@ -92,6 +102,8 @@ export function addClip(
         setFreezedProp(clip, '_id', entityId)
     }
 
+    normalizeClip(clip)
+
     // TODO: Not found behaviour
     const layer = targetLayerId instanceof Layer
         ? targetLayerId
@@ -146,6 +158,8 @@ export function addKeyframe(
         if (!clip.keyframes[propName]) {
             clip.keyframes[propName] = []
         }
+
+        normalizeKeyframe(_keyframe)
 
         const duplicated = clip.keyframes[propName].find(kf => kf.frameOnClip === _keyframe.frameOnClip)
 
@@ -289,6 +303,8 @@ export function modifyClip(
         ? targetClipId
         : findClipById(project, targetClipId)!
 
+    normalizeClip(clip)
+
     Object.assign(clip, patch)
 }
 
@@ -331,12 +347,9 @@ export function modifyKeyframe(
         ? targetKeyframeId
         : findKeyframeById(project, targetKeyframeId)!
 
-    if (patch.frameOnClip != null) {
-        patch.frameOnClip = patch.frameOnClip | 0
-    }
-
     // TODO: Check duplicate on frame
     Object.assign(keyframe, patch)
+    normalizeKeyframe(keyframe)
 }
 
 //

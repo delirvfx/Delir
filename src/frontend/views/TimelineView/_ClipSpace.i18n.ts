@@ -6,10 +6,10 @@ export default I18n({
             createClip: 'クリップを作成',
         },
         renderers: {
-            audio: 'オーディオ',
-            video: 'ムービー',
-            image: '画像',
-            text: 'テキスト',
+            audio: '🔊 オーディオ',
+            video: '🎥 ムービー',
+            image: '🖼️ 画像',
+            text: '📝 テキスト',
         }
     },
     en: {
@@ -17,10 +17,10 @@ export default I18n({
             createClip: 'Create clip',
         },
         renderers: {
-            audio: 'Audio',
-            video: 'Video',
-            image: 'Image',
-            text: 'Text',
+            audio: '🔊 Audio',
+            video: '🎥 Video',
+            image: '🖼️ Image',
+            text: '📝 Text',
         }
     }
 })
