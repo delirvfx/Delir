@@ -46,7 +46,7 @@
     "css-loader": "0.28.4",
     "css-modules-require-hook": "4.0.6",
     "devtron": "^1.4.0",
-    "electron": "^1.7.5",
+    "electron": "1.7.6",
     "electron-builder": "^19.19.1",
     "electron-devtools-installer": "^2.2.0",
     "electron-icon-maker": "^0.0.3",
