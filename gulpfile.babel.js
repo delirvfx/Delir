@@ -204,6 +204,8 @@ export function compileRendererJs(done) {
 }
 
 export async function compilePlugins(done) {
+    return done();
+
     webpack({
         target: "electron",
         watch: DELIR_ENV === 'dev',
