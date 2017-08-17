@@ -148,7 +148,6 @@ export function compileRendererJs(done) {
                     use: [
                         {loader: 'ts-loader', options: {
                             transpileOnly: true,
-                            configFileName: join(__dirname, './tsconfig.json'),
                         }},
                     ],
                 },
@@ -245,7 +244,6 @@ export async function compilePlugins(done) {
                     use: [
                         {loader: 'ts-loader', options: {
                             transpileOnly: true,
-                            configFileName: join(__dirname, './tsconfig.json'),
                         }},
                     ],
                 },
