@@ -1,5 +1,5 @@
 import {} from 'monaco-editor'
-import {join} from 'path'
+import {dirname} from 'path'
 
 type AvailableLibrary =
     | 'lib.es5.d.ts'
@@ -46,7 +46,10 @@ export default class Monaco {
 
         return new Promise(resolve => {
             const {global} = (window as any)
-            const baseDir = 'file://' + join(global.__dirname, '../../node_modules/monaco-editor/min/vs')
+
+            // Avoid to module resolving by webpack. (global.require.resolve)
+            // webpack resolves module as module number, it breaks dirname(string).
+            const baseDir = 'file://' + dirname(global.require.resolve("monaco-editor/min/vs/loader.js"))
 
             // Stash node's `require`
             const nodeRequire = global.require
