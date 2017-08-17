@@ -54,11 +54,6 @@ const handlePayload = async (payload: KnownPayload) => {
             const targetComposition = ProjectHelper.findCompositionById(state.project, payload.entity.compositionId)
             if (! targetComposition) break
 
-            // if (renderer.isPlaying) {
-            //     renderer.pause()
-            //     break
-            // }
-
             if (audioContext) {
                 audioContext.close()
             }
@@ -206,12 +201,6 @@ const rendererService = {
 
         console.log('Plugin loaded', successes, 'Failed:', fails)
         loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
-
-        // renderer = new Delir.Engine.Renderer({
-        //     pluginRegistry: pluginRegistry,
-        // })
-
-        // renderer.setAudioContext(audioContext)
 
         pipeline = new Delir.Engine.Pipeline()
         pipeline.pluginRegistry = pluginRegistry
