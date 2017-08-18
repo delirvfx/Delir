@@ -1,0 +1,4 @@
+{
+    "main": "./AboutModal.tsx",
+    "types": "./AboutModal.tsx"
+}

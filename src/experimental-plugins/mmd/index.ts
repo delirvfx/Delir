@@ -2,7 +2,7 @@ import {
     Type,
     TypeDescriptor,
     EffectPluginBase,
-    PluginPreRenderRequest,
+    PreRenderRequest,
     RenderRequest,
     Exceptions
 } from 'delir-core'
@@ -11,15 +11,7 @@ import * as Tooloud from 'tooloud'
 
 export default class MMDLayer extends EffectPluginBase
 {
-    static async pluginDidLoad()
-    {
-        // ✋( ͡° ͜ʖ ͡°) インターフェースに誓って
-        if (typeof window === 'undefined') {
-            throw new Exceptions.PluginLoadFailException('this plugin only running on Electron')
-        }
-    }
-
-    static provideParameters(): TypeDescriptor
+    public static provideParameters(): TypeDescriptor
     {
         return Type.none()
     }
@@ -29,9 +21,12 @@ export default class MMDLayer extends EffectPluginBase
         super()
     }
 
-    async beforeRender(preRenderRequest: PluginPreRenderRequest) {}
+    public async beforeRender(preRenderRequest: PreRenderRequest<null>)
+    {
 
-    async render(req: RenderRequest)
+    }
+
+    public async render(req: RenderRequest)
     {
         const canvas = req.destCanvas
         const ctx = req.destCanvas.getContext('2d')

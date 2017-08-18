@@ -1,0 +1,4 @@
+{
+    "main": "./AppView.tsx",
+    "typings": "./AppView.tsx"
+}

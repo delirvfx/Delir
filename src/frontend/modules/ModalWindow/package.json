@@ -1,0 +1,4 @@
+{
+    "main": "./ModalWindow.tsx",
+    "typings": "./ModalWindow.tsx"
+}

@@ -1,0 +1,4 @@
+{
+    "main": "./Monaco.ts",
+    "typings": "./Monaco.ts"
+}

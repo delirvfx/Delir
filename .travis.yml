@@ -1,14 +1,24 @@
 sudo: false
 language: node_js
 
+cache:
+    yarn: true
+    directories:
+        - node_modules
+
 node_js:
-    - "6.1.0"
+    - '8'
+
 env:
     - CXX=g++-4.8
 
 install:
     - npm i -g yarn
-    - yarn install
+    - yarn install -s
+
+script:
+    - yarn test-front
+    - yarn test-core
 
 addons:
     apt:

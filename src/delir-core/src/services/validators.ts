@@ -138,16 +138,16 @@ export const delirPackageJson = _validate('package.json(delir plugin)', {
     engines: T.shape({
         delir: customTypes.semverRange.isRequired,
     }).isRequired,
-    delir: customTypes.hasIfShape({
-        feature: T.oneOf([
-            'Effect',
-            'CustomLayer',
-            'ExpressionExtension'
-        ]),
-        targetApi: customTypes.hasIfShape({
-            renderer: customTypes
-                .if((props, propName, rootProps) => rootProps.delir.feature === 'Effect')
-                .when(customTypes.semverRange.isRequired)
-        }).isRequired
-    }).isRequired,
+    // delir: customTypes.hasIfShape({
+    //     feature: T.oneOf([
+    //         'Effect',
+    //         'CustomLayer',
+    //         'ExpressionExtension'
+    //     ]),
+    //     targetApi: customTypes.hasIfShape({
+    //         renderer: customTypes
+    //             .if((props, propName, rootProps) => rootProps.delir.feature === 'Effect')
+    //             .when(customTypes.semverRange.isRequired)
+    //     }).isRequired
+    // }).isRequired,
 })

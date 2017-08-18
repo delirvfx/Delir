@@ -1,54 +1,54 @@
 import * as _ from 'lodash'
+import * as uuid from 'uuid'
 
+import {EffectScheme, EffectOptionScheme} from './scheme/effect'
 import {KeyframeScheme} from './scheme/keyframe'
 import Keyframe from './keyframe'
-
-export interface EffectOptionScheme {
-    name: string|null
-    processor: string|null
-    keyframeInterpolationMethod: string
-}
-
-export interface EffectScheme {
-    id: string|null
-    options: EffectOptionScheme
-    keyframes: {[keyName:string]: KeyframeScheme[]}
-}
+import Expression from '../values/expression'
 
 export default class Effect
 {
-    static deserialize(effectJson: EffectScheme)
+    public static deserialize(effectJson: EffectScheme)
     {
-        const effect = new Effect
-        const options = _.pick(effectJson.options, [
+        const effect = new Effect()
+
+        const config = _.pick(effectJson.config, [
             'processor',
             'keyframeInterpolationMethod',
         ]) as EffectOptionScheme
 
         const keyframes = _.mapValues(effectJson.keyframes, keyframeSet => {
-            return new Set(Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe)))
+            return Array.from(keyframeSet).map(keyframe => Keyframe.deserialize(keyframe))
         })
 
-        Object.defineProperty(effect, 'id', {value: effectJson.id})
-        Object.assign(effect.options, options)
+        const expressions = _.mapValues(effectJson.expressions, expr => {
+            return new Expression(expr.language, expr.code)
+        })
+
+        Object.defineProperty(effect, '_id', {value: effectJson.id || uuid.v4()})
+        Object.assign(effect._config, config)
         effect.keyframes = keyframes
+        effect.expressions = expressions
+
         return effect
     }
 
-    id: string|null = null
+    private _id: string = uuid.v4()
 
-    private options: EffectOptionScheme = {
+    private _config: EffectOptionScheme = {
         name: null,
         processor: null,
         keyframeInterpolationMethod: 'linear',
     }
 
-    keyframes: {[keyName:string]: Set<Keyframe>} = {}
+    public keyframes: {[keyName: string]: Keyframe[]} = {}
 
-    // get id(): string { return this._id }
+    public expressions: {[keyName: string]: Expression} = {}
 
-    get processor(): string { return this.options.processor as string }
-    set processor(processor: string) { this.options.processor = processor }
+    get id(): string { return this._id }
+
+    get processor(): string { return this._config.processor as string }
+    set processor(processor: string) { this._config.processor = processor }
 
     get keyframeInterpolationMethod(): string { throw new Error('Effect.keyframeInterpolationMethod not implemented') }
     set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { throw new Error('Effect.keyframeInterpolationMethod not implemented') }
@@ -58,25 +58,27 @@ export default class Effect
         Object.seal(this)
     }
 
-    toPreBSON(): Object
+    public toPreBSON(): Object
     {
         return {
             id: this.id,
-            options: Object.assign({}, this.options),
-            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toPreBSON())
+            config: Object.assign({}, this._config),
+            keyframes: _.mapValues(this.keyframes, (keyframeSeq, propName) => {
+                return keyframeSeq.map(keyframe => keyframe.toPreBSON())
             }),
+            expressions: _.mapValues(this.expressions, expr => expr.toJSON())
         }
     }
 
-    toJSON(): Object
+    public toJSON(): Object
     {
         return {
             id: this.id,
-            options: Object.assign({}, this.options),
-            keyframes: _.mapValues(this.keyframes, (keyframe, propName) => {
-                return Array.from(keyframe).map(keyframe => keyframe.toJSON())
+            config: Object.assign({}, this._config),
+            keyframes: _.mapValues(this.keyframes, (keyframeSeq, propName) => {
+                return keyframeSeq.map(keyframe => keyframe.toJSON())
             }),
+            expressions: _.mapValues(this.expressions, expr => expr.toJSON())
         }
     }
 }

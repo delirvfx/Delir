@@ -19,105 +19,128 @@ export interface KeyframeValueSequence {
     [frame: number]: ParameterValueTypes
 }
 
+export function calcKeyframeValuesAt(
+    frame: number,
+    clipPlacedFrame: number,
+    descriptor: TypeDescriptor,
+    keyframes: {[propName: string]: Keyframe[]},
+): {[propName: string]: ParameterValueTypes}
+{
+    return descriptor.properties.map<[string, ParameterValueTypes]>(desc => {
+        return [
+            desc.propName,
+            calcKeyframeValueAt(frame, clipPlacedFrame, desc, keyframes[desc.propName] || [])
+        ]
+    })
+    .reduce((values, entry) => {
+        values[entry[0]] = entry[1]
+        return values
+    }, Object.create(null))
+}
+
 export function calcKeyframeValueAt(
     frame: number,
+    clipPlacedFrame: number,
     desc: AnyParameterTypeDescriptor,
     keyframes: Keyframe[],
 ): ParameterValueTypes
 {
     switch (desc.type) {
         case 'POINT_2D':
-            return calcKeyframe(desc, keyframes, frame, 1, calcPoint2dKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcPoint2dKeyFrames)[frame]
         case 'POINT_3D':
-            return calcKeyframe(desc, keyframes, frame, 1, calcPoint3dKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcPoint3dKeyFrames)[frame]
         case 'SIZE_2D':
-            return calcKeyframe(desc, keyframes, frame, 1, calcSize2dKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcSize2dKeyFrames)[frame]
         case 'SIZE_3D':
-            return calcKeyframe(desc, keyframes, frame, 1, calcSize3dKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcSize3dKeyFrames)[frame]
         case 'COLOR_RGB':
-            return calcKeyframe(desc, keyframes, frame, 1, calcColorRgbKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcColorRgbKeyFrames)[frame]
         case 'COLOR_RGBA':
-            return calcKeyframe(desc, keyframes, frame, 1, calcColorRgbaKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcColorRgbaKeyFrames)[frame]
         case 'BOOL':
-            return calcKeyframe(desc, keyframes, frame, 1, calcBoolKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcBoolKeyFrames)[frame]
         case 'STRING':
-            return calcKeyframe(desc, keyframes, frame, 1, calcStringKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcStringKeyFrames)[frame]
         case 'NUMBER':
-            return calcKeyframe(desc, keyframes, frame, 1, calcNumberKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNumberKeyFrames)[frame]
         case 'FLOAT':
-            return calcKeyframe(desc, keyframes, frame, 1, calcFloatKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcFloatKeyFrames)[frame]
         case 'ENUM':
-            return calcKeyframe(desc, keyframes, frame, 1, calcEnumKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcEnumKeyFrames)[frame]
         case 'CLIP':
-            return calcKeyframe(desc, keyframes, frame, 1, calcNoAnimatable)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNoAnimatable)[frame]
         case 'PULSE':
-            return calcKeyframe(desc, keyframes, frame, 1, calcPulseKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcPulseKeyFrames)[frame]
         case 'ARRAY':
-            return calcKeyframe(desc, keyframes, frame, 1, calcArrayOfKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcArrayOfKeyFrames)[frame]
         case 'ASSET':
-            return calcKeyframe(desc, keyframes, frame, 1, calcAssetKeyFrames)[frame]
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcAssetKeyFrames)[frame]
         default:
             throw new Error(`Unsupported parameter type ${desc.type}`)
     }
 }
 
 export function calcKeyFrames(
-    paramTypes: TypeDescriptor,
+    paramTypes: TypeDescriptor|AnyParameterTypeDescriptor[],
     keyFrames: {[propName: string]: Keyframe[]},
+    clipPlacedFrame: number,
     beginFrame: number,
     calcFrames: number
 ): {[propName: string]: KeyframeValueSequence}
 {
     const tables: {[propName: string]: KeyframeValueSequence} = {}
+    const props = paramTypes instanceof TypeDescriptor ? paramTypes.properties : paramTypes
 
-    for (const propDesc of paramTypes.properties) {
+    for (const propDesc of props) {
         const {propName} = propDesc
+        const propSequence = keyFrames[propName] || []
 
         switch (propDesc.type) {
             case 'POINT_2D':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcPoint2dKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPoint2dKeyFrames)
             break;
             case 'POINT_3D':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcPoint3dKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPoint3dKeyFrames)
             break;
             case 'SIZE_2D':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcSize2dKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcSize2dKeyFrames)
             break;
             case 'SIZE_3D':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcSize3dKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcSize3dKeyFrames)
             break;
             case 'COLOR_RGB':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcColorRgbKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcColorRgbKeyFrames)
             break;
             case 'COLOR_RGBA':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcColorRgbaKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcColorRgbaKeyFrames)
             break;
             case 'BOOL':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcBoolKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcBoolKeyFrames)
             break;
             case 'STRING':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcStringKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcStringKeyFrames)
             break;
             case 'NUMBER':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcNumberKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNumberKeyFrames)
             break;
             case 'FLOAT':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcFloatKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcFloatKeyFrames)
             break;
             case 'ENUM':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcEnumKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcEnumKeyFrames)
             break;
             case 'CLIP':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcNoAnimatable)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNoAnimatable)
             break;
             case 'PULSE':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcPulseKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPulseKeyFrames)
             break;
             case 'ARRAY':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcArrayOfKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcArrayOfKeyFrames)
             break;
             case 'ASSET':
-                tables[propName] = calcKeyframe(propDesc, keyFrames[propName], beginFrame, calcFrames, calcAssetKeyFrames)
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcAssetKeyFrames)
             break;
         }
     }
@@ -128,6 +151,7 @@ export function calcKeyFrames(
 export function calcKeyframe(
     propDesc: AnyParameterTypeDescriptor,
     keyFrameSequense: Keyframe[],
+    clipPlacedFrame: number,
     beginFrame: number,
     calcFrames: number,
     transformer: (rate: number, frame: number, keyFrameLink: KeyFrameLink) => any
@@ -142,7 +166,7 @@ export function calcKeyframe(
     const table: KeyframeValueSequence = {}
 
     for (let frame = beginFrame, end = beginFrame + calcFrames; frame <= end; frame++) {
-        let activeKeyFrame: KeyFrameLink|null = _activeKeyFrameOfFrame(linkedSequense, frame)
+        const activeKeyFrame: KeyFrameLink|null = _activeKeyFrameOfFrame(linkedSequense, clipPlacedFrame, frame)
 
         if (activeKeyFrame == null) {
             // 0  10  20
@@ -152,7 +176,7 @@ export function calcKeyframe(
             continue
         }
 
-        if (activeKeyFrame.previous == null && frame < activeKeyFrame.active.frameOnClip) {
+        if (activeKeyFrame.previous == null && frame < (clipPlacedFrame + activeKeyFrame.active.frameOnClip)) {
             // [0]  10  20
             //       ◇   ◇
             // -> use 10frame's value at frame 0
@@ -160,7 +184,7 @@ export function calcKeyframe(
             continue
         }
 
-        if (activeKeyFrame.next == null && frame >= activeKeyFrame.active.frameOnClip) {
+        if (activeKeyFrame.next == null && frame >= (clipPlacedFrame + activeKeyFrame.active.frameOnClip)) {
             //  0  [10]
             //  ◇   |
             // -> use 0frame's value at frame 10
@@ -177,7 +201,7 @@ export function calcKeyframe(
         const bezier = bezierEasing(...currentKeyEaseOut, ...nextKeyEaseIn)
 
         const progressRate = activeKeyFrame.next
-            ? (frame - activeKeyFrame.active.frameOnClip) / (activeKeyFrame.next.frameOnClip - activeKeyFrame.active.frameOnClip)
+            ? (frame - (clipPlacedFrame + activeKeyFrame.active.frameOnClip)) / ((clipPlacedFrame + activeKeyFrame.next.frameOnClip) - (clipPlacedFrame + activeKeyFrame.active.frameOnClip))
             : 1
 
         if (!activeKeyFrame.next || !activeKeyFrame.active) {
@@ -210,7 +234,7 @@ function _buildLinkedKeyFrame(orderedKeyFrameSeq: Keyframe[]): KeyFrameLink[]
     return linked
 }
 
-function _activeKeyFrameOfFrame(linkedKeyFrameSeq: Array<KeyFrameLink>, frame: number): KeyFrameLink|null
+function _activeKeyFrameOfFrame(linkedKeyFrameSeq: KeyFrameLink[], clipPlacedFrame: number, frame: number): KeyFrameLink|null
 {
     if (linkedKeyFrameSeq.length === 1) {
         return linkedKeyFrameSeq[0]
@@ -219,8 +243,8 @@ function _activeKeyFrameOfFrame(linkedKeyFrameSeq: Array<KeyFrameLink>, frame: n
     for (const keyFrameLink of linkedKeyFrameSeq) {
         if (
             keyFrameLink.next == null ||
-            (keyFrameLink.active.frameOnClip <= frame && frame < keyFrameLink.next.frameOnClip) ||
-            (keyFrameLink.previous == null && frame < keyFrameLink.active.frameOnClip)
+            ((clipPlacedFrame + keyFrameLink.active.frameOnClip) <= frame && frame < (clipPlacedFrame + keyFrameLink.next.frameOnClip)) ||
+            (keyFrameLink.previous == null && frame < (clipPlacedFrame + keyFrameLink.active.frameOnClip))
         ) {
             return keyFrameLink
         }

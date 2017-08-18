@@ -38,9 +38,21 @@ declare module 'keymirror' {
     export default _
 }
 
+declare module 'node-timecodes' {
+    type TimeCodeOptions = {
+        frameRate?: number,
+        ms?: boolean,
+    }
+    export function toSeconds(timecode: string): number
+    export function fromSeconds(seconds: number, option?: TimeCodeOptions): string
+}
+
 declare namespace NodeJS {
     export interface Global {
         // Define for electron's `global.require`
         require: NodeRequire
     }
 }
+
+// Typing helpers
+declare type Optionalized<T> = {[P in keyof T]?: T[P]}

@@ -71,8 +71,6 @@ export default class PluginLoader
                 } else {
                     packageInfo.class = _class
                 }
-
-                packageInfo.class!.pluginDidLoad()
             } catch (e) {
                 delete packages[packageInfo.id]
                 failedPackages.push({package: packageInfo.id, reason: `Failed to requiring plugin \`${id}\`. (${e.message})`, error: e})

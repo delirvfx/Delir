@@ -17,13 +17,13 @@ const paths = {
         root        : join(__dirname, "./src/"),
         plugins     : join(__dirname, 'src/plugins'),
         browser     : join(__dirname, "./src/browser/"),
-        renderer    : join(__dirname, "./src/renderer/"),
+        renderer    : join(__dirname, "./src/frontend/"),
     },
     compiled    : {
         root        : join(__dirname, "./prepublish/"),
         plugins     : join(__dirname, './prepublish/plugins'),
         browser     : join(__dirname, "./prepublish/browser/"),
-        renderer    : join(__dirname, "./prepublish/renderer/"),
+        frontend    : join(__dirname, "./prepublish/frontend/"),
     },
     build   : join(__dirname, "./prepublish/"),
     binary  : join(__dirname, "./release/"),
@@ -104,7 +104,7 @@ export function compileRendererJs(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.root,
         entry: {
-            'renderer/main': ['./renderer/require-hook', './renderer/main'],
+            'frontend/main': ['./frontend/require-hook', './frontend/main'],
         },
         output: {
             filename: "[name].js",
@@ -147,8 +147,7 @@ export function compileRendererJs(done) {
                     exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
-                            useBabel: true,
-                            configFileName: join(__dirname, './tsconfig.json'),
+                            transpileOnly: true,
                         }},
                     ],
                 },
@@ -176,7 +175,7 @@ export function compileRendererJs(done) {
             ]
         },
         plugins: [
-            new CleanWebpackPlugin([''], {verbose: true, root: paths.compiled.renderer}),
+            new CleanWebpackPlugin([''], {verbose: true, root: paths.compiled.frontend}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
             new webpack.LoaderOptionsPlugin({
                 test: /\.styl$/,
@@ -205,26 +204,13 @@ export function compileRendererJs(done) {
 }
 
 export async function compilePlugins(done) {
-
-    // const project = $.typescript.createProject('tsconfig.json')
-
-    // return g.src(join(paths.src.root, 'plugins/**/*.ts'), {base: join(paths.src.root,　'src/')})
-    //     .pipe($.plumber())
-    //     .pipe(project({
-    //         moduleResolution: "commonjs"
-    //     }))
-    //     .js.pipe(g.dest(join(paths.compiled.root, 'plugins')))
+    return done();
 
     webpack({
         target: "electron",
         watch: DELIR_ENV === 'dev',
         context: paths.src.plugins,
         entry: {
-            'audio/audio': './audio/audio',
-            'video/index': './video/index',
-            'image/index': './image/index',
-            'plane/index': './plane/index',
-            'text/index': './text/index',
             ...(DELIR_ENV === 'dev' ? {
                 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 'plane/index': '../experimental-plugins/plane/index',
@@ -258,8 +244,7 @@ export async function compilePlugins(done) {
                     exclude: /node_modules\//,
                     use: [
                         {loader: 'ts-loader', options: {
-                            useBabel: true,
-                            configFileName: join(__dirname, './tsconfig.json'),
+                            transpileOnly: true,
                         }},
                     ],
                 },
@@ -302,7 +287,7 @@ export function compilePugTempates() {
     return g.src(join(paths.src.renderer, "**/[^_]*.pug"))
         .pipe($.plumber())
         .pipe($.pug())
-        .pipe(g.dest(paths.compiled.renderer));
+        .pipe(g.dest(paths.compiled.frontend));
 }
 
 export function compileStyles() {
@@ -312,17 +297,17 @@ export function compileStyles() {
             'include css': true,
             use : [require("nib")()]
         }))
-        .pipe(g.dest(paths.compiled.renderer));
+        .pipe(g.dest(paths.compiled.frontend));
 }
 
 export function copyFonts() {
-    return g.src(join(paths.src.renderer, "fonts/*"))
-        .pipe(g.dest(join(paths.compiled.renderer, "fonts")));
+    return g.src(join(paths.src.renderer, "assets/fonts/*"))
+        .pipe(g.dest(join(paths.compiled.frontend, "assets/fonts")));
 }
 
 export function copyImage() {
-    return g.src(join(paths.src.renderer, "images/**/*"), {since: g.lastRun('copyImage')})
-        .pipe(g.dest(join(paths.compiled.renderer, "images")));
+    return g.src(join(paths.src.renderer, "assets/images/**/*"), {since: g.lastRun('copyImage')})
+        .pipe(g.dest(join(paths.compiled.frontend, "assets/images")));
 }
 
 export function makeIcon() {
@@ -364,7 +349,7 @@ export async function pack(done) {
                 appId: 'studio.delir',
                 copyright: '© 2017 Ragg',
                 productName: 'Delir',
-                electronVersion: '1.6.1',
+                electronVersion: '1.7.3',
                 asar: true,
                 asarUnpack: ["node_modules/"],
                 npmRebuild: true,
@@ -399,7 +384,7 @@ export async function clean(done) {
 }
 
 export async function cleanRendererScripts(done) {
-    await rimraf(join(paths.compiled.renderer, 'scripts'))
+    await rimraf(join(paths.compiled.frontend, 'scripts'))
     done();
 }
 
@@ -414,65 +399,10 @@ export function run(done) {
     done()
 }
 
-// export async function compileNavcodec() {
-//     await new Promise(resolve => {
-//         const compiler = spawn('npm', ['i', '../src/navcodec'], {
-//             cwd: join(__dirname, 'test'),
-//         });
-
-//         compiler.on('close', code => {
-//             console.log('npm install ending with %d', code)
-//             resolve()
-//         })
-//     })
-
-//     await new Promise(resolve => {
-//         const testRun = spawn('node', ['index.js'], {
-//             cwd: join(__dirname, 'test'),
-//             stdio: 'inherit',
-//         })
-
-//         testRun.on('close', code => {
-//             console.log('testRun ending with %d', code)
-//             resolve()
-//         })
-//     })
-// }
-
-// export async function compileNavcodecForElectron() {
-//     if (buildingElectron) {
-//         return
-//     }
-
-//     buildingElectron = true
-
-//     await new Promise(resolve => {
-//         const compiler = spawn('npm', ['i', 'src/navcodec'], {
-//             cwd: join(__dirname),
-//         });
-
-//         compiler.on('close', code => {
-//             console.log('npm install for electron ending with %d', code);
-//             resolve();
-//         })
-//     })
-
-//     await new Promise(resolve => {
-//         const rebuild = spawn('./node_modules/.bin/electron-rebuild', [], {
-//             cwd: join(__dirname),
-//         })
-//         rebuild.on('close', code => {
-//             console.log('electron-rebuild ending with %d', code)
-//             buildingElectron = false
-//             resolve()
-//         })
-//     })
-// }
-
 export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
-    g.watch(paths.src.renderer, buildRendererWithoutJs)
-    g.watch(join(paths.src.renderer, 'styles/**/*.styl'), compileStyles)
+    g.watch(join(paths.src.renderer, '**/*'), buildRendererWithoutJs)
+    g.watch(join(paths.src.renderer, '**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
     // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
