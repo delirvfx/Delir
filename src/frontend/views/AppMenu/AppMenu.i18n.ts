@@ -34,6 +34,9 @@ export default I18n({
             reload: 'リロード',
             toggleDevTool: '開発者ツールの切り替え',
         },
+        help: {
+            label: 'ヘルプ',
+        },
     },
     en: {
         appMenu: {
@@ -67,6 +70,9 @@ export default I18n({
             label: 'Development',
             reload: 'Reload',
             toggleDevTool: 'Toggle DevTools',
+        },
+        help: {
+            label: 'Help',
         },
     },
 })

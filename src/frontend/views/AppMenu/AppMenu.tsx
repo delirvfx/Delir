@@ -95,6 +95,14 @@ export default class AppMenu extends React.PureComponent<Props>
                         AppActions.renderDestinate(comp.id!)
                     }
                 },
+                ...(Platform.isWindows() ? [
+                    {type: 'separator'} as any,
+                    {
+                        label: t('appMenu.quit'),
+                        accelerator: 'CmdOrCtrl+Q',
+                        role: 'quit',
+                    },
+                ] : [])
             ]
         }, {
             label: t('edit.label'),
@@ -163,6 +171,23 @@ export default class AppMenu extends React.PureComponent<Props>
                         },
                     }
                 ]
+            })
+        }
+
+        if (Platform.isWindows()) {
+            menu.push({
+                label: t('help.label'),
+                submenu: [
+                    {
+                        label: t('appMenu.about'),
+                        click: this.openAbout,
+                    },
+                    {type: 'separator'},
+                    {
+                        label: t('appMenu.openPluginDir'),
+                        click: () => AppActions.openPluginDirectory()
+                    },
+                ],
             })
         }
 
