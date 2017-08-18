@@ -89,11 +89,11 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         <label className="label">{t('fields.dimensions')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="width" type="number" min="1" defaultValue={values.width} required />
+                                <input name="width" type="number" min="1" defaultValue={values.width} required style={{width:'6em'}} />
                             </div>
                             <span className="unit"> x </span>
                             <div className='formControl'>
-                                <input name="height" type="number" min="1" defaultValue={values.height} required />
+                                <input name="height" type="number" min="1" defaultValue={values.height} required style={{width:'6em'}} />
                             </div>
                         </div>
                     </div>
@@ -109,7 +109,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         <label className="label">{t('fields.framerate')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="framerate" type="number" min="1" defaultValue={values.framerate} required />
+                                <input name="framerate" type="number" min="1" defaultValue={values.framerate} required style={{width:'6em'}} />
                             </div><span className="unit">fps</span>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         <label className="label">{t('fields.durationSec')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="durationSeconds" type="number" min="1" defaultValue={values.durationSeconds} required />
+                                <input name="durationSeconds" type="number" min="1" defaultValue={values.durationSeconds} required style={{width:'6em'}} />
                             </div><span className="unit">s</span>
                         </div>
                     </div>
@@ -145,7 +145,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                     </div>
 
                     <div className={s.modalFooter}>
-                        <button id="cancel" className="button" type='button' onClick={this.onCancel}>{t('cancel')}</button>
+                        <button id="cancel" className="button" type='button' onClick={this.onCancel} style={{marginRight:'8px'}}>{t('cancel')}</button>
                         <button className="button primary" type='button' onClick={this.onConfirm}>{comp ? t('apply') : t('create')}</button>
                     </div>
                 </form>
