@@ -1,5 +1,9 @@
 import * as React from 'react'
 
+import connectToStores from '../../utils/Flux/connectToStores'
+import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
+import AppActions from '../../actions/App'
+
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 
@@ -11,19 +15,39 @@ import NavigationView from '../NavigationView'
 import StatusBar from '../StatusBar'
 import Notifications from '../Notifications'
 
-export default class AppView extends React.Component<null, null>
+interface Props {
+    editor: EditorState
+}
+
+@connectToStores([EditorStateStore], () => ({
+    editor: EditorStateStore.getState()
+}))
+export default class AppView extends React.PureComponent<Props>
 {
-    componentDidMount()
+    public componentDidMount()
     {
         window.addEventListener('dragenter', this.prevent, false)
         window.addEventListener('dragover', this.prevent, false)
+        window.addEventListener('keyup', this.handleShortCut)
     }
 
-    prevent = (e: any) => {
+    private prevent = (e: any) => {
         e.preventDefault()
     }
 
-    render()
+    public handleShortCut = (e: KeyboardEvent) => {
+        const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
+
+        if (document.activeElement && document.activeElement.matches('input:not(:disabled),textarea:not(:disabled),select:not(:disabled)')) return
+
+        if (e.code === 'Space') {
+            previewPlayed
+                ? AppActions.stopPreview()
+                : AppActions.startPreview(activeComp!.id, currentPreviewFrame)
+        }
+    }
+
+    public render()
     {
         return (
             <div className='_container' onDrop={this.prevent}>

@@ -134,7 +134,6 @@ export default class AppMenu extends React.PureComponent<Props>
             submenu: [
                 {
                     label: previewPlayed ? t('preview.pause') : t('preview.play'),
-                    accelerator: 'Space',
                     enabled: !!activeComp,
                     click: () => {
                         previewPlayed
