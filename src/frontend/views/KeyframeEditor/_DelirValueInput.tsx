@@ -1,5 +1,4 @@
 import * as React from 'react'
-import {Component} from 'react'
 import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import {ChromePicker} from 'react-color'
@@ -19,7 +18,7 @@ interface DelirValueInputProps {
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
 }
 
-export default class DelirValueInput extends Component<DelirValueInputProps, any>
+export default class DelirValueInput extends React.PureComponent<DelirValueInputProps, any>
 {
     public static propTypes = {
         descriptors: PropTypes.arrayOf(
