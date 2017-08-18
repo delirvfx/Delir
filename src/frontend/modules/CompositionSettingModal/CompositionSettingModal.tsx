@@ -65,8 +65,8 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
         const toRGBHash = ({r, g, b}: Delir.ColorRGB) => '#' + [r, g, b].map(c => c.toString(16)).join('')
         const values: {[prop: string]: any} = {
             name: comp ? comp.name : 'New Composition',
-            width: comp ? comp.width : 1,
-            height: comp ? comp.height : 1,
+            width: comp ? comp.width : 640,
+            height: comp ? comp.height : 360,
             backgroundColor: comp ? toRGBHash(comp.backgroundColor) : '#fff',
             framerate: comp ? comp.framerate : 30,
             durationSeconds: comp ? comp.durationFrames / comp.framerate : 10,
