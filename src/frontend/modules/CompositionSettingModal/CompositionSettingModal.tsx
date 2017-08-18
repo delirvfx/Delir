@@ -101,8 +101,8 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                         <label className="label">{t('fields.backgroundColor')}:</label>
                         <div className="inputs">
                             <div className='formControl'>
-                                <input name="backgroundColor" type="color" defaultValue={values.backgroundColor} required />
-                            </div><span className="unit">px</span>
+                                <input name="backgroundColor" type="color" defaultValue={values.backgroundColor} style={{borderBottom: 'none', padding: 0, height: 24, width: 20, verticalAlign: 'middle'}} required />
+                            </div>
                         </div>
                     </div>
                     <div className='formGroup'>
