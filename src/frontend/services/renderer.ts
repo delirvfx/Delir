@@ -178,9 +178,6 @@ const handlePayload = async (payload: KnownPayload) => {
 
 const rendererService = {
     initialize: async () => {
-        audioContext = new AudioContext
-        // scriptProcessor
-
         const userDir = remote.app.getPath('appData')
         pipeline = new Delir.Engine.Pipeline()
         pluginLoader = new Delir.PluginSupport.FSPluginLoader()
