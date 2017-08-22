@@ -38,8 +38,8 @@ export default class Asset
      * Asset file extension (without `.` prefix)
      * @property {string} fileType
      */
-    get fileType(): string { return this._config.fileType }
-    set fileType(fileType: string) { this._config.fileType = fileType}
+    get fileType(): string { return this._config.fileType.toLowerCase() }
+    set fileType(fileType: string) { this._config.fileType = fileType.toLowerCase() }
 
     get name(): string { return this._config.name }
     set name(name: string) { this._config.name = name }
