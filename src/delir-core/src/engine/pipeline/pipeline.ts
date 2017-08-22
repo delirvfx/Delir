@@ -73,7 +73,7 @@ export default class Pipeline
     private _fpsCounter: FPSCounter = new FPSCounter()
     private _seqRenderPromise: ProgressPromise<void>|null = null
     private _project: Project
-    private _pluginRegistry: PluginRegistry
+    private _pluginRegistry: PluginRegistry = new PluginRegistry()
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver|null = null

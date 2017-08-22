@@ -182,8 +182,9 @@ const rendererService = {
         // scriptProcessor
 
         const userDir = remote.app.getPath('appData')
+        pipeline = new Delir.Engine.Pipeline()
         pluginLoader = new Delir.PluginSupport.FSPluginLoader()
-        pluginRegistry = new Delir.PluginRegistry()
+        pluginRegistry = pipeline.pluginRegistry
 
         const loaded = [
             await pluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
@@ -201,9 +202,6 @@ const rendererService = {
 
         console.log('Plugin loaded', successes, 'Failed:', fails)
         loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
-
-        pipeline = new Delir.Engine.Pipeline()
-        pipeline.pluginRegistry = pluginRegistry
 
         dispatcher.register(handlePayload)
     },
