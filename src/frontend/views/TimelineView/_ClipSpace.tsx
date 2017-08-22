@@ -71,11 +71,10 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         if (dragEntity.type === 'asset') {
             // Drop asset into ClipSpace
             const {asset} = dragEntity
-            const {props:{framerate, pxPerSec, scale}} = this
+            const {framerate, pxPerSec, scale} = this.props
             const placedFrame = TimePixelConversion.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
             ProjectModActions.createClipWithAsset(this.props.layer, asset, placedFrame)
-        }
-        else if (dragEntity.type === 'clip') {
+        } else if (dragEntity.type === 'clip') {
             // Drop Clip into ClipSpace
             const {clip} = dragEntity
             const isChildClip = !! _.find(this.props.layer.clips, {id: clip.id})
