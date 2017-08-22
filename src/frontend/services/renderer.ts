@@ -185,22 +185,22 @@ const rendererService = {
         pluginLoader = new Delir.PluginSupport.FSPluginLoader()
         pluginRegistry = new Delir.PluginRegistry()
 
-        // const loaded = [
-        //     await pluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
-        //     await pluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
-        // ]
+        const loaded = [
+            await pluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
+            await pluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
+        ]
 
-        // const successes = [].concat(...loaded.map<any>(({loaded}) => loaded))
-        // const fails = [].concat(...loaded.map<any>(({failed}) => failed))
+        const successes = [].concat(...loaded.map<any>(({loaded}) => loaded))
+        const fails = [].concat(...loaded.map<any>(({failed}) => failed))
 
-        // if (fails.length > 0) {
-        //     const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
-        //     const message = fails.map((fail: any) => fail.reason).join('\n\n')
-        //     AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
-        // }
+        if (fails.length > 0) {
+            const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
+            const message = fails.map((fail: any) => fail.reason).join('\n\n')
+            AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
+        }
 
-        // console.log('Plugin loaded', successes, 'Failed:', fails)
-        // loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
+        console.log('Plugin loaded', successes, 'Failed:', fails)
+        loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
 
         pipeline = new Delir.Engine.Pipeline()
         pipeline.pluginRegistry = pluginRegistry
