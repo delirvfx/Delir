@@ -23,6 +23,7 @@ import {
     AddLayerWithAssetPayload,
     AddAssetPayload,
     AddKeyframePayload,
+    AddEffectIntoClipPayload,
     MoveClipToLayerPayload,
     ModifyCompositionPayload,
     ModifyLayerPayload,
@@ -37,7 +38,7 @@ import {
 } from './ProjectMod'
 
 export type EditorStateActionPayload =
-    SetActiveProjectPayload
+    | SetActiveProjectPayload
     | ClearActiveProjectPayload
     | SetDragEntityPayload
     | ClearDragEntityPayload
@@ -52,7 +53,7 @@ export type EditorStateActionPayload =
     | SeekPreviewFramePayload
 
 export type ProjectModifyActionPayload =
-    CreateCompositionPayload
+    | CreateCompositionPayload
     | CreateLayerPayload
     | CreateClipPayload
     | AddClipPayload
@@ -60,6 +61,7 @@ export type ProjectModifyActionPayload =
     | AddLayerWithAssetPayload
     | AddAssetPayload
     | AddKeyframePayload
+    | AddEffectIntoClipPayload
     | MoveClipToLayerPayload
     | ModifyCompositionPayload
     | ModifyLayerPayload

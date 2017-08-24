@@ -25,6 +25,7 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
 }>
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type AddKeyframePayload = Payload<'AddKeyframe', {targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe}>
+export type AddEffectIntoClipPayload = Payload<'AddEffectIntoClipPayload', { clipId: string, effect: Delir.Project.Effect }>
 export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: Partial<Delir.Project.Composition>}>
 export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Partial<Delir.Project.Layer>}>
@@ -46,6 +47,7 @@ export const DispatchTypes = keyMirror({
     AddLayerWithAsset: null,
     AddAsset: null,
     AddKeyframe: null,
+    AddEffectIntoClipPayload: null,
     MoveClipToLayer: null,
     ModifyComposition: null,
     ModifyLayer: null,
@@ -240,6 +242,13 @@ export default {
         asset.path = path
 
         dispatcher.dispatch(new Payload(DispatchTypes.AddAsset, {asset}))
+    },
+
+    addEffectIntoClipPayload(clipId: string, processorId: string)
+    {
+        const effect = new Delir.Project.Effect()
+        effect.processor = processorId
+        dispatcher.dispatch(new Payload(DispatchTypes.AddEffectIntoClipPayload, { clipId, effect }))
     },
 
     removeAsset(assetId: string)

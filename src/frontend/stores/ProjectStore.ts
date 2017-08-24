@@ -97,6 +97,12 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
             }
 
+            case ProjectModDispatchTypes.AddEffectIntoClipPayload: {
+                const { clipId, effect } = payload.entity
+                ProjectHelper.addEffect(project!, clipId, effect)
+                break
+            }
+
             case ProjectModDispatchTypes.MoveClipToLayer: {
                 const targetClip = ProjectHelper.findClipById(project!, payload.entity.clipId)
                 const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.entity.clipId)

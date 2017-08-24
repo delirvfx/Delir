@@ -3,7 +3,8 @@ import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import * as classnames from 'classnames'
 
-import {ContextMenu, MenuItem} from '../components/ContextMenu'
+import RendererService from '../../services/renderer'
+import {ContextMenu, MenuItem, MenuItemProps} from '../components/ContextMenu'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
@@ -93,6 +94,11 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     }
 
     private makeAlias = clipId => { return }
+
+    private addEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
+    {
+        ProjectModActions.addEffectIntoClipPayload(dataset.clipId, dataset.effectId)
+    }
 
     private removeClip = clipId =>
     {
