@@ -1,157 +1,58 @@
-import {remote} from 'electron'
+import * as Electron from 'electron'
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import * as Electron from 'electron'
-import * as classnames from 'classnames'
 
-import Portal from '../../../modules/Portal'
-import * as s from './ContextMenu.styl'
+import ContextMenuManager from './ContextMenuManager'
+import propToDataset from '../../../utils/propToDataset'
 
-// const {Menu, MenuItem: ElectronMenuItem} = remote
-
-const buildMenu = (path: EventTarget[], registeredMenus: WeakMap<Element, Electron.MenuItem[]>): Electron.Menu =>
-{
-    const menus: Electron.MenuItem[] = []
-
-    for (let el of (path as Element[])) {
-        const items = registeredMenus.get(el)
-
-        if (items) {
-            menus.push(...items)
-        }
-    }
-
-    const normalizedMenus = menus.filter((item, idx) => {
-        if (idx === 0 && item.type === 'separator') {
-            // Remove head separator
-            return false
-        }
-        else if (menus[idx - 1] && menus[idx - 1].type === 'separator' && item.type === 'separator') {
-            // Remove continuous separator
-            return false
-        }
-        else if (idx === menus.length - 1 && item.type === 'separator') {
-            // Remove tail separator
-            return false
-        }
-        else {
-            return true
-        }
-    })
-
-    const menu = new Electron.remote.Menu
-    normalizedMenus.forEach(item => menu.append(item))
-    return menu
-}
-
-const buildMenuElements = ({items}: Electron.Menu): JSX.Element => {
-    return (
-        <ul className={s.list}>
-            {items.map((entry, idx) => {
-
-                switch (entry.type) {
-                    case 'separator':
-                        return <hr className={classnames(s.item, s[`type--${entry.type}`])} />
-
-                    case 'normal':
-                    default:
-                        return (
-                            <li
-                                key={idx}
-                                className={classnames(
-                                    s.item,
-                                    s['type--normal'],
-                                    {[s[`hasSubmenu`]]: !!entry.submenu}
-                                )}
-                                disabled={entry.enabled === false}
-                                onClick={() => entry.click(entry, null!, null!)}
-                            >
-                                {entry.label}
-                                {entry.submenu && buildMenuElements(entry.submenu as Electron.Menu)}
-                            </li>
-                        )
-                }
-            })}
-        </ul>
-    )
-}
-
-class ContextMenuManager
-{
-    private activeMenu: Portal|null
-    private menus: WeakMap<Element, Electron.MenuItem[]> = new WeakMap()
-
-    private _leakCheck: WeakSet<any>
-
-    constructor()
-    {
-        __DEV__ && (this._leakCheck = new WeakSet())
-
-        window.addEventListener('contextmenu', e => {
-            setTimeout(() => {
-                const menus = buildMenu(e.path, this.menus)
-                menus.items.length && this.show(menus, e)
-            })
-
-            e.preventDefault()
-            e.stopPropagation()
-        })
-
-        window.addEventListener('click', e => {
-            window.requestIdleCallback(() => {
-                this.activeMenu && this.activeMenu.unmount()
-                this.activeMenu = null
-
-                __DEV__ && console.log(this._leakCheck)
-            })
-        })
-    }
-
-    private onBlur = () => { }
-
-    private show(menus: Electron.Menu, e: PointerEvent)
-    {
-        if (this.activeMenu) {
-            this.activeMenu.unmount()
-            this.activeMenu = null
-        }
-
-        this.activeMenu = Portal.mount(
-            <div
-                className={s.root}
-                style={{top: e.pageY + 4, left: e.pageX + 4}}
-            >
-                {buildMenuElements(menus)}
-            </div>
-        )
-
-        __DEV__ && this._leakCheck!.add(this.activeMenu)
-    }
-
-    public register(el: Element, menu: Electron.MenuItem[])
-    {
-        // const el = ReactDOM.findDOMNode(element)
-        this.menus.set(el, menu)
-    }
-
-    public unregister(el)
-    {
-        this.menus.delete(el)
-    }
-}
-
-const manager = new ContextMenuManager()
-
-interface MenuItemProps {
-    label: string
-    type?: string
-    onClick?: () => any
+export interface MenuItemOption<T = {}> {
+    type?: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio')
+    label?: string
+    icon?: HTMLImageElement | string
+    enabled?: boolean
+    visible?: boolean
     checked?: boolean
-    submenu?: Electron.MenuItem[]
-    context?: any
+    submenu?: MenuItemOption[]
+    click?: (props: MenuItemProps) => void
+    dataset: T
 }
 
-export class MenuItem extends React.Component<MenuItemProps, {}>
+export type MenuItemProps<T = any> = Readonly<MenuItemOption<T>>
+
+// Generics syntax conflicts JSX syntax, so split typedef and implementation
+type WrapArrayFunction = <T>(obj: T|T[]) => T[]|undefined
+const wrapArray: WrapArrayFunction = (obj) => {
+    if (obj == null) return undefined
+    return Array.isArray(obj) ? obj : [obj]
+}
+
+const toMenuItemJSON = (item: MenuItem): MenuItemOption => {
+    const menuItem: MenuItemOption = {
+        label: item.props.label,
+        type: item.props.type || 'normal',
+        click: item.props.onClick,
+        checked: item.props.checked,
+        dataset: propToDataset(item.props)
+    }
+
+    const subItems = wrapArray(item.props.children as MenuItem[])
+
+    if (subItems && subItems.length > 0 && subItems[0] != null) {
+        menuItem.submenu = subItems.map(subItem => toMenuItemJSON(subItem))
+    }
+
+    return menuItem
+}
+
+interface MenuItemComponentProps {
+    label: string
+    type?: Electron.MenuItemConstructorOptions['type']
+    onClick?: (props: MenuItemOption) => any
+    checked?: boolean
+    enabled?: boolean
+}
+
+export class MenuItem extends React.Component<MenuItemComponentProps, {}>
 {
     protected static propTypes = {
         label: PropTypes.string,
@@ -169,42 +70,27 @@ export class MenuItem extends React.Component<MenuItemProps, {}>
 
 export class ContextMenu extends React.Component
 {
+    private root: HTMLDivElement
+
     public componentDidMount()
     {
-        const items = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
-        manager.register(this.refs.root.parentElement, items.map(item => this.toMenuItem(item)))
+        if (!this.props.children) return
+
+        const items = wrapArray(this.props.children as MenuItem[])
+
+        if (!items) return
+        ContextMenuManager.instance.register(this.root.parentElement!, items.map(item => toMenuItemJSON(item)))
     }
 
     public componentWillUnMount()
     {
-        manager.unregister(this.refs.root)
+        ContextMenuManager.instance.unregister(this.root)
     }
 
-    public toMenuItem(item: MenuItem)
-    {
-        return new Electron.remote.MenuItem(this.toMenuItemJSON(item))
-    }
-
-    public toMenuItemJSON(item: MenuItem)
-    {
-        const menuItem: any = {
-            label: item.props.label,
-            type: item.props.type,
-            click: item.props.onClick,
-            checked: item.props.checked,
-            context: item.props.context,
-        }
-
-        const subItems: MenuItem[] = Array.isArray(item.props.children) ? item.props.children : [item.props.children] as any
-        if (subItems && subItems.length > 0 && subItems[0] != null) {
-            menuItem.submenu = subItems.map(subItem => this.toMenuItemJSON(subItem))
-        }
-
-        return menuItem
-    }
+    private bindRootElement = (el: HTMLDivElement) => this.root = el
 
     public render()
     {
-        return <div ref='root' style={{display:'none'}} />
+        return <div ref={this.bindRootElement} style={{ display: 'none' }} />
     }
 }
