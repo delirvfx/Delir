@@ -36,7 +36,6 @@ export default class Effect
     private _id: string = uuid.v4()
 
     private _config: EffectOptionScheme = {
-        name: null,
         processor: null,
         keyframeInterpolationMethod: 'linear',
     }
