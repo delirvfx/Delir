@@ -157,6 +157,12 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 ProjectHelper.deleteKeyframe(project!, payload.entity.targetKeyframeId)
                 break
 
+            case ProjectModDispatchTypes.RemoveEffectFromClip: {
+                const { holderClipId, targetEffectId } = payload.entity
+                ProjectHelper.deleteEffectFromClip(project, holderClipId, targetEffectId)
+                break
+            }
+
             default:
                 return state
         }

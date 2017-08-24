@@ -10,7 +10,7 @@ import {MeasurePoint} from '../../utils/TimePixelConversion'
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 import SelectList from '../components/select-list'
-import {ContextMenu, MenuItem} from '../components/ContextMenu'
+import {ContextMenu, MenuItem, MenuItemProps} from '../components/ContextMenu'
 import DelirValueInput from './_DelirValueInput'
 import KeyframeGraph from './KeyframeGraph'
 import ExpressionEditor from './ExpressionEditor'
@@ -157,6 +157,11 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         this.forceUpdate()
     }
 
+    private removeEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
+    {
+        ProjectModActions.removeEffect(dataset.clipId, dataset.effectId)
+    }
+
     public render()
     {
         const {activeClip, project: {project}, editor, scrollLeft} = this.props
@@ -288,8 +293,12 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
 
             elements.push((
                 <div className={classnames(s.propItem, s['propItem--effectContainer'])}>
-                    <div key={effect.id} className={classnames(s.propItem, { [s['propItem--active']]: true })}>
-                        {processorInfo.name}
+                    <div key={effect.id} className={classnames(s.propItem, s['propItem--header'])}>
+                        <ContextMenu>
+                            <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
+                        </ContextMenu>
+                        <i className='fa fa-magic' />
+                        {`${processorInfo.name} #${effect.id.slice(0, 4)}`}
                     </div>
                     {...propElements}
                 </div>
