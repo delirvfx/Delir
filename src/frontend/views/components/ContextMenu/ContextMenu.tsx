@@ -45,7 +45,7 @@ const toMenuItemJSON = (item: MenuItem): MenuItemOption => {
 }
 
 interface MenuItemComponentProps {
-    label: string
+    label?: string
     type?: Electron.MenuItemConstructorOptions['type']
     onClick?: (props: MenuItemOption) => any
     checked?: boolean
