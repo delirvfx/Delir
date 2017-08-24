@@ -94,6 +94,7 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
             case ProjectModDispatchTypes.AddKeyframe: {
                 const {targetClip, propName, keyframe} = payload.entity
                 ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
+                break
             }
 
             case ProjectModDispatchTypes.MoveClipToLayer: {
