@@ -211,6 +211,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                             </div>
                         )
                     })}
+                    {this.renderEffectProperties()}
                 </Pane>
                 <Pane>
                     <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph} onWheel={this._scaleTimeline}>
@@ -239,6 +240,63 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                 </Pane>
             </Workspace>
         )
+    }
+
+    private renderEffectProperties = () =>
+    {
+        const { activeClip, project: { project } } = this.props
+        const elements: React.ReactElement<any>[] = []
+
+        if (!activeClip) return null
+
+        activeClip.effects.forEach(effect => {
+            // const activePropDescriptor = this._getDescriptorByPropName(activePropName)
+            const activePropName = ''
+            const hasKeyframe = false
+            const processorInfo = RendererService.pluginRegistry.getPostEffectPlugins().find(entry => entry.id === effect.processor)!
+            const descriptors = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)!
+            const propElements: React.ReactElement<any>[] = []
+
+            descriptors.forEach(desc => {
+                propElements.push((
+                    <div
+                        key={activeClip!.id + desc.propName}
+                        className={s.propItem}
+                        data-prop-name={desc.propName}
+                        onClick={this.selectProperty}
+                    >
+                        <ContextMenu>
+                            <MenuItem label={t('contextMenu.expression')} onClick={() => this._openExpressionEditor(desc.propName) } />
+                        </ContextMenu>
+                        <span className={classnames(
+                                s.propKeyframeIndicator,
+                                {
+                                    [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                    [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                })
+                            }
+                        >
+                            {desc.animatable && (<i className='twa twa-clock12'></i>)}
+                        </span>
+                        <span className={s.propItemName}>{desc.label}</span>
+                        <div className={s.propItemInput}>
+                            <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={0} onChange={this.valueChanged} />
+                        </div>
+                    </div>
+                ))
+            })
+
+            elements.push((
+                <div className={classnames(s.propItem, s['propItem--effectContainer'])}>
+                    <div key={effect.id} className={classnames(s.propItem, { [s['propItem--active']]: true })}>
+                        {processorInfo.name}
+                    </div>
+                    {...propElements}
+                </div>
+            ))
+        })
+
+        return elements
     }
 
     private _renderMeasure = (): JSX.Element[] =>
