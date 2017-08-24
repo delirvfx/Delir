@@ -160,7 +160,11 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
                 onDragEnd={this.dragEnd}
             >
                 <ContextMenu>
-                    <MenuItem type='separator' />
+                    <MenuItem label='エフェクト'>
+                        {RendererService.pluginRegistry.getPostEffectPlugins().map(entry => (
+                            <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
+                        )}
+                    </MenuItem>
                     {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
                     <MenuItem label={t('contextMenu.remove')} onClick={this.removeClip.bind(null, clip.id)} />
                     <MenuItem type='separator' />

@@ -28,11 +28,11 @@ export default class EntityResolver
 
     public resolvePlugin(pluginName: string)
     {
-        return this._pluginRegistry.requireById(pluginName)
+        return this._pluginRegistry.requirePostEffectPluginById(pluginName)
     }
 
     public resolveEffectPlugin(pluginId: string): typeof EffectPluginBase
     {
-        return this._pluginRegistry.requireById(pluginId) as any
+        return this._pluginRegistry.requirePostEffectPluginById(pluginId) as any
     }
 }

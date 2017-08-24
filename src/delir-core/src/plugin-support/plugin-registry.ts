@@ -28,7 +28,7 @@ export const validatePluginPackageJSON = (packageJson: any)=> {
 }
 
 export default class PluginRegistry {
-    private _plugins: {[packageName: string]: Readonly<PluginEntry>} = {}
+    private _plugins: {[type: string]: {[packageName: string]: Readonly<PluginEntry>}} = {'post-effect': {}}
 
     public addEntries(entries: PluginEntry[])
     {
@@ -43,7 +43,7 @@ export default class PluginRegistry {
             }
 
             entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
-            this._plugins[entry.id] = Object.freeze(entry)
+            this._plugins[entry.type][entry.id] = Object.freeze(_.cloneDeep(entry))
         }
     }
 
@@ -52,13 +52,13 @@ export default class PluginRegistry {
      * @param   {string}    target plugin ID
      * @throws UnknownPluginReferenceException
      */
-    public requireById(id: string): typeof PluginBase
+    public requirePostEffectPluginById(id: string): typeof EffectPluginBase
     {
-        if (! this._plugins[id]) {
+        if (! this._plugins['post-effect'][id]) {
             throw new UnknownPluginReferenceException(`Plugin '${id}' doesn't loaded`)
         }
 
-        return this._plugins[id].class
+        return this._plugins['post-effect'][id].class as any
     }
 
     /**
@@ -67,9 +67,9 @@ export default class PluginRegistry {
      * @throws UnknownPluginReferenceException
      * @throws PluginAssertionFailedException
      */
-    public getParametersById(id: string): AnyParameterTypeDescriptor[]|null
+    public getPostEffectParametersById(id: string): AnyParameterTypeDescriptor[]|null
     {
-        const entry = this._plugins[id]
+        const entry = this._plugins['post-effect'][id]
 
         if (!entry) {
             throw new UnknownPluginReferenceException(`Plugin ${id} doesn't loaded`)
@@ -99,12 +99,13 @@ export default class PluginRegistry {
     /**
      * get registered plugins as array
      */
-    public getPlugins(): PluginSummary[]
+    public getPostEffectPlugins(): PluginSummary[]
     {
-        return _.map(this._plugins, (entry, id) => {
+        return _.map(this._plugins['post-effect'], (entry, id) => {
             return {
                 id: entry.id,
-                type: entry.pluginInfo.feature,
+                name: entry.name,
+                type: entry.pluginInfo.type,
                 path: entry.packageRoot,
                 package: _.cloneDeep(entry.packageJson),
             }

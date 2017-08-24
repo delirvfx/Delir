@@ -58,7 +58,7 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
     {
         const {layer, editor: {activeLayer}, onSelect, onRemove} = this.props
         const clips = Array.from(layer.clips)
-        const propTypes = activeLayer ? RendererService.pluginRegistry!.getParametersById(activeLayer.renderer) : []
+        const propTypes = activeLayer ? RendererService.pluginRegistry!.getPostEffectParametersById(activeLayer.renderer) : []
         const hasActiveLayer = clips.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1
 
         return (
