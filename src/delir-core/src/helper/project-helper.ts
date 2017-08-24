@@ -120,11 +120,6 @@ export function addEffect(
   effect: Effect
 ): Effect
 {
-    if (typeof effect.id !== 'string') {
-        const entityId = _generateAndReserveSymbolId(project)
-        setFreezedProp(effect, '_id', entityId)
-    }
-
     const clip = targetClipId instanceof Clip
       ? targetClipId
       : findClipById(project, targetClipId)!
