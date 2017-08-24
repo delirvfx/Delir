@@ -75,7 +75,8 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                     .set('activeClip', null)
 
             case ProjectModDispatchTypes.RemoveClip: {
-                if (state.get('activeClip').id === payload.entity.targetClipId) {
+                const activeClip = state.get('activeClip')
+                if (activeClip && activeClip.id === payload.entity.targetClipId) {
                     return state.set('activeClip', null)
                 }
 
