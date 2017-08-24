@@ -46,20 +46,8 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         activeClip: PropTypes.object,
     }
 
-    private _plugins: {id: string, packageName: string}[]
-
-    constructor()
-    {
-        super()
-
-        this._plugins = RendererService.pluginRegistry.getPlugins().map(entry => ({
-            id: entry.id,
-            packageName: entry.package.name
-        }))
-
-        this.state = {
-            dragovered: false,
-        }
+    public state = {
+        dragovered: false,
     }
 
     private _onDrop = (e: React.DragEvent<HTMLLIElement>) =>
