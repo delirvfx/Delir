@@ -13,18 +13,22 @@ import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
 import UnknownPluginReferenceException from '../exceptions/plugin-load-fail-exception'
 
 export const validatePluginPackageJSON = (packageJson: any)=> {
-    return checkPropTypes({
+    return checkPropTypes<any>({
         name: PropTypes.string.isRequired,
         version: (props, propName) => { if (!semver.valid(props[propName])) return new Error('Invalid version specified.') },
         main: PropTypes.string,
         engines: PropTypes.shape({
-            delir: (props, propName) => { if (!semver.valid(props[propName])) return new Error('Invalid engines.delir version specified.') },
-        }),
+            delir: (props: any, propName: string) => { if (!semver.validRange(props[propName])) return new Error('Invalid engines.delir version specified.') },
+        }).isRequired,
         delir: PropTypes.shape({
-            type: PropTypes.oneOf(['post-effect']),
-            acceptFileTypes: (props, propName) => { if (!_.values(props[propName]).every(v => typeof v === 'string')) throw new Error('Invalid file type handler definition.') },
+            name: PropTypes.string.isRequired,
+            type: PropTypes.oneOf(['post-effect']).isRequired,
+            acceptFileTypes: (props: any, propName: string, section: string) => {
+                if (!_.values(props[propName]).every((v: string) => typeof v === 'string')) return new Error(`Invalid file type handler definition in \`${section}\`.`)
+                if (!_.keys(props[propName]).every((v: string) => v.toLowerCase() === v)) return new Error(`File type extension must be lowercase in \`${section}\`.`)
+            },
         }).isRequired
-    }, packageJson, packageJson.name)
+    }, packageJson, `package.json of ${packageJson.name}`)
 }
 
 export default class PluginRegistry {
