@@ -52,6 +52,7 @@ export default class FSPluginLoader
 
                 packages[json.name] = {
                     id: json.name,
+                    name: json.delir.name,
                     type: json.delir.type,
                     packageJson: json,
                     pluginInfo: json.delir,

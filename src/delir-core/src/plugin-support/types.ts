@@ -33,6 +33,7 @@ export interface PluginEntryFragment {
 
 export interface PluginEntry {
     id: string
+    name: string
     type: PluginTypes
     packageJson: DelirPluginPackageJson
     pluginInfo: PackageJSONDelirSection
@@ -44,6 +45,7 @@ export interface PluginEntry {
 
 export interface PluginSummary {
     id: string
+    name: string
     type: PluginTypes
     path: string
     package: DelirPluginPackageJson
