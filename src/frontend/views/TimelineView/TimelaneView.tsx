@@ -201,7 +201,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             {/* Layer Panel */}
                             <Pane className='timeline-labels-container'>
                                 <div className='timeline-labels-header'>
-                                    <div className='--col-name'>Lanes</div>
+                                    <div className='--col-name'>Layers</div>
                                     <div className={s.scaleLabel} onClick={this._toggleScaleList}>
                                         <DropDown ref='scaleList' className={s.scaleList} shownInitial={false}>
                                             <li data-value="50" onClick={this._selectScale}>50%</li>
