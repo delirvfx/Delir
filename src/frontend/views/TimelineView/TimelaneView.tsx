@@ -105,9 +105,9 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         })
     }
 
-    private _selectLayer = laneId =>
+    private _selectLayer = layerId =>
     {
-        this.setState({selectedLayerId: laneId})
+        this.setState({selectedLayerId: layerId})
     }
 
     private _addNewLayer = () =>
