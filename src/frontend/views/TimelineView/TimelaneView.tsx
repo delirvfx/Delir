@@ -159,7 +159,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         this.setState({scale: scale})
     }
 
-    private _dropAsset = e =>
+    private _dropAsset = (e: React.DragEvent<HTMLElement>) =>
     {
         const {dragEntity, activeComp} = this.props.editor
 
