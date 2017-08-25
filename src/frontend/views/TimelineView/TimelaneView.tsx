@@ -37,7 +37,7 @@ interface TimelineViewState {
     timelineScrollLeft: number,
     cursorHeight: number,
     scale: number,
-    selectedLayerId: number|null,
+    selectedLayerId: string|null,
 }
 
 const PX_PER_SEC = 30
@@ -102,7 +102,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         })
     }
 
-    private _selectLayer = layerId =>
+    private _selectLayer = (layerId: string) =>
     {
         this.setState({selectedLayerId: layerId})
     }
@@ -117,7 +117,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         )
     }
 
-    private _removeLayer = layerId =>
+    private _removeLayer = (layerId: string) =>
     {
         if (!this.props.editor.activeComp) return
         ProjectModActions.removeLayer(layerId)
