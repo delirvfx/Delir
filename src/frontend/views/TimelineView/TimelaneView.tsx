@@ -1,8 +1,5 @@
 import * as _ from 'lodash'
-import * as uuid from 'uuid'
-import * as classnames from 'classnames'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as ReactDOM from 'react-dom'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/Flux/connectToStores'
@@ -11,10 +8,8 @@ import TimePixelConversion from '../../utils/TimePixelConversion'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
-import RendererService from '../../services/renderer'
-
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
-import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
+import {default as ProjectStore} from '../../stores/ProjectStore'
 
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
@@ -31,16 +26,14 @@ import Gradations from './_Gradations'
 import t from './Timelane.i18n'
 import * as s from './style.styl'
 
-interface TimelineViewProps {
-    editor?: EditorState,
-}
+interface TimelineViewProps {}
 
 interface TimelineViewState {
     timelineScrollTop: number,
     timelineScrollLeft: number,
     cursorHeight: number,
     scale: number,
-    selectedLayerId: number|null,
+    selectedLayerId: string|null,
 }
 
 const PX_PER_SEC = 30
@@ -59,6 +52,10 @@ const PX_PER_SEC = 30
 }))
 export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>
 {
+    public props: TimelineViewProps & {
+        editor: EditorState,
+    }
+
     public refs: {
         scaleList: DropDown
         keyframeView: KeyframeEditor
@@ -105,22 +102,24 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         })
     }
 
-    private _selectLayer = layerId =>
+    private _selectLayer = (layerId: string) =>
     {
         this.setState({selectedLayerId: layerId})
     }
 
     private _addNewLayer = () =>
     {
-        if (!this.props.editor.activeComp) return
+        const { editor } = this.props
+
+        if (!editor.activeComp) return
 
         ProjectModActions.addLayer(
-            this.props.editor.activeComp,
+            editor.activeComp,
             new Delir.Project.Layer
         )
     }
 
-    private _removeLayer = layerId =>
+    private _removeLayer = (layerId: string) =>
     {
         if (!this.props.editor.activeComp) return
         ProjectModActions.removeLayer(layerId)
@@ -158,7 +157,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         this.setState({scale: scale})
     }
 
-    private _dropAsset = e =>
+    private _dropAsset = (e: React.DragEvent<HTMLElement>) =>
     {
         const {dragEntity, activeComp} = this.props.editor
 
