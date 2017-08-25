@@ -90,7 +90,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
             const cursorLeft = TimePixelConversion.framesToPixel({
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
-                durationFrames: usingCurrentFrame
+                durationFrames: usingCurrentFrame,
                 scale,
             })
 
