@@ -204,17 +204,16 @@ export function compileRendererJs(done) {
 }
 
 export async function compilePlugins(done) {
-    return done();
-
     webpack({
         target: "electron",
         watch: DELIR_ENV === 'dev',
         context: paths.src.plugins,
         entry: {
             ...(DELIR_ENV === 'dev' ? {
-                'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
-                'plane/index': '../experimental-plugins/plane/index',
-                'noise/index': '../experimental-plugins/noise/index',
+                'filler/index': '../experimental-plugins/filler/index',
+                // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
+                // 'plane/index': '../experimental-plugins/plane/index',
+                // 'noise/index': '../experimental-plugins/noise/index',
             }: {})
         },
         output: {

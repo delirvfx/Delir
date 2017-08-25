@@ -167,7 +167,9 @@ ProjectHelper.addClip(p, c1_t1, imageClip)
 ProjectHelper.addClip(p, c1_t2, audioClip)
 ProjectHelper.addClip(p, c1_t3, movieClip)
 ProjectHelper.addClip(p, c1_t4, textClip)
-
+ProjectHelper.addEffect(p, textClip, assign(new Delir.Project.Effect(), {
+    processor: 'delir-plugin-filler',
+}))
 
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'x', [
 //     assign(new Delir.Project.Keyframe, {
