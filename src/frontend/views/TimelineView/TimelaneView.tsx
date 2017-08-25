@@ -40,7 +40,7 @@ interface TimelineViewState {
     timelineScrollLeft: number,
     cursorHeight: number,
     scale: number,
-    selectedLaneId: number|null,
+    selectedLayerId: number|null,
 }
 
 const PX_PER_SEC = 30
@@ -71,7 +71,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         timelineScrollLeft: 0,
         cursorHeight: 0,
         scale: 1,
-        selectedLaneId: null,
+        selectedLayerId: null,
     }
 
     public componentDidMount()
@@ -107,7 +107,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     private _selectLayer = laneId =>
     {
-        this.setState({selectedLaneId: laneId})
+        this.setState({selectedLayerId: laneId})
     }
 
     private _addNewLayer = () =>
