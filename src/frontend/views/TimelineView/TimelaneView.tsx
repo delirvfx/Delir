@@ -8,10 +8,8 @@ import TimePixelConversion from '../../utils/TimePixelConversion'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
-import RendererService from '../../services/renderer'
-
 import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
-import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
+import {default as ProjectStore} from '../../stores/ProjectStore'
 
 import Workspace from '../components/workspace'
 import Pane from '../components/pane'
