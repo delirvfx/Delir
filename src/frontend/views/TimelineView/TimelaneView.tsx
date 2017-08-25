@@ -62,7 +62,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
     public refs: {
         scaleList: DropDown
         keyframeView: KeyframeEditor
-        timelineLanes: HTMLUListElement
+        timelineLayers: HTMLUListElement
         timelineLabels: HTMLDivElement
     }
 
@@ -82,14 +82,14 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     public componentDidUpdate()
     {
-        this.refs.timelineLabels.scrollTop = this.refs.timelineLanes.scrollTop = this.state.timelineScrollTop
+        this.refs.timelineLabels.scrollTop = this.refs.timelineLayers.scrollTop = this.state.timelineScrollTop
     }
 
     private _syncCursorHeight = () =>
     {
-        const {timelineLanes, keyframeView} = this.refs
+        const {timelineLayers, keyframeView} = this.refs
 
-        const timelineHeight = timelineLanes.getBoundingClientRect().height
+        const timelineHeight = timelineLayers.getBoundingClientRect().height
         const keyFrameViewHeight = ReactDOM.findDOMNode(keyframeView).getBoundingClientRect().height
 
         this.setState({
@@ -142,9 +142,9 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     private handleKeyframeEditorScroll = (dx: number, dy: number) =>
     {
-        const {timelineLanes} = this.refs
-        timelineLanes.scrollLeft += dx
-        this.setState({timelineScrollLeft: timelineLanes.scrollLeft})
+        const {timelineLayers} = this.refs
+        timelineLayers.scrollLeft += dx
+        this.setState({timelineScrollLeft: timelineLayers.scrollLeft})
     }
 
     private _toggleScaleList = () =>
@@ -182,7 +182,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         const {scale, timelineScrollLeft} = this.state
         const {activeComp, activeClip, currentPreviewFrame, previewPlayed} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
-        const timelineLanes = activeComp ? Array.from(activeComp.layers) : []
+        const timelineLayers = activeComp ? Array.from(activeComp.layers) : []
 
         const measures = !activeComp ? [] : TimePixelConversion.buildMeasures({
             durationFrames      : activeComp.durationFrames,
@@ -223,7 +223,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                     </ContextMenu>
                                     {activeComp && (
                                         <SelectList key={compId}>
-                                            {timelineLanes.map(lane => (
+                                            {timelineLayers.map(lane => (
                                                 <LaneLabel key={lane.id} layer={lane} onSelect={this._selectLayer} onRemove={this._removeLayer} />)
                                             )}
                                         </SelectList>
@@ -244,13 +244,13 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                     onSeeked={this._onSeeked}
                                 />
 
-                                <ul ref='timelineLanes' className='timeline-lane-container' onScroll={this._scrollSync}>
+                                <ul ref='timelineLayers' className='timeline-lane-container' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
                                         <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
-                                    {activeComp && timelineLanes.map(layer => (
+                                    {activeComp && timelineLayers.map(layer => (
                                         <ClipSpace
                                             key={layer.id!}
                                             layer={layer}
