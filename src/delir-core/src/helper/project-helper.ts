@@ -168,6 +168,47 @@ export function addKeyframe(
     return keyframe
 }
 
+export function addEffectKeyframe(
+    project: Project,
+    targetClipId: Clip|string,
+    targetEffectId: Effect|string,
+    propName: string,
+    keyframe: Keyframe|Keyframe[]
+): Keyframe|Keyframe[]|null
+{
+    const keyframes = Array.isArray(keyframe) ? keyframe : [keyframe]
+
+    // TODO: Not found behaviour
+    const clip: Clip|null = targetClipId instanceof Clip
+        ? targetClipId
+        : findClipById(project, targetClipId)!
+
+    const effect: Effect|null = targetEffectId instanceof Effect
+        ? targetEffectId
+        : findEffectFromClipById(clip, targetEffectId)
+
+    if (!clip || !effect) return null
+
+    for (const _keyframe of keyframes) {
+        if (!effect.keyframes[propName]) {
+            effect.keyframes[propName] = []
+        }
+
+        normalizeKeyframe(_keyframe)
+
+        const duplicated = effect.keyframes[propName].find(kf => kf.frameOnClip === _keyframe.frameOnClip)
+        console.log(duplicated, effect)
+
+        if (duplicated) {
+            throw new Error(`Keyframe duplicated on frame ${duplicated.frameOnClip} (property: ${propName})`)
+        }
+
+        effect.keyframes[propName].push(_keyframe)
+    }
+
+    return keyframe
+}
+
 
 
 //
@@ -333,6 +374,36 @@ export function modifyEffect(
     Object.assign(effect, patch)
 }
 
+export function modifyEffectKeyframe(
+    project: Project,
+    effectHolderClipId: Clip|string,
+    kfHolderEffectId: Effect|string,
+    targetKeyframeId: Keyframe|string,
+    patch: Partial<Keyframe>,
+) {
+    const clip = effectHolderClipId instanceof Clip
+        ? effectHolderClipId
+        : findClipById(project, effectHolderClipId)
+
+    if (!clip) return
+
+    const effect = kfHolderEffectId instanceof Effect
+        ? kfHolderEffectId
+        : findEffectFromClipById(clip, kfHolderEffectId)
+
+    if (!effect) return
+
+    const keyframe = targetKeyframeId instanceof Keyframe
+        ? targetKeyframeId
+        : findKeyframeFromEffectById(effect, targetKeyframeId)!
+
+    if (!keyframe) return
+
+    // TODO: Check duplicate on frame
+    Object.assign(keyframe, patch)
+    normalizeKeyframe(keyframe)
+}
+
 export function modifyKeyframe(
     project: Project,
     targetKeyframeId: Keyframe|string,
@@ -480,6 +551,23 @@ export function findKeyframeFromClipById(clip: Clip, keyframeId: string): Keyfra
     return targetKeyframe
 }
 
+export function findKeyframeFromEffectById(effect: Effect, keyframeId: string): Keyframe|null
+{
+    let targetKeyframe: Keyframe|null = null
+
+    keyframeSearch:
+        for (const propName of Object.keys(effect.keyframes)) {
+            for (const keyframe of effect.keyframes[propName]) {
+                if (keyframe.id === keyframeId) {
+                    targetKeyframe = keyframe
+                    break keyframeSearch
+                }
+            }
+        }
+
+    return targetKeyframe
+}
+
 export function findKeyframeById(project: Project, keyframeId: string): Keyframe|null
 {
     let targetKeyframe: Keyframe|null = null
@@ -507,6 +595,13 @@ export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string,
 {
     if (!clip.keyframes[propName]) return null
     const target: Keyframe|undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frameOnClip)
+    return target ? target : null
+}
+
+export function findKeyframeFromEffectByPropAndFrame(effect: Effect, propName: string, frameOnClip: number): Keyframe|null
+{
+    if (!effect.keyframes[propName]) return null
+    const target: Keyframe|undefined = _.find(effect.keyframes[propName], kf => kf.frameOnClip === frameOnClip)
     return target ? target : null
 }
 

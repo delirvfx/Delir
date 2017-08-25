@@ -9,7 +9,6 @@ import Payload from '../utils/Flux/payload'
 // import deprecated from '../utils/deprecated'
 import RendererService from '../services/renderer'
 import ProjectStore from '../stores/ProjectStore'
-import RendererService from '../services/renderer'
 
 import AppActions from './App'
 
@@ -26,12 +25,14 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type AddKeyframePayload = Payload<'AddKeyframe', {targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe}>
 export type AddEffectIntoClipPayload = Payload<'AddEffectIntoClipPayload', { clipId: string, effect: Delir.Project.Effect }>
+export type AddEffectKeyframePayload = Payload<'AddEffectKeyframe', {targetClipId: string, targetEffectId: string, propName: string, keyframe: Delir.Project.Keyframe}>
 export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: Partial<Delir.Project.Composition>}>
 export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Partial<Delir.Project.Layer>}>
 export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: Partial<Delir.Project.Clip>}>
 export type ModifyClipExpression = Payload<'ModifyClipExpression', {targetClipId: string, targetProperty: string, expr: {language: string, code: string}}>
 export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
+export type ModifyEffectKeyframePayload = Payload<'ModifyEffectKeyframe', {targetClipId: string, effectId: string, targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetLayerId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
@@ -49,12 +50,14 @@ export const DispatchTypes = keyMirror({
     AddAsset: null,
     AddKeyframe: null,
     AddEffectIntoClipPayload: null,
+    AddEffectKeyframe: null,
     MoveClipToLayer: null,
     ModifyComposition: null,
     ModifyLayer: null,
     ModifyClip: null,
     ModifyClipExpression: null,
     ModifyKeyframe: null,
+    ModifyEffectKeyframe: null,
     RemoveComposition: null,
     RemoveLayer: null,
     RemoveClip: null,
@@ -202,20 +205,6 @@ export default {
 
         const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frameOnClip)
 
-        if (patch.easeInParam) {
-            patch.easeInParam = [
-                _.clamp(patch.easeInParam[0], 0, 1),
-                patch.easeInParam[1]
-            ]
-        }
-
-        if (patch.easeOutParam) {
-            patch.easeOutParam = [
-                _.clamp(patch.easeOutParam[0], 0, 1),
-                patch.easeOutParam[1]
-            ]
-        }
-
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
                 targetKeyframeId: keyframe.id,
@@ -232,6 +221,48 @@ export default {
                 targetClip: clip,
                 propName,
                 keyframe: newKeyframe
+            }))
+        }
+    },
+
+    createOrModifyKeyframeForEffect(clipId: string, effectId: string, propName: string, frameOnClip: number, patch: Partial<Delir.Project.Keyframe>)
+    {
+        const project = ProjectStore.getState().get('project')
+        if (!project) return
+
+        const clip = ProjectHelper.findClipById(project, clipId)
+        if (!clip) return
+
+        const effect = ProjectHelper.findEffectFromClipById(clip, effectId)
+        if (!effect) return
+
+        const props = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)
+        const propDesc = props ? props.find(prop => prop.propName === propName) : null
+        if (!propDesc) return
+
+        if (propDesc.animatable === false) {
+            frameOnClip = 0
+        }
+
+        const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, propName, frameOnClip)
+
+        console.log(keyframe)
+        if (keyframe) {
+            dispatcher.dispatch(new Payload(DispatchTypes.ModifyEffectKeyframe, {
+                targetClipId: clipId,
+                effectId: effectId,
+                targetKeyframeId: keyframe.id,
+                patch: propDesc.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
+            }))
+        } else {
+            const newKeyframe = new Delir.Project.Keyframe()
+            Object.assign(newKeyframe, Object.assign({ frameOnClip }, patch))
+
+            dispatcher.dispatch(new Payload(DispatchTypes.AddEffectKeyframe, {
+                targetClipId: clipId,
+                targetEffectId: effectId,
+                propName: propName,
+                keyframe: newKeyframe,
             }))
         }
     },

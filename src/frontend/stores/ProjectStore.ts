@@ -103,6 +103,12 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
             }
 
+            case ProjectModDispatchTypes.AddEffectKeyframe: {
+                const { targetClipId, targetEffectId, propName, keyframe } = payload.entity
+                ProjectHelper.addEffectKeyframe(project, targetClipId, targetEffectId, propName, keyframe)
+                break
+            }
+
             case ProjectModDispatchTypes.MoveClipToLayer: {
                 const targetClip = ProjectHelper.findClipById(project!, payload.entity.clipId)
                 const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.entity.clipId)
@@ -133,9 +139,16 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
             }
 
-            case ProjectModDispatchTypes.ModifyKeyframe:
+            case ProjectModDispatchTypes.ModifyKeyframe: {
                 ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
                 break
+            }
+
+            case ProjectModDispatchTypes.ModifyEffectKeyframe: {
+                const { targetClipId, effectId, targetKeyframeId, patch } = payload.entity
+                ProjectHelper.modifyEffectKeyframe(project!, targetClipId, effectId, targetKeyframeId, patch)
+                break
+            }
 
             case ProjectModDispatchTypes.RemoveComposition:
                 ProjectHelper.deleteComposition(project!, payload.entity.targetCompositionId)

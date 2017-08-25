@@ -24,12 +24,14 @@ import {
     AddAssetPayload,
     AddKeyframePayload,
     AddEffectIntoClipPayload,
+    AddEffectKeyframePayload,
     MoveClipToLayerPayload,
     ModifyCompositionPayload,
     ModifyLayerPayload,
     ModifyClipPayload,
     ModifyClipExpression,
     ModifyKeyframePayload,
+    ModifyEffectKeyframePayload,
     RemoveCompositionayload,
     RemoveLayerPayload,
     RemoveClipPayload,
@@ -63,12 +65,14 @@ export type ProjectModifyActionPayload =
     | AddAssetPayload
     | AddKeyframePayload
     | AddEffectIntoClipPayload
+    | AddEffectKeyframePayload
     | MoveClipToLayerPayload
     | ModifyCompositionPayload
     | ModifyLayerPayload
     | ModifyClipPayload
     | ModifyClipExpression
     | ModifyKeyframePayload
+    | ModifyEffectKeyframePayload
     | RemoveCompositionayload
     | RemoveLayerPayload
     | RemoveClipPayload

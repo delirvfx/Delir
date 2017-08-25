@@ -29,7 +29,7 @@ export default class Filler extends EffectPluginBase
         const param = req.parameters as any
         const canvas = req.destCanvas
         const ctx = canvas.getContext('2d')!
-        ctx.fillStyle = '#8df139' // param.color.toString()
+        ctx.fillStyle = param.color.toString()
         ctx.fillRect(0, 0, canvas.width, canvas.height)
     }
 }

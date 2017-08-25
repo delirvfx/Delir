@@ -40,6 +40,7 @@ interface KeyframeEditorProps {
 
 interface KeyframeEditorState {
     activePropName: string|null
+    activeEntity: { type: 'clip'|'effect', entityId: string }|null
     graphWidth: number
     graphHeight: number
     keyframeViewViewBox: string|undefined
@@ -63,6 +64,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
 
     public state: KeyframeEditorState = {
         activePropName: null,
+        activeEntity: null,
         graphWidth: 0,
         graphHeight: 0,
         keyframeViewViewBox: undefined,
@@ -94,14 +96,14 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         }
 
         const {activeClip} = this.props
-        const {activePropName} = this.state
+        const { activePropName } = this.state
 
         if (!activeClip || !activePropName) return
 
         try {
             ProjectModActions.modifyClipExpression(activeClip.id, activePropName, {
                 language: 'typescript',
-                code: result.code,
+                code: result.code!,
             })
 
             this.setState({editorOpened: false})
@@ -137,8 +139,17 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
 
     private selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
     {
-        const propName: string = currentTarget.dataset.propName!
-        this.setState({activePropName: propName})
+        const { entityType, entityId, propName } = currentTarget.dataset as {[_: string]: string}
+
+        console.log({ entityType, entityId, propName })
+
+        this.setState({
+            activeEntity: {
+                type: entityType as 'clip'|'effect',
+                entityId,
+            },
+            activePropName: propName,
+        })
     }
 
     private valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) =>
@@ -151,6 +162,17 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 
+    private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) =>
+    {
+        const {activeClip, editor: {currentPreviewFrame}} = this.props
+        const { activeEntity } = this.state
+        if (!activeClip) return
+
+        const frameOnClip = currentPreviewFrame - activeClip.placedFrame
+        ProjectModActions.createOrModifyKeyframeForEffect(activeClip.id, effectId, desc.propName, frameOnClip, {value})
+        AppActions.seekPreviewFrame(currentPreviewFrame)
+    }
+
     private _openExpressionEditor = (propName: string) => {
         const {activeClip} = this.props
         this.setState({editorOpened: true, activePropName: propName})
@@ -160,18 +182,19 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
     private removeEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
     {
         ProjectModActions.removeEffect(dataset.clipId, dataset.effectId)
+        AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
     }
 
     public render()
     {
         const {activeClip, project: {project}, editor, scrollLeft} = this.props
-        const {activePropName, keyframeViewViewBox, graphWidth, graphHeight, editorOpened} = this.state
-        const activePropDescriptor = this._getDescriptorByPropName(activePropName)
+        const {activePropName, activeEntity, keyframeViewViewBox, graphWidth, graphHeight, editorOpened} = this.state
+        const activePropDescriptor = this._getDescriptorByPropId(activePropName)
         const descriptors = activeClip
             ? Delir.Engine.Renderers.getInfo(activeClip.renderer).parameter.properties || []
             : []
 
-        const expressionCode = (!editorOpened && !activePropName) ? null : (
+        const expressionCode = (!editorOpened || !activePropName || !activeClip) ? null : (
             activeClip.expressions[activePropName]
                 ? activeClip.expressions[activePropName].code
                 : null
@@ -180,7 +203,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
                 <Pane className={s.propList}>
-                    {descriptors.map(desc => {
+                    {activeClip && descriptors.map(desc => {
                         const value = activeClip
                             ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, activeClip.keyframes[desc.propName] || [])
                             : undefined
@@ -191,8 +214,10 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                             <div
                                 key={activeClip!.id + desc.propName}
                                 className={classnames(s.propItem, {
-                                    [s['propItem--active']]: activePropName === desc.propName,
+                                    [s['propItem--active']]:  activeEntity && activeEntity.type === 'clip' && activePropName === desc.propName,
                                 })}
+                                data-entity-type='clip'
+                                data-entity-id={activeClip.id}
                                 data-prop-name={desc.propName}
                                 onClick={this.selectProperty}
                             >
@@ -249,25 +274,32 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
 
     private renderEffectProperties = () =>
     {
-        const { activeClip, project: { project } } = this.props
+        const { activeClip, editor, project: { project } } = this.props
+        const { activeEntity, activePropName } = this.state
         const elements: React.ReactElement<any>[] = []
 
         if (!activeClip) return null
 
         activeClip.effects.forEach(effect => {
-            // const activePropDescriptor = this._getDescriptorByPropName(activePropName)
-            const activePropName = ''
             const hasKeyframe = false
             const processorInfo = RendererService.pluginRegistry.getPostEffectPlugins().find(entry => entry.id === effect.processor)!
             const descriptors = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)!
             const propElements: React.ReactElement<any>[] = []
 
             descriptors.forEach(desc => {
+                const value = activeClip
+                    ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, effect.keyframes[desc.propName] || [])
+                    : undefined
+
                 propElements.push((
                     <div
                         key={activeClip!.id + desc.propName}
-                        className={s.propItem}
+                        className={classnames(s.propItem, {
+                            [s['propItem--active']]:  activeEntity && activeEntity.type === 'effect' && activeEntity.entityId === effect.id && activePropName === desc.propName,
+                        })}
                         data-prop-name={desc.propName}
+                        data-entity-type='effect'
+                        data-entity-id={effect.id}
                         onClick={this.selectProperty}
                     >
                         <ContextMenu>
@@ -285,7 +317,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                         </span>
                         <span className={s.propItemName}>{desc.label}</span>
                         <div className={s.propItemInput}>
-                            <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={0} onChange={this.valueChanged} />
+                            <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.effectValueChanged.bind(null, effect.id)} />
                         </div>
                     </div>
                 ))
@@ -334,13 +366,13 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         return components
     }
 
-    private _getDescriptorByPropName(propName: string|null)
+    private _getDescriptorByPropId(propId: string|null)
     {
         const {activeClip} = this.props
         const descriptors = activeClip
             ? Delir.Engine.Renderers.getInfo(activeClip.renderer)
             : {parameter: {properties: ([] as Delir.AnyParameterTypeDescriptor[])}}
 
-        return descriptors.parameter.properties.find(desc => desc.propName === propName) || null
+        return descriptors.parameter.properties.find(desc => desc.propName === propId) || null
     }
 }
