@@ -26,9 +26,7 @@ import Gradations from './_Gradations'
 import t from './Timelane.i18n'
 import * as s from './style.styl'
 
-interface TimelineViewProps {
-    editor?: EditorState,
-}
+interface TimelineViewProps {}
 
 interface TimelineViewState {
     timelineScrollTop: number,
