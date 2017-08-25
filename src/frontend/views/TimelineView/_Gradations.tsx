@@ -1,4 +1,3 @@
-import * as _ from 'lodash'
 import * as React from 'react'
 import {Component} from 'react'
 import * as PropTypes from 'prop-types'
@@ -90,7 +89,7 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
             const cursorLeft = TimePixelConversion.framesToPixel({
                 pxPerSec: 30,
                 framerate: activeComposition.framerate,
-                durationFrames: usingCurrentFrame
+                durationFrames: usingCurrentFrame,
                 scale,
             })
 
