@@ -54,6 +54,10 @@ const PX_PER_SEC = 30
 }))
 export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>
 {
+    public props: TimelineViewProps & {
+        editor: EditorState,
+    }
+
     public refs: {
         scaleList: DropDown
         keyframeView: KeyframeEditor
@@ -107,10 +111,12 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
 
     private _addNewLayer = () =>
     {
-        if (!this.props.editor.activeComp) return
+        const { editor } = this.props
+
+        if (!editor.activeComp) return
 
         ProjectModActions.addLayer(
-            this.props.editor.activeComp,
+            editor.activeComp,
             new Delir.Project.Layer
         )
     }
