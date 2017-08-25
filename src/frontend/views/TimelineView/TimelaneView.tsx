@@ -1,8 +1,5 @@
 import * as _ from 'lodash'
-import * as uuid from 'uuid'
-import * as classnames from 'classnames'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as ReactDOM from 'react-dom'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/Flux/connectToStores'
