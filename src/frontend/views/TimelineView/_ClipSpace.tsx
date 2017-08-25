@@ -132,7 +132,6 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         const {layer, activeClip, framerate, pxPerSec, scale} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
         const clips = Array.from<Delir.Project.Clip>(layer.clips)
-        const plugins = this._plugins
 
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
 
@@ -149,7 +148,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label={t('contextMenu.createClip')} enabled={!!plugins.length}>
+                    <MenuItem label={t('contextMenu.createClip')}>
                         {_.map(Delir.Engine.Renderers.RENDERERS, (renderer, idx) =>
                             <MenuItem keys={idx} label={t(['renderers', renderer.rendererId])} onClick={this.addNewClip.bind(null, renderer.rendererId)} />
                         )}
