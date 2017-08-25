@@ -223,8 +223,8 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                     </ContextMenu>
                                     {activeComp && (
                                         <SelectList key={compId}>
-                                            {timelineLayers.map(lane => (
-                                                <LaneLabel key={lane.id} layer={lane} onSelect={this._selectLayer} onRemove={this._removeLayer} />)
+                                            {timelineLayers.map(layer => (
+                                                <LaneLabel key={layer.id} layer={layer} onSelect={this._selectLayer} onRemove={this._removeLayer} />)
                                             )}
                                         </SelectList>
                                     )}
