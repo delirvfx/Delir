@@ -223,4 +223,3 @@ ProjectHelper.addClip(p, c2_t1, c2_t1_l2)
 
 AppActions.setActiveProject(p);
 AppActions.changeActiveComposition(c1.id!)
-AppActions.changeActiveClip(c1_t1_cl1.id)
