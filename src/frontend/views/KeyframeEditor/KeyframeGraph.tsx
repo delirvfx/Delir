@@ -17,7 +17,7 @@ interface Props {
     viewBox: string
     scrollLeft: number
     composition: Delir.Project.Composition
-    clip: Delir.Project.Clip,
+    entity: Delir.Project.Clip|Delir.Project.Effect,
     propName: string,
     descriptor?: Delir.AnyParameterTypeDescriptor
     keyframes: Delir.Project.Keyframe[]
@@ -38,7 +38,10 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         viewBox: PropTypes.string.isRequired,
         scrollLeft: PropTypes.number.isRequired,
         composition: PropTypes.instanceOf(Delir.Project.Composition).isRequired,
-        clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
+        entity: PropTypes.oneOfType([
+            PropTypes.instanceOf(Delir.Project.Clip),
+            PropTypes.instanceOf(Delir.Project.Effect)
+        ]).isRequired,
         propName: PropTypes.string.isRequired,
         descriptor: PropTypes.instanceOf(Delir.TypeDescriptor),
         keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)).isRequired,
