@@ -22,7 +22,7 @@ See [plugin-example](https://github.com/Ragg-/Delir/tree/alpha-release/src/delir
 2. clone this repository
   ```
   git clone git@github.com:Ragg-/delir.git
-  git checkout alpha-release
+  git checkout release/0.0.0-alpha.4
   ```
 
 3. install dependent node modules
