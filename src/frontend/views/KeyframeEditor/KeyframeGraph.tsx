@@ -153,7 +153,6 @@ export default class KeyframeGraph extends React.Component<Props, State> {
     private keydownOnKeyframeGraph = (e: React.KeyboardEvent<SVGElement>) =>
     {
         const {activeKeyframeId} = this.state
-        console.log(e)
 
         if ((e.key === 'Delete' || e.key === 'Backspace') && activeKeyframeId) {
             ProjectModActions.removeKeyframe(activeKeyframeId)

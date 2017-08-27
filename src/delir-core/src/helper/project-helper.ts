@@ -357,6 +357,24 @@ export function modifyClipExpression(
     clip.expressions[property] = expr
 }
 
+export function modifyEffectExpression(
+    project: Project,
+    targetClipId: Clip|string,
+    targetEffectId: Effect|string,
+    property: string,
+    expr: Expression,
+) {
+    const clip = targetClipId instanceof Clip
+        ? targetClipId
+        : findClipById(project, targetClipId)!
+
+    const effect = targetEffectId instanceof Effect
+        ? targetEffectId
+        : findEffectFromClipById(clip, targetEffectId)
+
+    effect!.expressions[property] = expr
+}
+
 export function modifyEffect(
     project: Project,
     parentClipId: Clip|string,

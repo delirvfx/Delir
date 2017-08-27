@@ -21,10 +21,13 @@ interface Props {
 
 // tslint:disable-next-line no-namespace
 namespace ExpressionEditor {
-    export interface EditorResult {
+    export type EditorResult = {
         /** if save cancelled then it value to be false */
-        saved: boolean
-        code: string|null
+        saved: true
+        code: string
+    }|{
+        saved: false
+        code: null
     }
 }
 
@@ -63,6 +66,7 @@ class ExpressionEditor extends React.Component<Props, null> {
             automaticLayout: true,
             theme: 'vs-dark',
             minimap: {enabled: false},
+            value: this.props.code ? this.props.code : '',
         })
 
         this._editor.createContextKey('cond1', true)

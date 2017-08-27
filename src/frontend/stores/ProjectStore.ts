@@ -139,6 +139,12 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
             }
 
+            case ProjectModDispatchTypes.ModifyEffectExpression: {
+                const {targetClipId, targetEffectId, targetProperty, expr} = payload.entity
+                ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
+                break
+            }
+
             case ProjectModDispatchTypes.ModifyKeyframe: {
                 ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
                 break

@@ -31,6 +31,7 @@ export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompo
 export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Partial<Delir.Project.Layer>}>
 export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: Partial<Delir.Project.Clip>}>
 export type ModifyClipExpression = Payload<'ModifyClipExpression', {targetClipId: string, targetProperty: string, expr: {language: string, code: string}}>
+export type ModifyEffectExpression = Payload<'ModifyEffectExpression', {targetClipId: string, targetEffectId: string, targetProperty: string, expr: {language: string, code: string}}>
 export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
 export type ModifyEffectKeyframePayload = Payload<'ModifyEffectKeyframe', {targetClipId: string, effectId: string, targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
@@ -56,6 +57,7 @@ export const DispatchTypes = keyMirror({
     ModifyLayer: null,
     ModifyClip: null,
     ModifyClipExpression: null,
+    ModifyEffectExpression: null,
     ModifyKeyframe: null,
     ModifyEffectKeyframe: null,
     RemoveComposition: null,
@@ -289,7 +291,6 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.RemoveAsset, {targetAssetId: assetId}))
     },
 
-
     // TODO: frame position
     moveClipToLayer(clipId: string, targetLayerId: string)
     {
@@ -323,6 +324,19 @@ export default {
     {
         dispatcher.dispatch(new Payload(DispatchTypes.ModifyClipExpression, {
             targetClipId: clipId,
+            targetProperty: property,
+            expr: {
+                language: expr.language,
+                code: expr.code,
+            }
+        }))
+    },
+
+    modifyEffectExpression(clipId: string, effectId: string, property: string, expr: {language: string, code: string})
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.ModifyEffectExpression, {
+            targetClipId: clipId,
+            targetEffectId: effectId,
             targetProperty: property,
             expr: {
                 language: expr.language,

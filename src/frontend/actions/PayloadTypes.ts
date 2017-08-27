@@ -30,6 +30,7 @@ import {
     ModifyLayerPayload,
     ModifyClipPayload,
     ModifyClipExpression,
+    ModifyEffectExpression,
     ModifyKeyframePayload,
     ModifyEffectKeyframePayload,
     RemoveCompositionayload,
@@ -71,6 +72,7 @@ export type ProjectModifyActionPayload =
     | ModifyLayerPayload
     | ModifyClipPayload
     | ModifyClipExpression
+    | ModifyEffectExpression
     | ModifyKeyframePayload
     | ModifyEffectKeyframePayload
     | RemoveCompositionayload

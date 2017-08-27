@@ -95,21 +95,23 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
             return
         }
 
-        const {activeClip} = this.props
-        const { activePropName } = this.state
+        const { activeClip } = this.props
+        const { activeEntity, activePropName } = this.state
 
-        if (!activeClip || !activePropName) return
+        if (!activeClip || !activeEntity || !activePropName) return
 
-        try {
+        if (activeEntity.type === 'clip') {
             ProjectModActions.modifyClipExpression(activeClip.id, activePropName, {
                 language: 'typescript',
-                code: result.code!,
+                code: result.code,
             })
-
-            this.setState({editorOpened: false})
-        } catch (e) {
-            console.log(e)
+        } else {
+            ProjectModActions.modifyEffectExpression(activeClip.id, activeEntity.entityId, activePropName, {
+                language: 'typescript',
+                code: result.code,
+            })
         }
+        this.setState({editorOpened: false})
     }
 
     private _syncGraphHeight = () =>
@@ -140,8 +142,6 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
     private selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
     {
         const { entityType, entityId, propName } = currentTarget.dataset as {[_: string]: string}
-
-        console.log({ entityType, entityId, propName })
 
         this.setState({
             activeEntity: {
@@ -194,11 +194,32 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
             ? Delir.Engine.Renderers.getInfo(activeClip.renderer).parameter.properties || []
             : []
 
-        const expressionCode = (!editorOpened || !activePropName || !activeClip) ? null : (
-            activeClip.expressions[activePropName]
-                ? activeClip.expressions[activePropName].code
+        let activeEntityObject: Delir.Project.Clip | Delir.Project.Effect | null = null
+        if (activeClip) {
+            if (activeEntity && activeEntity.type === 'effect') {
+                activeEntityObject = activeClip.effects.find(e => e.id === activeEntity.entityId)!
+            } else {
+                activeEntityObject = activeClip
+            }
+        }
+
+        const expressionCode = (!activeEntityObject || !activePropName) ? null : (
+            activeEntityObject.expressions[activePropName]
+                ? activeEntityObject.expressions[activePropName].code
                 : null
         )
+
+        let keyframes: Delir.Project.Keyframe[] | null = null
+        if (activeClip && activeEntity) {
+            if (activePropName) {
+                if (activeEntity.type === 'effect') {
+                    const activeEffect = activeClip.effects.find(e => e.id === activeEntity.entityId)
+                    keyframes = activeEffect!.keyframes[activePropName]
+                } else {
+                    keyframes = activeClip.keyframes[activePropName]
+                }
+            }
+        }
 
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
@@ -214,7 +235,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                             <div
                                 key={activeClip!.id + desc.propName}
                                 className={classnames(s.propItem, {
-                                    [s['propItem--active']]:  activeEntity && activeEntity.type === 'clip' && activePropName === desc.propName,
+                                    [s['propItem--active']]: activeEntity && activeEntity.type === 'clip' && activePropName === desc.propName,
                                 })}
                                 data-entity-type='clip'
                                 data-entity-id={activeClip.id}
@@ -251,7 +272,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                                 {...this._renderMeasure()}
                             </div>
                         </div>
-                        {activePropDescriptor && activeClip!.keyframes[activePropName!] && (
+                        {activePropDescriptor && keyframes && (
                             <KeyframeGraph
                                 composition={editor.activeComp!}
                                 clip={activeClip!}
@@ -263,7 +284,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                                 scrollLeft={scrollLeft}
                                 pxPerSec={this.props.pxPerSec}
                                 zoomScale={this.props.scale}
-                                keyframes={activeClip!.keyframes[activePropName!]}
+                                keyframes={keyframes}
                             />
                         )}
                     </div>
@@ -281,12 +302,13 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         if (!activeClip) return null
 
         activeClip.effects.forEach(effect => {
-            const hasKeyframe = false
             const processorInfo = RendererService.pluginRegistry.getPostEffectPlugins().find(entry => entry.id === effect.processor)!
             const descriptors = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)!
             const propElements: React.ReactElement<any>[] = []
 
             descriptors.forEach(desc => {
+                const hasKeyframe = desc.animatable && (effect.keyframes[desc.propName] || []).length !== 0
+
                 const value = activeClip
                     ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, effect.keyframes[desc.propName] || [])
                     : undefined
@@ -295,7 +317,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                     <div
                         key={activeClip!.id + desc.propName}
                         className={classnames(s.propItem, {
-                            [s['propItem--active']]:  activeEntity && activeEntity.type === 'effect' && activeEntity.entityId === effect.id && activePropName === desc.propName,
+                            [s['propItem--active']]: activeEntity && activeEntity.type === 'effect' && activeEntity.entityId === effect.id && activePropName === desc.propName,
                         })}
                         data-prop-name={desc.propName}
                         data-entity-type='effect'
