@@ -51,6 +51,6 @@ export default class ColorRGB {
 
     toString()
     {
-        return `rgba(${this.r}, ${this.g}, ${this.b}, 1)`
+        return `rgba(${this.r|0}, ${this.g|0}, ${this.b|0}, 1)`
     }
 }
