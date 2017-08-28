@@ -340,7 +340,7 @@ export default class Pipeline
                     const effectAssetProps = rendererProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
                     const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, effectProps, effect.keyframes)
                     effectAssetProps.forEach(propName => {
-                        rendererInitParam[propName] = req.resolver.resolveAsset(rendererInitParam[propName].assetId)!
+                        effectInitParam[propName] = req.resolver.resolveAsset(effectInitParam[propName].assetId)!
                     })
 
                     const effector: EffectPluginBase = new EffectPluginClass()
