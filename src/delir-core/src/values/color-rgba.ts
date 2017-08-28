@@ -28,6 +28,11 @@ export default class ColorRGBA {
     get b(): number { return this._blue }
     get a(): number { return this._alpha }
 
+    get red(): number { return this._red }
+    get green(): number { return this._green }
+    get blue(): number { return this._blue }
+    get alpha(): number { return this._alpha }
+
     clone(
         r: number|null = null,
         g: number|null = null,

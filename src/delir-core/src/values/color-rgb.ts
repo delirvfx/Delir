@@ -23,6 +23,10 @@ export default class ColorRGB {
     get g(): number { return this._green }
     get b(): number { return this._blue }
 
+    get red(): number { return this._red }
+    get green(): number { return this._green }
+    get blue(): number { return this._blue }
+
     clone(
         r: number|null = null,
         g: number|null = null,
