@@ -209,7 +209,7 @@ const rendererService = {
     },
 
     get pluginRegistry() {
-        return pluginRegistry
+        return pluginRegistry!
     },
 
     get renderer(): Delir.Engine.Pipeline {
