@@ -42,6 +42,8 @@
         "triple-equals": [true, "allow-null-check"],
         "interface-name": [false],
         "no-unused-variable": true,
-        "no-unused-expression": [true, "allow-fast-null-checks"]
+        "no-unused-expression": [true, "allow-fast-null-checks"],
+        "prefer-conditional-expression": false,
+        "label-position": false
     }
 }
