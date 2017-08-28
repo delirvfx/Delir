@@ -1,3 +1,5 @@
+@require '../../assets/styles/_variables'
+
 .Gradations
     position relative
     width 100%
@@ -7,7 +9,7 @@
     .playingCursor
         position absolute
         top 5px
-        z-index 10
+        z-index $z-index-frame-cursor
 
         border-left 1px solid #fff
         opacity .4
