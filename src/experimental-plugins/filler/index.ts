@@ -2,7 +2,7 @@ import {
     Type,
     TypeDescriptor,
     EffectPluginBase,
-    PreRenderingRequest,
+    PreRenderRequest,
     RenderRequest,
 } from 'delir-core'
 
@@ -17,7 +17,7 @@ export default class Filler extends EffectPluginBase
             })
     }
 
-    public async beforeRender(req: PreRenderingRequest)
+    public async beforeRender(req: PreRenderRequest)
     {
         // const canvas = document.createElement('canvas')
         // canvas.width = req.width

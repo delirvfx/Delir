@@ -39,7 +39,7 @@ export default class ExamplePlugin extends LayerPluginBase {
      * If you want initializing before rendering (likes load audio)
      * Do it in this method.
      */
-    async beforeRender(preRenderReq: PluginPreRenderRequest)
+    async beforeRender(req: PreRenderingRequest)
     {
 
     }

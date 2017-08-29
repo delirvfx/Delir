@@ -12,7 +12,7 @@ import {ColorRGB, ColorRGBA} from './values'
 import Type, {TypeDescriptor, AnyParameterTypeDescriptor} from './plugin-support/type-descriptor'
 import PluginBase from './plugin-support/plugin-base'
 import RenderRequest from './engine/pipeline/render-request'
-import PluginPreRenderRequest from './engine/pipeline/plugin-pre-rendering-request'
+import PreRenderRequest from './engine/pipeline/pre-rendering-request'
 import EffectPluginBase from './plugin-support/effect-plugin-base'
 import PluginRegistry from './plugin-support/plugin-registry'
 
@@ -32,7 +32,7 @@ export {
     TypeDescriptor,
     PluginBase,
     EffectPluginBase,
-    PluginPreRenderRequest,
+    PreRenderRequest,
     RenderRequest,
     PluginRegistry,
 
