@@ -1,42 +1,36 @@
 import {
-    LayerPluginBase,
-    Type,
-    PluginPreRenderRequest,
+    EffectPluginBase,
+    PreRenderingRequest,
     RenderRequest,
-    ColorRGBA
-} from 'delir-core';
+    Values,
+    Type
+} from "delir-core";
 
-interface Paramaters {
+interface Params {
     x: number
     y: number
     width: number
     height: number
-    color: ColorRGBA
+    color: Values.ColorRGBA
 }
 
-export default class ExamplePlugin extends LayerPluginBase {
-    /**
-     * Called only once when the plugin is loaded
-     */
-    static pluginDidLoad() {
-    }
-
+export default class ExamplePlugin extends EffectPluginBase {
     /**
      * Provide usable parameters
      */
-    static provideParameters() {
+    public static provideParameters() {
         return Type
             .number('x', {label: 'Position X', defaultValue: 0, animatable: true})
             .number('y', {label: 'Position Y', defaultValue: 0, animatable: true})
             .number('width', {label: 'Width', defaultValue: 100, animatable: true})
             .number('height', {label: 'Height', defaultValue: 100, animatable: true})
-            .colorRgba('color', {label: 'Fill color', defaultValue: new ColorRGBA(0, 0, 0, 1), animatable: true});
+            .colorRgba('color', {label: 'Fill color', defaultValue: new Values.ColorRGBA(0, 0, 0, 1), animatable: true});
     }
 
     /**
      * Called when before rendering start.
      *
-     * If you want initializing before rendering (likes load audio)
+     * If you want initializing before rendering (likes load audio, image, etc...)
      * Do it in this method.
      */
     public async initialize(req: PreRenderingRequest)
@@ -48,13 +42,13 @@ export default class ExamplePlugin extends LayerPluginBase {
      * Render frame into destination canvas.
      * @param req
      */
-    async render(req: RenderRequest)
+    public async render(req: RenderRequest<Params>)
     {
         const dest = req.destCanvas;
         const context = dest.getContext('2d');
-        const params = req.parameters as Paramaters;
+        const params = req.parameters as Params;
 
-        context.fillStyle = params.color.toString()
-        context.fillRect(params.x, params.y, params.width, params.height)
+        context.fillStyle = params.color.toString();
+        context.fillRect(params.x, params.y, params.width, params.height);
     }
 }
