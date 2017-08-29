@@ -1,7 +1,7 @@
 import Project from '../../project/project'
 import Clip from '../../project/clip'
 import Expression from '../../values/expression'
-import EffectPluginBase from '../../plugin-support/effect-plugin-base'
+import EffectPluginBase from '../../plugin-support/PostEffectBase'
 import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import {IRenderer} from '../renderer/renderer-base'
 import {IRenderingStreamObserver, RenderingStatus} from './IRenderingStreamObserver'

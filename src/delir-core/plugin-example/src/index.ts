@@ -1,5 +1,5 @@
 import {
-    EffectPluginBase,
+    PostEffectBase,
     PreRenderingRequest,
     RenderRequest,
     Values,
@@ -14,7 +14,7 @@ interface Params {
     color: Values.ColorRGBA
 }
 
-export default class ExamplePlugin extends EffectPluginBase {
+export default class ExamplePlugin extends PostEffectBase {
     /**
      * Provide usable parameters
      */

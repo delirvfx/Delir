@@ -1,7 +1,7 @@
 // @flow
 import Project from '../../project/project'
 import PluginRegistry from '../../plugin-support/plugin-registry'
-import EffectPluginBase from '../../plugin-support/effect-plugin-base'
+import EffectPluginBase from '../../plugin-support/PostEffectBase'
 import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
 
 import * as ProjectHelper from '../../helper/project-helper'

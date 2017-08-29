@@ -5,7 +5,7 @@ import * as semver from 'semver'
 import checkPropTypes from '../helper/checkPropTypes'
 import {PluginEntry, PluginTypes, PluginSummary, DelirPluginPackageJson} from './types'
 import PluginBase from './plugin-base'
-import EffectPluginBase from './effect-plugin-base'
+import EffectPluginBase from './PostEffectBase'
 import {AnyParameterTypeDescriptor} from './type-descriptor'
 
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'

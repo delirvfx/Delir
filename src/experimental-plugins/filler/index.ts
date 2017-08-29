@@ -1,12 +1,12 @@
 import {
     Type,
     TypeDescriptor,
-    EffectPluginBase,
+    PostEffectBase,
     PreRenderRequest,
     RenderRequest,
 } from 'delir-core'
 
-export default class Filler extends EffectPluginBase
+export default class Filler extends PostEffectBase
 {
 
     public static provideParameters(): TypeDescriptor
