@@ -5,8 +5,7 @@ export type PluginTypes = 'post-effect'
 export interface PackageJSONDelirSection {
     type: PluginTypes
     name: string
-    /** Accept file types by mimeType:propName */
-    acceptFileTypes?: {[mimeType: string]: string}
+    // acceptFileTypes?: {[extension: string]: string}
 }
 
 export interface DelirPluginPackageJson {

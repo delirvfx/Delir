@@ -115,28 +115,28 @@ describe('PluginRegistry#validatePluginPackageJSON', () => {
             expect(actual.errors[0]).to.be('The prop `delir.type` is marked as required in `package.json of delir-plugin`, but its value is `undefined`.')
         })
 
-        it('Invalid delir.acceptFileTypes', () => {
-            const actual = validatePluginPackageJSON({
-                name: 'delir-plugin',
-                version: '0.0.0',
-                author: 'Lorem <lorem@ipsum.com>',
-                engines: {
-                    'delir-core': '0.0.x',
-                },
-                delir: {
-                    name: 'spec',
-                    type: 'post-effect',
-                    acceptFileTypes: {
-                        PMD: 'model',
-                        PMX: 'model',
-                        VMD: 'motion',
-                    }
-                },
-            })
+        // it('Invalid delir.acceptFileTypes', () => {
+        //     const actual = validatePluginPackageJSON({
+        //         name: 'delir-plugin',
+        //         version: '0.0.0',
+        //         author: 'Lorem <lorem@ipsum.com>',
+        //         engines: {
+        //             'delir-core': '0.0.x',
+        //         },
+        //         delir: {
+        //             name: 'spec',
+        //             type: 'post-effect',
+        //             acceptFileTypes: {
+        //                 PMD: 'model',
+        //                 PMX: 'model',
+        //                 VMD: 'motion',
+        //             }
+        //         },
+        //     })
 
-            expect(actual.valid).to.not.ok()
-            expect(actual.errors).length(1)
-            expect(actual.errors[0]).to.be('File type extension must be lowercase in `package.json of delir-plugin`.')
-        })
+        //     expect(actual.valid).to.not.ok()
+        //     expect(actual.errors).length(1)
+        //     expect(actual.errors[0]).to.be('File type extension must be lowercase in `package.json of delir-plugin`.')
+        // })
     })
 })
