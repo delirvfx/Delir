@@ -17,7 +17,7 @@ export default class Filler extends EffectPluginBase
             })
     }
 
-    public async beforeRender(req: PreRenderRequest)
+    public async initialize(req: PreRenderRequest)
     {
         // const canvas = document.createElement('canvas')
         // canvas.width = req.width

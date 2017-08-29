@@ -346,7 +346,7 @@ export default class Pipeline
                     })
 
                     const effector: EffectPluginBase = new EffectPluginClass()
-                    await effector.beforeRender(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
+                    await effector.initialize(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
 
                     const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectProps, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
                     effectAssetProps.forEach(propName => {

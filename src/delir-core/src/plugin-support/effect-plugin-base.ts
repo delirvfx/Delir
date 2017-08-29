@@ -12,7 +12,7 @@ export default abstract class EffectPluginBase extends PluginBase
         return new TypeDescriptor()
     }
 
-    public abstract async beforeRender(req: PreRenderRequest): Promise<void>
+    public abstract async initialize(req: PreRenderRequest): Promise<void>
 
     public abstract async render(req: RenderRequest): Promise<void>
 }
