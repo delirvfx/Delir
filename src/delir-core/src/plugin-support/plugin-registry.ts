@@ -18,7 +18,7 @@ export const validatePluginPackageJSON = (packageJson: any)=> {
         version: (props, propName) => { if (!semver.valid(props[propName])) return new Error('Invalid version specified.') },
         main: PropTypes.string,
         engines: PropTypes.shape({
-            delir: (props: any, propName: string) => { if (!semver.validRange(props[propName])) return new Error('Invalid engines.delir version specified.') },
+            'delir-core': (props: any, propName: string) => { if (!semver.validRange(props[propName])) return new Error('Invalid engines.delir version specified.') },
         }).isRequired,
         delir: PropTypes.shape({
             name: PropTypes.string.isRequired,

@@ -7,7 +7,7 @@ describe('PluginRegistry#validatePluginPackageJSON', () => {
                 version: '0.0.0',
                 author: 'Lorem <lorem@ipsum.com>',
                 engines: {
-                    delir: '0.0.0-alpha.x',
+                    'delir-core': '0.0.0-alpha.x',
                 },
                 delir: {
                     name: 'spec',
@@ -23,7 +23,7 @@ describe('PluginRegistry#validatePluginPackageJSON', () => {
                 version: '0.0.0',
                 author: 'Lorem <lorem@ipsum.com>',
                 engines: {
-                    delir: '0.0.0-alpha.x',
+                    'delir-core': '0.0.0-alpha.x',
                 },
                 delir: {
                     name: 'spec',
@@ -47,7 +47,7 @@ describe('PluginRegistry#validatePluginPackageJSON', () => {
                 version: ' ✋( ͡° ͜ʖ ͡°)', // invalid
                 author: 'Lorem <lorem@ipsum.com>',
                 engines: {
-                    delir: '0.0.x',
+                    'delir-core': '0.0.x',
                 },
                 delir: {
                     name: 'spec',
@@ -66,7 +66,7 @@ describe('PluginRegistry#validatePluginPackageJSON', () => {
                 version: '0.0.0',
                 author: 'Lorem <lorem@ipsum.com>',
                 // engines: {
-                //     delir: '0.0.x',
+                //     'delir-core': '0.0.x',
                 // },
                 delir: {
                     name: 'spec',
@@ -83,7 +83,7 @@ describe('PluginRegistry#validatePluginPackageJSON', () => {
                 version: '0.0.0',
                 author: 'Lorem <lorem@ipsum.com>',
                 engines: {
-                    // delir: '0.0.x',
+                    // 'delir-core': '0.0.x',
                 },
                 delir: {
                     name: 'spec',
@@ -102,7 +102,7 @@ describe('PluginRegistry#validatePluginPackageJSON', () => {
                 version: '0.0.0',
                 author: 'Lorem <lorem@ipsum.com>',
                 engines: {
-                    delir: '0.0.x',
+                    'delir-core': '0.0.x',
                 },
                 delir: {
                     name: 'spec',
@@ -121,7 +121,7 @@ describe('PluginRegistry#validatePluginPackageJSON', () => {
                 version: '0.0.0',
                 author: 'Lorem <lorem@ipsum.com>',
                 engines: {
-                    delir: '0.0.x',
+                    'delir-core': '0.0.x',
                 },
                 delir: {
                     name: 'spec',
