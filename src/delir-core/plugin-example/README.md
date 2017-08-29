@@ -1,5 +1,5 @@
 # Delir plugin example
-Delirのサンプルプラグイン。  
+Delirのサンプルプラグイン。
 プラグイン開発のテンプレートとしてご利用ください。
 
 [プラグインテンプレートをダウンロード](https://github.com/Ragg-/Delir/files/906748/plugin-example-88bd02b.zip)
@@ -9,12 +9,12 @@ Delirのサンプルプラグイン。
 - 開発にはVisualStudio Codeの使用をおすすめします。
 
 プラグインテンプレートをダウンロードし、以下の場所にフォルダごと展開しましょう。
-（delir/plugins/プラグイン名/package.json が存在するようにしてください）
+（`delir/plugins/プラグイン名/package.json` が存在するようにしてください）
 
 Windows: %AppData%\delir\plugins
 macOS: $HOME/Library/Application\ Support/delir/plugins/
 
-テンプレートを展開したら、コマンドラインから展開したプラグインフォルダへ移動(cd)して  
+テンプレートを展開したら、コマンドラインから展開したプラグインフォルダへ移動(cd)して
 以下のコマンドを実行してください
 
 ```shell
@@ -35,8 +35,12 @@ yarn dev # 更新監視モードで開発を始める（コードを書き換え
 
 ```json5
 {
+    // プラグインID（他のプラグインとかぶらないように！）
+    "name": "@user/delir-plugin-example",
+    "main": "dist/index.js",
     "engines": {
-        "delir": "0.0.x" // => Support delir v0.0.*
+        // 対応しているdelir-coreのバージョン
+        "delir-core": "0.0.x"
     }
 }
 ```
@@ -46,25 +50,17 @@ yarn dev # 更新監視モードで開発を始める（コードを書き換え
 
 ```json5
 {
-  "delir": {
-    "feature": "CustomLayer",
-    "targetApi": {
-        "renderer": "0.0.x"
-    },
-    // Assetがタイムラインにドラッグアンドドロップされたときに
-    // そのAssetが左側に指定されたMimeTypeとマッチすると、
-    // 右側のプロパティへAssetを設定して、プラグインのインスタンスが作られるようになります。
-    "acceptFileTypes": {
-        // "mimetype": "default assign property name"
-        "video/mp4": "source"
+    "delir": {
+        // プラグイン名
+        "name": "サンプルプラグイン",
+
+        // typeは現在 `post-effect` のみです
+        "type": "post-effect"
     }
-  }
 }
 ```
 
 ## プラグインインターフェース
-### `static pluginDidLoad()`
-プラグイン読み込み時に１度だけ呼び出されるメソッドです。
 
 ### `static provideParameters()`
 プラグインで利用可能なパラメータを返します。
@@ -75,10 +71,12 @@ yarn dev # 更新監視モードで開発を始める（コードを書き換え
 - float - 小数型
 - asset - Asset型（Assetに追加されたファイルを利用する場合に利用します）
 - bool - 真偽型
+- colorRgb / colorRgba - Color型（透明度なし・あり）
 
 provideParametersメソッド内で以下のようにパラメータを定義します。
 
 ```javascript
+// Example:
 return Type
     // .<型名>('パラメータ名', {パラメータオプション})
     // パラメータオプション label - ユーザに表示されるパラメータ名を指定します。
@@ -86,18 +84,19 @@ return Type
     .number('x', {label: 'PositionX', defaultValue: 0})
     .number('y', {label: 'PositionY', defaultValue: 0})
     .bool('visibility', {label: 'Visible', defaultValue: true})
-    .asset('image', {label: 'Image', mimeTypes: ['image/jpeg', 'image/png', 'image/gif']})
+    .asset('image', {label: 'Image', extensions: ['jpeg', 'jpg', 'png', 'gif', 'svg']})
+    .colorRgba('color', {label: 'Color', defaultValue: new Delir.Values.ColorRGBA(0, 0, 0, 1)})
 ```
 
-### `async beforeRender(preRenderReq: PluginPreRenderRequest)`
+### `async initialize(req: Delir.PreRenderRequest)`
 レンダリング開始前の初期化処理で呼ばれるメソッドです。
 画像などのファイルの読み込みはここで行います。
 
-`preRenderReq`オブジェクトには、Assetなどの初期値が含まれています。
+`req`オブジェクトには、Assetなどの初期値が含まれています。
 
 ```javascript
-async beforeRender(preRenderReq: PluginPreRenderRequest) {
-    // preRenderReq.parametersにprovideParametersメソッドで指定したパラメータ名で初期値が渡されます
+async initialize(req: Delir.PreRenderRequest) {
+    // req.parameters に provideParameters メソッドで指定したパラメータ名で初期値が渡されます
     const parameters = preRenderReq.parameters;
     const imageAsset = parameters.image;
 
