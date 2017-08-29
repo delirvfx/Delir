@@ -32,7 +32,8 @@ const toMenuItemJSON = (item: MenuItem): MenuItemOption => {
         type: item.props.type || 'normal',
         click: item.props.onClick,
         checked: item.props.checked,
-        dataset: propToDataset(item.props)
+        enabled: item.props.enabled == null ? true : item.props.enabled,
+        dataset: propToDataset(item.props),
     }
 
     const subItems = wrapArray(item.props.children as MenuItem[])

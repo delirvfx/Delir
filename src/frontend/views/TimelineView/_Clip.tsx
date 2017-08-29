@@ -146,6 +146,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     public render()
     {
         const {clip, active} = this.props
+        const postEffects = RendererService.pluginRegistry.getPostEffectPlugins()
 
         return (
             <div className={classnames(s.Clip, {
@@ -168,8 +169,10 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
             >
                 <ContextMenu>
                     <MenuItem label='エフェクト'>
-                        {RendererService.pluginRegistry.getPostEffectPlugins().map(entry => (
+                        {postEffects.length ? postEffects.map(entry => (
                             <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
+                        ) : (
+                            <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
                         )}
                     </MenuItem>
                     {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}

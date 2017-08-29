@@ -24,7 +24,10 @@ export const buildMenuElements = (items: MenuItemOption[]): JSX.Element => {
                                 className={classnames(
                                     s.item,
                                     s['type--normal'],
-                                    {[s[`hasSubmenu`]]: !!menu.submenu}
+                                    {
+                                        [s.disabled]: !menu.enabled,
+                                        [s.hasSubmenu]: !!menu.submenu,
+                                    }
                                 )}
                                 onClick={menu.enabled === false ? undefined : () => { menu.click && menu.click(menu) }}
                             >
