@@ -12,6 +12,8 @@ import PluginAssertionFailedException from '../exceptions/plugin-assertion-faile
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
 import UnknownPluginReferenceException from '../exceptions/plugin-load-fail-exception'
 
+import * as DelirCorePackageJson from '../../package.json'
+
 export const validatePluginPackageJSON = (packageJson: any)=> {
     return checkPropTypes<any>({
         name: PropTypes.string.isRequired,
@@ -42,8 +44,13 @@ export default class PluginRegistry {
             }
 
             const result = validatePluginPackageJSON(entry.packageJson)
+
             if (!result.valid) {
                 throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
+            }
+
+            if (!semver.satisfies(DelirCorePackageJson.version, entry.packageJson.engines['delir-core'])) {
+                throw new PluginLoadFailException(`Plugin \`${entry.name}(${entry.id})\` not compatible to current delir-core version `)
             }
 
             entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
