@@ -323,61 +323,79 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         if (!activeClip) return null
 
         activeClip.effects.forEach(effect => {
-            const processorInfo = RendererService.pluginRegistry.getPostEffectPlugins().find(entry => entry.id === effect.processor)!
-            const descriptors = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)!
-            const propElements: React.ReactElement<any>[] = []
+            try {
+                const processorInfo = RendererService.pluginRegistry.getPostEffectPlugins().find(entry => entry.id === effect.processor)!
+                const descriptors = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)!
+                const propElements: React.ReactElement<any>[] = []
 
-            descriptors.forEach(desc => {
-                const hasKeyframe = desc.animatable && (effect.keyframes[desc.propName] || []).length !== 0
+                descriptors.forEach(desc => {
+                    const hasKeyframe = desc.animatable && (effect.keyframes[desc.propName] || []).length !== 0
 
-                const value = activeClip
-                    ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, effect.keyframes[desc.propName] || [])
-                    : undefined
+                    const value = activeClip
+                        ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, effect.keyframes[desc.propName] || [])
+                        : undefined
 
-                propElements.push((
-                    <div
-                        key={activeClip!.id + desc.propName}
-                        className={classnames(s.propItem, {
-                            [s['propItem--active']]: activeEntity && activeEntity.type === 'effect' && activeEntity.entityId === effect.id && activePropName === desc.propName,
-                        })}
-                        data-prop-name={desc.propName}
-                        data-entity-type='effect'
-                        data-entity-id={effect.id}
-                        onClick={this.selectProperty}
-                    >
-                        <ContextMenu>
-                            <MenuItem label={t('contextMenu.expression')} onClick={() => this._openExpressionEditor(desc.propName) } />
-                        </ContextMenu>
-                        <span className={classnames(
-                                s.propKeyframeIndicator,
-                                {
-                                    [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                    [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
-                                })
-                            }
+                    propElements.push((
+                        <div
+                            key={activeClip!.id + desc.propName}
+                            className={classnames(s.propItem, {
+                                [s['propItem--active']]: activeEntity && activeEntity.type === 'effect' && activeEntity.entityId === effect.id && activePropName === desc.propName,
+                            })}
+                            data-prop-name={desc.propName}
+                            data-entity-type='effect'
+                            data-entity-id={effect.id}
+                            onClick={this.selectProperty}
                         >
-                            {desc.animatable && (<i className='twa twa-clock12'></i>)}
-                        </span>
-                        <span className={s.propItemName}>{desc.label}</span>
-                        <div className={s.propItemInput}>
-                            <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.effectValueChanged.bind(null, effect.id)} />
+                            <ContextMenu>
+                                <MenuItem label={t('contextMenu.expression')} onClick={() => this._openExpressionEditor(desc.propName) } />
+                            </ContextMenu>
+                            <span className={classnames(
+                                    s.propKeyframeIndicator,
+                                    {
+                                        [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                        [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                    })
+                                }
+                            >
+                                {desc.animatable && (<i className='twa twa-clock12'></i>)}
+                            </span>
+                            <span className={s.propItemName}>{desc.label}</span>
+                            <div className={s.propItemInput}>
+                                <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.effectValueChanged.bind(null, effect.id)} />
+                            </div>
                         </div>
+                    ))
+                })
+
+                elements.push((
+                    <div className={classnames(s.propItem, s['propItem--effectContainer'])}>
+                        <div key={effect.id} className={classnames(s.propItem, s['propItem--header'])}>
+                            <ContextMenu>
+                                <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
+                            </ContextMenu>
+                            <i className='fa fa-magic' />
+                            {`${processorInfo.name}`}
+                        </div>
+                        {...propElements}
                     </div>
                 ))
-            })
-
-            elements.push((
-                <div className={classnames(s.propItem, s['propItem--effectContainer'])}>
-                    <div key={effect.id} className={classnames(s.propItem, s['propItem--header'])}>
-                        <ContextMenu>
-                            <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
-                        </ContextMenu>
-                        <i className='fa fa-magic' />
-                        {`${processorInfo.name} #${effect.id.slice(0, 4)}`}
-                    </div>
-                    {...propElements}
-                </div>
-            ))
+            } catch (e) {
+                if (e instanceof Delir.Exceptions.UnknownPluginReferenceException) {
+                    elements.push((
+                        <div className={classnames(s.propItem, s['propItem--effectContainer'])}　title={t('pluginMissing', {processorId: effect.processor})}>
+                            <div key={effect.id} className={classnames(s.propItem, s['propItem--header'], s['propItem--pluginMissing'])}>
+                                <ContextMenu>
+                                    <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
+                                </ContextMenu>
+                                <i className='fa fa-exclamation' />
+                                {`${effect.processor}`}
+                            </div>
+                        </div>
+                    ))
+                } else {
+                    throw e
+                }
+            }
         })
 
         return elements

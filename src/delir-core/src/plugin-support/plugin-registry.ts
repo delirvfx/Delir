@@ -10,7 +10,7 @@ import {AnyParameterTypeDescriptor} from './type-descriptor'
 
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
-import UnknownPluginReferenceException from '../exceptions/plugin-load-fail-exception'
+import UnknownPluginReferenceException from '../exceptions/unknown-plugin-reference-exception'
 
 import * as DelirCorePackageJson from '../../package.json'
 

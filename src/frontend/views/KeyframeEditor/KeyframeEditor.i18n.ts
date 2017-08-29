@@ -6,11 +6,13 @@ export default I18n({
             expression: 'エクスプレッションを編集',
             removeEffect: 'エフェクトを削除',
         },
+        pluginMissing: '不明なプラグイン: :processorId',
     },
     en: {
         contextMenu: {
             expression: 'Edit Expression',
             removeEffect: 'Remove effect',
         },
+        pluginMissing: 'Missing plugin: :processorId'
     }
 })

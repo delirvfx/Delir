@@ -31,6 +31,9 @@
         padding 0
         height: auto
 
+    &.propItem--pluginMissing
+        color rgba($color-error, .5)
+
     &.propItem--header
         position: sticky
         top: 0
@@ -43,6 +46,7 @@
         white-space nowrap
 
         :global(.fa)
+            width 1em
             margin-left 4px
             margin-right 8px
 
