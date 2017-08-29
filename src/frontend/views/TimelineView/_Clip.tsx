@@ -3,7 +3,8 @@ import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import * as classnames from 'classnames'
 
-import {ContextMenu, MenuItem} from '../components/ContextMenu'
+import RendererService from '../../services/renderer'
+import {ContextMenu, MenuItem, MenuItemProps} from '../components/ContextMenu'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
@@ -94,6 +95,12 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
     private makeAlias = clipId => { return }
 
+    private addEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
+    {
+        ProjectModActions.addEffectIntoClipPayload(dataset.clipId, dataset.effectId)
+        AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+    }
+
     private removeClip = clipId =>
     {
         ProjectModActions.removeClip(clipId)
@@ -139,6 +146,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     public render()
     {
         const {clip, active} = this.props
+        const postEffects = RendererService.pluginRegistry.getPostEffectPlugins()
 
         return (
             <div className={classnames(s.Clip, {
@@ -160,7 +168,13 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
                 onDragEnd={this.dragEnd}
             >
                 <ContextMenu>
-                    <MenuItem type='separator' />
+                    <MenuItem label='エフェクト'>
+                        {postEffects.length ? postEffects.map(entry => (
+                            <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
+                        ) : (
+                            <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
+                        )}
+                    </MenuItem>
                     {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
                     <MenuItem label={t('contextMenu.remove')} onClick={this.removeClip.bind(null, clip.id)} />
                     <MenuItem type='separator' />

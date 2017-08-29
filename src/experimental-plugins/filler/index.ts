@@ -1,16 +1,15 @@
 import {
     Type,
     TypeDescriptor,
-    LayerPluginBase,
-    PluginPreRenderRequest,
+    EffectPluginBase,
+    PreRenderingRequest,
     RenderRequest,
 } from 'delir-core'
 
-export default class Plane extends LayerPluginBase
+export default class Filler extends EffectPluginBase
 {
-    static pluginDidLoad() {}
 
-    static provideParameters(): TypeDescriptor
+    public static provideParameters(): TypeDescriptor
     {
         return Type
             .colorRgba('color', {
@@ -18,14 +17,14 @@ export default class Plane extends LayerPluginBase
             })
     }
 
-    async beforeRender(req: PluginPreRenderRequest)
+    public async beforeRender(req: PreRenderingRequest)
     {
-        const canvas = document.createElement('canvas')
-        canvas.width = req.width
-        canvas.height = req.height
+        // const canvas = document.createElement('canvas')
+        // canvas.width = req.width
+        // canvas.height = req.height
     }
 
-    async render(req: RenderRequest)
+    public async render(req: RenderRequest)
     {
         const param = req.parameters as any
         const canvas = req.destCanvas

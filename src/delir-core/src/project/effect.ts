@@ -36,7 +36,6 @@ export default class Effect
     private _id: string = uuid.v4()
 
     private _config: EffectOptionScheme = {
-        name: null,
         processor: null,
         keyframeInterpolationMethod: 'linear',
     }
@@ -58,7 +57,7 @@ export default class Effect
         Object.seal(this)
     }
 
-    public toPreBSON(): Object
+    public toPreBSON(): EffectOptionScheme
     {
         return {
             id: this.id,
@@ -70,7 +69,7 @@ export default class Effect
         }
     }
 
-    public toJSON(): Object
+    public toJSON(): EffectOptionScheme
     {
         return {
             id: this.id,

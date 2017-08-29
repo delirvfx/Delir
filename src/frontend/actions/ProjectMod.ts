@@ -9,7 +9,6 @@ import Payload from '../utils/Flux/payload'
 // import deprecated from '../utils/deprecated'
 import RendererService from '../services/renderer'
 import ProjectStore from '../stores/ProjectStore'
-import RendererService from '../services/renderer'
 
 import AppActions from './App'
 
@@ -25,17 +24,22 @@ export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
 }>
 export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
 export type AddKeyframePayload = Payload<'AddKeyframe', {targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe}>
+export type AddEffectIntoClipPayload = Payload<'AddEffectIntoClipPayload', { clipId: string, effect: Delir.Project.Effect }>
+export type AddEffectKeyframePayload = Payload<'AddEffectKeyframe', {targetClipId: string, targetEffectId: string, propName: string, keyframe: Delir.Project.Keyframe}>
 export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
 export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: Partial<Delir.Project.Composition>}>
 export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Partial<Delir.Project.Layer>}>
 export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: Partial<Delir.Project.Clip>}>
 export type ModifyClipExpression = Payload<'ModifyClipExpression', {targetClipId: string, targetProperty: string, expr: {language: string, code: string}}>
+export type ModifyEffectExpression = Payload<'ModifyEffectExpression', {targetClipId: string, targetEffectId: string, targetProperty: string, expr: {language: string, code: string}}>
 export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
+export type ModifyEffectKeyframePayload = Payload<'ModifyEffectKeyframe', {targetClipId: string, effectId: string, targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetLayerId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
 export type RemoveAssetPayload = Payload<'RemoveAsset', {targetAssetId: string}>
 export type RemoveKeyframePayload = Payload<'RemoveKeyframe', {targetKeyframeId: string}>
+export type RemoveEffectFromClip = Payload<'RemoveEffectFromClip', { holderClipId: string, targetEffectId: string }>
 
 export const DispatchTypes = keyMirror({
     CreateComposition: null,
@@ -46,17 +50,22 @@ export const DispatchTypes = keyMirror({
     AddLayerWithAsset: null,
     AddAsset: null,
     AddKeyframe: null,
+    AddEffectIntoClipPayload: null,
+    AddEffectKeyframe: null,
     MoveClipToLayer: null,
     ModifyComposition: null,
     ModifyLayer: null,
     ModifyClip: null,
     ModifyClipExpression: null,
+    ModifyEffectExpression: null,
     ModifyKeyframe: null,
+    ModifyEffectKeyframe: null,
     RemoveComposition: null,
     RemoveLayer: null,
     RemoveClip: null,
     RemoveAsset:null,
     RemoveKeyframe: null,
+    RemoveEffectFromClip: null,
 })
 
 export default {
@@ -198,20 +207,6 @@ export default {
 
         const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frameOnClip)
 
-        if (patch.easeInParam) {
-            patch.easeInParam = [
-                _.clamp(patch.easeInParam[0], 0, 1),
-                patch.easeInParam[1]
-            ]
-        }
-
-        if (patch.easeOutParam) {
-            patch.easeOutParam = [
-                _.clamp(patch.easeOutParam[0], 0, 1),
-                patch.easeOutParam[1]
-            ]
-        }
-
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
                 targetKeyframeId: keyframe.id,
@@ -232,6 +227,48 @@ export default {
         }
     },
 
+    createOrModifyKeyframeForEffect(clipId: string, effectId: string, propName: string, frameOnClip: number, patch: Partial<Delir.Project.Keyframe>)
+    {
+        const project = ProjectStore.getState().get('project')
+        if (!project) return
+
+        const clip = ProjectHelper.findClipById(project, clipId)
+        if (!clip) return
+
+        const effect = ProjectHelper.findEffectFromClipById(clip, effectId)
+        if (!effect) return
+
+        const props = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)
+        const propDesc = props ? props.find(prop => prop.propName === propName) : null
+        if (!propDesc) return
+
+        if (propDesc.animatable === false) {
+            frameOnClip = 0
+        }
+
+        const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, propName, frameOnClip)
+
+        console.log(keyframe)
+        if (keyframe) {
+            dispatcher.dispatch(new Payload(DispatchTypes.ModifyEffectKeyframe, {
+                targetClipId: clipId,
+                effectId: effectId,
+                targetKeyframeId: keyframe.id,
+                patch: propDesc.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
+            }))
+        } else {
+            const newKeyframe = new Delir.Project.Keyframe()
+            Object.assign(newKeyframe, Object.assign({ frameOnClip }, patch))
+
+            dispatcher.dispatch(new Payload(DispatchTypes.AddEffectKeyframe, {
+                targetClipId: clipId,
+                targetEffectId: effectId,
+                propName: propName,
+                keyframe: newKeyframe,
+            }))
+        }
+    },
+
     addAsset({name, fileType, path}: {name: string, fileType: string, path: string})
     {
         const asset = new Delir.Project.Asset()
@@ -242,11 +279,17 @@ export default {
         dispatcher.dispatch(new Payload(DispatchTypes.AddAsset, {asset}))
     },
 
+    addEffectIntoClipPayload(clipId: string, processorId: string)
+    {
+        const effect = new Delir.Project.Effect()
+        effect.processor = processorId
+        dispatcher.dispatch(new Payload(DispatchTypes.AddEffectIntoClipPayload, { clipId, effect }))
+    },
+
     removeAsset(assetId: string)
     {
         dispatcher.dispatch(new Payload(DispatchTypes.RemoveAsset, {targetAssetId: assetId}))
     },
-
 
     // TODO: frame position
     moveClipToLayer(clipId: string, targetLayerId: string)
@@ -289,6 +332,19 @@ export default {
         }))
     },
 
+    modifyEffectExpression(clipId: string, effectId: string, property: string, expr: {language: string, code: string})
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.ModifyEffectExpression, {
+            targetClipId: clipId,
+            targetEffectId: effectId,
+            targetProperty: property,
+            expr: {
+                language: expr.language,
+                code: expr.code,
+            }
+        }))
+    },
+
     removeComposition(compId: string)
     {
         dispatcher.dispatch(new Payload(DispatchTypes.RemoveComposition, {targetCompositionId: compId}))
@@ -307,5 +363,10 @@ export default {
     removeKeyframe(keyframeId: string)
     {
         dispatcher.dispatch(new Payload(DispatchTypes.RemoveKeyframe, {targetKeyframeId: keyframeId}))
-    }
+    },
+
+    removeEffect(holderClipId: string, effectId: string)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveEffectFromClip, { holderClipId, targetEffectId: effectId }))
+    },
 }

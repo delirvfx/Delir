@@ -178,32 +178,27 @@ const handlePayload = async (payload: KnownPayload) => {
 
 const rendererService = {
     initialize: async () => {
-        audioContext = new AudioContext
-        // scriptProcessor
-
-        // const userDir = remote.app.getPath('appData')
-        pluginLoader = new Delir.Services.PluginLoader()
-        pluginRegistry = new Delir.PluginRegistry()
-
-        // const loaded = [
-        //     await pluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
-        //     await pluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
-        // ]
-
-        // const successes = [].concat(...loaded.map<any>(({loaded}) => loaded))
-        // const fails = [].concat(...loaded.map<any>(({failed}) => failed))
-
-        // if (fails.length > 0) {
-        //     const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
-        //     const message = fails.map((fail: any) => fail.reason).join('\n\n')
-        //     AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
-        // }
-
-        // console.log('Plugin loaded', successes, 'Failed:', fails)
-        // loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
-
+        const userDir = remote.app.getPath('appData')
         pipeline = new Delir.Engine.Pipeline()
-        pipeline.pluginRegistry = pluginRegistry
+        pluginLoader = new Delir.PluginSupport.FSPluginLoader()
+        pluginRegistry = pipeline.pluginRegistry
+
+        const loaded = [
+            await pluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
+            await pluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
+        ]
+
+        const successes = [].concat(...loaded.map<any>(({loaded}) => loaded))
+        const fails = [].concat(...loaded.map<any>(({failed}) => failed))
+
+        if (fails.length > 0) {
+            const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
+            const message = fails.map((fail: any) => fail.reason).join('\n\n')
+            AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
+        }
+
+        console.log('Plugin loaded', successes, 'Failed:', fails)
+        loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
 
         dispatcher.register(handlePayload)
     },
@@ -214,7 +209,7 @@ const rendererService = {
     },
 
     get pluginRegistry() {
-        return pluginRegistry
+        return pluginRegistry!
     },
 
     get renderer(): Delir.Engine.Pipeline {

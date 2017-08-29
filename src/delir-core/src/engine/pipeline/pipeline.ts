@@ -73,7 +73,7 @@ export default class Pipeline
     private _fpsCounter: FPSCounter = new FPSCounter()
     private _seqRenderPromise: ProgressPromise<void>|null = null
     private _project: Project
-    private _pluginRegistry: PluginRegistry
+    private _pluginRegistry: PluginRegistry = new PluginRegistry()
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver|null = null
@@ -336,11 +336,13 @@ export default class Pipeline
                 for (const effect of clip.effects) {
                     const EffectPluginClass = req.resolver.resolveEffectPlugin(effect.processor)
 
+                    if (EffectPluginClass == null) break
+
                     const effectProps = EffectPluginClass.provideParameters()
                     const effectAssetProps = rendererProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
                     const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, effectProps, effect.keyframes)
                     effectAssetProps.forEach(propName => {
-                        rendererInitParam[propName] = req.resolver.resolveAsset(rendererInitParam[propName].assetId)!
+                        effectInitParam[propName] = req.resolver.resolveAsset(effectInitParam[propName].assetId)!
                     })
 
                     const effector: EffectPluginBase = new EffectPluginClass()

@@ -40,6 +40,10 @@
         "no-consecutive-blank-lines": [true, 1],
         "no-bitwise": false,
         "triple-equals": [true, "allow-null-check"],
-        "interface-name": [false]
+        "interface-name": [false],
+        "no-unused-variable": true,
+        "no-unused-expression": [true, "allow-fast-null-checks"],
+        "prefer-conditional-expression": false,
+        "label-position": false
     }
 }

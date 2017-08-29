@@ -1,0 +1,13 @@
+{
+    "name": "delir-plugin-filler",
+    "version": "0.0.1",
+    "author": "Ragg <ragg.devpr@gmail.com>",
+    "main": "index.js",
+    "engines": {
+        "delir-core": "0.0.0-alpha.3"
+    },
+    "delir": {
+        "name": "フィラー",
+        "type": "post-effect"
+    }
+}

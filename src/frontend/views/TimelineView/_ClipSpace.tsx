@@ -132,7 +132,6 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         const {layer, activeClip, framerate, pxPerSec, scale} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
         const clips = Array.from<Delir.Project.Clip>(layer.clips)
-
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
 
         return (

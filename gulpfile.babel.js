@@ -204,17 +204,16 @@ export function compileRendererJs(done) {
 }
 
 export async function compilePlugins(done) {
-    return done();
-
     webpack({
         target: "electron",
         watch: DELIR_ENV === 'dev',
         context: paths.src.plugins,
         entry: {
             ...(DELIR_ENV === 'dev' ? {
-                'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
-                'plane/index': '../experimental-plugins/plane/index',
-                'noise/index': '../experimental-plugins/noise/index',
+                'filler/index': '../experimental-plugins/filler/index',
+                // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
+                // 'plane/index': '../experimental-plugins/plane/index',
+                // 'noise/index': '../experimental-plugins/noise/index',
             }: {})
         },
         output: {
@@ -403,7 +402,7 @@ export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
     g.watch(join(paths.src.renderer, '**/*'), buildRendererWithoutJs)
     g.watch(join(paths.src.renderer, '**/*.styl'), compileStyles)
-    g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
+    g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
     // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }

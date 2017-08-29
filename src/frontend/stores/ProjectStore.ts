@@ -97,6 +97,18 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
             }
 
+            case ProjectModDispatchTypes.AddEffectIntoClipPayload: {
+                const { clipId, effect } = payload.entity
+                ProjectHelper.addEffect(project!, clipId, effect)
+                break
+            }
+
+            case ProjectModDispatchTypes.AddEffectKeyframe: {
+                const { targetClipId, targetEffectId, propName, keyframe } = payload.entity
+                ProjectHelper.addEffectKeyframe(project, targetClipId, targetEffectId, propName, keyframe)
+                break
+            }
+
             case ProjectModDispatchTypes.MoveClipToLayer: {
                 const targetClip = ProjectHelper.findClipById(project!, payload.entity.clipId)
                 const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.entity.clipId)
@@ -127,9 +139,22 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
             }
 
-            case ProjectModDispatchTypes.ModifyKeyframe:
+            case ProjectModDispatchTypes.ModifyEffectExpression: {
+                const {targetClipId, targetEffectId, targetProperty, expr} = payload.entity
+                ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
+                break
+            }
+
+            case ProjectModDispatchTypes.ModifyKeyframe: {
                 ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
                 break
+            }
+
+            case ProjectModDispatchTypes.ModifyEffectKeyframe: {
+                const { targetClipId, effectId, targetKeyframeId, patch } = payload.entity
+                ProjectHelper.modifyEffectKeyframe(project!, targetClipId, effectId, targetKeyframeId, patch)
+                break
+            }
 
             case ProjectModDispatchTypes.RemoveComposition:
                 ProjectHelper.deleteComposition(project!, payload.entity.targetCompositionId)
@@ -150,6 +175,12 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
             case ProjectModDispatchTypes.RemoveKeyframe:
                 ProjectHelper.deleteKeyframe(project!, payload.entity.targetKeyframeId)
                 break
+
+            case ProjectModDispatchTypes.RemoveEffectFromClip: {
+                const { holderClipId, targetEffectId } = payload.entity
+                ProjectHelper.deleteEffectFromClip(project, holderClipId, targetEffectId)
+                break
+            }
 
             default:
                 return state
