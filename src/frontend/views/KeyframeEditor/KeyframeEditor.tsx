@@ -192,8 +192,10 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
 
     private removeEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
     {
-        ProjectModActions.removeEffect(dataset.clipId, dataset.effectId)
-        AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+        this.setState({ editorOpened: false, activePropName: null, activeEntity: null }, () => {
+            ProjectModActions.removeEffect(dataset.clipId, dataset.effectId)
+            AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+        })
     }
 
     private get activeEntityObject(): Delir.Project.Clip | Delir.Project.Effect | null {
