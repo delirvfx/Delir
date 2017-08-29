@@ -336,6 +336,8 @@ export default class Pipeline
                 for (const effect of clip.effects) {
                     const EffectPluginClass = req.resolver.resolveEffectPlugin(effect.processor)
 
+                    if (EffectPluginClass == null) break
+
                     const effectProps = EffectPluginClass.provideParameters()
                     const effectAssetProps = rendererProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
                     const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, effectProps, effect.keyframes)

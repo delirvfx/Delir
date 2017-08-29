@@ -2,6 +2,7 @@
 import Project from '../../project/project'
 import PluginRegistry from '../../plugin-support/plugin-registry'
 import EffectPluginBase from '../../plugin-support/effect-plugin-base'
+import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
 
 import * as ProjectHelper from '../../helper/project-helper'
 
@@ -31,8 +32,16 @@ export default class EntityResolver
         return this._pluginRegistry.requirePostEffectPluginById(pluginName)
     }
 
-    public resolveEffectPlugin(pluginId: string): typeof EffectPluginBase
+    public resolveEffectPlugin(pluginId: string): typeof EffectPluginBase | null
     {
-        return this._pluginRegistry.requirePostEffectPluginById(pluginId) as any
+        try {
+            return this._pluginRegistry.requirePostEffectPluginById(pluginId) as any
+        } catch (e) {
+            if (e instanceof UnknownPluginReferenceException) {
+                return null
+            }
+
+            throw e
+        }
     }
 }
