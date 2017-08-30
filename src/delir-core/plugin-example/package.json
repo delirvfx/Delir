@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "description": "Example plugin for Delir",
   "main": "dist/index.js",
-  "repository": "git@github.com:Ragg-/delir-plugin-example.git",
-  "author": "Ragg <ragg.devpr@gmail.com>",
-  "license": "MIT",
   "scripts": {
     "dev": "./node_modules/.bin/webpack --watch",
     "build": "./node_modules/.bin/webpack"
@@ -14,13 +11,8 @@
     "delir": "0.0.x"
   },
   "delir": {
-    "feature": "CustomLayer",
-    "targetApi": {
-        "renderer": "0.0.x"
-    },
-    "acceptFileTypes": {
-        "video/mp4": "source"
-    }
+    "name": "サンプルプラグイン",
+    "type": "post-effect"
   },
   "devDependencies": {
     "awesome-typescript-loader": "^3.1.2",

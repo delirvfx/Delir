@@ -5,7 +5,7 @@ import * as semver from 'semver'
 import checkPropTypes from '../helper/checkPropTypes'
 import {PluginEntry, PluginTypes, PluginSummary, DelirPluginPackageJson} from './types'
 import PluginBase from './plugin-base'
-import EffectPluginBase from './effect-plugin-base'
+import EffectPluginBase from './PostEffectBase'
 import {AnyParameterTypeDescriptor} from './type-descriptor'
 
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
@@ -25,10 +25,10 @@ export const validatePluginPackageJSON = (packageJson: any)=> {
         delir: PropTypes.shape({
             name: PropTypes.string.isRequired,
             type: PropTypes.oneOf(['post-effect']).isRequired,
-            acceptFileTypes: (props: any, propName: string, section: string) => {
-                if (!_.values(props[propName]).every((v: string) => typeof v === 'string')) return new Error(`Invalid file type handler definition in \`${section}\`.`)
-                if (!_.keys(props[propName]).every((v: string) => v.toLowerCase() === v)) return new Error(`File type extension must be lowercase in \`${section}\`.`)
-            },
+            // acceptFileTypes: (props: any, propName: string, section: string) => {
+            //     if (!_.values(props[propName]).every((v: string) => typeof v === 'string')) return new Error(`Invalid file type handler definition in \`${section}\`.`)
+            //     if (!_.keys(props[propName]).every((v: string) => v.toLowerCase() === v)) return new Error(`File type extension must be lowercase in \`${section}\`.`)
+            // },
         }).isRequired
     }, packageJson, `package.json of ${packageJson.name}`)
 }
@@ -53,7 +53,7 @@ export default class PluginRegistry {
                 throw new PluginLoadFailException(`Plugin \`${entry.name}(${entry.id})\` not compatible to current delir-core version `)
             }
 
-            entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
+            // entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
             this._plugins[entry.type][entry.id] = Object.freeze(_.cloneDeep(entry))
         }
     }
