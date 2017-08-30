@@ -15,7 +15,7 @@ const {spawn, spawnSync} = require("child_process");
 const paths = {
     src         : {
         root        : join(__dirname, "./src/"),
-        plugins     : join(__dirname, 'src/plugins'),
+        plugins     : join(__dirname, './src/post-effect-plugins'),
         browser     : join(__dirname, "./src/browser/"),
         renderer    : join(__dirname, "./src/frontend/"),
     },
@@ -209,6 +209,7 @@ export async function compilePlugins(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.plugins,
         entry: {
+            'chromakey/index': './chromakey/index',
             ...(DELIR_ENV === 'dev' ? {
                 'filler/index': '../experimental-plugins/filler/index',
                 // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
@@ -271,7 +272,7 @@ export async function compilePlugins(done) {
 }
 
 export function copyPluginsPackageJson() {
-    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: join(paths.src.root,　'src/')})
+    return g.src(join(paths.src.plugins, '**/package.json'), {base: join(paths.src.plugins)})
         .pipe(g.dest(paths.compiled.plugins));
 }
 

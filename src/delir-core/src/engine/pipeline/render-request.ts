@@ -92,7 +92,9 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
     // alias
     public get seconds(): number { return this.time }
 
-    constructor(properties: Optionalized<RenderRequest<T>> = {})
+    public get webGlContextPool():void { return }
+
+    constructor(properties: Partial<RenderRequest<T>> = {})
     {
         const props = _.pick(
             properties,
