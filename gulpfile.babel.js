@@ -248,6 +248,10 @@ export async function compilePlugins(done) {
                         }},
                     ],
                 },
+                {
+                    test: /\.(frag|vert)$/,
+                    loader: 'raw-loader'
+                },
             ]
         },
         plugins: [
