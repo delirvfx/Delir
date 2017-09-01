@@ -22,6 +22,7 @@ import * as KeyframeHelper from '../../helper/keyframe-helper'
 import defaults from '../../helper/defaults'
 import FPSCounter from '../../helper/FPSCounter'
 import * as ExpressionContext from './ExpressionContext'
+import WebGLContextPool from './WebGLContextPool'
 import {mergeInto as mergeAudioBufferInto, arraysToAudioBuffer} from '../../helper/Audio'
 
 interface ExpressionExecuters {
@@ -77,6 +78,7 @@ export default class Pipeline
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver|null = null
+    private webGLContextPool: WebGLContextPool = new WebGLContextPool()
 
     get project() { return this._project }
     set project(project: Project) { this._project = project }
@@ -289,6 +291,7 @@ export default class Pipeline
 
             rootComposition,
             resolver,
+            glContextPool: this.webGLContextPool,
         })
     }
 

@@ -91,13 +91,13 @@ const textClip = assign(new Delir.Project.Clip(), {
         loop: [
             assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
         ],
-        x: [
-            assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
-            assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
-        ],
-        y: [
-            assign(new Delir.Project.Keyframe(), {value: 130, frameOnClip: 0, easeOutParam: [.4, .5]}),
-        ],
+        // x: [
+        //     assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
+        //     assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
+        // ],
+        // y: [
+        //     assign(new Delir.Project.Keyframe(), {value: 130, frameOnClip: 0, easeOutParam: [.4, .5]}),
+        // ],
     },
     expressions: {
         text: new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`')
@@ -166,9 +166,9 @@ ProjectHelper.addComposition(p, c1)
 // console.log(ProjectHelper.addClip())
 // ProjectHelper.addClip(p, c1_t1, c1_t1_cl1)
 // ProjectHelper.addClip(p, c1_t1, audioClip2)
-ProjectHelper.addClip(p, c1_t1, imageClip)
+// ProjectHelper.addClip(p, c1_t1, imageClip)
 // ProjectHelper.addClip(p, c1_t2, audioClip)
-ProjectHelper.addClip(p, c1_t3, movieClip)
+// ProjectHelper.addClip(p, c1_t3, movieClip)
 ProjectHelper.addClip(p, c1_t4, textClip)
 ProjectHelper.addEffect(p, textClip, assign(new Delir.Project.Effect(), {
     processor: '@ragg/delir-posteffect-chromakey',

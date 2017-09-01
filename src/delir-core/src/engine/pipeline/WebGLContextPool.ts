@@ -12,7 +12,7 @@ export default class WebGLContextPool {
     private readonly glPool: WebGLContextSet[] = []
     private readonly gl2Pool: WebGL2ContextSet[] = []
     private readonly programMap: WeakMap<WebGLProgram, WebGLRenderingContext|WebGL2RenderingContext> = new WeakMap()
-    private waiters: (() => boolean)[]
+    private waiters: (() => boolean)[] = []
 
     constructor()
     {
@@ -62,7 +62,7 @@ export default class WebGLContextPool {
         const assignedContext = this.programMap.get(program)
         if (!assignedContext) return null
 
-        const pool = context instanceof WebGLRenderingContext ? this.glPool : this.gl2Pool
+        const pool = assignedContext instanceof WebGLRenderingContext ? this.glPool : this.gl2Pool
         const contextSet = pool.find(set => set.context === assignedContext)
 
         if (!contextSet) return null

@@ -20,12 +20,25 @@
 //     vAlphaCoord = vec2(alphaArea.x + texCoord.s * alphaArea.z, alphaArea.y + texCoord.t * alphaArea.w);
 // }
 
-attribute vec3 position;
-attribute vec2 coord;
 
+
+// attribute vec3 position;
+// attribute vec2 coord;
+
+// varying vec2 texCoord;
+
+// void main(){
+//     texCoord = coord;
+//     gl_Position = vec4(position, 1.0);
+// }
+
+
+
+attribute vec2 position;
+attribute vec2 coord;
 varying vec2 texCoord;
 
-void main(){
+void main(void) {
+    gl_Position = vec4(position, 0.0, 1.0);
     texCoord = coord;
-    gl_Position = vec4(position, 1.0);
 }
