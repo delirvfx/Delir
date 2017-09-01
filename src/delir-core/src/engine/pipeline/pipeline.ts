@@ -474,6 +474,8 @@ export default class Pipeline
 
                 await clipTask.renderer.render(renderReq)
 
+                clipBufferCanvas.getContext('2d')!.setTransform(1, 0, 0, 1, 0, 0)
+
                 // Post process effects
                 for (const effectTask of clipTask.effects) {
                     const effectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => [desc.propName, effectTask.keyframeLUT[desc.propName][req.frame]])) as {[propName: string]: ParameterValueTypes}
