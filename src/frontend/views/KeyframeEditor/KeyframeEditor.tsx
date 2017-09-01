@@ -235,7 +235,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
             if (activePropName) {
                 if (activeEntity.type === 'effect') {
                     const activeEffect = activeClip.effects.find(e => e.id === activeEntity.entityId)
-                    keyframes = activeEffect!.keyframes[activePropName]
+                    keyframes = activeEffect ? activeEffect.keyframes[activePropName] : null
                 } else {
                     keyframes = activeClip.keyframes[activePropName]
                 }
