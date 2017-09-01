@@ -30,6 +30,21 @@ export function normalizeClip(clip: Clip) {
 
 export function normalizeKeyframe(kf: Keyframe) {
     kf.frameOnClip = Math.round(kf.frameOnClip)
+
+    if (kf.easeInParam) {
+        kf.easeInParam = [
+            _.clamp(kf.easeInParam[0], 0, 1),
+            _.clamp(kf.easeInParam[1], 0, 1),
+        ]
+    }
+
+    if (kf.easeOutParam) {
+        kf.easeOutParam = [
+            _.clamp(kf.easeOutParam[0], 0, 1),
+            _.clamp(kf.easeOutParam[1], 0, 1),
+        ]
+    }
+
     return kf
 }
 
