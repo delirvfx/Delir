@@ -25,12 +25,9 @@ export default class ChromakeyPostEffect extends PostEffectBase {
 
     private static VERTEX_SHADER: string = require('./vertex.vert')
     private static FRAGMENT_SHADER: string = require('./fragment.frag')
-    // private static FRAGMENT_SHADER_PAINT: string = require('./paint.frag')
 
-    // private glCanvas: HTMLCanvasElement
     private texCanvas: HTMLCanvasElement
     private texCanvasCtx: CanvasRenderingContext2D
-    private glContext: WebGLRenderingContext
     private fragShader: WebGLShader
     private vertShader: WebGLShader
     private program: WebGLProgram
@@ -54,7 +51,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      * Do it in this method.
      */
     public async initialize(req: PreRenderRequest) {
-        const gl = this.glContext = await req.glContextPool.getContext('webgl')
+        const gl = await req.glContextPool.getContext('webgl')
         const canvas = gl.canvas
 
         this.texCanvas = document.createElement('canvas')
