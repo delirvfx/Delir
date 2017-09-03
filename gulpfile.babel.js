@@ -225,12 +225,12 @@ export async function compilePlugins(done) {
         devtool: 'cheap-source-map',
         externals: [
             (ctx, request: string, callback) => {
-                if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
-                    // throughs non relative requiring ('./module', '../module', '!!../module')
-                    return callback(null, `require('${request}')`)
-                }
-
-                callback()
+                if (request !== 'delir-core') return callback()
+                callback(null, `require('${request}')`)
+                // if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
+                //     // throughs non relative requiring ('./module', '../module', '!!../module')
+                //     return callback(null, `require('${request}')`)
+                // }
             }
         ],
         resolve: {
@@ -276,13 +276,13 @@ export async function compilePlugins(done) {
 }
 
 export function copyPluginsPackageJson() {
-    return g.src(join(paths.src.plugins, '**/package.json'), {base: join(paths.src.plugins)})
+    return g.src(join(paths.src.plugins, '*/package.json'), {base: join(paths.src.plugins)})
         .pipe(g.dest(paths.compiled.plugins));
 }
 
 export function copyExperimentalPluginsPackageJson() {
     return DELIR_ENV === 'dev' ?
-        g.src(join(paths.src.root, 'experimental-plugins/**/package.json'))
+        g.src(join(paths.src.root, 'experimental-plugins/*/package.json'))
             .pipe(g.dest(paths.compiled.plugins))
         : Promise.resolve()
 }
