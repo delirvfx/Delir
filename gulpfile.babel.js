@@ -212,6 +212,7 @@ export async function compilePlugins(done) {
             'chromakey/index': './chromakey/index',
             ...(DELIR_ENV === 'dev' ? {
                 'filler/index': '../experimental-plugins/filler/index',
+                'mmd/index': '../experimental-plugins/mmd/index',
                 // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 // 'plane/index': '../experimental-plugins/plane/index',
                 // 'noise/index': '../experimental-plugins/noise/index',
