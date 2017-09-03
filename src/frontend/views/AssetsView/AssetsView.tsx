@@ -5,8 +5,7 @@ import * as parseColor from 'parse-color'
 import * as classnames from 'classnames'
 import * as path from 'path'
 
-import * as Delir from 'delir-core'
-import {ProjectHelper, ColorRGB} from 'delir-core'
+import {ProjectHelper, Values} from 'delir-core'
 
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
@@ -57,7 +56,7 @@ const castToCompositionPropTypes = (req: CompositionProps) => {
         height: +req.height,
         framerate: +req.framerate,
         durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
-        backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
+        backgroundColor: new Values.ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
         samplingRate: +req.samplingRate,
         audioChannels: +req.audioChannels,
     }

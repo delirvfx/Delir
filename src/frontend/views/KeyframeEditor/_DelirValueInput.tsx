@@ -229,7 +229,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                     <button
                         className={s.colorPickerOpenner}
                         style={{
-                            backgroundColor: (value as Delir.ColorRGBA).toString()
+                            backgroundColor: (value as Delir.Values.ColorRGBA).toString()
                         }}
                         onClick={this.openColorPicker}
                     />,

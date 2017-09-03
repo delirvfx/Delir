@@ -6,6 +6,8 @@ import Layer from './layer'
 
 import {CompositionScheme} from './scheme/composition'
 
+import toJSON from '../helper/toJSON'
+
 export default class Composition
 {
     static deserialize(compJson: CompositionScheme, project: Project)
@@ -97,7 +99,7 @@ export default class Composition
     {
         return {
             id: this.id,
-            config: Object.assign({}, this.config),
+            config: toJSON(this.config),
             layers: this.layers.map(layer => layer.toPreBSON()),
         }
     }
@@ -106,7 +108,7 @@ export default class Composition
     {
         return {
             id: this.id,
-            config: Object.assign({}, this.config),
+            config: toJSON(this.config),
             layers: this.layers.map(layer => layer.toJSON()),
         }
     }

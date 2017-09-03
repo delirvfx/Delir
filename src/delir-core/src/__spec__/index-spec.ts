@@ -73,14 +73,6 @@ describe('Check exportings', () => {
         expect(Delir.ProjectHelper).to.be.an('object')
     })
 
-    it('Delir.ColorRGB', () => {
-        expect(Delir.ColorRGB).to.be.an('function')
-    })
-
-    it('Delir.ColorRGBA', () => {
-        expect(Delir.ColorRGBA).to.be.an('function')
-    })
-
     it('Delir.Type', () => {
         expect(Delir.Type).to.be.an('function')
     })
