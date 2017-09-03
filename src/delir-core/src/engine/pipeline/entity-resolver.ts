@@ -34,7 +34,7 @@ export default class EntityResolver
         return this._pluginRegistry.requirePostEffectPluginById(pluginName)
     }
 
-    public resolveEffectPlugin(pluginId: string): typeof EffectPluginBase | null
+    public resolveEffectPlugin(pluginId: string): {new(...args: any[]): EffectPluginBase} | null
     {
         try {
             return this._pluginRegistry.requirePostEffectPluginById(pluginId) as any
