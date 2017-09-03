@@ -45,6 +45,10 @@ export function normalizeKeyframe(kf: Keyframe) {
         ]
     }
 
+    if (kf.value instanceof Asset) {
+        kf.value = {assetId: kf.value.id}
+    }
+
     return kf
 }
 
