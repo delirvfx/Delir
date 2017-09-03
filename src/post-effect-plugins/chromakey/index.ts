@@ -1,6 +1,7 @@
 import {
     PostEffectBase,
     PreRenderRequest,
+    PluginSupport,
     RenderRequest,
     Values,
     Type
@@ -26,6 +27,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
     private static VERTEX_SHADER: string = require('./vertex.vert')
     private static FRAGMENT_SHADER: string = require('./fragment.frag')
 
+    private ctxBindToken: PluginSupport.WebGLContextBindToken
     private texCanvas: HTMLCanvasElement
     private texCanvasCtx: CanvasRenderingContext2D
     private fragShader: WebGLShader
@@ -51,6 +53,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      * Do it in this method.
      */
     public async initialize(req: PreRenderRequest) {
+        this.ctxBindToken = req.glContextPool.generateContextBindToken()
         const gl = await req.glContextPool.getContext('webgl')
         const canvas = gl.canvas
 
@@ -96,7 +99,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
             1,-1,
             1,1,
             -1,1
-        ]), gl.STATIC_DRAW);
+        ]), gl.STATIC_DRAW)
 
         // Tex 2D
         this.tex2DBuffer = gl.createBuffer()
@@ -106,9 +109,9 @@ export default class ChromakeyPostEffect extends PostEffectBase {
             1, 1,
             1, 0,
             0, 0,
-        ]), gl.STATIC_DRAW);
+        ]), gl.STATIC_DRAW)
 
-        req.glContextPool.registerContextForProgram(this.program, gl)
+        req.glContextPool.registerContextForToken(this.ctxBindToken, gl)
         req.glContextPool.releaseContext(gl)
     }
 
@@ -121,7 +124,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
         const { destCanvas, parameters: {threshold, keyColor} } = req
         const destCtx = destCanvas.getContext('2d')
 
-        const gl = await req.glContextPool.getContextByProgram(this.program)
+        const gl = await req.glContextPool.getContextByToken(this.ctxBindToken)
         const canvas = gl.canvas
         // console.log(gl === this.glContext)
 

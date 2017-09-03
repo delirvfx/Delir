@@ -1,3 +1,5 @@
+import WebGLContextBindToken from '../../plugin-support/WebGLContextBindToken'
+
 interface WebGLContextSet {
     used: boolean
     context: WebGLRenderingContext
@@ -11,7 +13,7 @@ interface WebGL2ContextSet {
 export default class WebGLContextPool {
     private readonly glPool: WebGLContextSet[] = []
     private readonly gl2Pool: WebGL2ContextSet[] = []
-    private readonly programMap: WeakMap<WebGLProgram, WebGLRenderingContext|WebGL2RenderingContext> = new WeakMap()
+    private readonly tokenMap: WeakMap<WebGLContextBindToken, WebGLRenderingContext|WebGL2RenderingContext> = new WeakMap()
     private waiters: (() => boolean)[] = []
 
     constructor()
@@ -38,12 +40,12 @@ export default class WebGLContextPool {
         }
 
         const pool = type === 'webgl' ? this.glPool : this.gl2Pool
-        const freeContext: WebGLContextSet|WebGL2ContextSet|null = pool.find(set => !set.used)
+        const freeContext: WebGLContextSet|WebGL2ContextSet|void = pool.find(set => !set.used)
 
         if (!freeContext) {
             return new Promise<WebGLRenderingContext|WebGL2RenderingContext>(resolve => {
                 this.waiters.push(() => {
-                    const _freeContext: WebGLContextSet|WebGL2ContextSet|null = pool.find(set => !set.used)
+                    const _freeContext: WebGLContextSet|WebGL2ContextSet|void = pool.find(set => !set.used)
                     if (_freeContext) {
                         _freeContext.used = true
                         resolve(_freeContext.context)
@@ -57,9 +59,14 @@ export default class WebGLContextPool {
         return Promise.resolve(freeContext.context)
     }
 
-    public async getContextByProgram(program: WebGLProgram): Promise<WebGLRenderingContext|WebGL2RenderingContext|null>
+    public generateContextBindToken(): WebGLContextBindToken
     {
-        const assignedContext = this.programMap.get(program)
+        return new WebGLContextBindToken()
+    }
+
+    public async getContextByToken(token: WebGLContextBindToken)
+    {
+        const assignedContext = this.tokenMap.get(token)
         if (!assignedContext) return null
 
         const pool = assignedContext instanceof WebGLRenderingContext ? this.glPool : this.gl2Pool
@@ -73,7 +80,7 @@ export default class WebGLContextPool {
 
         return new Promise<WebGLRenderingContext|WebGL2RenderingContext>(resolve => {
             this.waiters.push(() => {
-                const _freeContext: WebGLContextSet|WebGL2ContextSet|null = pool.find(set => !set.used)
+                const _freeContext: WebGLContextSet|WebGL2ContextSet|void = pool.find(set => !set.used)
                 if (_freeContext) {
                     _freeContext.used = true
                     resolve(_freeContext.context)
@@ -82,14 +89,13 @@ export default class WebGLContextPool {
             })
         })
     }
-
-    public registerContextForProgram(program: WebGLProgram, context: WebGLRenderingContext|WebGL2RenderingContext)
+    public registerContextForToken(token: WebGLContextBindToken, context: WebGLRenderingContext|WebGL2RenderingContext)
     {
         const pool = context instanceof WebGLRenderingContext ? this.glPool : this.gl2Pool
         const hasContext = pool.findIndex(set => set.context === context) !== -1
 
         if (!hasContext) return
-        this.programMap.set(program, context)
+        this.tokenMap.set(token, context)
     }
 
     public releaseContext(context: WebGLRenderingContext|WebGL2RenderingContext)
