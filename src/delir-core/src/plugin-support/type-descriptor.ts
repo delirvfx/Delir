@@ -115,7 +115,8 @@ export type ParameterValueTypes =
     | string
     | number
     | boolean
-    | AssetPointerScheme
+    | AssetProxy
+    | null
 
 export const descriptorToValueType = (desc: AnyParameterTypeDescriptor) => {
      switch (desc.type) {
