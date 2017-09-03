@@ -351,7 +351,9 @@ export default class Pipeline
 
                 const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererProps, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
                 rendererAssetProps.forEach(propName => {
-                    rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
+                    rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => {
+                        return value ? req.resolver.resolveAsset(value.assetId) : null
+                    })
                 })
 
                 const rendererExpressions = _(clip.expressions).mapValues((expr: Expression) => {
@@ -385,7 +387,9 @@ export default class Pipeline
 
                     const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectProps, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
                     effectAssetProps.forEach(propName => {
-                        effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
+                        effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => {
+                            return value ? req.resolver.resolveAsset(value.assetId) : null
+                        })
                     })
 
                     const effectExpressions = _(effect.expressions).mapValues((expr: Expression) => {
