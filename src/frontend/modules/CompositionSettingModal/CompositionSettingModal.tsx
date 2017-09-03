@@ -62,7 +62,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
     {
         const {composition: comp} = this.props
 
-        const toRGBHash = ({r, g, b}: Delir.ColorRGB) => '#' + [r, g, b].map(c => c.toString(16)).join('')
+        const toRGBHash = ({r, g, b}: Delir.Values.ColorRGB) => '#' + [r, g, b].map(c => c.toString(16)).join('')
         const values: {[prop: string]: any} = {
             name: comp ? comp.name : 'New Composition',
             width: comp ? comp.width : 640,

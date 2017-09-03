@@ -80,7 +80,7 @@ export default {
         height: number,
         framerate: number,
         durationFrames: number,
-        backgroundColor: Delir.ColorRGB,
+        backgroundColor: Delir.Values.ColorRGB,
         samplingRate: number,
         audioChannels: number,
     })

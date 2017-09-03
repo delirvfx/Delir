@@ -383,7 +383,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                             height='8'
                             stroke='#fff'
                             strokeWidth='1'
-                            style={{fill: (kf.value as Delir.ColorRGBA).toString()}}
+                            style={{fill: (kf.value as Delir.Values.ColorRGBA).toString()}}
                         />
                     </g>
                 </g>
