@@ -20,13 +20,13 @@ export default class WebGLContextPool {
     {
         for (let i = 0; i < 4; i++) {
             const canvas = document.createElement('canvas')
-            const context = canvas.getContext('webgl')
+            const context = canvas.getContext('webgl')!
             this.glPool.push({used: false, context})
         }
 
         for (let i = 0; i < 4; i++) {
             const canvas = document.createElement('canvas')
-            const context = canvas.getContext('webgl2')
+            const context = canvas.getContext('webgl2')!
             this.gl2Pool.push({used: false, context})
         }
     }
