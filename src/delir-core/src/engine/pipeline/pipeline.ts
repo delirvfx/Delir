@@ -1,5 +1,6 @@
 import Project from '../../project/project'
 import Clip from '../../project/clip'
+import Effect from '../../project/effect'
 import Expression from '../../values/expression'
 import EffectPluginBase from '../../plugin-support/PostEffectBase'
 import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
@@ -77,6 +78,7 @@ export default class Pipeline
     private _pluginRegistry: PluginRegistry = new PluginRegistry()
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
+    private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver|null = null
     private webGLContextPool: WebGLContextPool = new WebGLContextPool()
 
@@ -350,8 +352,12 @@ export default class Pipeline
                             : null
                     })
 
-                    const effector: EffectPluginBase = new EffectPluginClass()
-                    await effector.initialize(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
+                    let effector = this._effectCache.get(effect)
+                    if (!effector) {
+                        effector = new EffectPluginClass()
+                        this._effectCache.set(effect, effector)
+                        await effector.initialize(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
+                    }
 
                     const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectProps, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
                     effectAssetProps.forEach(propName => {
