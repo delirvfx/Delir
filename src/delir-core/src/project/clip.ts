@@ -7,6 +7,8 @@ import {ClipScheme, ClipConfigScheme} from './scheme/clip'
 import {AvailableRenderer} from '../engine/renderer'
 import Expression from '../values/expression'
 
+import toJSON from '../helper/toJSON'
+
 export default class Clip
 {
     public static deserialize(clipJson: ClipScheme)
@@ -29,10 +31,15 @@ export default class Clip
             return new Expression(expr.language, expr.code)
         })
 
+        const effects = _.map(clipJson.effects, effect => {
+            return Effect.deserialize(effect)
+        })
+
         Object.defineProperty(clip, '_id', {value: clipJson.id || uuid.v4()})
         Object.assign(clip._config, config)
         clip.keyframes = keyframes
         clip.expressions = expressions
+        clip.effects = effects
 
         return clip
     }
@@ -83,12 +90,12 @@ export default class Clip
     {
         return {
             id: this._id,
-            config: Object.assign({}, this._config),
-            effects: this.effects.slice(0),
+            config: toJSON(this._config),
+            effects: this.effects.map(effect => effect.toPreBSON()),
             keyframes: _.mapValues(this.keyframes, (keyframes, propName) => {
                 return keyframes.map(keyframe => keyframe.toPreBSON())
             }) as any,
-            expressions: _.mapValues(this.expressions, expr => expr.toJSON())
+            expressions: toJSON(this.expressions)
         }
     }
 
@@ -96,12 +103,12 @@ export default class Clip
     {
         return {
             id: this._id,
-            config: Object.assign({}, this._config),
-            effects: this.effects.slice(0),
+            config: toJSON(this._config),
+            effects: this.effects.map(effect => effect.toJSON()),
             keyframes: _.mapValues(this.keyframes, (keyframes, propName) => {
                 return keyframes.map(keyframe => keyframe.toJSON())
             }) as any,
-            expressions: _.mapValues(this.expressions, expr => expr.toJSON())
+            expressions: toJSON(this.expressions)
         }
     }
 }

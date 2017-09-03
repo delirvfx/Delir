@@ -1,6 +1,7 @@
 // @flow
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
+import toJSON from '../helper/toJSON'
 
 import {KeyframeValueTypes, KeyframeScheme, KeyframeConfigScheme} from './scheme/keyframe'
 
@@ -72,7 +73,7 @@ export default class Keyframe
     {
         return {
             id: this.id,
-            config: Object.assign({}, this._config),
+            config: toJSON(this._config),
         }
     }
 }
