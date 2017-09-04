@@ -2,6 +2,7 @@ import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import Composition from '../../project/composition'
 import EntityResolver from './entity-resolver'
 import PreRenderingRequest from './pre-rendering-request'
+import WebGLContextPool from './WebGLContextPool'
 
 import * as _ from 'lodash'
 
@@ -36,6 +37,7 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
         // 'clipScope',
 
         'parameters',
+        'glContextPool'
     ]
 
     private static _permitOnlyInitializeKey = [
@@ -88,11 +90,12 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
     // Resolver
     //
     public readonly resolver: EntityResolver
+    public readonly glContextPool: WebGLContextPool
 
     // alias
     public get seconds(): number { return this.time }
 
-    constructor(properties: Optionalized<RenderRequest<T>> = {})
+    constructor(properties: Partial<RenderRequest<T>> = {})
     {
         const props = _.pick(
             properties,
@@ -127,6 +130,7 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
             parameters: this.parameters,
 
             resolver: this.resolver,
+            glContextPool: this.glContextPool,
         })
     }
 }

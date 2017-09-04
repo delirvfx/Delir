@@ -1,6 +1,6 @@
 import defaults from '../helper/defaults'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
-import {AssetPointerScheme} from '../project/scheme/keyframe'
+import AssetProxy from '../engine/pipeline/AssetProxy'
 
 import {
     Point2D,
@@ -115,7 +115,8 @@ export type ParameterValueTypes =
     | string
     | number
     | boolean
-    | AssetPointerScheme
+    | AssetProxy
+    | null
 
 export const descriptorToValueType = (desc: AnyParameterTypeDescriptor) => {
      switch (desc.type) {

@@ -102,7 +102,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         const { parentClip, entity, propName, keyframes, onModified } = this.props
 
         const {keyframeMovement} = this.state
-        // if (!clip || !activePropName) return
+        if (!parentClip || !propName) return
 
         process: {
             if (this._selectedKeyframeId) {

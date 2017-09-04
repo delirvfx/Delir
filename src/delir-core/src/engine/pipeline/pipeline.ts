@@ -1,5 +1,6 @@
 import Project from '../../project/project'
 import Clip from '../../project/clip'
+import Effect from '../../project/effect'
 import Expression from '../../values/expression'
 import EffectPluginBase from '../../plugin-support/PostEffectBase'
 import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
@@ -22,10 +23,11 @@ import * as KeyframeHelper from '../../helper/keyframe-helper'
 import defaults from '../../helper/defaults'
 import FPSCounter from '../../helper/FPSCounter'
 import * as ExpressionContext from './ExpressionContext'
+import WebGLContextPool from './WebGLContextPool'
 import {mergeInto as mergeAudioBufferInto, arraysToAudioBuffer} from '../../helper/Audio'
 
 interface ExpressionExecuters {
-    [propName: string]: (exposes: ExpressionContext.Exposes) => void
+    [propName: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes
 }
 
 interface IEffectRenderTask {
@@ -68,6 +70,30 @@ interface RenderProgression {
 
 const tsCompileOption: TypeScript.CompilerOptions = {}
 
+/**
+ * Get expression applied values
+ */
+export const applyExpression = (
+    req: RenderingRequest,
+    beforeExpressionParams: { [prop: string]: ParameterValueTypes },
+    expressions: { [prop: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes },
+): { [prop: string]: ParameterValueTypes } => {
+    return _.mapValues(beforeExpressionParams, (value, propName) => {
+        if (expressions[propName!]) {
+            // TODO: Value type Validation
+            const result = expressions[propName!]({
+                req,
+                clipProperties: beforeExpressionParams,
+                currentValue: value
+            })
+
+            return result === void 0 ? value : result
+        }
+
+        return value
+    })
+}
+
 export default class Pipeline
 {
     private _fpsCounter: FPSCounter = new FPSCounter()
@@ -76,7 +102,9 @@ export default class Pipeline
     private _pluginRegistry: PluginRegistry = new PluginRegistry()
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
+    private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver|null = null
+    private webGLContextPool: WebGLContextPool = new WebGLContextPool()
 
     get project() { return this._project }
     set project(project: Project) { this._project = project }
@@ -289,6 +317,7 @@ export default class Pipeline
 
             rootComposition,
             resolver,
+            glContextPool: this.webGLContextPool,
         })
     }
 
@@ -322,7 +351,9 @@ export default class Pipeline
 
                 const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererProps, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
                 rendererAssetProps.forEach(propName => {
-                    rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
+                    rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => {
+                        return value ? req.resolver.resolveAsset(value.assetId) : null
+                    })
                 })
 
                 const rendererExpressions = _(clip.expressions).mapValues((expr: Expression) => {
@@ -342,15 +373,23 @@ export default class Pipeline
                     const effectAssetProps = effectProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
                     const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, effectProps, effect.keyframes)
                     effectAssetProps.forEach(propName => {
-                        effectInitParam[propName] = req.resolver.resolveAsset(effectInitParam[propName].assetId)!
+                        effectInitParam[propName] = effectInitParam[propName]
+                            ? req.resolver.resolveAsset(effectInitParam[propName].assetId)
+                            : null
                     })
 
-                    const effector: EffectPluginBase = new EffectPluginClass()
-                    await effector.initialize(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
+                    let effector = this._effectCache.get(effect)
+                    if (!effector) {
+                        effector = new EffectPluginClass()
+                        this._effectCache.set(effect, effector)
+                        await effector.initialize(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
+                    }
 
                     const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectProps, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
                     effectAssetProps.forEach(propName => {
-                        effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => req.resolver.resolveAsset(value.assetId)!)
+                        effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => {
+                            return value ? req.resolver.resolveAsset(value.assetId) : null
+                        })
                     })
 
                     const effectExpressions = _(effect.expressions).mapValues((expr: Expression) => {
@@ -440,20 +479,7 @@ export default class Pipeline
                     return [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]
                 }))
 
-                const afterExpressionParams = _.mapValues(beforeExpressionParams, (value, propName) => {
-                    if (clipTask.expressions[propName!]) {
-                        // TODO: Value type Validation
-                        const result = clipTask.expressions[propName!]({
-                            req: renderReq,
-                            clipProperties: beforeExpressionParams,
-                            currentValue: value
-                        })
-
-                        return result === void 0 ? value : result
-                    }
-
-                    return value
-                })
+                const afterExpressionParams = applyExpression(renderReq, beforeExpressionParams, clipTask.expressions)
 
                 renderReq = renderReq.clone({parameters: afterExpressionParams})
 
@@ -471,12 +497,19 @@ export default class Pipeline
 
                 await clipTask.renderer.render(renderReq)
 
+                clipBufferCanvas.getContext('2d')!.setTransform(1, 0, 0, 1, 0, 0)
+
                 // Post process effects
                 for (const effectTask of clipTask.effects) {
-                    const effectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => [desc.propName, effectTask.keyframeLUT[desc.propName][req.frame]])) as {[propName: string]: ParameterValueTypes}
+                    const beforeExpressionEffectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => {
+                        return [desc.propName, effectTask.keyframeLUT[desc.propName][req.frame]]
+                    })) as {[propName: string]: ParameterValueTypes}
+
+                    const afterExpressionEffectorParams = applyExpression(renderReq, beforeExpressionEffectorParams, effectTask.expressions)
+
                     const effectRenderReq = req.clone({
                         destCanvas: clipBufferCanvas,
-                        parameters: effectorParams,
+                        parameters: afterExpressionEffectorParams,
                     })
 
                     await effectTask.instance.render(effectRenderReq)

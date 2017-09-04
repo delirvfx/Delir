@@ -98,7 +98,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     private addEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
     {
         ProjectModActions.addEffectIntoClipPayload(dataset.clipId, dataset.effectId)
-        AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+        AppActions.seekPreviewFrame()
     }
 
     private removeClip = clipId =>

@@ -97,7 +97,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
     private _onDragOver = (e: React.DragEvent<HTMLLIElement>) =>
     {
         const {editor: {dragEntity}} = this.props
-        if (dragEntity!.type !== 'clip') return
+        if (!dragEntity || dragEntity.type !== 'clip') return
 
         this.setState({dragovered: true})
     }

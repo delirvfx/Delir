@@ -15,7 +15,7 @@ const {spawn, spawnSync} = require("child_process");
 const paths = {
     src         : {
         root        : join(__dirname, "./src/"),
-        plugins     : join(__dirname, 'src/plugins'),
+        plugins     : join(__dirname, './src/post-effect-plugins'),
         browser     : join(__dirname, "./src/browser/"),
         renderer    : join(__dirname, "./src/frontend/"),
     },
@@ -209,8 +209,10 @@ export async function compilePlugins(done) {
         watch: DELIR_ENV === 'dev',
         context: paths.src.plugins,
         entry: {
+            'chromakey/index': './chromakey/index',
             ...(DELIR_ENV === 'dev' ? {
                 'filler/index': '../experimental-plugins/filler/index',
+                'mmd/index': '../experimental-plugins/mmd/index',
                 // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 // 'plane/index': '../experimental-plugins/plane/index',
                 // 'noise/index': '../experimental-plugins/noise/index',
@@ -224,12 +226,12 @@ export async function compilePlugins(done) {
         devtool: 'cheap-source-map',
         externals: [
             (ctx, request: string, callback) => {
-                if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
-                    // throughs non relative requiring ('./module', '../module', '!!../module')
-                    return callback(null, `require('${request}')`)
-                }
-
-                callback()
+                if (request !== 'delir-core') return callback()
+                callback(null, `require('${request}')`)
+                // if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
+                //     // throughs non relative requiring ('./module', '../module', '!!../module')
+                //     return callback(null, `require('${request}')`)
+                // }
             }
         ],
         resolve: {
@@ -246,6 +248,10 @@ export async function compilePlugins(done) {
                             transpileOnly: true,
                         }},
                     ],
+                },
+                {
+                    test: /\.(frag|vert)$/,
+                    loader: 'raw-loader'
                 },
             ]
         },
@@ -271,13 +277,13 @@ export async function compilePlugins(done) {
 }
 
 export function copyPluginsPackageJson() {
-    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: join(paths.src.root,　'src/')})
+    return g.src(join(paths.src.plugins, '*/package.json'), {base: join(paths.src.plugins)})
         .pipe(g.dest(paths.compiled.plugins));
 }
 
 export function copyExperimentalPluginsPackageJson() {
     return DELIR_ENV === 'dev' ?
-        g.src(join(paths.src.root, 'experimental-plugins/**/package.json'))
+        g.src(join(paths.src.root, 'experimental-plugins/*/package.json'))
             .pipe(g.dest(paths.compiled.plugins))
         : Promise.resolve()
 }
