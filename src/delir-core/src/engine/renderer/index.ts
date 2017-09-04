@@ -8,14 +8,16 @@ import VideoRenderer from './Video/Video'
 import ImageRenderer from './Image/Image'
 import TextRenderer from './Text/Text'
 import AudioRenderer from './Audio/Audio'
+import BufferedRenderer from './Buffered/Buffered'
 
-export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text'
+export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'buffered'
 
 export const RENDERERS: {[name: string]: IRendererStatic} = {
     audio: AudioRenderer,
     video: VideoRenderer,
     image: ImageRenderer,
     text: TextRenderer,
+    buffered: BufferedRenderer,
 }
 
 interface PluginInfo {

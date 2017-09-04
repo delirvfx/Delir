@@ -471,7 +471,7 @@ export default class Pipeline
                     timeOnClip: req.time - (clipTask.clipPlacedFrame / req.framerate),
                     frameOnClip: req.frame - clipTask.clipPlacedFrame,
 
-                    destCanvas: /* isAdjustClip */ false ? destBufferCanvas: clipBufferCanvas,
+                    destCanvas: clipTask.rendererType === 'buffered' ? destBufferCanvas: clipBufferCanvas,
                     destAudioBuffer: channelAudioBuffers,
                 })
 
