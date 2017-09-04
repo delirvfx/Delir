@@ -248,7 +248,6 @@ export default {
 
         const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, propName, frameOnClip)
 
-        console.log(keyframe)
         if (keyframe) {
             dispatcher.dispatch(new Payload(DispatchTypes.ModifyEffectKeyframe, {
                 targetClipId: clipId,
