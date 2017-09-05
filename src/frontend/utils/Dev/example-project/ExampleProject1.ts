@@ -148,11 +148,11 @@ const imageClip = assign(new Delir.Project.Clip(), {
     }
 })
 
-// const c1_t3_cl1 = assign(new Delir.Project.Clip(), {
-//     // renderer: 'plane',
-//     // placedFrame: 0,
-//     // durationFrames: 30 * 10,
-// })
+const adjustmentClip = assign(new Delir.Project.Clip(), {
+    renderer: 'adjustment',
+    placedFrame: 0,
+    durationFrames: 30 * 10,
+})
 
 const c1_t4_cl1 = assign(new Delir.Project.Clip(), {
     renderer: 'video',
@@ -169,8 +169,9 @@ ProjectHelper.addComposition(p, c1)
 // ProjectHelper.addClip(p, c1_t1, imageClip)
 // ProjectHelper.addClip(p, c1_t2, audioClip)
 // ProjectHelper.addClip(p, c1_t3, movieClip)
-ProjectHelper.addClip(p, c1_t4, textClip)
-ProjectHelper.addEffect(p, textClip, assign(new Delir.Project.Effect(), {
+ProjectHelper.addClip(p, c1_t3, textClip)
+ProjectHelper.addClip(p, c1_t4, adjustmentClip)
+ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Project.Effect(), {
     processor: '@ragg/delir-posteffect-chromakey',
     // keyframes: {
     //     color: [

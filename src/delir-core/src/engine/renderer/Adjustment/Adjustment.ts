@@ -17,9 +17,7 @@ export default class AdjustmentRenderer implements IRenderer<Param>
 
     public static provideAssetAssignMap()
     {
-        return {
-            mp4: 'source',
-        }
+        return {}
     }
 
     public static provideParameters(): TypeDescriptor
@@ -28,24 +26,10 @@ export default class AdjustmentRenderer implements IRenderer<Param>
             .number('opacity', { label: 'Opacity', defaultValue: 100, animatable: true })
     }
 
-    private bufferCanvas: HTMLCanvasElement
-    private bufferCtx: CanvasRenderingContext2D
-
-    public async beforeRender(req: PreRenderingRequest<Param>)
-    {
-        this.bufferCanvas = document.createElement('canvas')
-        this.bufferCtx = this.bufferCanvas.getContext('2d')
-    }
+    public async beforeRender(req: PreRenderingRequest<Param>) { return }
 
     public async render(req: RenderingRequest<Param>)
     {
-        const param = req.parameters
-
-        const canvas = this.bufferCanvas
-        canvas.width = req.width
-        canvas.height = req.height
-
-        this.bufferCtx.globalAlpha = clamp(param.opacity, 0, 100) / 100
-        this.bufferCtx.drawImage(req.destCanvas, 0, 0)
+        req.destCanvas.getContext('2d')!.drawImage(req.srcCanvas!, 0, 0)
     }
 }
