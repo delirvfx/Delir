@@ -210,6 +210,7 @@ export async function compilePlugins(done) {
         context: paths.src.plugins,
         entry: {
             'chromakey/index': './chromakey/index',
+            'the-world/index': './the-world/index',
             ...(DELIR_ENV === 'dev' ? {
                 'filler/index': '../experimental-plugins/filler/index',
                 'mmd/index': '../experimental-plugins/mmd/index',

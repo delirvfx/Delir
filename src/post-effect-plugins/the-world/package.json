@@ -1,0 +1,14 @@
+{
+    "name": "@ragg/delir-posteffect-the-world",
+    "version": "0.1.0",
+    "author": "Ragg (https://twitter.com/@_ragg_)",
+    "license": "MIT",
+    "main": "index.js",
+    "engines": {
+        "delir-core": "0.0.0-alpha.3"
+    },
+    "delir": {
+        "name": "The world",
+        "type": "post-effect"
+    }
+}
