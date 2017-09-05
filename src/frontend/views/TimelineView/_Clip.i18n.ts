@@ -11,7 +11,7 @@ export default I18n({
             video: 'video',
             image: 'image',
             text: 'text',
-            buffered: 'buffer',
+            adjustment: 'adjust',
         },
     },
     en: {
@@ -24,7 +24,7 @@ export default I18n({
             video: 'video',
             image: 'image',
             text: 'text',
-            buffered: 'buffer',
+            adjustment: 'adjust',
         },
     }
 })

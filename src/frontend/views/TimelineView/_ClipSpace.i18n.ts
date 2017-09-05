@@ -10,7 +10,7 @@ export default I18n({
             video: '🎥 ムービー',
             image: '🖼️ 画像',
             text: '📝 テキスト',
-            buffered: 'バッファ',
+            adjustment: '✨ 調整クリップ',
         }
     },
     en: {
@@ -22,7 +22,7 @@ export default I18n({
             video: '🎥 Video',
             image: '🖼️ Image',
             text: '📝 Text',
-            buffered: 'Buffer',
+            adjustment: '✨ Adjustment clip',
         }
     }
 })

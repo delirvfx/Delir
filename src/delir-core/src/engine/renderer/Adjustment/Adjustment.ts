@@ -11,9 +11,9 @@ interface Param {
     opacity: number
 }
 
-export default class BufferedRenderer implements IRenderer<Param>
+export default class AdjustmentRenderer implements IRenderer<Param>
 {
-    public static get rendererId(): string { return 'buffered' }
+    public static get rendererId(): string { return 'adjustment' }
 
     public static provideAssetAssignMap()
     {
