@@ -121,7 +121,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      */
     public async render(req: RenderRequest<Params>)
     {
-        const { destCanvas, parameters: {threshold, keyColor} } = req
+        const { srcCanvas, destCanvas, parameters: {threshold, keyColor} } = req
         const destCtx = destCanvas.getContext('2d')
 
         const gl = await req.glContextPool.getContextByToken(this.ctxBindToken)
@@ -133,7 +133,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
         const texCanvasCtx = this.texCanvasCtx
         textureCanvas.width = textureCanvas.height = 2 ** Math.ceil(Math.log2(Math.max(req.width, req.height)))
         texCanvasCtx.clearRect(0, 0, textureCanvas.width, textureCanvas.height)
-        texCanvasCtx.drawImage(destCanvas, 0, 0, textureCanvas.width, textureCanvas.width)
+        texCanvasCtx.drawImage(srcCanvas, 0, 0, textureCanvas.width, textureCanvas.width)
 
         gl.useProgram(this.program)
 
