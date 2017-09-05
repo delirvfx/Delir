@@ -65,8 +65,8 @@ describe('Check exportings', () => {
         expect(Delir.Engine).to.be.an('object')
     })
 
-    it('Delir.LayerPluginBase', () => {
-        expect(Delir.LayerPluginBase).to.be.an('function')
+    it('Delir.PostEffectBase', () => {
+        expect(Delir.PostEffectBase).to.be.an('function')
     })
 
     it('Delir.ProjectHelper', () => {

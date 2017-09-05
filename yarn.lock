@@ -480,8 +480,6 @@ av@0.4.9:
   resolved "https://registry.yarnpkg.com/av/-/av-0.4.9.tgz#8c7165f739580a541ec95071423492b3ffdc6e20"
   dependencies:
     coffeeify "^0.6.0"
-  optionalDependencies:
-    speaker "^0.3.0"
 
 aws-sign2@~0.6.0:
   version "0.6.0"
@@ -6002,15 +6000,6 @@ spdx-expression-parse@~1.0.0:
 spdx-license-ids@^1.0.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-1.2.2.tgz#c9df7a3424594ade6bd11900d596696dc06bac57"
-
-speaker@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/speaker/-/speaker-0.3.0.tgz#36e0ee37e74fb88f7ead9ac9b1f1517b9b82d253"
-  dependencies:
-    bindings "^1.2.1"
-    debug "^2.2.0"
-    nan "^2.2.0"
-    readable-stream "^2.0.5"
 
 speedometer@~0.1.2:
   version "0.1.4"

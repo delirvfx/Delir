@@ -14,7 +14,9 @@ env:
 
 install:
     - npm i -g yarn
-    - yarn install -s
+    - yarn install -s --no-optional
+    # Remove problem optional module
+    - rm -rf ./node_modules/speaker
 
 script:
     - yarn test-front
@@ -27,5 +29,3 @@ addons:
         packages:
             - g++-4.8
             - libfontconfig1-dev
-            # dependent by `av`
-            - libasound2-dev
