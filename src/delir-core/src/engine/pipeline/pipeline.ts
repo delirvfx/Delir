@@ -451,6 +451,8 @@ export default class Pipeline
 
             const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
 
+            // SPEC: The rendering order of the same layer at the same time is not defined.
+            //       In the future, want to ensure that there are no more than two clips in a single layer at a given time.
             const renderTargetClips = layerTask.clips.filter(clip => {
                 if (req.isAudioBufferingNeeded && clip.rendererType === 'audio') {
                     return clip.clipPlacedFrame <= (req.frameOnComposition + audioRenderStartRangeFrame)
@@ -467,21 +469,28 @@ export default class Pipeline
                 clipBufferCanvas.width = req.width
                 clipBufferCanvas.height = req.height
 
-                let renderReq = req.clone({
+                const clipBufferCtx = clipBufferCanvas.getContext('2d')!
+
+                const clipScopeReq = req.clone({
                     timeOnClip: req.time - (clipTask.clipPlacedFrame / req.framerate),
                     frameOnClip: req.frame - clipTask.clipPlacedFrame,
-
-                    destCanvas: /* isAdjustClip */ false ? destBufferCanvas: clipBufferCanvas,
-                    destAudioBuffer: channelAudioBuffers,
                 })
 
+                // Lookup current frame prop value from pre-calculated lookup-table
                 const beforeExpressionParams = _.fromPairs(clipTask.rendererProps.properties.map(desc => {
                     return [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]
                 }))
 
-                const afterExpressionParams = applyExpression(renderReq, beforeExpressionParams, clipTask.expressions)
+                // Apply expression
+                const afterExpressionParams = applyExpression(clipScopeReq, beforeExpressionParams, clipTask.expressions)
 
-                renderReq = renderReq.clone({parameters: afterExpressionParams})
+                const clipRenderReq = clipScopeReq.clone({
+                    parameters: afterExpressionParams,
+
+                    srcCanvas: clipTask.rendererType === 'adjustment' ? destBufferCanvas : null,
+                    destCanvas: clipBufferCanvas,
+                    destAudioBuffer: channelAudioBuffers,
+                })
 
                 if (/* isCompositionClip */ false) {
                     const frameOnComposition = req.frame - clipTask.clipPlacedFrame
@@ -495,9 +504,8 @@ export default class Pipeline
                     })
                 }
 
-                await clipTask.renderer.render(renderReq)
-
-                clipBufferCanvas.getContext('2d')!.setTransform(1, 0, 0, 1, 0, 0)
+                await clipTask.renderer.render(clipRenderReq)
+                clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
 
                 // Post process effects
                 for (const effectTask of clipTask.effects) {
@@ -505,17 +513,36 @@ export default class Pipeline
                         return [desc.propName, effectTask.keyframeLUT[desc.propName][req.frame]]
                     })) as {[propName: string]: ParameterValueTypes}
 
-                    const afterExpressionEffectorParams = applyExpression(renderReq, beforeExpressionEffectorParams, effectTask.expressions)
+                    const afterExpressionEffectorParams = applyExpression(clipScopeReq, beforeExpressionEffectorParams, effectTask.expressions)
 
-                    const effectRenderReq = req.clone({
+                    const effectRenderReq = clipScopeReq.clone({
+                        srcCanvas: clipBufferCanvas,
                         destCanvas: clipBufferCanvas,
                         parameters: afterExpressionEffectorParams,
                     })
 
                     await effectTask.instance.render(effectRenderReq)
+
+                    clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
+                    clipBufferCtx.globalAlpha = 1
                 }
 
-                layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
+                // Render clip rendering result to merger canvas
+                if (clipTask.rendererType === 'adjustment') {
+                    // Merge adjustment clip result to last destination canvas
+
+                    // SPEC: Through prevent painting if adjustment clip renders transparent(opacity: 0).
+                    // SPEC: Behavior when two or more clips exist on same layer at the same time is not defined.
+                    destBufferCtx.globalAlpha = _.clamp(afterExpressionParams.opacity as number, 0, 100) / 100
+                    destBufferCtx.drawImage(clipBufferCanvas, 0, 0)
+                    destBufferCtx.globalAlpha = 1
+
+                    // SPEC: When there are two or more adjustment clips on the same layer at the same time, the layer buffer is cleared for each that clip rendering
+                    //       This is not a problem if there is only one clip at a certain time. (Maybe...)
+                    layerBufferCanvasCtx.clearRect(0, 0, req.width, req.height)
+                } else {
+                    layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
+                }
 
                 if (req.isAudioBufferingNeeded) {
                     await mergeAudioBufferInto(
