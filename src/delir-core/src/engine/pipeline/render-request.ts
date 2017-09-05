@@ -17,6 +17,7 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
         'frameOnComposition',
         'frameOnClip',
 
+        'srcCanvas',
         'destCanvas',
         'width',
         'height',
@@ -59,6 +60,7 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
     //
     // Composition options
     //
+    public readonly srcCanvas: HTMLCanvasElement|null
     public readonly destCanvas: HTMLCanvasElement
     public readonly width: number
     public readonly height: number
