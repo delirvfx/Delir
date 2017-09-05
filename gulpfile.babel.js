@@ -3,6 +3,7 @@ const $ = require("gulp-load-plugins")();
 const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const builder = require('electron-builder')
 const nib = require('nib')
 const notifier = require('node-notifier')
@@ -111,7 +112,7 @@ export function compileRendererJs(done) {
             sourceMapFilename: "map/[file].map",
             path: paths.compiled.root,
         },
-        devtool: "#source-map",
+        devtool: DELIR_ENV === 'dev' ? "#source-map" : 'none',
         externals: [
             (ctx, request, callback) => {
                 if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
@@ -186,8 +187,8 @@ export function compileRendererJs(done) {
                 }
             }),
             ...(DELIR_ENV === 'dev' ? [] : [
-                new webpack.optimize.AggressiveMergingPlugin,
-                new webpack.optimize.UglifyJsPlugin,
+                new webpack.optimize.AggressiveMergingPlugin(),
+                new UglifyJSPlugin(),
             ])
         ]
     },  function(err, stats) {
@@ -224,7 +225,7 @@ export async function compilePlugins(done) {
             path: paths.compiled.plugins,
             libraryTarget: 'commonjs-module',
         },
-        devtool: 'cheap-source-map',
+        devtool: DELIR_ENV === 'dev' ? "#source-map" : 'none',
         externals: [
             (ctx, request: string, callback) => {
                 if (request !== 'delir-core') return callback()
@@ -260,8 +261,8 @@ export async function compilePlugins(done) {
             new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
             ...(DELIR_ENV === 'dev' ? [] : [
-                new webpack.optimize.AggressiveMergingPlugin,
-                new webpack.optimize.UglifyJsPlugin,
+                new webpack.optimize.AggressiveMergingPlugin(),
+                new UglifyJSPlugin(),
             ])
         ]
     },  function(err, stats) {
