@@ -102,7 +102,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         const { parentClip, entity, propName, keyframes, onModified } = this.props
 
         const {keyframeMovement} = this.state
-        if (!parentClip || !propName) return
+        if (!parentClip || !propName || !entity) return
 
         process: {
             if (this._selectedKeyframeId) {
@@ -128,7 +128,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 const data = this._selectedEasingHandleHolderData
                 const transitionPath = this._selectedEasingHandleHolderData.container.querySelector('[data-transition-path]')!
 
-                const keyframes = parentClip.keyframes[propName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
+                const keyframes = entity.keyframes[propName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
                 const keyframeIdx = keyframes.findIndex(kf => kf.id === this._selectedEasingHandleHolderData!.keyframeId)!
                 if (keyframeIdx === -1) break process
 
