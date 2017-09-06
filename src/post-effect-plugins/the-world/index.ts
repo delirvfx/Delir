@@ -13,7 +13,7 @@ interface Params {
     opacity: number
 }
 
-export default class ChromakeyPostEffect extends PostEffectBase {
+export default class TheWorldPostEffect extends PostEffectBase {
     /**
      * Provide usable parameters
      */
