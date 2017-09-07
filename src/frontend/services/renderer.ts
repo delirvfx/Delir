@@ -23,6 +23,7 @@ let canvasContext: CanvasRenderingContext2D
 
 let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
+let isInRendering = false
 
 const state: {
     project: Delir.Project.Project|null,
@@ -149,6 +150,7 @@ const handlePayload = async (payload: KnownPayload) => {
             }))
 
             if (! file) return
+            if (!state.project || !state.composition || !pluginRegistry) return
 
             // deream() の前に一瞬待たないとフリーズしてしまうので
             // awaitを噛ませてステータスを確実に出す
@@ -159,17 +161,26 @@ const handlePayload = async (payload: KnownPayload) => {
                 })
             })
 
-            await deream({
-                project: state.project,
-                rootCompId: state.composition.id,
-                exportPath: file,
-                pluginRegistry,
-                temporaryDir: remote.app.getPath('temp'),
-                ffmpegBin,
-                onProgress: progress => {
-                    setTimeout(() => { AppActions.updateProcessingState(progress.state) }, 0)
-                }
-            })
+            isInRendering = true
+
+            try {
+                await deream({
+                    project: state.project,
+                    rootCompId: state.composition.id,
+                    exportPath: file,
+                    pluginRegistry,
+                    temporaryDir: remote.app.getPath('temp'),
+                    ffmpegBin,
+                    onProgress: progress => {
+                        setTimeout(() => { AppActions.updateProcessingState(progress.state) }, 0)
+                    }
+                })
+
+                isInRendering = false
+            } catch (e) {
+                isInRendering = false
+                throw e
+            }
 
             break
         }
@@ -218,6 +229,11 @@ const rendererService = {
 
     get lastRenderState() {
         return renderState
+    }
+
+    get isInRendering()
+    {
+        return isInRendering
     }
 }
 
