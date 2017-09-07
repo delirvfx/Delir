@@ -4,7 +4,7 @@ import * as Delir from 'delir-core'
 import * as classnames from 'classnames'
 
 import RendererService from '../../services/renderer'
-import {ContextMenu, MenuItem, MenuItemProps} from '../components/ContextMenu'
+import {ContextMenu, MenuItem, MenuItemProps, MenuItemOption} from '../components/ContextMenu'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
@@ -101,9 +101,9 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         AppActions.seekPreviewFrame()
     }
 
-    private removeClip = clipId =>
+    private removeClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
     {
-        ProjectModActions.removeClip(clipId)
+        ProjectModActions.removeClip(dataset.clipId)
     }
 
     private resizeStart = (e: React.DragEvent<HTMLDivElement>) =>
@@ -177,7 +177,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
                         )}
                     </MenuItem>
                     {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
-                    <MenuItem label={t('contextMenu.remove')} onClick={this.removeClip.bind(null, clip.id)} />
+                    <MenuItem label={t('contextMenu.remove')} data-clip-id={clip.id} onClick={this.removeClip} />
                     <MenuItem type='separator' />
                 </ContextMenu>
                 <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>

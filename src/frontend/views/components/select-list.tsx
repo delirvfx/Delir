@@ -26,8 +26,9 @@ export default class SelectList extends React.Component<any, any>
 
     }
 
-    private onClickItem = (idx, e) =>
+    private onClickItem = (e: React.MouseEvent<HTMLDivElement>) =>
     {
+        const idx = parseInt(e.currentTarget.dataset.idx!, 10)
         e.preventDefault()
         e.stopPropagation()
 
@@ -72,7 +73,8 @@ export default class SelectList extends React.Component<any, any>
                     <div
                         key={idx}
                         className={classnames('select-list-item', {'selected': this.state.selected.includes(idx)})}
-                        onClick={this.onClickItem.bind(this, idx)}
+                        data-index={idx}
+                        onClick={this.onClickItem}
                     >
                         {child}
                     </div>

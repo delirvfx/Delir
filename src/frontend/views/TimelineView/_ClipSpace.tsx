@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
-import {ContextMenu, MenuItem} from '../components/ContextMenu'
+import {ContextMenu, MenuItem, MenuItemOption} from '../components/ContextMenu'
 import RendererService from '../../services/renderer'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
@@ -122,9 +122,9 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         })
     }
 
-    private addNewClip = (clipRendererId) =>
+    private addNewClip = ({ dataset }: MenuItemOption<{rendererId: string}>) =>
     {
-        ProjectModActions.createClip(this.props.layer.id!, clipRendererId, 0, 100)
+        ProjectModActions.createClip(this.props.layer.id!, dataset.rendererId, 0, 100)
     }
 
     public render()
@@ -149,7 +149,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                     <MenuItem type='separator' />
                     <MenuItem label={t('contextMenu.createClip')}>
                         {_.map(Delir.Engine.Renderers.RENDERERS, (renderer, idx) =>
-                            <MenuItem keys={idx} label={t(['renderers', renderer.rendererId])} onClick={this.addNewClip.bind(null, renderer.rendererId)} />
+                            <MenuItem keys={idx} label={t(['renderers', renderer.rendererId])} data-renderer-id={renderer.rendererId} onClick={this.addNewClip} />
                         )}
                     </MenuItem>
                     <MenuItem type='separator' />
