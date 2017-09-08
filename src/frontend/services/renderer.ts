@@ -156,6 +156,7 @@ const handlePayload = async (payload: KnownPayload) => {
             // awaitを噛ませてステータスを確実に出す
             await new Promise(resolve => {
                 setImmediate(() => {
+                    AppActions.autoSaveProject()
                     AppActions.updateProcessingState(`Rendering: Initializing`)
                     resolve()
                 })
