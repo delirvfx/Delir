@@ -57,14 +57,21 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
         const project = state.get('project') as Delir.Project.Project
 
         switch (payload.type) {
-            case AppActionsDispatchTypes.SetActiveProject:
-                console.log('✨ Project activated', payload.entity.project)
+            case AppActionsDispatchTypes.SetActiveProject: {
+                __DEV__ && console.log('✨ Project activated', payload.entity.project)
 
-                return state
+                const newState = state
                     .set('project', payload.entity.project)
-                    .set('projectPath', payload.entity.path)
+                    .set('projectPath', payload.entity.path!)
+
+                // No clear activeComposition etc, if project saved as new file
+                if (payload.entity.project === state.get('project')) return newState
+
+                return newState
                     .set('activeComp', null)
                     .set('activeClip', null)
+            }
+
 
             case AppActionsDispatchTypes.ClearActiveProject:
                 __DEV__ && console.log('💥 Project deactivated')
