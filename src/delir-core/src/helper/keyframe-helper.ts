@@ -9,7 +9,7 @@ import {
     AnyParameterTypeDescriptor,
 } from '../plugin-support/type-descriptor'
 
-import bezierEasing from 'bezier-easing'
+import * as bezierEasing from 'bezier-easing'
 
 interface KeyFrameLink {
     previous: Keyframe|null
@@ -342,7 +342,7 @@ function calcBoolKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLi
 
 function calcStringKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): string
 {
-    return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
+    return keyFrameLink.active.value
 }
 
 function calcNumberKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): number
