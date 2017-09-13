@@ -8,7 +8,7 @@
     "build": "./node_modules/.bin/webpack"
   },
   "engines": {
-    "delir": "0.0.x"
+    "delir-core": "0.4.x"
   },
   "delir": {
     "name": "サンプルプラグイン",
