@@ -5,7 +5,7 @@
     "license": "MIT",
     "main": "index.js",
     "engines": {
-        "delir-core": "0.0.0-alpha.3"
+        "delir-core": "0.4.x"
     },
     "delir": {
         "name": "The world",

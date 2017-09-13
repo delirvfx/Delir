@@ -1,6 +1,6 @@
 {
   "name": "delir-core",
-  "version": "0.0.0-alpha.3",
+  "version": "0.4.0",
   "description": "JavaScript VFX Engine",
   "main": "lib/index.js",
   "types": "src/index.ts",
