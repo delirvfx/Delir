@@ -129,9 +129,9 @@ export const descriptorToValueType = (desc: AnyParameterTypeDescriptor) => {
 }
 
 export class TypeDescriptor {
-    properties: AnyParameterTypeDescriptor[] = []
+    public properties: AnyParameterTypeDescriptor[] = []
 
-    // point2d(propName: string, conf: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
+    // public point2d(propName: string, conf: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
     // {
     //     const {defaultValue, label, enabled, animatable} = defaults(conf, {
     //         defaultValue: new Point2D(0, 0),
@@ -143,7 +143,7 @@ export class TypeDescriptor {
     //     return this
     // }
 
-    // point3d(propName: string, conf: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
+    // public point3d(propName: string, conf: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
     // {
     //     const {defaultValue, label, enabled, animatable} = defaults(conf, {
     //         defaultValue: new Point3D(0, 0, 0),
@@ -155,7 +155,7 @@ export class TypeDescriptor {
     //     return this
     // }
 
-    // size2d(propName: string, conf: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
+    // public size2d(propName: string, conf: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
     // {
     //     const {defaultValue, label, enabled, animatable} = defaults(conf, {
     //         defaultValue: new Size2D(0, 0),
@@ -167,7 +167,7 @@ export class TypeDescriptor {
     //     return this
     // }
 
-    // size3d(propName: string, conf: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
+    // public size3d(propName: string, conf: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
     // {
     //     const {defaultValue, label, enabled, animatable} = defaults(conf, {
     //         defaultValue: new Size3D(0, 0, 0),
@@ -179,7 +179,7 @@ export class TypeDescriptor {
     //     return this
     // }
 
-    colorRgb(propName: string, conf: {label: string, defaultValue?: ColorRGB, enabled?: boolean, animatable?: boolean})
+    public colorRgb(propName: string, conf: {label: string, defaultValue?: ColorRGB, enabled?: boolean, animatable?: boolean})
     {
         const {defaultValue, label, enabled, animatable} = defaults(conf, {
             defaultValue: new ColorRGB(0, 0, 0),
@@ -191,7 +191,7 @@ export class TypeDescriptor {
         return this
     }
 
-    colorRgba(propName: string, conf: {label: string, defaultValue?: ColorRGBA, enabled?: boolean, animatable?: boolean})
+    public colorRgba(propName: string, conf: {label: string, defaultValue?: ColorRGBA, enabled?: boolean, animatable?: boolean})
     {
         const {defaultValue, label, enabled, animatable} = defaults(conf, {
             defaultValue: new ColorRGBA(0, 0, 0, 1),
@@ -203,7 +203,7 @@ export class TypeDescriptor {
         return this
     }
 
-    bool(propName: string, conf: {label: string, defaultValue?: boolean, enabled?: boolean, animatable?: boolean})
+    public bool(propName: string, conf: {label: string, defaultValue?: boolean, enabled?: boolean, animatable?: boolean})
     {
         const {defaultValue, label, enabled, animatable} = defaults(conf, {
             defaultValue: false,
@@ -215,7 +215,7 @@ export class TypeDescriptor {
         return this
     }
 
-    string(propName: string, conf: {label: string, defaultValue?: string, enabled?: boolean, animatable?: boolean})
+    public string(propName: string, conf: {label: string, defaultValue?: string, enabled?: boolean, animatable?: boolean})
     {
         const {defaultValue, label, enabled, animatable} = defaults(conf, {
             defaultValue: '',
@@ -227,7 +227,7 @@ export class TypeDescriptor {
         return this
     }
 
-    number(propName: string, conf: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
+    public number(propName: string, conf: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
     {
         const {defaultValue, label, enabled, animatable} = defaults(conf, {
             defaultValue: 0,
@@ -239,7 +239,7 @@ export class TypeDescriptor {
         return this
     }
 
-    float(propName: string, conf: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
+    public float(propName: string, conf: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
     {
         const {defaultValue, label, enabled, animatable} = defaults(conf, {
             defaultValue: 0,
@@ -251,7 +251,7 @@ export class TypeDescriptor {
         return this
     }
 
-    // pulse(propName: string, conf: {label: string, enabled?: boolean})
+    // public pulse(propName: string, conf: {label: string, enabled?: boolean})
     // {
     //     const {label, enabled} = defaults(conf, {
     //         defaultValue: false,
@@ -262,7 +262,7 @@ export class TypeDescriptor {
     //     return this
     // }
 
-    enum(propName: string, conf: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
+    public enum(propName: string, conf: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
     {
         const {defaultValue, label, enabled, selection} = defaults(conf, {
             enabled: true,
@@ -284,7 +284,7 @@ export class TypeDescriptor {
         return this
     }
 
-    // clip(propName: string, conf: {label: string, enabled?: boolean})
+    // public clip(propName: string, conf: {label: string, enabled?: boolean})
     // {
     //     const {label, enabled} = defaults(conf, {
     //         enabled: true,
@@ -294,7 +294,7 @@ export class TypeDescriptor {
     //     return this
     // }
 
-    asset(propName: string, conf: {label: string, enabled?: boolean, extensions: Array<string>})
+    public asset(propName: string, conf: {label: string, enabled?: boolean, extensions: Array<string>})
     {
         const {label, enabled, extensions} = defaults(conf, {
             enabled: true,
@@ -311,7 +311,7 @@ export class TypeDescriptor {
         return this
     }
 
-    // arrayOf(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
+    // public arrayOf(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
     // {
     //     const {label, enabled} = defaults(conf, {
     //         enabled: true,
@@ -321,7 +321,7 @@ export class TypeDescriptor {
     //     return this
     // }
 
-    // structure(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
+    // public structure(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
     // {
     //     const {label, enabled} = defaults(conf, {
     //         enabled: true,
@@ -339,82 +339,82 @@ export default class Type
         throw new TypeError('Type is can not constructing')
     }
 
-    // static point2d(propName: string, option: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
+    // public static point2d(propName: string, option: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
     // {
     //     return (new TypeDescriptor()).point2d(propName, option)
     // }
 
-    // static point3d(propName: string, option: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
+    // public static point3d(propName: string, option: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
     // {
     //     return (new TypeDescriptor()).point3d(propName, option)
     // }
 
-    // static size2d(propName: string, option: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
+    // public static size2d(propName: string, option: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
     // {
     //     return (new TypeDescriptor()).size2d(propName, option)
     // }
 
-    // static size3d(propName: string, option: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
+    // public static size3d(propName: string, option: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
     // {
     //     return (new TypeDescriptor()).size3d(propName, option)
     // }
 
-    static colorRgb(propName: string, option: {label: string, defaultValue?: ColorRGB, enabled?: boolean, animatable?: boolean})
+    public static colorRgb(propName: string, option: {label: string, defaultValue?: ColorRGB, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).colorRgb(propName, option)
     }
 
-    static colorRgba(propName: string, option: {label: string, defaultValue?: ColorRGBA, enabled?: boolean, animatable?: boolean})
+    public static colorRgba(propName: string, option: {label: string, defaultValue?: ColorRGBA, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).colorRgba(propName, option)
     }
 
-    static bool(propName: string, option: {label: string, defaultValue?: boolean, enabled?: boolean, animatable?: boolean})
+    public static bool(propName: string, option: {label: string, defaultValue?: boolean, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).bool(propName, option)
     }
 
-    static string(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, animatable?: boolean})
+    public static string(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).string(propName, option)
     }
 
-    static number(propName: string, option: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
+    public static number(propName: string, option: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).number(propName, option)
     }
 
-    static float(propName: string, option: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
+    public static float(propName: string, option: {label: string, defaultValue?: number, enabled?: boolean, animatable?: boolean})
     {
         return (new TypeDescriptor()).float(propName, option)
     }
 
-    // static pulse(propName: string, option: {label: string, enabled?: boolean})
+    // public static pulse(propName: string, option: {label: string, enabled?: boolean})
     // {
     //     return (new TypeDescriptor()).pulse(propName, option)
     // }
 
-    // static enum(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
+    // public static enum(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
     // {
     //     return (new TypeDescriptor()).enum(propName, option)
     // }
 
-    // static clip(propName: string, option: {label: string, enabled?: boolean})
+    // public static clip(propName: string, option: {label: string, enabled?: boolean})
     // {
     //     return (new TypeDescriptor()).clip(propName, option)
     // }
 
-    static asset(propName: string, option: {label: string, enabled?: boolean, extensions: string[]})
+    public static asset(propName: string, option: {label: string, enabled?: boolean, extensions: string[]})
     {
         return (new TypeDescriptor()).asset(propName, option)
     }
 
-    // static arrayOf(propName: string, option: {label: string, enabled?: boolean}, type: TypeDescriptor)
+    // public static arrayOf(propName: string, option: {label: string, enabled?: boolean}, type: TypeDescriptor)
     // {
     //     return (new TypeDescriptor()).arrayOf(propName, option, type)
     // }
 
-    static none()
+    public static none()
     {
       return new TypeDescriptor()
     }
