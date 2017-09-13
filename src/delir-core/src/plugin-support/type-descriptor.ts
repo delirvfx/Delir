@@ -12,22 +12,22 @@ import {
 } from '../values'
 
 export type ParameterType =
-    'POINT_2D'      |
-    'POINT_3D'      |
-    'SIZE_2D'       |
-    'SIZE_3D'       |
-    'COLOR_RGB'     |
-    'COLOR_RGBA'    |
-    'BOOL'          |
-    'STRING'        |
-    'NUMBER'        |
-    'FLOAT'         |
-    'ENUM'          |
-    'CLIP'          |
-    'PULSE'         |
-    'ASSET'         |
-    'ARRAY'         |
-    'STRUCTURE'
+    // | 'POINT_2D'
+    // | 'POINT_3D'
+    // | 'SIZE_2D'
+    // | 'SIZE_3D'
+    | 'COLOR_RGB'
+    | 'COLOR_RGBA'
+    | 'BOOL'
+    | 'STRING'
+    | 'NUMBER'
+    | 'FLOAT'
+    | 'ENUM'
+    // | 'CLIP'
+    // | 'PULSE'
+    | 'ASSET'
+    // | 'ARRAY'
+    // | 'STRUCTURE'
 
 export interface ParameterTypeDescriptor<T extends ParameterType> {
     type: T
@@ -37,18 +37,18 @@ export interface ParameterTypeDescriptor<T extends ParameterType> {
     animatable: boolean|null
 }
 
-export interface Point2DTypeDescripter extends ParameterTypeDescriptor<'POINT_2D'> {
-    defaultValue?: Point2D
-}
-export interface Point3DTypeDescripter extends ParameterTypeDescriptor<'POINT_3D'> {
-    defaultValue?: Point3D
-}
-export interface Size2DTypeDescripter extends ParameterTypeDescriptor<'SIZE_2D'> {
-    defaultValue?: Size2D
-}
-export interface Size3DTypeDescripter extends ParameterTypeDescriptor<'SIZE_3D'> {
-    defaultValue?: Size3D
-}
+// export interface Point2DTypeDescripter extends ParameterTypeDescriptor<'POINT_2D'> {
+//     defaultValue?: Point2D
+// }
+// export interface Point3DTypeDescripter extends ParameterTypeDescriptor<'POINT_3D'> {
+//     defaultValue?: Point3D
+// }
+// export interface Size2DTypeDescripter extends ParameterTypeDescriptor<'SIZE_2D'> {
+//     defaultValue?: Size2D
+// }
+// export interface Size3DTypeDescripter extends ParameterTypeDescriptor<'SIZE_3D'> {
+//     defaultValue?: Size3D
+// }
 export interface ColorRGBTypeDescripter extends ParameterTypeDescriptor<'COLOR_RGB'> {
     defaultValue?: ColorRGB
 }
@@ -67,43 +67,43 @@ export interface NumberTypeDescripter extends ParameterTypeDescriptor<'NUMBER'> 
 export interface FloatTypeDescripter extends ParameterTypeDescriptor<'FLOAT'> {
     defaultValue?: number
 }
-export interface PulseTypeDescripter extends ParameterTypeDescriptor<'PULSE'> {
-    defaultValue?: true,
-}
+// export interface PulseTypeDescripter extends ParameterTypeDescriptor<'PULSE'> {
+//     defaultValue?: true,
+// }
 export interface EnumTypeDescripter extends ParameterTypeDescriptor<'ENUM'> {
     selection: string[]
     defaultValue?: string
 }
-export interface ClipTypeDescripter extends ParameterTypeDescriptor<'CLIP'> {}
+// export interface ClipTypeDescripter extends ParameterTypeDescriptor<'CLIP'> {}
 export interface AssetTypeDescripter extends ParameterTypeDescriptor<'ASSET'> {
-    extensions: Array<string>
+    extensions: string[]
 }
-export interface ArrayOfTypeDescripter extends ParameterTypeDescriptor<'ARRAY'> {
-    subType: TypeDescriptor
-}
-export interface StructureTypeDescripter extends ParameterTypeDescriptor<'STRUCTURE'> {
-    // TODO: implement structure type
-    subType: TypeDescriptor
-}
+// export interface ArrayOfTypeDescripter extends ParameterTypeDescriptor<'ARRAY'> {
+//     subType: TypeDescriptor
+// }
+// export interface StructureTypeDescripter extends ParameterTypeDescriptor<'STRUCTURE'> {
+//     // TODO: implement structure type
+//     subType: TypeDescriptor
+// }
 
 export type AnyParameterTypeDescriptor =
-    Point2DTypeDescripter
-    | Point3DTypeDescripter
-    | Size2DTypeDescripter
-    | Size3DTypeDescripter
-    | Size3DTypeDescripter
+    // | Point2DTypeDescripter
+    // | Point3DTypeDescripter
+    // | Size2DTypeDescripter
+    // | Size3DTypeDescripter
+    // | Size3DTypeDescripter
     | ColorRGBTypeDescripter
     | ColorRGBATypeDescripter
     | BoolTypeDescripter
     | StringTypeDescripter
     | NumberTypeDescripter
     | FloatTypeDescripter
-    | PulseTypeDescripter
+    // | PulseTypeDescripter
     | EnumTypeDescripter
-    | ClipTypeDescripter
+    // | ClipTypeDescripter
     | AssetTypeDescripter
-    | ArrayOfTypeDescripter
-    | StructureTypeDescripter
+    // | ArrayOfTypeDescripter
+    // | StructureTypeDescripter
 
 export type ParameterValueTypes =
     | Point2D
@@ -120,10 +120,10 @@ export type ParameterValueTypes =
 
 export const descriptorToValueType = (desc: AnyParameterTypeDescriptor) => {
      switch (desc.type) {
-         case 'POINT_2D': return Point2D
-         case 'POINT_3D': return Point3D
-         case 'SIZE_2D': return Size2D
-         case 'SIZE_3D': return Size3D
+        //  case 'POINT_2D': return Point2D
+        //  case 'POINT_3D': return Point3D
+        //  case 'SIZE_2D': return Size2D
+        //  case 'SIZE_3D': return Size3D
          default: throw new Error(`Unsupported parameter type ${desc.type}`)
      }
 }
@@ -131,53 +131,53 @@ export const descriptorToValueType = (desc: AnyParameterTypeDescriptor) => {
 export class TypeDescriptor {
     properties: AnyParameterTypeDescriptor[] = []
 
-    point2d(propName: string, conf: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
-    {
-        const {defaultValue, label, enabled, animatable} = defaults(conf, {
-            defaultValue: new Point2D(0, 0),
-            enabled: true,
-            animatable: true
-        })
+    // point2d(propName: string, conf: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
+    // {
+    //     const {defaultValue, label, enabled, animatable} = defaults(conf, {
+    //         defaultValue: new Point2D(0, 0),
+    //         enabled: true,
+    //         animatable: true
+    //     })
 
-        this.properties.push({type: 'POINT_2D', propName, defaultValue, label, enabled, animatable})
-        return this
-    }
+    //     this.properties.push({type: 'POINT_2D', propName, defaultValue, label, enabled, animatable})
+    //     return this
+    // }
 
-    point3d(propName: string, conf: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
-    {
-        const {defaultValue, label, enabled, animatable} = defaults(conf, {
-            defaultValue: new Point3D(0, 0, 0),
-            enabled: true,
-            animatable: true,
-        })
+    // point3d(propName: string, conf: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
+    // {
+    //     const {defaultValue, label, enabled, animatable} = defaults(conf, {
+    //         defaultValue: new Point3D(0, 0, 0),
+    //         enabled: true,
+    //         animatable: true,
+    //     })
 
-        this.properties.push({type: 'POINT_3D', propName, defaultValue, label, enabled, animatable})
-        return this
-    }
+    //     this.properties.push({type: 'POINT_3D', propName, defaultValue, label, enabled, animatable})
+    //     return this
+    // }
 
-    size2d(propName: string, conf: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
-    {
-        const {defaultValue, label, enabled, animatable} = defaults(conf, {
-            defaultValue: new Size2D(0, 0),
-            enabled: true,
-            animatable: true,
-        })
+    // size2d(propName: string, conf: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
+    // {
+    //     const {defaultValue, label, enabled, animatable} = defaults(conf, {
+    //         defaultValue: new Size2D(0, 0),
+    //         enabled: true,
+    //         animatable: true,
+    //     })
 
-        this.properties.push({type: 'SIZE_2D', propName, defaultValue, label, enabled, animatable})
-        return this
-    }
+    //     this.properties.push({type: 'SIZE_2D', propName, defaultValue, label, enabled, animatable})
+    //     return this
+    // }
 
-    size3d(propName: string, conf: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
-    {
-        const {defaultValue, label, enabled, animatable} = defaults(conf, {
-            defaultValue: new Size3D(0, 0, 0),
-            enabled: true,
-            animatable: true,
-        })
+    // size3d(propName: string, conf: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
+    // {
+    //     const {defaultValue, label, enabled, animatable} = defaults(conf, {
+    //         defaultValue: new Size3D(0, 0, 0),
+    //         enabled: true,
+    //         animatable: true,
+    //     })
 
-        this.properties.push({type: 'SIZE_3D', propName, defaultValue, label, enabled, animatable})
-        return this
-    }
+    //     this.properties.push({type: 'SIZE_3D', propName, defaultValue, label, enabled, animatable})
+    //     return this
+    // }
 
     colorRgb(propName: string, conf: {label: string, defaultValue?: ColorRGB, enabled?: boolean, animatable?: boolean})
     {
@@ -251,16 +251,16 @@ export class TypeDescriptor {
         return this
     }
 
-    pulse(propName: string, conf: {label: string, enabled?: boolean})
-    {
-        const {label, enabled} = defaults(conf, {
-            defaultValue: false,
-            enabled: true,
-        })
+    // pulse(propName: string, conf: {label: string, enabled?: boolean})
+    // {
+    //     const {label, enabled} = defaults(conf, {
+    //         defaultValue: false,
+    //         enabled: true,
+    //     })
 
-        this.properties.push({type: 'PULSE', propName, label, enabled, animatable: true})
-        return this
-    }
+    //     this.properties.push({type: 'PULSE', propName, label, enabled, animatable: true})
+    //     return this
+    // }
 
     enum(propName: string, conf: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
     {
@@ -284,15 +284,15 @@ export class TypeDescriptor {
         return this
     }
 
-    clip(propName: string, conf: {label: string, enabled?: boolean})
-    {
-        const {label, enabled} = defaults(conf, {
-            enabled: true,
-        })
+    // clip(propName: string, conf: {label: string, enabled?: boolean})
+    // {
+    //     const {label, enabled} = defaults(conf, {
+    //         enabled: true,
+    //     })
 
-        this.properties.push({type: 'CLIP', propName, label, enabled, animatable: false})
-        return this
-    }
+    //     this.properties.push({type: 'CLIP', propName, label, enabled, animatable: false})
+    //     return this
+    // }
 
     asset(propName: string, conf: {label: string, enabled?: boolean, extensions: Array<string>})
     {
@@ -311,25 +311,25 @@ export class TypeDescriptor {
         return this
     }
 
-    arrayOf(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
-    {
-        const {label, enabled} = defaults(conf, {
-            enabled: true,
-        })
+    // arrayOf(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
+    // {
+    //     const {label, enabled} = defaults(conf, {
+    //         enabled: true,
+    //     })
 
-        this.properties.push({type: 'ARRAY', propName, subType: type, label, enabled, animatable: false})
-        return this
-    }
+    //     this.properties.push({type: 'ARRAY', propName, subType: type, label, enabled, animatable: false})
+    //     return this
+    // }
 
-    structure(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
-    {
-        const {label, enabled} = defaults(conf, {
-            enabled: true,
-        })
+    // structure(propName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
+    // {
+    //     const {label, enabled} = defaults(conf, {
+    //         enabled: true,
+    //     })
 
-        this.properties.push({type: 'STRUCTURE', propName, subType: type, label, enabled, animatable: false})
-        return this
-    }
+    //     this.properties.push({type: 'STRUCTURE', propName, subType: type, label, enabled, animatable: false})
+    //     return this
+    // }
 }
 
 export default class Type
@@ -339,25 +339,25 @@ export default class Type
         throw new TypeError('Type is can not constructing')
     }
 
-    static point2d(propName: string, option: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
-    {
-        return (new TypeDescriptor()).point2d(propName, option)
-    }
+    // static point2d(propName: string, option: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
+    // {
+    //     return (new TypeDescriptor()).point2d(propName, option)
+    // }
 
-    static point3d(propName: string, option: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
-    {
-        return (new TypeDescriptor()).point3d(propName, option)
-    }
+    // static point3d(propName: string, option: {label: string, defaultValue?: Point3D, enabled?: boolean, animatable?: boolean})
+    // {
+    //     return (new TypeDescriptor()).point3d(propName, option)
+    // }
 
-    static size2d(propName: string, option: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
-    {
-        return (new TypeDescriptor()).size2d(propName, option)
-    }
+    // static size2d(propName: string, option: {label: string, defaultValue?: Size2D, enabled?: boolean, animatable?: boolean})
+    // {
+    //     return (new TypeDescriptor()).size2d(propName, option)
+    // }
 
-    static size3d(propName: string, option: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
-    {
-        return (new TypeDescriptor()).size3d(propName, option)
-    }
+    // static size3d(propName: string, option: {label: string, defaultValue?: Size3D, enabled?: boolean, animatable?: boolean})
+    // {
+    //     return (new TypeDescriptor()).size3d(propName, option)
+    // }
 
     static colorRgb(propName: string, option: {label: string, defaultValue?: ColorRGB, enabled?: boolean, animatable?: boolean})
     {
@@ -389,30 +389,30 @@ export default class Type
         return (new TypeDescriptor()).float(propName, option)
     }
 
-    static pulse(propName: string, option: {label: string, enabled?: boolean})
-    {
-        return (new TypeDescriptor()).pulse(propName, option)
-    }
+    // static pulse(propName: string, option: {label: string, enabled?: boolean})
+    // {
+    //     return (new TypeDescriptor()).pulse(propName, option)
+    // }
 
-    static enum(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
-    {
-        return (new TypeDescriptor()).enum(propName, option)
-    }
+    // static enum(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
+    // {
+    //     return (new TypeDescriptor()).enum(propName, option)
+    // }
 
-    static clip(propName: string, option: {label: string, enabled?: boolean})
-    {
-        return (new TypeDescriptor()).clip(propName, option)
-    }
+    // static clip(propName: string, option: {label: string, enabled?: boolean})
+    // {
+    //     return (new TypeDescriptor()).clip(propName, option)
+    // }
 
     static asset(propName: string, option: {label: string, enabled?: boolean, extensions: string[]})
     {
         return (new TypeDescriptor()).asset(propName, option)
     }
 
-    static arrayOf(propName: string, option: {label: string, enabled?: boolean}, type: TypeDescriptor)
-    {
-        return (new TypeDescriptor()).arrayOf(propName, option, type)
-    }
+    // static arrayOf(propName: string, option: {label: string, enabled?: boolean}, type: TypeDescriptor)
+    // {
+    //     return (new TypeDescriptor()).arrayOf(propName, option, type)
+    // }
 
     static none()
     {
@@ -420,10 +420,10 @@ export default class Type
     }
 }
 
-export const POINT_2D = 'POINT_2D'
-export const POINT_3D = 'POINT_3D'
-export const SIZE_2D = 'SIZE_2D'
-export const SIZE_3D = 'SIZE_3D'
+// export const POINT_2D = 'POINT_2D'
+// export const POINT_3D = 'POINT_3D'
+// export const SIZE_2D = 'SIZE_2D'
+// export const SIZE_3D = 'SIZE_3D'
 export const COLOR_RGB = 'COLOR_RGB'
 export const COLOR_RGBA = 'COLOR_RGBA'
 export const BOOL = 'BOOL'
@@ -431,8 +431,8 @@ export const STRING = 'STRING'
 export const NUMBER = 'NUMBER'
 export const FLOAT = 'FLOAT'
 export const ENUM = 'ENUM'
-export const CLIP = 'CLIP'
+// export const CLIP = 'CLIP'
 export const ASSET = 'ASSET'
-export const PULSE = 'PULSE'
-export const ARRAY = 'ARRAY'
-export const STRUCTURE = 'STRUCTURE'
+// export const PULSE = 'PULSE'
+// export const ARRAY = 'ARRAY'
+// export const STRUCTURE = 'STRUCTURE'
