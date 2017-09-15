@@ -15,6 +15,7 @@ const expressionAPITypeDef = {
 
 interface Props {
     title: string| null
+    entityId: string | null
     code: string|null
     onClose: (result: ExpressionEditor.EditorResult) => void
 }
@@ -31,10 +32,10 @@ namespace ExpressionEditor {
     }
 }
 
-class ExpressionEditor extends React.Component<Props, null> {
+class ExpressionEditor extends React.Component<Props> {
     public static propTypes = {
         title: PropTypes.string.isRequired,
-        show: PropTypes.bool.isRequired,
+        entityId: PropTypes.string.isRequired,
         code: PropTypes.string,
         onClose: PropTypes.func.isRequired
     }
@@ -74,6 +75,13 @@ class ExpressionEditor extends React.Component<Props, null> {
         this._editor.onDidFocusEditor(this.onFocusEditor)
         this._editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.closeWithSave, 'cond1')
         // this._editor.addCommand(monaco.KeyCode.Escape, this.closeWithoutSave, 'cond2')
+    }
+
+    public shouldComponentUpdate(nextProps: Props, nextState: {})
+    {
+        // Only update contents on target entity changed
+        // (Guard from parent component controll to reset content)
+        return nextProps.entityId !== this.props.entityId
     }
 
     public componentDidUpdate()
