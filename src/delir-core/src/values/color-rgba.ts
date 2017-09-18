@@ -6,6 +6,11 @@ export interface ColorRgbaJSON {
 }
 
 export default class ColorRGBA {
+    public static fromJSON(json: ColorRgbaJSON)
+    {
+        return new ColorRGBA(json.red, json.green, json.blue, json.alpha)
+    }
+
     private _red: number
     private _green: number
     private _blue: number
@@ -48,7 +53,7 @@ export default class ColorRGBA {
         )
     }
 
-    public toJSON()
+    public toJSON(): ColorRgbaJSON
     {
         return {
             red: this.r,
