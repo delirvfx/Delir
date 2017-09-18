@@ -1,4 +1,5 @@
 import {KeyframeScheme} from './keyframe'
+import {EffectScheme} from './effect'
 import {ExpressionJSON} from '../../values/expression'
 
 export interface ClipConfigScheme {
@@ -11,7 +12,7 @@ export interface ClipConfigScheme {
 export interface ClipScheme {
     id: string|null
     config: ClipConfigScheme
-    effects: any[]
-    keyframes: {[keyName:string]: KeyframeScheme[]}
+    effects: EffectScheme[]
+    keyframes: {[keyName: string]: KeyframeScheme[]}
     expressions: {[keyName: string]: ExpressionJSON}
 }
