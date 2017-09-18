@@ -13,7 +13,7 @@ import PluginRegistry from './plugin-support/plugin-registry'
 
 import * as ProjectHelper from './helper/project-helper'
 import * as KeyframeHelper from './helper/keyframe-helper'
-import ProjectMigrater from './helper/ProjectMigrater'
+import ProjectMigrator from './helper/ProjectMigrator'
 
 export {
     // Core (Namaspaces)
@@ -35,7 +35,7 @@ export {
     // import shorthand
     ProjectHelper,
     KeyframeHelper,
-    ProjectMigrater,
+    ProjectMigrator,
 
     // Types
     AnyParameterTypeDescriptor,
