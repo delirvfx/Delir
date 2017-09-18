@@ -1,3 +1,4 @@
+import {BSON} from 'bson'
 import Project from '../project'
 import Asset from '../asset'
 import Composition from '../composition'
@@ -36,8 +37,8 @@ describe('project structure specs', () => {
             const lane1 = new Layer()
             comp1.layers.push(lane1)
 
-            const pbson = project.serialize()
-            expect(Project.deserialize(pbson).toJSON()).to.eql(project.toJSON())
+            const pjson = (new BSON()).deserialize(project.serialize())
+            expect(Project.deserialize(pjson).toJSON()).to.eql(project.toJSON())
         })
     })
 })

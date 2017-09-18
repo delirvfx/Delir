@@ -1,0 +1,1837 @@
+{
+    "formatVersion": "2017091401",
+    "assets": [
+        {
+            "fileType": "mp3",
+            "name": "Come_On_Come_On.mp3",
+            "path": "/meow/Come_On_Come_On.mp3",
+            "data": null,
+            "id": "5ebf412d-a105-4e71-8d77-f5648338bb34"
+        },
+        {
+            "fileType": "mp4",
+            "name": "disco.mp4",
+            "path": "/meow/disco.mp4",
+            "data": null,
+            "id": "44b8c12b-99d4-4759-8a97-7bdf7a1693a6"
+        },
+        {
+            "fileType": "mp4",
+            "name": "stable.mp4",
+            "path": "/meow/stable.mp4",
+            "data": null,
+            "id": "3aedffb1-6b0f-4263-a1b1-53ae5642636a"
+        },
+        {
+            "fileType": "mp4",
+            "name": "chill.mp4",
+            "path": "/meow/chill.mp4",
+            "data": null,
+            "id": "12fcc520-0631-4cf0-9075-40817016b289"
+        },
+        {
+            "fileType": "mp4",
+            "name": "confused.mp4",
+            "path": "/meow/confused.mp4",
+            "data": null,
+            "id": "3e662f2f-c5f5-4891-a2b7-8a6c7129bf62"
+        },
+        {
+            "fileType": "jpg",
+            "name": "beach-wallpaper.jpg",
+            "path": "/meow/beach-wallpaper.jpg",
+            "data": null,
+            "id": "e491c76b-8443-4baf-8608-f347969d0bf3"
+        },
+        {
+            "fileType": "mp4",
+            "name": "deal.mp4",
+            "path": "/meow/deal.mp4",
+            "data": null,
+            "id": "fb3b1626-7d5d-4653-96de-3232d752a361"
+        }
+    ],
+    "compositions": [
+        {
+            "id": "1af378f1-fc65-4fea-8d5a-6d4eeca0bcc9",
+            "config": {
+                "name": "New Composition",
+                "width": 640,
+                "height": 360,
+                "framerate": 30,
+                "durationFrames": 990,
+                "samplingRate": 48000,
+                "audioChannels": 2,
+                "backgroundColor": {
+                    "red": 0,
+                    "green": 0,
+                    "blue": 0
+                }
+            },
+            "layers": [
+                {
+                    "id": "4fcbc380-6655-4eed-9dd7-2d77022eada7",
+                    "config": {
+                        "name": "it"
+                    },
+                    "clips": [
+                        {
+                            "id": "01b42279-004e-42ab-a251-c1ad9ccfbe60",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 603,
+                                "durationFrames": 54,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "6bbcd7e3-e030-40e8-b2fb-6559f5dacfd8",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "12fcc520-0631-4cf0-9075-40817016b289"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "loop": [
+                                    {
+                                        "id": "3a6fa729-08d1-4289-8a25-07229e795bb5",
+                                        "config": {
+                                            "value": true,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "scale": [
+                                    {
+                                        "id": "65b26e1b-2675-48cb-afc6-2b33990fcd35",
+                                        "config": {
+                                            "value": 712.15,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 2
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "3ed7442d-f830-4dd8-b081-4dc581e0e762",
+                                        "config": {
+                                            "value": 222,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 2
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "e1ded597-25a3-43ff-bf7a-132639dfeb8a",
+                                        "config": {
+                                            "value": 85,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 2
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        },
+                        {
+                            "id": "e1462d7d-b39c-4cc4-aa91-547b018369d1",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 721,
+                                "durationFrames": 54,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "285ebd6d-ec37-4c9b-b1c0-035604f7911b",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "12fcc520-0631-4cf0-9075-40817016b289"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "loop": [
+                                    {
+                                        "id": "f2e8f005-4064-43d5-9d04-a57eefe1a26f",
+                                        "config": {
+                                            "value": true,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "13712fe3-70c1-4bda-91a7-8df1f9fea01e",
+                                        "config": {
+                                            "value": 120,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 6
+                                        }
+                                    }
+                                ],
+                                "scale": [
+                                    {
+                                        "id": "7500805e-c206-4528-afc0-5052875c62be",
+                                        "config": {
+                                            "value": 1096.09,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 6
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "a1f76aac-5f45-4a05-9ba8-7cad15556e98",
+                                        "config": {
+                                            "value": 52,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 4
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        },
+                        {
+                            "id": "489ea97b-a9d5-47de-bee6-e684f57bd063",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 838,
+                                "durationFrames": 56,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [
+                                {
+                                    "id": "b5a649b9-643d-4fd0-963e-9d591a9db477",
+                                    "config": {
+                                        "processor": "@ragg/delir-posteffect-chromakey",
+                                        "keyframeInterpolationMethod": "linear"
+                                    },
+                                    "keyframes": {
+                                        "keyColor": [
+                                            {
+                                                "id": "6fc4e197-dada-4ded-a0a4-e5f2b2538c80",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 19
+                                                }
+                                            }
+                                        ],
+                                        "threshold": [
+                                            {
+                                                "id": "10f97591-7b6a-4249-9fc0-61a13442271a",
+                                                "config": {
+                                                    "value": 30.36,
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 19
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "expressions": {}
+                                }
+                            ],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "ccace837-dfa8-4cee-83d0-27548e5079d6",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "3e662f2f-c5f5-4891-a2b7-8a6c7129bf62"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "d7067f83-8387-44b9-812e-abfb1ce650e4",
+                                        "config": {
+                                            "value": 117,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 2
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "dd19e0aa-94e4-43ee-b41d-207f0c4f6fce",
+                                        "config": {
+                                            "value": 17,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 2
+                                        }
+                                    }
+                                ],
+                                "scale": [
+                                    {
+                                        "id": "edd05f84-76ce-429b-8734-370b44c4d74d",
+                                        "config": {
+                                            "value": 1309.53,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 2
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        },
+                        {
+                            "id": "0f85c77e-633f-4ce5-98cb-06d66f971356",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 947,
+                                "durationFrames": 100,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [
+                                {
+                                    "id": "ce5e556d-b5fe-4c28-91fb-c70e33470a49",
+                                    "config": {
+                                        "processor": "@ragg/delir-posteffect-chromakey",
+                                        "keyframeInterpolationMethod": "linear"
+                                    },
+                                    "keyframes": {
+                                        "keyColor": [
+                                            {
+                                                "id": "812fec80-1946-4b65-af40-31f992209888",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 21
+                                                }
+                                            }
+                                        ],
+                                        "threshold": [
+                                            {
+                                                "id": "94d5796d-ce7c-4429-8623-514ee6e85147",
+                                                "config": {
+                                                    "value": 36.52,
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 21
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "expressions": {}
+                                }
+                            ],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "3be1f36b-1187-452e-9ead-b80e5ce851e0",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "fb3b1626-7d5d-4653-96de-3232d752a361"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "ba3d6476-c5d3-452d-b456-2f5766c5cfbd",
+                                        "config": {
+                                            "value": 306,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 4
+                                        }
+                                    },
+                                    {
+                                        "id": "40674a2c-6c63-47d0-a345-7110e6a335ce",
+                                        "config": {
+                                            "value": 152,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 43
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "207524f3-13cd-461a-a36a-e785f5d6c1cd",
+                                        "config": {
+                                            "value": 183,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 4
+                                        }
+                                    },
+                                    {
+                                        "id": "b0f9a6b3-9ed7-4d95-b614-dac3a784014e",
+                                        "config": {
+                                            "value": 12,
+                                            "easeInParam": [
+                                                1,
+                                                0.9999999643869555
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 43
+                                        }
+                                    }
+                                ],
+                                "scale": [
+                                    {
+                                        "id": "ef657080-07a1-456a-b54f-86ce0b93f720",
+                                        "config": {
+                                            "value": 0,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0.12002188874539776,
+                                                0.8284881795516268
+                                            ],
+                                            "frameOnClip": 4
+                                        }
+                                    },
+                                    {
+                                        "id": "175119d1-ef6e-4482-90da-bbc4d49ab98e",
+                                        "config": {
+                                            "value": 248.36,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 43
+                                        }
+                                    }
+                                ],
+                                "opacity": [
+                                    {
+                                        "id": "b4d51f8c-aaf3-45bb-9c99-6e27865202e2",
+                                        "config": {
+                                            "value": 0,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0.014730084091994977,
+                                                1.0440083404611495
+                                            ],
+                                            "frameOnClip": 4
+                                        }
+                                    },
+                                    {
+                                        "id": "8c8c024e-cdf4-43dd-8459-763e1ddcd023",
+                                        "config": {
+                                            "value": 100,
+                                            "easeInParam": [
+                                                0.24768126342573724,
+                                                1.0495614049616369
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 43
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        }
+                    ]
+                },
+                {
+                    "id": "b3660f86-e2c2-4633-9ae3-b5d1a03107fa",
+                    "config": {
+                        "name": null
+                    },
+                    "clips": [
+                        {
+                            "id": "0a3aadc5-25be-41a8-9d15-feb71c7133a7",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 90,
+                                "durationFrames": 919,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [
+                                {
+                                    "id": "9f1f6613-6924-4fbd-921f-827856eaf880",
+                                    "config": {
+                                        "processor": "@ragg/delir-posteffect-chromakey",
+                                        "keyframeInterpolationMethod": "linear"
+                                    },
+                                    "keyframes": {
+                                        "keyColor": [
+                                            {
+                                                "id": "fa7c09c7-7046-4597-b9ea-6998cce2c5e9",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 25
+                                                }
+                                            },
+                                            {
+                                                "id": "a897c1cc-aa84-40a0-9b29-d5b6b22cc026",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 4
+                                                }
+                                            },
+                                            {
+                                                "id": "3cba371b-d9b6-464b-aa15-94205e7356f0",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 38
+                                                }
+                                            }
+                                        ],
+                                        "threshold": [
+                                            {
+                                                "id": "1567c602-f9a1-4144-8197-5121d1ab1e3f",
+                                                "config": {
+                                                    "value": 43.51,
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 25
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "expressions": {}
+                                }
+                            ],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "55fb9a14-4ce1-4a56-8aa8-a2952fa22d8d",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "3aedffb1-6b0f-4263-a1b1-53ae5642636a"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "scale": [
+                                    {
+                                        "id": "5df62a73-48ac-4d8e-9482-2c18716c80d2",
+                                        "config": {
+                                            "value": 360,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0.08941877794335588,
+                                                0.49703582980018063
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "1dea06ee-08a4-445f-b789-d09488bfb5c7",
+                                        "config": {
+                                            "value": 480,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "e4594a96-11a3-49a1-8d7a-950b1974eef7",
+                                        "config": {
+                                            "value": 217,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0.9999999999999716
+                                        }
+                                    }
+                                ],
+                                "loop": [
+                                    {
+                                        "id": "42b93016-242d-4f56-a071-6d9094350559",
+                                        "config": {
+                                            "value": true,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {
+                                "scale": {
+                                    "language": "typescript",
+                                    "code": "peak=1.05; //三角頂点の秒数 \ncycle=1.05;\nmax = 500;\nmin = 100;\n\nif(time%cycle<peak){\n　time%cycle*(max/peak) + min\n} else{\n　(max-time%cycle*max/cycle)/((cycle-peak)/cycle) + min\n}"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "85261358-077d-4d66-8069-da1f825b8bfe",
+                    "config": {
+                        "name": null
+                    },
+                    "clips": [
+                        {
+                            "id": "6537ced1-ab2a-4a99-900a-d96cb612a025",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 90,
+                                "durationFrames": 919,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [
+                                {
+                                    "id": "30ca3bb2-652a-4a77-a606-ab4b01c1387c",
+                                    "config": {
+                                        "processor": "@ragg/delir-posteffect-chromakey",
+                                        "keyframeInterpolationMethod": "linear"
+                                    },
+                                    "keyframes": {
+                                        "keyColor": [
+                                            {
+                                                "id": "a33f8982-d555-43ee-8d77-eed53f651dd2",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 25
+                                                }
+                                            },
+                                            {
+                                                "id": "759d18f5-97ff-457f-8dc1-90fb46f32226",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 38
+                                                }
+                                            }
+                                        ],
+                                        "threshold": [
+                                            {
+                                                "id": "7c546235-a77a-45c8-9355-879f8157e5b3",
+                                                "config": {
+                                                    "value": 20.74,
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 25
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "expressions": {}
+                                }
+                            ],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "5f29606d-7ffc-427b-b257-c132f755df31",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "3aedffb1-6b0f-4263-a1b1-53ae5642636a"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "scale": [
+                                    {
+                                        "id": "1e343e6d-215e-4f5d-b684-7209f7ae2687",
+                                        "config": {
+                                            "value": 360,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0.41587434143905083
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "cd78e25e-01aa-4b12-85e2-29d0c0f8ef6e",
+                                        "config": {
+                                            "value": 22,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 1
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "deb6e9a8-16aa-4abf-8cca-acd8fa415b30",
+                                        "config": {
+                                            "value": 261,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 1
+                                        }
+                                    }
+                                ],
+                                "loop": [
+                                    {
+                                        "id": "f889bb98-91f5-4b68-a97f-9b397a642a9a",
+                                        "config": {
+                                            "value": true,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {
+                                "scale": {
+                                    "language": "typescript",
+                                    "code": "value = 100 + 100 * ((100 * Math.sin(time * Math.PI * 2.1) + 100) / 200)\n// console.log(value)\nvalue\n"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "bec3ff10-94ee-4dc3-973b-9b5899b0a0a6",
+                    "config": {
+                        "name": null
+                    },
+                    "clips": [
+                        {
+                            "id": "61c73fd9-ba20-4b39-af84-76fa4490e4b3",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 317,
+                                "durationFrames": 689,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [
+                                {
+                                    "id": "1605d320-afe0-4936-b3bb-8aa5b75cb2eb",
+                                    "config": {
+                                        "processor": "@ragg/delir-posteffect-chromakey",
+                                        "keyframeInterpolationMethod": "linear"
+                                    },
+                                    "keyframes": {
+                                        "keyColor": [
+                                            {
+                                                "id": "31209f60-98dc-4364-b67e-62f77a44b578",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": -202
+                                                }
+                                            }
+                                        ],
+                                        "threshold": [
+                                            {
+                                                "id": "be33571a-8303-4d75-9ec7-0f57d45f9659",
+                                                "config": {
+                                                    "value": 15.97,
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": -202
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "expressions": {}
+                                }
+                            ],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "da6df08a-0f60-4605-9280-86a3ad1b9232",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "44b8c12b-99d4-4759-8a97-7bdf7a1693a6"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "2a94c86a-658a-4079-8395-6a9ab9f68d6e",
+                                        "config": {
+                                            "value": 409,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0.8571428571428896
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "216f24c4-8c4e-41c5-b3a1-023b7f257f73",
+                                        "config": {
+                                            "value": 129,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "rotate": [
+                                    {
+                                        "id": "a518e7a4-bc39-4457-8e1e-b9004a3245ae",
+                                        "config": {
+                                            "value": 0,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0.27717982424965387,
+                                                0.26971914108930667
+                                            ],
+                                            "frameOnClip": -0.14285714285711038
+                                        }
+                                    },
+                                    {
+                                        "id": "52993a21-a87a-4d28-9ae8-c2eb9b562439",
+                                        "config": {
+                                            "value": 35975.3,
+                                            "easeInParam": [
+                                                0.9926096211153682,
+                                                0.7444931182962465
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 671
+                                        }
+                                    }
+                                ],
+                                "loop": [
+                                    {
+                                        "id": "7bd8d731-ff2d-4363-a0e3-dc240168f1e8",
+                                        "config": {
+                                            "value": true,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        }
+                    ]
+                },
+                {
+                    "id": "3bfa4715-074e-4bb7-bd72-4564ef5f7cc7",
+                    "config": {
+                        "name": null
+                    },
+                    "clips": [
+                        {
+                            "id": "bc51499e-5c70-442b-b0ee-47c2ae26e581",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 203,
+                                "durationFrames": 801,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [
+                                {
+                                    "id": "d3727fb5-3e38-487a-960c-f4f1f212e247",
+                                    "config": {
+                                        "processor": "@ragg/delir-posteffect-chromakey",
+                                        "keyframeInterpolationMethod": "linear"
+                                    },
+                                    "keyframes": {
+                                        "keyColor": [
+                                            {
+                                                "id": "e99bde64-223d-4a6e-997b-a8852d24a175",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 138
+                                                }
+                                            },
+                                            {
+                                                "id": "db51aae3-1d80-471b-a748-f34523597aff",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": -75
+                                                }
+                                            }
+                                        ],
+                                        "threshold": [
+                                            {
+                                                "id": "0d9fbbda-0643-4a02-8a2a-2db37909ec9d",
+                                                "config": {
+                                                    "value": 17.48,
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 138
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "expressions": {}
+                                }
+                            ],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "6c71a1f1-ce51-429a-bebb-bb98114e48c7",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "44b8c12b-99d4-4759-8a97-7bdf7a1693a6"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "048877fd-b89b-46e8-9dac-ec99ea443d11",
+                                        "config": {
+                                            "value": 120,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": -52.157894736842906
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "cd9b4dfd-77af-47f4-8dea-096ce7a8874a",
+                                        "config": {
+                                            "value": 246,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 3.855537720706309
+                                        }
+                                    }
+                                ],
+                                "rotate": [
+                                    {
+                                        "id": "61cef7ae-42de-4688-bb5a-7336823384cf",
+                                        "config": {
+                                            "value": 0,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0.12271841234187938,
+                                                0.5990450386266822
+                                            ],
+                                            "frameOnClip": -0.14446227929369115
+                                        }
+                                    },
+                                    {
+                                        "id": "7bbd98a8-bbdb-4b0e-a63d-de550c84921c",
+                                        "config": {
+                                            "value": 455.07,
+                                            "easeInParam": [
+                                                0.6298249059077331,
+                                                0.9585327590587541
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 788
+                                        }
+                                    }
+                                ],
+                                "loop": [
+                                    {
+                                        "id": "347a1d06-57e1-4e82-9f9d-9b6934519c17",
+                                        "config": {
+                                            "value": true,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        }
+                    ]
+                },
+                {
+                    "id": "1c7dce6c-2992-40bf-955e-8cfd435304fb",
+                    "config": {
+                        "name": null
+                    },
+                    "clips": [
+                        {
+                            "id": "7c5794fa-4f7c-4c82-9202-755585d4f0e8",
+                            "config": {
+                                "renderer": "video",
+                                "placedFrame": 90,
+                                "durationFrames": 910,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [
+                                {
+                                    "id": "a852544a-5ec7-4a99-a7b8-b2235c020eeb",
+                                    "config": {
+                                        "processor": "@ragg/delir-posteffect-chromakey",
+                                        "keyframeInterpolationMethod": "linear"
+                                    },
+                                    "keyframes": {
+                                        "keyColor": [
+                                            {
+                                                "id": "99b8ba02-f68b-409e-9500-a00e578dacc5",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 251
+                                                }
+                                            },
+                                            {
+                                                "id": "d4fba204-d92e-4bef-b92e-b83aee566bda",
+                                                "config": {
+                                                    "value": {
+                                                        "type": "color-rgba",
+                                                        "value": {
+                                                            "red": 255,
+                                                            "green": 255,
+                                                            "blue": 255,
+                                                            "alpha": 1
+                                                        }
+                                                    },
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 38
+                                                }
+                                            }
+                                        ],
+                                        "threshold": [
+                                            {
+                                                "id": "afa36f8c-3409-4dd4-b9b1-aa64da9e5522",
+                                                "config": {
+                                                    "value": 10.59,
+                                                    "easeInParam": [
+                                                        1,
+                                                        1
+                                                    ],
+                                                    "easeOutParam": [
+                                                        0,
+                                                        0
+                                                    ],
+                                                    "frameOnClip": 251
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "expressions": {}
+                                }
+                            ],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "8ee3cecd-5e66-44d9-b458-d7d7d880938f",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "44b8c12b-99d4-4759-8a97-7bdf7a1693a6"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "84e9e581-0414-4844-b84e-51f409ba5b7f",
+                                        "config": {
+                                            "value": 90,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": -1
+                                        }
+                                    }
+                                ],
+                                "opacity": [
+                                    {
+                                        "id": "b2cb861f-91cf-4476-8d7d-507b82d6d6e9",
+                                        "config": {
+                                            "value": 100,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "rotate": [
+                                    {
+                                        "id": "efa842ee-6a8e-4ab8-b2ef-bc41084a1d67",
+                                        "config": {
+                                            "value": 2999.96,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0.32840722495894886,
+                                                0.8305885753437304
+                                            ],
+                                            "frameOnClip": -2
+                                        }
+                                    },
+                                    {
+                                        "id": "8fce7c6a-5c35-4de0-9d93-943c9e9af034",
+                                        "config": {
+                                            "value": 3180.83,
+                                            "easeInParam": [
+                                                0.8910525737992869,
+                                                0.5553235815720532
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 900
+                                        }
+                                    }
+                                ],
+                                "loop": [
+                                    {
+                                        "id": "0f40a65a-3bc2-4369-8c28-11b4f71cd69f",
+                                        "config": {
+                                            "value": true,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "1d7bd00e-abd0-4ebb-a5d9-0733f08f06a2",
+                                        "config": {
+                                            "value": 120,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": -1
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        }
+                    ]
+                },
+                {
+                    "id": "1e82b79c-fdd7-405b-b046-faba217f3d0c",
+                    "config": {
+                        "name": null
+                    },
+                    "clips": [
+                        {
+                            "id": "8628b666-5ed1-4163-9636-50ee336d34b2",
+                            "config": {
+                                "renderer": "audio",
+                                "placedFrame": 0,
+                                "durationFrames": 1063,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "c0451a3a-45d4-442c-9930-dd7dd7b8113f",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "5ebf412d-a105-4e71-8d77-f5648338bb34"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "startTime": [
+                                    {
+                                        "id": "9bc60d80-87a5-48c6-81d8-75ecb61bdf3a",
+                                        "config": {
+                                            "value": 105,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "volume": [
+                                    {
+                                        "id": "7bfc69e0-a6e2-442b-b080-4a01e1adae60",
+                                        "config": {
+                                            "value": 0.26190476190476186,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0.09891598847347088,
+                                                1.0174854686103165
+                                            ],
+                                            "frameOnClip": -0.3142857142857142
+                                        }
+                                    },
+                                    {
+                                        "id": "a2f11df4-115c-479c-81cb-144782464a72",
+                                        "config": {
+                                            "value": 100,
+                                            "easeInParam": [
+                                                0.8604336450013544,
+                                                1.0107670389757186
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 120
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        }
+                    ]
+                },
+                {
+                    "id": "47d85d1c-16a4-432d-9078-ac6d9cc6fcd8",
+                    "config": {
+                        "name": null
+                    },
+                    "clips": [
+                        {
+                            "id": "3c82a02c-7eb9-43ea-9df6-5ccf2984923f",
+                            "config": {
+                                "renderer": "image",
+                                "placedFrame": 0,
+                                "durationFrames": 1074,
+                                "keyframeInterpolationMethod": "linear"
+                            },
+                            "effects": [],
+                            "keyframes": {
+                                "source": [
+                                    {
+                                        "id": "06269b2c-6825-4d5a-9bc7-baee60b9f1b7",
+                                        "config": {
+                                            "value": {
+                                                "type": "asset",
+                                                "value": {
+                                                    "assetId": "e491c76b-8443-4baf-8608-f347969d0bf3"
+                                                }
+                                            },
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 0
+                                        }
+                                    }
+                                ],
+                                "scale": [
+                                    {
+                                        "id": "f66749a0-498d-4fcb-b179-6fd81fe179d8",
+                                        "config": {
+                                            "value": 34.4,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 1.5873015873015872
+                                        }
+                                    }
+                                ],
+                                "x": [
+                                    {
+                                        "id": "2fb2da05-4dc6-45a8-b846-1589ea9e3fa5",
+                                        "config": {
+                                            "value": -12,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 1.5873015873015872
+                                        }
+                                    }
+                                ],
+                                "y": [
+                                    {
+                                        "id": "edc9dcfd-d052-43d0-bf58-724cf148d4ec",
+                                        "config": {
+                                            "value": -33,
+                                            "easeInParam": [
+                                                1,
+                                                1
+                                            ],
+                                            "easeOutParam": [
+                                                0,
+                                                0
+                                            ],
+                                            "frameOnClip": 1.5873015873015872
+                                        }
+                                    }
+                                ]
+                            },
+                            "expressions": {}
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

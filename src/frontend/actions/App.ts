@@ -180,7 +180,10 @@ const actions = {
         if (! path.length) return
 
         const projectBson = await fs.readFile(path[0])
-        actions.setActiveProject(Delir.Project.Project.deserialize(projectBson), path[0])
+        const projectJson = (new BSON()).deserialize(projectBson)
+
+        const migratedProject = Delir.ProjectMigrater.migrate(projectJson)
+        actions.setActiveProject(Delir.Project.Project.deserialize(migratedProject), path[0])
     },
 
     async overwriteProject()

@@ -7,10 +7,8 @@ import Composition from './composition'
 
 export default class Project
 {
-    public static deserialize(projectBson: Buffer)
+    public static deserialize(projectJson: ProjectScheme)
     {
-        const projectJson: ProjectScheme = (new BSON()).deserialize(projectBson) as ProjectScheme
-
         const project = new Project()
         const assets = projectJson.assets.map(assetJson => Asset.deserialize(assetJson))
         const compositions = projectJson.compositions.map(compJson => Composition.deserialize(compJson, project))
