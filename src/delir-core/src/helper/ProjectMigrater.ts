@@ -36,6 +36,12 @@ const migrate000to2017091401 = (project: ProjectScheme): ProjectScheme => {
 
     // Update keyframe value schema (Post effect is not implemented in v0.0.0)
     for (const comp of project.compositions) {
+        comp.config.backgroundColor = {
+            red: (comp.config.backgroundColor as any)._red,
+            green: (comp.config.backgroundColor as any)._green,
+            blue: (comp.config.backgroundColor as any)._blue,
+        }
+
         for (const layer of comp.layers) {
             for (const clip of layer.clips) {
                 for (const kfName of Object.keys(clip.keyframes)) {

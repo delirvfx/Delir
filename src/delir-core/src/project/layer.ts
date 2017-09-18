@@ -44,7 +44,7 @@ export default class Layer
         Object.seal(this)
     }
 
-    public toPreBSON(): Object
+    public toPreBSON(): LayerScheme
     {
         return {
             id: this.id,
@@ -53,7 +53,7 @@ export default class Layer
         }
     }
 
-    public toJSON(): Object
+    public toJSON(): LayerScheme
     {
         return {
             id: this.id,
