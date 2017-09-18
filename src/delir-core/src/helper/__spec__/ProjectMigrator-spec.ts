@@ -1,14 +1,14 @@
-import ProjectMigrater from '../ProjectMigrater'
+import ProjectMigrator from '../ProjectMigrator'
 
 describe('ProjectMigrater', () => {
     const v000Project = require('../../../fixtures/project/v000.delir.json')
 
     it ('Should migratable v000', () => {
-        expect(ProjectMigrater.isMigratable(v000Project)).to.be(true)
+        expect(ProjectMigrator.isMigratable(v000Project)).to.be(true)
     })
 
     it('Migrate 0.0.0 to 2017091401', () => {
-        const migrated = ProjectMigrater.migrate(v000Project)
+        const migrated = ProjectMigrator.migrate(v000Project)
 
         expect(migrated.compositions[0].config.backgroundColor).to.eql({ red: 0, green: 0, blue: 0 })
 
