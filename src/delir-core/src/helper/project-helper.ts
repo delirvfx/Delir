@@ -310,6 +310,20 @@ export function deleteKeyframe(
     _.remove(clip.keyframes[propName], kf => kf.id === targetKeyframeId) // TODO: Implement this function Or change keyframe structure
 }
 
+export function deleteEffectKeyframe(
+    project: Project,
+    clipId: string,
+    effectId: string,
+    targetKeyframeId: string
+) {
+    const clip = findClipById(project, clipId)!
+    const effect = findEffectFromClipById(clip, effectId)!
+
+    for (const propName of Object.keys(effect.keyframes)) {
+        _.remove(effect.keyframes[propName], kf => kf.id === targetKeyframeId)
+    }
+}
+
 //
 // Modify
 //

@@ -39,6 +39,7 @@ export type RemoveLayerPayload = Payload<'RemoveLayer', {targetLayerId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
 export type RemoveAssetPayload = Payload<'RemoveAsset', {targetAssetId: string}>
 export type RemoveKeyframePayload = Payload<'RemoveKeyframe', {targetKeyframeId: string}>
+export type RemoveEffectKeyframePayload = Payload<'RemoveEffectKeyframe', {clipId: string, effectId: string, targetKeyframeId: string}>
 export type RemoveEffectFromClip = Payload<'RemoveEffectFromClip', { holderClipId: string, targetEffectId: string }>
 
 export const DispatchTypes = keyMirror({
@@ -65,6 +66,7 @@ export const DispatchTypes = keyMirror({
     RemoveClip: null,
     RemoveAsset:null,
     RemoveKeyframe: null,
+    RemoveEffectKeyframe: null,
     RemoveEffectFromClip: null,
 })
 
@@ -362,6 +364,11 @@ export default {
     removeKeyframe(keyframeId: string)
     {
         dispatcher.dispatch(new Payload(DispatchTypes.RemoveKeyframe, {targetKeyframeId: keyframeId}))
+    },
+
+    removeKeyframeForEffect(clipId: string, effectId: string, keyframeId: string)
+    {
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveEffectKeyframe, {clipId, effectId, targetKeyframeId: keyframeId}))
     },
 
     removeEffect(holderClipId: string, effectId: string)

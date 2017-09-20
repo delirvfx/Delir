@@ -24,6 +24,7 @@ interface Props {
     keyframes: Delir.Project.Keyframe[]
     pxPerSec: number
     zoomScale: number
+    onKeyframeRemove: (parentClipId: string, keyframeId: string) => void
     onModified: (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) => void
 }
 
@@ -52,6 +53,8 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)).isRequired,
         pxPerSec: PropTypes.number.isRequired,
         zoomScale: PropTypes.number.isRequired,
+        onKeyframeRemove: PropTypes.func.isRequired,
+        onModified: PropTypes.func.isRequired,
     }
 
     public state: State = {
@@ -168,10 +171,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     private keydownOnKeyframeGraph = (e: React.KeyboardEvent<SVGElement>) =>
     {
+        const { parentClip, onKeyframeRemove } = this.props
         const {activeKeyframeId} = this.state
 
         if ((e.key === 'Delete' || e.key === 'Backspace') && activeKeyframeId) {
-            ProjectModActions.removeKeyframe(activeKeyframeId)
+            onKeyframeRemove(parentClip.id, activeKeyframeId)
             this._selectedKeyframeId = null
         }
     }

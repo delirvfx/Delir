@@ -38,6 +38,7 @@ import {
     RemoveClipPayload,
     RemoveAssetPayload,
     RemoveKeyframePayload,
+    RemoveEffectKeyframePayload,
     RemoveEffectFromClip,
 } from './ProjectMod'
 
@@ -80,6 +81,7 @@ export type ProjectModifyActionPayload =
     | RemoveClipPayload
     | RemoveAssetPayload
     | RemoveKeyframePayload
+    | RemoveEffectKeyframePayload
     | RemoveEffectFromClip
 
 export type KnownPayload = EditorStateActionPayload | ProjectModifyActionPayload

@@ -173,7 +173,8 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         AppActions.seekPreviewFrame(currentPreviewFrame)
     }
 
-    private keyframeModified = (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) => {
+    private keyframeModified = (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) =>
+    {
         const { activeEntity } = this.state
         if (!activeEntity) return
 
@@ -181,6 +182,18 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
             ProjectModActions.createOrModifyKeyframeForClip(parentClipId, propName, frameOnClip, patch)
         } else {
             ProjectModActions.createOrModifyKeyframeForEffect(parentClipId, activeEntity.entityId, propName, frameOnClip, patch)
+        }
+    }
+
+    private keyframeRemoved = (parentClipId: string, keyframeId: string) =>
+    {
+        const { activeEntity } = this.state
+        if (!activeEntity) return
+
+        if (activeEntity.type === 'clip') {
+            ProjectModActions.removeKeyframe(activeEntity.entityId)
+        } else {
+            ProjectModActions.removeKeyframeForEffect(parentClipId, activeEntity.entityId, keyframeId)
         }
     }
 
@@ -314,6 +327,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                                 pxPerSec={this.props.pxPerSec}
                                 zoomScale={this.props.scale}
                                 keyframes={keyframes}
+                                onKeyframeRemove={this.keyframeRemoved}
                                 onModified={this.keyframeModified}
                             />
                         )}
