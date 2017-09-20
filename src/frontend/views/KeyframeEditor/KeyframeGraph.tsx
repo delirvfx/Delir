@@ -24,6 +24,7 @@ interface Props {
     keyframes: Delir.Project.Keyframe[]
     pxPerSec: number
     zoomScale: number
+    onKeyframeRemove: (parentClipId: string, keyframeId: string) => void
     onModified: (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) => void
 }
 
@@ -52,6 +53,8 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)).isRequired,
         pxPerSec: PropTypes.number.isRequired,
         zoomScale: PropTypes.number.isRequired,
+        onKeyframeRemove: PropTypes.func.isRequired,
+        onModified: PropTypes.func.isRequired,
     }
 
     public state: State = {
@@ -168,10 +171,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     private keydownOnKeyframeGraph = (e: React.KeyboardEvent<SVGElement>) =>
     {
+        const { parentClip, onKeyframeRemove } = this.props
         const {activeKeyframeId} = this.state
 
         if ((e.key === 'Delete' || e.key === 'Backspace') && activeKeyframeId) {
-            ProjectModActions.removeKeyframe(activeKeyframeId)
+            onKeyframeRemove(parentClip.id, activeKeyframeId)
             this._selectedKeyframeId = null
         }
     }
@@ -350,10 +354,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         if (!parentClip) return []
 
         const clipPlacedPositionX = this._frameToPx(parentClip.placedFrame) - scrollLeft
+        const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
 
-        return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
+        return orderedKeyframes.map((kf, idx) => {
             const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
-            const nextX = keyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(keyframes[idx + 1].frameOnClip) : null
+            const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
             const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
@@ -398,10 +403,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
         if (!parentClip) return []
         const clipPlacedPositionX = this._frameToPx(parentClip.placedFrame) - scrollLeft
+        const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
 
-        return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
+        return orderedKeyframes.map((kf, idx) => {
             const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
-            const nextX = keyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(keyframes[idx + 1].frameOnClip) : null
+            const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
             const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
