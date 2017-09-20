@@ -4,6 +4,7 @@ import ModalWindow from '../ModalWindow/Controller'
 import Link from '../../views/components/Link'
 import Button from '../../views/components/Button'
 
+import t from './AboutModal.i18n.ts'
 import * as s from './AboutModal.styl'
 import packageJson from '../../../../package.json'
 import corePackageJSON from '../../../delir-core/package.json'
@@ -41,7 +42,7 @@ const AboutModal = (props: {onClosed: () => void}) => {
                 </dd>
             </dl>
 
-            <Button type='normal' className={s.AboutModal_Closer} onClick={props.onClosed}>閉じる</Button>
+            <Button type='normal' className={s.AboutModal_Closer} onClick={props.onClosed}>{t('close')}</Button>
         </div>
     )
 }

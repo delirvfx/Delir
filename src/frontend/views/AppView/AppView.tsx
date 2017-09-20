@@ -29,6 +29,7 @@ export default class AppView extends React.PureComponent<Props>
         window.addEventListener('dragenter', this.prevent, false)
         window.addEventListener('dragover', this.prevent, false)
         window.addEventListener('keyup', this.handleShortCut)
+        window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
     }
 
     private prevent = (e: any) => {
@@ -45,6 +46,11 @@ export default class AppView extends React.PureComponent<Props>
                 ? AppActions.stopPreview()
                 : AppActions.startPreview(activeComp!.id, currentPreviewFrame)
         }
+    }
+
+    private projectAutoSaveTimer = () =>
+    {
+        AppActions.autoSaveProject()
     }
 
     public render()

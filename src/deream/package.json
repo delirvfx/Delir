@@ -1,6 +1,6 @@
 {
   "name": "deream",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Encode Motion JPEG stream to movie with ffmpeg / Node.js",
   "main": "index.ts",
   "typings": "index.ts",

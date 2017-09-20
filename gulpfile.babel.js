@@ -3,6 +3,7 @@ const $ = require("gulp-load-plugins")();
 const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const builder = require('electron-builder')
 const nib = require('nib')
 const notifier = require('node-notifier')
@@ -15,7 +16,7 @@ const {spawn, spawnSync} = require("child_process");
 const paths = {
     src         : {
         root        : join(__dirname, "./src/"),
-        plugins     : join(__dirname, 'src/plugins'),
+        plugins     : join(__dirname, './src/post-effect-plugins'),
         browser     : join(__dirname, "./src/browser/"),
         renderer    : join(__dirname, "./src/frontend/"),
     },
@@ -111,7 +112,7 @@ export function compileRendererJs(done) {
             sourceMapFilename: "map/[file].map",
             path: paths.compiled.root,
         },
-        devtool: "#source-map",
+        devtool: DELIR_ENV === 'dev' ? "#source-map" : 'none',
         externals: [
             (ctx, request, callback) => {
                 if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
@@ -186,8 +187,8 @@ export function compileRendererJs(done) {
                 }
             }),
             ...(DELIR_ENV === 'dev' ? [] : [
-                new webpack.optimize.AggressiveMergingPlugin,
-                new webpack.optimize.UglifyJsPlugin,
+                new webpack.optimize.AggressiveMergingPlugin(),
+                new UglifyJSPlugin(),
             ])
         ]
     },  function(err, stats) {
@@ -204,17 +205,19 @@ export function compileRendererJs(done) {
 }
 
 export async function compilePlugins(done) {
-    return done();
-
     webpack({
         target: "electron",
         watch: DELIR_ENV === 'dev',
         context: paths.src.plugins,
         entry: {
+            'chromakey/index': './chromakey/index',
+            'the-world/index': './the-world/index',
             ...(DELIR_ENV === 'dev' ? {
-                'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
-                'plane/index': '../experimental-plugins/plane/index',
-                'noise/index': '../experimental-plugins/noise/index',
+                'filler/index': '../experimental-plugins/filler/index',
+                'mmd/index': '../experimental-plugins/mmd/index',
+                // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
+                // 'plane/index': '../experimental-plugins/plane/index',
+                // 'noise/index': '../experimental-plugins/noise/index',
             }: {})
         },
         output: {
@@ -222,15 +225,15 @@ export async function compilePlugins(done) {
             path: paths.compiled.plugins,
             libraryTarget: 'commonjs-module',
         },
-        devtool: 'cheap-source-map',
+        devtool: DELIR_ENV === 'dev' ? "#source-map" : 'none',
         externals: [
             (ctx, request: string, callback) => {
-                if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
-                    // throughs non relative requiring ('./module', '../module', '!!../module')
-                    return callback(null, `require('${request}')`)
-                }
-
-                callback()
+                if (request !== 'delir-core') return callback()
+                callback(null, `require('${request}')`)
+                // if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
+                //     // throughs non relative requiring ('./module', '../module', '!!../module')
+                //     return callback(null, `require('${request}')`)
+                // }
             }
         ],
         resolve: {
@@ -248,14 +251,18 @@ export async function compilePlugins(done) {
                         }},
                     ],
                 },
+                {
+                    test: /\.(frag|vert)$/,
+                    loader: 'raw-loader'
+                },
             ]
         },
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
             ...(DELIR_ENV === 'dev' ? [] : [
-                new webpack.optimize.AggressiveMergingPlugin,
-                new webpack.optimize.UglifyJsPlugin,
+                new webpack.optimize.AggressiveMergingPlugin(),
+                new UglifyJSPlugin(),
             ])
         ]
     },  function(err, stats) {
@@ -272,13 +279,13 @@ export async function compilePlugins(done) {
 }
 
 export function copyPluginsPackageJson() {
-    return g.src(join(paths.src.root, 'plugins/**/package.json'), {base: join(paths.src.root,　'src/')})
+    return g.src(join(paths.src.plugins, '*/package.json'), {base: join(paths.src.plugins)})
         .pipe(g.dest(paths.compiled.plugins));
 }
 
 export function copyExperimentalPluginsPackageJson() {
     return DELIR_ENV === 'dev' ?
-        g.src(join(paths.src.root, 'experimental-plugins/**/package.json'))
+        g.src(join(paths.src.root, 'experimental-plugins/*/package.json'))
             .pipe(g.dest(paths.compiled.plugins))
         : Promise.resolve()
 }
@@ -403,7 +410,7 @@ export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
     g.watch(join(paths.src.renderer, '**/*'), buildRendererWithoutJs)
     g.watch(join(paths.src.renderer, '**/*.styl'), compileStyles)
-    g.watch(join(paths.src.root, 'plugins'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
+    g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
     // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }

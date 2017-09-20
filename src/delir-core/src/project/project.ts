@@ -7,10 +7,8 @@ import Composition from './composition'
 
 export default class Project
 {
-    public static deserialize(projectBson: Buffer)
+    public static deserialize(projectJson: ProjectScheme)
     {
-        const projectJson: ProjectScheme = (new BSON()).deserialize(projectBson) as ProjectScheme
-
         const project = new Project()
         const assets = projectJson.assets.map(assetJson => Asset.deserialize(assetJson))
         const compositions = projectJson.compositions.map(compJson => Composition.deserialize(compJson, project))
@@ -27,7 +25,7 @@ export default class Project
     public toPreBSON()
     {
         return {
-            formatVersion: '0.0.0',
+            formatVersion: '2017091401',
             assets: this.assets.map(asset => asset.toPreBSON()),
             compositions: this.compositions.map(comp => comp.toPreBSON()),
         }
@@ -36,7 +34,7 @@ export default class Project
     public toJSON()
     {
         return {
-            formatVersion: '0.0.0',
+            formatVersion: '2017091401',
             assets: this.assets.map(asset => asset.toJSON()),
             compositions: this.compositions.map(comp => comp.toJSON()),
         }

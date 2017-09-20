@@ -3,17 +3,19 @@ import {DelirPluginPackageJson, PluginEntry} from '../plugin-support/types'
 import * as fs from 'fs-promise'
 import * as path from 'path'
 import * as _ from 'lodash'
+import * as semver from 'semver'
 
-import * as Validators from './validators'
+import * as DelirCorePackageJson from '../../package.json'
+import {validatePluginPackageJSON} from '../plugin-support/plugin-registry'
 import {PluginLoadFailException} from '../exceptions/'
 
-export default class PluginLoader
+export default class FSPluginLoader
 {
     /**
      * Load packages from packages directory
      * @param {string} packageDir
      */
-    async loadPackageDir(packageDir: string): Promise<{loaded: PluginEntry[], failed: {package: string, reason: string}[]}>
+    public async loadPackageDir(packageDir: string): Promise<{loaded: PluginEntry[], failed: {package: string, reason: string}[]}>
     {
         const entries = await Promise.all(
             (await fs.readdir(packageDir))
@@ -41,15 +43,24 @@ export default class PluginLoader
                     entryPath = path.join(packageRoot, json.main)
                 }
 
-                Validators.delirPackageJson(json)
+                const validate = validatePluginPackageJSON(json)
+                if (!validate.valid) {
+                    throw new PluginLoadFailException(`Invalid package.json for \`${json.name}\` (${validate.errors[0]}${validate.errors[1] ? '. and more...' : ''})`)
+                }
 
                 if (packages[json.name]) {
                     throw new PluginLoadFailException(`Duplicate plugin ${json.name}`)
                 }
 
+                if (!semver.satisfies(DelirCorePackageJson.version, json.engines['delir-core'])) {
+                    throw new PluginLoadFailException(`Plugin \`${json.delir.name}(${json.name})\` not compatible to current delir-core version `)
+                }
+
                 packages[json.name] = {
                     id: json.name,
-                    package: json,
+                    name: json.delir.name,
+                    type: json.delir.type,
+                    packageJson: json,
                     pluginInfo: json.delir,
                     packageRoot,
                     entryPath,

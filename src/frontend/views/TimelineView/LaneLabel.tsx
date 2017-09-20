@@ -9,7 +9,7 @@ import {default as EditorStateStore, EditorState} from '../../stores/EditorState
 import ProjectModActions from '../../actions/ProjectMod'
 
 import LabelInput from '../components/label-input'
-import {ContextMenu, MenuItem} from '../components/ContextMenu'
+import {ContextMenu, MenuItem, MenuItemOption} from '../components/ContextMenu'
 
 import t from './LaneLabel.i18n'
 
@@ -20,10 +20,10 @@ interface LaneLabelProps {
     /**
      * Layer select handler
      */
-    onSelect: () => any
+    onSelect: (layerId: string) => any
 
     /** Layer remove handler */
-    onRemove: () => any
+    onRemove: (layerId: string) => any
 }
 
 @connectToStores([EditorStateStore], () => ({
@@ -54,11 +54,15 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
 
     private bindLayerNameInput = el => this.layerNameInput = el
 
+    private onSelect = ({ currentTarget }: React.MouseEvent<HTMLLIElement>) => this.props.onSelect(currentTarget.dataset.layerId!)
+
+    private onRemove = ({ dataset }: MenuItemOption<{layerId: string}>) => this.props.onRemove(dataset.layerId)
+
     public render()
     {
         const {layer, editor: {activeLayer}, onSelect, onRemove} = this.props
         const clips = Array.from(layer.clips)
-        const propTypes = activeLayer ? RendererService.pluginRegistry!.getParametersById(activeLayer.renderer) : []
+        const propTypes = activeLayer ? RendererService.pluginRegistry!.getPostEffectParametersById(activeLayer.renderer) : []
         const hasActiveLayer = clips.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1
 
         return (
@@ -71,11 +75,11 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
                     <MenuItem type='separator' />
                     {/*<MenuItem label='複製' onClick={() => {}} />*/}
                     <MenuItem label={t('contextMenu.renameLayer')} onClick={this.focusToLayerNameInput} />
-                    <MenuItem label={t('contextMenu.removeLayer')} onClick={onRemove.bind(null, layer.id)} />
+                    <MenuItem label={t('contextMenu.removeLayer')} data-layer-id={layer.id} onClick={this.onRemove} />
                     <MenuItem type='separator' />
                 </ContextMenu>
 
-                <li className='timeline_lane-label_col --col-name' onClick={onSelect.bind(this, layer.id)}>
+                <li className='timeline_lane-label_col --col-name' data-layer-id={layer.id} onClick={this.onSelect}>
                     <LabelInput ref={this.bindLayerNameInput} defaultValue={layer.name} placeholder='Layer name' onChange={this.layerNameChanged} />
                 </li>
                 <li className='timeline_lane-label_col --col-visibility'>

@@ -4,7 +4,9 @@ import ColorRGB from '../values/color-rgb'
 import Project from './project'
 import Layer from './layer'
 
-import {CompositionScheme} from './scheme/composition'
+import {CompositionScheme, CompositionConfigScheme} from './scheme/composition'
+
+import toJSON from '../helper/toJSON'
 
 export default class Composition
 {
@@ -12,7 +14,7 @@ export default class Composition
     {
         const comp = new Composition()
 
-        const config: CompositionScheme = _.pick(compJson.config, [
+        const config: CompositionConfigScheme = _.pick(compJson.config, [
             'name',
             'width',
             'height',
@@ -21,7 +23,7 @@ export default class Composition
             'samplingRate',
             'audioChannels',
             'backgroundColor',
-        ]) as CompositionScheme
+        ])
 
         const layers = compJson.layers.map(layer => Layer.deserialize(layer))
 
@@ -93,20 +95,20 @@ export default class Composition
         Object.seal(this)
     }
 
-    public toPreBSON(): Object
+    public toPreBSON(): CompositionScheme
     {
         return {
             id: this.id,
-            config: Object.assign({}, this.config),
+            config: toJSON(this.config),
             layers: this.layers.map(layer => layer.toPreBSON()),
         }
     }
 
-    public toJSON(): Object
+    public toJSON(): CompositionScheme
     {
         return {
             id: this.id,
-            config: Object.assign({}, this.config),
+            config: toJSON(this.config),
             layers: this.layers.map(layer => layer.toJSON()),
         }
     }

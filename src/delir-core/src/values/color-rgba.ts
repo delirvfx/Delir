@@ -6,10 +6,15 @@ export interface ColorRgbaJSON {
 }
 
 export default class ColorRGBA {
-    _red: number
-    _green: number
-    _blue: number
-    _alpha: number
+    public static fromJSON(json: ColorRgbaJSON)
+    {
+        return new ColorRGBA(json.red, json.green, json.blue, json.alpha)
+    }
+
+    private _red: number
+    private _green: number
+    private _blue: number
+    private _alpha: number
 
     constructor(
         r: number = 0,
@@ -28,7 +33,12 @@ export default class ColorRGBA {
     get b(): number { return this._blue }
     get a(): number { return this._alpha }
 
-    clone(
+    get red(): number { return this._red }
+    get green(): number { return this._green }
+    get blue(): number { return this._blue }
+    get alpha(): number { return this._alpha }
+
+    public clone(
         r: number|null = null,
         g: number|null = null,
         b: number|null = null,
@@ -43,7 +53,7 @@ export default class ColorRGBA {
         )
     }
 
-    toJSON()
+    public toJSON(): ColorRgbaJSON
     {
         return {
             red: this.r,
@@ -53,8 +63,16 @@ export default class ColorRGBA {
         }
     }
 
-    toString()
+    public toCSSColor()
     {
-        return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`
+        return `rgba(${this.r|0}, ${this.g|0}, ${this.b|0}, ${this.a})`
+    }
+
+    /**
+     * @deprecated
+     */
+    public toString()
+    {
+        return `rgba(${this.r|0}, ${this.g|0}, ${this.b|0}, ${this.a})`
     }
 }

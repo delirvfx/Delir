@@ -1,9 +1,11 @@
 // @flow
 import Project from '../../project/project'
 import PluginRegistry from '../../plugin-support/plugin-registry'
-import EffectPluginBase from '../../plugin-support/effect-plugin-base'
+import EffectPluginBase from '../../plugin-support/PostEffectBase'
+import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
 
 import * as ProjectHelper from '../../helper/project-helper'
+import AssetProxy from './AssetProxy'
 
 export default class EntityResolver
 {
@@ -16,9 +18,10 @@ export default class EntityResolver
         this._pluginRegistry = pluginRegistry
     }
 
-    public resolveAsset(assetId: string)
+    public resolveAsset(assetId: string): AssetProxy|null
     {
-        return ProjectHelper.findAssetById(this._project, assetId)
+        const asset = ProjectHelper.findAssetById(this._project, assetId)
+        return asset ? new AssetProxy(asset) : null
     }
 
     public resolveComp(compId: string)
@@ -28,11 +31,19 @@ export default class EntityResolver
 
     public resolvePlugin(pluginName: string)
     {
-        return this._pluginRegistry.requireById(pluginName)
+        return this._pluginRegistry.requirePostEffectPluginById(pluginName)
     }
 
-    public resolveEffectPlugin(pluginId: string): typeof EffectPluginBase
+    public resolveEffectPlugin(pluginId: string): {new(...args: any[]): EffectPluginBase} | null
     {
-        return this._pluginRegistry.requireById(pluginId) as any
+        try {
+            return this._pluginRegistry.requirePostEffectPluginById(pluginId) as any
+        } catch (e) {
+            if (e instanceof UnknownPluginReferenceException) {
+                return null
+            }
+
+            throw e
+        }
     }
 }

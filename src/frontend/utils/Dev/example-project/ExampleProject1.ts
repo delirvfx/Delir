@@ -91,10 +91,13 @@ const textClip = assign(new Delir.Project.Clip(), {
         loop: [
             assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
         ],
-        x: [
-            assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
-            assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
-        ],
+        // x: [
+        //     assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
+        //     assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
+        // ],
+        // y: [
+        //     assign(new Delir.Project.Keyframe(), {value: 130, frameOnClip: 0, easeOutParam: [.4, .5]}),
+        // ],
     },
     expressions: {
         text: new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`')
@@ -145,11 +148,11 @@ const imageClip = assign(new Delir.Project.Clip(), {
     }
 })
 
-// const c1_t3_cl1 = assign(new Delir.Project.Clip(), {
-//     // renderer: 'plane',
-//     // placedFrame: 0,
-//     // durationFrames: 30 * 10,
-// })
+const adjustmentClip = assign(new Delir.Project.Clip(), {
+    renderer: 'adjustment',
+    placedFrame: 0,
+    durationFrames: 30 * 10,
+})
 
 const c1_t4_cl1 = assign(new Delir.Project.Clip(), {
     renderer: 'video',
@@ -163,11 +166,26 @@ ProjectHelper.addComposition(p, c1)
 // console.log(ProjectHelper.addClip())
 // ProjectHelper.addClip(p, c1_t1, c1_t1_cl1)
 // ProjectHelper.addClip(p, c1_t1, audioClip2)
-ProjectHelper.addClip(p, c1_t1, imageClip)
-ProjectHelper.addClip(p, c1_t2, audioClip)
-ProjectHelper.addClip(p, c1_t3, movieClip)
-ProjectHelper.addClip(p, c1_t4, textClip)
-
+// ProjectHelper.addClip(p, c1_t1, imageClip)
+// ProjectHelper.addClip(p, c1_t2, audioClip)
+// ProjectHelper.addClip(p, c1_t3, movieClip)
+ProjectHelper.addClip(p, c1_t3, textClip)
+ProjectHelper.addClip(p, c1_t4, adjustmentClip)
+ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Project.Effect(), {
+    processor: '@ragg/delir-posteffect-chromakey',
+    // keyframes: {
+    //     color: [
+    //         assign(new Delir.Project.Keyframe(), {
+    //             frameOnClip: 40,
+    //             value: new Delir.Values.ColorRGBA(30, 170, 200, 1),
+    //         }),
+    //         assign(new Delir.Project.Keyframe(), {
+    //             frameOnClip: 200,
+    //             value: new Delir.Values.ColorRGBA(200, 170, 30, 1),
+    //         }),
+    //     ]
+    // }
+}))
 
 // ProjectHelper.addKeyframe(p, c1_t1_l1, 'x', [
 //     assign(new Delir.Project.Keyframe, {
@@ -223,4 +241,3 @@ ProjectHelper.addClip(p, c2_t1, c2_t1_l2)
 
 AppActions.setActiveProject(p);
 AppActions.changeActiveComposition(c1.id!)
-AppActions.changeActiveClip(c1_t1_cl1.id)

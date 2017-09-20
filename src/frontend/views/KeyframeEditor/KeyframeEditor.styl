@@ -25,6 +25,31 @@
     &.propItem--active
         background-color rgba(#fff, .2)
 
+    &.propItem--effectContainer
+        display block
+        margin 4px 0 0
+        padding 0
+        height: auto
+
+    &.propItem--pluginMissing
+        color rgba($color-error, .5)
+
+    &.propItem--header
+        position: sticky
+        top: 0
+        z-index: 1
+        display block
+        margin-bottom 2px
+        overflow hidden
+        background-color #292929
+        text-overflow ellipsis
+        white-space nowrap
+
+        :global(.fa)
+            width 1em
+            margin-left 4px
+            margin-right 8px
+
 .propItemName
     flex 1
 

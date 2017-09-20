@@ -1,5 +1,7 @@
 import Asset from '../project/asset'
 import Keyframe from '../project/keyframe'
+import ColorRGB from '../values/color-rgb'
+import ColorRGBA from '../values/color-rgba'
 
 import {
     TypeDescriptor,
@@ -7,7 +9,7 @@ import {
     AnyParameterTypeDescriptor,
 } from '../plugin-support/type-descriptor'
 
-import bezierEasing from 'bezier-easing'
+import * as bezierEasing from 'bezier-easing'
 
 interface KeyFrameLink {
     previous: Keyframe|null
@@ -311,11 +313,11 @@ function calcColorRgbKeyFrames(rate: number, frame: number, keyFrameLink: KeyFra
     const greenVector = keyFrameLink.next!.value.green - keyFrameLink.active.value.green
     const blueVector = keyFrameLink.next!.value.blue - keyFrameLink.active.value.blue
 
-    return {
-        red: keyFrameLink.active.value.red + (redVector * rate),
-        green: keyFrameLink.active.value.green + (greenVector * rate),
-        blue: keyFrameLink.active.value.blue + (blueVector * rate),
-    }
+    return new ColorRGB(
+        keyFrameLink.active.value.red + (redVector * rate),
+        keyFrameLink.active.value.green + (greenVector * rate),
+        keyFrameLink.active.value.blue + (blueVector * rate),
+    )
 }
 
 function calcColorRgbaKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {red:number, green: number, blue: number, alpha: number}
@@ -325,12 +327,12 @@ function calcColorRgbaKeyFrames(rate: number, frame: number, keyFrameLink: KeyFr
     const blueVector = keyFrameLink.next!.value.blue - keyFrameLink.active.value.blue
     const alphaVector = keyFrameLink.next!.value.alpha - keyFrameLink.active.value.alpha
 
-    return {
-        red: keyFrameLink.active.value.red + (redVector * rate),
-        green: keyFrameLink.active.value.green + (greenVector * rate),
-        blue: keyFrameLink.active.value.blue + (blueVector * rate),
-        alpha: keyFrameLink.active.value.alpha + (alphaVector * rate),
-    }
+    return new ColorRGBA(
+        keyFrameLink.active.value.red + (redVector * rate),
+        keyFrameLink.active.value.green + (greenVector * rate),
+        keyFrameLink.active.value.blue + (blueVector * rate),
+        keyFrameLink.active.value.alpha + (alphaVector * rate),
+    )
 }
 
 function calcBoolKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): boolean
@@ -340,7 +342,7 @@ function calcBoolKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLi
 
 function calcStringKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): string
 {
-    return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
+    return keyFrameLink.active.value
 }
 
 function calcNumberKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): number

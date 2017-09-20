@@ -23,6 +23,7 @@ let canvasContext: CanvasRenderingContext2D
 
 let audioContext: AudioContext|null = null
 let audioBuffer: AudioBuffer|null = null
+let isInRendering = false
 
 const state: {
     project: Delir.Project.Project|null,
@@ -149,27 +150,38 @@ const handlePayload = async (payload: KnownPayload) => {
             }))
 
             if (! file) return
+            if (!state.project || !state.composition || !pluginRegistry) return
 
             // deream() の前に一瞬待たないとフリーズしてしまうので
             // awaitを噛ませてステータスを確実に出す
             await new Promise(resolve => {
                 setImmediate(() => {
+                    AppActions.autoSaveProject()
                     AppActions.updateProcessingState(`Rendering: Initializing`)
                     resolve()
                 })
             })
 
-            await deream({
-                project: state.project,
-                rootCompId: state.composition.id,
-                exportPath: file,
-                pluginRegistry,
-                temporaryDir: remote.app.getPath('temp'),
-                ffmpegBin,
-                onProgress: progress => {
-                    setTimeout(() => { AppActions.updateProcessingState(progress.state) }, 0)
-                }
-            })
+            isInRendering = true
+
+            try {
+                await deream({
+                    project: state.project,
+                    rootCompId: state.composition.id,
+                    exportPath: file,
+                    pluginRegistry,
+                    temporaryDir: remote.app.getPath('temp'),
+                    ffmpegBin,
+                    onProgress: progress => {
+                        setTimeout(() => { AppActions.updateProcessingState(progress.state) }, 0)
+                    }
+                })
+
+                isInRendering = false
+            } catch (e) {
+                isInRendering = false
+                throw e
+            }
 
             break
         }
@@ -178,32 +190,27 @@ const handlePayload = async (payload: KnownPayload) => {
 
 const rendererService = {
     initialize: async () => {
-        audioContext = new AudioContext
-        // scriptProcessor
-
-        // const userDir = remote.app.getPath('appData')
-        pluginLoader = new Delir.Services.PluginLoader()
-        pluginRegistry = new Delir.PluginRegistry()
-
-        // const loaded = [
-        //     await pluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
-        //     await pluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
-        // ]
-
-        // const successes = [].concat(...loaded.map<any>(({loaded}) => loaded))
-        // const fails = [].concat(...loaded.map<any>(({failed}) => failed))
-
-        // if (fails.length > 0) {
-        //     const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
-        //     const message = fails.map((fail: any) => fail.reason).join('\n\n')
-        //     AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
-        // }
-
-        // console.log('Plugin loaded', successes, 'Failed:', fails)
-        // loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
-
+        const userDir = remote.app.getPath('appData')
         pipeline = new Delir.Engine.Pipeline()
-        pipeline.pluginRegistry = pluginRegistry
+        pluginLoader = new Delir.PluginSupport.FSPluginLoader()
+        pluginRegistry = pipeline.pluginRegistry
+
+        const loaded = [
+            await pluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
+            await pluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
+        ]
+
+        const successes = [].concat(...loaded.map<any>(({loaded}) => loaded))
+        const fails = [].concat(...loaded.map<any>(({failed}) => failed))
+
+        if (fails.length > 0) {
+            const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
+            const message = fails.map((fail: any) => fail.reason).join('\n\n')
+            AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
+        }
+
+        console.log('Plugin loaded', successes, 'Failed:', fails)
+        loaded.forEach(({loaded}) => pluginRegistry!.addEntries(loaded))
 
         dispatcher.register(handlePayload)
     },
@@ -214,7 +221,7 @@ const rendererService = {
     },
 
     get pluginRegistry() {
-        return pluginRegistry
+        return pluginRegistry!
     },
 
     get renderer(): Delir.Engine.Pipeline {
@@ -223,6 +230,11 @@ const rendererService = {
 
     get lastRenderState() {
         return renderState
+    }
+
+    get isInRendering()
+    {
+        return isInRendering
     }
 }
 

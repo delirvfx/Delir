@@ -17,18 +17,27 @@ interface Props {
     viewBox: string
     scrollLeft: number
     composition: Delir.Project.Composition
-    clip: Delir.Project.Clip,
+    parentClip: Delir.Project.Clip
+    entity: Delir.Project.Clip|Delir.Project.Effect|null
     propName: string,
     descriptor?: Delir.AnyParameterTypeDescriptor
     keyframes: Delir.Project.Keyframe[]
     pxPerSec: number
     zoomScale: number
+    onKeyframeRemove: (parentClipId: string, keyframeId: string) => void
+    onModified: (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) => void
 }
 
 interface State {
     activeKeyframeId: string|null
     keyframeMovement: {x: number}|null
     easingHandleMovement: {x: number, y: number}|null
+}
+
+export interface KeyframePatch {
+    easeInParam?: [number, number]
+    easeOutParam?: [number, number]
+    frameOnClip?: number
 }
 
 export default class KeyframeGraph extends React.Component<Props, State> {
@@ -44,6 +53,8 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)).isRequired,
         pxPerSec: PropTypes.number.isRequired,
         zoomScale: PropTypes.number.isRequired,
+        onKeyframeRemove: PropTypes.func.isRequired,
+        onModified: PropTypes.func.isRequired,
     }
 
     public state: State = {
@@ -51,6 +62,8 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         keyframeMovement: null,
         easingHandleMovement: null,
     }
+
+    public props: Props
 
     private _selectedKeyframeId: string|null = null
     private _initialKeyframePosition: {x: number, y: number}|null = null
@@ -89,10 +102,10 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         e.preventDefault()
         e.stopPropagation()
 
-        const {clip, propName, keyframes} = this.props
+        const { parentClip, entity, propName, keyframes, onModified } = this.props
 
         const {keyframeMovement} = this.state
-        // if (!clip || !activePropName) return
+        if (!parentClip || !propName || !entity) return
 
         process: {
             if (this._selectedKeyframeId) {
@@ -107,17 +120,18 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 const keyframe = keyframes.find(kf => kf.id === this._selectedKeyframeId)!
                 const movedFrame = this._pxToFrame(keyframeMovement.x)
 
-                ProjectModActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframe.frameOnClip, {
-                    frameOnClip: keyframe.frameOnClip + movedFrame
-                })
+                // ProjectModActions.createOrModifyKeyframeForClip(parentClip.id!, propName, keyframe.frameOnClip, {
+                //     frameOnClip: keyframe.frameOnClip + movedFrame
+                // })
 
+                onModified(parentClip.id, propName, keyframe.frameOnClip, { frameOnClip: keyframe.frameOnClip + movedFrame })
             } else if (this._selectedEasingHandleHolderData) {
                 // Process for easing handle dragged
 
                 const data = this._selectedEasingHandleHolderData
                 const transitionPath = this._selectedEasingHandleHolderData.container.querySelector('[data-transition-path]')!
 
-                const keyframes = clip.keyframes[propName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
+                const keyframes = entity.keyframes[propName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
                 const keyframeIdx = keyframes.findIndex(kf => kf.id === this._selectedEasingHandleHolderData!.keyframeId)!
                 if (keyframeIdx === -1) break process
 
@@ -126,11 +140,19 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 const position = {x: data.element.cx.baseVal.value, y: data.element.cy.baseVal.value}
 
                 if (data.type === 'ease-in') {
-                    ProjectModActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframes[keyframeIdx + 1].frameOnClip, {
+                    // ProjectModActions.createOrModifyKeyframeForClip(parentClip.id!, propName, keyframes[keyframeIdx + 1].frameOnClip, {
+                    //     easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
+                    // })
+                    const keyframe = keyframes[keyframeIdx + 1]
+                    onModified(parentClip.id, propName, keyframe.frameOnClip, {
                         easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 } else if (data.type === 'ease-out') {
-                    ProjectModActions.createOrModifyKeyframeForClip(clip.id!, propName, keyframes[keyframeIdx].frameOnClip, {
+                    // ProjectModActions.createOrModifyKeyframeForClip(parentClip.id!, propName, keyframes[keyframeIdx].frameOnClip, {
+                    //     easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
+                    // })
+                    const keyframe = keyframes[keyframeIdx]
+                    onModified(parentClip.id, propName, keyframe.frameOnClip, {
                         easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 }
@@ -149,11 +171,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     private keydownOnKeyframeGraph = (e: React.KeyboardEvent<SVGElement>) =>
     {
+        const { parentClip, onKeyframeRemove } = this.props
         const {activeKeyframeId} = this.state
-        console.log(e)
 
         if ((e.key === 'Delete' || e.key === 'Backspace') && activeKeyframeId) {
-            ProjectModActions.removeKeyframe(activeKeyframeId)
+            onKeyframeRemove(parentClip.id, activeKeyframeId)
             this._selectedKeyframeId = null
         }
     }
@@ -179,10 +201,10 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     private doubleClickOnKeyframe = ({currentTarget}: React.MouseEvent<SVGGElement>) =>
     {
-        const {clip} = this.props
-        if (!clip) return
+        const {parentClip} = this.props
+        if (!parentClip) return
 
-        AppActions.seekPreviewFrame(clip.placedFrame + (currentTarget.dataset.frame | 0))
+        AppActions.seekPreviewFrame(parentClip.placedFrame + (currentTarget.dataset.frame | 0))
     }
 
     public render()
@@ -325,17 +347,18 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     private _renderColorKeyframes(keyframes: Delir.Project.Keyframe[])
     {
-        const {clip, height: graphHeight} = this.props
+        const { parentClip, height: graphHeight } = this.props
         const {scrollLeft} = this.props
         const halfHeight = graphHeight / 2
 
-        if (!clip) return []
+        if (!parentClip) return []
 
-        const clipPlacedPositionX = this._frameToPx(clip.placedFrame) - scrollLeft
+        const clipPlacedPositionX = this._frameToPx(parentClip.placedFrame) - scrollLeft
+        const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
 
-        return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
+        return orderedKeyframes.map((kf, idx) => {
             const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
-            const nextX = keyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(keyframes[idx + 1].frameOnClip) : null
+            const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
             const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
@@ -365,7 +388,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                             height='8'
                             stroke='#fff'
                             strokeWidth='1'
-                            style={{fill: (kf.value as Delir.ColorRGBA).toString()}}
+                            style={{fill: (kf.value as Delir.Values.ColorRGBA).toString()}}
                         />
                     </g>
                 </g>
@@ -375,15 +398,16 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     private _renderStringKeyframes(keyframes: Delir.Project.Keyframe[])
     {
-        const {clip, scrollLeft, height} = this.props
+        const {parentClip, scrollLeft, height} = this.props
         const halfHeight = height / 2
 
-        if (!clip) return []
-        const clipPlacedPositionX = this._frameToPx(clip.placedFrame) - scrollLeft
+        if (!parentClip) return []
+        const clipPlacedPositionX = this._frameToPx(parentClip.placedFrame) - scrollLeft
+        const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
 
-        return keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip).map((kf, idx) => {
+        return orderedKeyframes.map((kf, idx) => {
             const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
-            const nextX = keyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(keyframes[idx + 1].frameOnClip) : null
+            const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
             const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
@@ -455,12 +479,12 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         nextEaseInHandle: {x: number, y: number}|null,
     }[] =>
     {
-        const {clip, descriptor, height, scrollLeft} = this.props
+        const {parentClip, descriptor, height, scrollLeft} = this.props
 
         if (!descriptor || descriptor.animatable === false) return []
 
         const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
-        const clipPlacedPositionX = this._frameToPx(clip.placedFrame)
+        const clipPlacedPositionX = this._frameToPx(parentClip.placedFrame)
 
         if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
             const maxValue = orderedKeyframes.reduce((memo, kf, idx, list) => {

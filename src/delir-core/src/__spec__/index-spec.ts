@@ -65,20 +65,12 @@ describe('Check exportings', () => {
         expect(Delir.Engine).to.be.an('object')
     })
 
-    it('Delir.LayerPluginBase', () => {
-        expect(Delir.LayerPluginBase).to.be.an('function')
+    it('Delir.PostEffectBase', () => {
+        expect(Delir.PostEffectBase).to.be.an('function')
     })
 
     it('Delir.ProjectHelper', () => {
         expect(Delir.ProjectHelper).to.be.an('object')
-    })
-
-    it('Delir.ColorRGB', () => {
-        expect(Delir.ColorRGB).to.be.an('function')
-    })
-
-    it('Delir.ColorRGBA', () => {
-        expect(Delir.ColorRGBA).to.be.an('function')
     })
 
     it('Delir.Type', () => {

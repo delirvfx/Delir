@@ -5,8 +5,7 @@ import * as parseColor from 'parse-color'
 import * as classnames from 'classnames'
 import * as path from 'path'
 
-import * as Delir from 'delir-core'
-import {ProjectHelper, ColorRGB} from 'delir-core'
+import {ProjectHelper, Values} from 'delir-core'
 
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
@@ -17,7 +16,7 @@ import ProjectStore from '../../stores/ProjectStore'
 import Pane from '../components/pane'
 import LabelInput from '../components/label-input'
 import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components/table'
-import { ContextMenu, MenuItem } from '../components/ContextMenu'
+import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
 import * as Modal from '../../modules/ModalWindow'
 import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
@@ -57,7 +56,7 @@ const castToCompositionPropTypes = (req: CompositionProps) => {
         height: +req.height,
         framerate: +req.framerate,
         durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
-        backgroundColor: new ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
+        backgroundColor: new Values.ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
         samplingRate: +req.samplingRate,
         audioChannels: +req.audioChannels,
     }
@@ -118,10 +117,10 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         })
     }
 
-    private removeAsset = (assetId: string) =>
+    private removeAsset = ({ dataset }: MenuItemOption<{assetId: string}>) =>
     {
         // TODO: Check references
-        ProjectModActions.removeAsset(assetId)
+        ProjectModActions.removeAsset(dataset.assetId)
     }
 
     private changeComposition = (compId: string) =>
@@ -129,9 +128,9 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         AppActions.changeActiveComposition(compId)
     }
 
-    private removeComposition = (compId: string) =>
+    private removeComposition = ({ dataset }: MenuItemOption<{compId: string}>) =>
     {
-        ProjectModActions.removeComposition(compId)
+        ProjectModActions.removeComposition(dataset.compId)
     }
 
     private modifyCompName = (compId, newName) =>
@@ -155,9 +154,10 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         target.value = ''
     }
 
-    private openCompositionSetting = async (compId: string) =>
+    private openCompositionSetting = async ({ dataset }: MenuItemOption<{compId: string}>) =>
     {
         if (!this.props.editor.project) return
+        const { compId } = dataset
 
         const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
         const req = await CompositionSettingModal.show({composition: comp})
@@ -223,8 +223,8 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label={t('compositions.contextMenu.rename')} onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
-                                    <MenuItem label={t('compositions.contextMenu.remove')} onClick={this.removeComposition.bind(null, comp.id)} />
-                                    <MenuItem label={t('compositions.contextMenu.preference')} onClick={this.openCompositionSetting.bind(null, comp.id)} />
+                                    <MenuItem label={t('compositions.contextMenu.remove')} data-comp-id={comp.id} onClick={this.removeComposition} />
+                                    <MenuItem label={t('compositions.contextMenu.preference')} data-comp-id={comp.id} onClick={this.openCompositionSetting} />
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
@@ -261,7 +261,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     {/*<MenuItem label='Reload' onClick={() => {}} />*/}
-                                    <MenuItem label={t('assets.contextMenu.remove')} onClick={this.removeAsset.bind(null, asset.id!)}/>
+                                    <MenuItem label={t('assets.contextMenu.remove')} data-asset-id={asset.id} onClick={this.removeAsset}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 

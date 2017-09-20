@@ -1,6 +1,7 @@
 import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
 import Composition from '../../project/composition'
 import EntityResolver from './entity-resolver'
+import WebGLContextPool from './WebGLContextPool'
 
 import * as _ from 'lodash'
 
@@ -21,6 +22,7 @@ export default class PreRenderingRequest<T = {[propName: string]: ParameterValue
         // 'clipScope',
 
         'parameters',
+        'glContextPool',
     ]
 
     private static _permitOnlyInitializeKey = [
@@ -59,18 +61,20 @@ export default class PreRenderingRequest<T = {[propName: string]: ParameterValue
     //
     public resolver: EntityResolver
 
-    constructor(properties: Optionalized<PreRenderingRequest<T>> = {})
+    public readonly glContextPool: WebGLContextPool
+
+    constructor(properties: Partial<PreRenderingRequest<T>> = {})
     {
         const props = _.pick(
             properties,
             PreRenderingRequest._permitKeys.concat(PreRenderingRequest._permitOnlyInitializeKey)
         )
 
-        Object.assign(this, props);
+        Object.assign(this, props)
         Object.freeze(this);
     }
 
-    public clone(patch: Optionalized<PreRenderingRequest<T>>): PreRenderingRequest<T>
+    public clone(patch: Partial<PreRenderingRequest<T>>): PreRenderingRequest<T>
     {
         const permitPatch = _.pick(patch, PreRenderingRequest._permitKeys)
         return new PreRenderingRequest<T>(Object.assign({}, this, permitPatch))

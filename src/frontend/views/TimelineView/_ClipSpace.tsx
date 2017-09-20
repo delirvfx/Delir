@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
-import {ContextMenu, MenuItem} from '../components/ContextMenu'
+import {ContextMenu, MenuItem, MenuItemOption} from '../components/ContextMenu'
 import RendererService from '../../services/renderer'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
@@ -46,20 +46,8 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         activeClip: PropTypes.object,
     }
 
-    private _plugins: {id: string, packageName: string}[]
-
-    constructor()
-    {
-        super()
-
-        this._plugins = RendererService.pluginRegistry.getPlugins().map(entry => ({
-            id: entry.id,
-            packageName: entry.package.name
-        }))
-
-        this.state = {
-            dragovered: false,
-        }
+    public state = {
+        dragovered: false,
     }
 
     private _onDrop = (e: React.DragEvent<HTMLLIElement>) =>
@@ -71,11 +59,10 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         if (dragEntity.type === 'asset') {
             // Drop asset into ClipSpace
             const {asset} = dragEntity
-            const {props:{framerate, pxPerSec, scale}} = this
+            const {framerate, pxPerSec, scale} = this.props
             const placedFrame = TimePixelConversion.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
             ProjectModActions.createClipWithAsset(this.props.layer, asset, placedFrame)
-        }
-        else if (dragEntity.type === 'clip') {
+        } else if (dragEntity.type === 'clip') {
             // Drop Clip into ClipSpace
             const {clip} = dragEntity
             const isChildClip = !! _.find(this.props.layer.clips, {id: clip.id})
@@ -110,7 +97,7 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
     private _onDragOver = (e: React.DragEvent<HTMLLIElement>) =>
     {
         const {editor: {dragEntity}} = this.props
-        if (dragEntity!.type !== 'clip') return
+        if (!dragEntity || dragEntity.type !== 'clip') return
 
         this.setState({dragovered: true})
     }
@@ -135,9 +122,9 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         })
     }
 
-    private addNewClip = (clipRendererId) =>
+    private addNewClip = ({ dataset }: MenuItemOption<{rendererId: string}>) =>
     {
-        ProjectModActions.createClip(this.props.layer.id!, clipRendererId, 0, 100)
+        ProjectModActions.createClip(this.props.layer.id!, dataset.rendererId, 0, 100)
     }
 
     public render()
@@ -145,8 +132,6 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         const {layer, activeClip, framerate, pxPerSec, scale} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
         const clips = Array.from<Delir.Project.Clip>(layer.clips)
-        const plugins = this._plugins
-
         const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
 
         return (
@@ -162,9 +147,9 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
-                    <MenuItem label={t('contextMenu.createClip')} enabled={!!plugins.length}>
+                    <MenuItem label={t('contextMenu.createClip')}>
                         {_.map(Delir.Engine.Renderers.RENDERERS, (renderer, idx) =>
-                            <MenuItem keys={idx} label={t(['renderers', renderer.rendererId])} onClick={this.addNewClip.bind(null, renderer.rendererId)} />
+                            <MenuItem keys={idx} label={t(['renderers', renderer.rendererId])} data-renderer-id={renderer.rendererId} onClick={this.addNewClip} />
                         )}
                     </MenuItem>
                     <MenuItem type='separator' />

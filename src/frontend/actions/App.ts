@@ -10,6 +10,9 @@ import dispatcher from '../utils/Flux/Dispatcher'
 import Payload from '../utils/Flux/Payload'
 
 import EditorStateStore from '../stores/EditorStateStore'
+import RendererService from '../services/renderer'
+
+import t from './App.i18n'
 
 export type DragEntity =
     | {type: 'asset', asset: Delir.Project.Asset}
@@ -105,7 +108,6 @@ const actions = {
         dispatcher.dispatch(new Payload(DispatchTypes.ChangeActiveClip, {clipId}))
     },
 
-
     //
     // Preview
     //
@@ -129,11 +131,14 @@ const actions = {
         dispatcher.dispatch(new Payload(DispatchTypes.UpdateProcessingState,　{stateText}))
     },
 
-    seekPreviewFrame(frame: number)
+    seekPreviewFrame(frame: number|null = null)
     {
-        const activeComp = EditorStateStore.getState().get('activeComp')
+        const state = EditorStateStore.getState()
+
+        const activeComp = state.get('activeComp')
         if (!activeComp) return
 
+        frame = _.isNumber(frame) ? frame : state.get('currentPreviewFrame')
         const overloadGuardedFrame = _.clamp(frame, 0, activeComp.durationFrames)
         dispatcher.dispatch(new Payload(DispatchTypes.SeekPreviewFrame, {frame: overloadGuardedFrame}))
     },
@@ -175,7 +180,10 @@ const actions = {
         if (! path.length) return
 
         const projectBson = await fs.readFile(path[0])
-        actions.setActiveProject(Delir.Project.Project.deserialize(projectBson), path[0])
+        const projectJson = (new BSON()).deserialize(projectBson)
+
+        const migratedProject = Delir.ProjectMigrator.migrate(projectJson)
+        actions.setActiveProject(Delir.Project.Project.deserialize(migratedProject), path[0])
     },
 
     async overwriteProject()
@@ -215,11 +223,32 @@ const actions = {
 
         if (!path) return
 
-        const bson = new BSON
+        const bson = new BSON()
         await fs.writeFile(path, bson.serialize(project.toPreBSON()))
         actions.setActiveProject(project, path) // update path
-        actions.notify('Project saved', '', 'info', 1000)
-    }
+        actions.notify(t('saved'), '', 'info', 1000)
+    },
+
+    async autoSaveProject()
+    {
+        const project = EditorStateStore.getState().get('project')
+        const projectPath = EditorStateStore.getState().get('projectPath')
+
+        if (RendererService.isInRendering) return
+
+        if (!project || !projectPath) {
+            actions.notify(t('letsSave'), '', 'info', 5000)
+            return
+        }
+
+        const frag = path.parse(projectPath)
+        const autoSaveFileName = `${frag.name}.auto-saved${frag.ext}`
+        const autoSavePath = path.join(frag.dir, autoSaveFileName)
+
+        const bson = new BSON()
+        await fs.writeFile(autoSavePath, bson.serialize(project.toPreBSON()))
+        actions.notify(t('autoSaved', {fileName: autoSaveFileName}), '', 'info', 2000)
+    },
 }
 
 export default actions

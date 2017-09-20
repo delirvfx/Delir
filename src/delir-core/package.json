@@ -1,6 +1,6 @@
 {
   "name": "delir-core",
-  "version": "0.0.0-alpha.3",
+  "version": "0.4.0",
   "description": "JavaScript VFX Engine",
   "main": "lib/index.js",
   "types": "src/index.ts",
@@ -12,5 +12,8 @@
     "@types/lodash": "^4.14.62",
     "@types/semver": "^5.3.31",
     "@types/uuid": "^2.0.29"
+  },
+  "devDependencies": {
+    "@types/webgl2": "0.0.2"
   }
 }

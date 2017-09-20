@@ -10,6 +10,7 @@ export default I18n({
             video: '🎥 ムービー',
             image: '🖼️ 画像',
             text: '📝 テキスト',
+            adjustment: '✨ 調整クリップ',
         }
     },
     en: {
@@ -21,6 +22,7 @@ export default I18n({
             video: '🎥 Video',
             image: '🖼️ Image',
             text: '📝 Text',
+            adjustment: '✨ Adjustment clip',
         }
     }
 })

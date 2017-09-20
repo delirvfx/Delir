@@ -6,6 +6,8 @@ import Clip from './clip'
 import {ClipScheme} from './scheme/clip'
 import {LayerScheme} from './scheme/layer'
 
+import toJSON from '../helper/toJSON'
+
 export default class Layer
 {
     public static deserialize(layerJson: LayerScheme)
@@ -42,20 +44,20 @@ export default class Layer
         Object.seal(this)
     }
 
-    public toPreBSON(): Object
+    public toPreBSON(): LayerScheme
     {
         return {
             id: this.id,
-            config: Object.assign({}, this._config),
+            config: toJSON(this._config),
             clips: Array.from(this.clips).map(clip => clip.toPreBSON()),
         }
     }
 
-    public toJSON(): Object
+    public toJSON(): LayerScheme
     {
         return {
             id: this.id,
-            config: Object.assign({}, this._config),
+            config: toJSON(this._config),
             clips: Array.from(this.clips).map(clip => clip.toJSON()),
         }
     }
