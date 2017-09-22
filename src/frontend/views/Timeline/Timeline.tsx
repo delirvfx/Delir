@@ -193,9 +193,9 @@ export default class Timeline extends React.Component<Props, State>
         })
 
         return (
-            <Pane className={s.timelineView} allowFocus>
+            <Pane className={s.Timeline} allowFocus>
                 <Workspace direction='vertical'>
-                    <Pane className={s.timelineRegion}>
+                    <Pane className={s.Timeline_Region}>
                         <Workspace direction="horizontal" onDrop={this._dropAsset}>
                             {/* Layer Panel */}
                             <Pane className='timeline-labels-container'>
@@ -263,7 +263,7 @@ export default class Timeline extends React.Component<Props, State>
                             </Pane>
                         </Workspace>
                     </Pane>
-                    <Pane className={s.keyframeGraphRegion}>
+                    <Pane className={s.Timeline_KeyframeGraph}>
                         <KeyframeEditor
                             ref='keyframeView'
                             activeComposition={activeComp}
