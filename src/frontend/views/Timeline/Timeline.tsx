@@ -15,10 +15,9 @@ import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
-import SelectList from '../components/select-list'
 import DropDown from '../components/dropdown'
 
-import LaneLabel from './LaneLabel'
+import LayerList from './LayerList'
 import KeyframeEditor from '../KeyframeEditor'
 import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
@@ -102,7 +101,7 @@ export default class Timeline extends React.Component<Props, State>
         })
     }
 
-    private _selectLayer = (layerId: string) =>
+    private onLayerSelect = (layerId: string) =>
     {
         this.setState({selectedLayerId: layerId})
     }
@@ -119,7 +118,7 @@ export default class Timeline extends React.Component<Props, State>
         )
     }
 
-    private _removeLayer = (layerId: string) =>
+    private onLayerRemove = (layerId: string) =>
     {
         if (!this.props.editor.activeComp) return
         ProjectModActions.removeLayer(layerId)
@@ -181,7 +180,7 @@ export default class Timeline extends React.Component<Props, State>
         const {scale, timelineScrollLeft} = this.state
         const {activeComp, activeClip, currentPreviewFrame, previewPlayed} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
-        const timelineLayers = activeComp ? Array.from(activeComp.layers) : []
+        const layers: Delir.Project.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
         const measures = !activeComp ? [] : TimePixelConversion.buildMeasures({
             durationFrames      : activeComp.durationFrames,
@@ -220,13 +219,7 @@ export default class Timeline extends React.Component<Props, State>
                                         <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
-                                    {activeComp && (
-                                        <SelectList key={compId}>
-                                            {timelineLayers.map(layer => (
-                                                <LaneLabel key={layer.id} layer={layer} onSelect={this._selectLayer} onRemove={this._removeLayer} />)
-                                            )}
-                                        </SelectList>
-                                    )}
+                                    {activeComp && (<LayerList layers={layers} onSelect={this.onLayerSelect} onRemove={this.onLayerRemove} />)}
                                 </div>
                             </Pane>
                             {/* Layer Panel */}
@@ -249,7 +242,7 @@ export default class Timeline extends React.Component<Props, State>
                                         <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
-                                    {activeComp && timelineLayers.map(layer => (
+                                    {activeComp && layers.map(layer => (
                                         <ClipSpace
                                             key={layer.id!}
                                             layer={layer}

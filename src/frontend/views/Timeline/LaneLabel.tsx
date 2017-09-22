@@ -79,3 +79,7 @@ class LaneLabel extends React.Component<Props>
         )
     }
 }
+
+export default SortableElement((props: Props) => (
+    <LaneLabel layer={props.layer} onSelect={props.onSelect} onRemove={props.onRemove} />
+))
