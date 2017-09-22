@@ -1,10 +1,7 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
-import connectToStores from '../../utils/Flux/connectToStores'
 
-import RendererService from '../../services/renderer'
 import ProjectModActions from '../../actions/ProjectMod'
 
 import LabelInput from '../components/label-input'
