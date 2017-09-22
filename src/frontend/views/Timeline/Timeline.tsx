@@ -1,6 +1,7 @@
 import * as _ from 'lodash'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { SortEndHandler } from 'react-sortable-hoc'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/Flux/connectToStores'
 import TimePixelConversion from '../../utils/TimePixelConversion'
@@ -104,6 +105,16 @@ export default class Timeline extends React.Component<Props, State>
     private onLayerSelect = (layerId: string) =>
     {
         this.setState({selectedLayerId: layerId})
+    }
+
+    private onLayerSort: SortEndHandler = ({ oldIndex, newIndex }) =>
+    {
+        const { editor: { activeComp } } = this.props
+        if (!activeComp) return
+
+        const layer = activeComp.layers[oldIndex]
+        ProjectModActions.moveLayerOrder(layer.id, newIndex)
+        AppActions.seekPreviewFrame()
     }
 
     private _addNewLayer = () =>
@@ -219,7 +230,14 @@ export default class Timeline extends React.Component<Props, State>
                                         <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
-                                    {activeComp && (<LayerList layers={layers} onSelect={this.onLayerSelect} onRemove={this.onLayerRemove} />)}
+                                    {activeComp && (
+                                        <LayerList
+                                            layers={layers}
+                                            onSortEnd={this.onLayerSort}
+                                            onLayerSelect={this.onLayerSelect}
+                                            onLayerRemove={this.onLayerRemove}
+                                        />
+                                    )}
                                 </div>
                             </Pane>
                             {/* Layer Panel */}

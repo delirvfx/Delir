@@ -469,6 +469,23 @@ export function modifyKeyframe(
     normalizeKeyframe(keyframe)
 }
 
+export function moveLayerOrder(
+    project: Project,
+    compositionId: string,
+    layerId: string,
+    newIndex: number
+): void {
+    const composition = findCompositionById(project, compositionId)!
+    const layer = findLayerById(project, layerId)!
+
+    if (!composition.layers.includes(layer)) {
+        throw new Error(`Ordering layer not contained in composition "${composition.name}"`)
+    }
+
+    const prevIndex = composition.layers.indexOf(layer)
+    composition.layers.splice(newIndex, 0, composition.layers.splice(prevIndex, 1)[0])
+}
+
 //
 // Finders
 //
