@@ -5,7 +5,6 @@ import * as Delir from 'delir-core'
 import connectToStores from '../../utils/Flux/connectToStores'
 
 import RendererService from '../../services/renderer'
-import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import ProjectModActions from '../../actions/ProjectMod'
 
 import LabelInput from '../components/label-input'
@@ -14,7 +13,6 @@ import {ContextMenu, MenuItem, MenuItemOption} from '../components/ContextMenu'
 import t from './LaneLabel.i18n'
 
 interface LaneLabelProps {
-    editor: EditorState
     layer: Delir.Project.Layer
 
     /**
@@ -26,9 +24,6 @@ interface LaneLabelProps {
     onRemove: (layerId: string) => any
 }
 
-@connectToStores([EditorStateStore], () => ({
-    editor: EditorStateStore.getState(),
-}))
 export default class LaneLabel extends React.Component<LaneLabelProps, null>
 {
     static propTypes = {
@@ -51,7 +46,6 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
         this.layerNameInput.enableAndFocus()
     }
 
-
     private bindLayerNameInput = el => this.layerNameInput = el
 
     private onSelect = ({ currentTarget }: React.MouseEvent<HTMLLIElement>) => this.props.onSelect(currentTarget.dataset.layerId!)
@@ -60,17 +54,10 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
 
     public render()
     {
-        const {layer, editor: {activeLayer}, onSelect, onRemove} = this.props
-        const clips = Array.from(layer.clips)
-        const propTypes = activeLayer ? RendererService.pluginRegistry!.getPostEffectParametersById(activeLayer.renderer) : []
-        const hasActiveLayer = clips.findIndex(layer => !!(activeLayer && layer.id === activeLayer.id)) !== -1
+        const { layer } = this.props
 
         return (
-            <ul key={layer.id} className={classnames(
-                'timeline_lane-label', {
-                    '--expand': hasActiveLayer,
-                })}
-            >
+            <ul key={layer.id} className='timeline_lane-label'>
                 <ContextMenu>
                     <MenuItem type='separator' />
                     {/*<MenuItem label='複製' onClick={() => {}} />*/}
@@ -83,10 +70,10 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
                     <LabelInput ref={this.bindLayerNameInput} defaultValue={layer.name} placeholder='Layer name' onChange={this.layerNameChanged} />
                 </li>
                 <li className='timeline_lane-label_col --col-visibility'>
-                    <i className="twa twa-eye"></i>
+                    <i className='twa twa-eye'></i>
                 </li>
                 <li className='timeline_lane-label_col --col-lock'>
-                    <i className="twa twa-lock"></i>
+                    <i className='twa twa-lock'></i>
                 </li>
             </ul>
         )
