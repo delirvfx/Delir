@@ -1,5 +1,7 @@
 import * as React from 'react'
+import * as classnames from 'classnames'
 import * as PropTypes from 'prop-types'
+import { SortableElement } from 'react-sortable-hoc'
 import * as Delir from 'delir-core'
 
 import ProjectModActions from '../../actions/ProjectMod'
@@ -8,8 +10,9 @@ import LabelInput from '../components/label-input'
 import {ContextMenu, MenuItem, MenuItemOption} from '../components/ContextMenu'
 
 import t from './LaneLabel.i18n'
+import * as s from './LaneLabel.styl'
 
-interface LaneLabelProps {
+interface Props {
     layer: Delir.Project.Layer
 
     /**
@@ -21,7 +24,7 @@ interface LaneLabelProps {
     onRemove: (layerId: string) => any
 }
 
-export default class LaneLabel extends React.Component<LaneLabelProps, null>
+class LaneLabel extends React.Component<Props>
 {
     static propTypes = {
         editor: PropTypes.object.isRequired,
@@ -43,7 +46,7 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
         this.layerNameInput.enableAndFocus()
     }
 
-    private bindLayerNameInput = el => this.layerNameInput = el
+    private bindLayerNameInput = (el: LabelInput) => this.layerNameInput = el
 
     private onSelect = ({ currentTarget }: React.MouseEvent<HTMLLIElement>) => this.props.onSelect(currentTarget.dataset.layerId!)
 
@@ -54,7 +57,7 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
         const { layer } = this.props
 
         return (
-            <ul key={layer.id} className='timeline_lane-label'>
+            <ul key={layer.id} className={s.LaneLabel}>
                 <ContextMenu>
                     <MenuItem type='separator' />
                     {/*<MenuItem label='複製' onClick={() => {}} />*/}
@@ -63,14 +66,14 @@ export default class LaneLabel extends React.Component<LaneLabelProps, null>
                     <MenuItem type='separator' />
                 </ContextMenu>
 
-                <li className='timeline_lane-label_col --col-name' data-layer-id={layer.id} onClick={this.onSelect}>
+                <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-name'])} data-layer-id={layer.id} onClick={this.onSelect}>
                     <LabelInput ref={this.bindLayerNameInput} defaultValue={layer.name} placeholder='Layer name' onChange={this.layerNameChanged} />
                 </li>
-                <li className='timeline_lane-label_col --col-visibility'>
-                    <i className='twa twa-eye'></i>
+                <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-visibility'])}>
+                    <i className='twa twa-eye' />
                 </li>
-                <li className='timeline_lane-label_col --col-lock'>
-                    <i className='twa twa-lock'></i>
+                <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-lock'])}>
+                    <i className='twa twa-lock' />
                 </li>
             </ul>
         )
