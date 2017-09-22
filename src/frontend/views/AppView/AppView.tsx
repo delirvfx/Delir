@@ -10,7 +10,7 @@ import Pane from '../components/pane'
 import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
 import PreviewView from '../PreviewView/'
-import TimelineView from '../TimelineView'
+import Timeline from '../Timeline'
 import NavigationView from '../NavigationView'
 import StatusBar from '../StatusBar'
 import Notifications from '../Notifications'
@@ -66,7 +66,7 @@ export default class AppView extends React.PureComponent<Props>
                             <PreviewView />
                         </Workspace>
                     </Pane>
-                    <TimelineView />
+                    <Timeline />
                 </Workspace>
                 <StatusBar />
                 <Notifications />

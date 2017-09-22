@@ -23,12 +23,12 @@ import KeyframeEditor from '../KeyframeEditor'
 import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
 
-import t from './Timelane.i18n'
+import t from './Timeline.i18n'
 import * as s from './style.styl'
 
-interface TimelineViewProps {}
+interface Props {}
 
-interface TimelineViewState {
+interface State {
     timelineScrollTop: number,
     timelineScrollLeft: number,
     cursorHeight: number,
@@ -50,9 +50,9 @@ const PX_PER_SEC = 30
 @connectToStores([EditorStateStore, ProjectStore], context => ({
     editor: EditorStateStore.getState(),
 }))
-export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>
+export default class Timeline extends React.Component<Props, State>
 {
-    public props: TimelineViewProps & {
+    public props: Props & {
         editor: EditorState,
     }
 
@@ -63,7 +63,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         timelineLabels: HTMLDivElement
     }
 
-    public state: TimelineViewState = {
+    public state: State = {
         timelineScrollTop: 0,
         timelineScrollLeft: 0,
         cursorHeight: 0,

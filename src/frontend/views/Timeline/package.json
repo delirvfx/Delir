@@ -1,0 +1,4 @@
+{
+    "main": "./Timeline.tsx",
+    "typings": "./Timeline.tsx"
+}
