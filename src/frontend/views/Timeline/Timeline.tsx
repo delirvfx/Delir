@@ -117,7 +117,7 @@ export default class Timeline extends React.Component<Props, State>
         AppActions.seekPreviewFrame()
     }
 
-    private _addNewLayer = () =>
+    private onLayerCreate = () =>
     {
         const { editor } = this.props
 
@@ -206,19 +206,19 @@ export default class Timeline extends React.Component<Props, State>
             <Pane className={s.Timeline} allowFocus>
                 <Workspace direction='vertical'>
                     <Pane className={s.Timeline_Region}>
-                        <Workspace direction="horizontal" onDrop={this._dropAsset}>
+                        <Workspace direction='horizontal' onDrop={this._dropAsset}>
                             {/* Layer Panel */}
                             <Pane className='timeline-labels-container'>
                                 <div className='timeline-labels-header'>
                                     <div className='--col-name'>Layers</div>
                                     <div className={s.scaleLabel} onClick={this._toggleScaleList}>
                                         <DropDown ref='scaleList' className={s.scaleList} shownInitial={false}>
-                                            <li data-value="50" onClick={this._selectScale}>50%</li>
-                                            <li data-value="100" onClick={this._selectScale}>100%</li>
-                                            <li data-value="150" onClick={this._selectScale}>150%</li>
-                                            <li data-value="200" onClick={this._selectScale}>200%</li>
-                                            <li data-value="250" onClick={this._selectScale}>250%</li>
-                                            <li data-value="300" onClick={this._selectScale}>300%</li>
+                                            <li data-value='50' onClick={this._selectScale}>50%</li>
+                                            <li data-value='100' onClick={this._selectScale}>100%</li>
+                                            <li data-value='150' onClick={this._selectScale}>150%</li>
+                                            <li data-value='200' onClick={this._selectScale}>200%</li>
+                                            <li data-value='250' onClick={this._selectScale}>250%</li>
+                                            <li data-value='300' onClick={this._selectScale}>300%</li>
                                         </DropDown>
                                         Scale: {scale * 100 | 0}%
                                     </div>
@@ -227,7 +227,7 @@ export default class Timeline extends React.Component<Props, State>
                                 <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this.onLayerCreate} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && (
@@ -257,7 +257,7 @@ export default class Timeline extends React.Component<Props, State>
                                 <ul ref='timelineLayers' className='timeline-lane-container' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this.onLayerCreate} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && layers.map(layer => (
