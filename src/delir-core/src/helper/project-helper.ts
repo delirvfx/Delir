@@ -216,7 +216,6 @@ export function addEffectKeyframe(
         normalizeKeyframe(_keyframe)
 
         const duplicated = effect.keyframes[propName].find(kf => kf.frameOnClip === _keyframe.frameOnClip)
-        console.log(duplicated, effect)
 
         if (duplicated) {
             throw new Error(`Keyframe duplicated on frame ${duplicated.frameOnClip} (property: ${propName})`)
