@@ -1,6 +1,7 @@
 import * as _ from 'lodash'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { SortEndHandler } from 'react-sortable-hoc'
 import * as Delir from 'delir-core'
 import connectToStores from '../../utils/Flux/connectToStores'
 import TimePixelConversion from '../../utils/TimePixelConversion'
@@ -15,20 +16,19 @@ import Workspace from '../components/workspace'
 import Pane from '../components/pane'
 
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
-import SelectList from '../components/select-list'
 import DropDown from '../components/dropdown'
 
-import LaneLabel from './LaneLabel'
+import LayerList from './LayerList'
 import KeyframeEditor from '../KeyframeEditor'
 import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
 
-import t from './Timelane.i18n'
+import t from './Timeline.i18n'
 import * as s from './style.styl'
 
-interface TimelineViewProps {}
+interface Props {}
 
-interface TimelineViewState {
+interface State {
     timelineScrollTop: number,
     timelineScrollLeft: number,
     cursorHeight: number,
@@ -50,9 +50,9 @@ const PX_PER_SEC = 30
 @connectToStores([EditorStateStore, ProjectStore], context => ({
     editor: EditorStateStore.getState(),
 }))
-export default class TimelineView extends React.Component<TimelineViewProps, TimelineViewState>
+export default class Timeline extends React.Component<Props, State>
 {
-    public props: TimelineViewProps & {
+    public props: Props & {
         editor: EditorState,
     }
 
@@ -63,7 +63,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         timelineLabels: HTMLDivElement
     }
 
-    public state: TimelineViewState = {
+    public state: State = {
         timelineScrollTop: 0,
         timelineScrollLeft: 0,
         cursorHeight: 0,
@@ -102,12 +102,22 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         })
     }
 
-    private _selectLayer = (layerId: string) =>
+    private onLayerSelect = (layerId: string) =>
     {
         this.setState({selectedLayerId: layerId})
     }
 
-    private _addNewLayer = () =>
+    private onLayerSort: SortEndHandler = ({ oldIndex, newIndex }) =>
+    {
+        const { editor: { activeComp } } = this.props
+        if (!activeComp) return
+
+        const layer = activeComp.layers[oldIndex]
+        ProjectModActions.moveLayerOrder(layer.id, newIndex)
+        AppActions.seekPreviewFrame()
+    }
+
+    private onLayerCreate = () =>
     {
         const { editor } = this.props
 
@@ -119,7 +129,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         )
     }
 
-    private _removeLayer = (layerId: string) =>
+    private onLayerRemove = (layerId: string) =>
     {
         if (!this.props.editor.activeComp) return
         ProjectModActions.removeLayer(layerId)
@@ -181,7 +191,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         const {scale, timelineScrollLeft} = this.state
         const {activeComp, activeClip, currentPreviewFrame, previewPlayed} = this.props.editor
         const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
-        const timelineLayers = activeComp ? Array.from(activeComp.layers) : []
+        const layers: Delir.Project.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
         const measures = !activeComp ? [] : TimePixelConversion.buildMeasures({
             durationFrames      : activeComp.durationFrames,
@@ -193,22 +203,22 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
         })
 
         return (
-            <Pane className={s.timelineView} allowFocus>
+            <Pane className={s.Timeline} allowFocus>
                 <Workspace direction='vertical'>
-                    <Pane className={s.timelineRegion}>
-                        <Workspace direction="horizontal" onDrop={this._dropAsset}>
+                    <Pane className={s.Timeline_Region}>
+                        <Workspace direction='horizontal' onDrop={this._dropAsset}>
                             {/* Layer Panel */}
                             <Pane className='timeline-labels-container'>
                                 <div className='timeline-labels-header'>
                                     <div className='--col-name'>Layers</div>
                                     <div className={s.scaleLabel} onClick={this._toggleScaleList}>
                                         <DropDown ref='scaleList' className={s.scaleList} shownInitial={false}>
-                                            <li data-value="50" onClick={this._selectScale}>50%</li>
-                                            <li data-value="100" onClick={this._selectScale}>100%</li>
-                                            <li data-value="150" onClick={this._selectScale}>150%</li>
-                                            <li data-value="200" onClick={this._selectScale}>200%</li>
-                                            <li data-value="250" onClick={this._selectScale}>250%</li>
-                                            <li data-value="300" onClick={this._selectScale}>300%</li>
+                                            <li data-value='50' onClick={this._selectScale}>50%</li>
+                                            <li data-value='100' onClick={this._selectScale}>100%</li>
+                                            <li data-value='150' onClick={this._selectScale}>150%</li>
+                                            <li data-value='200' onClick={this._selectScale}>200%</li>
+                                            <li data-value='250' onClick={this._selectScale}>250%</li>
+                                            <li data-value='300' onClick={this._selectScale}>300%</li>
                                         </DropDown>
                                         Scale: {scale * 100 | 0}%
                                     </div>
@@ -217,15 +227,17 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this.onLayerCreate} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && (
-                                        <SelectList key={compId}>
-                                            {timelineLayers.map(layer => (
-                                                <LaneLabel key={layer.id} layer={layer} onSelect={this._selectLayer} onRemove={this._removeLayer} />)
-                                            )}
-                                        </SelectList>
+                                        <LayerList
+                                            layers={layers}
+                                            useDragHandle={true}
+                                            onSortEnd={this.onLayerSort}
+                                            onLayerSelect={this.onLayerSelect}
+                                            onLayerRemove={this.onLayerRemove}
+                                        />
                                     )}
                                 </div>
                             </Pane>
@@ -246,10 +258,10 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                                 <ul ref='timelineLayers' className='timeline-lane-container' onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
-                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this._addNewLayer} enabled={!!activeComp} />
+                                        <MenuItem label={t('contextMenu.addLayer')} onClick={this.onLayerCreate} enabled={!!activeComp} />
                                         <MenuItem type='separator' />
                                     </ContextMenu>
-                                    {activeComp && timelineLayers.map(layer => (
+                                    {activeComp && layers.map(layer => (
                                         <ClipSpace
                                             key={layer.id!}
                                             layer={layer}
@@ -263,7 +275,7 @@ export default class TimelineView extends React.Component<TimelineViewProps, Tim
                             </Pane>
                         </Workspace>
                     </Pane>
-                    <Pane className={s.keyframeGraphRegion}>
+                    <Pane className={s.Timeline_KeyframeGraph}>
                         <KeyframeEditor
                             ref='keyframeView'
                             activeComposition={activeComp}

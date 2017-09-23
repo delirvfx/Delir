@@ -216,7 +216,6 @@ export function addEffectKeyframe(
         normalizeKeyframe(_keyframe)
 
         const duplicated = effect.keyframes[propName].find(kf => kf.frameOnClip === _keyframe.frameOnClip)
-        console.log(duplicated, effect)
 
         if (duplicated) {
             throw new Error(`Keyframe duplicated on frame ${duplicated.frameOnClip} (property: ${propName})`)
@@ -467,6 +466,23 @@ export function modifyKeyframe(
     // TODO: Check duplicate on frame
     Object.assign(keyframe, patch)
     normalizeKeyframe(keyframe)
+}
+
+export function moveLayerOrder(
+    project: Project,
+    compositionId: string,
+    layerId: string,
+    newIndex: number
+): void {
+    const composition = findCompositionById(project, compositionId)!
+    const layer = findLayerById(project, layerId)!
+
+    if (!composition.layers.includes(layer)) {
+        throw new Error(`Ordering layer not contained in composition "${composition.name}"`)
+    }
+
+    const prevIndex = composition.layers.indexOf(layer)
+    composition.layers.splice(newIndex, 0, composition.layers.splice(prevIndex, 1)[0])
 }
 
 //

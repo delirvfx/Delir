@@ -34,6 +34,7 @@ export type ModifyClipExpression = Payload<'ModifyClipExpression', {targetClipId
 export type ModifyEffectExpression = Payload<'ModifyEffectExpression', {targetClipId: string, targetEffectId: string, targetProperty: string, expr: {language: string, code: string}}>
 export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
 export type ModifyEffectKeyframePayload = Payload<'ModifyEffectKeyframe', {targetClipId: string, effectId: string, targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
+export type MoveLayerOrderPayload = Payload<'MoveLayerOrder', { parentCompositionId: string, targetLayerId: string, newIndex: number }>
 export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
 export type RemoveLayerPayload = Payload<'RemoveLayer', {targetLayerId: string}>
 export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
@@ -61,6 +62,7 @@ export const DispatchTypes = keyMirror({
     ModifyEffectExpression: null,
     ModifyKeyframe: null,
     ModifyEffectKeyframe: null,
+    MoveLayerOrder: null,
     RemoveComposition: null,
     RemoveLayer: null,
     RemoveClip: null,
@@ -344,6 +346,20 @@ export default {
                 code: expr.code,
             }
         }))
+    },
+
+    moveLayerOrder(layerId: string, newIndex: number)
+    {
+        const project = ProjectStore.getState().get('project')
+        if (!project) return
+
+        const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
+
+        dispatcher.dispatch(new Payload(DispatchTypes.MoveLayerOrder, {
+            parentCompositionId: comp.id,
+            targetLayerId: layerId,
+            newIndex,
+         }))
     },
 
     removeComposition(compId: string)

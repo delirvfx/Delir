@@ -156,6 +156,12 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                 break
             }
 
+            case ProjectModDispatchTypes.MoveLayerOrder: {
+                const { parentCompositionId, targetLayerId, newIndex } = payload.entity
+                ProjectHelper.moveLayerOrder(project, parentCompositionId, targetLayerId, newIndex)
+                break
+            }
+
             case ProjectModDispatchTypes.RemoveComposition:
                 ProjectHelper.deleteComposition(project!, payload.entity.targetCompositionId)
                 break

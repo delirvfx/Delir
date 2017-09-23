@@ -33,6 +33,7 @@ import {
     ModifyEffectExpression,
     ModifyKeyframePayload,
     ModifyEffectKeyframePayload,
+    MoveLayerOrderPayload,
     RemoveCompositionayload,
     RemoveLayerPayload,
     RemoveClipPayload,
@@ -76,6 +77,7 @@ export type ProjectModifyActionPayload =
     | ModifyEffectExpression
     | ModifyKeyframePayload
     | ModifyEffectKeyframePayload
+    | MoveLayerOrderPayload
     | RemoveCompositionayload
     | RemoveLayerPayload
     | RemoveClipPayload
