@@ -233,6 +233,7 @@ export default class Timeline extends React.Component<Props, State>
                                     {activeComp && (
                                         <LayerList
                                             layers={layers}
+                                            useDragHandle={true}
                                             onSortEnd={this.onLayerSort}
                                             onLayerSelect={this.onLayerSelect}
                                             onLayerRemove={this.onLayerRemove}

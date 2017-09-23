@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as classnames from 'classnames'
 import * as PropTypes from 'prop-types'
-import { SortableElement } from 'react-sortable-hoc'
+import { SortableElement, SortableHandle } from 'react-sortable-hoc'
 import * as Delir from 'delir-core'
 
 import ProjectModActions from '../../actions/ProjectMod'
@@ -23,6 +23,10 @@ interface Props {
     /** Layer remove handler */
     onRemove: (layerId: string) => any
 }
+
+const SortHandle = SortableHandle(() => (
+    <i className='fa fa-bars' />
+))
 
 class LaneLabel extends React.Component<Props>
 {
@@ -65,6 +69,10 @@ class LaneLabel extends React.Component<Props>
                     <MenuItem label={t('contextMenu.removeLayer')} data-layer-id={layer.id} onClick={this.onRemove} />
                     <MenuItem type='separator' />
                 </ContextMenu>
+
+                <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--Handle'])}>
+                    <SortHandle />
+                </li>
 
                 <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-name'])} data-layer-id={layer.id} onClick={this.onSelect}>
                     <LabelInput ref={this.bindLayerNameInput} defaultValue={layer.name} placeholder='Layer name' onChange={this.layerNameChanged} />
