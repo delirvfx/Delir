@@ -1,6 +1,7 @@
 import {TypeDescriptor} from '../../plugin-support/type-descriptor'
 import PreRenderingRequest from '../pipeline/pre-rendering-request'
 import RenderingRequest from '../pipeline/render-request'
+import {ClipBound} from '../pipeline/ExpressionContext'
 
 export interface IRendererStatic {
     rendererId: string
@@ -12,5 +13,6 @@ export interface IRendererStatic {
 
 export interface IRenderer<T> {
     beforeRender(request: PreRenderingRequest<T>): Promise<void>
+    calculateBound(beforeExpressionParams: T): ClipBound
     render(request: RenderingRequest<T>): Promise<void>
 }

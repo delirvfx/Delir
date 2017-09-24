@@ -70,30 +70,6 @@ interface RenderProgression {
 
 const tsCompileOption: TypeScript.CompilerOptions = {}
 
-/**
- * Get expression applied values
- */
-export const applyExpression = (
-    req: RenderingRequest,
-    beforeExpressionParams: { [prop: string]: ParameterValueTypes },
-    expressions: { [prop: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes },
-): { [prop: string]: ParameterValueTypes } => {
-    return _.mapValues(beforeExpressionParams, (value, propName) => {
-        if (expressions[propName!]) {
-            // TODO: Value type Validation
-            const result = expressions[propName!]({
-                req,
-                clipProperties: beforeExpressionParams,
-                currentValue: value
-            })
-
-            return result === void 0 ? value : result
-        }
-
-        return value
-    })
-}
-
 export default class Pipeline
 {
     private _fpsCounter: FPSCounter = new FPSCounter()
@@ -476,13 +452,29 @@ export default class Pipeline
                     frameOnClip: req.frame - clipTask.clipPlacedFrame,
                 })
 
+                // #region Render source by Renderer
                 // Lookup current frame prop value from pre-calculated lookup-table
                 const beforeExpressionParams = _.fromPairs(clipTask.rendererProps.properties.map(desc => {
                     return [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]
                 }))
 
-                // Apply expression
-                const afterExpressionParams = applyExpression(clipScopeReq, beforeExpressionParams, clipTask.expressions)
+                const clipBound = clipTask.renderer.calculateBound(beforeExpressionParams),
+
+                const afterExpressionParams = _.mapValues(beforeExpressionParams, (value, propName) => {
+                    if (clipTask.expressions[propName!]) {
+                        // TODO: Value type Validation
+                        const result = clipTask.expressions[propName!]({
+                            req,
+                            clipProperties: beforeExpressionParams,
+                            currentValue: value,
+                            clipBound,
+                        })
+
+                        return result === void 0 ? value : result
+                    }
+
+                    return value
+                })
 
                 const clipRenderReq = clipScopeReq.clone({
                     parameters: afterExpressionParams,
@@ -506,14 +498,29 @@ export default class Pipeline
 
                 await clipTask.renderer.render(clipRenderReq)
                 clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
+                // #endregion
 
-                // Post process effects
+                // #region Post process effects
                 for (const effectTask of clipTask.effects) {
                     const beforeExpressionEffectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => {
                         return [desc.propName, effectTask.keyframeLUT[desc.propName][req.frame]]
                     })) as {[propName: string]: ParameterValueTypes}
 
-                    const afterExpressionEffectorParams = applyExpression(clipScopeReq, beforeExpressionEffectorParams, effectTask.expressions)
+                    const afterExpressionEffectorParams = _.mapValues(beforeExpressionEffectorParams, (value, propName) => {
+                        if (effectTask.expressions[propName!]) {
+                            // TODO: Value type Validation
+                            const result = effectTask.expressions[propName!]({
+                                req: clipScopeReq,
+                                clipProperties: beforeExpressionEffectorParams,
+                                currentValue: value,
+                                clipBound,
+                            })
+
+                            return result === void 0 ? value : result
+                        }
+
+                        return value
+                    })
 
                     const effectRenderReq = clipScopeReq.clone({
                         srcCanvas: clipBufferCanvas,
@@ -526,6 +533,7 @@ export default class Pipeline
                     clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
                     clipBufferCtx.globalAlpha = 1
                 }
+                // #endregion
 
                 // Render clip rendering result to merger canvas
                 if (clipTask.rendererType === 'adjustment') {

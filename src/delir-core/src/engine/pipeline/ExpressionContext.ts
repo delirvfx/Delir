@@ -1,11 +1,19 @@
 import RenderingRequest from './render-request'
-import {Clip} from '../../project'
 import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
+
+export interface ClipBound {
+    x: number
+    y: number
+    width: number
+    height: number
+    rotate: number
+}
 
 export interface Exposes {
     req: RenderingRequest
     clipProperties: {[propName: string]: ParameterValueTypes}
     currentValue: any
+    clipBound: ClipBound
 }
 
 export const makeContext = (exposes: Exposes) => {
@@ -41,7 +49,13 @@ export const makeContext = (exposes: Exposes) => {
 }
 
 export const expressionContextTypeDefinition = `
-interface Clip {}
+interface ClipBound {
+    x: number
+    y: number
+    width: number
+    height: number
+    rotate: number
+}
 
 declare const ctx: {
     time: number
@@ -56,6 +70,7 @@ declare const ctx: {
     durationFrames: number
     clipProp: {[propertyName: string]: any}
     currentValue: any
+    clipBound: ClipBound
 }
 
 declare const time: number;
