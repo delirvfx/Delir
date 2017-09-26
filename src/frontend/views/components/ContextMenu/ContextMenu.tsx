@@ -83,6 +83,16 @@ export class ContextMenu extends React.Component
         ContextMenuManager.instance.register(this.root.parentElement!, items.map(item => toMenuItemJSON(item)))
     }
 
+    public componentDidUpdate()
+    {
+        ContextMenuManager.instance.unregister(this.root.parentElement!)
+
+        const items = wrapArray(this.props.children as MenuItem[])
+
+        if (!items) return
+        ContextMenuManager.instance.register(this.root.parentElement!, items.map(item => toMenuItemJSON(item)))
+    }
+
     public componentWillUnMount()
     {
         ContextMenuManager.instance.unregister(this.root)
