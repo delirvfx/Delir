@@ -6688,9 +6688,9 @@ typescript@*:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.0.tgz#aef5a8d404beba36ad339abf079ddddfffba86dd"
 
-typescript@2.5.0-dev.20170808:
-  version "2.5.0-dev.20170808"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.5.0-dev.20170808.tgz#89e017e404b058414d0b992cedfd2d9865164a75"
+typescript@2.7.0-dev.20171021:
+  version "2.7.0-dev.20171021"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.0-dev.20171021.tgz#32d945ef7deb0fcff6634173a903507efeef8d35"
 
 ua-parser-js@^0.7.9:
   version "0.7.12"
