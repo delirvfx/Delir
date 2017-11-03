@@ -2423,7 +2423,7 @@ electron-rebuild@1.6.0:
     colors "^1.1.2"
     debug "^2.6.3"
     fs-extra "^3.0.1"
-    node-abi "^2.1.1"
+    node-abi "^2.0.0"
     node-gyp "^3.6.0"
     ora "^1.2.0"
     rimraf "^2.6.1"
@@ -7168,9 +7168,9 @@ typescript@*:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.0.tgz#aef5a8d404beba36ad339abf079ddddfffba86dd"
 
-typescript@2.7.0-dev.20171021:
-  version "2.7.0-dev.20171021"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.0-dev.20171021.tgz#32d945ef7deb0fcff6634173a903507efeef8d35"
+typescript@2.7.0-dev.20171103:
+  version "2.7.0-dev.20171103"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.0-dev.20171103.tgz#0e9318e4890701846dd5e542a81573818b4fb311"
 
 ua-parser-js@^0.7.9:
   version "0.7.12"
