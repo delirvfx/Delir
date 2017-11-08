@@ -72,12 +72,12 @@ export function calcKeyframeValueAt(
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcCodeKeyFrames)[frame]
         case 'ENUM':
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcEnumKeyFrames)[frame]
-        case 'CLIP':
-            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNoAnimatable)[frame]
-        case 'PULSE':
-            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcPulseKeyFrames)[frame]
-        case 'ARRAY':
-            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcArrayOfKeyFrames)[frame]
+        // case 'CLIP':
+        //     return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNoAnimatable)[frame]
+        // case 'PULSE':
+        //     return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcPulseKeyFrames)[frame]
+        // case 'ARRAY':
+        //     return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcArrayOfKeyFrames)[frame]
         case 'ASSET':
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcAssetKeyFrames)[frame]
         default:
@@ -137,15 +137,15 @@ export function calcKeyFrames(
             case 'ENUM':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcEnumKeyFrames)
             break;
-            case 'CLIP':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNoAnimatable)
-            break;
-            case 'PULSE':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPulseKeyFrames)
-            break;
-            case 'ARRAY':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcArrayOfKeyFrames)
-            break;
+            // case 'CLIP':
+            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNoAnimatable)
+            // break;
+            // case 'PULSE':
+            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPulseKeyFrames)
+            // break;
+            // case 'ARRAY':
+            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcArrayOfKeyFrames)
+            // break;
             case 'ASSET':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcAssetKeyFrames)
             break;
