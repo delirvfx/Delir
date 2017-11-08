@@ -17,7 +17,17 @@ export default class ScriptingRenderer implements IRenderer<ScriptingRendererPar
 
     public static provideParameters()
     {
-        return Type.none()
+        return Type
+            .enum('langType', {
+                label: 'Language',
+                selection: ['Processing.js'],
+                defaultValue: 'Processing.js',
+            })
+            .code('process', {
+                label: 'Code',
+                langType: 'processing',
+                defaultValue: '',
+            })
     }
 
     public async beforeRender(params: PreRenderingRequest<ScriptingRendererParam>)
