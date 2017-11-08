@@ -68,6 +68,8 @@ export function calcKeyframeValueAt(
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNumberKeyFrames)[frame]
         case 'FLOAT':
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcFloatKeyFrames)[frame]
+        case 'CODE':
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcCodeKeyFrames)[frame]
         case 'ENUM':
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcEnumKeyFrames)[frame]
         case 'CLIP':
@@ -129,6 +131,9 @@ export function calcKeyFrames(
             case 'FLOAT':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcFloatKeyFrames)
             break;
+            case 'CODE':
+                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcCodeKeyFrames)
+            break
             case 'ENUM':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcEnumKeyFrames)
             break;
@@ -360,6 +365,11 @@ function calcFloatKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameL
 function calcPulseKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): boolean
 {
     return keyFrameLink.active.frameOnClip === frame ? true : false
+}
+
+function calcCodeKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): any
+{
+    return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
 }
 
 function calcEnumKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): any

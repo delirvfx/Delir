@@ -22,6 +22,7 @@ export type ParameterType =
     | 'STRING'
     | 'NUMBER'
     | 'FLOAT'
+    | 'CODE'
     | 'ENUM'
     // | 'CLIP'
     // | 'PULSE'
@@ -70,6 +71,10 @@ export interface FloatTypeDescripter extends ParameterTypeDescriptor<'FLOAT'> {
 // export interface PulseTypeDescripter extends ParameterTypeDescriptor<'PULSE'> {
 //     defaultValue?: true,
 // }
+export interface CodeTypeDescripter extends ParameterTypeDescriptor<'CODE'> {
+    langType: string
+    defaultValue?: string
+ }
 export interface EnumTypeDescripter extends ParameterTypeDescriptor<'ENUM'> {
     selection: string[]
     defaultValue?: string
@@ -99,6 +104,7 @@ export type AnyParameterTypeDescriptor =
     | NumberTypeDescripter
     | FloatTypeDescripter
     // | PulseTypeDescripter
+    | CodeTypeDescripter
     | EnumTypeDescripter
     // | ClipTypeDescripter
     | AssetTypeDescripter
@@ -262,6 +268,15 @@ export class TypeDescriptor {
     //     return this
     // }
 
+    public code(propName: string, conf: { label: string, enabled?: boolean, langType: string, defaultValue?: string })
+    {
+        const { defaultValue, label, enabled, langType } = defaults(conf, { enabled: true })
+
+        this.properties.push({type: 'CODE', propName, label, defaultValue, langType, enabled, animatable: false })
+
+        return this
+    }
+
     public enum(propName: string, conf: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
     {
         const {defaultValue, label, enabled, selection} = defaults(conf, {
@@ -394,10 +409,15 @@ export default class Type
     //     return (new TypeDescriptor()).pulse(propName, option)
     // }
 
-    // public static enum(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
-    // {
-    //     return (new TypeDescriptor()).enum(propName, option)
-    // }
+    public static code(propName: string, option: { label: string, defaultValue?: string, enabled?: boolean, langType: string })
+    {
+        return (new TypeDescriptor()).code(propName, option)
+    }
+
+    public static enum(propName: string, option: {label: string, defaultValue?: string, enabled?: boolean, selection: string[]})
+    {
+        return (new TypeDescriptor()).enum(propName, option)
+    }
 
     // public static clip(propName: string, option: {label: string, enabled?: boolean})
     // {
