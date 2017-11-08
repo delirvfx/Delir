@@ -98,6 +98,56 @@ declare module 'form-serialize' {
     export default function serialize(form: HTMLFormElement, options?: SerializeOption & {hash:true}): {[name: string]: string|string[]}
 }
 
+// processing-js
+declare namespace ProcessingJS {
+    export interface ProcFunction {
+        (processing: SketchProc): void
+    }
+
+    export interface SketchProc {
+        setup: () => void
+        draw: () => void
+
+        size(width: number, height: number, mode: any): void
+        loadImage(file: string): void
+        textureMode(mode: any): void
+    }
+
+    export class Processing {
+        constructor(canvas: HTMLCanvasElement, proc: ProcessingStatic.Sketch | ProcFunction)
+        loop(): void
+        redraw():void
+        noLoop(): void
+        exit(): void
+    }
+
+    export class ImageCache {
+        add(path: string): void
+    }
+
+    export namespace ProcessingStatic {
+        export class Sketch {
+            use3DContext: boolean
+            imageCache: ImageCache
+            attachFunction: ProcFunction
+        }
+    }
+
+    export interface ProcessingStatic {
+        new(canvas: HTMLCanvasElement, proc: ProcessingStatic.Sketch | ProcFunction): Processing
+        getInstanceById(id: string): Processing
+        instances: Processing[]
+    }
+}
+
+declare module 'processing-js' {
+    const _: {}
+    export = _
+}
+
+declare const Processing: ProcessingJS.ProcessingStatic
+
+
 // Delir exposed variables
 declare interface DelirApp {
     stores: {[storeName: string]: any}

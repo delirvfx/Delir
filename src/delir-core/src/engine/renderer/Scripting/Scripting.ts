@@ -4,6 +4,8 @@ import Expression from '../../../values/expression'
 import RenderingRequest from '../../pipeline/render-request'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'
 
+import 'processing-js'
+
 interface ScriptingRendererParam {
     code: Expression
 }
