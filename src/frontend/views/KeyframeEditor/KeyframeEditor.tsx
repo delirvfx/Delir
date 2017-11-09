@@ -14,6 +14,7 @@ import {ContextMenu, MenuItem, MenuItemProps} from '../components/ContextMenu'
 import DelirValueInput from './_DelirValueInput'
 import { default as KeyframeGraph, KeyframePatch } from './KeyframeGraph'
 import ExpressionEditor from './ExpressionEditor'
+import ScriptingRendererEditor from './ScriptingRendererEditor'
 
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
@@ -112,6 +113,20 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
             })
         }
         this.setState({editorOpened: false})
+    }
+
+    private onCloseScriptingRendererEditor = (result: ScriptingRendererEditor.EditorResult) => {
+        if (!result.saved) return this.setState({ activePropName: null })
+
+        const { activeEntity, activePropName } = this.state
+        const activePropDescriptor = this._getDescriptorByPropId(activePropName)
+        const { activeClip } = this.props
+
+        console.log(activePropDescriptor, activeEntity)
+        if (!activePropDescriptor || !activeEntity || activeEntity.type !== 'clip') return
+
+        ProjectModActions.createOrModifyKeyframeForClip(activeEntity.entityId, 'code', 0, { value: result.code })
+        this.setState({ activePropName: null })
     }
 
     private _syncGraphHeight = () =>
@@ -258,6 +273,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
                 <Pane className={s.propList}>
+                    {/* 選択されたclipのプロパティリスト */}
                     {activeClip && descriptors.map(desc => {
                         const value = activeClip
                             ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, activeClip.keyframes[desc.propName] || [])
@@ -299,7 +315,8 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                     {this.renderEffectProperties()}
                 </Pane>
                 <Pane>
-                    <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph} onWheel={this._scaleTimeline}>
+                    {/* キーフレームグラフ・エクスプレッションエディタ */}
+                    <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onWheel={this._scaleTimeline}>
                         {editorOpened && (
                             <ExpressionEditor
                                 entityId={`${activeEntityObject!.id}-${activePropName}`}
@@ -308,11 +325,26 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                                 onClose={this.onCloseEditor}
                             />
                         )}
+
+                        {(activePropDescriptor && activePropDescriptor.type === 'CODE') && (() => {
+                            const code = Delir.KeyframeHelper.calcKeyframeValueAt(0, activeClip!.placedFrame, activePropDescriptor, activeClip!.keyframes.code || []) as string
+
+                            return (
+                                <ScriptingRendererEditor
+                                    entityId={`${activeEntityObject!.id}-${activePropName}`}
+                                    title={`#${activeClip!.id.slice(0, 4)}`}
+                                    code={code}
+                                    onClose={this.onCloseScriptingRendererEditor}
+                                />
+                            )
+                        })()}
+
                         <div className={s.measureContainer}>
                             <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
                                 {...this._renderMeasure()}
                             </div>
                         </div>
+
                         {activePropDescriptor && activeClip && keyframes && (
                             <KeyframeGraph
                                 composition={editor.activeComp!}

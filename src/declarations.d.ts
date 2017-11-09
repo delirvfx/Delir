@@ -100,6 +100,26 @@ declare module 'form-serialize' {
 
 // processing-js
 declare namespace ProcessingJS {
+    export interface Sketch {
+        use3DContext: boolean
+        imageCache: ImageCache
+        attachFunction: ProcFunction|null
+        sourceCode: string
+        onExit(): void
+        onFrameEnd(): void
+        onFrameStart(): void
+        onLoad(): void
+        onLoop(): void
+        onPause(): void
+        onSetup(): void
+        options: {
+            isTransparent: boolean,
+            globalKeyEvents: boolean,
+            pauseOnBlur: boolean,
+        }
+        params: any
+    }
+
     export interface ProcFunction {
         (processing: SketchProc): void
     }
@@ -113,28 +133,27 @@ declare namespace ProcessingJS {
         textureMode(mode: any): void
     }
 
+    export class ImageCache {
+        add(path: string): void
+    }
+
+    export interface ProcessingExternals {
+        sketch: Sketch
+    }
+
     export class Processing {
-        constructor(canvas: HTMLCanvasElement, proc: ProcessingStatic.Sketch | ProcFunction)
+        externals: ProcessingExternals
+        constructor(canvas: HTMLCanvasElement, proc: Sketch | ProcFunction)
         loop(): void
+        draw(): void
         redraw():void
         noLoop(): void
         exit(): void
     }
 
-    export class ImageCache {
-        add(path: string): void
-    }
-
-    export namespace ProcessingStatic {
-        export class Sketch {
-            use3DContext: boolean
-            imageCache: ImageCache
-            attachFunction: ProcFunction
-        }
-    }
-
     export interface ProcessingStatic {
-        new(canvas: HTMLCanvasElement, proc: ProcessingStatic.Sketch | ProcFunction): Processing
+        new(canvas: HTMLCanvasElement, proc: Sketch | ProcFunction): Processing
+        compile(pde: string): Sketch
         getInstanceById(id: string): Processing
         instances: Processing[]
     }

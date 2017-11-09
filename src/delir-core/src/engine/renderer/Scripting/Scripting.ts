@@ -3,11 +3,13 @@ import Type from '../../../plugin-support/type-descriptor'
 import Expression from '../../../values/expression'
 import RenderingRequest from '../../pipeline/render-request'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'
+import * as VM from 'vm'
 
 import 'processing-js'
 
 interface ScriptingRendererParam {
-    code: Expression
+    langType: 'Processing.js'
+    code: string
 }
 
 export default class ScriptingRenderer implements IRenderer<ScriptingRendererParam> {
@@ -25,21 +27,42 @@ export default class ScriptingRenderer implements IRenderer<ScriptingRendererPar
                 selection: ['Processing.js'],
                 defaultValue: 'Processing.js',
             })
-            .code('process', {
+            .code('code', {
                 label: 'Code',
                 langType: 'processing',
                 defaultValue: '',
             })
     }
 
-    public async beforeRender(params: PreRenderingRequest<ScriptingRendererParam>)
+    private vmCtx: VM.Context
+    private p: ProcessingJS.Processing
+    private canvas: HTMLCanvasElement
+
+    public async beforeRender(req: PreRenderingRequest<ScriptingRendererParam>)
     {
-        return
+        const sketch = Processing.compile(req.parameters.code)
+        const vm = new VM.Script(sketch.sourceCode)
+
+        this.vmCtx = VM.createContext(new Proxy({ console: window.console }, {
+            get(target: any, propKey) {
+                return target[propKey]
+             }
+        }))
+
+        this.canvas = document.createElement('canvas')
+        Object.assign(this.canvas, { width: req.width, height: req.height })
+
+        this.p = new Processing(this.canvas, vm.runInContext(this.vmCtx))
+        this.p.size(req.width, req.height)
+        this.p.externals.sketch.options.isTransparent = true
+        // this.p
+        console.log(this.p)
+        this.p.noLoop()
     }
 
     public async render(req: RenderingRequest<ScriptingRendererParam>)
     {
-        console.log(req.parameters)
-        return
+        this.p.draw && this.p.draw()
+        req.destCanvas.getContext('2d')!.drawImage(this.canvas, 0, 0)
     }
 }
