@@ -100,10 +100,12 @@ declare module 'form-serialize' {
 
 // processing-js
 declare namespace ProcessingJS {
-    export interface Sketch {
+    export class Sketch {
+        constructor(proc?: SketchProc)
+
         use3DContext: boolean
         imageCache: ImageCache
-        attachFunction: ProcFunction|null
+        attachFunction: SketchProc|null
         sourceCode: string
         onExit(): void
         onFrameEnd(): void
@@ -120,18 +122,18 @@ declare namespace ProcessingJS {
         params: any
     }
 
-    export interface ProcFunction {
-        (processing: SketchProc): void
-    }
-
     export interface SketchProc {
-        setup: () => void
-        draw: () => void
-
-        size(width: number, height: number, mode: any): void
-        loadImage(file: string): void
-        textureMode(mode: any): void
+        (processing: Processing): void
     }
+
+    // export interface processing {
+    //     setup: () => void
+    //     draw: () => void
+
+    //     size(width: number, height: number, mode: any): void
+    //     loadImage(file: string): void
+    //     textureMode(mode: any): void
+    // }
 
     export class ImageCache {
         add(path: string): void
@@ -142,20 +144,30 @@ declare namespace ProcessingJS {
     }
 
     export class Processing {
+        static Sketch: typeof Sketch
+
+        static compile(pde: string): Sketch
+        static getInstanceById(id: string): Processing
+        static instances: Processing[]
+
         externals: ProcessingExternals
-        constructor(canvas: HTMLCanvasElement, proc: Sketch | ProcFunction)
+        frameCount: number
+        width: number
+        height: number
+        focused: boolean
+
+        constructor(canvas: HTMLCanvasElement, proc: Sketch | SketchProc)
         loop(): void
         draw(): void
         redraw():void
         noLoop(): void
         exit(): void
-    }
 
-    export interface ProcessingStatic {
-        new(canvas: HTMLCanvasElement, proc: Sketch | ProcFunction): Processing
-        compile(pde: string): Sketch
-        getInstanceById(id: string): Processing
-        instances: Processing[]
+        size(width: number, height: number): void
+        background(color: number): void
+        background(color: number, alpha: number): void
+
+        loadImage(path: string, extension?: string, callback?: () => void): void
     }
 }
 
@@ -164,7 +176,7 @@ declare module 'processing-js' {
     export = _
 }
 
-declare const Processing: ProcessingJS.ProcessingStatic
+declare const Processing: typeof ProcessingJS.Processing
 
 
 // Delir exposed variables

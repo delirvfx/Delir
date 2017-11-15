@@ -34,34 +34,62 @@ export default class ScriptingRenderer implements IRenderer<ScriptingRendererPar
             })
     }
 
-    private vmCtx: VM.Context
+    private vmContext: any
+    private vmScope: any
     private p: ProcessingJS.Processing
     private canvas: HTMLCanvasElement
 
+    private makeVmScopeVariables(req: PreRenderingRequest<any> | RenderingRequest<any>)
+    {
+        return {
+            delir: {
+                ctx: {
+                    width: req.width,
+                    height: req.height,
+                    framerate: req.framerate,
+                    time: (req as RenderingRequest).time,
+                    frame: (req as RenderingRequest).frame,
+                    timeOnClip: (req as RenderingRequest).timeOnClip,
+                    frameOnClip: (req as RenderingRequest).frameOnClip,
+                }
+            }
+        }
+    }
+
     public async beforeRender(req: PreRenderingRequest<ScriptingRendererParam>)
     {
-        const sketch = Processing.compile(req.parameters.code)
-        const vm = new VM.Script(sketch.sourceCode)
+        const compiled = Processing.compile(req.parameters.code)
 
-        this.vmCtx = VM.createContext(new Proxy({ console: window.console }, {
-            get(target: any, propKey) {
-                return target[propKey]
-             }
-        }))
+        // Make VM environment
+        this.vmScope = this.makeVmScopeVariables(req)
 
+        const vm = new VM.Script(compiled.sourceCode, {})
+        this.vmContext = VM.createContext(
+            new Proxy({ console: window.console }, {
+                get: (target: any, propKey) => {
+                    if (target[propKey]) return target[propKey]
+                    else return this.vmScope[propKey]
+                }
+            })
+        )
+
+        // Make VM scope binded sketch object
+        const sketch = new Processing.Sketch(vm.runInContext(this.vmContext))
+
+        // Initialize canvas and Processing
         this.canvas = document.createElement('canvas')
         Object.assign(this.canvas, { width: req.width, height: req.height })
 
-        this.p = new Processing(this.canvas, vm.runInContext(this.vmCtx))
+        this.p = new Processing(this.canvas, sketch)
+
         this.p.size(req.width, req.height)
-        this.p.externals.sketch.options.isTransparent = true
-        // this.p
-        console.log(this.p)
+        this.p.background(0, 0)
         this.p.noLoop()
     }
 
     public async render(req: RenderingRequest<ScriptingRendererParam>)
     {
+        this.vmScope = this.makeVmScopeVariables(req)
         this.p.draw && this.p.draw()
         req.destCanvas.getContext('2d')!.drawImage(this.canvas, 0, 0)
     }

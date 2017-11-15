@@ -3,7 +3,6 @@ import {ProjectHelper, Values} from 'delir-core'
 import {join} from 'path'
 import AppActions from '../../../actions/App'
 
-
 const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest as any, ...sources)
 
 const fps = 30
@@ -154,6 +153,45 @@ const adjustmentClip = assign(new Delir.Project.Clip(), {
     durationFrames: 30 * 10,
 })
 
+const scriptingClip = assign(new Delir.Project.Clip(), {
+    renderer: 'scripting',
+    placedFrame: 0,
+    durationFrames: 30  * 10,
+    keyframes: {
+        code: [assign(new Delir.Project.Keyframe(), {
+            frameOnClip: 0,
+            value: `
+float x = 300;
+float y = 200;
+int r = 180;
+PImage i;
+
+void setup() {
+    console.log(delir.ctx.width);
+    i = loadImage("test.jpg")
+}
+
+void draw(){
+    fill(0, 10);
+    noStroke();
+    rect(0, 0, 600, 400);
+    noFill();
+
+    x = x + random(-2, 2);
+    y = y + random(-2, 2);
+    stroke(random(255), random(255), 255);
+    ellipse(x, y, r, r);
+
+    stroke(random(255), random(255), 255);
+    ellipse(x - 100 + random(-2, 2), y - 100 + random(-2, 2), r + random(-2, 2), r + random(-2, 2));
+
+    image(i, 0, 0)
+}
+            `
+        })]
+    }
+})
+
 const c1_t4_cl1 = assign(new Delir.Project.Clip(), {
     renderer: 'video',
     placedFrame: 0,
@@ -168,6 +206,7 @@ ProjectHelper.addComposition(p, c1)
 // ProjectHelper.addClip(p, c1_t1, audioClip2)
 // ProjectHelper.addClip(p, c1_t1, imageClip)
 // ProjectHelper.addClip(p, c1_t2, audioClip)
+ProjectHelper.addClip(p, c1_t2, scriptingClip)
 // ProjectHelper.addClip(p, c1_t3, movieClip)
 ProjectHelper.addClip(p, c1_t3, textClip)
 ProjectHelper.addClip(p, c1_t4, adjustmentClip)
