@@ -9,8 +9,9 @@ import ImageRenderer from './Image/Image'
 import TextRenderer from './Text/Text'
 import AudioRenderer from './Audio/Audio'
 import AdjustmentRenderer from './Adjustment/Adjustment'
+import ScriptingRenderer from './Scripting/Scripting'
 
-export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment'
+export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment' | 'scripting'
 
 export const RENDERERS: {[name: string]: IRendererStatic} = {
     audio: AudioRenderer,
@@ -18,6 +19,7 @@ export const RENDERERS: {[name: string]: IRendererStatic} = {
     image: ImageRenderer,
     text: TextRenderer,
     adjustment: AdjustmentRenderer,
+    scripting: ScriptingRenderer,
 }
 
 interface PluginInfo {

@@ -12,6 +12,7 @@ export default I18n({
             image: 'image',
             text: 'text',
             adjustment: 'adjust',
+            scripting: 'script',
         },
     },
     en: {
@@ -25,6 +26,7 @@ export default I18n({
             image: 'image',
             text: 'text',
             adjustment: 'adjust',
+            scripting: 'script',
         },
     }
 })

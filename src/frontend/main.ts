@@ -48,6 +48,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (__DEV__) {
         require('./utils/Dev/example-project/ExampleProject1')
+        // require('./utils/Dev/example-project/ClipsExample')
         AppActions.notify('It\'s experimental VFX Application works with JavaScript', '👐 <DEV MODE> Hello, welcome to Delir', 'info')
     }
 

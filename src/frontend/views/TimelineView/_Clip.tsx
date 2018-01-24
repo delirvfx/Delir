@@ -156,6 +156,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
                     [s['Clip--text']]: clip.renderer === 'text',
                     [s['Clip--image']]: clip.renderer === 'image',
                     [s['Clip--adjustment']]: clip.renderer === 'adjustment',
+                    [s['Clip--scripting']]: clip.renderer === 'scripting',
                 })}
                 style={{
                     left: this.props.left,

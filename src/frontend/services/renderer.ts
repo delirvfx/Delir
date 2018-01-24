@@ -220,7 +220,7 @@ const rendererService = {
         canvasContext = canvas.getContext('2d')!
     },
 
-    get pluginRegistry() {
+    get pluginRegistry(): Delir.PluginRegistry {
         return pluginRegistry!
     },
 
@@ -230,7 +230,7 @@ const rendererService = {
 
     get lastRenderState() {
         return renderState
-    }
+    },
 
     get isInRendering()
     {

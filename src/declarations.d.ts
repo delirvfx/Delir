@@ -98,6 +98,7 @@ declare module 'form-serialize' {
     export default function serialize(form: HTMLFormElement, options?: SerializeOption & {hash:true}): {[name: string]: string|string[]}
 }
 
+
 // Delir exposed variables
 declare interface DelirApp {
     stores: {[storeName: string]: any}

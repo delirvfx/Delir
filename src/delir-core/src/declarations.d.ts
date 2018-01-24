@@ -54,5 +54,84 @@ declare namespace NodeJS {
     }
 }
 
-// Typing helpers
-declare type Optionalized<T> = {[P in keyof T]?: T[P]}
+// processing-js
+declare namespace ProcessingJS {
+    export class Sketch {
+        constructor(proc?: SketchProc)
+
+        use3DContext: boolean
+        imageCache: ImageCache
+        attachFunction: SketchProc|null
+        sourceCode: string
+        onExit(): void
+        onFrameEnd(): void
+        onFrameStart(): void
+        onLoad(): void
+        onLoop(): void
+        onPause(): void
+        onSetup(): void
+        options: {
+            isTransparent: boolean,
+            globalKeyEvents: boolean,
+            pauseOnBlur: boolean,
+        }
+        params: any
+    }
+
+    export interface SketchProc {
+        (processing: Processing): void
+    }
+
+    // export interface processing {
+    //     setup: () => void
+    //     draw: () => void
+
+    //     size(width: number, height: number, mode: any): void
+    //     loadImage(file: string): void
+    //     textureMode(mode: any): void
+    // }
+
+    export class ImageCache {
+        add(path: string): void
+    }
+
+    export interface ProcessingExternals {
+        sketch: Sketch
+    }
+
+    export class Processing {
+        static Sketch: typeof Sketch
+
+        static compile(pde: string): Sketch
+        static getInstanceById(id: string): Processing
+        static instances: Processing[]
+
+        externals: ProcessingExternals
+        frameCount: number
+        width: number
+        height: number
+        focused: boolean
+
+        constructor(canvas: HTMLCanvasElement, proc: Sketch | SketchProc)
+        loop(): void
+        draw(): void
+        redraw():void
+        noLoop(): void
+        exit(): void
+
+        size(width: number, height: number): void
+        background(color: number): void
+        background(color: number, alpha: number): void
+
+        loadImage(path: string, extension?: string, callback?: () => void): void
+    }
+}
+
+declare module 'processing-js' {
+    const _: {}
+    export = _
+}
+
+declare const Processing: typeof ProcessingJS.Processing
+
+
