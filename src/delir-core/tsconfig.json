@@ -20,10 +20,7 @@
             "es2017.object"
         ],
         "rootDir": "./src/",
-        "baseUrl": ".",
-        "types": [
-            "./src/declarations.d.ts"
-        ]
+        "baseUrl": "."
     },
     "files": [
         "./src/index",

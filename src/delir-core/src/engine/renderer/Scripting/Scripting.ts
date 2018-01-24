@@ -6,6 +6,11 @@ import PreRenderingRequest from '../../pipeline/pre-rendering-request'
 import * as VM from 'vm'
 
 import 'processing-js'
+import * as p5 from 'p5'
+// import Processing from './DelirProcessing'
+// import processingJSPatch from './processingJsPatch'
+
+console.log(p5)
 
 interface ScriptingRendererParam {
     langType: 'Processing.js'
@@ -75,6 +80,7 @@ export default class ScriptingRenderer implements IRenderer<ScriptingRendererPar
 
         // Make VM scope binded sketch object
         const sketch = new Processing.Sketch(vm.runInContext(this.vmContext))
+        const originalSetup = sketch.setup
 
         // Initialize canvas and Processing
         this.canvas = document.createElement('canvas')
@@ -85,6 +91,8 @@ export default class ScriptingRenderer implements IRenderer<ScriptingRendererPar
         this.p.size(req.width, req.height)
         this.p.background(0, 0)
         this.p.noLoop()
+
+        console.log(this.p)
     }
 
     public async render(req: RenderingRequest<ScriptingRendererParam>)

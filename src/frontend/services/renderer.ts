@@ -230,7 +230,7 @@ const rendererService = {
 
     get lastRenderState() {
         return renderState
-    }
+    },
 
     get isInRendering()
     {
