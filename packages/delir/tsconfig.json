@@ -7,6 +7,8 @@
         "jsx": "react",
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
         "forceConsistentCasingInFileNames": true,
         "lib": [
             "dom",

@@ -6,6 +6,8 @@
         "moduleResolution": "node",
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
         "forceConsistentCasingInFileNames": true
     }
 }
