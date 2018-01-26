@@ -1,0 +1,33 @@
+sudo: false
+language: node_js
+
+cache:
+    yarn: true
+    directories:
+        - node_modules
+
+node_js:
+    - '8'
+
+env:
+    - CXX=g++-4.8
+
+install:
+    - npm i -g yarn
+    - yarn install -s
+
+script:
+    - cd packages/delir-core
+    - yarn test
+    - cd packages/delir
+    - yarn test
+
+addons:
+    apt:
+        sources:
+            - ubuntu-toolchain-r-test
+        packages:
+            - g++-4.8
+            - libfontconfig1-dev
+            # dependent by `av`
+            - libasound2-dev
