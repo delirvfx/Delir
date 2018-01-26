@@ -1,0 +1,26 @@
+{
+    "private": true,
+    "workspaces": [
+        "packages/delir",
+        "packages/delir-core"
+    ],
+    "scripts": {
+        "precommit": "lint-staged",
+        "clean-modules": "rm -rf node_modules && rm -rf packages/delir-core/node_modules && rm -rf packages/delir/node_modules && yarn",
+        "dev": "cross-env NODE_ENV=development webpack --watch",
+        "build:webpack": "cross-env NODE_ENV=production webpack "
+    },
+    "devDependencies": {
+        "cross-env": "5.1.3",
+        "husky": "0.14.3",
+        "lint-staged": "6.1.0",
+        "tslint-plugin-prettier": "1.3.0",
+        "webpack": "3.10.0"
+    },
+    "lint-staged": {
+        "*.{ts,tsx}": [
+            "tslint --fix",
+            "git add"
+        ]
+    }
+}
