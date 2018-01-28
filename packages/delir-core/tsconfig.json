@@ -8,6 +8,11 @@
         "noUnusedParameters": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "lib": [
+            "es2015",
+            "es2016",
+            "es2017"
+        ]
     }
 }
