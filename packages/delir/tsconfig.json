@@ -9,6 +9,7 @@
         "noUnusedParameters": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
+        "strictNullChecks": true,
         "forceConsistentCasingInFileNames": true,
         "lib": [
             "dom",

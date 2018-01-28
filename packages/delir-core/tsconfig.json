@@ -8,6 +8,7 @@
         "noUnusedParameters": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
+        "strictNullChecks": true,
         "forceConsistentCasingInFileNames": true,
         "lib": [
             "es2015",
