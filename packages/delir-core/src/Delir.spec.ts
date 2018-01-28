@@ -1,7 +1,7 @@
 import Delir from './Delir'
 
 describe('Delir', () => {
-    it('Delir', () => {
+    it('#constructor', () => {
         const ctx = new Delir()
     })
 })

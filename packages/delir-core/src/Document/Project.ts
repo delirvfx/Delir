@@ -1,5 +1,12 @@
-export default class Project {
-    public formatVersion: string = '20170127'
-    public assets: any[]
-    public compositions: any[]
+import { Asset } from './Asset'
+import { Clip } from './Clip'
+import { Composition } from './Composition'
+import { Layer } from './Layer'
+
+export interface Project {
+    formatVersion: string
+    assets: Asset[]
+    compositions: Composition[]
+    layers: Layer[]
+    clips: Clip[]
 }
