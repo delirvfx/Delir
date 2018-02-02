@@ -7,7 +7,14 @@ type NewEntity<T extends { id: any }> = Omit<T, 'id'>
 interface OperationEvents {
     'asset:add': { id: string }
     'asset:remove': { id: string }
+    'composition:add': { id: string }
     'composition:remove': { id: string }
+    'layer:add': { id: string }
+    'layer:remove': { id: string }
+    'clip:add': { id: string }
+    'clip:remove': { id: string }
+    'effect:add': { id: string }
+    'effect:remove': { id: string }
 }
 
 /**
