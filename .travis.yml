@@ -19,7 +19,7 @@ install:
 script:
     - cd packages/delir-core
     - yarn test
-    - cd packages/delir
+    - cd - && cd packages/delir
     - yarn test
 
 addons:
