@@ -5,27 +5,47 @@ import DocumentOperator from './DocumentOperator'
 describe('DocumentOperator', () => {
     let docOp: DocumentOperator
 
-    it('#addAsset', () => {
-        const p = mockNewProject()
-        const docOp = new DocumentOperator({} as any, p)
+    describe('Asset operations', () => {
+        it.skip('#getAsset', () => { })
 
-        docOp.addAsset({ fileType: 'jpeg', name: 'photo', path: '/Users/Test' })
+        it('#addAsset', () => {
+            const p = mockNewProject()
+            const docOp = new DocumentOperator({} as any, p)
 
-        // Correctry inserted?
-        expect(p.assets).toHaveLength(1)
+            docOp.addAsset({ fileType: 'jpeg', name: 'photo', path: '/Users/Test' })
 
-        // Is ID were generated?
-        expect(typeof p.assets[0].id).toBe('string')
+            // Correctry inserted?
+            expect(p.assets).toHaveLength(1)
+
+            // Is ID were generated?
+            expect(typeof p.assets[0].id).toBe('string')
+        })
+
+        it('#removeAsset', () => {
+            const p = mockNewProject()
+            docOp = new DocumentOperator({} as any, p)
+
+            const asset = docOp.addAsset({ fileType: 'jpeg', name: 'photo', path: '/Users/Test' })
+            docOp.removeAsset(asset.id)
+
+            // Correctry removed?
+            expect(p.assets).toHaveLength(0)
+        })
     })
 
-    it('#removeAsset', () => {
-        const p = mockNewProject()
-        docOp = new DocumentOperator({} as any, p)
+    describe('Composition operations', () => {
+        it.skip('#getComposition', () => { })
+    })
 
-        const asset = docOp.addAsset({ fileType: 'jpeg', name: 'photo', path: '/Users/Test' })
-        docOp.removeAsset(asset.id)
+    describe('Layer operations', () => {
+        it.skip('#getLayer', () => { })
+    })
 
-        // Correctry removed?
-        expect(p.assets).toHaveLength(0)
+    describe('Clip operations', () => {
+        it.skip('#getClip', () => { })
+    })
+
+    describe('Effect operations', () => {
+        it.skip('#getEffect', () => { })
     })
 })

@@ -2,15 +2,23 @@ import Delir from 'Delir'
 import PluginRegistry from 'Engine/PluginRegistry'
 import { EventEmitter } from 'events'
 import DocumentOperator from '../DocumentOperator'
+import RootComponent from './Component/RootComponent'
 
-interface EngineEvents {
-    render: { a: string }
+interface RenderingResult {
+    canvas: HTMLCanvasElement
+    audioBuffer: Float32Array
+}
+
+interface RenderingOption {
+    frame: number
+    rootCompositionId: string
 }
 
 export default class Engine {
     private emitter: EventEmitter = new EventEmitter()
     private context: Delir
     private pluginRegistry: PluginRegistry
+    private componentTree: RootComponent
 
     /**
      * Use only for reading within this class.
@@ -28,8 +36,15 @@ export default class Engine {
         this.pluginRegistry = pluginRegistry
     }
 
-    public on<E extends keyof EngineEvents>(event: E, listener: (data: EngineEvents[E]) => void) {
-        this.emitter.on(event, listener)
+    private async mountComponents(rootCompositionId: string) {
+        const rootComposition = this.docOp.getComposition(rootCompositionId)
+        if (!rootComposition) throw new Error(`Specified composition not found (id: ${rootCompositionId})`)
+
+        this.componentTree = new RootComponent(this.docOp, rootComposition)
+    }
+
+    public async render(option: RenderingOption): RenderingResult {
+        this.mountComponents(option.rootCompositionId)
     }
 }
 

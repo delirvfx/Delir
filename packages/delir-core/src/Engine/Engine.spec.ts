@@ -1,5 +1,5 @@
 import {} from 'jest'
-import { mockNewProject } from '../../test_lib/mock'
+import { mockComposition, mockNewProject } from '../../test_lib/mock'
 import Delir from '../Delir'
 import DocumentOperator from '../DocumentOperator'
 import Engine from './Engine'
@@ -10,6 +10,7 @@ describe('Engine', () => {
 
     beforeEach(() => {
         const project = mockNewProject()
+        project.compositions = [ mockComposition({ id: 'mock-comp' }) ]
 
         const context = new Delir()
         const pluginRegistry = new PluginRegistry()
@@ -19,5 +20,16 @@ describe('Engine', () => {
 
     describe('#constructor', () => {
         it('new', () => { /* Run beforeEach */ })
+    })
+
+    describe('#mountComponents', () => {
+        it('mountComponents correctly', async () => {
+            await engine.mountComponents('mock-comp')
+        })
+
+        it('should throw an error on a composition that does not exist', async () => {
+            await expect(engine.mountComponents('mock-comp')).resolves.toBeUndefined()
+            await expect(engine.mountComponents('not-exists')).rejects.toEqual(expect.anything())
+        })
     })
 })
