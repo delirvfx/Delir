@@ -1,4 +1,4 @@
-import { Composition, Project } from '../src/Document'
+import { Asset, Composition, Project } from '../src/Document'
 
 export const mockNewProject = (prop: Partial<Project> = {}): Project => ({
     formatVersion: '20180128',
@@ -10,6 +10,13 @@ export const mockNewProject = (prop: Partial<Project> = {}): Project => ({
     ...prop,
 })
 
+export const mockAsset = (prop: Partial<Asset> = {}): Asset => ({
+    id: '',
+    name: 'MockedAsset',
+    fileType: 'mock',
+    path: '/fixtures/MockAsset.mock',
+    ...prop,
+})
 
 export const mockComposition = (prop: Partial<Composition> = {}): Composition => ({
     id: '',

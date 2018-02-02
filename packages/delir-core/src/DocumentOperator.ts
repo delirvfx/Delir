@@ -4,17 +4,39 @@ import { Omit } from './Utils/types'
 
 type NewEntity<T extends { id: any }> = Omit<T, 'id'>
 
+interface OperationEvents {
+    'asset:add': { id: string }
+    'asset:remove': { id: string }
+    'composition:remove': { id: string }
+}
+
 /**
  * Document operation methods
  */
 export default class DocumentOperator {
     private context: Delir
     private project: Project
+    private listeners: {
+        [event: string]: ((payload: any) => void)[]
+    }
 
     constructor(context: Delir, project: Project) {
         this.context = context
         this.project = project
+        this.listeners = Object.create(null)
     }
+
+    // emitter
+    public on<E extends keyof OperationEvents>(event: E, listener: (payload: OperationEvents[E]) => void): void {
+        this.listeners[event] = this.listeners[event] || []
+        this.listeners[event].push(listener)
+    }
+
+    private emit<E extends keyof OperationEvents>(event: E, payload: OperationEvents[E]): void {
+        if (!this.listeners[event]) return
+        for (const listener of this.listeners[event]) listener(payload)
+    }
+
 
     // Asset operations
 
@@ -25,6 +47,7 @@ export default class DocumentOperator {
     public addAsset(assetProp: NewEntity<Asset>): Asset {
         const asset = { ...assetProp, id: '' }
         this.project.assets.push(asset)
+        this.emit('asset:add', { id: asset.id })
         return asset
     }
 
@@ -33,6 +56,7 @@ export default class DocumentOperator {
         if (index === -1) return
 
         const [ asset ] = this.project.assets.splice(index, 1)
+        this.emit('asset:remove', { id: asset.id })
         return asset
     }
 

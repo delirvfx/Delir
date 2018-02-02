@@ -19,7 +19,7 @@ describe('RootComponent', () => {
         docOp = new DocumentOperator({} as any, p)
     })
 
-    describe('#didActivate', () => {
+    describe('#activate', () => {
         it('Is propagation to child CompositionComponent', async () => {
             const root = new RootComponent(docOp, composition)
             const mock = jest.fn()
@@ -30,7 +30,7 @@ describe('RootComponent', () => {
         })
     })
 
-    describe('#didDeactivate', () => {
+    describe('#deactivate', () => {
         it('Is propagation to child CompositionComponent', async () => {
             const root = new RootComponent(docOp, composition)
             const mock = jest.fn()

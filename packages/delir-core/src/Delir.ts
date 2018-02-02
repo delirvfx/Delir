@@ -1,5 +1,6 @@
 import { Project } from './Document/Project'
 import DocumentOperator from './DocumentOperator'
+import DocumentChangeApplyer from './Engine/DocumentChangeApplyer'
 import Engine from './Engine/Engine'
 import PluginRegistry from './Engine/PluginRegistry'
 
@@ -15,7 +16,7 @@ export default class Delir {
     public plugins: PluginRegistry
 
     public setProject(project: Project) {
-        // this._rawProject = project
+        this.documentChangeApplyer = new DocumentChangeApplyer()
         this.project = new DocumentOperator(this, project)
         this.plugins = new PluginRegistry()
         this.engine = new Engine(this, this.project)

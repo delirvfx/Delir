@@ -1,5 +1,5 @@
 import {} from 'jest'
-import { mockNewProject } from '../test_lib/mock'
+import { mockAsset, mockNewProject } from '../test_lib/mock'
 import DocumentOperator from './DocumentOperator'
 
 describe('DocumentOperator', () => {
@@ -11,14 +11,25 @@ describe('DocumentOperator', () => {
         it('#addAsset', () => {
             const p = mockNewProject()
             const docOp = new DocumentOperator({} as any, p)
-
-            docOp.addAsset({ fileType: 'jpeg', name: 'photo', path: '/Users/Test' })
+            docOp.addAsset(mockAsset())
 
             // Correctry inserted?
             expect(p.assets).toHaveLength(1)
 
             // Is ID were generated?
             expect(typeof p.assets[0].id).toBe('string')
+        })
+
+        it('#addAsset emits asset:add event', () => {
+            const p = mockNewProject()
+            const docOp = new DocumentOperator({} as any, p)
+            const mock = jest.fn()
+
+            docOp.on('asset:add', mock)
+            const asset = docOp.addAsset(mockAsset())
+
+            expect(mock.mock.calls.length).toBe(1)
+            expect(mock.mock.calls[0][0]).toEqual({ id: asset.id })
         })
 
         it('#removeAsset', () => {
@@ -30,6 +41,19 @@ describe('DocumentOperator', () => {
 
             // Correctry removed?
             expect(p.assets).toHaveLength(0)
+        })
+
+        it('#addAsset emits asset:remove event', () => {
+            const p = mockNewProject()
+            const docOp = new DocumentOperator({} as any, p)
+            const mock = jest.fn()
+
+            docOp.on('asset:remove', mock)
+            const asset = docOp.addAsset(mockAsset())
+            docOp.removeAsset(asset.id)
+
+            expect(mock.mock.calls.length).toBe(1)
+            expect(mock.mock.calls[0][0]).toEqual({ id: asset.id })
         })
     })
 
