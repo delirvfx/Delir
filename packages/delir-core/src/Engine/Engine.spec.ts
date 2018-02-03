@@ -1,5 +1,5 @@
 import {} from 'jest'
-import { mockComposition, mockNewProject } from '../../test_lib/mock'
+import { mockComposition, mockProject } from '../../test_lib/mock'
 import Delir from '../Delir'
 import DocumentOperator from '../DocumentOperator'
 import Engine from './Engine'
@@ -9,7 +9,7 @@ describe('Engine', () => {
     let engine: Engine
 
     beforeEach(() => {
-        const project = mockNewProject()
+        const project = mockProject()
         project.compositions = [ mockComposition({ id: 'mock-comp' }) ]
 
         const context = new Delir()

@@ -12,6 +12,6 @@ export default class CompositionComponent implements Component<Composition> {
         this.ref = ref
     }
 
-    public async didActivate() {}
-    public async didDeactivate() {}
+    public async activate() {}
+    public async deactivate() {}
 }

@@ -5,6 +5,6 @@
 export interface Component<T> {
     id: string
 
-    didActivate(): Promise<void>
-    didDeactivate(): Promise<void>
+    activate(): Promise<void>
+    deactivate(): Promise<void>
 }

@@ -11,6 +11,6 @@ export default class EffectComponent implements Component<Effect> {
         this.ref = ref
     }
 
-    public async didActivate() { }
-    public async didDeactivate() { }
+    public async activate() { }
+    public async deactivate() { }
 }

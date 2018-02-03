@@ -13,6 +13,6 @@ export default class ClipComponent implements Component<Clip> {
         this.ref = ref
     }
 
-    public async didActivate() { }
-    public async didDeactivate() { }
+    public async activate() { }
+    public async deactivate() { }
 }

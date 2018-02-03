@@ -18,11 +18,11 @@ export default class RootComponent {
     }
 
     public async activate() {
-        this.composition.didActivate()
+        this.composition.activate()
      }
 
     public async deactivate() {
-        this.composition.didDeactivate()
+        this.composition.deactivate()
      }
 
     private buildLayerComponentsTree(composition: Composition) {

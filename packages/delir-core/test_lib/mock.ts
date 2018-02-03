@@ -1,6 +1,6 @@
-import { Asset, Composition, Project } from '../src/Document'
+import { Asset, Clip, Composition, Layer, Project } from '../src/Document'
 
-export const mockNewProject = (prop: Partial<Project> = {}): Project => ({
+export const mockProject = (prop: Partial<Project> = {}): Project => ({
     formatVersion: '20180128',
     assets: [],
     clips: [],
@@ -33,5 +33,23 @@ export const mockComposition = (prop: Partial<Composition> = {}): Composition =>
         blue: 0,
     },
     layers: [],
+    ...prop,
+})
+
+export const mockLayer = (prop: Partial<Layer> = {}): Layer => ({
+    id: '',
+    name: 'Mocked layer',
+    clips: [],
+    ...prop,
+})
+
+export const mockClip = (prop: Partial<Clip> = {}): Clip => ({
+    id: '',
+    renderer: '',
+    placedFrame: 10,
+    durationFrames: 10,
+    keyframes: {},
+    effects: [],
+    expressions: {},
     ...prop,
 })

@@ -18,7 +18,8 @@ export default class Engine {
     private emitter: EventEmitter = new EventEmitter()
     private context: Delir
     private pluginRegistry: PluginRegistry
-    private componentTree: RootComponent
+    /** Do not touch from other than DocumentChangeApplyer */
+    public _componentTree: RootComponent
 
     /**
      * Use only for reading within this class.
@@ -40,7 +41,7 @@ export default class Engine {
         const rootComposition = this.docOp.getComposition(rootCompositionId)
         if (!rootComposition) throw new Error(`Specified composition not found (id: ${rootCompositionId})`)
 
-        this.componentTree = new RootComponent(this.docOp, rootComposition)
+        this._componentTree = new RootComponent(this.docOp, rootComposition)
     }
 
     public async render(option: RenderingOption): RenderingResult {

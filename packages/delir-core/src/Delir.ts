@@ -17,9 +17,9 @@ export default class Delir {
     public documentChangeApplyer: DocumentChangeApplyer
 
     public setProject(project: Project) {
-        this.documentChangeApplyer = new DocumentChangeApplyer()
         this.project = new DocumentOperator(this, project)
         this.plugins = new PluginRegistry()
-        this.engine = new Engine(this, this.project)
+        this.engine = new Engine(this, this.project, this.plugins)
+        this.documentChangeApplyer = new DocumentChangeApplyer(this.project, this.engine)
     }
 }
