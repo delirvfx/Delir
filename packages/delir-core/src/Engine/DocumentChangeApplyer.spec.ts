@@ -43,7 +43,7 @@ describe('DocumentChangeApplyer', () => {
 
     it('#handleRemoveComposition should executes CompositionComponent#deactivate', () => {
         const spyFn = jest.fn()
-        applyer.treeRoot.deactivate = spyFn
+        applyer.treeRoot!.deactivate = spyFn
 
         const result = applyer.handleRemoveComposition({ id: 'mocked-composition' } as OperationEvents['composition:remove'])
 
@@ -55,7 +55,7 @@ describe('DocumentChangeApplyer', () => {
 
     it('#handleRemoveLayer should executes LayerComponent#deactivate', () => {
         const spyFn = jest.fn()
-        applyer.treeRoot.composition.layers[0].deactivate = spyFn
+        applyer.treeRoot!.composition.layers[0].deactivate = spyFn
 
         const result = applyer.handleRemoveLayer({ id: 'mocked-layer' } as OperationEvents['layer:remove'])
 

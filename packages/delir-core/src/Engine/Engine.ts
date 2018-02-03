@@ -45,8 +45,13 @@ export default class Engine {
         this._componentTree = new ComponentRoot(this.docOp, rootComposition)
     }
 
+    private buildWorks(options: RenderingOption) {
+        // TODO
+    }
+
     public async render(option: RenderingOption): Promise<RenderingResult> {
         this.mountComponents(option.rootCompositionId)
+        const works = this.buildWorks()
     }
 }
 
