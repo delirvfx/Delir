@@ -1,11 +1,11 @@
-import { Clip, Composition, Layer } from '../../Document'
-import DocumentOperator from '../../DocumentOperator'
-import ClipComponent from './ClipComponent'
-import CompositionComponent from './CompositionComponent'
-import EffectComponent from './EffectComponent'
-import LayerComponent from './LayerComponent'
+import { Clip, Composition, Layer } from '../Document'
+import DocumentOperator from '../DocumentOperator'
+import ClipComponent from './Component/ClipComponent'
+import CompositionComponent from './Component/CompositionComponent'
+import EffectComponent from './Component/EffectComponent'
+import LayerComponent from './Component/LayerComponent'
 
-export default class RootComponent {
+export default class ComponentRoot {
     private docOp: DocumentOperator
     public composition: CompositionComponent
 

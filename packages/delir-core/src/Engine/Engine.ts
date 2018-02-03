@@ -2,7 +2,7 @@ import Delir from 'Delir'
 import PluginRegistry from 'Engine/PluginRegistry'
 import { EventEmitter } from 'events'
 import DocumentOperator from '../DocumentOperator'
-import RootComponent from './Component/RootComponent'
+import ComponentRoot from './ComponentRoot'
 
 interface RenderingResult {
     canvas: HTMLCanvasElement
@@ -19,7 +19,7 @@ export default class Engine {
     private context: Delir
     private pluginRegistry: PluginRegistry
     /** Do not touch from other than DocumentChangeApplyer */
-    public _componentTree: RootComponent|null
+    public _componentTree: ComponentRoot|null
 
     /**
      * Use only for reading within this class.
@@ -42,7 +42,7 @@ export default class Engine {
         if (!rootComposition) throw new Error(`Specified composition not found (id: ${rootCompositionId})`)
         if (this._componentTree && this._componentTree.composition.id === rootCompositionId) return
         this._componentTree && (await this._componentTree.deactivate())
-        this._componentTree = new RootComponent(this.docOp, rootComposition)
+        this._componentTree = new ComponentRoot(this.docOp, rootComposition)
     }
 
     public async render(option: RenderingOption): Promise<RenderingResult> {

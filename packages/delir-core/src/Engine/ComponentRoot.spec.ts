@@ -1,10 +1,10 @@
 import {} from 'jest'
-import { mockProject } from '../../../test_lib/mock'
-import { Composition } from '../../Document'
-import DocumentOperator from '../../DocumentOperator'
-import RootComponent from './RootComponent'
+import { mockProject } from '../../test_lib/mock'
+import { Composition } from '../Document'
+import DocumentOperator from '../DocumentOperator'
+import ComponentRoot from './ComponentRoot'
 
-describe('RootComponent', () => {
+describe('ComponentRoot', () => {
     let docOp: DocumentOperator
     let composition: Composition
 
@@ -21,7 +21,7 @@ describe('RootComponent', () => {
 
     describe('#activate', () => {
         it('Is propagation to child CompositionComponent', async () => {
-            const root = new RootComponent(docOp, composition)
+            const root = new ComponentRoot(docOp, composition)
             const mock = jest.fn()
             root.composition.activate = mock
             await root.activate()
@@ -32,7 +32,7 @@ describe('RootComponent', () => {
 
     describe('#deactivate', () => {
         it('Is propagation to child CompositionComponent', async () => {
-            const root = new RootComponent(docOp, composition)
+            const root = new ComponentRoot(docOp, composition)
             const mock = jest.fn()
             root.composition.deactivate = mock
             await root.deactivate()
