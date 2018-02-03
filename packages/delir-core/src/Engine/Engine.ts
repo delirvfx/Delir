@@ -19,7 +19,7 @@ export default class Engine {
     private context: Delir
     private pluginRegistry: PluginRegistry
     /** Do not touch from other than DocumentChangeApplyer */
-    public _componentTree: RootComponent
+    public _componentTree: RootComponent|null
 
     /**
      * Use only for reading within this class.
@@ -40,11 +40,12 @@ export default class Engine {
     private async mountComponents(rootCompositionId: string) {
         const rootComposition = this.docOp.getComposition(rootCompositionId)
         if (!rootComposition) throw new Error(`Specified composition not found (id: ${rootCompositionId})`)
-
+        if (this._componentTree && this._componentTree.composition.id === rootCompositionId) return
+        this._componentTree && (await this._componentTree.deactivate())
         this._componentTree = new RootComponent(this.docOp, rootComposition)
     }
 
-    public async render(option: RenderingOption): RenderingResult {
+    public async render(option: RenderingOption): Promise<RenderingResult> {
         this.mountComponents(option.rootCompositionId)
     }
 }

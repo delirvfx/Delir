@@ -6,6 +6,5 @@
     Name of "Saved project file (.delir)".
 - Project
     Indicate for Project data or file(.delir).
-    It contains all persistable entities on 
+    It contains all persistable entities.
 - Asset
-    Indicate 

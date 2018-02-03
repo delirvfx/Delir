@@ -1,6 +1,10 @@
 import DocumentOperator, { OperationEvents } from '../DocumentOperator'
 import Engine from '../Engine/Engine'
 
+/**
+ * Handle side effects on engine internal component tree due to document change event.
+ * @see ./Component/README.md
+ */
 export default class DocumentChangeApplyer {
     constructor(
         private docOp: DocumentOperator,
@@ -33,8 +37,8 @@ export default class DocumentChangeApplyer {
     }
 
     private readonly handleRemoveComposition = async ({ id }: OperationEvents['composition:remove']) => {
-        if (this.treeRoot.composition.id !== id) return
-        await this.treeRoot.deactivate()
+        if (this.treeRoot!.composition.id !== id) return
+        await this.treeRoot!.deactivate()
     }
 
     private readonly handleAddLayer = () => {
@@ -42,7 +46,7 @@ export default class DocumentChangeApplyer {
     }
 
     private readonly handleRemoveLayer = async ({ id }: OperationEvents['layer:remove']) => {
-        const { layers } = this.treeRoot.composition
+        const { layers } = this.treeRoot!.composition
         const removedIndex = layers.findIndex(layerComp => layerComp.id === id)
 
         if (removedIndex === -1) return
