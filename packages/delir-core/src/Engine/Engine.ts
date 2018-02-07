@@ -2,7 +2,9 @@ import Delir from 'Delir'
 import PluginRegistry from 'Engine/PluginRegistry'
 import { EventEmitter } from 'events'
 import DocumentOperator from '../DocumentOperator'
+import never from '../Utils/never'
 import ComponentRoot from './ComponentRoot'
+import FrameContext from './FrameContext'
 
 interface RenderingResult {
     canvas: HTMLCanvasElement
@@ -12,6 +14,7 @@ interface RenderingResult {
 interface RenderingOption {
     frame: number
     rootCompositionId: string
+
 }
 
 export default class Engine {
@@ -46,7 +49,26 @@ export default class Engine {
     }
 
     private buildWorks(options: RenderingOption) {
-        // TODO
+        const { _componentTree: tree } = this
+        if (!tree) return never()
+
+        const stack = []
+
+        // この方法はレンダリングを並列化できないからダメ
+        // Rendering order sort (idx: ... 3, 2, 1, 0)
+        const layers = [...tree.composition.layers].reverse()
+
+        for (const layer of layers) {
+            for (const clip of layer.clips) {
+                stack.push(new ClipRenderWork(clip))
+                for (const effect of clip.effects) {
+                    stack.push(new PostEffectApplyWork(effect))
+                }
+            }
+            stack.push(new LayerCommitWork)
+        }
+
+        stack.push(new CopositionCommitWork(tree.composition))
     }
 
     public async render(option: RenderingOption): Promise<RenderingResult> {
