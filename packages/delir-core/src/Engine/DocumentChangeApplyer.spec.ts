@@ -30,6 +30,7 @@ describe('DocumentChangeApplyer', () => {
 
         ctx.setProject(p)
         ctx.engine.mountComponents('mocked-composition')
+        ctx
 
         docOp = ctx.project
         applyer = ctx.documentChangeApplyer
