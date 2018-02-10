@@ -60,7 +60,7 @@ export default class Engine {
         })
 
         const targets = new TargetComponentFinder(this._componentTree, context)
-        const work = new CompositionRenderWork()
+        const work = new CompositionRenderWork(targets)
 
         const result = work.perform(context)
 
