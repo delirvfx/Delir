@@ -4,25 +4,22 @@ import { EventEmitter } from 'events'
 import DocumentOperator from '../DocumentOperator'
 import never from '../Utils/never'
 import ComponentRoot from './ComponentRoot'
-import FrameContext from './FrameContext'
-
-interface RenderingResult {
-    canvas: HTMLCanvasElement
-    audioBuffer: Float32Array
-}
+import CompositionScopeFrameContext from './FrameContext/CompositionScopeFrameContext'
+import { RenderingResult } from './RenderingResult'
+import TargetComponentFinder from './TargetComponentFinder'
+import CompositionRenderWork from './Work/CompositionRenderWork'
 
 interface RenderingOption {
     frame: number
     rootCompositionId: string
-
 }
 
 export default class Engine {
+    /** Do not touch from other than DocumentChangeApplyer */
+    public _componentTree: ComponentRoot | null
     private emitter: EventEmitter = new EventEmitter()
     private context: Delir
     private pluginRegistry: PluginRegistry
-    /** Do not touch from other than DocumentChangeApplyer */
-    public _componentTree: ComponentRoot|null
 
     /**
      * Use only for reading within this class.
@@ -40,40 +37,48 @@ export default class Engine {
         this.pluginRegistry = pluginRegistry
     }
 
-    private async mountComponents(rootCompositionId: string) {
-        const rootComposition = this.docOp.getComposition(rootCompositionId)
-        if (!rootComposition) throw new Error(`Specified composition not found (id: ${rootCompositionId})`)
-        if (this._componentTree && this._componentTree.composition.id === rootCompositionId) return
-        this._componentTree && (await this._componentTree.deactivate())
-        this._componentTree = new ComponentRoot(this.docOp, rootComposition)
-    }
-
-    private buildWorks(options: RenderingOption) {
-        const { _componentTree: tree } = this
-        if (!tree) return never()
-
-        const stack = []
-
-        // この方法はレンダリングを並列化できないからダメ
-        // Rendering order sort (idx: ... 3, 2, 1, 0)
-        const layers = [...tree.composition.layers].reverse()
-
-        for (const layer of layers) {
-            for (const clip of layer.clips) {
-                stack.push(new ClipRenderWork(clip))
-                for (const effect of clip.effects) {
-                    stack.push(new PostEffectApplyWork(effect))
-                }
-            }
-            stack.push(new LayerCommitWork)
-        }
-
-        stack.push(new CopositionCommitWork(tree.composition))
-    }
-
     public async render(option: RenderingOption): Promise<RenderingResult> {
         this.mountComponents(option.rootCompositionId)
-        const works = this.buildWorks()
+        if (!this._componentTree) return never()
+
+        const { composition } = this._componentTree
+
+        const context: FrameContext = new CompositionScopeFrameContext({
+            width: composition.ref.width,
+            height: composition.ref.height,
+            durationFrames: composition.ref.durationFrames,
+
+            time: option.frame / composition.ref.framerate,
+            timeOnComposition: option.frame / composition.ref.framerate,
+
+            frame: option.frame,
+            framerate: composition.ref.framerate,
+            frameOnComposition: option.frame,
+
+            audioChannels: composition.ref.audioChannels,
+            samplingRate: composition.ref.samplingRate,
+        })
+
+        const targets = new TargetComponentFinder(this._componentTree, context)
+        const work = new CompositionRenderWork()
+
+        const result = work.perform(context)
+
+        return null
+    }
+
+    private async mountComponents(rootCompositionId: string): Promise<void> {
+        const rootComposition = this.docOp.getComposition(rootCompositionId)
+
+        if (!rootComposition) throw new Error(`Specified composition not found (id: ${rootCompositionId})`)
+
+        // Do nothing if same Composition already mounted
+        if (this._componentTree && this._componentTree.composition.id === rootCompositionId) return
+
+        // Dispose old component tree
+        this._componentTree && (await this._componentTree.deactivate())
+
+        this._componentTree = new ComponentRoot(this.docOp, rootComposition)
     }
 }
 
@@ -641,4 +646,3 @@ export default class Engine {
 //         }
 //     }
 // }
-

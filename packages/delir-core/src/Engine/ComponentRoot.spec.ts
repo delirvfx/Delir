@@ -40,4 +40,12 @@ describe('ComponentRoot', () => {
             expect(mock.mock.calls.length).toBe(1)
         })
     })
+
+    describe('#buildClipComponentsTree', () => {
+        it.skip('', () => {})
+    })
+
+    describe('#buildEffectComponentsTree', () => {
+        it.skip('', () => {})
+    })
 })
