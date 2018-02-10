@@ -1,5 +1,5 @@
 import Delir from './Delir'
-import { Asset, Clip, Composition, Effect, Layer, Project} from './Document/index'
+import { Asset, Clip, Composition, Effect, Layer, Project } from './Document/index'
 import { Omit } from './Utils/types'
 
 type NewEntity<T extends { id: any }> = Omit<T, 'id'>
@@ -47,15 +47,9 @@ export default class DocumentOperator {
         index !== -1 && this.listeners[event].splice(index, 1)
     }
 
-    private emit<E extends keyof OperationEvents>(event: E, payload: OperationEvents[E]): void {
-        if (!this.listeners[event]) return
-        const frozenPayload = { ...(payload as object) }
-        for (const listener of this.listeners[event]) listener(frozenPayload)
-    }
-
     // Asset operations
 
-    public getAsset(assetId: string): Asset|void {
+    public getAsset(assetId: string): Asset | void {
         return this.project.assets.find(asset => asset.id === assetId)
     }
 
@@ -66,7 +60,7 @@ export default class DocumentOperator {
         return asset
     }
 
-    public removeAsset(assetId: string): Asset|void {
+    public removeAsset(assetId: string): Asset | void {
         const index = this.project.assets.findIndex(asset => asset.id === assetId)
         if (index === -1) return
 
@@ -77,7 +71,7 @@ export default class DocumentOperator {
 
     // Composition operations
 
-    public getComposition(compositionId: string): Composition|void {
+    public getComposition(compositionId: string): Composition | void {
         return this.project.compositions.find(composition => composition.id === compositionId)
     }
 
@@ -85,7 +79,7 @@ export default class DocumentOperator {
         // TODO
     }
 
-    public removeComposition(compositionId: string): Composition|void {
+    public removeComposition(compositionId: string): Composition | void {
         const index = this.project.compositions.findIndex(comp => comp.id === compositionId)
         if (index === -1) return
 
@@ -97,7 +91,7 @@ export default class DocumentOperator {
     // Layer operations
 
     // TODO: remove, add for Composition
-    public getLayer(layerId: string): Layer|void {
+    public getLayer(layerId: string): Layer | void {
         return this.project.layers.find(layer => layer.id === layerId)
     }
 
@@ -105,7 +99,7 @@ export default class DocumentOperator {
         // TODO
     }
 
-    public removeLayer(layerId: string ): Layer|void {
+    public removeLayer(layerId: string ): Layer | void {
         const index = this.project.layers.findIndex(layer => layer.id === layerId)
         if (index === -1)return
 
@@ -116,7 +110,7 @@ export default class DocumentOperator {
 
     // Clip operations
 
-    public getClip(clipId: string): Clip|void {
+    public getClip(clipId: string): Clip | void {
         return this.project.clips.find(clip => clip.id === clipId)
     }
 
@@ -124,7 +118,7 @@ export default class DocumentOperator {
         // TODO
     }
 
-    public removeClip(clipId: string): Clip|void {
+    public removeClip(clipId: string): Clip | void {
         const index = this.project.clips.findIndex(clip => clip.id === clipId)
         if (index === -1) return
 
@@ -140,9 +134,15 @@ export default class DocumentOperator {
     // Clip keyframe operations
 
     // Effect operations
-    public getEffect(effectId: string): Effect|void {
+    public getEffect(effectId: string): Effect | void {
         return this.project.effects.find(effect => effect.id === effectId)
     }
 
     // Effect keyframe operations
+
+    private emit<E extends keyof OperationEvents>(event: E, payload: OperationEvents[E]): void {
+        if (!this.listeners[event]) return
+        const frozenPayload = { ...(payload as object) }
+        for (const listener of this.listeners[event]) listener(frozenPayload)
+    }
 }
