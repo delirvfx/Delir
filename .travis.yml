@@ -18,9 +18,9 @@ install:
 
 script:
     - cd packages/delir-core
-    - yarn test
+    - yarn test --coverage --verbose
     - cd - && cd packages/delir
-    - yarn test
+    - yarn test --coverage --verbose
 
 addons:
     apt:
