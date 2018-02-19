@@ -96,7 +96,7 @@
     "fs-promise": "2.0.3",
     "immutable": "3.8.1",
     "keymirror": "0.1.1",
-    "lodash": "4.17.4",
+    "lodash": "4.17.5",
     "lodash.times": "4.3.2",
     "mkdirp-promise": "5.0.1",
     "monaco-editor": "0.9.0",
