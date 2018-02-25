@@ -19,7 +19,7 @@
     "css-loader": "0.28.9",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
-    "extract-text-webpack-plugin": "3.0.2",
+    "extract-text-webpack-plugin": "4.0.0-alpha.0",
     "jest": "22.1.4",
     "mkdirp": "0.5.1",
     "postcss": "6.0.16",
@@ -30,8 +30,8 @@
     "ts-node": "4.1.0",
     "tslint-loader": "3.5.3",
     "typescript": "2.6.2",
-    "uglifyjs-webpack-plugin": "1.1.6",
-    "webpack": "3.10.0"
+    "uglifyjs-webpack-plugin": "1.2.2",
+    "webpack": "4.0.0"
   },
   "dependencies": {
     "react": "^16.2.0",

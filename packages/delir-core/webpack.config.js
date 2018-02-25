@@ -1,29 +1,29 @@
-const mkdirp = require("mkdirp");
-const { join } = require("path");
-const webpack = require("webpack");
+const mkdirp = require('mkdirp');
+const { join } = require('path');
+const webpack = require('webpack');
 
-const cacheDir = join(__dirname, "./tmp");
+const cacheDir = join(__dirname, './tmp');
 mkdirp.sync(cacheDir);
 
 module.exports = {
-  target: "web",
+  target: 'web',
   context: __dirname,
-  entry: "./src/index",
+  entry: './src/index',
   output: {
-    path: join(__dirname, "dist"),
-    filename: "[name].js",
-    library: "Delir",
-    libraryTarget: "umd"
+    path: join(__dirname, 'dist'),
+    filename: '[name].js',
+    library: 'Delir',
+    libraryTarget: 'umd'
   },
   resolve: {
-    extensions: [".js", ".ts"]
+    extensions: ['.js', '.ts']
   },
   module: {
     rules: [
       {
-        enforce: "pre",
+        enforce: 'pre',
         test: /\.ts$/,
-        loader: "tslint-loader",
+        loader: 'tslint-loader',
         options: {
           typeCheck: true,
         },
@@ -33,17 +33,17 @@ module.exports = {
         exclude: [ /node_module/, /\.spec\.ts$/, /test_lib\// ],
         use: [
           {
-            loader: "cache-loader",
+            loader: 'cache-loader',
             options: {
               cacheDirectory: cacheDir
             }
           },
           {
-            loader: "awesome-typescript-loader",
+            loader: 'awesome-typescript-loader',
             options: {
               useCache: true,
               cacheDirectory: cacheDir,
-              configFileName: join(__dirname, "tsconfig.json")
+              configFileName: join(__dirname, 'tsconfig.json')
             }
           }
         ]
