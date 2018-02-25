@@ -23,14 +23,14 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        enforce: 'pre',
-        test: /\.tsx?$/,
-        loader: 'tslint-loader',
-        options: {
-          typeCheck: true,
-        }
-      },
+      // {
+      //   enforce: 'pre',
+      //   test: /\.tsx?$/,
+      //   loader: 'tslint-loader',
+      //   options: {
+      //     typeCheck: true,
+      //   }
+      // },
       {
         test: /\.tsx?$/,
         exclude: [/node_module/, /\.spec\.ts$/, /test_lib\//],
@@ -79,11 +79,11 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin({
-      filename: "app.css"
+      filename: 'app.css'
     }),
-    new HtmlWebpackPlugin({
-      title: "Delir"
-    }),
+    // new HtmlWebpackPlugin({
+    //   title: 'Delir'
+    // }),
     new webpack.DefinePlugin({
       __DEV__: dev ? 'true' : 'false'
     })

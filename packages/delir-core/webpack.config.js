@@ -20,14 +20,14 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        enforce: 'pre',
-        test: /\.ts$/,
-        loader: 'tslint-loader',
-        options: {
-          typeCheck: true,
-        },
-      },
+      // {
+      //   enforce: 'pre',
+      //   test: /\.ts$/,
+      //   loader: 'tslint-loader',
+      //   options: {
+      //     typeCheck: true,
+      //   },
+      // },
       {
         test: /\.ts$/,
         exclude: [ /node_module/, /\.spec\.ts$/, /test_lib\// ],
