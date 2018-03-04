@@ -13,7 +13,6 @@
     "@types/jest": "22.1.0",
     "awesome-typescript-loader": "3.4.1",
     "cache-loader": "1.2.0",
-    "html-webpack-plugin": "2.30.1",
     "jest": "22.1.4",
     "mkdirp": "0.5.1",
     "ts-jest": "22.0.1",
