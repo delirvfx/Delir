@@ -92,5 +92,9 @@ module.exports = {
       parallel: true,
       cache: cacheDir
     })
-  ])
+  ]),
+  devServer: {
+    contentBase: join(__dirname, 'prebuild'),
+    port: 3000,
+  }
 };
