@@ -81,9 +81,9 @@ module.exports = {
     new ExtractTextPlugin({
       filename: 'app.css'
     }),
-    // new HtmlWebpackPlugin({
-    //   title: 'Delir'
-    // }),
+    new HtmlWebpackPlugin({
+      title: 'Delir'
+    }),
     new webpack.DefinePlugin({
       __DEV__: dev ? 'true' : 'false'
     })
