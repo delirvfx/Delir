@@ -1,6 +1,15 @@
 import * as React from 'react'
-import * as s from './style.sass'
+// import * as s from './style.sass'
 
-console.log(s)
+export default class Test extends React.Component {
+    private canvas: HTMLCanvasElement
 
-export default () => (<div />)
+    public render(): React.ReactNode {
+        return (
+            <canvas ref={this.bindCanvas} />
+        )
+    }
+
+
+    private bindCanvas = (canvas: HTMLCanvasElement) => this.canvas = canvas
+}

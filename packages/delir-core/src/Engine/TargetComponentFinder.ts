@@ -21,10 +21,18 @@ export default class TargetComponentFinder
         private context: CompositionScopeFrameContext,
     ) { }
 
-    public findTargetClips(): void {
+    public searchTargetClips(): void {
         this.targets = {
             layers: this.findTargetClipFromComposition(this.tree.composition),
         }
+    }
+
+    public searchActiveCamClip(): void {
+        // TODO
+    }
+
+    public searchAudioClips(): void {
+        // TODO
     }
 
     private findTargetClipFromComposition(composition: CompositionComponent): any {

@@ -14,7 +14,7 @@ export interface Asset {
 
 // export default class Asset
 // {
-//     public static deserialize(assetJson: AssetScheme)
+//     public static deserialize(assetJson: AsssetScheme)
 //     {
 //         const asset = new Asset()
 

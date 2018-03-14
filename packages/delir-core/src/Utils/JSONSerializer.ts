@@ -72,10 +72,8 @@ export default class JSONSerializer {
         }
     }
 
-    public deserialize(object: )
+    // TODO: public deserialize(object: any)
 }
-
-
 
 const a = new JSONSerializer
 a.addType<Date, { time: number }>('Date', Date, {

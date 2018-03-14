@@ -30,7 +30,7 @@ module.exports = {
       // },
       {
         test: /\.ts$/,
-        exclude: [ /node_module/, /\.spec\.ts$/, /test_lib\// ],
+        exclude: [ /node_modules/, /\.spec\.tsx?$/, /test_lib\// ],
         use: [
           {
             loader: 'cache-loader',
@@ -39,11 +39,13 @@ module.exports = {
             }
           },
           {
-            loader: 'awesome-typescript-loader',
+            // loader: 'awesome-typescript-loader',
+            loader: 'ts-loader',
             options: {
-              useCache: true,
-              cacheDirectory: cacheDir,
-              configFileName: join(__dirname, 'tsconfig.json')
+              // useCache: true,
+              // cacheDirectory: cacheDir,
+              // configFileName: join(__dirname, 'tsconfig.json')
+              configFile: join(__dirname, 'tsconfig.json')
             }
           }
         ]

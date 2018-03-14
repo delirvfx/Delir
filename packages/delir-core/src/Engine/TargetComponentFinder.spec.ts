@@ -47,13 +47,13 @@ describe('TargetComponentFinder', () => {
         })
     })
 
-    describe('#findTargetClips', () => {
+    describe('#searchTargetClips', () => {
         it('Should find ClipComponent at frame (with clip start frame)', () => {
             // Find clips at frame 10
             const ctx = new CompositionScopeFrameContext({...baseFrameCtx, frame: 0, frameOnComposition: 0})
             const finder = new TargetComponentFinder(tree, ctx)
 
-            finder.findTargetClips()
+            finder.searchTargetClips()
 
             expect(finder.targets.layers).toMatchObject([ { id: 'mocked-clip-1' }, null　]) // Strict orders
         })
@@ -63,7 +63,7 @@ describe('TargetComponentFinder', () => {
             const ctx = new CompositionScopeFrameContext({...baseFrameCtx, frame: 50, frameOnComposition: 50})
             const finder = new TargetComponentFinder(tree, ctx)
 
-            finder.findTargetClips()
+            finder.searchTargetClips()
 
             expect(finder.targets.layers).toMatchObject([ { id: 'mocked-clip-1' }, null　]) // Strict orders
         })
@@ -73,9 +73,17 @@ describe('TargetComponentFinder', () => {
             const ctx = new CompositionScopeFrameContext({...baseFrameCtx, frame: 100, frameOnComposition: 100})
             const finder = new TargetComponentFinder(tree, ctx)
 
-            finder.findTargetClips()
+            finder.searchTargetClips()
 
             expect(finder.targets.layers).toMatchObject([ null, { id: 'mocked-clip-2' }]) // Strict orders
         })
+    })
+
+    describe('#searchActiveCamClip', () => {
+        it.skip('Method not implemented')
+    })
+
+    describe('#searchAudioClips', () => {
+        it.skip('Method not implemented')
     })
 })

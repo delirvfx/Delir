@@ -43,7 +43,7 @@ export default class Engine {
 
         const { composition } = this._componentTree
 
-        const context: FrameContext = new CompositionScopeFrameContext({
+        const context: CompositionScopeFrameContext = new CompositionScopeFrameContext({
             width: composition.ref.width,
             height: composition.ref.height,
             durationFrames: composition.ref.durationFrames,
@@ -60,7 +60,7 @@ export default class Engine {
         })
 
         const targets = new TargetComponentFinder(this._componentTree, context)
-        const work = new CompositionRenderWork(targets)
+        const work = new CompositionRenderWork()
 
         const result = work.perform(context)
 

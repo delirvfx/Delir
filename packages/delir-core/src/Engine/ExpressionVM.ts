@@ -1,12 +1,12 @@
 import { createContext, runInNewContext } from 'vm'
-import FrameContext from './FrameContext'
+// import FrameContext from './FrameContext'
 
 interface ExpressionVMOption {
     filename: string
 }
 
 interface GlobalScopeSource {
-    context: FrameContext
+    // context: FrameContext
 }
 
 export default class ExpressionVM {

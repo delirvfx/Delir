@@ -1,4 +1,4 @@
-import CompositionScopeFrameContext, { CompositionScopeFrameContextProps } from './CompositionScopeFrameContext'
+import CompositionScopeFrameContext from './CompositionScopeFrameContext'
 
 interface LayerScopeFrameContextProps {}
 

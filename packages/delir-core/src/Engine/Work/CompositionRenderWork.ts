@@ -11,7 +11,7 @@ export default class CompositionRenderWork {
     ): Promise<RenderingResult> {
         // TODO: Audio preprocessing
         const works = this.toClipRenderWorkFromLayers(finder.targets.layers)
-        const results = await this.runWorks(works)
+        const results = await this.runWorks(works, context)
         return this.mergeLayers(results)
     }
 
@@ -42,7 +42,7 @@ export default class CompositionRenderWork {
         return queue
     }
 
-    private runWorks(works: ClipRenderWork[][]): Promise<RenderingResult[][]> {
+    private runWorks(works: ClipRenderWork[][], context: CompositionScopeFrameContext): Promise<RenderingResult[][]> {
         const resultsPromises: Promise<RenderingResult[]>[] = []
 
         for (const group of works) {
@@ -57,5 +57,10 @@ export default class CompositionRenderWork {
         }
 
         return Promise.all(resultsPromises)
+    }
+
+    private mergeLayers(results: RenderingResult[][]): RenderingResult
+    {
+        // for
     }
 }
