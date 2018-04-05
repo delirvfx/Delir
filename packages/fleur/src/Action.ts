@@ -15,3 +15,5 @@ export interface ErrorFluxStandardAction<T extends string, P extends Error, M = 
 export type Action<T extends string, P = {}, E extends Error = any, M = void> =
     | FluxStandardAction<T, P, M>
     | ErrorFluxStandardAction<T, E, M>
+
+export const Action = <T extends string, P > (type: T, payload: P)

@@ -15,6 +15,6 @@ export default class ActionContext<Actions extends Action<any, any, any, any>> {
     }
 
     public dispatch<_Actions = Actions>(action: _Actions): void {
-        this.context.dispatchr.dispatch(actionn)
+        this.context.dispatchr.dispatch(action)
     }
 }
