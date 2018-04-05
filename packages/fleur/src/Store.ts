@@ -4,11 +4,12 @@ interface Events {
     onChange: void
 }
 
-export interface StoreConstructor { new (...args: any[]): Store }
+export interface StoreClass<T = {}> { new(...args: any[]): Store<T> }
 
-export type InstanceOf<T extends StoreConstructor> = T extends ({ new(...args: any[]): infer I }) ? I : never
+export default class Store<T = {}> extends Emitter<Events> {
+    public rehydrate(state: T): void {}
 
-export default class Store extends Emitter<Events> {
-    public rehydrate() {}
-    public dehydrate() {}
+    public dehydrate(): T {
+        return {} as T
+    }
 }

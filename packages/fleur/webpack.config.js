@@ -10,7 +10,7 @@ module.exports = {
   context: __dirname,
   entry: './src/index',
   output: {
-    path: join(__dirname, 'dist'),
+    path: join(__dirname, 'lib'),
     filename: '[name].js',
     library: 'Delir',
     libraryTarget: 'umd'

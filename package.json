@@ -1,9 +1,7 @@
 {
     "private": true,
     "workspaces": [
-        "packages/delir",
-        "packages/delir-core",
-        "packages/fleur"
+        "packages/*"
     ],
     "scripts": {
         "precommit": "lint-staged",

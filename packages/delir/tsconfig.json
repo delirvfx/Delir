@@ -18,8 +18,12 @@
             "es2017"
         ]
     },
+    "files": [
+        "main.tsx",
+        "declarations.d.ts"
+    ],
     "exclude": [
-        "src/**/*.spec.ts",
+        "**/*.spec.ts",
         "test_lib/"
     ]
 }

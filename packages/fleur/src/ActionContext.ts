@@ -1,22 +1,20 @@
-import Fleur from '.'
-import Store, { StoreConstructor } from './Store'
 import { Action } from './Action'
-import { ActionCreator } from './ActionCreator'
-
-type FirstArg<T> = T extends ((arg: infer A) => void) ? A : never
+import { ActionCreator, ActionCreatorArg } from './ActionCreator'
+import AppContext from './AppContext'
+import Store from './Store'
 
 export default class ActionContext<Actions extends Action<any, any, any, any>> {
-    constructor(private fleurContext: Fleur) {}
+    constructor(private context: AppContext) {}
 
-    public async executeActon<AC extends ActionCreator>(actionCreator: AC, payload: FirstArg<AC> ): Promise<void> {
-        actionCreator(this, payload)
+    public async executeActon<AC extends ActionCreator<any>>(actionCreator: AC, arg: ActionCreatorArg<AC> ): Promise<void> {
+        actionCreator(this, arg)
     }
 
-    public getStore<T extends StoreConstructor>(store: T) {
-        this.fleurContext.getStore(store)
+    public getStore<T extends Store>(storeClass: { new(...args: any[]): T }): T {
+        return this.context.getStore(storeClass)
     }
 
-    public dispatch(action: Actions): void {
-
+    public dispatch<_Actions = Actions>(action: _Actions): void {
+        this.context.dispatchr.dispatch(actionn)
     }
 }

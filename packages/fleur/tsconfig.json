@@ -3,6 +3,7 @@
         "baseUrl": "./src",
         "target": "es2015",
         "module": "es2015",
+        "jsx": "react",
         "moduleResolution": "node",
         "noUnusedLocals": true,
         "noUnusedParameters": true,

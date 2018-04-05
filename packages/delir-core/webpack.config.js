@@ -45,7 +45,8 @@ module.exports = {
               // useCache: true,
               // cacheDirectory: cacheDir,
               // configFileName: join(__dirname, 'tsconfig.json')
-              configFile: join(__dirname, 'tsconfig.json')
+              transpileOnly: true,
+              configFile: join(__dirname, 'tsconfig.json'),
             }
           }
         ]

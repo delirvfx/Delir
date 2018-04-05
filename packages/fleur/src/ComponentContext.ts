@@ -1,17 +1,10 @@
-import * as React from 'react'
-import Fleur from './Fleur'
+import { ActionCreator, ActionCreatorArg } from 'ActionCreator'
+import AppContext from 'AppContext'
 
-const context = Symbol('FleurComponentContext')
+export default class ComponentContext {
+    constructor(private context: AppContext) {}
 
-const ComponentContext: {
-    Provider: React.ComponentClass<{value: any}>
-    Consumer: React.ComponentClass<{children: (context: any) => React.ReactNode}>
-} = (React as any).createContext(context)
-
-export { ComponentContext }
-
-export default class ComponentContextInstance {
-    constructor(private fleurContext: Fleur) {}
-
-    public executeAction(action: ()): void
+    public executeAction = <T extends ActionCreator<any>>(actionCreator: T, arg: ActionCreatorArg<T>): void => {
+        actionCreator(this.context.actionContext, arg)
+    }
 }

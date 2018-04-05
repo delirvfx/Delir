@@ -1,15 +1,23 @@
-import * as React from 'react'
 // import * as s from './style.sass'
+import { ExecuteActionProp, Store, withExecuteAction } from '@ragg/fleur'
+import * as React from 'react'
 
-export default class Test extends React.Component {
-    private canvas: HTMLCanvasElement
+const someAction = () => void 0
 
-    public render(): React.ReactNode {
-        return (
-            <canvas ref={this.bindCanvas} />
-        )
+export default withExecuteAction(
+    class Test extends React.Component<ExecuteActionProp> {
+        private handleOnClick = () => {
+            this.props.executeAction(someAction, {})
+        }
+
+        private canvas: HTMLCanvasElement
+
+        public render(): React.ReactNode {
+            return (
+                <canvas ref={this.bindCanvas} onClick={this.handleOnClick} />
+            )
+        }
+
+        private bindCanvas = (canvas: HTMLCanvasElement) => this.canvas = canvas
     }
-
-
-    private bindCanvas = (canvas: HTMLCanvasElement) => this.canvas = canvas
-}
+)

@@ -1,16 +1,14 @@
-import Dispatcher from './Dispatcher'
-import Store, { StoreConstructor, InstanceOf } from './Store'
+import AppContext from './AppContext'
+import { StoreClass } from './Store'
 
 export default class Fleur {
-    private stores: { [storeName: string]: Store }
+    public stores: { [storeName: string]: StoreClass<any> }
 
-    public dispatcher: Dispatcher = new Dispatcher()
-
-    public registerStore(store: StoreConstructor): void {
-        this.stores[store.name] = new Store()
+    public registerStore(Store: StoreClass<any>): void {
+        this.stores[Store.name] = Store
     }
 
-    public getStore<T extends StoreConstructor>(store: T): InstanceOf<T> {
-        return this.stores[store.name]
+    public createContext(): AppContext {
+        return new AppContext(this)
     }
 }
