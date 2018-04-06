@@ -2,10 +2,10 @@ import AppContext from './AppContext'
 import { StoreClass } from './Store'
 
 export default class Fleur {
-    public stores: { [storeName: string]: StoreClass<any> }
+    public stores: Set<StoreClass> = new Set()
 
     public registerStore(Store: StoreClass<any>): void {
-        this.stores[Store.name] = Store
+        this.stores.add(Store)
     }
 
     public createContext(): AppContext {

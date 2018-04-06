@@ -8,6 +8,7 @@ export default class Emitter<Events extends object> {
 
     public on<T extends keyof Events>(event: T, listener: Listener<Events[T]>): void {
         this.listeners[event] = this.listeners[event] || []
+        this.listeners[event].push(listener)
     }
 
     public emit<T extends keyof Events>(event: T, payload: Events[T]): void {

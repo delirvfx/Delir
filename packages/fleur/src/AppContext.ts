@@ -7,18 +7,21 @@ import ComponentContext from './ComponentContext'
 import Dispatcher from './Dispatcher'
 import Fleur from './Fleur'
 import ComponentContextProvider from './react/ComponentContextProvider'
-import Store from './Store'
+import Store, { StoreClass } from './Store'
 
 export default class AppContext<Actions = Action<any>> {
-    public dispatchr: Dispatcher
+    public dispatcher: Dispatcher
     public actionContext: ActionContext<any>
     public componentContext: ComponentContext
-    public stores: { [storeName: string]: Store } = {}
+    public stores: Map<StoreClass, Store> = new Map()
+    public actionTypes: { [type: string]: symbol | string } = Object.create(null)
 
     constructor(private app: Fleur) {
-        this.dispatchr = new Dispatcher()
+        this.dispatcher = new Dispatcher()
         this.actionContext = new ActionContext(this)
         this.componentContext = new ComponentContext(this)
+        app.stores.forEach(Store => { Object.keys(Store.handlers).forEach(key => this.actionTypes[key] = key)})
+        console.log(this.actionTypes)
     }
 
     public createElementWithContext(children: React.ReactChild) {
@@ -28,13 +31,21 @@ export default class AppContext<Actions = Action<any>> {
     }
 
     public getStore<T extends Store>(StoreClass: { new(...args: any[]): T}): T {
-        const RegisteredStore = this.app.stores[StoreClass.name]
-        invariant(RegisteredStore != null, `Store ${StoreClass.name} is must be registered`)
+        const storeRegistered = this.app.stores.has(StoreClass)
+        invariant(storeRegistered, `Store ${StoreClass.name} is must be registered`)
 
-        if (!this.stores[RegisteredStore.name]) {
-            this.stores[RegisteredStore.name] = new RegisteredStore()
+        let store: Store | null = this.stores.get(StoreClass)
+
+        if (!store) {
+            store = new StoreClass()
+            this.stores.set(StoreClass, store)
+
+            this.dispatcher.listen(action => {
+                store![StoreClass.handlers[action.type]]()
+                store!.emitChange()
+            })
         }
 
-        return this.stores[RegisteredStore.name]
+        return store as any
     }
 }

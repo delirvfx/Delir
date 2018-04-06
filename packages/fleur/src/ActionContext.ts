@@ -1,9 +1,9 @@
 import { Action } from './Action'
-import { ActionCreator, ActionCreatorArg } from './ActionCreator'
+import { ActionCreator } from './ActionCreator'
 import AppContext from './AppContext'
 import Store from './Store'
 
-export default class ActionContext<Actions extends Action<any, any, any, any>> {
+export default class ActionContext<Actions extends Action<any, any, any>> {
     constructor(private context: AppContext) {}
 
     public async executeActon<AC extends ActionCreator<any>>(actionCreator: AC, arg: ActionCreatorArg<AC> ): Promise<void> {
@@ -14,7 +14,7 @@ export default class ActionContext<Actions extends Action<any, any, any, any>> {
         return this.context.getStore(storeClass)
     }
 
-    public dispatch<_Actions = Actions>(action: _Actions): void {
-        this.context.dispatchr.dispatch(action)
+    public dispatch(action: Actions): void {
+        this.context.dispatcher.dispatch(action)
     }
 }

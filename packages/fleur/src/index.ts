@@ -1,8 +1,7 @@
-import * as React from 'react'
-
 export { default } from './Fleur'
 export { default as Store } from './Store'
-// export { default as Action } from './Action'
-export { ActionCreator } from './ActionCreator'
+export { default as actionCreator, ActionCreator } from './ActionCreator'
+export { default as ActionContext } from './ActionContext'
 export { Action } from './Action'
-export { default as withExecuteAction, ExecuteActionProp } from './react/withExecuteAction'
+export { default as withComponentContext, ExecuteActionProp } from './react/withComponentContext'
+export { default as connectToStores } from './react/connectToStores'

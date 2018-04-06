@@ -3,19 +3,24 @@ import ComponentContext from '../ComponentContext'
 import ComponentContextProvider from './ComponentContextProvider'
 
 export interface ExecuteActionProp {
-    executeAction: ComponentContext['executeAction']
+    context: ComponentContext
 }
 
 type ExcludeExcuteActionProps<T extends ExecuteActionProp> = Pick<T, Exclude<keyof T, keyof ExecuteActionProp>>
 
-const withExecutAction = <Props extends ExecuteActionProp>(Component: React.ComponentClass<Props>) => (
+const withComponentContext = <Props extends ExecuteActionProp>(Component: React.ComponentClass<Props>) => (
     (props: ExcludeExcuteActionProps<Props>) => (
         React.createElement(ComponentContextProvider.Consumer, {
             children: (context: ComponentContext) => (
-                React.createElement(Component, { executeAction: context.executeAction, ...props })
+                React.createElement(Component, { ...props,
+                    context: {
+                        executeAction: context.executeAction,
+                        getStore: context.getStore,
+                    }
+                })
             )
         })
     )
 )
 
-export { withExecutAction as default }
+export { withComponentContext as default }

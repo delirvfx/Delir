@@ -1,23 +1,50 @@
 // import * as s from './style.sass'
-import { ExecuteActionProp, Store, withExecuteAction } from '@ragg/fleur'
+import { connectToStores, ExecuteActionProp, Store } from '@ragg/fleur'
 import * as React from 'react'
+import EditorStore from '../../store/EditorStore'
+import { increment } from '../../usecases/usecases'
 
 const someAction = () => void 0
 
-export default withExecuteAction(
-    class Test extends React.Component<ExecuteActionProp> {
-        private handleOnClick = () => {
-            this.props.executeAction(someAction, {})
-        }
+type Props = { count: number} & ExecuteActionProp
 
-        private canvas: HTMLCanvasElement
+export default connectToStores([EditorStore], (ctx) => ({
+    count: ctx.getStore(EditorStore).getCount(),
+}))(
+    class Test extends React.PureComponent<Props> {
+        public render() {
+            const { count } = this.props
 
-        public render(): React.ReactNode {
             return (
-                <canvas ref={this.bindCanvas} onClick={this.handleOnClick} />
+                // <canvas ref={this.bindCanvas} onClick={this.handleOnClick} />
+                <div onClick={this.handleOnClick}>{count}</div>
             )
         }
 
-        private bindCanvas = (canvas: HTMLCanvasElement) => this.canvas = canvas
+        private handleOnClick = () => {
+            // this.props.context.getStore()
+            this.props.context.executeAction(increment, { increase: 1 })
+            // this.props.context.executeAction(someAction, {})
+        }
+
+        // private canvas: HTMLCanvasElement
+
+        // public render(): React.ReactNode {
+
+        //     return (
+        //         <Consumer>
+        //             {context => (
+        //                 <div onClick={this.handler.bind(null, context)}>
+        //             )}
+        //         </Consumer>
+        //     )
+        // }
+
+        // handler() {
+        //     this.props.context
+
+        // }
+
+        // private bindCanvas = (canvas: HTMLCanvasElement) => this.canvas = canvas
     }
 )

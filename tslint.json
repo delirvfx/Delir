@@ -36,7 +36,6 @@
             "named": "never"
         } ],
         "trailing-comma": [ true ],
-        "typedef": [ true, "call-signature", "parameter", "property-declaration", "member-variable-declaration" ],
         "quotemark": [ true, "single", "avoid-escape", "avoid-template" ],
         "whitespace": [ true, "check-branch", "check-decl", "check-operator", "check-module", "check-separator", "check-type", "check-typecast", "check-type-operator", "check-preblock" ]
     }
