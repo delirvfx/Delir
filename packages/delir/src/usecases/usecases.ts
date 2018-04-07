@@ -14,11 +14,12 @@ import { KnownActions } from './action'
 // // const action =
 // type DrawRectAction = typeof Action<'DrawRect', {}>
 
-export const increment: ActionCreator<KnownActions> = (ctx, arg: { increase: number }) => {
-    ctx.dispatch({type: 'INCREASE', payload: {  } })
-}
+export const increment = actionCreator<KnownActions>((ctx, arg: { increase: number }) => {
+    // ctx.dispatch({type: 'INCREASE', error: false, payload: { increase: 1 } })
+    ctx.dispatch({type: 'INCREASE', error: false, payload: { decrease: 1, increase: 1 } })
+})
 
-export const decrease = actionCreator((ctx, arg: { decrease: number }) => {
+export const decrease = actionCreator<KnownActions>((ctx, arg: { decrease: number }) => {
     // ctx.getStore(EditorStore).getState
-    ctx.dispatch({type: 'DECREASE'})
+    ctx.dispatch({type: 'DECREASE', error: true, payload: new Error('') })
 })

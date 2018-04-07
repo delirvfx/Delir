@@ -23,7 +23,7 @@ export default connectToStores([EditorStore], (ctx) => ({
 
         private handleOnClick = () => {
             // this.props.context.getStore()
-            this.props.context.executeAction(increment, { increase: 1 })
+            this.props.context.executeAction(increment, { })
             // this.props.context.executeAction(someAction, {})
         }
 

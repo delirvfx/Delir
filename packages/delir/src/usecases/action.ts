@@ -1,4 +1,4 @@
-import { Action } from '@ragg/fleur'
+import { Action, ThrowableAction } from '@ragg/fleur'
 import { decrease } from './usecases'
 
 // type FirstArg<T> = T extends (arg: infer A) => any ? A : never
@@ -23,7 +23,7 @@ import { decrease } from './usecases'
 // //  | Action<'DECREMENT', {}>
 
 type IncreaseAction = Action<'INCREASE', { increase: number }>
-type DecreaseAction = Action<'DECREASE', { decrease: number }>
+type DecreaseAction = ThrowableAction<'DECREASE', { decrease: number }>
 
 export type KnownActions =
  | IncreaseAction

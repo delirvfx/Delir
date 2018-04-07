@@ -1,20 +1,19 @@
-export interface FluxStandardAction<T extends string, P, M = never>  {
+export interface FluxStandardAction<T extends string, P, M = never> {
     type: T
-    error?: false
     payload: P
+    error?: false
     meta?: M
 }
 
-// export interface ErrorFluxStandardAction<T extends string, E extends Error, M = never>{
-//     type: T
-//     error: true
-//     payload: E
-//     meta?: M
-// }
+export interface ErrorFluxStandardAction<T extends string, P, E extends Error, M = never>{
+    type: T
+    error: boolean
+    payload: P | E
+    meta?: M
+}
 
-export type Action<T extends string, P = {}, E extends Error = Error> =
-    | FluxStandardAction<T, P>
-    // | ErrorFluxStandardAction<T, E>
+export type Action<T extends string, P = {}> = FluxStandardAction<T, P>
+export type ThrowableAction<T extends string, P = {}, E extends Error = Error> = ErrorFluxStandardAction<T, P, E>
 
 // type ActionType<A extends Action<string, any, any>> = A extends FluxStandardAction < infer T, any > ? T : never
 // type PayloadType<A extends Action<string, any, any>> = A extends FluxStandardAction < any, infer P > ? P : never

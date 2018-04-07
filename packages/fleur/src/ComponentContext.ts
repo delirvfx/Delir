@@ -6,7 +6,9 @@ export default class ComponentContext {
     constructor(private context: AppContext) {}
 
     public executeAction = <T extends ActionCreator<any>>(actionCreator: T, arg: ActionCreatorArg<T>): void => {
-        actionCreator(this.context.actionContext, arg)
+        this.context.executeAction actionCreator(this.context.actionContext, arg)). catch (e => {
+            throw e
+        })
     }
 
     public getStore = <T extends Store>(StoreClass: { new(...args: any[]): T}): T => {

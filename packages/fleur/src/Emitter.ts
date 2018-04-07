@@ -11,7 +11,7 @@ export default class Emitter<Events extends object> {
         this.listeners[event].push(listener)
     }
 
-    public emit<T extends keyof Events>(event: T, payload: Events[T]): void {
+    public emit<T extends keyof Events>(event: T, payload: Events[T] | void): void {
         if (!this.listeners[event]) return
         this.listeners[event].forEach(listener => listener(payload))
     }

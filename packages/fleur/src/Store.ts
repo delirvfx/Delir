@@ -1,18 +1,35 @@
 import immer from 'immer'
 
+import { Action } from 'index'
 import Emitter from './Emitter'
 
 interface Events {
-    onChange: void
+    onChange: never
 }
 
 export interface StoreClass<T = {}> { new(...args: any[]): Store<T> }
+
+// type TypeOf<T> = T extends { type: infer Type } ? Type : never
+type PayloadType<A extends Action<any>, T extends string> = A extends Action<T> ? A.payload : never
+
+interface StoreOptions < Actions extends Action < any > , S > {
+    rehydrate?(state: S): void
+    dehydrate?(): S
+    handlers: {
+        [K in Actions.type]?: (arg: PayloadType<Actions, K>) => void
+    }
+    // [prop: string]: any
+}
+
+export const createStore = <Actions extends Action<any>, S = {}>(options: StoreOptions<Actions, S>) => {
+
+}
 
 export default class Store<T = any> extends Emitter<Events> {
     protected state: T
 
     public emitChange(): void {
-        this.emit('onChange', void 0)
+        this.emit('onChange')
     }
 
     public rehydrate(state: T): void {

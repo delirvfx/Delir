@@ -2,6 +2,7 @@ import * as invariant from 'invariant'
 import * as React from 'react'
 
 import { Action } from 'Action'
+import { ActionCreator } from 'index'
 import ActionContext from './ActionContext'
 import ComponentContext from './ComponentContext'
 import Dispatcher from './Dispatcher'
@@ -47,5 +48,11 @@ export default class AppContext<Actions = Action<any>> {
         }
 
         return store as any
+    }
+
+    public executeAction(actionCreator: ActionCreator<any>, arg?: any) {
+        Promise.resolve(actionCreator(this.actionContext, arg)).catch(e => {
+            throw e
+        })
     }
 }
