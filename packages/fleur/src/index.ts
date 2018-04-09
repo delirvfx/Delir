@@ -1,6 +1,6 @@
 export { default } from './Fleur'
-export { default as Store, createStore } from './Store'
-export { default as actionCreator, ActionCreator } from './ActionCreator'
+export { default as Store, createStore, actionListener } from './Store'
+export { default as operation, ActionCreator } from './ActionCreator'
 export { default as ActionContext } from './ActionContext'
 export { actions, action } from './Action'
 export { default as withComponentContext, ExecuteActionProp } from './react/withComponentContext'
