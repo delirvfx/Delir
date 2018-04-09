@@ -1,11 +1,11 @@
-import { Action, ThrowableAction } from '@ragg/fleur'
+import { Action, action, ActionContext, ActionCreator, actions, operations, ThrowableAction } from '@ragg/fleur'
 import { decrease } from './usecases'
 
-// type FirstArg<T> = T extends (arg: infer A) => any ? A : never
+type FirstArg<T> = T extends (arg: infer A) => any ? A : never
 // type ActionGenarator<P> = (payload: P) => { payload: P }
 // type ActionGroup<T> = { [K in keyof T]: ((arg: FirstArg<T[K]>) => { payload: FirstArg<T[K]> } & { type: K }) & {type: symbol} }
 
-// const action = <P>() => (payload: P) => ({ payload })
+// const action = <P>() => (payload: P): P => { throw new Error('Do not call Action as function') }
 
 // const actions = <T extends { [action: string]: ActionGenarator<any>　}>(actions: T): ActionGroup<T> => {
 //     const wrap: any = Object.create(null)
@@ -23,11 +23,20 @@ import { decrease } from './usecases'
 // //  | Action<'DECREMENT', {}>
 
 type IncreaseAction = Action<'INCREASE', { increase: number }>
-type DecreaseAction = ThrowableAction<'DECREASE', { decrease: number }>
+type DecreaseAction = Action<'DECREASE', { decrease: number }>
 
-export type KnownActions =
- | IncreaseAction
- | DecreaseAction
+// export type KnownActions =
+// //  | IncreaseAction
+//     | { type: 'INCREASE', payload: { increase: number }, error?: false, meta?: never }
+// //  | DecreaseAction
+//     | { type: 'DECREASE', payload: { decrease: number }, error?: false, meta?: never }
+
+const acts = actions({
+    increment: action<{ increase: number }>(),
+    decrement: action<{ decrease: number }>(),
+})
+
+export default acts
 
 // const acts = actions({
 //     increase: action<{ increase: number }>(),

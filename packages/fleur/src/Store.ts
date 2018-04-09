@@ -12,11 +12,11 @@ export interface StoreClass<T = {}> { new(...args: any[]): Store<T> }
 // type TypeOf<T> = T extends { type: infer Type } ? Type : never
 type PayloadType<A extends Action<any>, T extends string> = A extends Action<T> ? A.payload : never
 
-interface StoreOptions < Actions extends Action < any > , S > {
+interface StoreOptions < A extends Action < any > , S > {
     rehydrate?(state: S): void
     dehydrate?(): S
     handlers: {
-        [K in Actions.type]?: (arg: PayloadType<Actions, K>) => void
+        [K in A.type]?: (arg: Payload) => void
     }
     // [prop: string]: any
 }

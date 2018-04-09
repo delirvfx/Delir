@@ -10,7 +10,14 @@ interface State {
 export default createStore<KnownActions>({
     handlers: {
         'INCREASE': (arg) => { arg.increase }
-    }
+    },
+    // a: (a: KnownActions) => {
+    //     switch(a.type) {
+    //         case 'DECREASE': {
+    //             a.payload.
+    //         }
+    //     }
+    // }
 })
 
 class EditorStore extends Store<State> {

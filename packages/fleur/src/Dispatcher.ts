@@ -1,6 +1,6 @@
 import { FluxStandardAction } from 'flux-standard-action'
 
-import { Action } from './Action'
+import { Action, ActionIdentifier } from './Action'
 import Emitter from './Emitter'
 
 interface Events {
@@ -14,7 +14,7 @@ export default class Dispatcher {
         this.emitter.on('dispatch', listener)
     }
 
-    public dispatch(action: Action<any>) {
-        this.emitter.emit('dispatch', action)
+    public dispatch<P>(type: ActionIdentifier<P>, payload: P) {
+        this.emitter.emit('dispatch', { type, payload })
     }
 }

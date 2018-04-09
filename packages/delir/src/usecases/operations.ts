@@ -1,7 +1,7 @@
-import { Action, ActionContext, actionCreator, ActionCreator } from '@ragg/fleur'
+import { Action, ActionContext, actionCreator, ActionCreator, operations } from '@ragg/fleur'
 // import { Action } from '@ragg/fleur/lib/Action'
 import EditorStore from '../store/EditorStore'
-import { KnownActions } from './action'
+import acts, { KnownActions } from './action'
 
 // import Actions from './action'
 
@@ -14,9 +14,11 @@ import { KnownActions } from './action'
 // // const action =
 // type DrawRectAction = typeof Action<'DrawRect', {}>
 
-export const increment = actionCreator<KnownActions>((ctx, arg: { increase: number }) => {
+export const increment = actionCreator<typeof acts>((ctx, arg: { increase: number }) => {
     // ctx.dispatch({type: 'INCREASE', error: false, payload: { increase: 1 } })
-    ctx.dispatch({type: 'INCREASE', error: false, payload: { decrease: 1, increase: 1 } })
+    ctx.dispatch(acts.increment, {
+        increase: 1
+    })
 })
 
 export const decrease = actionCreator<KnownActions>((ctx, arg: { decrease: number }) => {
