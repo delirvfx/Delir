@@ -1,5 +1,5 @@
 export { default } from './Fleur'
-export { default as Store, createStore, actionListener } from './Store'
+export { default as Store, createStore, listen } from './Store'
 export { default as operation, ActionCreator } from './ActionCreator'
 export { default as ActionContext } from './ActionContext'
 export { actions, action } from './Action'

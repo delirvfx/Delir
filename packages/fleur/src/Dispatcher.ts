@@ -1,16 +1,19 @@
 import { FluxStandardAction } from 'flux-standard-action'
 
-import { Action, ActionIdentifier } from './Action'
+import { ActionIdentifier } from './Action'
 import Emitter from './Emitter'
 
 interface Events {
-    dispatch: Action<any>
+    dispatch: {
+        type: ActionIdentifier<any>
+        payload: any
+    }
 }
 
 export default class Dispatcher {
     private emitter = new Emitter<Events>()
 
-    public listen(listener: (action: Action<any>) => void) {
+    public listen(listener: (action: Events['dispatch']) => void) {
         this.emitter.on('dispatch', listener)
     }
 

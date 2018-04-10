@@ -1,6 +1,6 @@
 import immer from 'immer'
 
-import { Action } from './Action'
+import { Action, ActionIdentifier, ExtractPayloadType } from './Action'
 import Emitter from './Emitter'
 
 interface StoreEvents {
@@ -19,8 +19,11 @@ export const createStore = <Actions extends Action<any>, S = {}>(options: StoreO
 
 }
 
+export const listen = <A extends ActionIdentifier<any>>(_action: A, producer: (payload: ExtractPayloadType<A>) => void): void => producer
+}
+
 export default class Store<T = any> extends Emitter<StoreEvents> {
-    protected state: T
+    public state: T
 
     public emitChange(): void {
         this.emit('onChange')
