@@ -14,7 +14,7 @@ const withComponentContext = <Props extends ExecuteActionProp>(Component: React.
             children: (context: ComponentContext) => (
                 React.createElement(Component, { ...props,
                     context: {
-                        executeAction: context.executeAction,
+                        executeOperation: context.executeOperation,
                         getStore: context.getStore,
                     }
                 })

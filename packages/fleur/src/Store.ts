@@ -19,14 +19,17 @@ export const createStore = <Actions extends Action<any>, S = {}>(options: StoreO
 
 }
 
-export const listen = <A extends ActionIdentifier<any>>(_action: A, producer: (payload: ExtractPayloadType<A>) => void): void => producer
-}
+export const listen = <A extends ActionIdentifier<any>>(action: A, producer: (payload: ExtractPayloadType<A>) => void) => ({
+    __fleurHandler: true,
+    __action: action,
+    producer,
+})
 
 export default class Store<T = any> extends Emitter<StoreEvents> {
     public state: T
 
     public emitChange(): void {
-        this.emit('onChange')
+        // this.emit('onChange')
     }
 
     public rehydrate(state: T): void {

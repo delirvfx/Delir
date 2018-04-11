@@ -1,28 +1,26 @@
 import * as invariant from 'invariant'
 import * as React from 'react'
 
-import { Action } from 'Action'
-import { ActionCreator } from 'index'
+import {  ActionIdentifier, ExtractPayloadType } from 'Action'
 import ActionContext from './ActionContext'
 import ComponentContext from './ComponentContext'
 import Dispatcher from './Dispatcher'
 import Fleur from './Fleur'
+import { Operation, OperationArg } from './Operations'
 import ComponentContextProvider from './react/ComponentContextProvider'
-import Store, { StoreClass } from './Store'
+import Store, { StoreClass, StoreClass } from './Store'
 
-export default class AppContext<Actions = Action<any>> {
+export default class AppContext<Actions extends ActionIdentifier<any> = ActionIdentifier<any>> {
     public dispatcher: Dispatcher
     public actionContext: ActionContext<any>
     public componentContext: ComponentContext
     public stores: Map<StoreClass, Store> = new Map()
-    public actionTypes: { [type: string]: symbol | string } = Object.create(null)
+    public actionCallbackMap: Map<StoreClass, Map<ActionIdentifier<any>, (payload: any) => void>> = new Map()
 
     constructor(private app: Fleur) {
         this.dispatcher = new Dispatcher()
         this.actionContext = new ActionContext(this)
         this.componentContext = new ComponentContext(this)
-        app.stores.forEach(Store => { Object.keys(Store.handlers).forEach(key => this.actionTypes[key] = key)})
-        console.log(this.actionTypes)
     }
 
     public createElementWithContext(children: React.ReactChild) {
@@ -32,27 +30,39 @@ export default class AppContext<Actions = Action<any>> {
     }
 
     public getStore<T extends Store>(StoreClass: { new(...args: any[]): T}): T {
-        const storeRegistered = this.app.stores.has(StoreClass)
-        invariant(storeRegistered, `Store ${StoreClass.name} is must be registered`)
-
-        let store: Store | null = this.stores.get(StoreClass)
-
-        if (!store) {
-            store = new StoreClass()
-            this.stores.set(StoreClass, store)
-
-            this.dispatcher.listen(action => {
-                store![StoreClass.handlers[action.type]]()
-                store!.emitChange()
-            })
+        if (process.env.NODE_ENV !== 'production') {
+            const storeRegistered = this.app.stores.has(StoreClass)
+            invariant(storeRegistered, `Store ${StoreClass.name} is must be registered`)
         }
 
-        return store as any
+        return this.stores.get(StoreClass) || this.initializeStore(StoreClass)
     }
 
-    public executeAction(actionCreator: ActionCreator<any>, arg?: any) {
-        Promise.resolve(actionCreator(this.actionContext, arg)).catch(e => {
-            throw e
+    public async executeOperation<T extends Operation<Actions>>(operation: T, arg: OperationArg<T>): Promise<void> {
+        await Promise.resolve(operation(this.actionContext, arg))
+    }
+
+    public dispatch<A extends Actions>(actionIdentifier: A, payload: ExtractPayloadType<A>) {
+        this.dispatcher.dispatch(actionIdentifier, payload)
+    }
+
+    private initializeStore(StoreClass: StoreClass<any>) {
+        const store = new StoreClass()
+        const actionCallbackMap = new Map()
+        this.stores.set(StoreClass, store)
+
+        Object.keys(store)
+            .filter(key => (store as any)[key] != null && (store as any)[key].__fleurHandler)
+            .forEach(key => actionCallbackMap.set((store as any)[key].__action, (store as any)[key].producer))
+
+        this.actionCallbackMap.set(StoreClass, actionCallbackMap)
+
+        this.dispatcher.listen(action => {
+            const actionCallbackMap = this.actionCallbackMap.get(StoreClass)!
+            const handler = actionCallbackMap.get(action.type)
+            handler && handler(action.payload)
         })
+
+        return store
     }
 }

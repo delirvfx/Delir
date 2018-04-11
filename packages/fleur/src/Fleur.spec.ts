@@ -1,14 +1,36 @@
+import { action, ExtractActionIdentifiers } from './ActionIdentifier'
 import Fleur from './Fleur'
-import Store from './Store'
+import { operation } from './Operations'
+import Store, { listen } from './Store'
 
 describe('Fleur', () => {
-    it('types', () => {
-        const ctx = new Fleur()
-        const StoreClass = class extends Store {
-            public testMethod() { return 'gotcha' }
+    it('flows', () => {
+        const actions = {
+            increase: action<{ increase: number }>(),
+            decrease: action<{ decrease: number }>()
         }
 
-        ctx.registerStore(StoreClass)
-        console.log(ctx.getStore(StoreClass).testMethod)
+        class TestStore extends Store {
+            public state: { count: number } = { count: 0 }
+
+            private handleIncrease = listen(actions.increase, (p) => {
+                this.state.count += p.increase
+                console.log(this.state)
+            })
+        }
+
+        type AppActions = ExtractActionIdentifiers<typeof actions>
+
+        const app = new Fleur()
+        const ctx = app.createContext()
+        app.registerStore(TestStore)
+
+        ctx.getStore(TestStore)
+
+        const increaseOperation = operation((ctx, arg: { increase: number }) => {
+            ctx.dispatch(actions.increase, { increase: arg.increase })
+        })
+
+        ctx.executeOperation(increaseOperation, { increase: 10 })
     })
 })
