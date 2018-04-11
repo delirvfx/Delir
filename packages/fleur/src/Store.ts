@@ -15,10 +15,6 @@ interface StoreOptions < A extends Action < any > , S > {
     [prop: string]: any
 }
 
-export const createStore = <Actions extends Action<any>, S = {}>(options: StoreOptions<Actions, S>) => {
-
-}
-
 export const listen = <A extends ActionIdentifier<any>>(action: A, producer: (payload: ExtractPayloadType<A>) => void) => ({
     __fleurHandler: true,
     __action: action,

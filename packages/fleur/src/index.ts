@@ -1,8 +1,8 @@
 export { default } from './Fleur'
-export { default as Store, createStore, listen } from './Store'
-// export { default as operation } from './ActionCreator'
+export { default as Store, listen } from './Store'
 export { default as ActionContext } from './ActionContext'
 export { actions, action, ExtractActionIdentifiers } from './ActionIdentifier'
-export { default as withComponentContext, ExecuteActionProp } from './react/withComponentContext'
-export { default as connectToStores } from './react/connectToStores'
 export { operations, operation } from './Operations'
+
+// export { default as withComponentContext, ExecuteActionProp } from './react/withComponentContext'
+// export { default as connectToStores } from './react/connectToStores'
