@@ -17,6 +17,11 @@ describe('Fleur', () => {
                 this.state.count += p.increase
                 console.log(this.state)
             })
+
+            private handleIncrease2 = listen(actions.increase, (p) => {
+                this.state.count += p.increase
+                console.log(this.state)
+            })
         }
 
         type AppActions = ExtractActionIdentifiers<typeof actions>

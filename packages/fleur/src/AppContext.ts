@@ -53,7 +53,15 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
 
         Object.keys(store)
             .filter(key => (store as any)[key] != null && (store as any)[key].__fleurHandler)
-            .forEach(key => actionCallbackMap.set((store as any)[key].__action, (store as any)[key].producer))
+            .forEach(key => {
+                const actionIdentifier = (store as any)[key].__action
+
+                if (process.env.NODE_ENV !== 'production') {
+                    invariant(actionCallbackMap.has(actionIdentifier) === false, `Action handler duplicated in store '${StoreClass.name}'`)
+                }
+
+                actionCallbackMap.set(actionIdentifier, (store as any)[key].producer)
+            })
 
         this.actionCallbackMap.set(StoreClass, actionCallbackMap)
 
