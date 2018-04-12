@@ -1,35 +1,43 @@
 import * as invariant from 'invariant'
-import * as React from 'react'
 
-import {  ActionIdentifier, ExtractPayloadType } from 'Action'
-import ActionContext from './ActionContext'
+import {  ActionIdentifier, ExtractPayloadType } from './ActionIdentifier'
 import ComponentContext from './ComponentContext'
 import Dispatcher from './Dispatcher'
 import Fleur from './Fleur'
+import OperationContext from './OperationContext'
 import { Operation, OperationArg } from './Operations'
-import ComponentContextProvider from './react/ComponentContextProvider'
 import Store, { StoreClass } from './Store'
 
 export default class AppContext<Actions extends ActionIdentifier<any> = ActionIdentifier<any>> {
     public dispatcher: Dispatcher
-    public actionContext: ActionContext<any>
+    public actionContext: OperationContext<any>
     public componentContext: ComponentContext
-    public stores: Map<StoreClass, Store> = new Map()
+    public stores: Map<StoreClass, Store<any>> = new Map()
     public actionCallbackMap: Map<StoreClass, Map<ActionIdentifier<any>, (payload: any) => void>> = new Map()
 
     constructor(private app: Fleur) {
         this.dispatcher = new Dispatcher()
-        this.actionContext = new ActionContext(this)
+        this.actionContext = new OperationContext(this)
         this.componentContext = new ComponentContext(this)
     }
 
-    public getStore<T extends Store>(StoreClass: { new(...args: any[]): T}): T {
+    public dehydrate(): object {
+        // TODO
+        return {}
+    }
+
+    public rehydrate(_state: object) {
+        // TODO
+        // this.state = state
+    }
+
+    public getStore<T extends StoreClass<any>>(StoreClass: T): InstanceType<T> {
         if (process.env.NODE_ENV !== 'production') {
             const storeRegistered = this.app.stores.has(StoreClass)
             invariant(storeRegistered, `Store ${StoreClass.name} is must be registered`)
         }
 
-        return this.stores.get(StoreClass) || this.initializeStore(StoreClass)
+        return (this.stores.get(StoreClass) as any) || this.initializeStore(StoreClass)
     }
 
     public async executeOperation<T extends Operation<Actions>>(operation: T, arg: OperationArg<T>): Promise<void> {

@@ -1,8 +1,8 @@
-import { ActionIdentifier } from './Action'
-import ActionContext from './ActionContext'
+import { ActionIdentifier } from './ActionIdentifier'
+import OperationContext from './OperationContext'
 
 export interface Operation<Actions extends ActionIdentifier<any>> {
-    (context: ActionContext<Actions>, arg: any): Promise<void> | void
+    (context: OperationContext<Actions>, arg: any): Promise<void> | void
 }
 
 export type OperationArg<T> = T extends (_: any, arg: infer A) => any ? A : never

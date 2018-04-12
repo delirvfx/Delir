@@ -1,6 +1,4 @@
-import { FluxStandardAction } from 'flux-standard-action'
-
-import { ActionIdentifier } from './Action'
+import { ActionIdentifier } from './ActionIdentifier'
 import Emitter from './Emitter'
 
 interface Events {

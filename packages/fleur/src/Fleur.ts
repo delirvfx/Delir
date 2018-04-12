@@ -1,4 +1,3 @@
-import { ActionIdentifier } from 'Action'
 import AppContext from './AppContext'
 import { StoreClass } from './Store'
 

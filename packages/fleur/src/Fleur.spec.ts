@@ -1,4 +1,4 @@
-import { action, ExtractActionIdentifiers } from './ActionIdentifier'
+import { action, ExtractActionIdentifiersFromObject } from './ActionIdentifier'
 import Fleur from './Fleur'
 import { operation } from './Operations'
 import Store, { listen } from './Store'
@@ -24,7 +24,7 @@ describe('Fleur', () => {
             })
         }
 
-        type AppActions = ExtractActionIdentifiers<typeof actions>
+        type AppActions = ExtractActionIdentifiersFromObject<typeof actions>
 
         const app = new Fleur()
         const ctx = app.createContext()

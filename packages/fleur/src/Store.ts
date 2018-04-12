@@ -1,6 +1,5 @@
 import immer from 'immer'
 
-import Payload from '../../../alpha4/src/frontend/utils/Flux/Payload'
 import { ActionIdentifier, ExtractPayloadType } from './ActionIdentifier'
 import Emitter from './Emitter'
 
@@ -17,11 +16,7 @@ interface StoreEvents {
 }
 
 export default class Store<T = any> extends Emitter<StoreEvents> {
-    public state: T
-
-    public emitChange(): void {
-        this.emit('onChange', null)
-    }
+    protected state: T
 
     public rehydrate(state: T): void {
         this.state = state
@@ -29,6 +24,10 @@ export default class Store<T = any> extends Emitter<StoreEvents> {
 
     public dehydrate(): T {
         return this.state
+    }
+
+    protected emitChange(): void {
+        this.emit('onChange', void 0)
     }
 
     protected produce(producer: (draft: T) => void): void {

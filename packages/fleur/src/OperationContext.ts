@@ -1,9 +1,9 @@
-import { Operation, OperationArg } from 'Operations'
-import { ActionIdentifier } from './Action'
+import { ActionIdentifier } from './ActionIdentifier'
 import AppContext from './AppContext'
+import { Operation, OperationArg } from './Operations'
 import Store from './Store'
 
-class ActionContext<Actions extends ActionIdentifier<any>> {
+class OperationContext<Actions extends ActionIdentifier<any>> {
     constructor(private context: AppContext) {}
 
     public async executeOperation<O extends Operation<Actions>>(operator: O, arg: OperationArg<O> ): Promise<void> {
@@ -19,4 +19,4 @@ class ActionContext<Actions extends ActionIdentifier<any>> {
     }
 }
 
-export { ActionContext as default }
+export { OperationContext as default }

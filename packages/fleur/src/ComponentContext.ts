@@ -1,6 +1,6 @@
-import AppContext from 'AppContext'
-import { Operation, OperationArg } from 'Operations'
-import Store from 'Store'
+import AppContext from './AppContext'
+import { Operation, OperationArg } from './Operations'
+import Store from './Store'
 
 export default class ComponentContext {
     constructor(private context: AppContext) {}
