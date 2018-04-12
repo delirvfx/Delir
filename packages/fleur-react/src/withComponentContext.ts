@@ -3,14 +3,14 @@ import * as React from 'react'
 
 import ComponentContextProvider from './ComponentContextProvider'
 
-export interface ComponentContextProp {
+export interface ContextProp {
     context: ComponentContext
 }
 
-type ExcludeComponentContextProp<T extends ComponentContextProp> = Pick<T, Exclude<keyof T, keyof ComponentContextProp>>
+type ExcludeContextProp<P extends ContextProp> = Pick<P, Exclude<keyof P, keyof ContextProp>>
 
-const withComponentContext = <Props extends ComponentContextProp>(Component: React.ComponentClass<Props>) => (
-    class WithComponentContext extends React.PureComponent<ExcludeComponentContextProp<Props>> {
+const withComponentContext = <Props extends ContextProp>(Component: React.ComponentClass<Props>) => (
+    class WithComponentContext extends React.PureComponent<ExcludeContextProp<Props>> {
         public render() {
             return React.createElement(ComponentContextProvider.Consumer, {
                 children: (context: ComponentContext) => {
@@ -19,7 +19,7 @@ const withComponentContext = <Props extends ComponentContextProp>(Component: Rea
                         context: {
                             executeOperation: context.executeOperation,
                             getStore: context.getStore,
-                        }
+                        } as any
                     })
                 }
             })

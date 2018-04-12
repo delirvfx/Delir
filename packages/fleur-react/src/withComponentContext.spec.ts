@@ -4,13 +4,13 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 import createElementWithContext from './createElementWithContext'
-import withComponentContext, { ComponentContextProp } from './withComponentContext'
+import withComponentContext, { ContextProp } from './withComponentContext'
 
 describe('withComponentContext', () => {
     it('Is received context in props', async () => {
         const app = new Fleur()
         const context = app.createContext()
-        const Component = withComponentContext(class extends React.Component<ComponentContextProp> { public render() {
+        const Component = withComponentContext(class extends React.Component<ContextProp> { public render() {
             expect(Object.keys(this.props.context)).toEqual(['executeOperation', 'getStore'])
             return null
         } })
