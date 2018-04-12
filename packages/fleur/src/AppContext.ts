@@ -8,7 +8,7 @@ import Dispatcher from './Dispatcher'
 import Fleur from './Fleur'
 import { Operation, OperationArg } from './Operations'
 import ComponentContextProvider from './react/ComponentContextProvider'
-import Store, { StoreClass, StoreClass } from './Store'
+import Store, { StoreClass } from './Store'
 
 export default class AppContext<Actions extends ActionIdentifier<any> = ActionIdentifier<any>> {
     public dispatcher: Dispatcher
@@ -21,12 +21,6 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
         this.dispatcher = new Dispatcher()
         this.actionContext = new ActionContext(this)
         this.componentContext = new ComponentContext(this)
-    }
-
-    public createElementWithContext(children: React.ReactChild) {
-        return React.createElement(ComponentContextProvider.Provider, {
-            value: this.componentContext
-        }, children)
     }
 
     public getStore<T extends Store>(StoreClass: { new(...args: any[]): T}): T {

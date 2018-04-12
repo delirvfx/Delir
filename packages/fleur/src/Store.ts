@@ -1,19 +1,10 @@
 import immer from 'immer'
 
-import { Action, ActionIdentifier, ExtractPayloadType } from './Action'
+import Payload from '../../../alpha4/src/frontend/utils/Flux/Payload'
+import { ActionIdentifier, ExtractPayloadType } from './ActionIdentifier'
 import Emitter from './Emitter'
 
-interface StoreEvents {
-    onChange: never
-}
-
 export interface StoreClass<T = {}> { new(...args: any[]): Store<T> }
-
-interface StoreOptions < A extends Action < any > , S > {
-    rehydrate?(state: S): void
-    dehydrate?(): S
-    [prop: string]: any
-}
 
 export const listen = <A extends ActionIdentifier<any>>(action: A, producer: (payload: ExtractPayloadType<A>) => void) => ({
     __fleurHandler: true,
@@ -21,11 +12,15 @@ export const listen = <A extends ActionIdentifier<any>>(action: A, producer: (pa
     producer,
 })
 
+interface StoreEvents {
+    onChange: void
+}
+
 export default class Store<T = any> extends Emitter<StoreEvents> {
     public state: T
 
     public emitChange(): void {
-        // this.emit('onChange')
+        this.emit('onChange', null)
     }
 
     public rehydrate(state: T): void {
@@ -38,5 +33,6 @@ export default class Store<T = any> extends Emitter<StoreEvents> {
 
     protected produce(producer: (draft: T) => void): void {
         this.state = immer(this.state, draft => { producer(draft) })
+        this.emitChange()
     }
 }
