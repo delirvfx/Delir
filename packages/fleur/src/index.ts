@@ -1,4 +1,6 @@
-export { default } from './Fleur'
+import Fleur from './Fleur'
+
+export { Fleur as default } // Aliasing for editor intellisense
 export { default as Store, StoreClass, listen } from './Store'
 export { default as OperationContext } from './OperationContext'
 export { actions, action, ExtractActionIdentifiersFromObject } from './ActionIdentifier'

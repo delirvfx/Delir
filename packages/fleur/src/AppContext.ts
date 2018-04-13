@@ -8,6 +8,10 @@ import OperationContext from './OperationContext'
 import { Operation, OperationArg } from './Operations'
 import Store, { StoreClass } from './Store'
 
+interface HydrateState {
+    stores: { [storeName: string]: object }
+}
+
 export default class AppContext<Actions extends ActionIdentifier<any> = ActionIdentifier<any>> {
     public dispatcher: Dispatcher
     public actionContext: OperationContext<any>
@@ -21,14 +25,25 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
         this.componentContext = new ComponentContext(this)
     }
 
-    public dehydrate(): object {
-        // TODO
-        return {}
+    public dehydrate(): HydrateState {
+        const state = { stores: {} }
+
+        this.stores.forEach((store, StoreClass) => {
+            state.stores[StoreClass.name] = store.dehydrate()
+        })
+
+        return state
     }
 
-    public rehydrate(_state: object) {
-        // TODO
-        // this.state = state
+    public rehydrate(state: HydrateState) {
+        this.app.stores.forEach((StoreClass) => {
+            if (!state.stores[StoreClass.name]) return
+
+            if (!this.stores.has(StoreClass)) {
+                this.initializeStore(StoreClass)
+                this.stores.get(StoreClass).rehydrate(state.stores[StoreClass.name])
+            }
+        })
     }
 
     public getStore<T extends StoreClass<any>>(StoreClass: T): InstanceType<T> {
