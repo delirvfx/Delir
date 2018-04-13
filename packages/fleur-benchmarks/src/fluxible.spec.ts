@@ -41,12 +41,12 @@ describe('benchmark', () => {
         context.getStore(TestStore)
         const div = document.createElement('div')
 
-        console.time('Fleur')
+        console.time('Fluxible')
         for (let count = 1; count < 10000; count++) {
             await context.executeAction(incrementOperation, {})
             await new Promise(r => ReactDOM.render(createElementWithContext(context, {}), div, r))
             expect(div.innerHTML).toBe(`<div>${count}</div>`)
         }
-        console.timeEnd('Fleur')
+        console.timeEnd('Fluxible')
     })
 })
