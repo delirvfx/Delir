@@ -30,7 +30,7 @@ describe('benchmark', () => {
 
         console.time('Fleur')
         for (let count = 1; count < 10000; count++) {
-            context.executeOperation(incrementOperation, {})
+            await context.executeOperation(incrementOperation, {})
             await new Promise(r => ReactDOM.render(createElementWithContext(context, Component, {}), div, r))
             expect(div.innerHTML).toBe(`<div>${count}</div>`)
         }
