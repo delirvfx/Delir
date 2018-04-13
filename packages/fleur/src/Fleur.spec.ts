@@ -15,12 +15,10 @@ describe('Fleur', () => {
 
             private handleIncrease = listen(actions.increase, (p) => {
                 this.state.count += p.increase
-                console.log(this.state)
             })
 
-            private handleIncrease2 = listen(actions.increase, (p) => {
-                this.state.count += p.increase
-                console.log(this.state)
+            private handleDecrease = listen(actions.decrease, (p) => {
+                this.state.count -= p.decrease
             })
         }
 

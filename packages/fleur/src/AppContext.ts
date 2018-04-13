@@ -23,6 +23,7 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
         this.dispatcher = new Dispatcher()
         this.actionContext = new OperationContext(this)
         this.componentContext = new ComponentContext(this)
+        this.app.stores.forEach((StoreClass) => { this.initializeStore(StoreClass) })
     }
 
     public dehydrate(): HydrateState {
