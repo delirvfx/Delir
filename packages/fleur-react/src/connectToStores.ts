@@ -1,7 +1,7 @@
 import { ComponentContext, StoreClass } from '@ragg/fleur'
 import * as React from 'react'
 
-import withComponentContext from './withComponentContext'
+import withComponentContext, { ContextProp } from './withComponentContext'
 
 type StoreToPropMapper<P, T> = (context: ComponentContext, props: P) => T
 
@@ -41,7 +41,7 @@ class StoreHandler extends React.PureComponent<StoreHandlerProps, StoreHandlerSt
     }
 }
 
-const connectToStores = <Props, Mapped = {}>(stores: StoreClass[], mapStoresToProps: StoreToPropMapper<Props, Mapped>) => (
+const connectToStores = <Props extends ContextProp, Mapped = {}>(stores: StoreClass[], mapStoresToProps: StoreToPropMapper<Props, Mapped>) => (
     (Component: React.ComponentClass<Props>) => (
         class ConnectToStoreComponent extends React.PureComponent<Exclude<Props, Mapped>> {
             public render() {
