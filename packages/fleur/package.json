@@ -1,0 +1,36 @@
+{
+  "name": "@ragg/fleur",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "typings/index.d.ts",
+  "author": "Ragg<0674272bac@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "prepublishOnly": "tsc --emitDeclarationOnly --declaration --outDir ./typings \n tsc --outDir lib \n exit 0",
+    "test": "jest --verbose"
+  },
+  "devDependencies": {
+    "@types/eventemitter3": "^2.0.2",
+    "@types/flux-standard-action": "1.1.0",
+    "@types/invariant": "2.2.29",
+    "@types/react": "16.3.5",
+    "@types/react-dom": "16.0.4",
+    "cache-loader": "1.2.2",
+    "eventemitter3": "^3.0.1",
+    "jest": "22.4.3",
+    "ts-jest": "22.4.2",
+    "ts-loader": "4.1.0",
+    "typescript": "2.8.1",
+    "webpack": "4.5.0"
+  },
+  "dependencies": {
+    "flux-standard-action": "2.0.1",
+    "immer": "1.2.1",
+    "invariant": "2.2.4",
+    "react": "16.3.1",
+    "react-dom": "16.3.1"
+  },
+  "peerDependencies": {
+    "react": "^16.3.1"
+  }
+}

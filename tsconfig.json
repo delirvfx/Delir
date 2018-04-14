@@ -1,35 +1,7 @@
 {
-    "compileOnSave": false,
     "compilerOptions": {
-        "strictNullChecks": true,
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "noUnusedLocals": false,
-        "noUnusedParameters": false,
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "allowJs": true,
-        "jsx": "react",
-        "target": "es2016",
-        "module": "es2015",
-        "moduleResolution": "node",
-        "isolatedModules": true,
-        "downlevelIteration": true,
-        "lib": [
-            "dom",
-            "dom.iterable",
-            "es2015",
-            "es2016",
-            "es2017",
-            "esnext.asynciterable"
-        ],
-        "baseUrl": "."
-    },
-    "files": [
-        "./src/declarations.d.ts",
-        "./src/frontend/main.ts"
-    ],
-    "awesomeTypescriptLoaderOptions": {
-        "ignoreDiagnostics": [8010, 8011]
+        "target": "es2015",
+        "module": "commonjs",
+        "moduleResolution": "node"
     }
 }

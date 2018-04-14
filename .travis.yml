@@ -14,13 +14,23 @@ env:
 
 install:
     - npm i -g yarn
-    - yarn install -s --no-optional
-    # Remove problem optional module
-    - rm -rf ./node_modules/speaker
+    - yarn install
 
 script:
-    - yarn test-front
-    - yarn test-core
+    - cd packages/delir-core
+    - yarn prepublishOnly
+    - yarn test --coverage --verbose
+
+    - cd - && cd packages/fleur
+    - yarn prepublishOnly
+    - yarn test --coverage --verbose
+
+    - cd - && cd packages/fleur-react
+    - yarn prepublishOnly
+    - yarn test --coverage --verbose
+
+    - cd - && cd packages/delir
+    - yarn test --coverage --verbose
 
 addons:
     apt:
@@ -29,3 +39,5 @@ addons:
         packages:
             - g++-4.8
             - libfontconfig1-dev
+            # dependent by `av`
+            - libasound2-dev
