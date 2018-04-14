@@ -1,6 +1,8 @@
 # Delir
 Web Technology driven VFX Application
 
+Links: [Web](https://delir.studio/) | [Discord](https://discord.gg/rrr2z2E) | [Trello](https://trello.com/b/2WiN64z2/delir-roadmap-research-reports)
+
 ## How to develop Delir plugin
 See [plugin-example](https://github.com/Ragg-/Delir/tree/alpha-release/src/delir-core/plugin-example)
 
