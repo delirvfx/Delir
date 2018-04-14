@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "prepublishOnly": "tsc --emitDeclarationOnly --declaration --outDir ./typings && tsc --outDir lib"
+    "prepublishOnly": "tsc --emitDeclarationOnly --declaration --outDir ./typings \n tsc --outDir lib \n exit 0",
   },
   "peerDependencies": {
     "react": "16.3.1",

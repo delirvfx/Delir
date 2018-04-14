@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": "./src",
         "target": "es2015",
-        "module": "es2015",
+        "module": "commonjs",
         "moduleResolution": "node",
         "noUnusedLocals": true,
         "noUnusedParameters": true,
@@ -16,6 +16,9 @@
             "es2017"
         ]
     },
+    "files": [
+        "src/index.ts"
+    ],
     "exclude": [
         "src/**/*.spec.ts",
         "test_lib/"
