@@ -42,8 +42,9 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
 
             if (!this.stores.has(StoreClass)) {
                 this.initializeStore(StoreClass)
-                this.stores.get(StoreClass).rehydrate(state.stores[StoreClass.name])
             }
+
+            this.stores.get(StoreClass).rehydrate(state.stores[StoreClass.name])
         })
     }
 
@@ -65,6 +66,11 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
     }
 
     private initializeStore(StoreClass: StoreClass<any>) {
+        if (process.env.NODE_ENV !== 'production') {
+            const storeRegistered = this.app.stores.has(StoreClass)
+            invariant(storeRegistered, `Store ${StoreClass.name} is must be registered`)
+        }
+
         const store = new StoreClass()
         const actionCallbackMap = new Map()
         this.stores.set(StoreClass, store)
