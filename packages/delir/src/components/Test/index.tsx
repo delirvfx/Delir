@@ -1,50 +1,33 @@
-// import * as s from './style.sass'
-import { connectToStores, ExecuteActionProp, Store } from '@ragg/fleur'
+import { Engine } from '@ragg/delir-core'
+import { Store } from '@ragg/fleur'
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as React from 'react'
+
 import EditorStore from '../../store/EditorStore'
-import { increment } from '../../usecases/usecases'
+import RendererStore from '../../store/RendererStore'
+import * as s from './style.sass'
 
 const someAction = () => void 0
 
-type Props = { count: number} & ExecuteActionProp
+type Props = { count: number } & ContextProp
 
-export default connectToStores([EditorStore], (ctx) => ({
-    count: ctx.getStore(EditorStore).getCount(),
-}))(
+export default withComponentContext(connectToStores([EditorStore, RendererStore], (ctx) => ({}))(
     class Test extends React.PureComponent<Props> {
+        private canvasRef = React.createRef<HTMLCanvasElement>()
+
+        public componentDidMount() {
+            const engine: Engine = this.props.context.getStore(RendererStore).getEngine()
+            console.log(engine)
+            // console.log(this.canvasRef)
+        }
+
         public render() {
             const { count } = this.props
 
-            return (
-                // <canvas ref={this.bindCanvas} onClick={this.handleOnClick} />
-                <div onClick={this.handleOnClick}>{count}</div>
-            )
+            return (<>
+                <canvas ref={this.canvasRef} />
+                <div>hi</div>
+            </>)
         }
-
-        private handleOnClick = () => {
-            // this.props.context.getStore()
-            this.props.context.executeOperation(increment, { })
-            // this.props.context.executeAction(someAction, {})
-        }
-
-        // private canvas: HTMLCanvasElement
-
-        // public render(): React.ReactNode {
-
-        //     return (
-        //         <Consumer>
-        //             {context => (
-        //                 <div onClick={this.handler.bind(null, context)}>
-        //             )}
-        //         </Consumer>
-        //     )
-        // }
-
-        // handler() {
-        //     this.props.context
-
-        // }
-
-        // private bindCanvas = (canvas: HTMLCanvasElement) => this.canvas = canvas
     }
-)
+))
