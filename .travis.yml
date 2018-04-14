@@ -21,15 +21,15 @@ script:
     - yarn prepublishOnly
     - yarn test --coverage --verbose
 
-    - cd - && cd packages/delir
-    - yarn test --coverage --verbose
-
     - cd - && cd packages/fleur
     - yarn prepublishOnly
     - yarn test --coverage --verbose
 
     - cd - && cd packages/fleur-react
     - yarn prepublishOnly
+    - yarn test --coverage --verbose
+
+    - cd - && cd packages/delir
     - yarn test --coverage --verbose
 
 addons:
