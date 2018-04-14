@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": "./src",
         "target": "es2015",
-        "module": "es2015",
+        "module": "commonjs",
         "jsx": "react",
         "moduleResolution": "node",
         "noUnusedLocals": true,
