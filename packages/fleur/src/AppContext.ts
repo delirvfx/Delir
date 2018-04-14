@@ -13,15 +13,15 @@ interface HydrateState {
 }
 
 export default class AppContext<Actions extends ActionIdentifier<any> = ActionIdentifier<any>> {
-    public dispatcher: Dispatcher
-    public actionContext: OperationContext<any>
-    public componentContext: ComponentContext
-    public stores: Map<StoreClass, Store<any>> = new Map()
-    public actionCallbackMap: Map<StoreClass, Map<ActionIdentifier<any>, (payload: any) => void>> = new Map()
+    public readonly dispatcher: Dispatcher
+    public readonly operationContext: OperationContext<any>
+    public readonly componentContext: ComponentContext
+    public readonly stores: Map<StoreClass, Store<any>> = new Map()
+    public readonly actionCallbackMap: Map<StoreClass, Map<ActionIdentifier<any>, (payload: any) => void>> = new Map()
 
     constructor(private app: Fleur) {
         this.dispatcher = new Dispatcher()
-        this.actionContext = new OperationContext(this)
+        this.operationContext = new OperationContext(this)
         this.componentContext = new ComponentContext(this)
         this.app.stores.forEach((StoreClass) => { this.initializeStore(StoreClass) })
     }
@@ -58,7 +58,7 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
     }
 
     public async executeOperation<T extends Operation<Actions>>(operation: T, arg: OperationArg<T>): Promise<void> {
-        await Promise.resolve(operation(this.actionContext, arg))
+        await Promise.resolve(operation(this.operationContext, arg))
     }
 
     public dispatch<A extends Actions>(actionIdentifier: A, payload: ExtractPayloadType<A>) {
