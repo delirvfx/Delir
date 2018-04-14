@@ -21,6 +21,10 @@ script:
     - yarn test --coverage --verbose
     - cd - && cd packages/delir
     - yarn test --coverage --verbose
+    - cd - && cd packages/fleur
+    - yarn test --coverage --verbose
+    - cd - && cd packages/fleur-react
+    - yarn test --coverage --verbose
 
 addons:
     apt:
