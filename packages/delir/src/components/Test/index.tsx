@@ -14,11 +14,18 @@ type Props = { count: number } & ContextProp
 export default withComponentContext(connectToStores([EditorStore, RendererStore], (ctx) => ({}))(
     class Test extends React.PureComponent<Props> {
         private canvasRef = React.createRef<HTMLCanvasElement>()
+        private canvasCtx: CanvasRenderingContext2D
 
         public componentDidMount() {
+            const canvas = this.canvasRef.current
+            this.canvasCtx = canvas.getContext('2d')!
+
             const engine: Engine = this.props.context.getStore(RendererStore).getEngine()
-            console.log(engine)
-            // console.log(this.canvasRef)
+            engine.observeFrame((frame) => {
+                this.canvasCtx.drawImage(frame, 0, 0, canvas.width, canvas.height)
+            })
+
+            engine.render()
         }
 
         public render() {

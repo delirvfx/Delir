@@ -25,6 +25,11 @@ module.exports = {
     modules: [
       "node_modules"
     ],
+    alias: {
+      '@ragg/delir-core': '@ragg/delir-core/src/index.ts',
+      '@ragg/fleur': '@ragg/fleur/src/index.ts',
+      '@ragg/fleur-react': '@ragg/fleur-react/src/index.ts',
+    }
   },
   module: {
     rules: [

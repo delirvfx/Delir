@@ -1,4 +1,4 @@
-import DelirCore, { Document } from '@ragg/delir-core'
+import Delir, { Document } from '@ragg/delir-core'
 import { Store } from '@ragg/fleur'
 
 interface State {
@@ -6,14 +6,14 @@ interface State {
 }
 
 class RendererStore extends Store<State> {
-    public readonly renderer = new DelirCore()
-    public state: Document = {}
+    public readonly renderer = new Delir()
+    public state = {
+        project: Delir.createProject()
+    }
 
     constructor() {
         super()
-        this.renderer.setProject({})
-
-        console.log(this.renderer)
+        this.renderer.setProject(this.state.project)
     }
 
     public getEngine() {
