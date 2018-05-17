@@ -1,7 +1,7 @@
 import { ActionIdentifier } from './ActionIdentifier'
 import Emitter from './Emitter'
 
-interface Events {
+export interface Events {
     dispatch: {
         type: ActionIdentifier<any>
         payload: any

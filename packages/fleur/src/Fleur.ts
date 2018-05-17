@@ -1,7 +1,7 @@
 import AppContext from './AppContext'
 import { StoreClass } from './Store'
 
-interface FleurOption {
+export interface FleurOption {
     stores?: StoreClass[]
 }
 

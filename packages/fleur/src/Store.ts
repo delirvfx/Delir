@@ -11,7 +11,7 @@ export const listen = <A extends ActionIdentifier<any>>(action: A, producer: (pa
     producer,
 })
 
-interface StoreEvents {
+export interface StoreEvents {
     onChange: void
 }
 

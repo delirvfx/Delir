@@ -8,7 +8,7 @@ import OperationContext from './OperationContext'
 import { Operation, OperationArg } from './Operations'
 import Store, { StoreClass } from './Store'
 
-interface HydrateState {
+export interface HydrateState {
     stores: { [storeName: string]: object }
 }
 
