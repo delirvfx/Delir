@@ -3,7 +3,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 import connectToStores from './connectToStores'
-import createElementWithContext from './createElementWithContext'
+import { createElementWithContext } from './createElementWithContext'
 
 describe('connectToStores', () => {
     it('Should map stores to props', async () => {
