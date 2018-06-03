@@ -15,6 +15,29 @@ export const decrease = action<{ amount: number }>();
 ```
 
 ``` typescript
+// store.ts (Store)
+import { listen, Store } from '@ragg/fleur'
+import * as actions from './actions.ts'
+
+export default class SomeStore extends Store {
+    public state: { count: number } = { count: 0 }
+
+    private handleIncrease = listen(actions.increase, (payload) => {
+        // `this.produce` is immutable changing `this.state` with `immer.js`
+        this.produce(draft => draft.count += payload.amount)
+    })
+
+    private handleDecrease = listen(actions.decrease, (payload) => {
+        this.produce(draft => draft.count -= payload.amount)
+    })
+
+    public getCount() { 
+        return this.state.count
+    }
+}
+```
+
+``` typescript
 // operations.ts (Action Creator)
 import { operation } from '@ragg/fleur'
 import * as actions from './actions.ts'
@@ -29,33 +52,17 @@ export const decreaseOperation = operation((ctx, { amount }: { amount: number })
 ```
 
 ``` typescript
-// store.ts (Store)
-import { listen, Store } from '@ragg/fleur'
-
-export default class Store extends Store {
-    public state: { count: number } = { count: 0 }
-
-    private handleIncrease = listen(actions.increase, (payload) => {
-        // `this.produce` is immutable changing `this.state` with `immer.js`
-        this.produce(draft => draft.count += payload.amount)
-    })
-
-    private handleDecrease = listen(actions.decrease, (payload) => {
-        this.produce(draft => draft.count -= payload.amount)
-    })
-}
-```
-
-``` typescript
 // app.ts
-import Store from './store.ts'
+import Fleur from '@ragg/fleur'
+import SomeStore from './store.ts'
 
 const app = new Fleur({
-    stores: [TestStore],
+    stores: [SomeStore],
 })
 
 const ctx = app.createContext()
 ctx.executeOperation(increaseOperation, { increase: 10 })
+console.log(ctx.getStore(SomeStore).getCount()) // => 10
 ```
 
 ## How to use with React?

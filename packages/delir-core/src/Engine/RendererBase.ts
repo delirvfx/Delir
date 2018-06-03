@@ -1,4 +1,4 @@
-import RendererParam from './FrameContext/RendererParam'
+// import RendererParam from './FrameContext/RendererParam'
 
 export default abstract class RendererBase {
     public static provideAssetAssignMap(): {[extName: string]: string} {
@@ -10,6 +10,6 @@ export default abstract class RendererBase {
 
     public rendererId: string
 
-    public abstract beforeRender(param: RendererParam<object>): Promise<void>
-    public abstract render(param: RendererParam<object>): Promise<void>
+    public abstract beforeRender(param: object): Promise<void>
+    public abstract render(param: object): Promise<void>
 }

@@ -76,7 +76,9 @@ export default class DocumentOperator {
     }
 
     public addComposition(compositionProp: NewEntity<Composition>): Composition {
-        // TODO
+        const composition = { ...compositionProp, id: '' }
+        this.project.compositions.push(composition)
+        return composition
     }
 
     public removeComposition(compositionId: string): Composition | void {

@@ -14,6 +14,17 @@ class RendererStore extends Store<State> {
     constructor() {
         super()
         this.renderer.setProject(this.state.project)
+        this.renderer.project.addComposition({
+            width: 640,
+            height: 360,
+            backgroundColor: { red: 255, green: 255, blue: 255 },
+            durationFrames: 100,
+            layers: [],
+            name: 'Comp',
+            framerate: 30,
+            samplingRate: 10,
+            audioChannels: 2,
+        })
     }
 
     public getEngine() {
