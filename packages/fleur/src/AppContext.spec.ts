@@ -6,9 +6,11 @@ describe('AppContext', () => {
     describe('dehydrate', () => {
         it('Should dehydrate', () => {
             class SomeStore extends Store {
+                public static storeName = 'SomeStore'
                 public state = { some: 1 }
             }
             class Some2Store extends Store {
+                public static storeName = 'Some2Store'
                 public state = { some2: 2 }
             }
 
@@ -33,9 +35,11 @@ describe('AppContext', () => {
     describe('rehydrate', () => {
         it('Should dehydrate', () => {
             class SomeStore extends Store {
+                public static storeName = 'SomeStore'
                 public state = { some: 1 }
             }
             class Some2Store extends Store {
+                public static storeName = 'Some2Store'
                 public state = { some2: 2 }
             }
 

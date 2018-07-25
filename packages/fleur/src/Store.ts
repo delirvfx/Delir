@@ -3,7 +3,10 @@ import immer from 'immer'
 import { ActionIdentifier, ExtractPayloadType } from './ActionIdentifier'
 import Emitter from './Emitter'
 
-export interface StoreClass<T = {}> { new(...args: any[]): Store<T> }
+export interface StoreClass<T = {}> {
+    storeName: string
+    new(...args: any[]): Store<T>
+}
 
 export const listen = <A extends ActionIdentifier<any>>(action: A, producer: (payload: ExtractPayloadType<A>) => void) => ({
     __fleurHandler: true,
@@ -16,6 +19,8 @@ export interface StoreEvents {
 }
 
 export default class Store<T = any> extends Emitter<StoreEvents> {
+    public static storeName: string = ''
+
     protected state: T
 
     public rehydrate(state: T): void {

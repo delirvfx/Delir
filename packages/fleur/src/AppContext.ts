@@ -1,6 +1,6 @@
 import * as invariant from 'invariant'
 
-import {  ActionIdentifier, ExtractPayloadType } from './ActionIdentifier'
+import { ActionIdentifier, ExtractPayloadType } from './ActionIdentifier'
 import ComponentContext from './ComponentContext'
 import Dispatcher from './Dispatcher'
 import Fleur from './Fleur'
@@ -16,7 +16,7 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
     public readonly dispatcher: Dispatcher
     public readonly operationContext: OperationContext<any>
     public readonly componentContext: ComponentContext
-    public readonly stores: Map<StoreClass, Store<any>> = new Map()
+    public readonly stores: Map<string, Store<any>> = new Map()
     public readonly actionCallbackMap: Map<StoreClass, Map<ActionIdentifier<any>, (payload: any) => void>> = new Map()
 
     constructor(private app: Fleur) {
@@ -29,8 +29,8 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
     public dehydrate(): HydrateState {
         const state: HydrateState = { stores: {}  }
 
-        this.stores.forEach((store, StoreClass) => {
-            state.stores[StoreClass.name] = store.dehydrate()
+        this.stores.forEach((store, storeName) => {
+            state.stores[storeName] = store.dehydrate()
         })
 
         return state
@@ -38,23 +38,23 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
 
     public rehydrate(state: HydrateState) {
         this.app.stores.forEach((StoreClass) => {
-            if (!state.stores[StoreClass.name]) return
+            if (!state.stores[StoreClass.storeName]) return
 
-            if (!this.stores.has(StoreClass)) {
+            if (!this.stores.has(StoreClass.storeName)) {
                 this.initializeStore(StoreClass)
             }
 
-            this.stores.get(StoreClass)!.rehydrate(state.stores[StoreClass.name])
+            this.stores.get(StoreClass.storeName)!.rehydrate(state.stores[StoreClass.storeName])
         })
     }
 
     public getStore<T extends StoreClass<any>>(StoreClass: T): InstanceType<T> {
         if (process.env.NODE_ENV !== 'production') {
             const storeRegistered = this.app.stores.has(StoreClass)
-            invariant(storeRegistered, `Store ${StoreClass.name} is must be registered`)
+            invariant(storeRegistered, `Store ${StoreClass.storeName} is must be registered`)
         }
 
-        return (this.stores.get(StoreClass) as any) || this.initializeStore(StoreClass)
+        return (this.stores.get(StoreClass.storeName) as any) || this.initializeStore(StoreClass)
     }
 
     public async executeOperation<T extends Operation<Actions>>(operation: T, arg: OperationArg<T>): Promise<void> {
@@ -68,12 +68,12 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
     private initializeStore(StoreClass: StoreClass<any>) {
         if (process.env.NODE_ENV !== 'production') {
             const storeRegistered = this.app.stores.has(StoreClass)
-            invariant(storeRegistered, `Store ${StoreClass.name} is must be registered`)
+            invariant(storeRegistered, `Store ${StoreClass.storeName} is must be registered`)
         }
 
         const store = new StoreClass()
         const actionCallbackMap = new Map()
-        this.stores.set(StoreClass, store)
+        this.stores.set(StoreClass.storeName, store)
 
         Object.keys(store)
             .filter(key => (store as any)[key] != null && (store as any)[key].__fleurHandler)
@@ -81,7 +81,7 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
                 const actionIdentifier = (store as any)[key].__action
 
                 if (process.env.NODE_ENV !== 'production') {
-                    invariant(actionCallbackMap.has(actionIdentifier) === false, `Action handler duplicated in store '${StoreClass.name}'`)
+                    invariant(actionCallbackMap.has(actionIdentifier) === false, `Action handler duplicated in store '${StoreClass.storeName}'`)
                 }
 
                 actionCallbackMap.set(actionIdentifier, (store as any)[key].producer)
