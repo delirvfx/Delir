@@ -18,6 +18,7 @@
     "@types/webpack": "3.8.3",
     "awesome-typescript-loader": "3.5.0",
     "cache-loader": "1.2.0",
+    "clean-webpack-plugin": "0.1.19",
     "css-loader": "0.28.9",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
@@ -36,12 +37,14 @@
     "tslint-loader": "3.5.3",
     "typescript": "2.7.2",
     "uglifyjs-webpack-plugin": "1.2.2",
-    "webpack": "4.0.0"
+    "webpack": "4.0.0",
+    "write-assets-webpack-plugin": "1.0.4"
   },
   "dependencies": {
     "@ragg/delir-core": "*",
     "@ragg/fleur": "*",
     "@ragg/fleur-react": "*",
+    "electron": "2.0.5",
     "immer": "1.2.1",
     "react": "16.3.1",
     "react-dom": "16.3.1"

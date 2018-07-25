@@ -2,16 +2,30 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
+const WriteAssetsWebpackPlugin = require('write-assets-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const once = require('lodash/once');
 const mkdirp = require('mkdirp');
 const { join } = require('path');
 const webpack = require('webpack');
+const { spawn } = require('child_process');
 
 const dev = process.env.NODE_ENV === 'development';
 const cacheDir = join(__dirname, './tmp');
 mkdirp.sync(cacheDir);
 
+const runElectron = once(() => {
+  spawn(
+    join(__dirname, 'node_modules/.bin/electron'),
+    [ join(__dirname, './electron-main-dev.js') ],
+    { detached: true, stdio: 'inherit' }
+  ).on('error', (e) => {
+    console.error(e)
+  })
+})
+
 module.exports = {
-  target: 'web',
+  target: 'electron-renderer',
   context: __dirname,
   entry: './src/main',
   devtool: dev ? 'source-map' : false,
@@ -102,8 +116,14 @@ module.exports = {
     new webpack.DefinePlugin({
       __DEV__: dev ? 'true' : 'false'
     }),
+    new CleanWebpackPlugin(['prebuild']),
     new webpack.HotModuleReplacementPlugin(),
-  ].concat(dev ? []　: [
+  ].concat(dev ? [
+    new WriteAssetsWebpackPlugin({ force: true }),
+    { apply: (compiler) => {
+      compiler.hooks.done.tap('Electron Runner', runElectron)
+    } },
+  ]　: [
     new UglifyJSPlugin({
       parallel: true,
       cache: cacheDir
