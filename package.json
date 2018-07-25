@@ -6,7 +6,7 @@
     "scripts": {
         "precommit": "lint-staged",
         "clean-modules": "rm -rf node_modules && rm -rf packages/{delir,delir-core,fleur,fleur-react}/node_modules && yarn --ignore-engines",
-        "dev": "cross-env NODE_ENV=development webpack-dev-server --watch --mode development",
+        "dev": "cross-env NODE_ENV=development webpack-dev-server --watch --mode production",
         "build:webpack": "cross-env NODE_ENV=production webpack --mode production"
     },
     "devDependencies": {
