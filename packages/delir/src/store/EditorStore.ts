@@ -4,5 +4,7 @@ interface State {
 }
 
 export default class EditorStore extends Store<State> {
+    public static storeName = 'EditorStore'
+
     public state: State
 }

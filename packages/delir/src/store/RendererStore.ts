@@ -6,7 +6,10 @@ interface State {
 }
 
 class RendererStore extends Store<State> {
+    public static storeName = 'RendererStore'
+
     public readonly renderer = new Delir()
+
     public state = {
         project: Delir.createProject()
     }
