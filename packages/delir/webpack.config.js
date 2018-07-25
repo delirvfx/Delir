@@ -18,7 +18,7 @@ const runElectron = once(() => {
   spawn(
     join(__dirname, 'node_modules/.bin/electron'),
     [ join(__dirname, './electron-main-dev.js') ],
-    { detached: true, stdio: 'inherit' }
+    { detached: false, stdio: 'inherit' }
   ).on('error', (e) => {
     console.error(e)
   })
