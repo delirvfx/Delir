@@ -15,7 +15,7 @@
     "@types/invariant": "2.2.29",
     "cache-loader": "1.2.2",
     "eventemitter3": "^3.0.1",
-    "jest": "22.4.3",
+    "jest": "23.4.1",
     "ts-jest": "22.4.2",
     "ts-loader": "4.1.0",
     "typescript": "2.8.1",
