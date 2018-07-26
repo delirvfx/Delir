@@ -50,7 +50,7 @@ export default withComponentContext(
                 </head>
                 <body>
                     <div>
-                        {/* get .meta property from route.meta */}
+                        {/* get .meta property from route.meta */}
                         {!route.meta.noHeader && <header />}
 
                         {/* mount Handler component here */}
@@ -72,6 +72,7 @@ import Fleur from '@ragg/fleur'
 import { navigateOperation } from '@ragg/fleur-route-store'
 import express from 'express'
 import RouteStore, from './RouteStore'
+import App from './App'
 
 const server = express()
 const app = new Fleur({ stores: [ RouteStore ] })
@@ -80,7 +81,7 @@ server.use((req) => {
     const context = req.context = app.createContext();
 
     context.executeOperation(navigateOperation, {
-        url: req.url,
+        url: req.url,
         method: req.method
     })
 })
@@ -89,7 +90,7 @@ server.use((req, res) => {
     res.write('<!doctype html>')
     res.write(
         ReactDOM.renderToString(
-            createElementWithContext(context, App, {})
+            createElementWithContext(req.context, App, {})
         )
     )
 })
