@@ -1,6 +1,6 @@
 import AppContext from './AppContext'
 import { Operation, OperationArg } from './Operations'
-import Store from './Store'
+import { StoreClass } from './Store'
 
 export default class ComponentContext {
     constructor(private context: AppContext) {}
@@ -9,7 +9,7 @@ export default class ComponentContext {
         this.context.executeOperation(operation, arg)
     }
 
-    public getStore = <T extends Store>(StoreClass: { new(...args: any[]): T}): T => {
+    public getStore = <T extends StoreClass>(StoreClass: T): InstanceType<T> => {
         return this.context.getStore(StoreClass)
     }
 }

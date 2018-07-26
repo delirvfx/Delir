@@ -1,7 +1,7 @@
 import { ActionIdentifier } from './ActionIdentifier'
 import AppContext from './AppContext'
 import { Operation, OperationArg } from './Operations'
-import Store from './Store'
+import { StoreClass } from './Store'
 
 class OperationContext<Actions extends ActionIdentifier<any>> {
     constructor(private context: AppContext) {}
@@ -10,7 +10,7 @@ class OperationContext<Actions extends ActionIdentifier<any>> {
         operator(this, arg)
     }
 
-    public getStore<T extends Store>(storeClass: { new(...args: any[]): T }): T {
+    public getStore<T extends StoreClass>(storeClass: T): InstanceType<T> {
         return this.context.getStore(storeClass)
     }
 

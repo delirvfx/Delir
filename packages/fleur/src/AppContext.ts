@@ -50,7 +50,7 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
 
     public getStore<T extends StoreClass<any>>(StoreClass: T): InstanceType<T> {
         if (process.env.NODE_ENV !== 'production') {
-            const storeRegistered = this.app.stores.has(StoreClass)
+            const storeRegistered = this.app.stores.has(StoreClass.storeName)
             invariant(storeRegistered, `Store ${StoreClass.storeName} is must be registered`)
         }
 
@@ -67,7 +67,7 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
 
     private initializeStore(StoreClass: StoreClass<any>) {
         if (process.env.NODE_ENV !== 'production') {
-            const storeRegistered = this.app.stores.has(StoreClass)
+            const storeRegistered = this.app.stores.has(StoreClass.storeName)
             invariant(storeRegistered, `Store ${StoreClass.storeName} is must be registered`)
         }
 

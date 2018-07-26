@@ -29,6 +29,10 @@ script:
     - yarn prepublishOnly
     - yarn test --coverage --verbose
 
+    - cd - && cd packages/fleur-route-store
+    - yarn prepublishOnly
+    - yarn test --coverage --verbose
+
     - cd - && cd packages/delir
     - yarn test --coverage --verbose
 

@@ -8,7 +8,7 @@ export interface FleurOption {
 }
 
 export default class Fleur {
-    public stores: Set<StoreClass> = new Set()
+    public stores: Map<string, StoreClass> = new Map()
 
     constructor(options: FleurOption = {}) {
         if (options.stores) {
@@ -22,10 +22,10 @@ export default class Fleur {
             throw new Error('Store.storeName must be specified.')
         }
 
-        const storeRegistered = [...this.stores].find(StoreClass => StoreClass.storeName === Store.storeName)
+        const storeRegistered = this.stores.has(Store.storeName)
         invariant(!storeRegistered, `Store ${Store.storeName} already registered.`)
 
-        this.stores.add(Store)
+        this.stores.set(Store.storeName, Store)
     }
 
     public createContext(): AppContext {
