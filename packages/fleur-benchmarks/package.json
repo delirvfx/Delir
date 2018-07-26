@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "fluxible": "^1.4.0",
-    "fluxible-addons-react": "^0.2.14"
+    "fluxible-addons-react": "0.2.15"
   }
 }

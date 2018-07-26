@@ -14,16 +14,15 @@
     "@types/flux-standard-action": "1.1.0",
     "@types/invariant": "2.2.29",
     "cache-loader": "1.2.2",
-    "eventemitter3": "^3.0.1",
+    "eventemitter3": "3.1.0",
     "jest": "23.4.1",
-    "ts-jest": "22.4.2",
-    "ts-loader": "4.1.0",
-    "typescript": "2.8.1",
-    "webpack": "4.5.0"
+    "ts-jest": "23.0.1",
+    "ts-loader": "4.4.2",
+    "typescript": "2.9.2",
+    "webpack": "4.16.2"
   },
   "dependencies": {
-    "flux-standard-action": "2.0.1",
-    "immer": "1.2.1",
+    "immer": "1.5.0",
     "invariant": "2.2.4"
   }
 }
