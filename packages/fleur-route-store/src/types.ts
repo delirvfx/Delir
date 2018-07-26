@@ -3,7 +3,7 @@ import { OperationContext } from '@ragg/fleur'
 export interface Route {
     method?: 'GET' | 'POST'
     path: string
-    action?: (context: OperationContext<any> ) => Promise<any> | void
+    action?: (context: OperationContext<any>, route: MatchedRoute) => Promise<any> | void
     handler: any
     meta ? : any
 }

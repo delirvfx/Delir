@@ -2,7 +2,7 @@ import { operation, OperationContext } from '@ragg/fleur'
 import * as Router from 'routr'
 import { navigateFailure, navigateStart, navigateSuccess } from './actions'
 import RouteStore from './RouteStore'
-import { RouteDefinitions } from './types'
+import { MatchedRoute, RouteDefinitions } from './types'
 
 export const navigateOperation = operation(async (context: OperationContext<any>, { url, method }: { url: string, method: string }) => {
     const routeStore = context.getStore(RouteStore)
@@ -23,7 +23,7 @@ export const navigateOperation = operation(async (context: OperationContext<any>
 
     try {
         if (route.action) {
-            await Promise.resolve(route.action(context))
+            await Promise.resolve(route.action(context, route))
         }
 
         context.dispatch(navigateSuccess, { url, method })
@@ -49,4 +49,4 @@ export const withStaticRoutes = <R extends RouteDefinitions>(routes: R): {
     }
 }
 
-export { RouteStore }
+export { RouteStore, MatchedRoute as Route }

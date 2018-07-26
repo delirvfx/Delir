@@ -35,6 +35,7 @@ export default withComponentContext(
 
 ``` typescript
 import Fleur, { Store, listen, operation, action } from '@ragg/fleur'
+import { createElementWithContext } from '@ragg/fleur-react'
 import AppRoot from './components/AppRoot'
 import SomeStore from './stores/SomeStore'
 
