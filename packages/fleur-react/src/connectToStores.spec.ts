@@ -22,7 +22,7 @@ describe('connectToStores', () => {
             get count() { return this.state.count }
 
             private increase = listen(ident, (payload) => {
-                this.produce(d => d.count += payload.increase)
+                this.updateWith(d => d.count += payload.increase)
             })
         }
 

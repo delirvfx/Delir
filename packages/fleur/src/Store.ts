@@ -35,7 +35,7 @@ export default class Store<T = any> extends Emitter<StoreEvents> {
         this.emit('onChange', void 0)
     }
 
-    protected produce(producer: (draft: T) => void): void {
+    protected updateWith(producer: (draft: T) => void): void {
         this.state = immer(this.state, draft => { producer(draft) })
         this.emitChange()
     }
