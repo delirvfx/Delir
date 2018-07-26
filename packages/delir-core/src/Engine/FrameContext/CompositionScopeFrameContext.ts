@@ -1,35 +1,35 @@
 export interface CompositionScopeFrameContextProps {
-    width: number
-    height: number
+    readonly width: number
+    readonly height: number
 
-    framerate: number
-    durationFrames: number
+    readonly framerate: number
+    readonly durationFrames: number
 
-    samplingRate: number
-    audioChannels: number
+    readonly samplingRate: number
+    readonly audioChannels: number
 
-    time: number
-    timeOnComposition: number
+    readonly time: number
+    readonly timeOnComposition: number
 
-    frame: number
-    frameOnComposition: number
+    readonly frame: number
+    readonly frameOnComposition: number
 }
 
 export default class CompositionScopeFrameContext {
-    public width: number
-    public height: number
+    public readonly width: number
+    public readonly height: number
 
-    public framerate: number
-    public durationFrames: number
+    public readonly framerate: number
+    public readonly durationFrames: number
 
-    public samplingRate: number
-    public audioChannels: number
+    public readonly samplingRate: number
+    public readonly audioChannels: number
 
-    public time: number
-    public timeOnComposition: number
+    public readonly time: number
+    public readonly timeOnComposition: number
 
-    public frame: number
-    public frameOnComposition: number
+    public readonly frame: number
+    public readonly frameOnComposition: number
 
     constructor(props: CompositionScopeFrameContextProps) {
         Object.assign(this, props)

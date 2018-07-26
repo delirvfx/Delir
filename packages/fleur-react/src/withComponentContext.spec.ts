@@ -3,7 +3,7 @@ import { mount } from 'enzyme'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import createElementWithContext from './createElementWithContext'
+import { createElementWithContext } from './createElementWithContext'
 import withComponentContext, { ContextProp } from './withComponentContext'
 
 describe('withComponentContext', () => {

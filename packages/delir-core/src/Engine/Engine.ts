@@ -20,6 +20,7 @@ export default class Engine {
     private emitter: EventEmitter = new EventEmitter()
     private context: Delir
     private pluginRegistry: PluginRegistry
+    private canvasElement: HTMLCanvasElement
 
     /**
      * Use only for reading within this class.
@@ -35,6 +36,10 @@ export default class Engine {
         this.context = context
         this.docOp = docOp
         this.pluginRegistry = pluginRegistry
+    }
+
+    public observeFrame(observer: (canvas: HTMLCanvasElement, ) => void) {
+        this.emitter.addListener('onFrame', observer)
     }
 
     public async render(option: RenderingOption): Promise<RenderingResult> {

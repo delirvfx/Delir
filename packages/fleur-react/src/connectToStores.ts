@@ -5,7 +5,7 @@ import withComponentContext, { ContextProp } from './withComponentContext'
 
 type StoreToPropMapper<P, T> = (context: ComponentContext, props: P) => T
 
-interface StoreHandlerProps {
+export interface StoreHandlerProps {
     mapStoresToProps: (...args: any[]) => any
     context: ComponentContext,
     stores: StoreClass[],

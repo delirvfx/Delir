@@ -1,19 +1,31 @@
+import * as invariant from 'invariant'
+
 import AppContext from './AppContext'
 import { StoreClass } from './Store'
 
-interface FleurOption {
+export interface FleurOption {
     stores?: StoreClass[]
 }
 
 export default class Fleur {
-    public stores: Set<StoreClass>
+    public stores: Map<string, StoreClass> = new Map()
 
     constructor(options: FleurOption = {}) {
-        this.stores = new Set(options.stores || [])
+        if (options.stores) {
+            options.stores.forEach(StoreClass => this.registerStore(StoreClass))
+        }
     }
 
     public registerStore(Store: StoreClass<any>): void {
-        this.stores.add(Store)
+        if (typeof Store.storeName !== 'string' || Store.storeName === '') {
+            console.error('Store.storeName must be specified.', Store)
+            throw new Error('Store.storeName must be specified.')
+        }
+
+        const storeRegistered = this.stores.has(Store.storeName)
+        invariant(!storeRegistered, `Store ${Store.storeName} already registered.`)
+
+        this.stores.set(Store.storeName, Store)
     }
 
     public createContext(): AppContext {

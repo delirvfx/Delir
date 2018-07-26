@@ -23,7 +23,7 @@ describe('Sever side rendering', () => {
                 protected state = { count: 0 }
 
                 private increase = listen(increaseIdent, ({increase}) => {
-                    this.produce(d => d.count += increase )
+                    this.updateWith(d => d.count += increase )
                 })
 
                 public getCount() { return this.state.count }

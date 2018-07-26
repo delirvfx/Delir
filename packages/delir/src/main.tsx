@@ -7,6 +7,8 @@ import Test from './components/Test'
 import EditorStore from './store/EditorStore'
 import RendererStore from './store/RendererStore'
 
+import './global.sass'
+
 document.addEventListener('DOMContentLoaded', () => {
     const app = new Fleur({
         stores: [ EditorStore, RendererStore ]

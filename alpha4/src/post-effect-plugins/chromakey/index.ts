@@ -54,7 +54,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      */
     public async initialize(req: PreRenderRequest) {
         this.ctxBindToken = req.glContextPool.generateContextBindToken()
-        const gl = await req.glContextPool.getContext('webgl')
+        const gl: WebGLRenderingContext = await req.glContextPool.getContext('webgl')
         const canvas = gl.canvas
 
         this.texCanvas = document.createElement('canvas')

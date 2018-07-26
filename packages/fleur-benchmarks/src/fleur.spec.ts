@@ -14,7 +14,7 @@ describe('benchmark', () => {
             public state = { count: 0 }
             private handleIncrement = listen(incrementAction, (payload) => {
                 callCounter()
-                this.produce(d => d.count++ )
+                this.updateWith(d => d.count++ )
             })
             get count() { return this.state.count }
         }
@@ -55,7 +55,7 @@ describe('benchmark', () => {
                 public state = { count: 0 }
                 private handleIncrement = listen(incrementAction, (payload) => {
                     callCounter()
-                    this.produce(d => d.count++ )
+                    this.updateWith(d => d.count++ )
                 })
                 get count() { return this.state.count }
             }

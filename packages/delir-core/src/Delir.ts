@@ -10,6 +10,17 @@ import PluginRegistry from './Engine/PluginRegistry'
  * This class, aggregate process module dependency and instance injection processing.
  */
 export default class Delir {
+    public static createProject(): Project {
+        return {
+            formatVersion: '1.0.0',
+            assets: [],
+            compositions: [],
+            layers: [],
+            clips: [],
+            effects: [],
+        }
+    }
+
     // private _rawProject: Project|null = null
     public project: DocumentOperator
     public engine: Engine

@@ -16,10 +16,12 @@ const withComponentContext = <Props extends ContextProp>(Component: React.Compon
                 children: (context: ComponentContext) => {
                     return React.createElement(Component as React.ComponentClass<Props>, {
                         ...(this.props as object),
-                        context: {
-                            executeOperation: context.executeOperation,
-                            getStore: context.getStore,
-                        } as any
+                        ...{
+                            context: {
+                                executeOperation: context.executeOperation,
+                                getStore: context.getStore,
+                            }
+                        } as any,
                     })
                 }
             })

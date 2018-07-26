@@ -9,4 +9,4 @@ const createElementWithContext = <P>(context: AppContext, Component: React.Compo
     }, React.createElement(Component, (props || {} as any)))
 )
 
-export { createElementWithContext as default }
+export { createElementWithContext }
