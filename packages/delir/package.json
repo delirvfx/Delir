@@ -30,6 +30,7 @@
     "postcss": "7.0.1",
     "postcss-loader": "2.1.6",
     "postcss-scss": "2.0.0",
+    "raw-loader": "0.5.1",
     "style-loader": "0.21.0",
     "ts-jest": "23.0.1",
     "ts-loader": "4.4.2",
@@ -44,9 +45,16 @@
     "@ragg/delir-core": "*",
     "@ragg/fleur": "*",
     "@ragg/fleur-react": "*",
+    "classnames": "2.2.6",
     "electron": "2.0.5",
+    "form-serialize": "0.7.2",
+    "fs-promise": "2.0.3",
     "immer": "1.5.0",
+    "keymirror": "0.1.1",
+    "prop-types": "15.6.2",
     "react": "16.4.1",
-    "react-dom": "16.4.1"
+    "react-color": "2.14.1",
+    "react-dom": "16.4.1",
+    "react-sortable-hoc": "0.8.3"
   }
 }
