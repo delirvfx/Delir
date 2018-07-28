@@ -1,14 +1,14 @@
 import ClipScopeFrameContext from './FrameContext/ClipScopeFrameContext'
 
-export interface IClipRendererStatic {
+export interface ClipRendererStatic {
     rendererId: string
+
+    new(): ClipRenderer<any>
     provideAssetAssignMap(): {[extName: string]: string}
     provideParameters(): TypeDescriptor
-
-    new(): IClipRenderer<any>
 }
 
-export interface IClipRenderer<T> {
+export interface ClipRenderer<T> {
     beforeRender(request: ClipScopeFrameContext<T>): Promise<void>
     render(request: ClipScopeFrameContext<T>): Promise<void>
 }

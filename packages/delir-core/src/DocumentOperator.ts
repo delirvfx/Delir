@@ -1,5 +1,5 @@
 import Delir from './Delir'
-import { Asset, Clip, Composition, Effect, Layer, Project } from './Document/index'
+import { Asset, Clip, Composition, Effect, Layer, Project } from './Document'
 import { Omit } from './Utils/types'
 
 type NewEntity<T extends { id: any }> = Omit<T, 'id'>

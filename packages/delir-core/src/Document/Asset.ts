@@ -1,10 +1,10 @@
-export class Asset {
-    public id: string
+export interface Asset {
+    id: string
     /** Extenstion of file without dot (like "jpeg") */
-    public fileType: string
+    fileType: string
     /** Asset name */
-    public name: string
-    public path: string
+    name: string
+    path: string
 }
 
 // import {AssetScheme} from './scheme/asset'

@@ -48,26 +48,12 @@ export default class Engine {
 
         const { composition } = this._componentTree
 
-        const context: CompositionScopeFrameContext = new CompositionScopeFrameContext({
-            width: composition.ref.width,
-            height: composition.ref.height,
-            durationFrames: composition.ref.durationFrames,
-
-            time: option.frame / composition.ref.framerate,
-            timeOnComposition: option.frame / composition.ref.framerate,
-
-            frame: option.frame,
-            framerate: composition.ref.framerate,
-            frameOnComposition: option.frame,
-
-            audioChannels: composition.ref.audioChannels,
-            samplingRate: composition.ref.samplingRate,
-        })
+        const context = CompositionScopeFrameContext.buildFromComponent(composition, { frame: option.frame })
 
         const targets = new TargetComponentFinder(this._componentTree, context)
         const work = new CompositionRenderWork()
 
-        const result = work.perform(context)
+        const result = await work.perform(context)
 
         return null
     }

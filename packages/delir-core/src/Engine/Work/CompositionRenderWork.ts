@@ -1,12 +1,12 @@
 import ClipComponent from '../Component/ClipComponent'
 import CompositionScopeFrameContext from '../FrameContext/CompositionScopeFrameContext'
 import { RenderingResult } from '../RenderingResult'
-import TargetComponentFinder from '../TargetComponentFinder'
+import TargetPerformerFinder from '../TargetPerformerFinder'
 import ClipRenderWork from './ClipRenderWork'
 
 export default class CompositionRenderWork {
     public async perform(
-        finder: TargetComponentFinder,
+        finder: TargetPerformerFinder,
         context: CompositionScopeFrameContext,
     ): Promise<RenderingResult> {
         // TODO: Audio preprocessing
