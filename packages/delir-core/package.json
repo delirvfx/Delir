@@ -8,7 +8,7 @@
   "author": "Ragg <ragg.devpr@gmail.com> (https://twitter.com/@_ragg_)",
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "tsc --emitDeclarationOnly --declaration --outDir ./typings \n tsc --outDir lib \n exit 0",
+    "prepublishOnly": "rm -rf ./{lib,typings} \n tsc --emitDeclarationOnly --declaration --outDir ./typings \n tsc --outDir lib \n exit 0",
     "test": "jest --verbose"
   },
   "devDependencies": {
