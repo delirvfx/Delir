@@ -24,7 +24,7 @@ import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
 import connectToStores from '../../utils/Flux/connectToStores'
 
 import t from './AssetsView.i18n'
-import * as s from './style.styl'
+import * as s from './style.sass'
 
 export interface AssetsViewProps {
     editor: EditorState,

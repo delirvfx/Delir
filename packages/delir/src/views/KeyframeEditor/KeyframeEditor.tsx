@@ -23,7 +23,7 @@ import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectSt
 import RendererService from '../../services/renderer'
 
 import t from './KeyframeEditor.i18n'
-import * as s from './KeyframeEditor.styl'
+import * as s from './KeyframeEditor.sass'
 
 interface KeyframeEditorProps {
     activeComposition: Delir.Project.Composition|null

@@ -9,7 +9,7 @@ import TimePixelConversion from '../../utils/TimePixelConversion'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
-import * as s from './KeyframeGraph.styl'
+import * as s from './KeyframeGraph.sass'
 
 interface Props {
     width: number

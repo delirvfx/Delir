@@ -13,7 +13,7 @@ import ProjectStore from '../../stores/ProjectStore'
 import RendererService from '../../services/renderer'
 
 import t from './PreviewView.i18n'
-import * as s from './style.styl'
+import * as s from './style.sass'
 
 interface PreviewViewProps {
     activeComp?: Delir.Project.Composition

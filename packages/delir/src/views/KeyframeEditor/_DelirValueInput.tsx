@@ -9,7 +9,7 @@ import DragNumberInput from '../components/drag-number-input'
 import Dropdown from '../components/dropdown'
 
 import t from './_DelirValueInput.i18n'
-import * as s from './delir-value-input.styl'
+import * as s from './delir-value-input.sass'
 
 interface DelirValueInputProps {
     assets: Delir.Project.Asset[]|null

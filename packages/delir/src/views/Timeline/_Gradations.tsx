@@ -10,7 +10,7 @@ import RendererService from '../../services/renderer'
 import {ContextMenu, MenuItem} from '../components/ContextMenu'
 
 import t from './_Gradations.i18n'
-import * as s from './Gradations.styl'
+import * as s from './Gradations.sass'
 
 interface GradationsProps {
     currentFrame: number

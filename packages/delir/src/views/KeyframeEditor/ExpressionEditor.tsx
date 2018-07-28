@@ -6,7 +6,7 @@ import Monaco from '../../utils/Monaco'
 
 import Button from '../components/Button'
 
-import * as s from './ExpressionEditor.styl'
+import * as s from './ExpressionEditor.sass'
 
 const expressionAPITypeDef = {
     name: 'ExpressionAPI.d.ts',

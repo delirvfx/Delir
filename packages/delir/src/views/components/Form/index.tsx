@@ -1,2 +1,2 @@
-import * as s from './style.styl'
+import * as s from './style.sass'
 export default s

@@ -9,7 +9,7 @@ import AppActions from '../../actions/App'
 
 import Pane from '../components/pane'
 
-import * as s from './style.styl'
+import * as s from './style.sass'
 
 interface NavigationViewProps {
     editor: EditorState,

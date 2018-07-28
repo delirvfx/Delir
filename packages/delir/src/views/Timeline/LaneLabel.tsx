@@ -10,7 +10,7 @@ import LabelInput from '../components/label-input'
 import {ContextMenu, MenuItem, MenuItemOption} from '../components/ContextMenu'
 
 import t from './LaneLabel.i18n'
-import * as s from './LaneLabel.styl'
+import * as s from './LaneLabel.sass'
 
 interface Props {
     layer: Delir.Project.Layer

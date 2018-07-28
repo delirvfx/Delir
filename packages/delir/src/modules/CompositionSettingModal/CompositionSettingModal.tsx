@@ -7,7 +7,7 @@ import　ModalWindow from '../../modules/ModalWindow/Controller'
 import FormStyle from '../../views/components/Form'
 
 import t from './CompositionSettingModal.i18n'
-import * as s from './CompositionSettingModal.styl'
+import * as s from './CompositionSettingModal.sass'
 
 type SettingResult = {[props: string]: string} | void
 

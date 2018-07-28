@@ -9,7 +9,7 @@ import * as classnames from 'classnames'
 
 import Portal from '../Portal'
 
-import * as s from './ModalWindow.styl'
+import * as s from './ModalWindow.sass'
 
 export interface ModalWindowProps {
     show?: boolean

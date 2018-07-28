@@ -24,7 +24,7 @@ import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
 
 import t from './Timeline.i18n'
-import * as s from './style.styl'
+import * as s from './style.sass'
 
 interface Props {}
 

@@ -5,7 +5,7 @@ import * as classnames from 'classnames'
 
 import Portal from '../../modules/Portal'
 
-import * as s from './dropdown.styl'
+import * as s from './dropdown.sass'
 
 interface DropdownProps {
     shownInitial?: boolean

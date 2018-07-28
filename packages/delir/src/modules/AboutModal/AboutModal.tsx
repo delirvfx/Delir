@@ -5,7 +5,7 @@ import Link from '../../views/components/Link'
 import Button from '../../views/components/Button'
 
 import t from './AboutModal.i18n.ts'
-import * as s from './AboutModal.styl'
+import * as s from './AboutModal.sass'
 import packageJson from '../../../../package.json'
 import corePackageJSON from '../../../delir-core/package.json'
 

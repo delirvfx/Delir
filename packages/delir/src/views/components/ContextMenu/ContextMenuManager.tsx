@@ -5,7 +5,7 @@ import * as Electron from 'electron'
 import Portal from '../../../modules/Portal'
 import { MenuItem, MenuItemOption } from './ContextMenu'
 
-import * as s from './ContextMenu.styl'
+import * as s from './ContextMenu.sass'
 
 export const buildMenuElements = (items: MenuItemOption[]): JSX.Element => {
     return (

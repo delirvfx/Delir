@@ -5,7 +5,7 @@ import * as classnames from 'classnames'
 import connectToStores from '../../utils/Flux/connectToStores'
 import {default as EditorStateStore, NotificationEntries as NotificationEntries} from '../../stores/EditorStateStore'
 
-import * as s from './style.styl'
+import * as s from './style.sass'
 
 type NotificationsProps = {
     entries: NotificationEntries

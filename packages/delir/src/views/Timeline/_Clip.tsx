@@ -9,7 +9,7 @@ import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
 import t from './_Clip.i18n'
-import * as s from './Clip.styl'
+import * as s from './Clip.sass'
 
 interface TimelaneClipProps {
     clip: Delir.Project.Clip,
