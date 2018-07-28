@@ -4,7 +4,7 @@ import * as parseColor from 'parse-color'
 import * as path from 'path'
 import * as React from 'react'
 
-import { ProjectHelper, Values } from 'delir-core'
+import { ProjectHelper, Values } from '@ragg/delir-core'
 
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'

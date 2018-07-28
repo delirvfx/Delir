@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as Delir from 'delir-core'
+import * as Delir from '@ragg/delir-core'
 import { SortableContainer } from 'react-sortable-hoc'
 
 import LaneLabel from './LaneLabel'

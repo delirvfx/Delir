@@ -1,4 +1,4 @@
-import * as Delir from 'delir-core'
+import * as Delir from '@ragg/delir-core'
 import * as _ from 'lodash'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'

@@ -1,8 +1,8 @@
 import * as _ from 'lodash'
 import {remote} from 'electron'
 import {join, dirname} from 'path'
-import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
+import * as Delir from '@ragg/delir-core'
+import {ProjectHelper} from '@ragg/delir-core'
 import deream from '../../deream'
 
 import * as Platform from '../utils/platform'

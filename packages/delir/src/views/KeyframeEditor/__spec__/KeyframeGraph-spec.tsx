@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactTestRenderer from 'react-test-renderer'
 import * as jsdom from 'jsdom-global'
-import * as Delir from 'delir-core'
+import * as Delir from '@ragg/delir-core'
 
 import {default as project, IMAGE_LAYER_INDEX} from '../../../__spec__/fixtures/Project'
 import KeyframeGraph from '../KeyframeGraph.tsx'

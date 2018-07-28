@@ -6,7 +6,7 @@ import AppComponent from './views/AppView'
 import Monaco from './utils/Monaco'
 import AppActions from './actions/App'
 
-import * as Delir from 'delir-core'
+import * as Delir from '@ragg/delir-core'
 import RendererService from './services/renderer'
 
 // Handle errors

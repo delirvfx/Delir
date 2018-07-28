@@ -1,8 +1,8 @@
 import * as _ from 'lodash'
 import * as keyMirror from 'keymirror'
 import * as uuid from 'uuid'
-import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
+import * as Delir from '@ragg/delir-core'
+import {ProjectHelper} from '@ragg/delir-core'
 
 import dispatcher from '../utils/Flux/Dispatcher'
 import Payload from '../utils/Flux/payload'

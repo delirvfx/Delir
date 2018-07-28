@@ -1,5 +1,5 @@
-import * as Delir from 'delir-core'
-import {ProjectHelper, Values} from 'delir-core'
+import * as Delir from '@ragg/delir-core'
+import {ProjectHelper, Values} from '@ragg/delir-core'
 import {join} from 'path'
 import AppActions from '../../../actions/App'
 

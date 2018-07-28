@@ -2,8 +2,8 @@ import * as _ from 'lodash'
 import {ReduceStore} from 'flux/utils'
 import * as Immutable from 'immutable'
 
-import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
+import * as Delir from '@ragg/delir-core'
+import {ProjectHelper} from '@ragg/delir-core'
 
 import dispatcher from '../utils/Flux/Dispatcher'
 import Record from '../utils/Record'
