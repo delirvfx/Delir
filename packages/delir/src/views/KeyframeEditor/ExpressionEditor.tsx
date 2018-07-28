@@ -1,6 +1,5 @@
-import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
+import * as React from 'react'
 
 import Monaco from '../../utils/Monaco'
 
@@ -14,9 +13,9 @@ const expressionAPITypeDef = {
 }
 
 interface Props {
-    title: string| null
+    title: string | null
     entityId: string | null
-    code: string|null
+    code: string | null
     onClose: (result: ExpressionEditor.EditorResult) => void
 }
 
@@ -26,20 +25,13 @@ namespace ExpressionEditor {
         /** if save cancelled then it value to be false */
         saved: true
         code: string
-    }|{
+    } | {
         saved: false
         code: null
     }
 }
 
 class ExpressionEditor extends React.Component<Props> {
-    public static propTypes = {
-        title: PropTypes.string.isRequired,
-        entityId: PropTypes.string.isRequired,
-        code: PropTypes.string,
-        onClose: PropTypes.func.isRequired
-    }
-
     private _editor: monaco.editor.IStandaloneCodeEditor
     private editorElement: HTMLDivElement
 
@@ -89,6 +81,22 @@ class ExpressionEditor extends React.Component<Props> {
         this._editor.setValue(this.props.code ? this.props.code : '')
     }
 
+    public render()
+    {
+        const {title} = this.props
+
+        return (
+            <div className={s.ExpressionEditor}>
+                <div className={s.ExpressionEditor__Toolbar}>
+                    <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
+                    <Button type='normal' onClick={this.closeWithoutSave}>変更を破棄</Button>
+                    <Button type='primary' onClick={this.closeWithSave}>保存</Button>
+                </div>
+                <div ref={this.bindEditorElement} className={s.ExpressionEditor__Editor} />
+            </div>
+        )
+    }
+
     private bindEditorElement = (el: HTMLDivElement) =>
     {
         this.editorElement = el
@@ -106,22 +114,6 @@ class ExpressionEditor extends React.Component<Props> {
     private closeWithoutSave = () =>
     {
         this.props.onClose({saved: false, code: null})
-    }
-
-    public render()
-    {
-        const {title} = this.props
-
-        return (
-            <div className={s.ExpressionEditor}>
-                <div className={s.ExpressionEditor__Toolbar}>
-                    <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
-                    <Button type='normal' onClick={this.closeWithoutSave}>変更を破棄</Button>
-                    <Button type='primary' onClick={this.closeWithSave}>保存</Button>
-                </div>
-                <div ref={this.bindEditorElement} className={s.ExpressionEditor__Editor} />
-            </div>
-        )
     }
 }
 

@@ -1,12 +1,11 @@
-import * as React from 'react'
-import * as PropTypes from 'prop-types'
-import * as Delir from 'delir-core'
 import * as classnames from 'classnames'
+import * as Delir from 'delir-core'
+import * as React from 'react'
 
-import RendererService from '../../services/renderer'
-import {ContextMenu, MenuItem, MenuItemProps, MenuItemOption} from '../components/ContextMenu'
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
+import RendererService from '../../services/renderer'
+import { ContextMenu, MenuItem, MenuItemOption, MenuItemProps } from '../components/ContextMenu'
 
 import t from './_Clip.i18n'
 import * as s from './Clip.sass'
@@ -22,24 +21,15 @@ interface TimelaneClipProps {
 
 interface TimelaneClipState {
     draggedPxX: number
-    dragStartPosition: {clientX: number, clientY: number}|null
-    dragStyle: {[prop: string]: string}|null
+    dragStartPosition: {clientX: number, clientY: number} | null
+    dragStyle: {[prop: string]: string} | null
 
-    resizeStartPosition: {clientX: number}|null
+    resizeStartPosition: {clientX: number} | null
     resizeMovedX: number
 }
 
 export default class TimelaneClip extends React.Component<TimelaneClipProps, TimelaneClipState>
 {
-    public static propTypes = {
-        clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
-        left: PropTypes.number.isRequired,
-        width: PropTypes.number.isRequired,
-        active: PropTypes.bool.isRequired,
-        onChangePlace: PropTypes.func.isRequired,
-        onChangeDuration: PropTypes.func.isRequired,
-    }
-
     public state = {
         draggedPxX: 0,
         dragStartPosition: null,
@@ -51,6 +41,56 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
     public refs: {
         clipRoot: HTMLDivElement
+    }
+
+    public render()
+    {
+        const {clip, active} = this.props
+        const postEffects = RendererService.pluginRegistry.getPostEffectPlugins()
+
+        return (
+            <div className={classnames(s.Clip, {
+                    [s['Clip--active']]: active,
+                    [s['Clip--video']]: clip.renderer === 'video',
+                    [s['Clip--audio']]: clip.renderer === 'audio',
+                    [s['Clip--text']]: clip.renderer === 'text',
+                    [s['Clip--image']]: clip.renderer === 'image',
+                    [s['Clip--adjustment']]: clip.renderer === 'adjustment',
+                })}
+                style={{
+                    left: this.props.left,
+                    width: this.props.width + this.state.resizeMovedX,
+                    ...this.state.dragStyle,
+                }}
+                draggable={true}
+                onClick={this.selectClip}
+                onDragStart={this.dragStart}
+                onDrag={this.drag}
+                onDragEnd={this.dragEnd}
+            >
+                <ContextMenu>
+                    <MenuItem label='エフェクト'>
+                        {postEffects.length ? postEffects.map(entry => (
+                            <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
+                        ) : (
+                            <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
+                        )}
+                    </MenuItem>
+                    {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
+                    <MenuItem label={t('contextMenu.remove')} data-clip-id={clip.id} onClick={this.removeClip} />
+                    <MenuItem type='separator' />
+                </ContextMenu>
+                <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>
+                <span className={s.Clip__IdLabel}>#{clip.id.substring(0, 4)}</span>
+                <div
+                    className={s.resizeHandle}
+                    draggable
+                    onDragStart={this.resizeStart}
+                    onDrag={this.resizeMove}
+                    onDragEnd={this.resizeEnd}
+                />
+            </div>
+        )
     }
 
     private selectClip = e =>
@@ -141,55 +181,5 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
         if (newWidth < 0) return
 
         this.props.onChangeDuration(newWidth)
-    }
-
-    public render()
-    {
-        const {clip, active} = this.props
-        const postEffects = RendererService.pluginRegistry.getPostEffectPlugins()
-
-        return (
-            <div className={classnames(s.Clip, {
-                    [s['Clip--active']]: active,
-                    [s['Clip--video']]: clip.renderer === 'video',
-                    [s['Clip--audio']]: clip.renderer === 'audio',
-                    [s['Clip--text']]: clip.renderer === 'text',
-                    [s['Clip--image']]: clip.renderer === 'image',
-                    [s['Clip--adjustment']]: clip.renderer === 'adjustment',
-                })}
-                style={{
-                    left: this.props.left,
-                    width: this.props.width + this.state.resizeMovedX,
-                    ...this.state.dragStyle,
-                }}
-                draggable={true}
-                onClick={this.selectClip}
-                onDragStart={this.dragStart}
-                onDrag={this.drag}
-                onDragEnd={this.dragEnd}
-            >
-                <ContextMenu>
-                    <MenuItem label='エフェクト'>
-                        {postEffects.length ? postEffects.map(entry => (
-                            <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
-                        ) : (
-                            <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
-                        )}
-                    </MenuItem>
-                    {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
-                    <MenuItem label={t('contextMenu.remove')} data-clip-id={clip.id} onClick={this.removeClip} />
-                    <MenuItem type='separator' />
-                </ContextMenu>
-                <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>
-                <span className={s.Clip__IdLabel}>#{clip.id.substring(0, 4)}</span>
-                <div
-                    className={s.resizeHandle}
-                    draggable
-                    onDragStart={this.resizeStart}
-                    onDrag={this.resizeMove}
-                    onDragEnd={this.resizeEnd}
-                />
-            </div>
-        )
     }
 }

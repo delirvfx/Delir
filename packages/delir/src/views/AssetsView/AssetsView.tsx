@@ -1,11 +1,10 @@
-import * as _ from 'lodash'
-import * as React from 'react'
-import * as PropTypes from 'prop-types'
-import * as parseColor from 'parse-color'
 import * as classnames from 'classnames'
+import * as _ from 'lodash'
+import * as parseColor from 'parse-color'
 import * as path from 'path'
+import * as React from 'react'
 
-import {ProjectHelper, Values} from 'delir-core'
+import { ProjectHelper, Values } from 'delir-core'
 
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
@@ -13,13 +12,13 @@ import ProjectModActions from '../../actions/ProjectMod'
 import { default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
 import ProjectStore from '../../stores/ProjectStore'
 
-import Pane from '../components/pane'
-import LabelInput from '../components/label-input'
-import { Table, TableHeader, TableBodySelectList, Row, Col } from '../components/table'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
+import LabelInput from '../components/label-input'
+import Pane from '../components/pane'
+import { Col, Row, Table, TableBodySelectList, TableHeader } from '../components/table'
 
-import * as Modal from '../../modules/ModalWindow'
 import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
+import * as Modal from '../../modules/ModalWindow'
 
 import connectToStores from '../../utils/Flux/connectToStores'
 
@@ -36,7 +35,7 @@ export interface AssetsViewState {
     settingCompositionQuery: { [name: string]: string | number } | null,
 }
 
-type CompositionProps = {
+interface CompositionProps {
     name: string,
     width: string,
     height: string,
@@ -47,7 +46,7 @@ type CompositionProps = {
     audioChannels: string,
 }
 
-const castToCompositionPropTypes = (req: CompositionProps) => {
+const castToCompositionProps = (req: CompositionProps) => {
     const bgColor = parseColor(req.backgroundColor)
 
     return {
@@ -89,10 +88,6 @@ const fileIconFromExtension = (ext: string) => {
 }))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
 {
-    public static propTypes = {
-        editor: PropTypes.object.isRequired,
-    }
-
     constructor()
     {
         super()
@@ -102,92 +97,6 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
             settingCompositionWindowOpened: false,
             settingCompositionQuery: null,
         }
-    }
-
-    private addAsset = (e: React.DragEvent<HTMLDivElement>) =>
-    {
-        _.each(e.dataTransfer.files, (file, idx) => {
-            if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
-
-            ProjectModActions.addAsset({
-                name: file.name,
-                fileType: path.extname(file.name).slice(1),
-                path: file.path,
-            })
-        })
-    }
-
-    private removeAsset = ({ dataset }: MenuItemOption<{assetId: string}>) =>
-    {
-        // TODO: Check references
-        ProjectModActions.removeAsset(dataset.assetId)
-    }
-
-    private changeComposition = (compId: string) =>
-    {
-        AppActions.changeActiveComposition(compId)
-    }
-
-    private removeComposition = ({ dataset }: MenuItemOption<{compId: string}>) =>
-    {
-        ProjectModActions.removeComposition(dataset.compId)
-    }
-
-    private modifyCompName = (compId, newName) =>
-    {
-        ProjectModActions.modifyComposition(compId, { name: newName })
-    }
-
-    private selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
-    {
-        const target = e.target as HTMLInputElement
-        const files = Array.from(target.files!)
-
-        files.forEach(file => {
-            ProjectModActions.addAsset({
-                name: file.name,
-                fileType: path.extname(file.name).slice(1),
-                path: file.path,
-            })
-        })
-
-        target.value = ''
-    }
-
-    private openCompositionSetting = async ({ dataset }: MenuItemOption<{compId: string}>) =>
-    {
-        if (!this.props.editor.project) return
-        const { compId } = dataset
-
-        const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
-        const req = await CompositionSettingModal.show({composition: comp})
-
-        if (!req) return
-        ProjectModActions.modifyComposition(compId, castToCompositionPropTypes(req as any))
-    }
-
-    private openNewCompositionWindow =  async () =>
-    {
-        const req = await CompositionSettingModal.show()
-
-        if (!req) return
-        ProjectModActions.createComposition(castToCompositionPropTypes(req))
-    }
-
-    private onAssetsDragStart = ({target}: {target: HTMLElement}) =>
-    {
-        const {editor: {project}} = this.props
-        if (!project) return
-
-        AppActions.setDragEntity({
-            type: 'asset',
-            asset: ProjectHelper.findAssetById(project, target.dataset.assetId)!,
-        })
-    }
-
-    private onAssetDragEnd = () =>
-    {
-        AppActions.clearDragEntity()
     }
 
     public render()
@@ -284,5 +193,91 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
                 </Table>
             </Pane>
         )
+    }
+
+    private addAsset = (e: React.DragEvent<HTMLDivElement>) =>
+    {
+        _.each(e.dataTransfer.files, (file, idx) => {
+            if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
+
+            ProjectModActions.addAsset({
+                name: file.name,
+                fileType: path.extname(file.name).slice(1),
+                path: file.path,
+            })
+        })
+    }
+
+    private removeAsset = ({ dataset }: MenuItemOption<{assetId: string}>) =>
+    {
+        // TODO: Check references
+        ProjectModActions.removeAsset(dataset.assetId)
+    }
+
+    private changeComposition = (compId: string) =>
+    {
+        AppActions.changeActiveComposition(compId)
+    }
+
+    private removeComposition = ({ dataset }: MenuItemOption<{compId: string}>) =>
+    {
+        ProjectModActions.removeComposition(dataset.compId)
+    }
+
+    private modifyCompName = (compId, newName) =>
+    {
+        ProjectModActions.modifyComposition(compId, { name: newName })
+    }
+
+    private selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
+    {
+        const target = e.target as HTMLInputElement
+        const files = Array.from(target.files!)
+
+        files.forEach(file => {
+            ProjectModActions.addAsset({
+                name: file.name,
+                fileType: path.extname(file.name).slice(1),
+                path: file.path,
+            })
+        })
+
+        target.value = ''
+    }
+
+    private openCompositionSetting = async ({ dataset }: MenuItemOption<{compId: string}>) =>
+    {
+        if (!this.props.editor.project) return
+        const { compId } = dataset
+
+        const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
+        const req = await CompositionSettingModal.show({composition: comp})
+
+        if (!req) return
+        ProjectModActions.modifyComposition(compId, castToCompositionProps(req as any))
+    }
+
+    private openNewCompositionWindow =  async () =>
+    {
+        const req = await CompositionSettingModal.show()
+
+        if (!req) return
+        ProjectModActions.createComposition(castToCompositionProps(req))
+    }
+
+    private onAssetsDragStart = ({target}: {target: HTMLElement}) =>
+    {
+        const {editor: {project}} = this.props
+        if (!project) return
+
+        AppActions.setDragEntity({
+            type: 'asset',
+            asset: ProjectHelper.findAssetById(project, target.dataset.assetId)!,
+        })
+    }
+
+    private onAssetDragEnd = () =>
+    {
+        AppActions.clearDragEntity()
     }
 }

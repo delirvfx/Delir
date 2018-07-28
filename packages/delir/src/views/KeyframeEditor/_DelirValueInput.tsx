@@ -1,7 +1,6 @@
-import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
-import {ChromePicker} from 'react-color'
+import * as React from 'react'
+import { ChromePicker } from 'react-color'
 
 import AppActions from '../../actions/App'
 
@@ -12,20 +11,16 @@ import t from './_DelirValueInput.i18n'
 import * as s from './delir-value-input.sass'
 
 interface DelirValueInputProps {
-    assets: Delir.Project.Asset[]|null
+    assets: Delir.Project.Asset[] | null
     descriptor: Delir.AnyParameterTypeDescriptor,
-    value: string|number|boolean|{assetId: string}|Delir.Values.Point2D|Delir.Values.Point3D|Delir.Values.ColorRGB|Delir.Values.ColorRGBA
+    value: string | number | boolean | {assetId: string} | Delir.Values.Point2D | Delir.Values.Point3D | Delir.Values.ColorRGB | Delir.Values.ColorRGBA
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
 }
 
 export default class DelirValueInput extends React.PureComponent<DelirValueInputProps, any>
 {
-    public static propTypes = {
-        descriptors: PropTypes.arrayOf(
-            PropTypes.instanceOf(Delir.TypeDescriptor)
-        ),
-        value: PropTypes.any,
-        onChange: PropTypes.func.isRequired,
+    public state = {
+        value: this.props.value,
     }
 
     private ref: {
@@ -48,15 +43,131 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
         colorPickerDropdown?: Dropdown
     } = {}
 
-    public state = {
-        value: this.props.value,
-    }
-
     public componentWillReceiveProps(nextProps: Readonly<DelirValueInputProps>, nextContext: any)
     {
         if (this.props.value !== nextProps.value) {
             setTimeout(() => this.setState({value: nextProps.value}), 0)
         }
+    }
+
+    public render()
+    {
+        const {descriptor, assets} = this.props
+        const {value} = this.state
+        let component: JSX.Element[] = []
+
+        switch (descriptor.type) {
+        //     case 'POINT_2D':
+        //         component = [
+        //             <DragNumberInput ref='propX' value={value.x} onChange={this.valueChanged} />,
+        //             <span className='separator'>,</span>,
+        //             <DragNumberInput ref='propY' value={value.y} onChange={this.valueChanged} />
+        //         ]
+        //         break
+        //     case 'POINT_3D':
+        //         component = [
+        //             <DragNumberInput ref='propX' value={value.x} onChange={this.valueChanged} />,
+        //             <span className='separator'>,</span>,
+        //             <DragNumberInput ref='propY' value={value.y} onChange={this.valueChanged} />,
+        //             <span className='separator'>,</span>,
+        //             <DragNumberInput ref='propZ' value={value.z} onChange={this.valueChanged} />
+        //         ]
+        //         break
+        //     case 'SIZE_2D':
+        //         component = [
+        //             <DragNumberInput ref='propWidth' value={value.width} onChange={this.valueChanged} />,
+        //             <span className='separator'>x</span>,
+        //             <DragNumberInput ref='propHeight' value={value.height} onChange={this.valueChanged} />
+        //         ]
+        //         break
+        //     case 'SIZE_3D':
+        //         component = [
+        //             <DragNumberInput ref='propWidth' onChange={this.valueChanged} />,
+        //             <span className='separator'>x</span>,
+        //             <DragNumberInput ref='propHeight' onChange={this.valueChanged} />,
+        //             <span className='separator'>x</span>,
+        //             <DragNumberInput ref='propDepth' onChange={this.valueChanged} />
+        //         ]
+        //         break
+
+            case 'COLOR_RGB':
+            case 'COLOR_RGBA':
+                component = [
+                    <button
+                        className={s.colorPickerOpenner}
+                        style={{
+                            backgroundColor: (value as Delir.Values.ColorRGBA).toString()
+                        }}
+                        onClick={this.openColorPicker}
+                    />,
+                    <Dropdown ref={this.bindColorPickerDropdown} className={s.colorPickerContainer}>
+                        <button className={s.colorPickerCloser} onClick={this.closeColorPicker}>Close</button>
+                        <ChromePicker ref={this.bindColorPicker} color={value.toString()} onChange={this.valueChanged} disableAlpha={descriptor.type === 'COLOR_RGB'} />
+                    </Dropdown>
+                ]
+                break
+
+            case 'BOOL':
+                component = [<input ref={this.bindCheckbox} type='checkbox' className={s.checkbox} checked={value as boolean} onChange={this.valueChanged} />]
+                break
+
+            case 'STRING':
+                component = [
+                    <Dropdown ref={this.bindTextInputDropdown}>
+                        <textarea ref={this.bindTextArea} className={s.textArea} onKeyDown={this.onKeydownTextArea} defaultValue={value as string} />
+                    </Dropdown>,
+                    <input ref={this.bindTextSummary} type='text' className={s.textInput} onFocus={this.onFocusTextInput} value={value as string} readOnly />
+                ]
+                break
+
+            case 'FLOAT':
+            case 'NUMBER':
+                component = [<DragNumberInput ref={this.bindNumberInput} value={value as number} onChange={this.valueChanged} allowFloat={descriptor.type === 'FLOAT'} />]
+                break
+
+            case 'FLOAT':
+            case 'CLIP':
+            case 'PULSE':
+                component = []
+                break
+
+            case 'ENUM':
+                component = [
+                    <select ref={this.bindEnumSelect} value={value ? (value as string) : ''} onChange={this.valueChanged}>
+                        <option></option>
+                        {descriptor.selection.map(item => <option value={item}>{item}</option>)}
+                    </select>
+                ]
+                break
+
+            case 'ASSET': {
+                const acceptedAssets = assets.filter(asset => descriptor.extensions.includes(asset.fileType))
+
+                component = [
+                    <select ref={this.bindAssetSelect} value={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
+                        {acceptedAssets.length === 0 && (
+                            <option selected disabled>{t('asset.empty')}</option>
+                        )}
+                        {acceptedAssets.length > 0 && ([
+                            <option />,
+                            ...acceptedAssets.map(asset => (<option value={asset.id as string}>{asset.name}</option>))
+                        ])}
+                    </select>
+                ]
+                break
+            }
+
+            case 'ARRAY':
+            default:
+                component = []
+        }
+
+        // destruct component list to make function `ref` property
+        return (
+            <div>
+                {...component}
+            </div>
+        )
     }
 
     private valueChanged = () =>
@@ -182,124 +293,4 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
     private bindNumberInput = el => { this.ref.numberInput = el }
     private bindEnumSelect = el => { this.ref.enumSelect = el }
     private bindAssetSelect = el => { this.ref.assetSelect = el }
-
-    public render()
-    {
-        const {descriptor, assets} = this.props
-        const {value} = this.state
-        let component: JSX.Element[] = []
-
-        switch (descriptor.type) {
-        //     case 'POINT_2D':
-        //         component = [
-        //             <DragNumberInput ref='propX' value={value.x} onChange={this.valueChanged} />,
-        //             <span className='separator'>,</span>,
-        //             <DragNumberInput ref='propY' value={value.y} onChange={this.valueChanged} />
-        //         ]
-        //         break
-        //     case 'POINT_3D':
-        //         component = [
-        //             <DragNumberInput ref='propX' value={value.x} onChange={this.valueChanged} />,
-        //             <span className='separator'>,</span>,
-        //             <DragNumberInput ref='propY' value={value.y} onChange={this.valueChanged} />,
-        //             <span className='separator'>,</span>,
-        //             <DragNumberInput ref='propZ' value={value.z} onChange={this.valueChanged} />
-        //         ]
-        //         break
-        //     case 'SIZE_2D':
-        //         component = [
-        //             <DragNumberInput ref='propWidth' value={value.width} onChange={this.valueChanged} />,
-        //             <span className='separator'>x</span>,
-        //             <DragNumberInput ref='propHeight' value={value.height} onChange={this.valueChanged} />
-        //         ]
-        //         break
-        //     case 'SIZE_3D':
-        //         component = [
-        //             <DragNumberInput ref='propWidth' onChange={this.valueChanged} />,
-        //             <span className='separator'>x</span>,
-        //             <DragNumberInput ref='propHeight' onChange={this.valueChanged} />,
-        //             <span className='separator'>x</span>,
-        //             <DragNumberInput ref='propDepth' onChange={this.valueChanged} />
-        //         ]
-        //         break
-
-            case 'COLOR_RGB':
-            case 'COLOR_RGBA':
-                component = [
-                    <button
-                        className={s.colorPickerOpenner}
-                        style={{
-                            backgroundColor: (value as Delir.Values.ColorRGBA).toString()
-                        }}
-                        onClick={this.openColorPicker}
-                    />,
-                    <Dropdown ref={this.bindColorPickerDropdown} className={s.colorPickerContainer}>
-                        <button className={s.colorPickerCloser} onClick={this.closeColorPicker}>Close</button>
-                        <ChromePicker ref={this.bindColorPicker} color={value.toString()} onChange={this.valueChanged} disableAlpha={descriptor.type === 'COLOR_RGB'} />
-                    </Dropdown>
-                ]
-                break
-
-            case 'BOOL':
-                component = [<input ref={this.bindCheckbox} type='checkbox' className={s.checkbox} checked={value as boolean} onChange={this.valueChanged} />]
-                break
-
-            case 'STRING':
-                component = [
-                    <Dropdown ref={this.bindTextInputDropdown}>
-                        <textarea ref={this.bindTextArea} className={s.textArea} onKeyDown={this.onKeydownTextArea} defaultValue={value as string} />
-                    </Dropdown>,
-                    <input ref={this.bindTextSummary} type='text' className={s.textInput} onFocus={this.onFocusTextInput} value={value as string} readOnly />
-                ]
-                break
-
-            case 'FLOAT':
-            case 'NUMBER':
-                component = [<DragNumberInput ref={this.bindNumberInput} value={value as number} onChange={this.valueChanged} allowFloat={descriptor.type === 'FLOAT'} />]
-                break
-
-            case 'FLOAT':
-            case 'CLIP':
-            case 'PULSE':
-                component = []
-                break
-
-            case 'ENUM':
-                component = [
-                    <select ref={this.bindEnumSelect} value={value ? (value as string) : ''} onChange={this.valueChanged}>
-                        <option></option>
-                        {descriptor.selection.map(item => <option value={item}>{item}</option>)}
-                    </select>
-                ]
-                break
-
-            case 'ASSET': {
-                const acceptedAssets = assets.filter(asset => descriptor.extensions.includes(asset.fileType))
-
-                component = [
-                    <select ref={this.bindAssetSelect} value={value ? (value as {assetId: string}).assetId! : undefined} onChange={this.valueChanged}>
-                        {acceptedAssets.length === 0 && (
-                            <option selected disabled>{t('asset.empty')}</option>
-                        )}
-                        {acceptedAssets.length > 0 && ([
-                            <option />,
-                            ...acceptedAssets.map(asset => (<option value={asset.id as string}>{asset.name}</option>))
-                        ])}
-                    </select>
-                ]
-                break
-            }
-
-            case 'ARRAY':
-            default:
-                component = []
-        }
-
-        // destruct component list to make function `ref` property
-        return (
-            <div>
-                {...component}
-            </div>
-        )
-    }
 }

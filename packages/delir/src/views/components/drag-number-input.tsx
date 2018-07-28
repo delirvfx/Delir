@@ -1,7 +1,6 @@
+import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
-import * as classnames from 'classnames'
 import * as Platform from '../../utils/platform'
 
 interface DragNumberInputProps {
@@ -9,7 +8,7 @@ interface DragNumberInputProps {
     min?: number
     max?: number
     name?: string
-    value?: string|number
+    value?: string | number
     disabled?: boolean
     allowFloat?: boolean
     onChange?: (value: number) => any
@@ -17,25 +16,14 @@ interface DragNumberInputProps {
 }
 
 interface DragNumberInputState {
-    value: number|string
+    value: number | string
     valueChanged: boolean
 }
 
 export default class DragNumberInput extends React.Component<DragNumberInputProps, DragNumberInputState>
 {
-    public static propTypes = {
-        className: PropTypes.string,
-        data: PropTypes.object,
-        min: PropTypes.number,
-        max: PropTypes.number,
-        name: PropTypes.string,
-        value: PropTypes.number,
-        disabled: PropTypes.bool,
-        allowFloat: PropTypes.bool,
-        onChange: PropTypes.func,
-        doubleClickToEdit: PropTypes.bool,
-    }
 
+    public get value(): number { return +this.state.value }
     public static defaultProps = {
         allowFloat: false,
         disabled: false,
@@ -51,8 +39,6 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         valueChanged: false,
     }
 
-    public get value(): number { return +this.state.value }
-
     public componentDidMount()
     {
         this.refs.input.onpointerlockerror = e => console.error(e)
@@ -61,6 +47,24 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
     public componentWillReceiveProps(nextProps: DragNumberInputProps)
     {
         this.setState({value: nextProps.value})
+    }
+
+    public render()
+    {
+        return (
+            <input
+                ref='input'
+                type='text'
+                className={classnames('_drag-number-input', this.props.className)}
+                value={this.state.value}
+                onBlur={this.onBlur}
+                onChange={this.valueChanged}
+                onKeyDown={this.onKeyDown}
+                onMouseDown={this.onMouseDown}
+                onMouseMove={this.onMouseMove}
+                onMouseUp={this.onMouseUp}
+            />
+        )
     }
 
     private onKeyDown = (e: KeyboardEvent) =>
@@ -138,7 +142,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         this.setState({value: e.target.value})
     }
 
-    private _parseValue(rawValue: number|string): number
+    private _parseValue(rawValue: number | string): number
     {
         const parsedValue = parseFloat(rawValue as string)
         let value = _.isNaN(parsedValue) ? 0 : parsedValue
@@ -150,23 +154,5 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         }
 
         return value
-    }
-
-    public render()
-    {
-        return (
-            <input
-                ref='input'
-                type='text'
-                className={classnames('_drag-number-input', this.props.className)}
-                value={this.state.value}
-                onBlur={this.onBlur}
-                onChange={this.valueChanged}
-                onKeyDown={this.onKeyDown}
-                onMouseDown={this.onMouseDown}
-                onMouseMove={this.onMouseMove}
-                onMouseUp={this.onMouseUp}
-            />
-        )
     }
 }

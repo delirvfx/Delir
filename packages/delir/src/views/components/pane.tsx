@@ -1,7 +1,6 @@
-import * as React from 'react'
-import {Component, Children} from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
+import * as React from 'react'
+import { Children, Component } from 'react'
 
 interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
     resizable?: boolean,
@@ -11,12 +10,6 @@ interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export default class Pane extends Component<PaneProps, any>
 {
-    public static propTypes = {
-        children: PropTypes.element,
-        resizable: PropTypes.bool,
-        allowFocus: PropTypes.bool,
-    }
-
     public static defaultProps = {
         allowFocus: false,
         resizable: true,

@@ -1,33 +1,32 @@
-import * as _ from 'lodash'
-import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
+import * as _ from 'lodash'
 import * as mouseWheel from 'mouse-wheel'
+import * as React from 'react'
 import connectToStores from '../../utils/Flux/connectToStores'
-import {MeasurePoint} from '../../utils/TimePixelConversion'
+import { MeasurePoint } from '../../utils/TimePixelConversion'
 
-import Workspace from '../components/workspace'
+import { ContextMenu, MenuItem, MenuItemProps } from '../components/ContextMenu'
 import Pane from '../components/pane'
 import SelectList from '../components/select-list'
-import {ContextMenu, MenuItem, MenuItemProps} from '../components/ContextMenu'
+import Workspace from '../components/workspace'
 import DelirValueInput from './_DelirValueInput'
-import { default as KeyframeGraph, KeyframePatch } from './KeyframeGraph'
 import ExpressionEditor from './ExpressionEditor'
+import { default as KeyframeGraph, KeyframePatch } from './KeyframeGraph'
 
 import AppActions from '../../actions/App'
 import ProjectModActions from '../../actions/ProjectMod'
 
-import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
-import {default as ProjectStore, ProjectStoreState} from '../../stores/ProjectStore'
 import RendererService from '../../services/renderer'
+import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
+import {default as ProjectStore, ProjectStoreState } from '../../stores/ProjectStore'
 
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.sass'
 
 interface KeyframeEditorProps {
-    activeComposition: Delir.Project.Composition|null
-    activeClip: Delir.Project.Clip|null
+    activeComposition: Delir.Project.Composition | null
+    activeClip: Delir.Project.Clip | null
     editor: EditorState
     project: ProjectStoreState
     scrollLeft: number
@@ -39,11 +38,11 @@ interface KeyframeEditorProps {
 }
 
 interface KeyframeEditorState {
-    activePropName: string|null
-    activeEntity: { type: 'clip'|'effect', entityId: string }|null
+    activePropName: string | null
+    activeEntity: { type: 'clip' | 'effect', entityId: string } | null
     graphWidth: number
     graphHeight: number
-    keyframeViewViewBox: string|undefined
+    keyframeViewViewBox: string | undefined
     editorOpened: boolean
 }
 
@@ -52,10 +51,20 @@ interface KeyframeEditorState {
     project: ProjectStore.getState()
 }))
 export default class KeyframeEditor extends React.Component<KeyframeEditorProps, KeyframeEditorState> {
-    public static propTypes = {
-        activeClip: PropTypes.instanceOf(Delir.Project.Clip),
-        scrollLeft: PropTypes.number,
-        measures: PropTypes.array.isRequired
+
+    private get activeEntityObject(): Delir.Project.Clip | Delir.Project.Effect | null {
+        const { activeClip } = this.props
+        const { activeEntity } = this.state
+
+        if (activeClip) {
+            if (activeEntity && activeEntity.type === 'effect') {
+                return activeClip.effects.find(e => e.id === activeEntity.entityId)!
+            } else {
+                return activeClip
+            }
+        }
+
+        return null
     }
 
     public static defaultProps: Partial<KeyframeEditorProps> = {
@@ -87,143 +96,6 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         if (!nextProps.activeClip) {
             this.setState({activePropName: null, editorOpened: false})
         }
-    }
-
-    private onCloseEditor = (result: ExpressionEditor.EditorResult) => {
-        if (!result.saved) {
-            this.setState({editorOpened: false})
-            return
-        }
-
-        const { activeClip } = this.props
-        const { activeEntity, activePropName } = this.state
-
-        if (!activeClip || !activeEntity || !activePropName) return
-
-        if (activeEntity.type === 'clip') {
-            ProjectModActions.modifyClipExpression(activeClip.id, activePropName, {
-                language: 'typescript',
-                code: result.code,
-            })
-        } else {
-            ProjectModActions.modifyEffectExpression(activeClip.id, activeEntity.entityId, activePropName, {
-                language: 'typescript',
-                code: result.code,
-            })
-        }
-        this.setState({editorOpened: false})
-    }
-
-    private _syncGraphHeight = () =>
-    {
-        const box = this.refs.svgParent.getBoundingClientRect()
-
-        this.setState({
-            graphWidth: box.width,
-            graphHeight: box.height,
-            keyframeViewViewBox: `0 0 ${box.width} ${box.height}`,
-        })
-    }
-
-    private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) =>
-    {
-        if (e.altKey) {
-            const newScale = this.props.scale + (e.deltaY * .05)
-            this.props.onScaled(Math.max(newScale, .1))
-            e.preventDefault()
-        }
-    }
-
-    private handleScrolling = (dx: number, dy: number) =>
-    {
-        this.props.onScroll(dx, dy)
-    }
-
-    private selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
-    {
-        const { entityType, entityId, propName } = currentTarget.dataset as {[_: string]: string}
-
-        this.setState({
-            activeEntity: {
-                type: entityType as 'clip'|'effect',
-                entityId,
-            },
-            activePropName: propName,
-        })
-    }
-
-    private valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) =>
-    {
-        const {activeClip, editor: {currentPreviewFrame}} = this.props
-        if (!activeClip) return
-
-        const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        ProjectModActions.createOrModifyKeyframeForClip(activeClip.id!, desc.propName, frameOnClip, {value})
-        AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
-    }
-
-    private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) =>
-    {
-        const {activeClip, editor: {currentPreviewFrame}} = this.props
-        const { activeEntity } = this.state
-        if (!activeClip) return
-
-        const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        ProjectModActions.createOrModifyKeyframeForEffect(activeClip.id, effectId, desc.propName, frameOnClip, {value})
-        AppActions.seekPreviewFrame(currentPreviewFrame)
-    }
-
-    private keyframeModified = (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) =>
-    {
-        const { activeEntity } = this.state
-        if (!activeEntity) return
-
-        if (activeEntity.type === 'clip') {
-            ProjectModActions.createOrModifyKeyframeForClip(parentClipId, propName, frameOnClip, patch)
-        } else {
-            ProjectModActions.createOrModifyKeyframeForEffect(parentClipId, activeEntity.entityId, propName, frameOnClip, patch)
-        }
-    }
-
-    private keyframeRemoved = (parentClipId: string, keyframeId: string) =>
-    {
-        const { activeEntity } = this.state
-        if (!activeEntity) return
-
-        if (activeEntity.type === 'clip') {
-            ProjectModActions.removeKeyframe(activeEntity.entityId)
-        } else {
-            ProjectModActions.removeKeyframeForEffect(parentClipId, activeEntity.entityId, keyframeId)
-        }
-    }
-
-    private _openExpressionEditor = (propName: string) => {
-        const {activeClip} = this.props
-        this.setState({editorOpened: true, activePropName: propName})
-        this.forceUpdate()
-    }
-
-    private removeEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
-    {
-        this.setState({ editorOpened: false, activePropName: null, activeEntity: null }, () => {
-            ProjectModActions.removeEffect(dataset.clipId, dataset.effectId)
-            AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
-        })
-    }
-
-    private get activeEntityObject(): Delir.Project.Clip | Delir.Project.Effect | null {
-        const { activeClip } = this.props
-        const { activeEntity } = this.state
-
-        if (activeClip) {
-            if (activeEntity && activeEntity.type === 'effect') {
-                return activeClip.effects.find(e => e.id === activeEntity.entityId)!
-            } else {
-                return activeClip
-            }
-        }
-
-        return null
     }
 
     public render()
@@ -335,6 +207,128 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
                 </Pane>
             </Workspace>
         )
+    }
+
+    private onCloseEditor = (result: ExpressionEditor.EditorResult) => {
+        if (!result.saved) {
+            this.setState({editorOpened: false})
+            return
+        }
+
+        const { activeClip } = this.props
+        const { activeEntity, activePropName } = this.state
+
+        if (!activeClip || !activeEntity || !activePropName) return
+
+        if (activeEntity.type === 'clip') {
+            ProjectModActions.modifyClipExpression(activeClip.id, activePropName, {
+                language: 'typescript',
+                code: result.code,
+            })
+        } else {
+            ProjectModActions.modifyEffectExpression(activeClip.id, activeEntity.entityId, activePropName, {
+                language: 'typescript',
+                code: result.code,
+            })
+        }
+        this.setState({editorOpened: false})
+    }
+
+    private _syncGraphHeight = () =>
+    {
+        const box = this.refs.svgParent.getBoundingClientRect()
+
+        this.setState({
+            graphWidth: box.width,
+            graphHeight: box.height,
+            keyframeViewViewBox: `0 0 ${box.width} ${box.height}`,
+        })
+    }
+
+    private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) =>
+    {
+        if (e.altKey) {
+            const newScale = this.props.scale + (e.deltaY * .05)
+            this.props.onScaled(Math.max(newScale, .1))
+            e.preventDefault()
+        }
+    }
+
+    private handleScrolling = (dx: number, dy: number) =>
+    {
+        this.props.onScroll(dx, dy)
+    }
+
+    private selectProperty = ({currentTarget}: React.MouseEvent<HTMLDivElement>) =>
+    {
+        const { entityType, entityId, propName } = currentTarget.dataset as {[_: string]: string}
+
+        this.setState({
+            activeEntity: {
+                type: entityType as 'clip' | 'effect',
+                entityId,
+            },
+            activePropName: propName,
+        })
+    }
+
+    private valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) =>
+    {
+        const {activeClip, editor: {currentPreviewFrame}} = this.props
+        if (!activeClip) return
+
+        const frameOnClip = currentPreviewFrame - activeClip.placedFrame
+        ProjectModActions.createOrModifyKeyframeForClip(activeClip.id!, desc.propName, frameOnClip, {value})
+        AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+    }
+
+    private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) =>
+    {
+        const {activeClip, editor: {currentPreviewFrame}} = this.props
+        const { activeEntity } = this.state
+        if (!activeClip) return
+
+        const frameOnClip = currentPreviewFrame - activeClip.placedFrame
+        ProjectModActions.createOrModifyKeyframeForEffect(activeClip.id, effectId, desc.propName, frameOnClip, {value})
+        AppActions.seekPreviewFrame(currentPreviewFrame)
+    }
+
+    private keyframeModified = (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) =>
+    {
+        const { activeEntity } = this.state
+        if (!activeEntity) return
+
+        if (activeEntity.type === 'clip') {
+            ProjectModActions.createOrModifyKeyframeForClip(parentClipId, propName, frameOnClip, patch)
+        } else {
+            ProjectModActions.createOrModifyKeyframeForEffect(parentClipId, activeEntity.entityId, propName, frameOnClip, patch)
+        }
+    }
+
+    private keyframeRemoved = (parentClipId: string, keyframeId: string) =>
+    {
+        const { activeEntity } = this.state
+        if (!activeEntity) return
+
+        if (activeEntity.type === 'clip') {
+            ProjectModActions.removeKeyframe(activeEntity.entityId)
+        } else {
+            ProjectModActions.removeKeyframeForEffect(parentClipId, activeEntity.entityId, keyframeId)
+        }
+    }
+
+    private _openExpressionEditor = (propName: string) => {
+        const {activeClip} = this.props
+        this.setState({editorOpened: true, activePropName: propName})
+        this.forceUpdate()
+    }
+
+    private removeEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
+    {
+        this.setState({ editorOpened: false, activePropName: null, activeEntity: null }, () => {
+            ProjectModActions.removeEffect(dataset.clipId, dataset.effectId)
+            AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+        })
     }
 
     private renderEffectProperties = () =>
@@ -450,7 +444,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         return components
     }
 
-    private _getDescriptorByPropId(propName: string|null)
+    private _getDescriptorByPropId(propName: string | null)
     {
         const activeEntityObject = this.activeEntityObject
 
