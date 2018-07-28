@@ -1,20 +1,13 @@
+import { ReduceStore } from 'flux/utils'
 import _ from 'lodash'
-import {ReduceStore} from 'flux/utils'
 
-import dispatcher from '../utils/Flux/Dispatcher'
 import ActionTypes from '../action-types'
+import dispatcher from '../utils/Flux/Dispatcher'
 
 class HistoryStore extends ReduceStore<Object>
 {
-    getInitialState(): Object
-    {
-        return {
-            historyStack: [],
-            redoStack: [],
-        }
-    }
 
-    reducers = {
+    public reducers = {
         [ActionTypes.HISTORY_PUSH](state, payload)
         {
             return {
@@ -41,8 +34,15 @@ class HistoryStore extends ReduceStore<Object>
             }
         },
     }
+    public getInitialState(): Object
+    {
+        return {
+            historyStack: [],
+            redoStack: [],
+        }
+    }
 
-    reduce(state: Object, {type, payload}: Object)
+    public reduce(state: Object, {type, payload}: Object)
     {
         if (this.reducers[type]) {
             return this.reducers[type](payload)

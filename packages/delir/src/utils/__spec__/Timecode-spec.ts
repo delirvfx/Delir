@@ -1,4 +1,4 @@
-import {frameToTimeCode} from '../Timecode'
+import { frameToTimeCode } from '../Timecode'
 
 describe('Timecode', () => {
     describe('#frameToTimecode', () => {

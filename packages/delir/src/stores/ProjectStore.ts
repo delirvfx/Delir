@@ -1,26 +1,26 @@
+import { ReduceStore } from 'flux/utils'
 import * as _ from 'lodash'
-import {ReduceStore} from 'flux/utils'
 import * as uuid from 'uuid'
 
 import * as Delir from '@ragg/delir-core'
-import {ProjectHelper} from '@ragg/delir-core'
+import { ProjectHelper } from '@ragg/delir-core'
 
+import {DispatchTypes as AppActionsDispatchTypes } from '../actions/App'
+import { KnownPayload } from '../actions/PayloadTypes'
+import {DispatchTypes as ProjectModDispatchTypes } from '../actions/ProjectMod'
 import dispatcher from '../utils/Flux/Dispatcher'
 import Record from '../utils/Record'
-import {KnownPayload} from '../actions/PayloadTypes'
-import {DispatchTypes as AppActionsDispatchTypes} from '../actions/App'
-import {DispatchTypes as ProjectModDispatchTypes} from '../actions/ProjectMod'
 
 type StateRecord = Record<ProjectStoreState>
 
 export interface ProjectStoreState {
-    project: Delir.Project.Project|null,
+    project: Delir.Project.Project | null,
     lastChangeTime: number,
 }
 
 class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
 {
-    getInitialState(): StateRecord
+    public getInitialState(): StateRecord
     {
         return new Record({
             project: null,
@@ -28,14 +28,14 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
         })
     }
 
-    areEqual(a: StateRecord, b: StateRecord): boolean
+    public areEqual(a: StateRecord, b: StateRecord): boolean
     {
         const equal = a.equals(b)
         __DEV__ && !equal && console.log('📷 Project updated')
         return equal
     }
 
-    reduce(state: StateRecord, payload: KnownPayload)
+    public reduce(state: StateRecord, payload: KnownPayload)
     {
         const project: Delir.Project.Project = state.get('project')!
         if (payload.type !== AppActionsDispatchTypes.SetActiveProject && project == null) return state
@@ -81,7 +81,7 @@ class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
                         value: {assetId: registeredAsset.id},
                     }))
 
-                    const layer = new Delir.Project.Layer
+                    const layer = new Delir.Project.Layer()
                     ProjectHelper.addLayer(project, targetComposition, layer)
                     ProjectHelper.addClip(project, layer, clip)
                 })()
