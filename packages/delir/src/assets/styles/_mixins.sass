@@ -1,8 +1,8 @@
-disable-scrollbar()
+@mixin disable-scrollbar()
     &::-webkit-scrollbar
         display none
 
-thin-scrollbar()
+@mixin thin-scrollbar()
     &::-webkit-scrollbar
         // overflow auto
         width 3px

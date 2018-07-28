@@ -11,15 +11,15 @@
     background-position: center center;
     background-size: 1em 1em;
 
-    $size-map = {
+    $size-map: (
         'lg': 1.33,
         '2x': 2,
         '3x': 3,
         '4x': 4,
         '5x': 5
-    }
+    )
 
-    for $name, $size in $size-map
+    @for $name, $size in $size-map
         &.twa-{$name}
             height: 1em * $size
             width: 1em * $size
@@ -27,7 +27,7 @@
             vertical-align: -0.1em * $size
             background-size: 1em * $size 1em * $size
 
-    $emoji-map = {
+    $emoji-map = (
         '1f604': 'smile',
         '1f606': 'laughing',
         '1f60a': 'blush',
@@ -1103,8 +1103,8 @@
         '1f6ba': 'womens',
         '274c': 'x',
         '30-20e3': 'zero'
-    }
+    )
 
-    for $code, $name in $emoji-map
+    @for $code, $name in $emoji-map
         &.twa-{$name}
             background-image: url('../images/twemoji-svg/' + $code + '.svg')

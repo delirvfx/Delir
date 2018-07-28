@@ -37,7 +37,7 @@
             border-bottom 1px solid rgba(#fff, .4)
 
         .timeline-labels
-            thin-scrollbar()
+            @include thin-scrollbar()
 
             display block
             flex 1
@@ -51,7 +51,7 @@
             background-color $pane-background
 
         .timeline-lane-container
-            disable-scrollbar()
+            @include disable-scrollbar()
             flex 1
             padding-bottom 20px
             overflow auto
