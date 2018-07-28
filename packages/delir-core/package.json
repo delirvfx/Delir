@@ -12,7 +12,9 @@
     "test": "jest --verbose"
   },
   "devDependencies": {
+    "@types/bson": "1.0.11",
     "@types/jest": "23.3.0",
+    "@types/lodash": "4.14.115",
     "@types/uuid": "3.4.3",
     "awesome-typescript-loader": "5.2.0",
     "cache-loader": "1.2.2",
@@ -26,6 +28,8 @@
     "webpack": "4.16.2"
   },
   "dependencies": {
+    "bson": "3.0.2",
+    "lodash": "4.17.10",
     "uuid": "3.3.2"
   }
 }

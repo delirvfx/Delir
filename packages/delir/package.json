@@ -51,6 +51,7 @@
     "fs-promise": "2.0.3",
     "immer": "1.5.0",
     "keymirror": "0.1.1",
+    "mouse-wheel": "1.2.0",
     "prop-types": "15.6.2",
     "react": "16.4.1",
     "react-color": "2.14.1",
