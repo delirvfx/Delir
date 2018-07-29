@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
@@ -37,15 +36,6 @@ interface TimelaneClipSpaceState {
 }))
 export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, TimelaneClipSpaceState>
 {
-    public static propTypes = {
-        editor: PropTypes.object.isRequired,
-        layer: PropTypes.object.isRequired,
-        framerate: PropTypes.number.isRequired,
-        pxPerSec: PropTypes.number.isRequired,
-        scale: PropTypes.number.isRequired,
-        activeClip: PropTypes.object,
-    }
-
     public state = {
         dragovered: false,
     }

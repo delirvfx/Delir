@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 
 interface LabelInputProps {
@@ -18,15 +17,6 @@ interface LabelInputState {
 
 export default class LabelInput extends React.Component<LabelInputProps, LabelInputState>
 {
-    public static propTypes = {
-        className: PropTypes.string,
-        name: PropTypes.string,
-        defaultValue: PropTypes.string,
-        placeholder: PropTypes.string,
-        onChange: PropTypes.func,
-        doubleClickToEdit: PropTypes.bool,
-    }
-
     public static defaultProps = {
         doubleClickToEdit: false,
     }

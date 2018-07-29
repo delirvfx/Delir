@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import * as mouseWheel from 'mouse-wheel'
@@ -52,12 +51,6 @@ interface KeyframeEditorState {
     project: ProjectStore.getState()
 }))
 export default class KeyframeEditor extends React.Component<KeyframeEditorProps, KeyframeEditorState> {
-    public static propTypes = {
-        activeClip: PropTypes.instanceOf(Delir.Project.Clip),
-        scrollLeft: PropTypes.number,
-        measures: PropTypes.array.isRequired
-    }
-
     public static defaultProps: Partial<KeyframeEditorProps> = {
         scrollLeft: 0
     }

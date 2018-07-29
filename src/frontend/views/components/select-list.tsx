@@ -1,17 +1,21 @@
 import * as _ from 'lodash'
 import * as React from 'react'
 import {Children} from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 
-export default class SelectList extends React.Component<any, any>
-{
-    public static propTypes = {
-        className: PropTypes.string,
-        multiple: PropTypes.bool.isRequired,
-        onSelectionChanged: PropTypes.func,
-    }
+interface Props {
+    className?: string
+    multiple: boolean
+    onSelectionChanged?: (selection: number[]) => void
+}
 
+interface State {
+    lastSelectedIdx: number
+    selected: number[]
+}
+
+export default class SelectList extends React.Component<Props, State>
+{
     public static defaultProps = {
         multiple: false,
     }

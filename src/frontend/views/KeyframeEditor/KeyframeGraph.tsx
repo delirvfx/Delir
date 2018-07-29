@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
@@ -41,22 +40,6 @@ export interface KeyframePatch {
 }
 
 export default class KeyframeGraph extends React.Component<Props, State> {
-    protected static propTypes = {
-        width: PropTypes.number.isRequired,
-        height: PropTypes.number.isRequired,
-        viewBox: PropTypes.string.isRequired,
-        scrollLeft: PropTypes.number.isRequired,
-        composition: PropTypes.instanceOf(Delir.Project.Composition).isRequired,
-        clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
-        propName: PropTypes.string.isRequired,
-        descriptor: PropTypes.instanceOf(Delir.TypeDescriptor),
-        keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)).isRequired,
-        pxPerSec: PropTypes.number.isRequired,
-        zoomScale: PropTypes.number.isRequired,
-        onKeyframeRemove: PropTypes.func.isRequired,
-        onModified: PropTypes.func.isRequired,
-    }
-
     public state: State = {
         activeKeyframeId: null,
         keyframeMovement: null,

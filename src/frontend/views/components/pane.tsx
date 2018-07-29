@@ -1,6 +1,4 @@
 import * as React from 'react'
-import {Component, Children} from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 
 interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -9,14 +7,8 @@ interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
     className?: string,
 }
 
-export default class Pane extends Component<PaneProps, any>
+export default class Pane extends React.Component<PaneProps, any>
 {
-    public static propTypes = {
-        children: PropTypes.element,
-        resizable: PropTypes.bool,
-        allowFocus: PropTypes.bool,
-    }
-
     public static defaultProps = {
         allowFocus: false,
         resizable: true,
@@ -42,7 +34,7 @@ export default class Pane extends Component<PaneProps, any>
                 {...props}
             >
                 {resizable ? <div className='_workspace-pane-handle' /> : null}
-                {Children.map(children, child => child)}
+                {React.Children.map(children, child => child)}
             </div>
         )
     }

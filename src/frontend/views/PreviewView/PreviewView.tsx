@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import {frameToTimeCode} from '../../utils/Timecode'
 

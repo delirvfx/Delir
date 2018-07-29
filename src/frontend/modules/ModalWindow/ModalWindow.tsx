@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as path from 'path'
 import * as URL from 'url'
 import * as qs from 'querystring'
@@ -33,18 +32,6 @@ export const show = <T extends JSX.Element = any>(component: T, props: ModalWind
 
 export default class ModalWindow extends React.Component<ModalWindowProps, ModalWindowState>
 {
-    public static propTypes = {
-        // children: PropTypes.element.isRequired,
-        show: PropTypes.bool.isRequired,
-        url: PropTypes.string.isRequired,
-        width: PropTypes.number,
-        height: PropTypes.number,
-        query: PropTypes.object,
-        closable: PropTypes.bool,
-        onHide: PropTypes.func,
-        onResponse: PropTypes.func,
-    }
-
     public static defaultProps = {
         show: false,
         url: 'about:blank',

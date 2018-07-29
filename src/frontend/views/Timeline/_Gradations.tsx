@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {Component} from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 
@@ -31,18 +30,6 @@ interface GradationsState {
 
 export default class Gradations extends Component<GradationsProps, GradationsState>
 {
-    public static propTypes = {
-        currentFrame: PropTypes.number.isRequired,
-        measures: PropTypes.array.isRequired,
-        previewPlayed: PropTypes.bool.isRequired,
-        activeComposition: PropTypes.object.isRequired,
-        cursorHeight: PropTypes.number.isRequired,
-        scrollLeft: PropTypes.number,
-        scale: PropTypes.number.isRequired,
-        pxPerSec: PropTypes.number.isRequired,
-        onSeeked: PropTypes.func.isRequired
-    }
-
     public static defaultProps = {
         scrollLeft: 0,
     }

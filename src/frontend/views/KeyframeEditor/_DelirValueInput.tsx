@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import {ChromePicker} from 'react-color'
 
@@ -20,14 +19,6 @@ interface DelirValueInputProps {
 
 export default class DelirValueInput extends React.PureComponent<DelirValueInputProps, any>
 {
-    public static propTypes = {
-        descriptors: PropTypes.arrayOf(
-            PropTypes.instanceOf(Delir.TypeDescriptor)
-        ),
-        value: PropTypes.any,
-        onChange: PropTypes.func.isRequired,
-    }
-
     private ref: {
         numberInput?: DragNumberInput,
         propX?: DragNumberInput,

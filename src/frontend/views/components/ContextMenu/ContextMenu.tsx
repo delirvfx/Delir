@@ -1,6 +1,5 @@
 import * as Electron from 'electron'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 
 import ContextMenuManager from './ContextMenuManager'
 import propToDataset from '../../../utils/propToDataset'
@@ -55,14 +54,6 @@ interface MenuItemComponentProps {
 
 export class MenuItem extends React.Component<MenuItemComponentProps, {}>
 {
-    protected static propTypes = {
-        label: PropTypes.string,
-        type: PropTypes.string,
-        onClick: PropTypes.func,
-        checked: PropTypes.bool,
-        submenu: PropTypes.array,
-    }
-
     public render()
     {
         return null

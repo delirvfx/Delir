@@ -1,6 +1,5 @@
 import {remote} from 'electron'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as path from 'path'
 import connectToStores from '../../utils/Flux/connectToStores'
 
@@ -20,10 +19,6 @@ interface NavigationViewProps {
 }))
 export default class NavigationView extends React.Component<NavigationViewProps, null>
 {
-    public static propTypes = {
-        editor: PropTypes.object.isRequired,
-    }
-
     private onClickPlay = action =>
     {
         const {activeComp} = this.props.editor

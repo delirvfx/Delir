@@ -1,5 +1,4 @@
 import * as _ from 'lodash'
-import * as PropTypes from 'prop-types'
 import * as semver from 'semver'
 
 import checkPropTypes from '../helper/checkPropTypes'
@@ -14,23 +13,23 @@ import UnknownPluginReferenceException from '../exceptions/unknown-plugin-refere
 
 import * as DelirCorePackageJson from '../../package.json'
 
-export const validatePluginPackageJSON = (packageJson: any)=> {
-    return checkPropTypes<any>({
-        name: PropTypes.string.isRequired,
-        version: (props, propName) => { if (!semver.valid(props[propName])) return new Error('Invalid version specified.') },
-        main: PropTypes.string,
-        engines: PropTypes.shape({
-            'delir-core': (props: any, propName: string) => { if (!semver.validRange(props[propName])) return new Error('Invalid engines.delir version specified.') },
-        }).isRequired,
-        delir: PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            type: PropTypes.oneOf(['post-effect']).isRequired,
-            // acceptFileTypes: (props: any, propName: string, section: string) => {
-            //     if (!_.values(props[propName]).every((v: string) => typeof v === 'string')) return new Error(`Invalid file type handler definition in \`${section}\`.`)
-            //     if (!_.keys(props[propName]).every((v: string) => v.toLowerCase() === v)) return new Error(`File type extension must be lowercase in \`${section}\`.`)
-            // },
-        }).isRequired
-    }, packageJson, `package.json of ${packageJson.name}`)
+// export const validatePluginPackageJSON = (packageJson: any)=> {
+//     return checkPropTypes<any>({
+//         name: PropTypes.string.isRequired,
+//         version: (props, propName) => { if (!semver.valid(props[propName])) return new Error('Invalid version specified.') },
+//         main: PropTypes.string,
+//         engines: PropTypes.shape({
+//             'delir-core': (props: any, propName: string) => { if (!semver.validRange(props[propName])) return new Error('Invalid engines.delir version specified.') },
+//         }).isRequired,
+//         delir: PropTypes.shape({
+//             name: PropTypes.string.isRequired,
+//             type: PropTypes.oneOf(['post-effect']).isRequired,
+//             // acceptFileTypes: (props: any, propName: string, section: string) => {
+//             //     if (!_.values(props[propName]).every((v: string) => typeof v === 'string')) return new Error(`Invalid file type handler definition in \`${section}\`.`)
+//             //     if (!_.keys(props[propName]).every((v: string) => v.toLowerCase() === v)) return new Error(`File type extension must be lowercase in \`${section}\`.`)
+//             // },
+//         }).isRequired
+//     }, packageJson, `package.json of ${packageJson.name}`)
 }
 
 export default class PluginRegistry {
@@ -43,11 +42,11 @@ export default class PluginRegistry {
                 throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
             }
 
-            const result = validatePluginPackageJSON(entry.packageJson)
+            // const result = validatePluginPackageJSON(entry.packageJson)
 
-            if (!result.valid) {
-                throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
-            }
+            // if (!result.valid) {
+            //     throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
+            // }
 
             if (!semver.satisfies(DelirCorePackageJson.version, entry.packageJson.engines['delir-core'])) {
                 throw new PluginLoadFailException(`Plugin \`${entry.name}(${entry.id})\` not compatible to current delir-core version `)

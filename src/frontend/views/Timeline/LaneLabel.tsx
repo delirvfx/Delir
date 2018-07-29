@@ -1,6 +1,5 @@
 import * as React from 'react'
 import * as classnames from 'classnames'
-import * as PropTypes from 'prop-types'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'
 import * as Delir from 'delir-core'
 
@@ -30,13 +29,6 @@ const SortHandle = SortableHandle(() => (
 
 class LaneLabel extends React.Component<Props>
 {
-    static propTypes = {
-        editor: PropTypes.object.isRequired,
-        layer: PropTypes.object.isRequired,
-        onSelect: PropTypes.func.isRequired,
-        onRemove: PropTypes.func.isRequired,
-    }
-
     private layerNameInput: LabelInput
 
     private layerNameChanged = (value: string) =>

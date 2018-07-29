@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import * as serialize from 'form-serialize'
 
@@ -41,12 +40,6 @@ interface Props {
 
 class CompositionSettingModal extends React.PureComponent<Props, any>
 {
-    public static propTypes = {
-        composition: PropTypes.object,
-        onConfirm: PropTypes.func.isRequired,
-        onCancel: PropTypes.func.isRequired,
-    }
-
     private onConfirm = () =>
     {
         const opts = serialize((this.refs.form as HTMLFormElement), {hash: true})

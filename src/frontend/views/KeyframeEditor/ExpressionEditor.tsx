@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 
 import Monaco from '../../utils/Monaco'
@@ -33,13 +32,6 @@ namespace ExpressionEditor {
 }
 
 class ExpressionEditor extends React.Component<Props> {
-    public static propTypes = {
-        title: PropTypes.string.isRequired,
-        entityId: PropTypes.string.isRequired,
-        code: PropTypes.string,
-        onClose: PropTypes.func.isRequired
-    }
-
     private _editor: monaco.editor.IStandaloneCodeEditor
     private editorElement: HTMLDivElement
 

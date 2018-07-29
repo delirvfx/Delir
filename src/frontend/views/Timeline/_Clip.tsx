@@ -1,5 +1,4 @@
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as Delir from 'delir-core'
 import * as classnames from 'classnames'
 
@@ -31,15 +30,6 @@ interface TimelaneClipState {
 
 export default class TimelaneClip extends React.Component<TimelaneClipProps, TimelaneClipState>
 {
-    public static propTypes = {
-        clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
-        left: PropTypes.number.isRequired,
-        width: PropTypes.number.isRequired,
-        active: PropTypes.bool.isRequired,
-        onChangePlace: PropTypes.func.isRequired,
-        onChangeDuration: PropTypes.func.isRequired,
-    }
-
     public state = {
         draggedPxX: 0,
         dragStartPosition: null,

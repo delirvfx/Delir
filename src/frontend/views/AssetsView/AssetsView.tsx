@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as parseColor from 'parse-color'
 import * as classnames from 'classnames'
 import * as path from 'path'
@@ -47,7 +46,7 @@ type CompositionProps = {
     audioChannels: string,
 }
 
-const castToCompositionPropTypes = (req: CompositionProps) => {
+const castToCompositionProps = (req: CompositionProps) => {
     const bgColor = parseColor(req.backgroundColor)
 
     return {
@@ -89,10 +88,6 @@ const fileIconFromExtension = (ext: string) => {
 }))
 export default class AssetsView extends React.Component<AssetsViewProps, AssetsViewState>
 {
-    public static propTypes = {
-        editor: PropTypes.object.isRequired,
-    }
-
     constructor()
     {
         super()
@@ -163,7 +158,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         const req = await CompositionSettingModal.show({composition: comp})
 
         if (!req) return
-        ProjectModActions.modifyComposition(compId, castToCompositionPropTypes(req as any))
+        ProjectModActions.modifyComposition(compId, castToCompositionProps(req as any))
     }
 
     private openNewCompositionWindow =  async () =>
@@ -171,7 +166,7 @@ export default class AssetsView extends React.Component<AssetsViewProps, AssetsV
         const req = await CompositionSettingModal.show()
 
         if (!req) return
-        ProjectModActions.createComposition(castToCompositionPropTypes(req))
+        ProjectModActions.createComposition(castToCompositionProps(req))
     }
 
     private onAssetsDragStart = ({target}: {target: HTMLElement}) =>

@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
 import * as Platform from '../../utils/platform'
 
@@ -23,19 +22,6 @@ interface DragNumberInputState {
 
 export default class DragNumberInput extends React.Component<DragNumberInputProps, DragNumberInputState>
 {
-    public static propTypes = {
-        className: PropTypes.string,
-        data: PropTypes.object,
-        min: PropTypes.number,
-        max: PropTypes.number,
-        name: PropTypes.string,
-        value: PropTypes.number,
-        disabled: PropTypes.bool,
-        allowFloat: PropTypes.bool,
-        onChange: PropTypes.func,
-        doubleClickToEdit: PropTypes.bool,
-    }
-
     public static defaultProps = {
         allowFloat: false,
         disabled: false,

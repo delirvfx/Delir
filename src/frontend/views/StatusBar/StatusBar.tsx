@@ -1,5 +1,4 @@
 import React from 'react'
-import * as PropTypes from 'prop-types'
 import {remote} from 'electron'
 
 import EditorStateStore from '../../stores/EditorStateStore'
