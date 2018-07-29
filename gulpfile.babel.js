@@ -227,7 +227,7 @@ export async function compilePlugins(done) {
         },
         devtool: __DEV__ ? "#source-map" : 'none',
         externals: [
-            (ctx, request: string, callback) => {
+            (ctx, request, callback) => {
                 if (request !== 'delir-core') return callback()
                 callback(null, `require('${request}')`)
                 // if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
