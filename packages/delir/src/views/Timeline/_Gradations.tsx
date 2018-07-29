@@ -1,13 +1,12 @@
-import * as React from 'react'
-import {Component} from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
-import * as Delir from 'delir-core'
+import * as Delir from '@ragg/delir-core'
+import * as React from 'react'
+import { Component } from 'react'
 
-import {default as TimePixelConversion, MeasurePoint} from '../../utils/TimePixelConversion'
 import RendererService from '../../services/renderer'
+import {default as TimePixelConversion, MeasurePoint } from '../../utils/TimePixelConversion'
 
-import {ContextMenu, MenuItem} from '../components/ContextMenu'
+import { ContextMenu, MenuItem } from '../components/ContextMenu'
 
 import t from './_Gradations.i18n'
 import * as s from './Gradations.sass'
@@ -16,7 +15,7 @@ interface GradationsProps {
     currentFrame: number
     measures: MeasurePoint[]
     previewPlayed: boolean
-    activeComposition: Delir.Project.Composition|null,
+    activeComposition: Delir.Project.Composition | null,
     cursorHeight: number,
     scrollLeft: number,
     scale: number
@@ -31,23 +30,9 @@ interface GradationsState {
 
 export default class Gradations extends Component<GradationsProps, GradationsState>
 {
-    public static propTypes = {
-        currentFrame: PropTypes.number.isRequired,
-        measures: PropTypes.array.isRequired,
-        previewPlayed: PropTypes.bool.isRequired,
-        activeComposition: PropTypes.object.isRequired,
-        cursorHeight: PropTypes.number.isRequired,
-        scrollLeft: PropTypes.number,
-        scale: PropTypes.number.isRequired,
-        pxPerSec: PropTypes.number.isRequired,
-        onSeeked: PropTypes.func.isRequired
-    }
-
     public static defaultProps = {
         scrollLeft: 0,
     }
-
-    private intervalId: number = -1
 
     public refs: {
         cursor: HTMLDivElement
@@ -59,6 +44,8 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
         dragSeekEnabled: false,
     }
 
+    private intervalId: number = -1
+
     public componentDidMount()
     {
         this.intervalId = requestAnimationFrame(this._updateCursor)
@@ -67,6 +54,29 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
     public componentWillUnmount()
     {
         cancelAnimationFrame(this.intervalId)
+    }
+
+    public render()
+    {
+        return (
+            <div
+                className={s.Gradations}
+                onMouseDown={this._seeking}
+                onMouseMove={this._seeking}
+                onMouseUp={this._seeking}
+                onClick={this._seeking}
+            >
+                <ContextMenu>
+                    <MenuItem label={t('contextMenu.seekToHead')} onClick={this.seekToHead} />
+                </ContextMenu>
+                <div className={s.measureLayerTrimer}>
+                    <div ref='measureLayer' className={s.measureLayer}>
+                        {this._renderMeasure()}
+                    </div>
+                </div>
+                <div ref='cursor' className={s.playingCursor} style={{height: `calc(100% + ${this.props.cursorHeight}px - 5px)`}} />
+            </div>
+        )
     }
 
     private handleGlobalMouseUp = () => {
@@ -131,29 +141,6 @@ export default class Gradations extends Component<GradationsProps, GradationsSta
     private seekToHead = () =>
     {
         this.props.onSeeked(0)
-    }
-
-    public render()
-    {
-        return (
-            <div
-                className={s.Gradations}
-                onMouseDown={this._seeking}
-                onMouseMove={this._seeking}
-                onMouseUp={this._seeking}
-                onClick={this._seeking}
-            >
-                <ContextMenu>
-                    <MenuItem label={t('contextMenu.seekToHead')} onClick={this.seekToHead} />
-                </ContextMenu>
-                <div className={s.measureLayerTrimer}>
-                    <div ref='measureLayer' className={s.measureLayer}>
-                        {this._renderMeasure()}
-                    </div>
-                </div>
-                <div ref='cursor' className={s.playingCursor} style={{height: `calc(100% + ${this.props.cursorHeight}px - 5px)`}} />
-            </div>
-        )
     }
 
     private _renderMeasure = (): JSX.Element[] =>

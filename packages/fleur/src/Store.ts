@@ -1,4 +1,4 @@
-import immer from 'immer'
+import immer, { Draft } from 'immer'
 
 import { ActionIdentifier, ExtractPayloadType } from './ActionIdentifier'
 import Emitter from './Emitter'
@@ -35,7 +35,7 @@ export default class Store<T = any> extends Emitter<StoreEvents> {
         this.emit('onChange', void 0)
     }
 
-    protected updateWith(producer: (draft: T) => void): void {
+    protected updateWith(producer: (draft: Draft<T>) => void): void {
         this.state = immer(this.state, draft => { producer(draft) })
         this.emitChange()
     }

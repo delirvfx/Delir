@@ -1,9 +1,8 @@
+import { remote } from 'electron'
 import React from 'react'
-import * as PropTypes from 'prop-types'
-import {remote} from 'electron'
 
+import * as AppActions from '../../actions/App'
 import EditorStateStore from '../../stores/EditorStateStore'
-import AppActions from '../../actions/App'
 
 import Pane from '../components/pane'
 

@@ -1,4 +1,4 @@
-export type MeasurePoint = {
+export interface MeasurePoint {
     index: number
     left: number
     frameNumber: number

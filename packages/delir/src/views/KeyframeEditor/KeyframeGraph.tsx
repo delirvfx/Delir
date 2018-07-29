@@ -1,13 +1,12 @@
+import * as Delir from '@ragg/delir-core'
+import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
-import * as classnames from 'classnames'
-import * as Delir from 'delir-core'
 
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
 import * as s from './KeyframeGraph.sass'
 
@@ -18,7 +17,7 @@ interface Props {
     scrollLeft: number
     composition: Delir.Project.Composition
     parentClip: Delir.Project.Clip
-    entity: Delir.Project.Clip|Delir.Project.Effect|null
+    entity: Delir.Project.Clip | Delir.Project.Effect | null
     propName: string,
     descriptor?: Delir.AnyParameterTypeDescriptor
     keyframes: Delir.Project.Keyframe[]
@@ -29,9 +28,9 @@ interface Props {
 }
 
 interface State {
-    activeKeyframeId: string|null
-    keyframeMovement: {x: number}|null
-    easingHandleMovement: {x: number, y: number}|null
+    activeKeyframeId: string | null
+    keyframeMovement: {x: number} | null
+    easingHandleMovement: {x: number, y: number} | null
 }
 
 export interface KeyframePatch {
@@ -41,22 +40,6 @@ export interface KeyframePatch {
 }
 
 export default class KeyframeGraph extends React.Component<Props, State> {
-    protected static propTypes = {
-        width: PropTypes.number.isRequired,
-        height: PropTypes.number.isRequired,
-        viewBox: PropTypes.string.isRequired,
-        scrollLeft: PropTypes.number.isRequired,
-        composition: PropTypes.instanceOf(Delir.Project.Composition).isRequired,
-        clip: PropTypes.instanceOf(Delir.Project.Clip).isRequired,
-        propName: PropTypes.string.isRequired,
-        descriptor: PropTypes.instanceOf(Delir.TypeDescriptor),
-        keyframes: PropTypes.arrayOf(PropTypes.instanceOf(Delir.Project.Keyframe)).isRequired,
-        pxPerSec: PropTypes.number.isRequired,
-        zoomScale: PropTypes.number.isRequired,
-        onKeyframeRemove: PropTypes.func.isRequired,
-        onModified: PropTypes.func.isRequired,
-    }
-
     public state: State = {
         activeKeyframeId: null,
         keyframeMovement: null,
@@ -65,17 +48,37 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     public props: Props
 
-    private _selectedKeyframeId: string|null = null
-    private _initialKeyframePosition: {x: number, y: number}|null = null
+    private _selectedKeyframeId: string | null = null
+    private _initialKeyframePosition: {x: number, y: number} | null = null
     private _keyframeDragged: boolean = false
 
     private _selectedEasingHandleHolderData: {
-        type: 'ease-in'|'ease-out',
+        type: 'ease-in' | 'ease-out',
         keyframeId: string,
         element: SVGCircleElement,
         container: SVGGElement,
         initialPosition: {x: number, y: number},
-    }|null = null
+    } | null = null
+
+    public render()
+    {
+        const {width, height, viewBox, descriptor} = this.props
+
+        return (
+            <svg
+                className={s.keyframeGraph}
+                viewBox={viewBox}
+                width={width}
+                height={height}
+                onMouseMove={this.mouseMoveOnSvg}
+                onMouseUp={this.mouseUpOnSvg}
+                onKeyDown={this.keydownOnKeyframeGraph}
+                tabIndex={-1}
+            >
+                {descriptor.animatable && this.renderKeyframes()}
+            </svg>
+        )
+    }
 
     private mouseMoveOnSvg = (e: React.MouseEvent<SVGElement>) =>
     {
@@ -205,26 +208,6 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         if (!parentClip) return
 
         AppActions.seekPreviewFrame(parentClip.placedFrame + (currentTarget.dataset.frame | 0))
-    }
-
-    public render()
-    {
-        const {width, height, viewBox, descriptor} = this.props
-
-        return (
-            <svg
-                className={s.keyframeGraph}
-                viewBox={viewBox}
-                width={width}
-                height={height}
-                onMouseMove={this.mouseMoveOnSvg}
-                onMouseUp={this.mouseUpOnSvg}
-                onKeyDown={this.keydownOnKeyframeGraph}
-                tabIndex={-1}
-            >
-                {descriptor.animatable && this.renderKeyframes()}
-            </svg>
-        )
     }
 
     private renderKeyframes()
@@ -472,11 +455,11 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         frame: number,
         point: {x: number, y: number},
         hasNextKeyframe: boolean,
-        transition: {x: number, y: number, xh: number, yh: number, xxh: number, yyh: number, xx: number, yy: number}|null,
-        easeOutLine: {x: number, y: number, xx: number, yy: number}|null,
-        nextEaseInLine: {x: number, y: number, xx: number, yy: number}|null,
-        easeOutHandle: {x: number, y: number}|null,
-        nextEaseInHandle: {x: number, y: number}|null,
+        transition: {x: number, y: number, xh: number, yh: number, xxh: number, yyh: number, xx: number, yy: number} | null,
+        easeOutLine: {x: number, y: number, xx: number, yy: number} | null,
+        nextEaseInLine: {x: number, y: number, xx: number, yy: number} | null,
+        easeOutHandle: {x: number, y: number} | null,
+        nextEaseInHandle: {x: number, y: number} | null,
     }[] =>
     {
         const {parentClip, descriptor, height, scrollLeft} = this.props
@@ -509,7 +492,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
             // Calc keyframe and handle points
             return orderedKeyframes.map((keyframe, idx) => {
                 // const previousKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx - 1]
-                const nextKeyframe: Delir.Project.Keyframe|undefined = orderedKeyframes[idx + 1]
+                const nextKeyframe: Delir.Project.Keyframe | undefined = orderedKeyframes[idx + 1]
 
                 // let previousX = 0
                 // let previousY = 0

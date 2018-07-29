@@ -1,5 +1,5 @@
 import {} from 'monaco-editor'
-import {dirname} from 'path'
+import { dirname } from 'path'
 
 type AvailableLibrary =
     | 'lib.es5.d.ts'
@@ -37,8 +37,6 @@ const typeDefinitionLibs = {
 }
 
 export default class Monaco {
-    private static librarySet: {[setName: string]: (AvailableLibrary|LibraryEntry)[]} = Object.create(null)
-    private static activeLibrarySetDisposer: () => void|null
 
     public static setup(): Promise<void>
     {
@@ -49,7 +47,7 @@ export default class Monaco {
 
             // Avoid to module resolving by webpack. (global.require.resolve)
             // webpack resolves module as module number, it breaks dirname(string).
-            const baseDir = 'file://' + dirname(global.require.resolve("monaco-editor/min/vs/loader.js"))
+            const baseDir = 'file://' + dirname(global.require.resolve('monaco-editor/min/vs/loader.js'))
 
             // Stash node's `require`
             const nodeRequire = global.require
@@ -88,7 +86,7 @@ export default class Monaco {
         })
     }
 
-    public static registerLibrarySet(name: string, libs: (AvailableLibrary|LibraryEntry)[])
+    public static registerLibrarySet(name: string, libs: (AvailableLibrary | LibraryEntry)[])
     {
         this.librarySet[name] = libs
     }
@@ -109,4 +107,6 @@ export default class Monaco {
 
         this.activeLibrarySetDisposer = () => disposables.forEach(d => d.dispose())
     }
+    private static librarySet: {[setName: string]: (AvailableLibrary | LibraryEntry)[]} = Object.create(null)
+    private static activeLibrarySetDisposer: () => void | null
 }

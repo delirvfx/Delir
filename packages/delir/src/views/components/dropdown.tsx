@@ -1,7 +1,6 @@
-import * as React from 'react'
-import {PureComponent} from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
+import * as React from 'react'
+import { PureComponent } from 'react'
 
 import Portal from '../../modules/Portal'
 
@@ -17,11 +16,6 @@ interface DropdownState {
 }
 
 export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
-    public static propTypes = {
-        shownInitial: PropTypes.bool,
-        className: PropTypes.string,
-    }
-
     public static defaultProps = {
         shownInitial: false,
     }
@@ -49,16 +43,6 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
     public toggle = () =>
     {
         this.setState({show: !this.state.show})
-    }
-
-    private hideOnOutsideClicked = (e: MouseEvent) =>
-    {
-        const path = ((e as any).path as Element[])
-        const clickSelfOrChild = path.includes(this._portal.root)
-
-        if (!clickSelfOrChild && this.state.show) {
-            this.hide()
-        }
     }
 
     public componentDidMount()
@@ -94,5 +78,15 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         return (
             <div ref='inspector' className={s.dropdownInspector} />
         )
+    }
+
+    private hideOnOutsideClicked = (e: MouseEvent) =>
+    {
+        const path = ((e as any).path as Element[])
+        const clickSelfOrChild = path.includes(this._portal.root)
+
+        if (!clickSelfOrChild && this.state.show) {
+            this.hide()
+        }
     }
 }

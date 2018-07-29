@@ -1,57 +1,50 @@
+import { connectToStores, ContextProp } from '@ragg/fleur-react'
 import * as React from 'react'
 
-import connectToStores from '../../utils/Flux/connectToStores'
-import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
-import AppActions from '../../actions/App'
+// import * as AppActions from '../../actions/App'
 
-import Workspace from '../components/workspace'
-import Pane from '../components/pane'
+import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
+
+// import Pane from '../components/pane'
+// import Workspace from '../components/workspace'
 
 import AppMenu from '../AppMenu'
-import AssetsView from '../AssetsView'
-import PreviewView from '../PreviewView/'
-import Timeline from '../Timeline'
+// import AssetsView from '../AssetsView'
 import NavigationView from '../NavigationView'
-import StatusBar from '../StatusBar'
-import Notifications from '../Notifications'
+// import Notifications from '../Notifications'
+// import PreviewView from '../PreviewView/'
+// import StatusBar from '../StatusBar'
+// import Timeline from '../Timeline'
 
-interface Props {
+interface OwnProps {
     editor: EditorState
 }
 
-@connectToStores([EditorStateStore], () => ({
-    editor: EditorStateStore.getState()
-}))
-export default class AppView extends React.PureComponent<Props>
+type Props = OwnProps & ContextProp
+
+export default connectToStores([EditorStateStore], (context) => ({
+    editor: context.getStore(EditorStateStore).getState()
+}))(class AppView extends React.PureComponent<Props>
 {
     public componentDidMount()
     {
         window.addEventListener('dragenter', this.prevent, false)
         window.addEventListener('dragover', this.prevent, false)
         window.addEventListener('keyup', this.handleShortCut)
-        window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
+        // window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
     }
 
-    private prevent = (e: any) => {
-        e.preventDefault()
-    }
+    // public handleShortCut = (e: KeyboardEvent) => {
+    //     const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
 
-    public handleShortCut = (e: KeyboardEvent) => {
-        const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
+    //     if (document.activeElement && document.activeElement.matches('input:not(:disabled),textarea:not(:disabled),select:not(:disabled)')) return
 
-        if (document.activeElement && document.activeElement.matches('input:not(:disabled),textarea:not(:disabled),select:not(:disabled)')) return
-
-        if (e.code === 'Space') {
-            previewPlayed
-                ? AppActions.stopPreview()
-                : AppActions.startPreview(activeComp!.id, currentPreviewFrame)
-        }
-    }
-
-    private projectAutoSaveTimer = () =>
-    {
-        AppActions.autoSaveProject()
-    }
+    //     if (e.code === 'Space') {
+    //         previewPlayed
+    //             ? AppActions.stopPreview()
+    //             : AppActions.startPreview(activeComp!.id, currentPreviewFrame)
+    //     }
+    // }
 
     public render()
     {
@@ -59,7 +52,7 @@ export default class AppView extends React.PureComponent<Props>
             <div className='_container' onDrop={this.prevent}>
                 <AppMenu />
                 <NavigationView />
-                <Workspace className='app-body' direction='vertical'>
+                {/* <Workspace className='app-body' direction='vertical'>
                     <Pane className='body-pane'>
                         <Workspace direction='horizontal'>
                             <AssetsView />
@@ -69,8 +62,17 @@ export default class AppView extends React.PureComponent<Props>
                     <Timeline />
                 </Workspace>
                 <StatusBar />
-                <Notifications />
+                <Notifications /> */}
             </div>
         )
     }
-}
+
+    private prevent = (e: any) => {
+        e.preventDefault()
+    }
+
+    // private projectAutoSaveTimer = () =>
+    // {
+    //     AppActions.autoSaveProject()
+    // }
+})

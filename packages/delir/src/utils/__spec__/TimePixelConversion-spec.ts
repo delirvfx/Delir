@@ -1,5 +1,5 @@
-import {} from 'mocha'
 import {} from 'expect.js'
+import {} from 'mocha'
 
 import TimePixelConversion from '../TimePixelConversion'
 

@@ -23,8 +23,8 @@ const replacePlaceHolder = (text: string, params: {[name: string]: any}): string
 export default (json: I18nTexts) => {
     const lang = __DEV__ ? 'en' : navigator.language
 
-    return (key: string|string[], params?: {[name: string]: any}): string => {
-        const text = (_.get(json[lang], key) || _.get(json.en, key)) as string|null
+    return (key: string | string[], params?: {[name: string]: any}): string => {
+        const text = (_.get(json[lang], key) || _.get(json.en, key)) as string | null
 
         if (text == null) {
             throw new Error(`Missing translation key \`${key}\``)

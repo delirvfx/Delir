@@ -35,7 +35,7 @@ module.exports = {
     publicPath: '/',
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx'],
+    extensions: ['.js', '.ts', '.tsx', '.node'],
     modules: [
       "node_modules"
     ],
@@ -98,9 +98,15 @@ module.exports = {
                   : '[hash:base64:7]'
               }
             },
-            { loader: 'postcss-loader' }
+            {
+              loader: 'postcss-loader',
+            }
           ]
         })
+      },
+      {
+        test: /\.node$/,
+        loader: 'node-loader',
       }
     ]
   },

@@ -1,6 +1,5 @@
-import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import * as classnames from 'classnames'
+import * as React from 'react'
 
 interface LabelInputProps {
     className?: string
@@ -13,20 +12,11 @@ interface LabelInputProps {
 
 interface LabelInputState {
     readOnly: boolean
-    value: string|undefined
+    value: string | undefined
 }
 
 export default class LabelInput extends React.Component<LabelInputProps, LabelInputState>
 {
-    public static propTypes = {
-        className: PropTypes.string,
-        name: PropTypes.string,
-        defaultValue: PropTypes.string,
-        placeholder: PropTypes.string,
-        onChange: PropTypes.func,
-        doubleClickToEdit: PropTypes.bool,
-    }
-
     public static defaultProps = {
         doubleClickToEdit: false,
     }
@@ -45,6 +35,31 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         this.setState({readOnly: false})
         this.refs.input.focus()
         this.refs.input.select()
+    }
+
+    public render()
+    {
+        const {
+            props: {className, name, placeholder},
+            state: {value, readOnly},
+        } = this
+
+        return (
+            <input
+                ref='input'
+                type='text'
+                tabIndex={-1}
+                className={classnames('_label-input', className)}
+                name={name}
+                value={value}
+                placeholder={placeholder}
+                readOnly={readOnly}
+                onChange={this.valueChanged}
+                onKeyDown={this.onKeyDown}
+                onBlur={this.onBlur}
+                onDoubleClick={this.onDoubleClick}
+            />
+        )
     }
 
     private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>
@@ -87,30 +102,5 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
     private valueChanged = e =>
     {
         this.setState({value: this.refs.input.value})
-    }
-
-    public render()
-    {
-        const {
-            props: {className, name, placeholder},
-            state: {value, readOnly},
-        } = this
-
-        return (
-            <input
-                ref='input'
-                type='text'
-                tabIndex={-1}
-                className={classnames('_label-input', className)}
-                name={name}
-                value={value}
-                placeholder={placeholder}
-                readOnly={readOnly}
-                onChange={this.valueChanged}
-                onKeyDown={this.onKeyDown}
-                onBlur={this.onBlur}
-                onDoubleClick={this.onDoubleClick}
-            />
-        )
     }
 }

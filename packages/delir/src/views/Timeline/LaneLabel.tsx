@@ -1,13 +1,12 @@
-import * as React from 'react'
+import * as Delir from '@ragg/delir-core'
 import * as classnames from 'classnames'
-import * as PropTypes from 'prop-types'
+import * as React from 'react'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'
-import * as Delir from 'delir-core'
 
-import ProjectModActions from '../../actions/ProjectMod'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
+import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 import LabelInput from '../components/label-input'
-import {ContextMenu, MenuItem, MenuItemOption} from '../components/ContextMenu'
 
 import t from './LaneLabel.i18n'
 import * as s from './LaneLabel.sass'
@@ -30,31 +29,7 @@ const SortHandle = SortableHandle(() => (
 
 class LaneLabel extends React.Component<Props>
 {
-    static propTypes = {
-        editor: PropTypes.object.isRequired,
-        layer: PropTypes.object.isRequired,
-        onSelect: PropTypes.func.isRequired,
-        onRemove: PropTypes.func.isRequired,
-    }
-
     private layerNameInput: LabelInput
-
-    private layerNameChanged = (value: string) =>
-    {
-        const {layer} = this.props
-        ProjectModActions.modifyLayer(layer.id!, {name: value})
-    }
-
-    private focusToLayerNameInput = () =>
-    {
-        this.layerNameInput.enableAndFocus()
-    }
-
-    private bindLayerNameInput = (el: LabelInput) => this.layerNameInput = el
-
-    private onSelect = ({ currentTarget }: React.MouseEvent<HTMLLIElement>) => this.props.onSelect(currentTarget.dataset.layerId!)
-
-    private onRemove = ({ dataset }: MenuItemOption<{layerId: string}>) => this.props.onRemove(dataset.layerId)
 
     public render()
     {
@@ -86,6 +61,23 @@ class LaneLabel extends React.Component<Props>
             </ul>
         )
     }
+
+    private layerNameChanged = (value: string) =>
+    {
+        const {layer} = this.props
+        ProjectModActions.modifyLayer(layer.id!, {name: value})
+    }
+
+    private focusToLayerNameInput = () =>
+    {
+        this.layerNameInput.enableAndFocus()
+    }
+
+    private bindLayerNameInput = (el: LabelInput) => this.layerNameInput = el
+
+    private onSelect = ({ currentTarget }: React.MouseEvent<HTMLLIElement>) => this.props.onSelect(currentTarget.dataset.layerId!)
+
+    private onRemove = ({ dataset }: MenuItemOption<{layerId: string}>) => this.props.onRemove(dataset.layerId)
 }
 
 export default SortableElement((props: Props) => (

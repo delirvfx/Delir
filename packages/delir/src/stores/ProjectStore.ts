@@ -1,212 +1,247 @@
-import * as _ from 'lodash'
-import {ReduceStore} from 'flux/utils'
-import * as uuid from 'uuid'
+import * as Delir from '@ragg/delir-core'
+import { ProjectHelper } from '@ragg/delir-core'
+import { listen, Store } from '@ragg/fleur'
 
-import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
-
-import dispatcher from '../utils/Flux/Dispatcher'
-import Record from '../utils/Record'
-import {KnownPayload} from '../actions/PayloadTypes'
-import {DispatchTypes as AppActionsDispatchTypes} from '../actions/App'
-import {DispatchTypes as ProjectModDispatchTypes} from '../actions/ProjectMod'
-
-type StateRecord = Record<ProjectStoreState>
+import { ProjectModActions } from '../actions/actions'
 
 export interface ProjectStoreState {
-    project: Delir.Project.Project|null,
+    project: Delir.Project.Project | null,
     lastChangeTime: number,
 }
 
-class ProjectStore extends ReduceStore<StateRecord, KnownPayload>
+export default class ProjectStore extends Store<ProjectStoreState>
 {
-    getInitialState(): StateRecord
-    {
-        return new Record({
-            project: null,
-            lastChangeTime: 0,
-        })
+    public static storeName = 'ProjectStore'
+
+    protected state = {
+        project: null,
+        lastChangeTime: 0,
     }
 
-    areEqual(a: StateRecord, b: StateRecord): boolean
-    {
-        const equal = a.equals(b)
-        __DEV__ && !equal && console.log('📷 Project updated')
-        return equal
-    }
+    // @ts-ignore
+    private handleSetActiveProject = listen(ProjectModActions.setActiveProjectAction, (payload) => {
+        this.updateWith(d => d.project = payload.project)
+    })
 
-    reduce(state: StateRecord, payload: KnownPayload)
-    {
-        const project: Delir.Project.Project = state.get('project')!
-        if (payload.type !== AppActionsDispatchTypes.SetActiveProject && project == null) return state
+    // @ts-ignore
+    private handleClearActiveProject = listen(ProjectModActions.clearActiveProjectAction, (payload) => {
+        this.updateWith(d => d.project = null)
+    })
 
-        switch (payload.type) {
-            case AppActionsDispatchTypes.SetActiveProject:
-                return state.set('project', payload.entity.project)
+    // @ts-ignore
+    private handleCreateComposition = listen(ProjectModActions.createCompositionAction, (payload) => {
+        const { project } = this.state
+        const newLayer = new Delir.Project.Layer()
+        ProjectHelper.addComposition(project!, payload.composition)
+        ProjectHelper.addLayer(project!, payload.composition, newLayer)
+        this.updateLastModified()
+    })
 
-            case AppActionsDispatchTypes.ClearActiveProject:
-                return state.set('project', null)
+    // @ts-ignore
+    private handleCreateLayer = listen(ProjectModActions.createLayerAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.addLayer(project!, payload.targetCompositionId, payload.layer)
+        this.updateLastModified()
+    })
 
-            case ProjectModDispatchTypes.CreateComposition:
-                const newLayer = new Delir.Project.Layer()
-                ProjectHelper.addComposition(project!, payload.entity.composition)
-                ProjectHelper.addLayer(project!, payload.entity.composition, newLayer)
-                break
+    // @ts-ignore
+    private handleCreateClip = listen(ProjectModActions.createClipAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.addClip(project!, payload.targetLayerId, payload.newClip)
+        this.updateLastModified()
+    })
 
-            case ProjectModDispatchTypes.CreateLayer:
-                ProjectHelper.addLayer(project!, payload.entity.targetCompositionId, payload.entity.layer)
-                break
+    // @ts-ignore
+    private handleAddClip = listen(ProjectModActions.addClipAction, (payload) => {
+        const { project } = this.state
+        const { targetLayer, newClip } = payload
+        ProjectHelper.addClip(project, targetLayer, newClip)
+        this.updateLastModified()
+    })
 
-            case ProjectModDispatchTypes.CreateClip:
-                ProjectHelper.addClip(project!, payload.entity.targetLayerId, payload.entity.newClip)
-                break
+    // @ts-ignore
+    private handleAddLayer = listen(ProjectModActions.addLayerAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.addLayer(project!, payload.targetComposition, payload.layer)
+        this.updateLastModified()
+    })
 
-            case ProjectModDispatchTypes.AddClip:
-                const {targetLayer, newClip} = payload.entity
-                ProjectHelper.addClip(project, targetLayer, newClip)
-                break
+    // @ts-ignore
+    private handleAddLayerWithAsset = listen(ProjectModActions.addLayerWithAssetAction, (payload) => {
+        const { project } = this.state
+        const { targetComposition, clip, asset: registeredAsset } = payload
+        const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
 
-            case ProjectModDispatchTypes.AddLayer:
-                ProjectHelper.addLayer(project!, payload.entity.targetComposition, payload.entity.layer)
-                break
+        if (propName == null) return
+        ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
+            frameOnClip: 0,
+            value: { assetId: registeredAsset.id },
+        }))
 
-            case ProjectModDispatchTypes.AddLayerWithAsset:
-                (() => {
-                    const {targetComposition, clip, asset: registeredAsset} = payload.entity
-                    const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
+        const layer = new Delir.Project.Layer()
+        ProjectHelper.addLayer(project, targetComposition, layer)
+        ProjectHelper.addClip(project, layer, clip)
+        this.updateLastModified()
+    })
 
-                    if (propName == null) return
-                    ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
-                        frameOnClip: 0,
-                        value: {assetId: registeredAsset.id},
-                    }))
+    // @ts-ignore
+    private handleAddAsset = listen(ProjectModActions.addAssetAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.addAsset(project!, payload.asset)
+        this.updateLastModified()
+    })
 
-                    const layer = new Delir.Project.Layer
-                    ProjectHelper.addLayer(project, targetComposition, layer)
-                    ProjectHelper.addClip(project, layer, clip)
-                })()
-                break
+    // @ts-ignore
+    private handleAddKeyframe = listen(ProjectModActions.addKeyframeAction, (payload) => {
+        const { project } = this.state
+        const { targetClip, propName, keyframe } = payload
+        ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
+        this.updateLastModified()
+    })
 
-            case ProjectModDispatchTypes.AddAsset:
-                ProjectHelper.addAsset(project!, payload.entity.asset)
-                break
+    // @ts-ignore
+    private handleAddEffectIntoClipPayload = listen(ProjectModActions.addEffectIntoClipPayloadAction, (payload) => {
+        const { project } = this.state
+        const { clipId, effect } = payload
+        ProjectHelper.addEffect(project!, clipId, effect)
+        this.updateLastModified()
+    })
 
-            case ProjectModDispatchTypes.AddKeyframe: {
-                const {targetClip, propName, keyframe} = payload.entity
-                ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
-                break
-            }
+    // @ts-ignore
+    private handleAddEffectKeyframe = listen(ProjectModActions.addEffectKeyframeAction, (payload) => {
+        const { project } = this.state
+        const { targetClipId, targetEffectId, propName, keyframe } = payload
+        ProjectHelper.addEffectKeyframe(project, targetClipId, targetEffectId, propName, keyframe)
+        this.updateLastModified()
+    })
 
-            case ProjectModDispatchTypes.AddEffectIntoClipPayload: {
-                const { clipId, effect } = payload.entity
-                ProjectHelper.addEffect(project!, clipId, effect)
-                break
-            }
+    // @ts-ignore
+    private handleMoveClipToLayer = listen(ProjectModActions.moveClipToLayerAction, (payload) => {
+        const { project } = this.state
+        const targetClip = ProjectHelper.findClipById(project!, payload.clipId)
+        const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.clipId)
+        const destLane = ProjectHelper.findLayerById(project!, payload.targetLayerId)
 
-            case ProjectModDispatchTypes.AddEffectKeyframe: {
-                const { targetClipId, targetEffectId, propName, keyframe } = payload.entity
-                ProjectHelper.addEffectKeyframe(project, targetClipId, targetEffectId, propName, keyframe)
-                break
-            }
-
-            case ProjectModDispatchTypes.MoveClipToLayer: {
-                const targetClip = ProjectHelper.findClipById(project!, payload.entity.clipId)
-                const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.entity.clipId)
-                const destLane = ProjectHelper.findLayerById(project!, payload.entity.targetLayerId)
-
-                if (targetClip == null || sourceLane == null || destLane == null) break
-
-                ProjectHelper.deleteClip(project!, targetClip)
-                ProjectHelper.addClip(project!, destLane, targetClip)
-                break
-            }
-
-            case ProjectModDispatchTypes.ModifyComposition:
-                ProjectHelper.modifyComposition(project!, payload.entity.targetCompositionId, payload.entity.patch)
-                break
-
-            case ProjectModDispatchTypes.ModifyLayer:
-                ProjectHelper.modifyLayer(project!, payload.entity.targetLayerId, payload.entity.patch)
-                break
-
-            case ProjectModDispatchTypes.ModifyClip:
-                ProjectHelper.modifyClip(project!, payload.entity.targetClipId, payload.entity.patch)
-                break
-
-            case ProjectModDispatchTypes.ModifyClipExpression: {
-                const {targetClipId, targetProperty, expr} = payload.entity
-                ProjectHelper.modifyClipExpression(project!, targetClipId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
-                break
-            }
-
-            case ProjectModDispatchTypes.ModifyEffectExpression: {
-                const {targetClipId, targetEffectId, targetProperty, expr} = payload.entity
-                ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
-                break
-            }
-
-            case ProjectModDispatchTypes.ModifyKeyframe: {
-                ProjectHelper.modifyKeyframe(project!, payload.entity.targetKeyframeId, payload.entity.patch)
-                break
-            }
-
-            case ProjectModDispatchTypes.ModifyEffectKeyframe: {
-                const { targetClipId, effectId, targetKeyframeId, patch } = payload.entity
-                ProjectHelper.modifyEffectKeyframe(project!, targetClipId, effectId, targetKeyframeId, patch)
-                break
-            }
-
-            case ProjectModDispatchTypes.MoveLayerOrder: {
-                const { parentCompositionId, targetLayerId, newIndex } = payload.entity
-                ProjectHelper.moveLayerOrder(project, parentCompositionId, targetLayerId, newIndex)
-                break
-            }
-
-            case ProjectModDispatchTypes.RemoveComposition:
-                ProjectHelper.deleteComposition(project!, payload.entity.targetCompositionId)
-                break
-
-            case ProjectModDispatchTypes.RemoveLayer:
-                ProjectHelper.deleteLayer(project!, payload.entity.targetLayerId)
-                break
-
-            case ProjectModDispatchTypes.RemoveClip:
-                ProjectHelper.deleteClip(project!, payload.entity.targetClipId)
-                break
-
-            case ProjectModDispatchTypes.RemoveAsset:
-                ProjectHelper.deleteAsset(project!, payload.entity.targetAssetId)
-                break
-
-            case ProjectModDispatchTypes.RemoveKeyframe:
-                ProjectHelper.deleteKeyframe(project!, payload.entity.targetKeyframeId)
-                break
-
-            case ProjectModDispatchTypes.RemoveEffectKeyframe: {
-                const { clipId, effectId, targetKeyframeId } = payload.entity
-                ProjectHelper.deleteEffectKeyframe(project!, clipId, effectId, targetKeyframeId)
-                break
-            }
-
-            case ProjectModDispatchTypes.RemoveEffectFromClip: {
-                const { holderClipId, targetEffectId } = payload.entity
-                ProjectHelper.deleteEffectFromClip(project, holderClipId, targetEffectId)
-                break
-            }
-
-            default:
-                return state
+        if (targetClip == null || sourceLane == null || destLane == null) {
+            ProjectHelper.deleteClip(project!, targetClip)
+            ProjectHelper.addClip(project!, destLane, targetClip)
+            this.updateLastModified()
         }
+    })
 
+    // @ts-ignore
+    private handleModifyComposition = listen(ProjectModActions.modifyCompositionAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.modifyComposition(project!, payload.targetCompositionId, payload.patch)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleModifyLayer = listen(ProjectModActions.modifyLayerAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.modifyLayer(project!, payload.targetLayerId, payload.patch)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleModifyClip = listen(ProjectModActions.modifyClipAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.modifyClip(project!, payload.targetClipId, payload.patch)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleModifyClipExpression = listen(ProjectModActions.modifyClipExpressionAction, (payload) => {
+        const { project } = this.state
+        const { targetClipId, targetProperty, expr } = payload
+        ProjectHelper.modifyClipExpression(project!, targetClipId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleModifyEffectExpression = listen(ProjectModActions.modifyEffectExpressionAction, (payload) => {
+        const { project } = this.state
+        const { targetClipId, targetEffectId, targetProperty, expr } = payload
+        ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleModifyKeyframe = listen(ProjectModActions.modifyKeyframeAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.modifyKeyframe(project!, payload.targetKeyframeId, payload.patch)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleModifyEffectKeyframe = listen(ProjectModActions.modifyEffectKeyframeAction, (payload) => {
+        const { project } = this.state
+        const { targetClipId, effectId, targetKeyframeId, patch } = payload
+        ProjectHelper.modifyEffectKeyframe(project!, targetClipId, effectId, targetKeyframeId, patch)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleMoveLayerOrder = listen(ProjectModActions.moveLayerOrderAction, (payload) => {
+        const { project } = this.state
+        const { parentCompositionId, targetLayerId, newIndex } = payload
+        ProjectHelper.moveLayerOrder(project, parentCompositionId, targetLayerId, newIndex)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleRemoveComposition = listen(ProjectModActions.removeCompositionAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.deleteComposition(project!, payload.targetCompositionId)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleRemoveLayer = listen(ProjectModActions.removeLayerAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.deleteLayer(project!, payload.targetLayerId)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleRemoveClip = listen(ProjectModActions.removeClipAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.deleteClip(project!, payload.targetClipId)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleRemoveAsset = listen(ProjectModActions.removeAssetAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.deleteAsset(project!, payload.targetAssetId)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleRemoveKeyframe = listen(ProjectModActions.removeKeyframeAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.deleteKeyframe(project!, payload.targetKeyframeId)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleRemoveEffectKeyframe = listen(ProjectModActions.removeEffectKeyframeAction, (payload) => {
+        const { project } = this.state
+        const { clipId, effectId, targetKeyframeId } = payload
+        ProjectHelper.deleteEffectKeyframe(project!, clipId, effectId, targetKeyframeId)
+        this.updateLastModified()
+    })
+
+    // @ts-ignore
+    private handleRemoveEffectFromClip = listen(ProjectModActions.removeEffectFromClipAction, (payload) => {
+        const { project } = this.state
+        const { holderClipId, targetEffectId } = payload
+        ProjectHelper.deleteEffectFromClip(project, holderClipId, targetEffectId)
+        this.updateLastModified()
+    })
+
+    private updateLastModified = () => {
         // Projectの変更は検知できないし、構造が大きくなる可能性があるので今のところImmutableにもしたくない
-        return state.set('lastChangeTime', Date.now())
+        this.updateWith(d => d.lastChangeTime = Date.now())
     }
 }
-
-const store = new ProjectStore(dispatcher)
-
-if (__DEV__) {
-    _.set(window, 'app.store.ProjectModifyStore', store)
-}
-
-export default store

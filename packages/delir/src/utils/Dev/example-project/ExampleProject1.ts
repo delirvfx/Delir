@@ -1,8 +1,7 @@
-import * as Delir from 'delir-core'
-import {ProjectHelper, Values} from 'delir-core'
-import {join} from 'path'
-import AppActions from '../../../actions/App'
-
+import * as Delir from '@ragg/delir-core'
+import { ProjectHelper, Values } from '@ragg/delir-core'
+import { join } from 'path'
+import * as AppActions from '../../../actions/App'
 
 const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest as any, ...sources)
 
@@ -34,7 +33,7 @@ const imageAsset = assign(new Delir.Project.Asset(), {
     path: join(process.cwd(), 'image.jpg'),
 })
 
-;[movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => ProjectHelper.addAsset(p, a))
+; [movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => ProjectHelper.addAsset(p, a))
 
 // Maser Composition
 const c1 = new Delir.Project.Composition()
@@ -161,7 +160,7 @@ const c1_t4_cl1 = assign(new Delir.Project.Clip(), {
 })
 
 ProjectHelper.addComposition(p, c1)
-;[c1_t1, c1_t2, c1_t3, c1_t4].forEach(lane => ProjectHelper.addLayer(p, c1, lane))
+; [c1_t1, c1_t2, c1_t3, c1_t4].forEach(lane => ProjectHelper.addLayer(p, c1, lane))
 
 // console.log(ProjectHelper.addClip())
 // ProjectHelper.addClip(p, c1_t1, c1_t1_cl1)
@@ -214,15 +213,12 @@ ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Project.Effect(), {
 //     assign(new Delir.Project.Keyframe, {frameOnClip: 0, value: true})
 // ])
 
-
-
-
 // Sub Composition
-const c2 = new Delir.Project.Composition
-const c2_t1 = new Delir.Project.Layer
-const c2_t1_l1 = new Delir.Project.Clip
-const c2_t1_l2 = new Delir.Project.Clip
-const c2_t1_l3 = new Delir.Project.Clip
+const c2 = new Delir.Project.Composition()
+const c2_t1 = new Delir.Project.Layer()
+const c2_t1_l1 = new Delir.Project.Clip()
+const c2_t1_l2 = new Delir.Project.Clip()
+const c2_t1_l3 = new Delir.Project.Clip()
 c2.name = 'Sub Composition'
 c2_t1_l1.placedFrame = 20
 c2_t1_l2.placedFrame = 40
@@ -238,6 +234,5 @@ ProjectHelper.addClip(p, c2_t1, c2_t1_l2)
 // ProjectHelper.addClip(p, c2_t1, c2_t1_l3)
 // ProjectHelper.addKeyframe(p, c1_t1_l1, new Delir.Project.Keyframe)
 
-
-AppActions.setActiveProject(p);
+AppActions.setActiveProject(p)
 AppActions.changeActiveComposition(c1.id!)

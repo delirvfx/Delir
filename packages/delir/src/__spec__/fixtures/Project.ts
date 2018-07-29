@@ -1,6 +1,6 @@
-import * as Delir from 'delir-core'
-import {ProjectHelper, Values} from 'delir-core'
-import {join} from 'path'
+import * as Delir from '@ragg/delir-core'
+import { ProjectHelper, Values } from '@ragg/delir-core'
+import { join } from 'path'
 
 const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest as any, ...sources)
 
@@ -32,7 +32,7 @@ const imageAsset = assign(new Delir.Project.Asset(), {
     path: join(process.cwd(), 'image.jpg'),
 })
 
-;[movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => ProjectHelper.addAsset(project, a))
+; [movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => ProjectHelper.addAsset(project, a))
 
 // Maser Composition
 const c1 = assign(new Delir.Project.Composition(), {
@@ -144,7 +144,7 @@ const imageClip = assign(new Delir.Project.Clip(), {
 })
 
 ProjectHelper.addComposition(project, c1)
-;[layer1, layer2, layer3, layer4].forEach(lane => ProjectHelper.addLayer(project, c1, lane))
+; [layer1, layer2, layer3, layer4].forEach(lane => ProjectHelper.addLayer(project, c1, lane))
 
 ProjectHelper.addClip(project, layer1, imageClip)
 ProjectHelper.addClip(project, layer2, audioClip)
