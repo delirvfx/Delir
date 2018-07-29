@@ -1,6 +1,6 @@
 {
   "name": "@ragg/fleur",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "lib/index.js",
   "types": "typings/index.d.ts",
   "author": "Ragg<ragg.devpr@gmail.com>",
