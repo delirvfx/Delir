@@ -98,7 +98,9 @@ module.exports = {
                   : '[hash:base64:7]'
               }
             },
-            { loader: 'postcss-loader' }
+            {
+              loader: 'postcss-loader',
+            }
           ]
         })
       }
