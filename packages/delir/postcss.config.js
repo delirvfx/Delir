@@ -1,3 +1,3 @@
 module.exports = {
-  parser: "postcss-sass",
+  parser: 'postcss-sass',
 };
