@@ -31,7 +31,7 @@ const paths = {
 };
 
 const isWindows = os.type() === 'Windows_NT'
-const DELIR_ENV = process.env.DELIR_ENV
+const __DEV__ = process.env.DELIR_ENV === 'development'
 
 export function buildBrowserJs() {
     return g.src([join(paths.src.browser, "**/*.js")])
@@ -101,8 +101,8 @@ export async function symlinkDependencies(done) {
 
 export function compileRendererJs(done) {
     webpack({
-        target: "electron",
-        watch: DELIR_ENV === 'dev',
+        target: "electron-renderer",
+        watch: __DEV__,
         context: paths.src.root,
         entry: {
             'frontend/main': ['./frontend/require-hook', './frontend/main'],
@@ -112,7 +112,7 @@ export function compileRendererJs(done) {
             sourceMapFilename: "map/[file].map",
             path: paths.compiled.root,
         },
-        devtool: DELIR_ENV === 'dev' ? "#source-map" : 'none',
+        devtool: __DEV__ ? "#source-map" : 'none',
         externals: [
             (ctx, request, callback) => {
                 if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
@@ -163,7 +163,7 @@ export function compileRendererJs(done) {
                             loader: 'css-loader',
                             options: {
                                 modules: true,
-                                localIdentName: DELIR_ENV === 'dev'
+                                localIdentName: __DEV__
                                     ? '[path][name]__[local]--[emoji:4]'
                                     : '[local]--[hash:base64:5]',
                             },
@@ -177,7 +177,7 @@ export function compileRendererJs(done) {
         },
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: paths.compiled.frontend}),
-            new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
+            new webpack.DefinePlugin({__DEV__: JSON.stringify(__DEV__)}),
             new webpack.LoaderOptionsPlugin({
                 test: /\.styl$/,
                 stylus: {
@@ -186,7 +186,7 @@ export function compileRendererJs(done) {
                     }
                 }
             }),
-            ...(DELIR_ENV === 'dev' ? [] : [
+            ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),
             ])
@@ -206,13 +206,13 @@ export function compileRendererJs(done) {
 
 export async function compilePlugins(done) {
     webpack({
-        target: "electron",
-        watch: DELIR_ENV === 'dev',
+        target: "electron-renderer",
+        watch: __DEV__,
         context: paths.src.plugins,
         entry: {
             'chromakey/index': './chromakey/index',
             'the-world/index': './the-world/index',
-            ...(DELIR_ENV === 'dev' ? {
+            ...(__DEV__ ? {
                 'filler/index': '../experimental-plugins/filler/index',
                 'mmd/index': '../experimental-plugins/mmd/index',
                 // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
@@ -225,7 +225,7 @@ export async function compilePlugins(done) {
             path: paths.compiled.plugins,
             libraryTarget: 'commonjs-module',
         },
-        devtool: DELIR_ENV === 'dev' ? "#source-map" : 'none',
+        devtool: __DEV__ ? "#source-map" : 'none',
         externals: [
             (ctx, request: string, callback) => {
                 if (request !== 'delir-core') return callback()
@@ -259,8 +259,8 @@ export async function compilePlugins(done) {
         },
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
-            new webpack.DefinePlugin({__DEV__: JSON.stringify(DELIR_ENV === 'dev')}),
-            ...(DELIR_ENV === 'dev' ? [] : [
+            new webpack.DefinePlugin({__DEV__: JSON.stringify(__DEV__)}),
+            ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),
             ])
@@ -284,7 +284,7 @@ export function copyPluginsPackageJson() {
 }
 
 export function copyExperimentalPluginsPackageJson() {
-    return DELIR_ENV === 'dev' ?
+    return __DEV__ ?
         g.src(join(paths.src.root, 'experimental-plugins/*/package.json'))
             .pipe(g.dest(paths.compiled.plugins))
         : Promise.resolve()
