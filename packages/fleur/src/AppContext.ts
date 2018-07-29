@@ -17,7 +17,7 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
     public readonly operationContext: OperationContext<any>
     public readonly componentContext: ComponentContext
     public readonly stores: Map<string, Store<any>> = new Map()
-    public readonly actionCallbackMap: Map<StoreClass, Map<ActionIdentifier<any>, (payload: any) => void>> = new Map()
+    public readonly actionCallbackMap: Map<StoreClass, Map<ActionIdentifier<any>, ((payload: any) => void)[]>> = new Map()
 
     constructor(private app: Fleur) {
         this.dispatcher = new Dispatcher()
@@ -72,27 +72,25 @@ export default class AppContext<Actions extends ActionIdentifier<any> = ActionId
         }
 
         const store = new StoreClass()
-        const actionCallbackMap = new Map()
+        const actionCallbackMap = new Map<ActionIdentifier<any>, ((payload: any) => void)[]>()
         this.stores.set(StoreClass.storeName, store)
 
         Object.keys(store)
             .filter(key => (store as any)[key] != null && (store as any)[key].__fleurHandler)
             .forEach(key => {
                 const actionIdentifier = (store as any)[key].__action
+                const actionCallbacks = actionCallbackMap.get(actionIdentifier) || []
 
-                if (process.env.NODE_ENV !== 'production') {
-                    invariant(actionCallbackMap.has(actionIdentifier) === false, `Action handler duplicated in store '${StoreClass.storeName}'`)
-                }
-
-                actionCallbackMap.set(actionIdentifier, (store as any)[key].producer)
+                actionCallbacks.push((store as any)[key].producer)
+                actionCallbackMap.set(actionIdentifier, actionCallbacks)
             })
 
         this.actionCallbackMap.set(StoreClass, actionCallbackMap)
 
         this.dispatcher.listen(action => {
             const actionCallbackMap = this.actionCallbackMap.get(StoreClass)!
-            const handler = actionCallbackMap.get(action.type)
-            handler && handler(action.payload)
+            const handlers = actionCallbackMap.get(action.type)
+            handlers && handlers.forEach((handler) => handler(action.payload))
         })
 
         return store
