@@ -1,7 +1,7 @@
 import { remote } from 'electron'
 import React from 'react'
 
-import AppActions from '../../actions/App'
+import * as AppActions from '../../actions/App'
 import EditorStateStore from '../../stores/EditorStateStore'
 
 import Pane from '../components/pane'

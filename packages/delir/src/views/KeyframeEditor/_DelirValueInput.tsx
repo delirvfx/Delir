@@ -2,7 +2,7 @@ import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 import { ChromePicker } from 'react-color'
 
-import AppActions from '../../actions/App'
+import * as AppActions from '../../actions/App'
 
 import DragNumberInput from '../components/drag-number-input'
 import Dropdown from '../components/dropdown'

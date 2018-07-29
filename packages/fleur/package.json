@@ -6,7 +6,7 @@
   "author": "Ragg<ragg.devpr@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "rm -rf typings && tsc --emitDeclarationOnly --declaration --outDir ./typings && tsc --outDir lib",
+    "prepublishOnly": "rm -rf ./{typings,lib} && tsc --emitDeclarationOnly --declaration --outDir ./typings && tsc --outDir lib",
     "test": "jest --verbose"
   },
   "devDependencies": {

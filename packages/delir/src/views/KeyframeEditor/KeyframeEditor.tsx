@@ -14,8 +14,8 @@ import DelirValueInput from './_DelirValueInput'
 import ExpressionEditor from './ExpressionEditor'
 import { default as KeyframeGraph, KeyframePatch } from './KeyframeGraph'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
 import RendererService from '../../services/renderer'
 import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'

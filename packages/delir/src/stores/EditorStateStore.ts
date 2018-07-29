@@ -1,16 +1,8 @@
-import * as _ from 'lodash'
-
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
-
-import { AppActions, DragEntity } from '../actions/App'
-import { KnownPayload } from '../actions/PayloadTypes'
-import { ProjectModActions } from '../actions/ProjectMod'
-import dispatcher from '../utils/Flux/Dispatcher'
-import Record from '../utils/Record'
-
-type StateRecord = Record<EditorState>
+import { AppActions, ProjectModActions } from '../actions/actions'
+import { DragEntity } from '../actions/App'
 
 export interface NotificationEntry {
     id: string
@@ -33,6 +25,8 @@ export interface EditorState {
 }
 
 export default class EditorStateStore extends Store<EditorState> {
+    public static storeName = 'EditorStateStore'
+
     protected state: EditorState = {
         project: null,
         projectPath: null,
@@ -171,4 +165,8 @@ export default class EditorStateStore extends Store<EditorState> {
             d.notifications.splice(idx, 1)
         })
     })
+
+    public getState() {
+        return this.state
+    }
 }

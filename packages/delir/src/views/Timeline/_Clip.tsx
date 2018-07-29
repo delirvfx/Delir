@@ -2,8 +2,8 @@ import * as classnames from 'classnames'
 import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 import RendererService from '../../services/renderer'
 import { ContextMenu, MenuItem, MenuItemOption, MenuItemProps } from '../components/ContextMenu'
 
@@ -137,7 +137,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
     private addEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
     {
-        ProjectModActions.addEffectIntoClipPayload(dataset.clipId, dataset.effectId)
+        ProjectModActions.addEffectIntoClip(dataset.clipId, dataset.effectId)
         AppActions.seekPreviewFrame()
     }
 

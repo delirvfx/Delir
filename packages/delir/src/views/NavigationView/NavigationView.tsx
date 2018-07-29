@@ -1,24 +1,24 @@
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import { remote } from 'electron'
 import * as path from 'path'
 import * as React from 'react'
-import connectToStores from '../../utils/Flux/connectToStores'
 
-import AppActions from '../../actions/App'
-import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
+import * as AppActions from '../../actions/App'
+import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
 
 import Pane from '../components/pane'
 
 import * as s from './style.sass'
 
-interface NavigationViewProps {
+interface OwnProps {
     editor: EditorState,
 }
 
-@connectToStores([EditorStateStore], () => ({
-    editor: EditorStateStore.getState()
-}))
-export default class NavigationView extends React.Component<NavigationViewProps, null>
-{
+type Props = OwnProps & ContextProp
+
+export default withComponentContext(connectToStores([EditorStateStore], context => ({
+    editor: context.getStore(EditorStateStore).getState()
+}))(class NavigationView extends React.Component<Props, null> {
     public render()
     {
         const {project, projectPath, previewPlayed} = this.props.editor
@@ -69,4 +69,4 @@ export default class NavigationView extends React.Component<NavigationViewProps,
         const browserWindow = remote.getCurrentWindow()
         browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
     }
-}
+}))

@@ -2,7 +2,7 @@ import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
 
-import { ProjectModActions } from '../actions/ProjectMod'
+import { ProjectModActions } from '../actions/actions'
 
 export interface ProjectStoreState {
     project: Delir.Project.Project | null,
@@ -11,6 +11,8 @@ export interface ProjectStoreState {
 
 export default class ProjectStore extends Store<ProjectStoreState>
 {
+    public static storeName = 'ProjectStore'
+
     protected state = {
         project: null,
         lastChangeTime: 0,

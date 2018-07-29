@@ -3,7 +3,7 @@ import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'
 
-import ProjectModActions from '../../actions/ProjectMod'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 import LabelInput from '../components/label-input'

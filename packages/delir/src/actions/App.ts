@@ -1,18 +1,14 @@
 import * as Delir from '@ragg/delir-core'
-import { action, operation, operations } from '@ragg/fleur'
+import { operation } from '@ragg/fleur'
 import { BSON } from 'bson'
 import { remote } from 'electron'
 import * as fs from 'fs-promise'
-import * as keyMirror from 'keymirror'
 import * as _ from 'lodash'
 import * as path from 'path'
 
-import dispatcher from '../utils/Flux/Dispatcher'
-import Payload from '../utils/Flux/Payload'
-
 import RendererService from '../services/renderer'
 import EditorStateStore from '../stores/EditorStateStore'
-
+import { AppActions } from './actions'
 import t from './App.i18n'
 
 export type DragEntity =
@@ -20,28 +16,12 @@ export type DragEntity =
     | { type: 'clip', clip: Delir.Project.Clip }
     | { type: 'clip-resizing', clip: Delir.Project.Clip }
 
-export const AppActions = {
-    setActiveProjectAction: action<{ project: Delir.Project.Project, path?: string }>(),
-    clearActiveProjectAction: action<null>(),
-    setDragEntityAction: action<DragEntity>(),
-    clearDragEntityAction: action<{}>(),
-    changeActiveCompositionAction: action<{ compositionId: string }>(),
-    changeActiveClipAction: action<{ clipId: string }>(),
-    startPreviewAction: action<{ compositionId: string, beginFrame: number }>(),
-    stopPreviewAction: action<{}>(),
-    renderDestinateAction: action<{ compositionId: string }>(),
-    updateProcessingStateAction: action<{ stateText: string }>(),
-    addMessageAction: action<{ id: string, title?: string, level: 'info' | 'error', message: string, detail?: string }>(),
-    removeMessageAction: action<{ id: string }>(),
-    seekPreviewFrameAction: action<{ frame: number }>(),
-}
-
 //
 // App services
 //
 export const previewProgressed = operation((context, { currentFrame }: { currentFrame: number }) => {
     context.dispatch
-    // dispatcher.dispatch({
+    // context.dispatch({
     //     type: 'preview-progressed',
     //     payload: {currentFrame}
     // })
@@ -57,18 +37,18 @@ export const openPluginDirectory = operation((context, arg: {}) => {
 // Editor Store
 //
 export const setActiveProject = operation((context, arg: { project: Delir.Project.Project, path?: string }) => {
-    dispatcher.dispatch(AppActions.setActiveProjectAction, {
+    context.dispatch(AppActions.setActiveProjectAction, {
         project: arg.project,
-        path
+        path: arg.path
     })
 })
 
 export const setDragEntity = operation((context, arg: { entity: DragEntity }) => {
-    dispatcher.dispatch(AppActions.setDragEntityAction, arg.entity)
+    context.dispatch(AppActions.setDragEntityAction, arg.entity)
 })
 
 export const clearDragEntity = operation((context, arg: {}) => {
-    dispatcher.dispatch(AppActions.clearDragEntityAction, {})
+    context.dispatch(AppActions.clearDragEntityAction, {})
 })
 
 export const notify = operation((context, arg: {
@@ -80,7 +60,7 @@ export const notify = operation((context, arg: {
 }) => {
     const id = _.uniqueId('notify')
 
-    dispatcher.dispatch(AppActions.addMessageAction, {
+    context.dispatch(AppActions.addMessageAction, {
         id,
         title: arg.title,
         message: arg.message,
@@ -89,60 +69,61 @@ export const notify = operation((context, arg: {
     })
 
     if (arg.timeout != null) {
-        setTimeout(() => { dispatcher.dispatch(AppActions.removeMessageAction, { id })) }, arg.timeout
-    }
+        setTimeout(() => { context.dispatch(AppActions.removeMessageAction, { id }))
+    }, arg.timeout
+}
 })
 
 //
 // Change active element
 //
-export const changeActiveComposition = operation((context, { compositionId } : { compositionId: string }) => {
-    dispatcher.dispatch(AppActions.changeActiveCompositionAction, { compositionId })
+export const changeActiveComposition = operation((context, { compositionId }: { compositionId: string }) => {
+    context.dispatch(AppActions.changeActiveCompositionAction, { compositionId })
 })
 
-export const changeActiveClip = operation((context, {clipId}: { clipId: string }) => {
-    dispatcher.dispatch(AppActions.changeActiveClipAction, { clipId })
+export const changeActiveClip = operation((context, { clipId }: { clipId: string }) => {
+    context.dispatch(AppActions.changeActiveClipAction, { clipId })
 })
 
 //
 // Preview
 //
 export const startPreview = operation((context, { compositionId, beginFrame = 0 }: { compositionId: string, beginFrame: number }) => {
-    dispatcher.dispatch(AppActions.startPreviewAction, { compositionId, beginFrame })
+    context.dispatch(AppActions.startPreviewAction, { compositionId, beginFrame })
 })
 
 export const stopPreview = operation((context) => {
-    dispatcher.dispatch(AppActions.stopPreviewAction, {})
+    context.dispatch(AppActions.stopPreviewAction, {})
 })
 
 export const renderDestinate = operation((context, arg: { compositionId: string }) => {
-    dispatcher.dispatch(AppActions.renderDestinateAction, {
+    context.dispatch(AppActions.renderDestinateAction, {
         compositionId: arg.compositionId
     })
 })
 
 export const updateProcessingState = operation((context, arg: { stateText: string }) => {
-    dispatcher.dispatch(AppActions.updateProcessingStateAction, {
+    context.dispatch(AppActions.updateProcessingStateAction, {
         stateText: arg.stateText
     })
 })
 
 export const seekPreviewFrame = operation((context, { frame = null }: { frame: number | null }) => {
-    const state = EditorStateStore.getState()
+    const state = context.getStore(EditorStateStore).getState()
 
-    const activeComp = state.get('activeComp')
+    const {activeComp} = state
     if (!activeComp) return
 
-    frame = _.isNumber(frame) ? frame : state.get('currentPreviewFrame')
+    frame = _.isNumber(frame) ? frame : state.currentPreviewFrame
     const overloadGuardedFrame = _.clamp(frame, 0, activeComp.durationFrames)
-    dispatcher.dispatch(AppActions.seekPreviewFrameAction, { frame: overloadGuardedFrame })
+    context.dispatch(AppActions.seekPreviewFrameAction, { frame: overloadGuardedFrame })
 })
 
 //
 // Import & Export
 //
 export const newProject = operation(async (context) => {
-    const project = EditorStateStore.getState().get('project')
+    const project = context.getStore(EditorStateStore).getState().project
 
     if (project) {
         const acceptDiscard = window.confirm('現在のプロジェクトの変更を破棄して新しいプロジェクトを開きますか？')
@@ -157,7 +138,7 @@ export const newProject = operation(async (context) => {
 })
 
 export const openProject = operation(async (context) => {
-    const project = EditorStateStore.getState().get('project')
+    const project = context.getStore(EditorStateStore).getState().project
 
     if (project) {
         const acceptDiscard = window.confirm('現在のプロジェクトの変更を破棄してプロジェクトを開きますか？')
@@ -186,20 +167,19 @@ export const openProject = operation(async (context) => {
 })
 
 export const overwriteProject = operation(async (context) => {
-    const state = EditorStateStore.getState()
-    const project = state.get('project')
-    const path = state.get('projectPath')
+    const state = context.getStore(EditorStateStore).getState()
+    const { project, projectPath } = state
 
     if (!project) return
 
-    if (!path) {
+    if (!projectPath) {
         await context.executeOperation(saveProject, {})
         return
     }
 
     const bson = new BSON()
 
-    await fs.writeFile(path, bson.serialize(project.toPreBSON()))
+    await fs.writeFile(projectPath, bson.serialize(project.toPreBSON()))
 
     await context.executeOperation(notify, {
         message: 'Project saved',
@@ -210,7 +190,7 @@ export const overwriteProject = operation(async (context) => {
 })
 
 export const saveProject = operation(async (context) => {
-    const project = EditorStateStore.getState().get('project')
+    const project = context.getStore(EditorStateStore).getState().project
 
     if (!project) return
 
@@ -241,8 +221,8 @@ export const saveProject = operation(async (context) => {
 })
 
 export const autoSaveProject = operation(async (context) => {
-    const project = EditorStateStore.getState().get('project')
-    const projectPath = EditorStateStore.getState().get('projectPath')
+    const project = context.getStore(EditorStateStore).getState().project
+    const projectPath = context.getStore(EditorStateStore).getState().projectPath
 
     if (RendererService.isInRendering) return
 

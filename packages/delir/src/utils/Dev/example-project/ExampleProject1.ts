@@ -1,7 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper, Values } from '@ragg/delir-core'
 import { join } from 'path'
-import AppActions from '../../../actions/App'
+import * as AppActions from '../../../actions/App'
 
 const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest as any, ...sources)
 

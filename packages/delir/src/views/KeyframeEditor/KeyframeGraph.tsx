@@ -5,8 +5,8 @@ import * as React from 'react'
 
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
 import * as s from './KeyframeGraph.sass'
 

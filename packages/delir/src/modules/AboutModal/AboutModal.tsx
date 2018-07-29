@@ -4,10 +4,13 @@ import Button from '../../views/components/Button'
 import Link from '../../views/components/Link'
 import ModalWindow from '../ModalWindow/Controller'
 
-import packageJson from '../../../../package.json'
-import corePackageJSON from '../../../delir-core/package.json'
-import t from './AboutModal.i18n.ts'
+// import corePackageJSON from '../../../../delir-core/package.json'
+// import packageJson from '../../../package.json'
+import t from './AboutModal.i18n'
 import * as s from './AboutModal.sass'
+
+const packageJson = {}
+const corePackageJSON = {}
 
 export const show = (): void => {
     const modal = new ModalWindow({closable: true})

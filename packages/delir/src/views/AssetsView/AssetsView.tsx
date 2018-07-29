@@ -6,8 +6,8 @@ import * as React from 'react'
 
 import { ProjectHelper, Values } from '@ragg/delir-core'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
 import { default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
 import ProjectStore from '../../stores/ProjectStore'

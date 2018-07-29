@@ -6,8 +6,8 @@ import { SortEndHandler } from 'react-sortable-hoc'
 import connectToStores from '../../utils/Flux/connectToStores'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
 import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
 import {default as ProjectStore } from '../../stores/ProjectStore'

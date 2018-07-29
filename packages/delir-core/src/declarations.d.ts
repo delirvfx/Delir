@@ -8,10 +8,6 @@ declare module 'bezier-easing' {
     export default _
 }
 
-declare module 'fs-promise' {
-    export * from 'mz/fs'
-}
-
 declare module 'electron-canvas-to-buffer' {
     const _: (canvas: HTMLCanvasElement, mimeType: string) => Buffer
     export default _
@@ -53,6 +49,3 @@ declare namespace NodeJS {
         require: NodeRequire
     }
 }
-
-// Typing helpers
-declare type Optionalized<T> = {[P in keyof T]?: T[P]}
