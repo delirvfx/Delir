@@ -1,5 +1,5 @@
-import * as classnames from 'classnames'
 import * as Delir from '@ragg/delir-core'
+import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'

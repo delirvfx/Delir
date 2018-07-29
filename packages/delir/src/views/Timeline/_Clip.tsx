@@ -1,5 +1,5 @@
-import * as classnames from 'classnames'
 import * as Delir from '@ragg/delir-core'
+import * as classnames from 'classnames'
 import * as React from 'react'
 
 import * as AppActions from '../../actions/App'
