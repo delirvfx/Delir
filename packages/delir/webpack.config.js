@@ -35,7 +35,7 @@ module.exports = {
     publicPath: '/',
   },
   resolve: {
-    extensions: ['.js', '.ts', '.tsx'],
+    extensions: ['.js', '.ts', '.tsx', '.node'],
     modules: [
       "node_modules"
     ],
@@ -103,6 +103,10 @@ module.exports = {
             }
           ]
         })
+      },
+      {
+        test: /\.node$/,
+        loader: 'node-loader',
       }
     ]
   },
