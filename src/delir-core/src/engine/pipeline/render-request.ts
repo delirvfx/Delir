@@ -2,7 +2,7 @@ import * as _ from 'lodash'
 
 import Composition from '../../project/composition'
 import { KeyframeValueTypes } from '../../project/keyframe'
-import EntityResolver from './entity-resolver'
+import DependencyResolver from './DependencyResolver'
 import PreRenderingRequest from './pre-rendering-request'
 import WebGLContextPool from './WebGLContextPool'
 
@@ -91,7 +91,7 @@ export default class RenderRequest<T = {[propName: string]: KeyframeValueTypes}>
     //
     // Resolver
     //
-    public readonly resolver: EntityResolver
+    public readonly resolver: DependencyResolver
     public readonly glContextPool: WebGLContextPool
 
     // alias

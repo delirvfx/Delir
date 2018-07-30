@@ -7,7 +7,7 @@ import { Clip, Effect } from '../../../project'
 import { KeyframeValueTypes } from '../../../project/keyframe'
 import { AssetPointerScheme } from '../../../project/scheme/keyframe'
 import { Expression } from '../../../values'
-import EntityResolver from '../entity-resolver'
+import DependencyResolver from '../DependencyResolver'
 import { compileTypeScript } from '../ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionContext'
 import ExpressionVM from '../ExpressionVM'
@@ -20,7 +20,7 @@ export default class EffectRenderTask {
         clip: Clip,
         effectCache: WeakMap<Effect, EffectPluginBase>,
         req: RenderRequest,
-        resolver: EntityResolver,
+        resolver: DependencyResolver,
     }): EffectRenderTask {
         const EffectPluginClass = resolver.resolveEffectPlugin(effect.processor)
 

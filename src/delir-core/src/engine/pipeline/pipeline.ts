@@ -21,7 +21,7 @@ import * as KeyframeHelper from '../../helper/keyframe-helper'
 import ProgressPromise from '../../helper/progress-promise'
 import * as ProjectHelper from '../../helper/project-helper'
 import * as RendererFactory from '../renderer'
-import EntityResolver from './entity-resolver'
+import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionContext'
 import RenderingRequest from './render-request'
 import ClipRenderTask from './Task/ClipRenderTask'
@@ -32,7 +32,7 @@ export interface ExpressionExecuters {
     [propName: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes
 }
 
-interface ILayerRenderTask {
+interface LayerRenderTask {
     layerId: string
     clips: ClipRenderTask[]
 }
@@ -258,7 +258,7 @@ export default class Pipeline
         const rootComposition = ProjectHelper.findCompositionById(this._project, compositionId)
         if (!rootComposition) throw new RenderingFailedException('Specified composition not found')
 
-        const resolver = new EntityResolver(this._project, this._pluginRegistry)
+        const resolver = new DependencyResolver(this._project, this._pluginRegistry)
 
         const canvas = document.createElement('canvas') as HTMLCanvasElement
         canvas.width = rootComposition.width
@@ -304,9 +304,9 @@ export default class Pipeline
         })
     }
 
-    private async _taskingStage(this: Pipeline, req: RenderingRequest): Promise<ILayerRenderTask[]>
+    private async _taskingStage(this: Pipeline, req: RenderingRequest): Promise<LayerRenderTask[]>
     {
-        const layerTasks: ILayerRenderTask[] = []
+        const layerTasks: LayerRenderTask[] = []
 
         const renderOrderLayers = req.rootComposition.layers.slice(0).reverse()
         for (const layer of renderOrderLayers) {
@@ -351,7 +351,7 @@ export default class Pipeline
         return layerTasks
     }
 
-    private async _renderStage(req: RenderingRequest, layerRenderTasks: ILayerRenderTask[]): Promise<void>
+    private async _renderStage(req: RenderingRequest, layerRenderTasks: LayerRenderTask[]): Promise<void>
     {
         const destBufferCanvas = req.destCanvas
         const destBufferCtx = destBufferCanvas.getContext('2d')!

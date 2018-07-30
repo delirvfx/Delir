@@ -7,7 +7,7 @@ import Project from '../../project/project'
 import * as ProjectHelper from '../../helper/project-helper'
 import AssetProxy from './AssetProxy'
 
-export default class EntityResolver
+export default class DependencyResolver
 {
     private _project: Project
     private _pluginRegistry: PluginRegistry

@@ -1,6 +1,6 @@
 import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
 import Composition from '../../project/composition'
-import EntityResolver from './entity-resolver'
+import DependencyResolver from './DependencyResolver'
 import WebGLContextPool from './WebGLContextPool'
 
 import * as _ from 'lodash'
@@ -59,7 +59,7 @@ export default class PreRenderingRequest<T = {[propName: string]: ParameterValue
     //
     // Resolver
     //
-    public resolver: EntityResolver
+    public resolver: DependencyResolver
 
     public readonly glContextPool: WebGLContextPool
 

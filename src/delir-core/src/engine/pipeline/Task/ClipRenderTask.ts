@@ -5,7 +5,7 @@ import { Clip } from '../../../project'
 import { Expression } from '../../../values'
 import * as RendererFactory from '../../renderer'
 import { IRenderer } from '../../renderer/renderer-base'
-import EntityResolver from '../entity-resolver'
+import DependencyResolver from '../DependencyResolver'
 import { compileTypeScript } from '../ExpressionCompiler'
 import { Exposes } from '../ExpressionContext'
 import * as ExpressionContext from '../ExpressionContext'
@@ -18,7 +18,7 @@ export default class ClipRenderTask {
         clip: Clip
         clipRendererCache: WeakMap<Clip, IRenderer<any>>
         req: RenderRequest,
-        resolver: EntityResolver
+        resolver: DependencyResolver
     }): ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
         const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
