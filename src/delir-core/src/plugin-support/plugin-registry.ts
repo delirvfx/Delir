@@ -2,10 +2,10 @@ import * as _ from 'lodash'
 import * as semver from 'semver'
 
 import checkPropTypes from '../helper/checkPropTypes'
-import {PluginEntry, PluginTypes, PluginSummary, DelirPluginPackageJson} from './types'
 import PluginBase from './plugin-base'
 import EffectPluginBase from './PostEffectBase'
-import {AnyParameterTypeDescriptor} from './type-descriptor'
+import { AnyParameterTypeDescriptor } from './type-descriptor'
+import { DelirPluginPackageJson, PluginEntry, PluginSummary, PluginTypes } from './types'
 
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
@@ -77,7 +77,7 @@ export default class PluginRegistry {
      * @throws UnknownPluginReferenceException
      * @throws PluginAssertionFailedException
      */
-    public getPostEffectParametersById(id: string): AnyParameterTypeDescriptor[]|null
+    public getPostEffectParametersById(id: string): AnyParameterTypeDescriptor[] | null
     {
         const entry = this._plugins['post-effect'][id]
 

@@ -1,6 +1,6 @@
-import * as React from 'react'
-import {PureComponent} from 'react'
 import * as classnames from 'classnames'
+import * as React from 'react'
+import { PureComponent } from 'react'
 
 import Portal from '../../modules/Portal'
 
@@ -45,16 +45,6 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         this.setState({show: !this.state.show})
     }
 
-    private hideOnOutsideClicked = (e: MouseEvent) =>
-    {
-        const path = ((e as any).path as Element[])
-        const clickSelfOrChild = path.includes(this._portal.root)
-
-        if (!clickSelfOrChild && this.state.show) {
-            this.hide()
-        }
-    }
-
     public componentDidMount()
     {
         window.addEventListener('click', this.hideOnOutsideClicked, {capture: true})
@@ -88,5 +78,15 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         return (
             <div ref='inspector' className={s.dropdownInspector} />
         )
+    }
+
+    private hideOnOutsideClicked = (e: MouseEvent) =>
+    {
+        const path = ((e as any).path as Element[])
+        const clickSelfOrChild = path.includes(this._portal.root)
+
+        if (!clickSelfOrChild && this.state.show) {
+            this.hide()
+        }
     }
 }

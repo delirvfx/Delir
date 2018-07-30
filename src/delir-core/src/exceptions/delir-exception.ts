@@ -1,10 +1,10 @@
 export default class DelirException extends Error
 {
-    before: Error
-    message: string
-    info?: Object
-    stack?: string
-    stackLines: Array<string>
+    public before: Error
+    public message: string
+    public info?: Object
+    public stack?: string
+    public stackLines: string[]
 
     constructor(message: string, info: any = {})
     {

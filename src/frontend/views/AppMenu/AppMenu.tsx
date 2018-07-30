@@ -1,12 +1,12 @@
-import * as React from 'react'
 import * as Electron from 'electron'
-import {remote} from 'electron'
+import { remote } from 'electron'
+import * as React from 'react'
 import * as Platform from '../../utils/platform'
 
-import connectToStores from '../../utils/Flux/connectToStores'
 import AppActions from '../../actions/App'
-import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import * as AboutModal from '../../modules/AboutModal'
+import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
+import connectToStores from '../../utils/Flux/connectToStores'
 
 import t from './AppMenu.i18n'
 
@@ -19,9 +19,6 @@ interface Props {
 }))
 export default class AppMenu extends React.PureComponent<Props>
 {
-    private openAbout = () => {
-        AboutModal.show()
-    }
 
     public render()
     {
@@ -30,6 +27,9 @@ export default class AppMenu extends React.PureComponent<Props>
         )
 
         return null
+    }
+    private openAbout = () => {
+        AboutModal.show()
     }
 
     private _buildMenu(): Electron.MenuItemConstructorOptions[]

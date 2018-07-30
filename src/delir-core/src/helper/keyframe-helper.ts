@@ -4,17 +4,17 @@ import ColorRGB from '../values/color-rgb'
 import ColorRGBA from '../values/color-rgba'
 
 import {
-    TypeDescriptor,
-    ParameterValueTypes,
     AnyParameterTypeDescriptor,
+    ParameterValueTypes,
+    TypeDescriptor,
 } from '../plugin-support/type-descriptor'
 
 import * as bezierEasing from 'bezier-easing'
 
 interface KeyFrameLink {
-    previous: Keyframe|null
+    previous: Keyframe | null
     active: Keyframe
-    next: Keyframe|null
+    next: Keyframe | null
 }
 
 export interface KeyframeValueSequence {
@@ -84,7 +84,7 @@ export function calcKeyframeValueAt(
 }
 
 export function calcKeyFrames(
-    paramTypes: TypeDescriptor|AnyParameterTypeDescriptor[],
+    paramTypes: TypeDescriptor | AnyParameterTypeDescriptor[],
     keyFrames: {[propName: string]: Keyframe[]},
     clipPlacedFrame: number,
     beginFrame: number,
@@ -101,49 +101,49 @@ export function calcKeyFrames(
         switch (propDesc.type) {
             case 'POINT_2D':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPoint2dKeyFrames)
-            break;
+            break
             case 'POINT_3D':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPoint3dKeyFrames)
-            break;
+            break
             case 'SIZE_2D':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcSize2dKeyFrames)
-            break;
+            break
             case 'SIZE_3D':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcSize3dKeyFrames)
-            break;
+            break
             case 'COLOR_RGB':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcColorRgbKeyFrames)
-            break;
+            break
             case 'COLOR_RGBA':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcColorRgbaKeyFrames)
-            break;
+            break
             case 'BOOL':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcBoolKeyFrames)
-            break;
+            break
             case 'STRING':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcStringKeyFrames)
-            break;
+            break
             case 'NUMBER':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNumberKeyFrames)
-            break;
+            break
             case 'FLOAT':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcFloatKeyFrames)
-            break;
+            break
             case 'ENUM':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcEnumKeyFrames)
-            break;
+            break
             case 'CLIP':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNoAnimatable)
-            break;
+            break
             case 'PULSE':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPulseKeyFrames)
-            break;
+            break
             case 'ARRAY':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcArrayOfKeyFrames)
-            break;
+            break
             case 'ASSET':
                 tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcAssetKeyFrames)
-            break;
+            break
         }
     }
 
@@ -168,7 +168,7 @@ export function calcKeyframe(
     const table: KeyframeValueSequence = {}
 
     for (let frame = beginFrame, end = beginFrame + calcFrames; frame <= end; frame++) {
-        const activeKeyFrame: KeyFrameLink|null = _activeKeyFrameOfFrame(linkedSequense, clipPlacedFrame, frame)
+        const activeKeyFrame: KeyFrameLink | null = _activeKeyFrameOfFrame(linkedSequense, clipPlacedFrame, frame)
 
         if (activeKeyFrame == null) {
             // 0  10  20
@@ -236,7 +236,7 @@ function _buildLinkedKeyFrame(orderedKeyFrameSeq: Keyframe[]): KeyFrameLink[]
     return linked
 }
 
-function _activeKeyFrameOfFrame(linkedKeyFrameSeq: KeyFrameLink[], clipPlacedFrame: number, frame: number): KeyFrameLink|null
+function _activeKeyFrameOfFrame(linkedKeyFrameSeq: KeyFrameLink[], clipPlacedFrame: number, frame: number): KeyFrameLink | null
 {
     if (linkedKeyFrameSeq.length === 1) {
         return linkedKeyFrameSeq[0]
@@ -259,7 +259,7 @@ function _activeKeyFrameOfFrame(linkedKeyFrameSeq: KeyFrameLink[], clipPlacedFra
 // Typed keyframe calculators
 //
 
-function calcPoint2dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {x: number, y:number}
+function calcPoint2dKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {x: number, y: number}
 {
     const xVector = keyFrameLink.next!.value.x - keyFrameLink.active.value.x
     const yVector = keyFrameLink.next!.value.y - keyFrameLink.active.value.y
@@ -320,7 +320,7 @@ function calcColorRgbKeyFrames(rate: number, frame: number, keyFrameLink: KeyFra
     )
 }
 
-function calcColorRgbaKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {red:number, green: number, blue: number, alpha: number}
+function calcColorRgbaKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): {red: number, green: number, blue: number, alpha: number}
 {
     const redVector = keyFrameLink.next!.value.red - keyFrameLink.active.value.red
     const greenVector = keyFrameLink.next!.value.green - keyFrameLink.active.value.green

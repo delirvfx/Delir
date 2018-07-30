@@ -1,6 +1,6 @@
-import {ProjectScheme} from './scheme/project'
+import { ProjectScheme } from './scheme/project'
 
-import {BSON} from 'bson'
+import { BSON } from 'bson'
 
 import Asset from './asset'
 import Composition from './composition'

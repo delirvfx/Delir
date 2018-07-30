@@ -1,5 +1,5 @@
-import {LayerScheme} from './layer'
-import {ColorRgbJSON} from '../../values/color-rgb'
+import { ColorRgbJSON } from '../../values/color-rgb'
+import { LayerScheme } from './layer'
 
 export interface CompositionConfigScheme {
     name: string,
@@ -13,7 +13,7 @@ export interface CompositionConfigScheme {
 }
 
 export interface CompositionScheme {
-    id: string|null
+    id: string | null
     config: CompositionConfigScheme
     layers: LayerScheme[]
 }

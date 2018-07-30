@@ -1,7 +1,7 @@
+import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
-import {Children} from 'react'
-import * as classnames from 'classnames'
+import { Children } from 'react'
 
 interface TableProps {
     className?: string
@@ -32,13 +32,6 @@ export class Table extends React.Component<TableProps, any>
         }
     }
 
-    private handleCellResizing = (cellIdx: number, width: number) =>
-    {
-        const _widths = this.state.columnWidths.slice(0)
-        _widths[cellIdx] = width
-        this.setState({columnWidths: _widths})
-    }
-
     public render()
     {
         const {className, children, ...props} = this.props
@@ -62,6 +55,13 @@ export class Table extends React.Component<TableProps, any>
                 })}
             </div>
         )
+    }
+
+    private handleCellResizing = (cellIdx: number, width: number) =>
+    {
+        const _widths = this.state.columnWidths.slice(0)
+        _widths[cellIdx] = width
+        this.setState({columnWidths: _widths})
     }
 }
 
@@ -92,7 +92,7 @@ export class TableHeader extends React.Component<TableHeaderProps, any>
 }
 
 interface TableBodyProps {
-    _widths: number[]|string[],
+    _widths: number[] | string[],
     className?: string,
 }
 
@@ -117,7 +117,7 @@ export class TableBody extends React.Component<TableBodyProps, any>
 }
 
 interface TableBodySelectListProps {
-    _widths: number[]|string[],
+    _widths: number[] | string[],
     className: string,
     multiple?: boolean,
     onSelectionChanged: (selection: number[]) => any,
@@ -137,6 +137,39 @@ export class TableBodySelectList extends React.Component<TableBodySelectListProp
     public state = {
         lastSelectedIdx: null,
         selected: [],
+    }
+
+    public render()
+    {
+        let rowIdx = 0
+
+        return (
+            <div className={classnames('table-body-selectlist', this.props.className)}>
+                {Children.map(this.props.children, (maybeRowChild, idx) => {
+                    if (maybeRowChild.type === Row) {
+                        let _rowIdx = rowIdx++
+
+                        return React.cloneElement(maybeRowChild, {
+                            _widths: this.props._widths,
+                            className: classnames(maybeRowChild.props.className, {
+                                'selected': this.state.selected.includes(_rowIdx)
+                            }),
+                            onClick: e => {
+                                this.onClickItem(_rowIdx, e)
+                                maybeRowChild.props.onClick && maybeRowChild.props.onClick(e)
+                            },
+                            onContextMenu: e => {
+                                console.log(e)
+                                this.onClickItem(_rowIdx, e)
+                                maybeRowChild.props.onClick && maybeRowChild.props.onClick(e)
+                            },
+                        })
+                    }
+
+                    return maybeRowChild
+                })}
+            </div>
+        )
     }
 
     private clearSelection()
@@ -176,39 +209,6 @@ export class TableBodySelectList extends React.Component<TableBodySelectListProp
 
         this.props.onSelectionChanged && this.props.onSelectionChanged(this.state.selected)
     }
-
-    public render()
-    {
-        let rowIdx = 0
-
-        return (
-            <div className={classnames('table-body-selectlist', this.props.className)}>
-                {Children.map(this.props.children, (maybeRowChild, idx) => {
-                    if (maybeRowChild.type === Row) {
-                        let _rowIdx = rowIdx++
-
-                        return React.cloneElement(maybeRowChild, {
-                            _widths: this.props._widths,
-                            className: classnames(maybeRowChild.props.className, {
-                                'selected': this.state.selected.includes(_rowIdx)
-                            }),
-                            onClick: e => {
-                                this.onClickItem(_rowIdx, e)
-                                maybeRowChild.props.onClick && maybeRowChild.props.onClick(e)
-                            },
-                            onContextMenu: e => {
-                                console.log(e);
-                                this.onClickItem(_rowIdx, e)
-                                maybeRowChild.props.onClick && maybeRowChild.props.onClick(e)
-                            },
-                        })
-                    }
-
-                    return maybeRowChild
-                })}
-            </div>
-        )
-    }
 }
 
 export class TableFooter extends React.Component<{className: string}, null>
@@ -216,7 +216,7 @@ export class TableFooter extends React.Component<{className: string}, null>
     public render()
     {
         return (
-            <div className={classnames('table-footer', this,props.className)}>
+            <div className={classnames('table-footer', this, props.className)}>
                 {this.props.children}
             </div>
         )
@@ -273,9 +273,9 @@ interface ColProps {
     _inHeader?: boolean
     _notifyCellResizing?: (x: number) => void
     className?: string
-    defaultWidth?: string|number
-    minWidth?: string|number
-    maxWidth?: string|number
+    defaultWidth?: string | number
+    minWidth?: string | number
+    maxWidth?: string | number
     resizable?: boolean
 }
 
@@ -297,12 +297,6 @@ export class Col extends React.Component<ColProps, any>
         }
     }
 
-    private onResizeEnd = e =>
-    {
-        this.props._notifyCellResizing && this.props._notifyCellResizing(e.clientX)
-        this.setState({width: e.clientX})
-    }
-
     public render()
     {
         const {width} = this.state
@@ -321,5 +315,11 @@ export class Col extends React.Component<ColProps, any>
                 />
             </div>
         )
+    }
+
+    private onResizeEnd = e =>
+    {
+        this.props._notifyCellResizing && this.props._notifyCellResizing(e.clientX)
+        this.setState({width: e.clientX})
     }
 }

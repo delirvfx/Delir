@@ -1,8 +1,8 @@
 // @flow
-import Project from '../../project/project'
+import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
 import PluginRegistry from '../../plugin-support/plugin-registry'
 import EffectPluginBase from '../../plugin-support/PostEffectBase'
-import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
+import Project from '../../project/project'
 
 import * as ProjectHelper from '../../helper/project-helper'
 import AssetProxy from './AssetProxy'
@@ -18,7 +18,7 @@ export default class EntityResolver
         this._pluginRegistry = pluginRegistry
     }
 
-    public resolveAsset(assetId: string): AssetProxy|null
+    public resolveAsset(assetId: string): AssetProxy | null
     {
         const asset = ProjectHelper.findAssetById(this._project, assetId)
         return asset ? new AssetProxy(asset) : null

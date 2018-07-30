@@ -1,10 +1,10 @@
-import * as _ from 'lodash'
-import * as React from 'react'
-import * as path from 'path'
-import * as URL from 'url'
-import * as qs from 'querystring'
-import {remote} from 'electron'
 import * as classnames from 'classnames'
+import { remote } from 'electron'
+import * as _ from 'lodash'
+import * as path from 'path'
+import * as qs from 'querystring'
+import * as React from 'react'
+import * as URL from 'url'
 
 import Portal from '../Portal'
 
@@ -16,9 +16,9 @@ export interface ModalWindowProps {
     width?: number
     height?: number
     closable?: boolean
-    query?: {[name: string]: string|number}
+    query?: {[name: string]: string | number}
     onHide?: () => any
-    onResponse?: (param: {[name: string]: string|number}) => any
+    onResponse?: (param: {[name: string]: string | number}) => any
 }
 
 interface ModalWindowState {
@@ -49,14 +49,6 @@ export default class ModalWindow extends React.Component<ModalWindowProps, Modal
         }
     }
 
-    private transitionEnd = () => {
-        const {onTransitionEnd} = this.state
-
-        if (typeof onTransitionEnd === 'function') {
-            onTransitionEnd()
-        }
-    }
-
     public render()
     {
         const {children, url, width, height} = this.props
@@ -66,5 +58,13 @@ export default class ModalWindow extends React.Component<ModalWindowProps, Modal
                 {children ? children : <webview className={s.webview} src={url} autosize='on' style={{width, height}} />}
             </div>
         )
+    }
+
+    private transitionEnd = () => {
+        const {onTransitionEnd} = this.state
+
+        if (typeof onTransitionEnd === 'function') {
+            onTransitionEnd()
+        }
     }
 }

@@ -1,11 +1,11 @@
-import Project from '../../project/project'
+import EffectPluginBase from '../../plugin-support/PostEffectBase'
+import { ParameterValueTypes, TypeDescriptor } from '../../plugin-support/type-descriptor'
 import Clip from '../../project/clip'
 import Effect from '../../project/effect'
+import Project from '../../project/project'
 import Expression from '../../values/expression'
-import EffectPluginBase from '../../plugin-support/PostEffectBase'
-import {TypeDescriptor, ParameterValueTypes} from '../../plugin-support/type-descriptor'
-import {IRenderer} from '../renderer/renderer-base'
-import {IRenderingStreamObserver, RenderingStatus} from './IRenderingStreamObserver'
+import { IRenderer } from '../renderer/renderer-base'
+import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
 
 import PluginRegistry from '../../plugin-support/plugin-registry'
 
@@ -13,18 +13,18 @@ import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
 import * as TypeScript from 'typescript'
 import * as vm from 'vm'
-import ProgressPromise from '../../helper/progress-promise'
-import RenderingRequest from './render-request'
-import EntityResolver from './entity-resolver'
-import * as ProjectHelper from '../../helper/project-helper'
-import {RenderingFailedException, RenderingAbortedException} from '../../exceptions/'
-import * as RendererFactory from '../renderer'
-import * as KeyframeHelper from '../../helper/keyframe-helper'
+import { RenderingAbortedException, RenderingFailedException } from '../../exceptions/'
+import { arraysToAudioBuffer, mergeInto as mergeAudioBufferInto } from '../../helper/Audio'
 import defaults from '../../helper/defaults'
 import FPSCounter from '../../helper/FPSCounter'
+import * as KeyframeHelper from '../../helper/keyframe-helper'
+import ProgressPromise from '../../helper/progress-promise'
+import * as ProjectHelper from '../../helper/project-helper'
+import * as RendererFactory from '../renderer'
+import EntityResolver from './entity-resolver'
 import * as ExpressionContext from './ExpressionContext'
+import RenderingRequest from './render-request'
 import WebGLContextPool from './WebGLContextPool'
-import {mergeInto as mergeAudioBufferInto, arraysToAudioBuffer} from '../../helper/Audio'
 
 interface ExpressionExecuters {
     [propName: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes
@@ -97,13 +97,13 @@ export const applyExpression = (
 export default class Pipeline
 {
     private _fpsCounter: FPSCounter = new FPSCounter()
-    private _seqRenderPromise: ProgressPromise<void>|null = null
+    private _seqRenderPromise: ProgressPromise<void> | null = null
     private _project: Project
     private _pluginRegistry: PluginRegistry = new PluginRegistry()
     private _destinationAudioNode: AudioNode
     private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
-    private _streamObserver: IRenderingStreamObserver|null = null
+    private _streamObserver: IRenderingStreamObserver | null = null
     private webGLContextPool: WebGLContextPool = new WebGLContextPool()
 
     get project() { return this._project }
@@ -192,10 +192,10 @@ export default class Pipeline
                 const currentTime = currentFrame / framerate
 
                 // 最後のバッファリングから１秒経過 & 次のフレームがレンダリングの終わりでなければバッファリング
-                const isAudioBufferingNeeded = lastAudioBufferTime !== (currentTime|0) && (renderedFrames + 1) <= request.durationFrames
+                const isAudioBufferingNeeded = lastAudioBufferTime !== (currentTime | 0) && (renderedFrames + 1) <= request.durationFrames
 
                 if (isAudioBufferingNeeded) {
-                    lastAudioBufferTime = currentTime|0
+                    lastAudioBufferTime = currentTime | 0
 
                     for (const buffer of request.destAudioBuffer) {
                         buffer.fill(0)

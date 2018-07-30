@@ -1,19 +1,19 @@
 import * as React from 'react'
 
-import connectToStores from '../../utils/Flux/connectToStores'
-import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import AppActions from '../../actions/App'
+import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
+import connectToStores from '../../utils/Flux/connectToStores'
 
-import Workspace from '../components/workspace'
 import Pane from '../components/pane'
+import Workspace from '../components/workspace'
 
 import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
-import PreviewView from '../PreviewView/'
-import Timeline from '../Timeline'
 import NavigationView from '../NavigationView'
-import StatusBar from '../StatusBar'
 import Notifications from '../Notifications'
+import PreviewView from '../PreviewView/'
+import StatusBar from '../StatusBar'
+import Timeline from '../Timeline'
 
 interface Props {
     editor: EditorState
@@ -32,10 +32,6 @@ export default class AppView extends React.PureComponent<Props>
         window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
     }
 
-    private prevent = (e: any) => {
-        e.preventDefault()
-    }
-
     public handleShortCut = (e: KeyboardEvent) => {
         const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
 
@@ -46,11 +42,6 @@ export default class AppView extends React.PureComponent<Props>
                 ? AppActions.stopPreview()
                 : AppActions.startPreview(activeComp!.id, currentPreviewFrame)
         }
-    }
-
-    private projectAutoSaveTimer = () =>
-    {
-        AppActions.autoSaveProject()
     }
 
     public render()
@@ -72,5 +63,14 @@ export default class AppView extends React.PureComponent<Props>
                 <Notifications />
             </div>
         )
+    }
+
+    private prevent = (e: any) => {
+        e.preventDefault()
+    }
+
+    private projectAutoSaveTimer = () =>
+    {
+        AppActions.autoSaveProject()
     }
 }

@@ -1,13 +1,13 @@
-import * as React from 'react'
-import {Component} from 'react'
 import * as classnames from 'classnames'
+import * as React from 'react'
+import { Component } from 'react'
 
+import {default as EditorStateStore, NotificationEntries as NotificationEntries } from '../../stores/EditorStateStore'
 import connectToStores from '../../utils/Flux/connectToStores'
-import {default as EditorStateStore, NotificationEntries as NotificationEntries} from '../../stores/EditorStateStore'
 
 import * as s from './style.styl'
 
-type NotificationsProps = {
+interface NotificationsProps {
     entries: NotificationEntries
 }
 
@@ -15,7 +15,7 @@ type NotificationsProps = {
     entries: EditorStateStore.getState().get('notifications')
 }))
 export default class Notifications extends Component<NotificationsProps, any> {
-    render()
+    public render()
     {
         const {entries} = this.props
 

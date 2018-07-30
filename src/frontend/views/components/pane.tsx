@@ -1,5 +1,5 @@
-import * as React from 'react'
 import * as classnames from 'classnames'
+import * as React from 'react'
 
 interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
     resizable?: boolean,

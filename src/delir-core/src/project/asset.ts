@@ -1,4 +1,4 @@
-import {AssetScheme} from './scheme/asset'
+import { AssetScheme } from './scheme/asset'
 
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
@@ -20,8 +20,8 @@ export default class Asset
     private _config: {
         fileType: string,
         name: string,
-        path: string|null,
-        data: Object|null,
+        path: string | null,
+        data: Object | null,
     } = {
         fileType: '',
         name: '',
@@ -61,6 +61,6 @@ export default class Asset
 
     public toJSON()
     {
-        return Object.assign({}, this._config, {id: this.id});
+        return {...this._config, id: this.id}
     }
 }

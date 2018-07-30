@@ -1,6 +1,6 @@
-import {ProjectScheme} from '../project/scheme/project'
-import {ClipScheme} from '../project/scheme/clip'
-import {KeyframeConfigScheme} from '../project/scheme/keyframe'
+import { ClipScheme } from '../project/scheme/clip'
+import { KeyframeConfigScheme } from '../project/scheme/keyframe'
+import { ProjectScheme } from '../project/scheme/project'
 
 import * as _ from 'lodash'
 import toJSON from './toJSON'

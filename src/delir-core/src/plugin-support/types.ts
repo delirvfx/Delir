@@ -11,7 +11,7 @@ export interface PackageJSONDelirSection {
 export interface DelirPluginPackageJson {
     name: string
     version: string
-    author: string|string[]
+    author: string | string[]
     main?: string
     engines: {
         'delir-core': string

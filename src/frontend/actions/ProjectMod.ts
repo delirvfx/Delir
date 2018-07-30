@@ -1,14 +1,14 @@
-import * as _ from 'lodash'
-import * as keyMirror from 'keymirror'
-import * as uuid from 'uuid'
 import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
+import { ProjectHelper } from 'delir-core'
+import * as keyMirror from 'keymirror'
+import * as _ from 'lodash'
+import * as uuid from 'uuid'
 
-import dispatcher from '../utils/Flux/Dispatcher'
-import Payload from '../utils/Flux/payload'
 // import deprecated from '../utils/deprecated'
 import RendererService from '../services/renderer'
 import ProjectStore from '../stores/ProjectStore'
+import dispatcher from '../utils/Flux/Dispatcher'
+import Payload from '../utils/Flux/payload'
 
 import AppActions from './App'
 
@@ -66,7 +66,7 @@ export const DispatchTypes = keyMirror({
     RemoveComposition: null,
     RemoveLayer: null,
     RemoveClip: null,
-    RemoveAsset:null,
+    RemoveAsset: null,
     RemoveKeyframe: null,
     RemoveEffectKeyframe: null,
     RemoveEffectFromClip: null,
@@ -89,15 +89,15 @@ export default {
         audioChannels: number,
     })
     {
-        const composition = new Delir.Project.Composition
+        const composition = new Delir.Project.Composition()
         Object.assign(composition, options)
-        dispatcher.dispatch(new Payload(DispatchTypes.CreateComposition,　{composition}))
+        dispatcher.dispatch(new Payload(DispatchTypes.CreateComposition,　 {composition}))
     },
 
     // @deprecated
     createLayer(compId: string)
     {
-        const layer = new Delir.Project.Layer
+        const layer = new Delir.Project.Layer()
         dispatcher.dispatch(new Payload(DispatchTypes.CreateLayer, {targetCompositionId: compId, layer}))
     },
 
@@ -120,7 +120,7 @@ export default {
             return
         }
 
-        const clip = new Delir.Project.Clip
+        const clip = new Delir.Project.Clip()
         Object.assign(clip, {
             renderer: processablePlugins[0].id,
             placedFrame: 0,
@@ -172,7 +172,7 @@ export default {
             return
         }
 
-        const newClip = new Delir.Project.Clip
+        const newClip = new Delir.Project.Clip()
         Object.assign(newClip, {
             renderer: processablePlugins[0].id,
             placedFrame,
@@ -374,7 +374,7 @@ export default {
 
     removeClip(clipId: string)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveClip,　{targetClipId: clipId}))
+        dispatcher.dispatch(new Payload(DispatchTypes.RemoveClip,　 {targetClipId: clipId}))
     },
 
     removeKeyframe(keyframeId: string)

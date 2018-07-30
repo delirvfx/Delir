@@ -1,14 +1,14 @@
-import defaults from '../helper/defaults'
-import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
 import AssetProxy from '../engine/pipeline/AssetProxy'
+import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
+import defaults from '../helper/defaults'
 
 import {
+    ColorRGB,
+    ColorRGBA,
     Point2D,
     Point3D,
     Size2D,
     Size3D,
-    ColorRGB,
-    ColorRGBA,
 } from '../values'
 
 export type ParameterType =
@@ -34,7 +34,7 @@ export interface ParameterTypeDescriptor<T extends ParameterType> {
     propName: string
     label: string
     enabled: boolean
-    animatable: boolean|null
+    animatable: boolean | null
 }
 
 // export interface Point2DTypeDescripter extends ParameterTypeDescriptor<'POINT_2D'> {
@@ -334,10 +334,6 @@ export class TypeDescriptor {
 
 export default class Type
 {
-    constructor()
-    {
-        throw new TypeError('Type is can not constructing')
-    }
 
     // public static point2d(propName: string, option: {label: string, defaultValue?: Point2D, enabled?: boolean, animatable?: boolean})
     // {
@@ -417,6 +413,10 @@ export default class Type
     public static none()
     {
       return new TypeDescriptor()
+    }
+    constructor()
+    {
+        throw new TypeError('Type is can not constructing')
     }
 }
 

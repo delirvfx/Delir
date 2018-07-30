@@ -1,7 +1,7 @@
+import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
-import {Children} from 'react'
-import * as classnames from 'classnames'
+import { Children } from 'react'
 
 interface Props {
     className?: string
@@ -23,6 +23,26 @@ export default class SelectList extends React.Component<Props, State>
     public state = {
         lastSelectedIdx: null,
         selected: [],
+    }
+
+    public render()
+    {
+        const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
+
+        return (
+            <div className={classnames('_select-list', this.props.className)}>
+                {this.props.children && Children.map(children, (child, idx) => (
+                    <div
+                        key={idx}
+                        className={classnames('select-list-item', {'selected': this.state.selected.includes(idx)})}
+                        data-index={idx}
+                        onClick={this.onClickItem}
+                    >
+                        {child}
+                    </div>
+                ))}
+            </div>
+        )
     }
 
     private clearSelection()
@@ -65,25 +85,5 @@ export default class SelectList extends React.Component<Props, State>
         if (this.props.onSelectionChanged) {
             this.props.onSelectionChanged(this.state.selected)
         }
-    }
-
-    public render()
-    {
-        const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
-
-        return (
-            <div className={classnames('_select-list', this.props.className)}>
-                {this.props.children && Children.map(children, (child, idx) => (
-                    <div
-                        key={idx}
-                        className={classnames('select-list-item', {'selected': this.state.selected.includes(idx)})}
-                        data-index={idx}
-                        onClick={this.onClickItem}
-                    >
-                        {child}
-                    </div>
-                ))}
-            </div>
-        )
     }
 }

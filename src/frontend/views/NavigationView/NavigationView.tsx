@@ -1,10 +1,10 @@
-import {remote} from 'electron'
-import * as React from 'react'
+import { remote } from 'electron'
 import * as path from 'path'
+import * as React from 'react'
 import connectToStores from '../../utils/Flux/connectToStores'
 
-import {default as EditorStateStore, EditorState} from '../../stores/EditorStateStore'
 import AppActions from '../../actions/App'
+import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
 
 import Pane from '../components/pane'
 
@@ -19,29 +19,6 @@ interface NavigationViewProps {
 }))
 export default class NavigationView extends React.Component<NavigationViewProps, null>
 {
-    private onClickPlay = action =>
-    {
-        const {activeComp} = this.props.editor
-
-        if (! activeComp) return
-        AppActions.startPreview(activeComp.id!)
-    }
-
-    private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
-        AppActions.stopPreview()
-    }
-
-    private onClickDest = action =>
-    {
-        const {activeComp} = this.props.editor
-        activeComp && AppActions.renderDestinate(activeComp.id!)
-    }
-
-    private titleBarDoubleClicked = e =>
-    {
-        const browserWindow = remote.getCurrentWindow()
-        browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
-    }
 
     public render()
     {
@@ -68,5 +45,28 @@ export default class NavigationView extends React.Component<NavigationViewProps,
                 </ul>
             </Pane>
         )
+    }
+    private onClickPlay = action =>
+    {
+        const {activeComp} = this.props.editor
+
+        if (! activeComp) return
+        AppActions.startPreview(activeComp.id!)
+    }
+
+    private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
+        AppActions.stopPreview()
+    }
+
+    private onClickDest = action =>
+    {
+        const {activeComp} = this.props.editor
+        activeComp && AppActions.renderDestinate(activeComp.id!)
+    }
+
+    private titleBarDoubleClicked = e =>
+    {
+        const browserWindow = remote.getCurrentWindow()
+        browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
     }
 }
