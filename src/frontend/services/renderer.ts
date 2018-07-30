@@ -1,33 +1,33 @@
-import * as _ from 'lodash'
-import {remote} from 'electron'
-import {join, dirname} from 'path'
 import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
+import { ProjectHelper } from 'delir-core'
+import { remote } from 'electron'
+import * as _ from 'lodash'
+import { dirname, join } from 'path'
 import deream from '../../deream'
 
-import * as Platform from '../utils/platform'
+import { KnownPayload } from '../actions/PayloadTypes'
 import dispatcher from '../utils/Flux/Dispatcher'
-import {KnownPayload} from '../actions/PayloadTypes'
+import * as Platform from '../utils/platform'
 
-import EditorStateStore from '../stores/EditorStateStore'
 import AppActions from '../actions/App'
-import {DispatchTypes as EditorStateDispatchTypes} from '../actions/App'
+import {DispatchTypes as EditorStateDispatchTypes } from '../actions/App'
+import EditorStateStore from '../stores/EditorStateStore'
 
-let pluginRegistry: Delir.PluginRegistry|null = null
-let pluginLoader: Delir.Services.PluginLoader|null = null
-let pipeline: Delir.Engine.Pipeline|null = null
-let renderState: {currentFrame: number}|null = null
+let pluginRegistry: Delir.PluginRegistry | null = null
+let pluginLoader: Delir.Services.PluginLoader | null = null
+let pipeline: Delir.Engine.Pipeline | null = null
+let renderState: {currentFrame: number} | null = null
 
 let destCanvas: HTMLCanvasElement
 let canvasContext: CanvasRenderingContext2D
 
-let audioContext: AudioContext|null = null
-let audioBuffer: AudioBuffer|null = null
+let audioContext: AudioContext | null = null
+let audioBuffer: AudioBuffer | null = null
 let isInRendering = false
 
 const state: {
-    project: Delir.Project.Project|null,
-    composition: Delir.Project.Composition|null,
+    project: Delir.Project.Project | null,
+    composition: Delir.Project.Composition | null,
 } = {
     project: null,
     composition: null,
@@ -100,7 +100,7 @@ const handlePayload = async (payload: KnownPayload) => {
 
             promise.catch(e => {
                 if (e instanceof Delir.Exceptions.RenderingAbortedException) {
-                    AppActions.updateProcessingState(`Stop.`)
+                    AppActions.updateProcessingState('Stop.')
                     return
                 }
 
@@ -157,7 +157,7 @@ const handlePayload = async (payload: KnownPayload) => {
             await new Promise(resolve => {
                 setImmediate(() => {
                     AppActions.autoSaveProject()
-                    AppActions.updateProcessingState(`Rendering: Initializing`)
+                    AppActions.updateProcessingState('Rendering: Initializing')
                     resolve()
                 })
             })

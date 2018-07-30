@@ -1,16 +1,16 @@
+import { BSON } from 'bson'
 import * as Delir from 'delir-core'
+import { remote } from 'electron'
+import * as fs from 'fs-promise'
 import * as keyMirror from 'keymirror'
 import * as _ from 'lodash'
-import {remote} from 'electron'
-import {BSON} from 'bson'
-import * as fs from 'fs-promise'
 import * as path from 'path'
 
 import dispatcher from '../utils/Flux/Dispatcher'
 import Payload from '../utils/Flux/Payload'
 
-import EditorStateStore from '../stores/EditorStateStore'
 import RendererService from '../services/renderer'
+import EditorStateStore from '../stores/EditorStateStore'
 
 import t from './App.i18n'
 
@@ -29,7 +29,7 @@ export type StartPreviewPayload = Payload<'StartPreview', {compositionId: string
 export type StopPreviewPayload = Payload<'StopPreview', {}>
 export type RenderDestinatePayload = Payload<'RenderDestinate', {compositionId: string}>
 export type UpdateProcessingState = Payload<'UpdateProcessingState', {stateText: string}>
-export type AddMessagePayload = Payload<'AddMessage', {id: string, title?: string, level: 'info'|'error', message: string, detail?: string}>
+export type AddMessagePayload = Payload<'AddMessage', {id: string, title?: string, level: 'info' | 'error', message: string, detail?: string}>
 export type RemoveMessagePayload = Payload<'RemoveMessage', {id: string}>
 export type SeekPreviewFramePayload = Payload<'SeekPreviewFrame', {frame: number}>
 
@@ -86,12 +86,12 @@ const actions = {
         dispatcher.dispatch(new Payload(DispatchTypes.ClearDragEntity, {}))
     },
 
-    notify(message: string, title: string, level: 'info'|'error' = 'info', timeout?: number, detail?: string,)
+    notify(message: string, title: string, level: 'info' | 'error' = 'info', timeout?: number, detail?: string, )
     {
         const id = _.uniqueId('notify')
         dispatcher.dispatch(new Payload(DispatchTypes.AddMessage, {id, title, message, detail, level}))
         if (timeout != null) {
-            setTimeout(() => { dispatcher.dispatch(new Payload(DispatchTypes.RemoveMessage, {id})); }, timeout)
+            setTimeout(() => { dispatcher.dispatch(new Payload(DispatchTypes.RemoveMessage, {id})) }, timeout)
         }
     },
 
@@ -128,10 +128,10 @@ const actions = {
 
     updateProcessingState(stateText: string)
     {
-        dispatcher.dispatch(new Payload(DispatchTypes.UpdateProcessingState,　{stateText}))
+        dispatcher.dispatch(new Payload(DispatchTypes.UpdateProcessingState,　 {stateText}))
     },
 
-    seekPreviewFrame(frame: number|null = null)
+    seekPreviewFrame(frame: number | null = null)
     {
         const state = EditorStateStore.getState()
 
@@ -199,7 +199,7 @@ const actions = {
             return
         }
 
-        const bson = new BSON
+        const bson = new BSON()
         await fs.writeFile(path, bson.serialize(project.toPreBSON()))
         actions.notify('Project saved', '', 'info', 1000)
     },

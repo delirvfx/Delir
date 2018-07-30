@@ -1,4 +1,4 @@
-import {Record as ImmutableRecord} from 'immutable'
+import {Record as ImmutableRecord } from 'immutable'
 
 export default class Record<R> {
     constructor(records: R) {

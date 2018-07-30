@@ -1,15 +1,15 @@
-import * as _ from 'lodash'
-import {ReduceStore} from 'flux/utils'
+import { ReduceStore } from 'flux/utils'
 import * as Immutable from 'immutable'
+import * as _ from 'lodash'
 
 import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
+import { ProjectHelper } from 'delir-core'
 
+import {DispatchTypes as AppActionsDispatchTypes, DragEntity } from '../actions/App'
+import { KnownPayload } from '../actions/PayloadTypes'
+import {DispatchTypes as ProjectModDispatchTypes } from '../actions/ProjectMod'
 import dispatcher from '../utils/Flux/Dispatcher'
 import Record from '../utils/Record'
-import {KnownPayload} from '../actions/PayloadTypes'
-import {DispatchTypes as AppActionsDispatchTypes, DragEntity} from '../actions/App'
-import {DispatchTypes as ProjectModDispatchTypes} from '../actions/ProjectMod'
 
 type StateRecord = Record<EditorState>
 
@@ -17,19 +17,19 @@ export interface NotificationEntry {
     id: string
     title?: string
     message: string
-    level: 'info'|'error'
+    level: 'info' | 'error'
     detail?: string
 }
 
 export type NotificationEntries = Immutable.List<NotificationEntry>
 
 export interface EditorState {
-    project: Delir.Project.Project|null
-    projectPath: string|null
-    activeComp: Delir.Project.Composition|null
-    activeClip: Delir.Project.Clip|null
-    dragEntity: DragEntity|null
-    processingState: string|null
+    project: Delir.Project.Project | null
+    projectPath: string | null
+    activeComp: Delir.Project.Composition | null
+    activeClip: Delir.Project.Clip | null
+    dragEntity: DragEntity | null
+    processingState: string | null
     previewPlayed: boolean
     currentPreviewFrame: number
     notifications: NotificationEntries
@@ -52,7 +52,7 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
         })
     }
 
-    reduce(state: StateRecord, payload: KnownPayload)
+    public reduce(state: StateRecord, payload: KnownPayload)
     {
         const project = state.get('project') as Delir.Project.Project
 
@@ -71,7 +71,6 @@ class EditorStateStore extends ReduceStore<StateRecord, KnownPayload>
                     .set('activeComp', null)
                     .set('activeClip', null)
             }
-
 
             case AppActionsDispatchTypes.ClearActiveProject:
                 __DEV__ && console.log('💥 Project deactivated')

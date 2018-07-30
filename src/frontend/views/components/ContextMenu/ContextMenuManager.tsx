@@ -1,6 +1,6 @@
-import * as React from 'react'
 import * as classnames from 'classnames'
 import * as Electron from 'electron'
+import * as React from 'react'
 
 import Portal from '../../../modules/Portal'
 import { MenuItem, MenuItemOption } from './ContextMenu'
@@ -72,13 +72,13 @@ export const buildMenu = (path: EventTarget[], registeredMenus: WeakMap<Element,
 
 export default class ContextMenuManager
 {
-    private static _instance: ContextMenuManager
 
     public static get instance(): ContextMenuManager {
         return ContextMenuManager._instance = ContextMenuManager._instance || new ContextMenuManager()
     }
+    private static _instance: ContextMenuManager
 
-    private activeMenu: Portal|null
+    private activeMenu: Portal | null
     private menus: WeakMap<HTMLElement, MenuItemOption[]> = new WeakMap()
 
     private _leakCheck: WeakSet<any>
@@ -107,6 +107,16 @@ export default class ContextMenuManager
         })
     }
 
+    public register(el: HTMLElement, menu: MenuItemOption[])
+    {
+        this.menus.set(el, menu)
+    }
+
+    public unregister(el: HTMLElement)
+    {
+        this.menus.delete(el)
+    }
+
     private show(menus: MenuItemOption[], e: PointerEvent)
     {
         if (this.activeMenu) {
@@ -124,15 +134,5 @@ export default class ContextMenuManager
         )
 
         __DEV__ && this._leakCheck!.add(this.activeMenu)
-    }
-
-    public register(el: HTMLElement, menu: MenuItemOption[])
-    {
-        this.menus.set(el, menu)
-    }
-
-    public unregister(el: HTMLElement)
-    {
-        this.menus.delete(el)
     }
 }

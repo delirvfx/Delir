@@ -1,8 +1,8 @@
 import * as Electron from 'electron'
 import * as React from 'react'
 
-import ContextMenuManager from './ContextMenuManager'
 import propToDataset from '../../../utils/propToDataset'
+import ContextMenuManager from './ContextMenuManager'
 
 export interface MenuItemOption<T = {}> {
     type?: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio')
@@ -19,7 +19,7 @@ export interface MenuItemOption<T = {}> {
 export type MenuItemProps<T = any> = Readonly<MenuItemOption<T>>
 
 // Generics syntax conflicts JSX syntax, so split typedef and implementation
-type WrapArrayFunction = <T>(obj: T|T[]) => T[]|undefined
+type WrapArrayFunction = <T>(obj: T | T[]) => T[] | undefined
 const wrapArray: WrapArrayFunction = (obj) => {
     if (obj == null) return undefined
     return Array.isArray(obj) ? obj : [obj]
@@ -89,10 +89,10 @@ export class ContextMenu extends React.Component
         ContextMenuManager.instance.unregister(this.root)
     }
 
-    private bindRootElement = (el: HTMLDivElement) => this.root = el
-
     public render()
     {
         return <div ref={this.bindRootElement} style={{ display: 'none' }} />
     }
+
+    private bindRootElement = (el: HTMLDivElement) => this.root = el
 }

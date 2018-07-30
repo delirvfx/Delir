@@ -2,9 +2,6 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 export default class Portal {
-    public root: Element
-    private mounted: boolean = false
-    private mountedComponent: React.Component<any, any>|null
 
     public static mount(component: JSX.Element)
     {
@@ -12,6 +9,9 @@ export default class Portal {
         portal.mount(component)
         return portal
     }
+    public root: Element
+    private mounted: boolean = false
+    private mountedComponent: React.Component<any, any> | null
 
     constructor()
     {
