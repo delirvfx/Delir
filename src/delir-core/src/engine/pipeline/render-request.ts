@@ -1,12 +1,12 @@
-import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
+import * as _ from 'lodash'
+
 import Composition from '../../project/composition'
+import { KeyframeValueTypes } from '../../project/keyframe'
 import EntityResolver from './entity-resolver'
 import PreRenderingRequest from './pre-rendering-request'
 import WebGLContextPool from './WebGLContextPool'
 
-import * as _ from 'lodash'
-
-export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}>
+export default class RenderRequest<T = {[propName: string]: KeyframeValueTypes}>
 {
     private static _permitKeys = [
         'time',

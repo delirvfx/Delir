@@ -1,7 +1,7 @@
 // @flow
 import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
 import PluginRegistry from '../../plugin-support/plugin-registry'
-import EffectPluginBase from '../../plugin-support/PostEffectBase'
+import EffectPluginBase, { EffectPluginClass } from '../../plugin-support/PostEffectBase'
 import Project from '../../project/project'
 
 import * as ProjectHelper from '../../helper/project-helper'
@@ -34,7 +34,7 @@ export default class EntityResolver
         return this._pluginRegistry.requirePostEffectPluginById(pluginName)
     }
 
-    public resolveEffectPlugin(pluginId: string): {new(...args: any[]): EffectPluginBase} | null
+    public resolveEffectPlugin(pluginId: string): EffectPluginClass | null
     {
         try {
             return this._pluginRegistry.requirePostEffectPluginById(pluginId) as any
