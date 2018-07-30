@@ -82,6 +82,8 @@
     "webpack": "4.16.3"
   },
   "dependencies": {
+    "@ragg/fleur": "0.0.3",
+    "@ragg/fleur-react": "0.0.1",
     "aac": "0.1.3",
     "alac": "0.1.0",
     "arraybuffer-to-buffer": "0.0.4",
