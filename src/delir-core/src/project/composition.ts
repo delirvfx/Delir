@@ -1,68 +1,15 @@
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 import ColorRGB from '../values/color-rgb'
-import Project from './project'
 import Layer from './layer'
+import Project from './project'
 
-import {CompositionScheme, CompositionConfigScheme} from './scheme/composition'
+import { CompositionConfigScheme, CompositionScheme } from './scheme/composition'
 
 import toJSON from '../helper/toJSON'
 
 export default class Composition
 {
-    static deserialize(compJson: CompositionScheme, project: Project)
-    {
-        const comp = new Composition()
-
-        const config: CompositionConfigScheme = _.pick(compJson.config, [
-            'name',
-            'width',
-            'height',
-            'framerate',
-            'durationFrames',
-            'samplingRate',
-            'audioChannels',
-            'backgroundColor',
-        ])
-
-        const layers = compJson.layers.map(layer => Layer.deserialize(layer))
-
-        Object.defineProperty(comp, '_id', {value: compJson.id || uuid.v4()})
-        Object.assign(comp.config, config)
-        comp.layers = layers
-
-        const color = config.backgroundColor
-        comp.backgroundColor = new ColorRGB(color.red, color.green, color.blue)
-        return comp
-    }
-
-    private _id: string = uuid.v4()
-
-    public layers : Layer[] = []
-
-    private config : {
-        name: string|null,
-        width: number|null,
-        height: number|null,
-        framerate: number|null,
-        durationFrames: number|null,
-
-        samplingRate: number|null,
-        audioChannels: number|null,
-
-        backgroundColor: ColorRGB|null,
-    } = {
-        name: null,
-        width: null,
-        height: null,
-        framerate: null,
-        durationFrames: null,
-
-        samplingRate: null,
-        audioChannels: null,
-
-        backgroundColor: new ColorRGB(0, 0, 0),
-    }
 
     get id(): string { return this._id }
 
@@ -89,6 +36,59 @@ export default class Composition
 
     get backgroundColor(): ColorRGB { return this.config.backgroundColor as ColorRGB }
     set backgroundColor(backgroundColor: ColorRGB) { this.config.backgroundColor = backgroundColor }
+    public static deserialize(compJson: CompositionScheme, project: Project)
+    {
+        const comp = new Composition()
+
+        const config: CompositionConfigScheme = _.pick(compJson.config, [
+            'name',
+            'width',
+            'height',
+            'framerate',
+            'durationFrames',
+            'samplingRate',
+            'audioChannels',
+            'backgroundColor',
+        ])
+
+        const layers = compJson.layers.map(layer => Layer.deserialize(layer))
+
+        Object.defineProperty(comp, '_id', {value: compJson.id || uuid.v4()})
+        Object.assign(comp.config, config)
+        comp.layers = layers
+
+        const color = config.backgroundColor
+        comp.backgroundColor = new ColorRGB(color.red, color.green, color.blue)
+        return comp
+    }
+
+    public layers : Layer[] = []
+
+    private _id: string = uuid.v4()
+
+    private config : {
+        name: string | null,
+        width: number | null,
+        height: number | null,
+        framerate: number | null,
+        durationFrames: number | null,
+
+        samplingRate: number | null,
+        audioChannels: number | null,
+
+        backgroundColor: ColorRGB | null,
+    } = {
+        name: null,
+        width: null,
+        height: null,
+        framerate: null,
+        durationFrames: null,
+
+        samplingRate: null,
+        audioChannels: null,
+
+        backgroundColor: new ColorRGB(0, 0, 0),
+    }
 
     constructor()
     {

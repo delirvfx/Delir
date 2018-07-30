@@ -39,10 +39,10 @@ export default class ColorRGBA {
     get alpha(): number { return this._alpha }
 
     public clone(
-        r: number|null = null,
-        g: number|null = null,
-        b: number|null = null,
-        a: number|null = null,
+        r: number | null = null,
+        g: number | null = null,
+        b: number | null = null,
+        a: number | null = null,
     ): ColorRGBA
     {
         return new ColorRGBA(
@@ -65,7 +65,7 @@ export default class ColorRGBA {
 
     public toCSSColor()
     {
-        return `rgba(${this.r|0}, ${this.g|0}, ${this.b|0}, ${this.a})`
+        return `rgba(${this.r | 0}, ${this.g | 0}, ${this.b | 0}, ${this.a})`
     }
 
     /**
@@ -73,6 +73,6 @@ export default class ColorRGBA {
      */
     public toString()
     {
-        return `rgba(${this.r|0}, ${this.g|0}, ${this.b|0}, ${this.a})`
+        return `rgba(${this.r | 0}, ${this.g | 0}, ${this.b | 0}, ${this.a})`
     }
 }

@@ -1,5 +1,5 @@
-import {AssetScheme} from './asset'
-import {CompositionScheme} from './composition'
+import { AssetScheme } from './asset'
+import { CompositionScheme } from './composition'
 
 export interface ProjectScheme {
     formatVersion: string

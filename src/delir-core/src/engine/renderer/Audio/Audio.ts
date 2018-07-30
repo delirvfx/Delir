@@ -1,20 +1,20 @@
 import * as _ from 'lodash'
 
-import {IRenderer} from '../renderer-base'
+import { resampling } from '../../../helper/Audio'
 import Type from '../../../plugin-support/type-descriptor'
-import {TypeDescriptor} from '../../../plugin-support/type-descriptor'
+import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'
 import RenderingRequest from '../../pipeline/render-request'
-import {resampling} from '../../../helper/Audio'
+import { IRenderer } from '../renderer-base'
 
 import Asset from '../../../project/asset'
 
-import * as fs from 'fs'
-import AV from 'av'
-import 'mp3'
-import 'flac'
-import 'alac'
 import 'aac'
+import 'alac/src/decoder'
+import AV from 'av/node'
+import 'flac'
+import * as fs from 'fs'
+import 'mp3'
 
 interface AVFormat {
     bitrate: number
@@ -115,7 +115,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
     public async render(req: RenderingRequest<AudioRendererParam>)
     {
-        return await this.renderAudio(req)
+        return this.renderAudio(req)
     }
 
     public async renderAudio(req: RenderingRequest<AudioRendererParam>)

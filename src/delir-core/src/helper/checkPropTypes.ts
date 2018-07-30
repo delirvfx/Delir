@@ -8,7 +8,7 @@ interface CheckResult {
 type Validator<T> = (object: T, key: string, componentName?: string, ...rest: any[]) => Error | null | undefined
 
 interface Rules<T> {
-    [prop: string]: Validator<T>|Rules<T>
+    [prop: string]: Validator<T> | Rules<T>
 }
 
 export default <T>(propTypes: Rules<T>, props: any, componentName: string = 'unnamed'): CheckResult => {

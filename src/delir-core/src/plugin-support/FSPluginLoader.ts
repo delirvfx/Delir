@@ -1,13 +1,13 @@
-import {DelirPluginPackageJson, PluginEntry} from '../plugin-support/types'
+import { DelirPluginPackageJson, PluginEntry } from '../plugin-support/types'
 
 import * as fs from 'fs-promise'
-import * as path from 'path'
 import * as _ from 'lodash'
+import * as path from 'path'
 import * as semver from 'semver'
 
 import * as DelirCorePackageJson from '../../package.json'
-import {validatePluginPackageJSON} from '../plugin-support/plugin-registry'
-import {PluginLoadFailException} from '../exceptions/'
+import { PluginLoadFailException } from '../exceptions/'
+import { validatePluginPackageJSON } from '../plugin-support/plugin-registry'
 
 export default class FSPluginLoader
 {

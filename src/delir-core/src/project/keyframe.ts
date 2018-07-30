@@ -9,9 +9,9 @@ import toJSON from '../helper/toJSON'
 import ColorRGB from '../values/color-rgb'
 import ColorRGBA from '../values/color-rgba'
 
-import {JSONKeyframeValueTypes, KeyframeScheme, KeyframeConfigScheme, AssetPointerScheme} from './scheme/keyframe'
+import { AssetPointerScheme, JSONKeyframeValueTypes, KeyframeConfigScheme, KeyframeScheme } from './scheme/keyframe'
 
-type KeyframeValueTypes = number|boolean|string|ColorRGB|ColorRGBA|AssetPointerScheme
+type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | AssetPointerScheme
 
 export default class Keyframe
 {
@@ -55,8 +55,8 @@ export default class Keyframe
     private _id: string = uuid.v4()
 
     private _config: {
-        value: KeyframeValueTypes|null,
-        frameOnClip: number|null,
+        value: KeyframeValueTypes | null,
+        frameOnClip: number | null,
         easeInParam: [number, number],
         easeOutParam: [number, number],
     } = {
@@ -68,8 +68,8 @@ export default class Keyframe
 
     get id(): string { return this._id = this._id || uuid.v4() }
 
-    get value(): KeyframeValueTypes|null { return this._config.value }
-    set value(value: KeyframeValueTypes|null) { this._config.value = value }
+    get value(): KeyframeValueTypes | null { return this._config.value }
+    set value(value: KeyframeValueTypes | null) { this._config.value = value }
 
     get frameOnClip(): number { return this._config.frameOnClip as number }
     set frameOnClip(frameOnClip: number) { this._config.frameOnClip = frameOnClip }
@@ -112,7 +112,7 @@ export default class Keyframe
         } else if (_.isObject(this.value)) {
             throw new Error(`Serialization failed, unexpected value type on Keyframe#${this.id}`)
         } else {
-            value = this.value as string|number|boolean
+            value = this.value as string | number | boolean
         }
 
         return {

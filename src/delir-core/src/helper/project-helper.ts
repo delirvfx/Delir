@@ -1,14 +1,14 @@
 // @flow
-import * as uuid from 'uuid'
 import * as _ from 'lodash'
+import * as uuid from 'uuid'
 
-import Project from '../project/project'
 import Asset from '../project/asset'
-import Composition from '../project/composition'
-import Layer from '../project/layer'
 import Clip from '../project/clip'
+import Composition from '../project/composition'
 import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
+import Layer from '../project/layer'
+import Project from '../project/project'
 import Expression from '../values/expression'
 
 import PluginRegistory from '../plugin-support/plugin-registry'
@@ -88,7 +88,7 @@ export function addComposition(
 
 export function addLayer(
     project: Project,
-    targetCompositionId: Composition|string,
+    targetCompositionId: Composition | string,
     layer: Layer
     // TODO: position specify option
 ): Layer
@@ -111,7 +111,7 @@ export function addLayer(
 
 export function addClip(
     project: Project,
-    targetLayerId: Layer|string,
+    targetLayerId: Layer | string,
     clip: Clip
 ): Clip
 {
@@ -135,7 +135,7 @@ export function addClip(
 
 export function addEffect(
   project: Project,
-  targetClipId: Clip|string,
+  targetClipId: Clip | string,
   effect: Effect
 ): Effect
 {
@@ -150,15 +150,15 @@ export function addEffect(
 
 export function addKeyframe(
     project: Project,
-    targetClipId: Clip|string,
+    targetClipId: Clip | string,
     propName: string,
-    keyframe: Keyframe|Keyframe[]
-): Keyframe|Keyframe[]
+    keyframe: Keyframe | Keyframe[]
+): Keyframe | Keyframe[]
 {
     let keyframes = Array.isArray(keyframe) ? keyframe : [keyframe]
 
     // TODO: Not found behaviour
-    const clip: Clip|null = targetClipId instanceof Clip
+    const clip: Clip | null = targetClipId instanceof Clip
         ? targetClipId
         : findClipById(project, targetClipId)!
 
@@ -189,20 +189,20 @@ export function addKeyframe(
 
 export function addEffectKeyframe(
     project: Project,
-    targetClipId: Clip|string,
-    targetEffectId: Effect|string,
+    targetClipId: Clip | string,
+    targetEffectId: Effect | string,
     propName: string,
-    keyframe: Keyframe|Keyframe[]
-): Keyframe|Keyframe[]|null
+    keyframe: Keyframe | Keyframe[]
+): Keyframe | Keyframe[] | null
 {
     const keyframes = Array.isArray(keyframe) ? keyframe : [keyframe]
 
     // TODO: Not found behaviour
-    const clip: Clip|null = targetClipId instanceof Clip
+    const clip: Clip | null = targetClipId instanceof Clip
         ? targetClipId
         : findClipById(project, targetClipId)!
 
-    const effect: Effect|null = targetEffectId instanceof Effect
+    const effect: Effect | null = targetEffectId instanceof Effect
         ? targetEffectId
         : findEffectFromClipById(clip, targetEffectId)
 
@@ -227,14 +227,12 @@ export function addEffectKeyframe(
     return keyframe
 }
 
-
-
 //
 // Delete
 //
 export function deleteAsset(
     project: Project,
-    targetAssetId: Asset|string,
+    targetAssetId: Asset | string,
 ) {
     const asset = targetAssetId instanceof Asset
         ? targetAssetId
@@ -245,7 +243,7 @@ export function deleteAsset(
 
 export function deleteComposition(
     project: Project,
-    targetCompositionId: Composition|string,
+    targetCompositionId: Composition | string,
 ) {
     const composition = targetCompositionId instanceof Composition
         ? targetCompositionId
@@ -257,7 +255,7 @@ export function deleteComposition(
 
 export function deleteLayer(
     project: Project,
-    targetLayerId: Layer|string,
+    targetLayerId: Layer | string,
 ) {
     const layer = targetLayerId instanceof Layer
         ? targetLayerId
@@ -270,7 +268,7 @@ export function deleteLayer(
 
 export function deleteClip(
     project: Project,
-    targetClipId: Clip|string,
+    targetClipId: Clip | string,
 ) {
     const clip = targetClipId instanceof Clip
         ? targetClipId
@@ -282,8 +280,8 @@ export function deleteClip(
 
 export function deleteEffectFromClip(
     project: Project,
-    parentClipId: Clip|string,
-    targetEffectId: Effect|string,
+    parentClipId: Clip | string,
+    targetEffectId: Effect | string,
 ) {
     const clip = parentClipId instanceof Clip
         ? parentClipId
@@ -298,7 +296,7 @@ export function deleteEffectFromClip(
 
 export function deleteKeyframe(
     project: Project,
-    targetKeyframeId: Keyframe|string,
+    targetKeyframeId: Keyframe | string,
 ) {
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId
@@ -328,7 +326,7 @@ export function deleteEffectKeyframe(
 //
 export function modifyAsset(
     project: Project,
-    targetAssetId: Asset|string,
+    targetAssetId: Asset | string,
     patch: Partial<Asset>
 ) {
     const asset = targetAssetId instanceof Asset
@@ -340,7 +338,7 @@ export function modifyAsset(
 
 export function modifyComposition(
     project: Project,
-    targetCompositionId: Composition|string,
+    targetCompositionId: Composition | string,
     patch: Partial<Composition>
 ) {
     const composition = targetCompositionId instanceof Composition
@@ -352,7 +350,7 @@ export function modifyComposition(
 
 export function modifyLayer(
     project: Project,
-    targetLayerId: Layer|string,
+    targetLayerId: Layer | string,
     patch: Partial<Layer>
 ) {
     const layer = targetLayerId instanceof Layer
@@ -364,7 +362,7 @@ export function modifyLayer(
 
 export function modifyClip(
     project: Project,
-    targetClipId: Clip|string,
+    targetClipId: Clip | string,
     patch: Partial<Clip>
 ) {
     const clip = targetClipId instanceof Clip
@@ -378,7 +376,7 @@ export function modifyClip(
 
 export function modifyClipExpression(
     project: Project,
-    targetClipId: Clip|string,
+    targetClipId: Clip | string,
     property: string,
     expr: Expression,
 ) {
@@ -391,8 +389,8 @@ export function modifyClipExpression(
 
 export function modifyEffectExpression(
     project: Project,
-    targetClipId: Clip|string,
-    targetEffectId: Effect|string,
+    targetClipId: Clip | string,
+    targetEffectId: Effect | string,
     property: string,
     expr: Expression,
 ) {
@@ -409,8 +407,8 @@ export function modifyEffectExpression(
 
 export function modifyEffect(
     project: Project,
-    parentClipId: Clip|string,
-    targetEffectId: Effect|string,
+    parentClipId: Clip | string,
+    targetEffectId: Effect | string,
     patch: Partial<Effect>
 ) {
     const clip = parentClipId instanceof Clip
@@ -426,9 +424,9 @@ export function modifyEffect(
 
 export function modifyEffectKeyframe(
     project: Project,
-    effectHolderClipId: Clip|string,
-    kfHolderEffectId: Effect|string,
-    targetKeyframeId: Keyframe|string,
+    effectHolderClipId: Clip | string,
+    kfHolderEffectId: Effect | string,
+    targetKeyframeId: Keyframe | string,
     patch: Partial<Keyframe>,
 ) {
     const clip = effectHolderClipId instanceof Clip
@@ -456,7 +454,7 @@ export function modifyEffectKeyframe(
 
 export function modifyKeyframe(
     project: Project,
-    targetKeyframeId: Keyframe|string,
+    targetKeyframeId: Keyframe | string,
     patch: Partial<Keyframe>,
 ) {
     const keyframe = targetKeyframeId instanceof Keyframe
@@ -488,9 +486,9 @@ export function moveLayerOrder(
 //
 // Finders
 //
-export function findAssetById(project: Project, assetId: string): Asset|null
+export function findAssetById(project: Project, assetId: string): Asset | null
 {
-    let targetAsset: Asset|null = null
+    let targetAsset: Asset | null = null
 
     compSearch:
         for (const asset of project.assets) {
@@ -503,9 +501,9 @@ export function findAssetById(project: Project, assetId: string): Asset|null
     return targetAsset
 }
 
-export function findCompositionById(project: Project, compositionId: string): Composition|null
+export function findCompositionById(project: Project, compositionId: string): Composition | null
 {
-    let targetComp: Composition|null = null
+    let targetComp: Composition | null = null
 
     compSearch:
         for (const comp of project.compositions) {
@@ -518,9 +516,9 @@ export function findCompositionById(project: Project, compositionId: string): Co
     return targetComp
 }
 
-export function findLayerById(project: Project, layerId: string): Layer|null
+export function findLayerById(project: Project, layerId: string): Layer | null
 {
-    let targetLayer: Layer|null = null
+    let targetLayer: Layer | null = null
 
     layerSearch:
         for (const comp of project.compositions) {
@@ -535,9 +533,9 @@ export function findLayerById(project: Project, layerId: string): Layer|null
     return targetLayer
 }
 
-export function findClipById(project: Project, clipId: string): Clip|null
+export function findClipById(project: Project, clipId: string): Clip | null
 {
-    let targetClip: Clip|null = null
+    let targetClip: Clip | null = null
 
     clipSearch:
         for (const comp of project.compositions) {
@@ -554,7 +552,7 @@ export function findClipById(project: Project, clipId: string): Clip|null
     return targetClip
 }
 
-export function findEffectFromClipById(clip: Clip, effectId: string): Effect|null
+export function findEffectFromClipById(clip: Clip, effectId: string): Effect | null
 {
     for (const effect of clip.effects) {
         if (effect.id === effectId) {
@@ -565,9 +563,9 @@ export function findEffectFromClipById(clip: Clip, effectId: string): Effect|nul
     return null
 }
 
-export function findParentCompositionByLayerId(project: Project, layerId: string): Composition|null
+export function findParentCompositionByLayerId(project: Project, layerId: string): Composition | null
 {
-    let targetComp: Composition|null = null
+    let targetComp: Composition | null = null
 
     compositionSearch:
         for (const comp of project.compositions) {
@@ -582,9 +580,9 @@ export function findParentCompositionByLayerId(project: Project, layerId: string
     return targetComp
 }
 
-export function findParentLayerByClipId(project: Project, clipId: string): Layer|null
+export function findParentLayerByClipId(project: Project, clipId: string): Layer | null
 {
-    let targetLayer: Layer|null = null
+    let targetLayer: Layer | null = null
 
     layerSearch:
         for (const comp of project.compositions) {
@@ -601,9 +599,9 @@ export function findParentLayerByClipId(project: Project, clipId: string): Layer
     return targetLayer
 }
 
-export function findKeyframeFromClipById(clip: Clip, keyframeId: string): Keyframe|null
+export function findKeyframeFromClipById(clip: Clip, keyframeId: string): Keyframe | null
 {
-    let targetKeyframe: Keyframe|null = null
+    let targetKeyframe: Keyframe | null = null
 
     keyframeSearch:
         for (const propName of Object.keys(clip.keyframes)) {
@@ -618,9 +616,9 @@ export function findKeyframeFromClipById(clip: Clip, keyframeId: string): Keyfra
     return targetKeyframe
 }
 
-export function findKeyframeFromEffectById(effect: Effect, keyframeId: string): Keyframe|null
+export function findKeyframeFromEffectById(effect: Effect, keyframeId: string): Keyframe | null
 {
-    let targetKeyframe: Keyframe|null = null
+    let targetKeyframe: Keyframe | null = null
 
     keyframeSearch:
         for (const propName of Object.keys(effect.keyframes)) {
@@ -635,9 +633,9 @@ export function findKeyframeFromEffectById(effect: Effect, keyframeId: string): 
     return targetKeyframe
 }
 
-export function findKeyframeById(project: Project, keyframeId: string): Keyframe|null
+export function findKeyframeById(project: Project, keyframeId: string): Keyframe | null
 {
-    let targetKeyframe: Keyframe|null = null
+    let targetKeyframe: Keyframe | null = null
 
     keyframeSearch:
         for (const comp of project.compositions) {
@@ -658,23 +656,23 @@ export function findKeyframeById(project: Project, keyframeId: string): Keyframe
     return targetKeyframe
 }
 
-export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string, frameOnClip: number): Keyframe|null
+export function findKeyframeFromClipByPropAndFrame(clip: Clip, propName: string, frameOnClip: number): Keyframe | null
 {
     if (!clip.keyframes[propName]) return null
-    const target: Keyframe|undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frameOnClip)
+    const target: Keyframe | undefined = _.find(clip.keyframes[propName], kf => kf.frameOnClip === frameOnClip)
     return target ? target : null
 }
 
-export function findKeyframeFromEffectByPropAndFrame(effect: Effect, propName: string, frameOnClip: number): Keyframe|null
+export function findKeyframeFromEffectByPropAndFrame(effect: Effect, propName: string, frameOnClip: number): Keyframe | null
 {
     if (!effect.keyframes[propName]) return null
-    const target: Keyframe|undefined = _.find(effect.keyframes[propName], kf => kf.frameOnClip === frameOnClip)
+    const target: Keyframe | undefined = _.find(effect.keyframes[propName], kf => kf.frameOnClip === frameOnClip)
     return target ? target : null
 }
 
-export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, propName: string}|null
+export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, propName: string} | null
 {
-    let target: {clip: Clip, propName: string}|null = null
+    let target: {clip: Clip, propName: string} | null = null
 
     keyframeSearch:
         for (const comp of project.compositions) {

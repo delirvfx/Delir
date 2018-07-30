@@ -2,7 +2,7 @@ import PreRenderRequest from '../engine/pipeline/pre-rendering-request'
 import RenderRequest from '../engine/pipeline/render-request'
 
 import PluginBase from './plugin-base'
-import {TypeDescriptor, ParameterValueTypes} from './type-descriptor'
+import { ParameterValueTypes, TypeDescriptor } from './type-descriptor'
 
 export default abstract class EffectPluginBase extends PluginBase
 {

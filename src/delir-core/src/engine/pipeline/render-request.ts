@@ -1,4 +1,4 @@
-import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
+import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
 import Composition from '../../project/composition'
 import EntityResolver from './entity-resolver'
 import PreRenderingRequest from './pre-rendering-request'
@@ -60,7 +60,7 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
     //
     // Composition options
     //
-    public readonly srcCanvas: HTMLCanvasElement|null
+    public readonly srcCanvas: HTMLCanvasElement | null
     public readonly destCanvas: HTMLCanvasElement
     public readonly width: number
     public readonly height: number
@@ -68,7 +68,7 @@ export default class RenderRequest<T = {[propName: string]: ParameterValueTypes}
     public readonly durationFrames: number
 
     public readonly destAudioBuffer: Float32Array[]
-    public readonly audioContext: AudioContext|OfflineAudioContext
+    public readonly audioContext: AudioContext | OfflineAudioContext
     public readonly samplingRate: number
     public readonly neededSamples: number
     public readonly audioChannels: number

@@ -1,4 +1,4 @@
-import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
+import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
 import Composition from '../../project/composition'
 import EntityResolver from './entity-resolver'
 import WebGLContextPool from './WebGLContextPool'
@@ -46,7 +46,7 @@ export default class PreRenderingRequest<T = {[propName: string]: ParameterValue
     // Composition hierarchy
     //
     public rootComposition: Readonly<Composition>
-    public parentComposition: Readonly<Composition>|null
+    public parentComposition: Readonly<Composition> | null
 
     //
     // Variable store
@@ -71,7 +71,7 @@ export default class PreRenderingRequest<T = {[propName: string]: ParameterValue
         )
 
         Object.assign(this, props)
-        Object.freeze(this);
+        Object.freeze(this)
     }
 
     public clone(patch: Partial<PreRenderingRequest<T>>): PreRenderingRequest<T>

@@ -1,6 +1,6 @@
+import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
+import { Clip } from '../../project'
 import RenderingRequest from './render-request'
-import {Clip} from '../../project'
-import {ParameterValueTypes} from '../../plugin-support/type-descriptor'
 
 export interface Exposes {
     req: RenderingRequest
@@ -10,7 +10,7 @@ export interface Exposes {
 
 export const makeContext = (exposes: Exposes) => {
     const clipPropertyProxy = new Proxy(exposes.clipProperties, {
-        set: () => { throw new Error(`Illegal property setting in expression`) }
+        set: () => { throw new Error('Illegal property setting in expression') }
     })
 
     const PROP_PROXIES = {

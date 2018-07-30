@@ -33,9 +33,9 @@ export default class ColorRGB {
     get blue(): number { return this._blue }
 
     public clone(
-        r: number|null = null,
-        g: number|null = null,
-        b: number|null = null,
+        r: number | null = null,
+        g: number | null = null,
+        b: number | null = null,
     ): ColorRGB
     {
         return new ColorRGB(
@@ -56,7 +56,7 @@ export default class ColorRGB {
 
     public toCSSColor()
     {
-        return `rgba(${this.r|0}, ${this.g|0}, ${this.b|0}, ${this.a})`
+        return `rgba(${this.r | 0}, ${this.g | 0}, ${this.b | 0}, ${this.a})`
     }
 
     /**
@@ -64,6 +64,6 @@ export default class ColorRGB {
      */
     public toString()
     {
-        return `rgba(${this.r|0}, ${this.g|0}, ${this.b|0}, 1)`
+        return `rgba(${this.r | 0}, ${this.g | 0}, ${this.b | 0}, 1)`
     }
 }

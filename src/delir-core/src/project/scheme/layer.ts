@@ -1,9 +1,9 @@
-import {ClipScheme} from './clip'
+import { ClipScheme } from './clip'
 
 export interface LayerScheme {
-    id: string|null
+    id: string | null
     config: {
-        name: string|null
+        name: string | null
     }
     clips: ClipScheme[]
 }

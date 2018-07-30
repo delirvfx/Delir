@@ -1,11 +1,11 @@
-import * as _ from 'lodash'
 import * as FontManager from 'font-manager'
+import * as _ from 'lodash'
 
-import {IRenderer} from '../renderer-base'
 import Type from '../../../plugin-support/type-descriptor'
-import {TypeDescriptor} from '../../../plugin-support/type-descriptor'
+import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'
 import RenderingRequest from '../../pipeline/render-request'
+import { IRenderer } from '../renderer-base'
 
 import ColorRGBA from '../../../values/color-rgba'
 
@@ -25,11 +25,6 @@ interface TextRendererParam {
 export default class TextLayer implements IRenderer<TextRendererParam>
 {
     public static get rendererId(): string { return 'text' }
-
-    public static provideAssetAssignMap()
-    {
-        return {}
-    }
 
     // `getAvailableFontsSync` is very heavy, Cache returned result with _.once
     public static provideParameters = _.once((): TypeDescriptor =>
@@ -54,8 +49,8 @@ export default class TextLayer implements IRenderer<TextRendererParam>
             })
             .enum('weight', {
                 label: 'weight',
-                defaultValue: "400",
-                selection: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+                defaultValue: '400',
+                selection: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
             })
             .number('size', {
                 label: 'Font size',
@@ -87,6 +82,11 @@ export default class TextLayer implements IRenderer<TextRendererParam>
                 defaultValue: 100,
             })
     })
+
+    public static provideAssetAssignMap()
+    {
+        return {}
+    }
 
     private _bufferCanvas: HTMLCanvasElement
 

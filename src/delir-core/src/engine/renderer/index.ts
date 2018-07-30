@@ -1,14 +1,14 @@
-import {IRendererStatic, IRenderer} from './renderer-base'
-import {TypeDescriptor} from '../../plugin-support/type-descriptor'
+import { TypeDescriptor } from '../../plugin-support/type-descriptor'
+import { IRenderer, IRendererStatic } from './renderer-base'
 
 import * as _ from 'lodash'
 import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
 
-import VideoRenderer from './Video/Video'
+import AdjustmentRenderer from './Adjustment/Adjustment'
+import AudioRenderer from './Audio/Audio'
 import ImageRenderer from './Image/Image'
 import TextRenderer from './Text/Text'
-import AudioRenderer from './Audio/Audio'
-import AdjustmentRenderer from './Adjustment/Adjustment'
+import VideoRenderer from './Video/Video'
 
 export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment'
 
