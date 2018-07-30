@@ -9,7 +9,6 @@ import { KnownPayload } from '../actions/PayloadTypes'
 import dispatcher from '../utils/Flux/Dispatcher'
 import * as Platform from '../utils/platform'
 
-import AppActions from '../actions/App'
 import {DispatchTypes as EditorStateDispatchTypes } from '../actions/App'
 import EditorStateStore from '../stores/EditorStateStore'
 
@@ -95,12 +94,12 @@ const handlePayload = async (payload: KnownPayload) => {
             })
 
             promise.progress(progress => {
-                AppActions.updateProcessingState(`Preview: ${progress.state}`)
+                // AppActions.updateProcessingState(`Preview: ${progress.state}`)
             })
 
             promise.catch(e => {
                 if (e instanceof Delir.Exceptions.RenderingAbortedException) {
-                    AppActions.updateProcessingState('Stop.')
+                    // AppActions.updateProcessingState('Stop.')
                     return
                 }
 
@@ -156,8 +155,8 @@ const handlePayload = async (payload: KnownPayload) => {
             // awaitを噛ませてステータスを確実に出す
             await new Promise(resolve => {
                 setImmediate(() => {
-                    AppActions.autoSaveProject()
-                    AppActions.updateProcessingState('Rendering: Initializing')
+                    // AppActions.autoSaveProject()
+                    // AppActions.updateProcessingState('Rendering: Initializing')
                     resolve()
                 })
             })
@@ -173,7 +172,9 @@ const handlePayload = async (payload: KnownPayload) => {
                     temporaryDir: remote.app.getPath('temp'),
                     ffmpegBin,
                     onProgress: progress => {
-                        setTimeout(() => { AppActions.updateProcessingState(progress.state) }, 0)
+                        setTimeout(() => {
+                            // AppActions.updateProcessingState(progress.state)
+                        }, 0)
                     }
                 })
 
@@ -206,7 +207,7 @@ const rendererService = {
         if (fails.length > 0) {
             const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
             const message = fails.map((fail: any) => fail.reason).join('\n\n')
-            AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
+            // AppActions.notify(`${failedPlugins}`, `Failed to load ${fails.length} plugins`, 'error', 5000, message)
         }
 
         console.log('Plugin loaded', successes, 'Failed:', fails)
