@@ -30,7 +30,9 @@ import * as DelirCorePackageJson from '../../package.json'
 //             // },
 //         }).isRequired
 //     }, packageJson, `package.json of ${packageJson.name}`)
-}
+// }
+
+export const validatePluginPackageJSON = () => true
 
 export default class PluginRegistry {
     private _plugins: {[type: string]: {[packageName: string]: Readonly<PluginEntry>}} = {'post-effect': {}}

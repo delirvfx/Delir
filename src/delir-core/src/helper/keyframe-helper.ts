@@ -1,5 +1,5 @@
 import Asset from '../project/asset'
-import Keyframe from '../project/keyframe'
+import Keyframe, { KeyframeValueTypes } from '../project/keyframe'
 import ColorRGB from '../values/color-rgb'
 import ColorRGBA from '../values/color-rgba'
 
@@ -10,6 +10,7 @@ import {
 } from '../plugin-support/type-descriptor'
 
 import * as bezierEasing from 'bezier-easing'
+import { AssetPointerScheme } from '../project/scheme/keyframe'
 
 interface KeyFrameLink {
     previous: Keyframe | null
@@ -17,8 +18,8 @@ interface KeyFrameLink {
     next: Keyframe | null
 }
 
-export interface KeyframeValueSequence {
-    [frame: number]: ParameterValueTypes
+export interface KeyframeParamValueSequence {
+    [frame: number]: KeyframeValueTypes
 }
 
 export function calcKeyframeValuesAt(
@@ -26,9 +27,9 @@ export function calcKeyframeValuesAt(
     clipPlacedFrame: number,
     descriptor: TypeDescriptor,
     keyframes: {[propName: string]: Keyframe[]},
-): {[propName: string]: ParameterValueTypes}
+): {[propName: string]: KeyframeValueTypes}
 {
-    return descriptor.properties.map<[string, ParameterValueTypes]>(desc => {
+    return descriptor.properties.map<[string, KeyframeValueTypes]>(desc => {
         return [
             desc.propName,
             calcKeyframeValueAt(frame, clipPlacedFrame, desc, keyframes[desc.propName] || [])
@@ -45,7 +46,7 @@ export function calcKeyframeValueAt(
     clipPlacedFrame: number,
     desc: AnyParameterTypeDescriptor,
     keyframes: Keyframe[],
-): ParameterValueTypes
+): KeyframeValueTypes
 {
     switch (desc.type) {
         case 'POINT_2D':
@@ -89,9 +90,9 @@ export function calcKeyFrames(
     clipPlacedFrame: number,
     beginFrame: number,
     calcFrames: number
-): {[propName: string]: KeyframeValueSequence}
+): {[propName: string]: KeyframeParamValueSequence}
 {
-    const tables: {[propName: string]: KeyframeValueSequence} = {}
+    const tables: {[propName: string]: KeyframeParamValueSequence} = {}
     const props = paramTypes instanceof TypeDescriptor ? paramTypes.properties : paramTypes
 
     for (const propDesc of props) {
@@ -157,7 +158,7 @@ export function calcKeyframe(
     beginFrame: number,
     calcFrames: number,
     transformer: (rate: number, frame: number, keyFrameLink: KeyFrameLink) => any
-): KeyframeValueSequence
+): KeyframeParamValueSequence
 {
     const orderedSequense: Keyframe[] = keyFrameSequense
         .slice(0)
@@ -165,7 +166,7 @@ export function calcKeyframe(
 
     const linkedSequense: KeyFrameLink[] = _buildLinkedKeyFrame(orderedSequense)
 
-    const table: KeyframeValueSequence = {}
+    const table: KeyframeParamValueSequence = {}
 
     for (let frame = beginFrame, end = beginFrame + calcFrames; frame <= end; frame++) {
         const activeKeyFrame: KeyFrameLink | null = _activeKeyFrameOfFrame(linkedSequense, clipPlacedFrame, frame)
@@ -372,7 +373,7 @@ function calcClipKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLi
     return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
 }
 
-function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): Asset
+function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink): AssetPointerScheme
 {
     return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
 }

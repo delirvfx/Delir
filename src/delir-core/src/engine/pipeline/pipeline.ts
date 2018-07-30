@@ -21,37 +21,20 @@ import * as KeyframeHelper from '../../helper/keyframe-helper'
 import ProgressPromise from '../../helper/progress-promise'
 import * as ProjectHelper from '../../helper/project-helper'
 import * as RendererFactory from '../renderer'
-import EntityResolver from './entity-resolver'
+import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionContext'
 import RenderingRequest from './render-request'
+import ClipRenderTask from './Task/ClipRenderTask'
+import EffectRenderTask from './Task/EffectRenderTask'
 import WebGLContextPool from './WebGLContextPool'
 
-interface ExpressionExecuters {
+export interface ExpressionExecuters {
     [propName: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes
 }
 
-interface IEffectRenderTask {
-    effectEntityId: string
-    instance: EffectPluginBase
-    effectorProps: TypeDescriptor
-    keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
-    expressions: ExpressionExecuters
-}
-
-interface IClipRenderTask {
-    renderer: IRenderer<any>
-    rendererProps: TypeDescriptor
-    rendererType: RendererFactory.AvailableRenderer
-    clipPlacedFrame: number
-    clipDurationFrames: number
-    keyframeLUT: {[propName: string]: {[frame: number]: ParameterValueTypes}}
-    expressions: ExpressionExecuters
-    effects: IEffectRenderTask[]
-}
-
-interface ILayerRenderTask {
+interface LayerRenderTask {
     layerId: string
-    clips: IClipRenderTask[]
+    clips: ClipRenderTask[]
 }
 
 interface RenderingOption {
@@ -101,7 +84,7 @@ export default class Pipeline
     private _project: Project
     private _pluginRegistry: PluginRegistry = new PluginRegistry()
     private _destinationAudioNode: AudioNode
-    private _rendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
+    private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver | null = null
     private webGLContextPool: WebGLContextPool = new WebGLContextPool()
@@ -275,7 +258,7 @@ export default class Pipeline
         const rootComposition = ProjectHelper.findCompositionById(this._project, compositionId)
         if (!rootComposition) throw new RenderingFailedException('Specified composition not found')
 
-        const resolver = new EntityResolver(this._project, this._pluginRegistry)
+        const resolver = new DependencyResolver(this._project, this._pluginRegistry)
 
         const canvas = document.createElement('canvas') as HTMLCanvasElement
         canvas.width = rootComposition.width
@@ -321,103 +304,42 @@ export default class Pipeline
         })
     }
 
-    private async _taskingStage(this: Pipeline, req: RenderingRequest): Promise<ILayerRenderTask[]>
+    private async _taskingStage(this: Pipeline, req: RenderingRequest): Promise<LayerRenderTask[]>
     {
-        const layerTasks: ILayerRenderTask[] = []
+        const layerTasks: LayerRenderTask[] = []
 
         const renderOrderLayers = req.rootComposition.layers.slice(0).reverse()
         for (const layer of renderOrderLayers) {
 
-            const clips: IClipRenderTask[] = []
+            const clips: ClipRenderTask[] = []
             for (const clip of layer.clips) {
-                // yield
-
-                // Initialize renderer
-                const rendererProps = RendererFactory.getInfo(clip.renderer).parameter
-                const rendererAssetProps = rendererProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
-                const rendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, rendererProps, clip.keyframes)
-                rendererAssetProps.forEach(propName => {
-                    rendererInitParam[propName] = rendererInitParam[propName]
-                        ? req.resolver.resolveAsset(rendererInitParam[propName].assetId)
-                        : null
+                // Initialize clip
+                const clipRenderTask = ClipRenderTask.build({
+                    clip,
+                    clipRendererCache: this._clipRendererCache,
+                    req,
+                    resolver: req.resolver,
                 })
 
-                let renderer = this._rendererCache.get(clip)
-                if (!renderer) {
-                    renderer = RendererFactory.create(clip.renderer)
-                    this._rendererCache.set(clip, renderer)
-                    await renderer.beforeRender(req.clone({parameters: rendererInitParam}).toPreRenderingRequest())
-                }
-
-                const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererProps, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
-                rendererAssetProps.forEach(propName => {
-                    rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => {
-                        return value ? req.resolver.resolveAsset(value.assetId) : null
-                    })
-                })
-
-                const rendererExpressions = _(clip.expressions).mapValues((expr: Expression) => {
-                    const code = expr.language === 'typescript' ? TypeScript.transpile(expr.code, tsCompileOption) : expr.code
-                    const script = new vm.Script(code, {filename: `${layer.name}.${clip.id}.expression.ts`})
-                    return (exposes: ExpressionContext.Exposes) => script.runInNewContext(ExpressionContext.makeContext(exposes))
-                }).pickBy(value => value !== null).value() as ExpressionExecuters
+                await clipRenderTask.initialize(req)
 
                 // Initialize effects
-                const effects: IEffectRenderTask[] = []
+                const effects: EffectRenderTask[] = []
                 for (const effect of clip.effects) {
-                    const EffectPluginClass = req.resolver.resolveEffectPlugin(effect.processor)
-
-                    if (EffectPluginClass == null) break
-
-                    const effectProps = EffectPluginClass.provideParameters()
-                    const effectAssetProps = effectProps.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
-                    const effectInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, effectProps, effect.keyframes)
-                    effectAssetProps.forEach(propName => {
-                        effectInitParam[propName] = effectInitParam[propName]
-                            ? req.resolver.resolveAsset(effectInitParam[propName].assetId)
-                            : null
+                    const effectRenderTask = EffectRenderTask.build({
+                        effect,
+                        clip,
+                        req,
+                        effectCache: this._effectCache,
+                        resolver: req.resolver
                     })
 
-                    let effector = this._effectCache.get(effect)
-                    if (!effector) {
-                        effector = new EffectPluginClass()
-                        this._effectCache.set(effect, effector)
-                        await effector.initialize(req.clone({parameters: effectInitParam}).toPreRenderingRequest())
-                    }
-
-                    const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectProps, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
-                    effectAssetProps.forEach(propName => {
-                        effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => {
-                            return value ? req.resolver.resolveAsset(value.assetId) : null
-                        })
-                    })
-
-                    const effectExpressions = _(effect.expressions).mapValues((expr: Expression) => {
-                        const code = expr.language === 'typescript' ? TypeScript.transpile(expr.code, tsCompileOption) : expr.code
-                        const script = new vm.Script(code, {filename: `${layer.name}.${clip.id}.effect.expression.ts`})
-                        return (exposes: ExpressionContext.Exposes) => script.runInNewContext(ExpressionContext.makeContext(exposes))
-                    }).pickBy(value => value !== null).value() as ExpressionExecuters
-
-                    effects.push({
-                        effectEntityId: effect.id,
-                        instance: effector,
-                        effectorProps: effectProps,
-                        keyframeLUT: effectKeyframeLUT,
-                        expressions: effectExpressions,
-                    })
+                    await effectRenderTask.initialize(req)
+                    effects.push(effectRenderTask)
                 }
 
-                clips.push({
-                    renderer,
-                    // rendererInfo: RendererFactory.getInfo(clip.renderer),
-                    rendererProps,
-                    rendererType: clip.renderer,
-                    clipPlacedFrame: clip.placedFrame,
-                    clipDurationFrames: clip.durationFrames,
-                    keyframeLUT: rendererKeyframeLUT,
-                    expressions: rendererExpressions,
-                    effects,
-                })
+                clipRenderTask.effectRenderTask = effects
+                clips.push(clipRenderTask)
             }
 
             layerTasks.push({
@@ -429,7 +351,7 @@ export default class Pipeline
         return layerTasks
     }
 
-    private async _renderStage(req: RenderingRequest, layerRenderTasks: ILayerRenderTask[]): Promise<void>
+    private async _renderStage(req: RenderingRequest, layerRenderTasks: LayerRenderTask[]): Promise<void>
     {
         const destBufferCanvas = req.destCanvas
         const destBufferCtx = destBufferCanvas.getContext('2d')!
@@ -477,7 +399,7 @@ export default class Pipeline
                 })
 
                 // Lookup current frame prop value from pre-calculated lookup-table
-                const beforeExpressionParams = _.fromPairs(clipTask.rendererProps.properties.map(desc => {
+                const beforeExpressionParams = _.fromPairs(clipTask.rendererParams.properties.map(desc => {
                     return [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]
                 }))
 
@@ -504,11 +426,11 @@ export default class Pipeline
                     })
                 }
 
-                await clipTask.renderer.render(clipRenderReq)
+                await clipTask.clipRenderer.render(clipRenderReq)
                 clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
 
                 // Post process effects
-                for (const effectTask of clipTask.effects) {
+                for (const effectTask of clipTask.effectRenderTask) {
                     const beforeExpressionEffectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => {
                         return [desc.propName, effectTask.keyframeLUT[desc.propName][req.frame]]
                     })) as {[propName: string]: ParameterValueTypes}
@@ -521,7 +443,7 @@ export default class Pipeline
                         parameters: afterExpressionEffectorParams,
                     })
 
-                    await effectTask.instance.render(effectRenderReq)
+                    await effectTask.effectRenderer.render(effectRenderReq)
 
                     clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
                     clipBufferCtx.globalAlpha = 1

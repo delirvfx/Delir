@@ -31,7 +31,7 @@ const paths = {
 };
 
 const isWindows = os.type() === 'Windows_NT'
-const __DEV__ = process.env.DELIR_ENV === 'development'
+const __DEV__ = process.env.DELIR_ENV === 'dev'
 
 export function buildBrowserJs() {
     return g.src([join(paths.src.browser, "**/*.js")])
@@ -61,7 +61,7 @@ export async function symlinkDependencies(done) {
 
             for (let dep of deps) {
                 if (depList.indexOf(dep) === -1) {
-                    console.log("dep: %s", dep);
+                    // console.log("dep: %s", dep);
                     depList.push(dep);
                     checkdep(dep, depList);
                 }
@@ -186,6 +186,7 @@ export function compileRendererJs(done) {
                     }
                 }
             }),
+            // new webpack.IgnorePlugin(/font-manager/),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),

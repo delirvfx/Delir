@@ -11,7 +11,7 @@ import ColorRGBA from '../values/color-rgba'
 
 import { AssetPointerScheme, JSONKeyframeValueTypes, KeyframeConfigScheme, KeyframeScheme } from './scheme/keyframe'
 
-type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | AssetPointerScheme
+export type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | AssetPointerScheme
 
 export default class Keyframe
 {

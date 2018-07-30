@@ -43,10 +43,10 @@ export default class FSPluginLoader
                     entryPath = path.join(packageRoot, json.main)
                 }
 
-                const validate = validatePluginPackageJSON(json)
-                if (!validate.valid) {
-                    throw new PluginLoadFailException(`Invalid package.json for \`${json.name}\` (${validate.errors[0]}${validate.errors[1] ? '. and more...' : ''})`)
-                }
+                // const validate = validatePluginPackageJSON(json)
+                // if (!validate.valid) {
+                //     throw new PluginLoadFailException(`Invalid package.json for \`${json.name}\` (${validate.errors[0]}${validate.errors[1] ? '. and more...' : ''})`)
+                // }
 
                 if (packages[json.name]) {
                     throw new PluginLoadFailException(`Duplicate plugin ${json.name}`)
@@ -67,6 +67,7 @@ export default class FSPluginLoader
                     class: null!, // load later
                 }
             } catch (e) {
+                console.log(e)
                 failedPackages.push({package: dir, reason: e.message, error: e})
             }
         }))
