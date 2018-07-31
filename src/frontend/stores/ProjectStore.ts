@@ -120,9 +120,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
         const { project } = this.state
         const targetClip = ProjectHelper.findClipById(project!, payload.clipId)
         const sourceLayer = ProjectHelper.findParentLayerByClipId(project!, payload.clipId)
-        const destLayer = ProjectHelper.findLayerById(project!, payload.targetLayerId)
-
-        console.log(payload)
+        const destLayer = ProjectHelper.findLayerById(project!, payload.destLayerId)
 
         if (targetClip == null || sourceLayer == null || destLayer == null) {
             ProjectHelper.deleteClip(project!, targetClip!)
