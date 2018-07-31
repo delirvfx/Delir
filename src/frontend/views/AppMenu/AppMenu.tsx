@@ -1,39 +1,42 @@
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as Electron from 'electron'
 import { remote } from 'electron'
 import * as React from 'react'
-import * as Platform from '../../utils/platform'
 
-import AppActions from '../../actions/App'
+import * as AppActions from '../../actions/App'
 import * as AboutModal from '../../modules/AboutModal'
 import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
-import connectToStores from '../../utils/Flux/connectToStores'
+import * as Platform from '../../utils/platform'
 
 import t from './AppMenu.i18n'
 
-interface Props {
+interface ConnectedProps {
     editor: EditorState
 }
 
-@connectToStores([EditorStateStore], () => ({
-    editor: EditorStateStore.getState()
-}))
-export default class AppMenu extends React.PureComponent<Props>
-{
+type Props = ConnectedProps & ContextProp
 
-    public render()
-    {
+export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
+    editor: context.getStore(EditorStateStore).getState()
+}))(class AppMenu extends React.PureComponent<Props> {
+    public componentDidUpdate() {
         remote.Menu.setApplicationMenu(
             remote.Menu.buildFromTemplate(this._buildMenu())
         )
+    }
 
+    public render()
+    {
         return null
     }
+
     private openAbout = () => {
         AboutModal.show()
     }
 
     private _buildMenu(): Electron.MenuItemConstructorOptions[]
     {
+        const {context} = this.props
         const {previewPlayed, activeComp, currentPreviewFrame} = this.props.editor
         const menu: Electron.MenuItemConstructorOptions[] = []
 
@@ -48,7 +51,7 @@ export default class AppMenu extends React.PureComponent<Props>
                     {type: 'separator'},
                     {
                         label: t('appMenu.openPluginDir'),
-                        click: () => AppActions.openPluginDirectory()
+                        click: () => context.executeOperation(AppActions.openPluginDirectory, {})
                     },
                     {type: 'separator'},
                     {
@@ -66,33 +69,33 @@ export default class AppMenu extends React.PureComponent<Props>
                 {
                     label: t('file.newProject'),
                     accelerator: 'CmdOrCtrl+N',
-                    click: () => AppActions.newProject()
+                    click: () => context.executeOperation(AppActions.newProject, {})
                 },
                 {type: 'separator'},
                 {
                     label: t('file.openProject'),
                     accelerator: 'CmdOrCtrl+O',
-                    click: () => AppActions.openProject()
+                    click: () => context.executeOperation(AppActions.openProject, {})
                 },
                 {type: 'separator'},
                 {
                     label: t('file.save'),
                     accelerator: 'CmdOrCtrl+S',
-                    click: () => AppActions.overwriteProject()
+                    click: () => context.executeOperation(AppActions.overwriteProject, {})
                 },
                 {
                     label: t('file.saveAs'),
                     accelerator: 'CmdOrCtrl+Shift+S',
-                    click: () => AppActions.saveProject()
+                    click: () => context.executeOperation(AppActions.saveProject, {})
                 },
                 {type: 'separator'},
                 {
                     label: t('file.rendering'),
                     accelerator: 'CmdOrCtrl+Shift+R',
                     click() {
-                        const comp = EditorStateStore.getState().get('activeComp')
+                        const comp = context.getStore(EditorStateStore).getState().activeComp
                         if (!comp) return
-                        AppActions.renderDestinate(comp.id!)
+                        context.executeOperation(AppActions.renderDestinate, { compositionId: comp.id! })
                     }
                 },
                 ...(Platform.isWindows() ? [
@@ -145,8 +148,11 @@ export default class AppMenu extends React.PureComponent<Props>
                     enabled: !!activeComp,
                     click: () => {
                         previewPlayed
-                            ? AppActions.stopPreview()
-                            : AppActions.startPreview(activeComp!.id, currentPreviewFrame)
+                            ? context.executeOperation(AppActions.stopPreview, {})
+                            : context.executeOperation(AppActions.startPreview, {
+                                compositionId: activeComp!.id,
+                                beginFrame: currentPreviewFrame
+                            })
                     } ,
                 },
             ]
@@ -185,7 +191,7 @@ export default class AppMenu extends React.PureComponent<Props>
                     {type: 'separator'},
                     {
                         label: t('appMenu.openPluginDir'),
-                        click: () => AppActions.openPluginDirectory()
+                        click: () => context.executeOperation(AppActions.openPluginDirectory, {})
                     },
                 ],
             })
@@ -193,4 +199,4 @@ export default class AppMenu extends React.PureComponent<Props>
 
         return menu
     }
-}
+}))

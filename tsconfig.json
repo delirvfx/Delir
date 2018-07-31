@@ -23,7 +23,10 @@
             "es2017",
             "esnext.asynciterable"
         ],
-        "baseUrl": "."
+        "baseUrl": ".",
+        "paths": {
+            "delir-core": ["src/delir-core"]
+        }
     },
     "files": [
         "./src/declarations.d.ts",

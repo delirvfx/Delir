@@ -1,16 +1,16 @@
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as Delir from 'delir-core'
 import * as _ from 'lodash'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { SortEndHandler } from 'react-sortable-hoc'
-import connectToStores from '../../utils/Flux/connectToStores'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
-import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
-import {default as ProjectStore } from '../../stores/ProjectStore'
+import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
+import ProjectStore from '../../stores/ProjectStore'
 
 import Pane from '../components/pane'
 import Workspace from '../components/workspace'
@@ -26,7 +26,9 @@ import LayerList from './LayerList'
 import * as s from './style.styl'
 import t from './Timeline.i18n'
 
-interface Props {}
+interface ConnectedProps {
+    editor: EditorState
+}
 
 interface State {
     timelineScrollTop: number,
@@ -35,6 +37,8 @@ interface State {
     scale: number,
     selectedLayerId: string | null,
 }
+
+type Props = ConnectedProps & ContextProp
 
 const PX_PER_SEC = 30
 
@@ -47,11 +51,9 @@ const PX_PER_SEC = 30
  *     └ ClipSpace
  *       └ Clip
  */
-@connectToStores([EditorStateStore, ProjectStore], context => ({
-    editor: EditorStateStore.getState(),
-}))
-export default class Timeline extends React.Component<Props, State>
-{
+export default withComponentContext(connectToStores([EditorStateStore, ProjectStore], context => ({
+    editor: context.getStore(EditorStateStore).getState(),
+}))(class Timeline extends React.Component<Props, State> {
     public props: Props & {
         editor: EditorState,
     }
@@ -217,11 +219,12 @@ export default class Timeline extends React.Component<Props, State>
     private onLayerSort: SortEndHandler = ({ oldIndex, newIndex }) =>
     {
         const { editor: { activeComp } } = this.props
+        console.log(oldIndex, newIndex, activeComp)
         if (!activeComp) return
 
         const layer = activeComp.layers[oldIndex]
-        ProjectModActions.moveLayerOrder(layer.id, newIndex)
-        AppActions.seekPreviewFrame()
+        this.props.context.executeOperation(ProjectModActions.moveLayerOrder, { layerId: layer.id, newIndex })
+        this.props.context.executeOperation(AppActions.seekPreviewFrame, {})
     }
 
     private onLayerCreate = () =>
@@ -230,16 +233,16 @@ export default class Timeline extends React.Component<Props, State>
 
         if (!editor.activeComp) return
 
-        ProjectModActions.addLayer(
-            editor.activeComp,
-            new Delir.Project.Layer()
-        )
+        this.props.context.executeOperation(ProjectModActions.addLayer, {
+            targetComposition: editor.activeComp,
+            layer: new Delir.Project.Layer()
+        })
     }
 
     private onLayerRemove = (layerId: string) =>
     {
         if (!this.props.editor.activeComp) return
-        ProjectModActions.removeLayer(layerId)
+        this.props.context.executeOperation(ProjectModActions.removeLayer, { layerId })
     }
 
     private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) =>
@@ -279,17 +282,23 @@ export default class Timeline extends React.Component<Props, State>
         const {dragEntity, activeComp} = this.props.editor
 
         if (!activeComp) {
-            AppActions.notify('Must be select any composition before add assets to timeline', 'Woops', 'error', 1000)
+            this.props.context.executeOperation(AppActions.notify, {
+                message: 'Must be select any composition before add assets to timeline',
+                title: 'Woops',
+                level: 'error',
+                timeout: 1000
+            })
+
             return
         }
 
         if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
         const {asset} = dragEntity
-        ProjectModActions.addLayerWithAsset(activeComp, asset)
+        this.props.context.executeOperation(ProjectModActions.addLayerWithAsset, { targetComposition: activeComp, asset })
     }
 
     private _onSeeked = (frame: number) =>
     {
-        AppActions.seekPreviewFrame(frame)
+        this.props.context.executeOperation(AppActions.seekPreviewFrame, { frame })
     }
-}
+}))

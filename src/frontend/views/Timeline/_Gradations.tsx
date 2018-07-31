@@ -1,7 +1,6 @@
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import * as React from 'react'
-import { Component } from 'react'
 
 import RendererService from '../../services/renderer'
 import {default as TimePixelConversion, MeasurePoint } from '../../utils/TimePixelConversion'
@@ -28,7 +27,7 @@ interface GradationsState {
     dragSeekEnabled: boolean,
 }
 
-export default class Gradations extends Component<GradationsProps, GradationsState>
+export default class Gradations extends React.Component<GradationsProps, GradationsState>
 {
     public static defaultProps = {
         scrollLeft: 0,

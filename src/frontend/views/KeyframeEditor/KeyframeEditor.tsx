@@ -1,21 +1,20 @@
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import * as _ from 'lodash'
 import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'
-import connectToStores from '../../utils/Flux/connectToStores'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
 import { ContextMenu, MenuItem, MenuItemProps } from '../components/ContextMenu'
 import Pane from '../components/pane'
-import SelectList from '../components/select-list'
 import Workspace from '../components/workspace'
 import DelirValueInput from './_DelirValueInput'
 import ExpressionEditor from './ExpressionEditor'
 import { default as KeyframeGraph, KeyframePatch } from './KeyframeGraph'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
 import RendererService from '../../services/renderer'
 import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
@@ -24,11 +23,9 @@ import {default as ProjectStore, ProjectStoreState } from '../../stores/ProjectS
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
-interface KeyframeEditorProps {
+interface OwnProps {
     activeComposition: Delir.Project.Composition | null
     activeClip: Delir.Project.Clip | null
-    editor: EditorState
-    project: ProjectStoreState
     scrollLeft: number
     scale: number
     pxPerSec: number
@@ -37,7 +34,12 @@ interface KeyframeEditorProps {
     onScaled: (scale: number) => void
 }
 
-interface KeyframeEditorState {
+interface ConnectedProps {
+    editor: EditorState
+    project: ProjectStoreState
+}
+
+interface State {
     activePropName: string | null
     activeEntity: { type: 'clip' | 'effect', entityId: string } | null
     graphWidth: number
@@ -46,11 +48,12 @@ interface KeyframeEditorState {
     editorOpened: boolean
 }
 
-@connectToStores([EditorStateStore], () => ({
-    editor: EditorStateStore.getState(),
-    project: ProjectStore.getState()
-}))
-export default class KeyframeEditor extends React.Component<KeyframeEditorProps, KeyframeEditorState> {
+type Props = OwnProps & ConnectedProps & ContextProp
+
+export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
+    editor: context.getStore(EditorStateStore).getState(),
+    project: context.getStore(ProjectStore).getState()
+}))(class KeyframeEditor extends React.Component<Props, State> {
 
     private get activeEntityObject(): Delir.Project.Clip | Delir.Project.Effect | null {
         const { activeClip } = this.props
@@ -66,11 +69,11 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
 
         return null
     }
-    public static defaultProps: Partial<KeyframeEditorProps> = {
+    public static defaultProps: Partial<Props> = {
         scrollLeft: 0
     }
 
-    public state: KeyframeEditorState = {
+    public state: State = {
         activePropName: null,
         activeEntity: null,
         graphWidth: 0,
@@ -90,7 +93,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         mouseWheel(this.refs.svgParent, this.handleScrolling)
     }
 
-    public componentWillReceiveProps(nextProps: KeyframeEditorProps)
+    public componentWillReceiveProps(nextProps: Props)
     {
         if (!nextProps.activeClip) {
             this.setState({activePropName: null, editorOpened: false})
@@ -208,7 +211,7 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         )
     }
 
-    private onCloseEditor = (result: ExpressionEditor.EditorResult) => {
+    private onCloseEditor = async (result: ExpressionEditor.EditorResult) => {
         if (!result.saved) {
             this.setState({editorOpened: false})
             return
@@ -220,16 +223,26 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         if (!activeClip || !activeEntity || !activePropName) return
 
         if (activeEntity.type === 'clip') {
-            ProjectModActions.modifyClipExpression(activeClip.id, activePropName, {
+            this.props.context.executeOperation(ProjectModActions.modifyClipExpression, {
+                clipId: activeClip.id,
+                property: activePropName,
+                expr: {
                 language: 'typescript',
                 code: result.code,
+                }
             })
         } else {
-            ProjectModActions.modifyEffectExpression(activeClip.id, activeEntity.entityId, activePropName, {
-                language: 'typescript',
-                code: result.code,
+            this.props.context.executeOperation(ProjectModActions.modifyEffectExpression, {
+                clipId: activeClip.id,
+                effectId: activeEntity.entityId,
+                property: activePropName,
+                expr: {
+                    language: 'typescript',
+                    code: result.code,
+                }
             })
         }
+
         this.setState({editorOpened: false})
     }
 
@@ -277,8 +290,15 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        ProjectModActions.createOrModifyKeyframeForClip(activeClip.id!, desc.propName, frameOnClip, {value})
-        AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+
+        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+            clipId: activeClip.id!,
+            propName: desc.propName,
+            frameOnClip,
+            patch: { value }
+        })
+
+        this.props.context.executeOperation(AppActions.seekPreviewFrame, { frame: this.props.editor.currentPreviewFrame })
     }
 
     private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) =>
@@ -288,8 +308,15 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        ProjectModActions.createOrModifyKeyframeForEffect(activeClip.id, effectId, desc.propName, frameOnClip, {value})
-        AppActions.seekPreviewFrame(currentPreviewFrame)
+        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForEffect, {
+            clipId: activeClip.id,
+            effectId,
+            propName: desc.propName,
+            frameOnClip,
+            patch: {value}
+        })
+
+        this.props.context.executeOperation(AppActions.seekPreviewFrame, { frame: currentPreviewFrame })
     }
 
     private keyframeModified = (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) =>
@@ -298,9 +325,20 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         if (!activeEntity) return
 
         if (activeEntity.type === 'clip') {
-            ProjectModActions.createOrModifyKeyframeForClip(parentClipId, propName, frameOnClip, patch)
+            this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+                clipId: parentClipId,
+                propName,
+                frameOnClip,
+                patch
+            })
         } else {
-            ProjectModActions.createOrModifyKeyframeForEffect(parentClipId, activeEntity.entityId, propName, frameOnClip, patch)
+            this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForEffect, {
+                clipId: parentClipId,
+                effectId: activeEntity.entityId,
+                propName,
+                frameOnClip,
+                patch
+            })
         }
     }
 
@@ -310,9 +348,13 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
         if (!activeEntity) return
 
         if (activeEntity.type === 'clip') {
-            ProjectModActions.removeKeyframe(activeEntity.entityId)
+            this.props.context.executeOperation(ProjectModActions.removeKeyframe, { keyframeId: activeEntity.entityId })
         } else {
-            ProjectModActions.removeKeyframeForEffect(parentClipId, activeEntity.entityId, keyframeId)
+            this.props.context.executeOperation(ProjectModActions.removeKeyframeForEffect, {
+                clipId: parentClipId,
+                effectId: activeEntity.entityId,
+                keyframeId
+            })
         }
     }
 
@@ -325,8 +367,13 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
     private removeEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
     {
         this.setState({ editorOpened: false, activePropName: null, activeEntity: null }, () => {
-            ProjectModActions.removeEffect(dataset.clipId, dataset.effectId)
-            AppActions.seekPreviewFrame(this.props.editor.currentPreviewFrame)
+            this.props.context.executeOperation(ProjectModActions.removeEffect, {
+                holderClipId: dataset.clipId,
+                effectId: dataset.effectId
+            })
+            this.props.context.executeOperation(AppActions.seekPreviewFrame, {
+                frame: this.props.editor.currentPreviewFrame
+            })
         })
     }
 
@@ -462,4 +509,4 @@ export default class KeyframeEditor extends React.Component<KeyframeEditorProps,
 
         return parameters.find(desc => desc.propName === propName) || null
     }
-}
+}))

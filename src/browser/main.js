@@ -51,13 +51,14 @@ const install = async () => {
     const args = parseCommandLine()
     await install()
 
-    if (args.devMode && process.env.DELIR_ENV === 'dev') {
+    if (args.devMode || process.env.DELIR_ENV === 'dev') {
         console.log('Run as develop mode')
 
         // install devtools
         const devtron = require('devtron')
-        const {default: installExtension, REACT_DEVELOPER_TOOLS} = require('electron-devtools-installer')
         devtron.install()
+
+        const {default: installExtension, REACT_DEVELOPER_TOOLS} = require('electron-devtools-installer')
         await installExtension(REACT_DEVELOPER_TOOLS)
     }
 

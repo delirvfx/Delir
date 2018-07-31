@@ -1,7 +1,6 @@
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
-import { Component } from 'react'
 
 export interface WorkspaceProps extends React.DOMAttributes<HTMLDivElement> {
     className?: string,
@@ -9,7 +8,7 @@ export interface WorkspaceProps extends React.DOMAttributes<HTMLDivElement> {
     direction: 'vertical' | 'horizontal'
 }
 
-export default class Workspace extends Component<WorkspaceProps, any>
+export default class Workspace extends React.Component<WorkspaceProps, any>
 {
     public static defaultProps = {
         acceptPaneDragIn: false,

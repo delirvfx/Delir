@@ -1,42 +1,45 @@
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import * as _ from 'lodash'
 import * as React from 'react'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
+
 import RendererService from '../../services/renderer'
-import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
-import connectToStores from '../../utils/Flux/connectToStores'
+import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
 import Clip from './_Clip'
 import t from './_ClipSpace.i18n'
 
-interface TimelaneClipSpaceProps {
-    editor: EditorState,
-    layer: Delir.Project.Layer,
-    activeClip: Delir.Project.Clip | null,
-    framerate: number,
-    pxPerSec: number,
-    scale: number,
+interface OwnProps {
+    layer: Delir.Project.Layer
+    activeClip: Delir.Project.Clip | null
+    framerate: number
+    pxPerSec: number
+    scale: number
 }
 
-interface TimelaneClipSpaceState {
-    dragovered: boolean,
-    pxPerSec: number,
+interface ConnectedProps {
+    editor: EditorState,
+}
+
+type Props = OwnProps & ConnectedProps & ContextProp
+
+interface State {
+    dragovered: boolean
 }
 
 /**
  * ClipSpace
  */
-@connectToStores([EditorStateStore], context => ({
-    editor: EditorStateStore.getState(),
-}))
-export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, TimelaneClipSpaceState>
-{
-    public state = {
+export default withComponentContext(connectToStores([EditorStateStore], context => ({
+    editor: context.getStore(EditorStateStore).getState(),
+}))(class ClipSpace extends React.Component<Props, State> {
+    public state: State = {
         dragovered: false,
     }
 
@@ -45,7 +48,6 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
         const {layer, activeClip, framerate, pxPerSec, scale} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
         const clips = Array.from<Delir.Project.Clip>(layer.clips)
-        const tmpKey = keyframes ? Object.keys(keyframes)[1] : ''
 
         return (
             <li
@@ -112,7 +114,11 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             const {asset} = dragEntity
             const {framerate, pxPerSec, scale} = this.props
             const placedFrame = TimePixelConversion.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
-            ProjectModActions.createClipWithAsset(this.props.layer, asset, placedFrame)
+            this.props.context.executeOperation(ProjectModActions.createClipWithAsset, {
+                targetLayer: this.props.layer,
+                asset,
+                placedFrame
+            })
         } else if (dragEntity.type === 'clip') {
             // Drop Clip into ClipSpace
             const {clip} = dragEntity
@@ -125,15 +131,22 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
                     pixel: e.pageX - e.currentTarget.getBoundingClientRect().left - (e.nativeEvent as DragEvent).offsetX,
                     scale: this.props.scale,
                 })
-                ProjectModActions.modifyClip(dragEntity.clip.id!, {placedFrame: placedFrame})
+
+                this.props.context.executeOperation(ProjectModActions.modifyClip, {
+                    clipId: dragEntity.clip.id!,
+                    props: { placedFrame }
+                })
             } else {
-                ProjectModActions.moveClipToLayer(clip.id!, this.props.layer.id!)
+                this.props.context.executeOperation(ProjectModActions.moveClipToLayer, {
+                    clipId: clip.id!,
+                    targetLayerId: this.props.layer.id!
+                })
             }
         } else {
             return
         }
 
-        AppActions.clearDragEntity()
+        this.props.context.executeOperation(AppActions.clearDragEntity, {})
         this.setState({dragovered: false})
 
         e.preventDefault()
@@ -168,13 +181,19 @@ export default class ClipSpace extends React.Component<TimelaneClipSpaceProps, T
             scale: this.props.scale,
         })
 
-        ProjectModActions.modifyClip(clip.id, {
-            durationFrames: newDurationFrames,
+        this.props.context.executeOperation(ProjectModActions.modifyClip, {
+            clipId: clip.id,
+            props: { durationFrames: newDurationFrames }
         })
     }
 
     private addNewClip = ({ dataset }: MenuItemOption<{rendererId: string}>) =>
     {
-        ProjectModActions.createClip(this.props.layer.id!, dataset.rendererId, 0, 100)
+        this.props.context.executeOperation(ProjectModActions.createClip, {
+            layerId: this.props.layer.id!,
+            clipRendererId: dataset.rendererId,
+            placedFrame: 0,
+            durationFrames: 100
+        })
     }
-}
+}))

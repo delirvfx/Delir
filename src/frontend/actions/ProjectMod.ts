@@ -1,394 +1,369 @@
+import { operation } from '@ragg/fleur'
 import * as Delir from 'delir-core'
 import { ProjectHelper } from 'delir-core'
-import * as keyMirror from 'keymirror'
-import * as _ from 'lodash'
-import * as uuid from 'uuid'
 
-// import deprecated from '../utils/deprecated'
 import RendererService from '../services/renderer'
 import ProjectStore from '../stores/ProjectStore'
-import dispatcher from '../utils/Flux/Dispatcher'
-import Payload from '../utils/Flux/payload'
+import { ProjectModActions } from './actions'
+import * as AppActions from './App'
 
-import AppActions from './App'
-
-export type CreateCompositionPayload = Payload<'CreateComposition', {composition: Delir.Project.Composition}>
-export type CreateLayerPayload = Payload<'CreateLayer', {targetCompositionId: string, layer: Delir.Project.Layer}>
-export type CreateClipPayload = Payload<'CreateClip', {targetLayerId: string, newClip: Delir.Project.Clip}>
-export type AddClipPayload = Payload<'AddClip', {targetLayer: Delir.Project.Layer, newClip: Delir.Project.Clip}>
-export type AddLayerPayload = Payload<'AddLayer', {targetComposition: Delir.Project.Composition, layer: Delir.Project.Layer}>
-export type AddLayerWithAssetPayload = Payload<'AddLayerWithAsset', {
-    targetComposition: Delir.Project.Composition,
-    clip: Delir.Project.Clip,
-    asset: Delir.Project.Asset,
-}>
-export type AddAssetPayload = Payload<'AddAsset', {asset: Delir.Project.Asset}>
-export type AddKeyframePayload = Payload<'AddKeyframe', {targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe}>
-export type AddEffectIntoClipPayload = Payload<'AddEffectIntoClipPayload', { clipId: string, effect: Delir.Project.Effect }>
-export type AddEffectKeyframePayload = Payload<'AddEffectKeyframe', {targetClipId: string, targetEffectId: string, propName: string, keyframe: Delir.Project.Keyframe}>
-export type MoveClipToLayerPayload = Payload<'MoveClipToLayer', {targetLayerId: string, clipId: string}>
-export type ModifyCompositionPayload = Payload<'ModifyComposition', {targetCompositionId: string, patch: Partial<Delir.Project.Composition>}>
-export type ModifyLayerPayload = Payload<'ModifyLayer', {targetLayerId: string, patch: Partial<Delir.Project.Layer>}>
-export type ModifyClipPayload = Payload<'ModifyClip', {targetClipId: string, patch: Partial<Delir.Project.Clip>}>
-export type ModifyClipExpression = Payload<'ModifyClipExpression', {targetClipId: string, targetProperty: string, expr: {language: string, code: string}}>
-export type ModifyEffectExpression = Payload<'ModifyEffectExpression', {targetClipId: string, targetEffectId: string, targetProperty: string, expr: {language: string, code: string}}>
-export type ModifyKeyframePayload = Payload<'ModifyKeyframe', {targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
-export type ModifyEffectKeyframePayload = Payload<'ModifyEffectKeyframe', {targetClipId: string, effectId: string, targetKeyframeId: string, patch: Partial<Delir.Project.Keyframe>}>
-export type MoveLayerOrderPayload = Payload<'MoveLayerOrder', { parentCompositionId: string, targetLayerId: string, newIndex: number }>
-export type RemoveCompositionayload = Payload<'RemoveComposition', {targetCompositionId: string}>
-export type RemoveLayerPayload = Payload<'RemoveLayer', {targetLayerId: string}>
-export type RemoveClipPayload = Payload<'RemoveClip', {targetClipId: string}>
-export type RemoveAssetPayload = Payload<'RemoveAsset', {targetAssetId: string}>
-export type RemoveKeyframePayload = Payload<'RemoveKeyframe', {targetKeyframeId: string}>
-export type RemoveEffectKeyframePayload = Payload<'RemoveEffectKeyframe', {clipId: string, effectId: string, targetKeyframeId: string}>
-export type RemoveEffectFromClip = Payload<'RemoveEffectFromClip', { holderClipId: string, targetEffectId: string }>
-
-export const DispatchTypes = keyMirror({
-    CreateComposition: null,
-    CreateLayer: null,
-    CreateClip: null,
-    AddClip: null,
-    AddLayer: null,
-    AddLayerWithAsset: null,
-    AddAsset: null,
-    AddKeyframe: null,
-    AddEffectIntoClipPayload: null,
-    AddEffectKeyframe: null,
-    MoveClipToLayer: null,
-    ModifyComposition: null,
-    ModifyLayer: null,
-    ModifyClip: null,
-    ModifyClipExpression: null,
-    ModifyEffectExpression: null,
-    ModifyKeyframe: null,
-    ModifyEffectKeyframe: null,
-    MoveLayerOrder: null,
-    RemoveComposition: null,
-    RemoveLayer: null,
-    RemoveClip: null,
-    RemoveAsset: null,
-    RemoveKeyframe: null,
-    RemoveEffectKeyframe: null,
-    RemoveEffectFromClip: null,
+//
+// Modify project
+//
+// @deprecated
+export const createComposition = operation((context, options: {
+    name: string,
+    width: number,
+    height: number,
+    framerate: number,
+    durationFrames: number,
+    backgroundColor: Delir.Values.ColorRGB,
+    samplingRate: number,
+    audioChannels: number,
+}) => {
+    const composition = new Delir.Project.Composition()
+    Object.assign(composition, options)
+    context.dispatch(ProjectModActions.createCompositionAction, { composition })
 })
 
-export default {
-    //
-    // Modify project
-    //
+// @deprecated
+export const createLayer = operation((context, { compId }: { compId: string }) => {
+    const layer = new Delir.Project.Layer()
+    context.dispatch(ProjectModActions.createLayerAction, { targetCompositionId: compId, layer })
+})
 
-    // @deprecated
-    createComposition(options: {
-        name: string,
-        width: number,
-        height: number,
-        framerate: number,
-        durationFrames: number,
-        backgroundColor: Delir.Values.ColorRGB,
-        samplingRate: number,
-        audioChannels: number,
+export const addLayer = operation((context, { targetComposition, layer }: {
+    targetComposition: Delir.Project.Composition,
+    layer: Delir.Project.Layer
+}) => {
+    context.dispatch(ProjectModActions.addLayerAction, { targetComposition, layer })
+})
+
+export const addLayerWithAsset = operation((context, { targetComposition, asset }: {
+    targetComposition: Delir.Project.Composition,
+    asset: Delir.Project.Asset
+}) => {
+    const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => {
+        return entry.handlableFileTypes.includes(asset.fileType)
     })
-    {
-        const composition = new Delir.Project.Composition()
-        Object.assign(composition, options)
-        dispatcher.dispatch(new Payload(DispatchTypes.CreateComposition,　 {composition}))
-    },
 
-    // @deprecated
-    createLayer(compId: string)
-    {
-        const layer = new Delir.Project.Layer()
-        dispatcher.dispatch(new Payload(DispatchTypes.CreateLayer, {targetCompositionId: compId, layer}))
-    },
-
-    addLayer(
-        targetComposition: Delir.Project.Composition,
-        layer: Delir.Project.Layer
-    ) {
-        dispatcher.dispatch(new Payload(DispatchTypes.AddLayer, {targetComposition, layer}))
-    },
-
-    addLayerWithAsset(
-        targetComposition: Delir.Project.Composition,
-        asset: Delir.Project.Asset
-    ) {
-        const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
-
-        // TODO: Support selection
-        if (processablePlugins.length === 0) {
-            AppActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 5000)
-            return
-        }
-
-        const clip = new Delir.Project.Clip()
-        Object.assign(clip, {
-            renderer: processablePlugins[0].id,
-            placedFrame: 0,
-            durationFrames: targetComposition.framerate,
+    // TODO: Support selection
+    if (processablePlugins.length === 0) {
+        context.executeOperation(AppActions.notify, {
+            message: `plugin not available for \`${asset.fileType}\``,
+            title: '😢 Supported plugin not available',
+            level: 'info',
+            timeout: 5000
         })
 
-        dispatcher.dispatch(new Payload(DispatchTypes.AddLayerWithAsset, {
-            targetComposition,
-            clip,
-            asset,
-            pluginRegistry: RendererService.pluginRegistry!,
-        }))
-    },
+        return
+    }
 
-    createClip(
-        layerId: string,
-        clipRendererId: string,
-        placedFrame = 0,
-        durationFrames = 100
-    ) {
-        const newClip = new Delir.Project.Clip()
-        Object.assign(newClip, {
-            renderer: clipRendererId,
-            placedFrame: placedFrame,
-            durationFrames: durationFrames,
+    const clip = new Delir.Project.Clip()
+    Object.assign(clip, {
+        renderer: processablePlugins[0].id,
+        placedFrame: 0,
+        durationFrames: targetComposition.framerate,
+    })
+
+    context.dispatch(ProjectModActions.addLayerWithAssetAction, {
+        targetComposition,
+        clip,
+        asset,
+    })
+})
+
+export const createClip = operation((context, { layerId, clipRendererId, placedFrame = 0, durationFrames = 100 }: {
+    layerId: string,
+    clipRendererId: string,
+    placedFrame: number,
+    durationFrames: number,
+}) => {
+    const newClip = new Delir.Project.Clip()
+    Object.assign(newClip, {
+        renderer: clipRendererId,
+        placedFrame: placedFrame,
+        durationFrames: durationFrames,
+    })
+
+    context.dispatch(ProjectModActions.createClipAction, {
+        newClip,
+        targetLayerId: layerId,
+    })
+})
+
+export const createClipWithAsset = operation((context, { targetLayer, asset, placedFrame = 0, durationFrames = 100 }: {
+    targetLayer: Delir.Project.Layer,
+    asset: Delir.Project.Asset,
+    placedFrame?: number,
+    durationFrames?: number,
+}) => {
+    const {project} = context.getStore(ProjectStore).getState()
+    if (!project) return
+
+    const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
+
+    // TODO: Support selection
+    if (processablePlugins.length === 0) {
+        context.executeOperation(AppActions.notify, {
+            message: `plugin not available for \`${asset.fileType}\``,
+            title: '😢 Supported plugin not available',
+            level: 'info',
+            timeout: 3000
         })
 
-        dispatcher.dispatch(new Payload(DispatchTypes.CreateClip, {
-            newClip,
-            targetLayerId: layerId,
-        }))
-    },
+        return
+    }
 
-    createClipWithAsset(
-        targetLayer: Delir.Project.Layer,
-        asset: Delir.Project.Asset,
-        placedFrame = 0,
-        durationFrames = 100,
-    ) {
-        const project = ProjectStore.getState().get('project')
+    const newClip = new Delir.Project.Clip()
+    Object.assign(newClip, {
+        renderer: processablePlugins[0].id,
+        placedFrame,
+        durationFrames,
+    })
 
-        if (!project) return
+    const propName = Delir.Engine.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
 
-        const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
+    if (!propName) return
 
-        // TODO: Support selection
-        if (processablePlugins.length === 0) {
-            AppActions.notify(`plugin not available for \`${asset.fileType}\``, '😢 Supported plugin not available', 'info', 3000)
-            return
-        }
+    ProjectHelper.addKeyframe(project!, newClip, propName, Object.assign(new Delir.Project.Keyframe(), {
+        frameOnClip: 0,
+        value: { assetId: asset.id },
+    }))
 
-        const newClip = new Delir.Project.Clip()
-        Object.assign(newClip, {
-            renderer: processablePlugins[0].id,
-            placedFrame,
-            durationFrames,
+    context.dispatch(ProjectModActions.addClipAction, { targetLayer, newClip })
+})
+
+export const createOrModifyKeyframeForClip = operation((context, { clipId, propName, frameOnClip, patch }: {
+    clipId: string,
+    propName: string,
+    frameOnClip: number,
+    patch: Partial<Delir.Project.Keyframe>
+}) => {
+    const {project} = context.getStore(ProjectStore).getState()
+
+    if (!project) return
+    const clip = ProjectHelper.findClipById(project, clipId)
+
+    if (!clip) return
+
+    const props = Delir.Engine.Renderers.getInfo(clip.renderer!).parameter.properties
+    const propDesc = props ? props.find(prop => prop.propName === propName) : null
+    if (!propDesc) return
+
+    frameOnClip = Math.round(frameOnClip)
+
+    if (propDesc.animatable === false) {
+        frameOnClip = 0
+    }
+
+    const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frameOnClip)
+
+    if (keyframe) {
+        context.dispatch(ProjectModActions.modifyKeyframeAction, {
+            targetKeyframeId: keyframe.id,
+            patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
         })
+    } else {
+        const newKeyframe = new Delir.Project.Keyframe()
 
-        const propName = Delir.Engine.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
+        Object.assign(newKeyframe, Object.assign({
+            frameOnClip,
+        }, patch))
 
-        if (!propName) return
+        context.dispatch(ProjectModActions.addKeyframeAction, {
+            targetClip: clip,
+            propName,
+            keyframe: newKeyframe
+        })
+    }
+})
 
-        ProjectHelper.addKeyframe(project!, newClip, propName, Object.assign(new Delir.Project.Keyframe(), {
-            frameOnClip: 0,
-            value: {assetId: asset.id},
-        }))
-        dispatcher.dispatch(new Payload(DispatchTypes.AddClip, {targetLayer, newClip}))
-    },
+export const createOrModifyKeyframeForEffect = operation((context, { clipId, effectId, propName, frameOnClip, patch }: {
+    clipId: string,
+    effectId: string,
+    propName: string,
+    frameOnClip: number,
+    patch: Partial<Delir.Project.Keyframe>
+}) => {
+    const {project} = context.getStore(ProjectStore).getState()
+    if (!project) return
 
-    createOrModifyKeyframeForClip(clipId: string, propName: string, frameOnClip: number, patch: Partial<Delir.Project.Keyframe>)
-    {
-        const project = ProjectStore.getState().get('project')
+    const clip = ProjectHelper.findClipById(project, clipId)
+    if (!clip) return
 
-        if (!project) return
-        const clip = ProjectHelper.findClipById(project, clipId)
+    const effect = ProjectHelper.findEffectFromClipById(clip, effectId)
+    if (!effect) return
 
-        if (!clip) return
+    const props = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)
+    const propDesc = props ? props.find(prop => prop.propName === propName) : null
+    if (!propDesc) return
 
-        const props = Delir.Engine.Renderers.getInfo(clip.renderer!).parameter.properties
-        const propDesc = props ? props.find(prop => prop.propName === propName) : null
-        if (!propDesc) return
+    if (propDesc.animatable === false) {
+        frameOnClip = 0
+    }
 
-        frameOnClip = Math.round(frameOnClip)
+    const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, propName, frameOnClip)
 
-        if (propDesc.animatable === false) {
-            frameOnClip = 0
-        }
-
-        const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frameOnClip)
-
-        if (keyframe) {
-            dispatcher.dispatch(new Payload(DispatchTypes.ModifyKeyframe, {
-                targetKeyframeId: keyframe.id,
-                patch: propDesc.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
-            }))
-        } else {
-            const newKeyframe = new Delir.Project.Keyframe()
-
-            Object.assign(newKeyframe, Object.assign({
-                frameOnClip,
-            }, patch))
-
-            dispatcher.dispatch(new Payload(DispatchTypes.AddKeyframe, {
-                targetClip: clip,
-                propName,
-                keyframe: newKeyframe
-            }))
-        }
-    },
-
-    createOrModifyKeyframeForEffect(clipId: string, effectId: string, propName: string, frameOnClip: number, patch: Partial<Delir.Project.Keyframe>)
-    {
-        const project = ProjectStore.getState().get('project')
-        if (!project) return
-
-        const clip = ProjectHelper.findClipById(project, clipId)
-        if (!clip) return
-
-        const effect = ProjectHelper.findEffectFromClipById(clip, effectId)
-        if (!effect) return
-
-        const props = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)
-        const propDesc = props ? props.find(prop => prop.propName === propName) : null
-        if (!propDesc) return
-
-        if (propDesc.animatable === false) {
-            frameOnClip = 0
-        }
-
-        const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, propName, frameOnClip)
-
-        if (keyframe) {
-            dispatcher.dispatch(new Payload(DispatchTypes.ModifyEffectKeyframe, {
-                targetClipId: clipId,
-                effectId: effectId,
-                targetKeyframeId: keyframe.id,
-                patch: propDesc.animatable === false ? Object.assign(patch, {frameOnClip: 0}) : patch,
-            }))
-        } else {
-            const newKeyframe = new Delir.Project.Keyframe()
-            Object.assign(newKeyframe, Object.assign({ frameOnClip }, patch))
-
-            dispatcher.dispatch(new Payload(DispatchTypes.AddEffectKeyframe, {
-                targetClipId: clipId,
-                targetEffectId: effectId,
-                propName: propName,
-                keyframe: newKeyframe,
-            }))
-        }
-    },
-
-    addAsset({name, fileType, path}: {name: string, fileType: string, path: string})
-    {
-        const asset = new Delir.Project.Asset()
-        asset.name = name
-        asset.fileType = fileType
-        asset.path = path
-
-        dispatcher.dispatch(new Payload(DispatchTypes.AddAsset, {asset}))
-    },
-
-    addEffectIntoClipPayload(clipId: string, processorId: string)
-    {
-        const effect = new Delir.Project.Effect()
-        effect.processor = processorId
-        dispatcher.dispatch(new Payload(DispatchTypes.AddEffectIntoClipPayload, { clipId, effect }))
-    },
-
-    removeAsset(assetId: string)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveAsset, {targetAssetId: assetId}))
-    },
-
-    // TODO: frame position
-    moveClipToLayer(clipId: string, targetLayerId: string)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.MoveClipToLayer, {targetLayerId, clipId}))
-    },
-
-    modifyComposition(compId: string, props: Partial<Delir.Project.Composition>)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.ModifyComposition, {
-            targetCompositionId: compId,
-            patch: props
-        }))
-    },
-
-    modifyLayer(layerId: string, props: Partial<Delir.Project.Layer>)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.ModifyLayer, {
-            targetLayerId: layerId,
-            patch: props,
-        }))
-    },
-
-    modifyClip(clipId: string, props: Partial<Delir.Project.Clip>) {
-        dispatcher.dispatch(new Payload(DispatchTypes.ModifyClip, {
+    if (keyframe) {
+        context.dispatch(ProjectModActions.modifyEffectKeyframeAction, {
             targetClipId: clipId,
-            patch: props,
-        }))
-    },
+            effectId: effectId,
+            targetKeyframeId: keyframe.id,
+            patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
+        })
+    } else {
+        const newKeyframe = new Delir.Project.Keyframe()
+        Object.assign(newKeyframe, Object.assign({ frameOnClip }, patch))
 
-    modifyClipExpression(clipId: string, property: string, expr: {language: string, code: string})
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.ModifyClipExpression, {
-            targetClipId: clipId,
-            targetProperty: property,
-            expr: {
-                language: expr.language,
-                code: expr.code,
-            }
-        }))
-    },
-
-    modifyEffectExpression(clipId: string, effectId: string, property: string, expr: {language: string, code: string})
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.ModifyEffectExpression, {
+        context.dispatch(ProjectModActions.addEffectKeyframeAction, {
             targetClipId: clipId,
             targetEffectId: effectId,
-            targetProperty: property,
-            expr: {
-                language: expr.language,
-                code: expr.code,
-            }
-        }))
-    },
+            propName: propName,
+            keyframe: newKeyframe,
+        })
+    }
+})
 
-    moveLayerOrder(layerId: string, newIndex: number)
-    {
-        const project = ProjectStore.getState().get('project')
-        if (!project) return
+export const addAsset = operation((context, { name, fileType, path }: {
+    name: string,
+    fileType: string,
+    path: string
+}) => {
+    const asset = new Delir.Project.Asset()
+    asset.name = name
+    asset.fileType = fileType
+    asset.path = path
 
-        const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
+    context.dispatch(ProjectModActions.addAssetAction, { asset })
+})
 
-        dispatcher.dispatch(new Payload(DispatchTypes.MoveLayerOrder, {
-            parentCompositionId: comp.id,
-            targetLayerId: layerId,
-            newIndex,
-         }))
-    },
+export const addEffectIntoClip = operation((context, { clipId, processorId }: {
+    clipId: string,
+    processorId: string
+}) => {
+    const effect = new Delir.Project.Effect()
+    effect.processor = processorId
+    context.dispatch(ProjectModActions.addEffectIntoClipPayloadAction, { clipId, effect })
+})
 
-    removeComposition(compId: string)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveComposition, {targetCompositionId: compId}))
-    },
+export const removeAsset = operation((context, { assetId }: { assetId: string }) => {
+    context.dispatch(ProjectModActions.removeAssetAction, { targetAssetId: assetId })
+})
 
-    removeLayer(clipId: string)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveLayer, {targetLayerId: clipId}))
-    },
+// TODO: frame position
+export const moveClipToLayer = operation((context, { clipId, targetLayerId }: {
+    clipId: string,
+    // FIXME: Rename to destinationLayerId
+    targetLayerId: string
+}) => {
+    context.dispatch(ProjectModActions.moveClipToLayerAction, { targetLayerId, clipId })
+})
 
-    removeClip(clipId: string)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveClip,　 {targetClipId: clipId}))
-    },
+export const modifyComposition = operation((context, { compositionId, props }: {
+    compositionId: string,
+    props: Partial<Delir.Project.Composition>
+}) => {
+    context.dispatch(ProjectModActions.modifyCompositionAction, {
+        targetCompositionId: compositionId,
+        patch: props
+    })
+})
 
-    removeKeyframe(keyframeId: string)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveKeyframe, {targetKeyframeId: keyframeId}))
-    },
+export const modifyLayer = operation((context, { layerId, props }: {
+    layerId: string,
+    props: Partial<Delir.Project.Layer>
+}) => {
+    context.dispatch(ProjectModActions.modifyLayerAction, {
+        targetLayerId: layerId,
+        patch: props,
+    })
+})
 
-    removeKeyframeForEffect(clipId: string, effectId: string, keyframeId: string)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveEffectKeyframe, {clipId, effectId, targetKeyframeId: keyframeId}))
-    },
+export const modifyClip = operation((context, { clipId, props }: {
+    clipId: string,
+    props: Partial<Delir.Project.Clip>
+}) => {
+    context.dispatch(ProjectModActions.modifyClipAction, {
+        targetClipId: clipId,
+        patch: props,
+    })
+})
 
-    removeEffect(holderClipId: string, effectId: string)
-    {
-        dispatcher.dispatch(new Payload(DispatchTypes.RemoveEffectFromClip, { holderClipId, targetEffectId: effectId }))
-    },
-}
+export const modifyClipExpression = operation((context, { clipId, property, expr }: {
+    clipId: string,
+    property: string,
+    expr: { language: string, code: string }
+}) => {
+    context.dispatch(ProjectModActions.modifyClipExpressionAction, {
+        targetClipId: clipId,
+        targetProperty: property,
+        expr: {
+            language: expr.language,
+            code: expr.code,
+        }
+    })
+})
+
+export const modifyEffectExpression = operation((context, { clipId, effectId, property, expr }: {
+    clipId: string,
+    effectId: string,
+    property: string,
+    expr: { language: string, code: string }
+}) => {
+    context.dispatch(ProjectModActions.modifyEffectExpressionAction, {
+        targetClipId: clipId,
+        targetEffectId: effectId,
+        targetProperty: property,
+        expr: {
+            language: expr.language,
+            code: expr.code,
+        }
+    })
+})
+
+export const moveLayerOrder = operation((context, { layerId, newIndex }: { layerId: string, newIndex: number }) => {
+    const {project} = context.getStore(ProjectStore).getState()
+    console.log(project)
+    if (!project) return
+
+    const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
+    console.log(comp)
+
+    context.dispatch(ProjectModActions.moveLayerOrderAction, {
+        parentCompositionId: comp.id,
+        targetLayerId: layerId,
+        newIndex,
+    })
+})
+
+export const removeComposition = operation((context, { compositionId }: { compositionId: string }) => {
+    context.dispatch(ProjectModActions.removeCompositionAction, { targetCompositionId: compositionId })
+})
+
+export const removeLayer = operation((context, { layerId }: { layerId: string }) => {
+    context.dispatch(ProjectModActions.removeLayerAction, { targetLayerId: layerId })
+})
+
+export const removeClip = operation((context, { clipId }: { clipId: string }) => {
+    context.dispatch(ProjectModActions.removeClipAction, { targetClipId: clipId })
+})
+
+export const removeKeyframe = operation((context, { keyframeId }: { keyframeId: string }) => {
+    context.dispatch(ProjectModActions.removeKeyframeAction, { targetKeyframeId: keyframeId })
+})
+
+export const removeKeyframeForEffect = operation((context, { clipId, effectId, keyframeId }: {
+    clipId: string,
+    effectId: string,
+    keyframeId: string
+}) => {
+    context.dispatch(ProjectModActions.removeEffectKeyframeAction, { clipId, effectId, targetKeyframeId: keyframeId })
+})
+
+export const removeEffect = operation((context, { holderClipId, effectId }: {
+    holderClipId: string,
+    effectId: string
+}) => {
+    context.dispatch(ProjectModActions.removeEffectFromClipAction, { holderClipId, targetEffectId: effectId })
+})

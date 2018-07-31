@@ -1,25 +1,25 @@
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import { remote } from 'electron'
 import * as path from 'path'
 import * as React from 'react'
-import connectToStores from '../../utils/Flux/connectToStores'
 
-import AppActions from '../../actions/App'
+import * as AppActions from '../../actions/App'
 import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
 
 import Pane from '../components/pane'
 
 import * as s from './style.styl'
 
-interface NavigationViewProps {
+interface ConnectedProps {
     editor: EditorState,
 }
 
-@connectToStores([EditorStateStore], () => ({
-    editor: EditorStateStore.getState()
-}))
-export default class NavigationView extends React.Component<NavigationViewProps, null>
-{
+type Props = ConnectedProps & ContextProp
 
+export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
+    editor: context.getStore(EditorStateStore).getState()
+}))(class NavigationView extends React.Component<Props>
+{
     public render()
     {
         const {project, projectPath, previewPlayed} = this.props.editor
@@ -46,22 +46,22 @@ export default class NavigationView extends React.Component<NavigationViewProps,
             </Pane>
         )
     }
-    private onClickPlay = action =>
+    private onClickPlay = () =>
     {
         const {activeComp} = this.props.editor
-
         if (! activeComp) return
-        AppActions.startPreview(activeComp.id!)
+
+        this.props.context.executeOperation(AppActions.startPreview, { compositionId: activeComp.id! })
     }
 
     private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
-        AppActions.stopPreview()
+        this.props.context.executeOperation(AppActions.stopPreview, {})
     }
 
-    private onClickDest = action =>
+    private onClickDest = () =>
     {
         const {activeComp} = this.props.editor
-        activeComp && AppActions.renderDestinate(activeComp.id!)
+        activeComp && this.props.context.executeOperation(AppActions.renderDestinate, { compositionId: activeComp.id! })
     }
 
     private titleBarDoubleClicked = e =>
@@ -69,4 +69,4 @@ export default class NavigationView extends React.Component<NavigationViewProps,
         const browserWindow = remote.getCurrentWindow()
         browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
     }
-}
+}))

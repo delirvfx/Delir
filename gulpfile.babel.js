@@ -54,6 +54,7 @@ export async function copyPackageJSON(done) {
 }
 
 export async function symlinkDependencies(done) {
+    const prepublishNodeModules = join(paths.compiled.root, "node_modules/")
     const checkdep = (packageName, depList = []) => {
         try {
             let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies || {};
@@ -66,16 +67,16 @@ export async function symlinkDependencies(done) {
                     checkdep(dep, depList);
                 }
             }
-        } catch (e) { console.log(e); }
+        } catch (e) { console.log('[symlinkDependencies]', e); }
     };
 
     try {
-        await rimraf(join(paths.compiled.root, "node_modules"));
+        await rimraf(prepublishNodeModules);
     } catch (e) {
         console.log(e);
     };
     try {
-        await fs.mkdir(join(paths.compiled.root, "node_modules"));
+        await fs.mkdir(prepublishNodeModules);
     } catch (e) {
         console.log(e);
     };
@@ -88,9 +89,17 @@ export async function symlinkDependencies(done) {
 
     for (let dep of dependencies) {
         try {
+            if (dep.includes('/')) {
+                const ns = dep.slice(0, dep.indexOf('/'))
+
+                if (!(await fs.exists(join(prepublishNodeModules, ns)))) {
+                    await fs.mkdir(join(prepublishNodeModules, ns))
+                }
+            }
+
             await fs.symlink(
                 join(__dirname, "node_modules/", dep),
-                join(paths.compiled.root, "node_modules/", dep),
+                join(prepublishNodeModules, dep),
                 "dir"
             );
         } catch (e) { console.log(e); }
@@ -101,11 +110,12 @@ export async function symlinkDependencies(done) {
 
 export function compileRendererJs(done) {
     webpack({
+        mode: __DEV__ ? 'development' : 'production',
         target: "electron-renderer",
         watch: __DEV__,
         context: paths.src.root,
         entry: {
-            'frontend/main': ['./frontend/require-hook', './frontend/main'],
+            'frontend/main': ['./frontend/main'],
         },
         output: {
             filename: "[name].js",
@@ -113,16 +123,6 @@ export function compileRendererJs(done) {
             path: paths.compiled.root,
         },
         devtool: __DEV__ ? "#source-map" : 'none',
-        externals: [
-            (ctx, request, callback) => {
-                if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
-                    // throughs non relative requiring ('./module', '../module', '!!../module')
-                    return callback(null, `require('${request}')`)
-                }
-
-                callback()
-            },
-        ],
         resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
             modules: ["node_modules"],
@@ -186,7 +186,8 @@ export function compileRendererJs(done) {
                     }
                 }
             }),
-            // new webpack.IgnorePlugin(/font-manager/),
+            // preserve require() for native modules
+            new webpack.ExternalsPlugin('commonjs', ['font-manager']),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),
@@ -207,6 +208,7 @@ export function compileRendererJs(done) {
 
 export async function compilePlugins(done) {
     webpack({
+        mode: __DEV__ ? 'development' : 'production',
         target: "electron-renderer",
         watch: __DEV__,
         context: paths.src.plugins,

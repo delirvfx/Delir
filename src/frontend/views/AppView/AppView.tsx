@@ -1,8 +1,8 @@
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as React from 'react'
 
-import AppActions from '../../actions/App'
+import * as AppActions from '../../actions/App'
 import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
-import connectToStores from '../../utils/Flux/connectToStores'
 
 import Pane from '../components/pane'
 import Workspace from '../components/workspace'
@@ -15,15 +15,15 @@ import PreviewView from '../PreviewView/'
 import StatusBar from '../StatusBar'
 import Timeline from '../Timeline'
 
-interface Props {
+interface ConnectedProps {
     editor: EditorState
 }
 
-@connectToStores([EditorStateStore], () => ({
-    editor: EditorStateStore.getState()
-}))
-export default class AppView extends React.PureComponent<Props>
-{
+type Props = ConnectedProps & ContextProp
+
+export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
+    editor: context.getStore(EditorStateStore).getState()
+}))(class AppView extends React.PureComponent<Props> {
     public componentDidMount()
     {
         window.addEventListener('dragenter', this.prevent, false)
@@ -39,8 +39,11 @@ export default class AppView extends React.PureComponent<Props>
 
         if (e.code === 'Space') {
             previewPlayed
-                ? AppActions.stopPreview()
-                : AppActions.startPreview(activeComp!.id, currentPreviewFrame)
+                ? this.props.context.executeOperation(AppActions.stopPreview, {})
+                : this.props.context.executeOperation(AppActions.startPreview, {
+                    compositionId: activeComp!.id,
+                    beginFrame: currentPreviewFrame
+                 })
         }
     }
 
@@ -71,6 +74,6 @@ export default class AppView extends React.PureComponent<Props>
 
     private projectAutoSaveTimer = () =>
     {
-        AppActions.autoSaveProject()
+        this.props.context.executeOperation(AppActions.autoSaveProject, {})
     }
-}
+}))
