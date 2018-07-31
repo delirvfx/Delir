@@ -110,6 +110,7 @@ export async function symlinkDependencies(done) {
 
 export function compileRendererJs(done) {
     webpack({
+        mode: __DEV__ ? 'development' : 'production',
         target: "electron-renderer",
         watch: __DEV__,
         context: paths.src.root,
@@ -207,6 +208,7 @@ export function compileRendererJs(done) {
 
 export async function compilePlugins(done) {
     webpack({
+        mode: __DEV__ ? 'development' : 'production',
         target: "electron-renderer",
         watch: __DEV__,
         context: paths.src.plugins,
