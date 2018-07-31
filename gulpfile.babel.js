@@ -114,7 +114,7 @@ export function compileRendererJs(done) {
         watch: __DEV__,
         context: paths.src.root,
         entry: {
-            'frontend/main': ['./frontend/require-hook', './frontend/main'],
+            'frontend/main': ['./frontend/main'],
         },
         output: {
             filename: "[name].js",
