@@ -122,9 +122,11 @@ export default class ProjectStore extends Store<ProjectStoreState>
         const sourceLayer = ProjectHelper.findParentLayerByClipId(project!, payload.clipId)
         const destLayer = ProjectHelper.findLayerById(project!, payload.destLayerId)
 
-        if (targetClip == null || sourceLayer == null || destLayer == null) {
-            ProjectHelper.deleteClip(project!, targetClip!)
-            ProjectHelper.addClip(project!, destLayer!, targetClip!)
+        console.log(targetClip, sourceLayer, destLayer)
+
+        if (targetClip && sourceLayer && destLayer) {
+            ProjectHelper.deleteClip(project!, targetClip)
+            ProjectHelper.addClip(project!, destLayer, targetClip)
             this.updateLastModified()
         }
     })
