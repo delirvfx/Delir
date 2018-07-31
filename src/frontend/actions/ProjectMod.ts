@@ -252,12 +252,11 @@ export const removeAsset = operation((context, { assetId }: { assetId: string })
 })
 
 // TODO: frame position
-export const moveClipToLayer = operation((context, { clipId, targetLayerId }: {
+export const moveClipToLayer = operation((context, { clipId, destLayerId }: {
     clipId: string,
-    // FIXME: Rename to destinationLayerId
-    targetLayerId: string
+    destLayerId: string
 }) => {
-    context.dispatch(ProjectModActions.moveClipToLayerAction, { targetLayerId, clipId })
+    context.dispatch(ProjectModActions.moveClipToLayerAction, { destLayerId: destLayerId, clipId })
 })
 
 export const modifyComposition = operation((context, { compositionId, props }: {

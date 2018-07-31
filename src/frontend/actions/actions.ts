@@ -33,7 +33,7 @@ export const ProjectModActions = {
     addKeyframeAction: action<{ targetClip: Delir.Project.Clip, propName: string, keyframe: Delir.Project.Keyframe }>(),
     addEffectIntoClipAction: action<{ clipId: string, effect: Delir.Project.Effect }>(),
     addEffectKeyframeAction: action<{ targetClipId: string, targetEffectId: string, propName: string, keyframe: Delir.Project.Keyframe }>(),
-    moveClipToLayerAction: action<{ targetLayerId: string, clipId: string }>(),
+    moveClipToLayerAction: action<{ destLayerId: string, clipId: string }>(),
     modifyCompositionAction: action<{ targetCompositionId: string, patch: Partial<Delir.Project.Composition> }>(),
     modifyLayerAction: action<{ targetLayerId: string, patch: Partial<Delir.Project.Layer> }>(),
     modifyClipAction: action<{ targetClipId: string, patch: Partial<Delir.Project.Clip> }>(),

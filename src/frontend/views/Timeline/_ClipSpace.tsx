@@ -139,7 +139,7 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
             } else {
                 this.props.context.executeOperation(ProjectModActions.moveClipToLayer, {
                     clipId: clip.id!,
-                    targetLayerId: this.props.layer.id!
+                    destLayerId: this.props.layer.id!
                 })
             }
         } else {
