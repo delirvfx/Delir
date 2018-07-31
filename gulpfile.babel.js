@@ -122,16 +122,6 @@ export function compileRendererJs(done) {
             path: paths.compiled.root,
         },
         devtool: __DEV__ ? "#source-map" : 'none',
-        externals: [
-            (ctx, request, callback) => {
-                if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
-                    // throughs non relative requiring ('./module', '../module', '!!../module')
-                    return callback(null, `require('${request}')`)
-                }
-
-                callback()
-            },
-        ],
         resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
             modules: ["node_modules"],
@@ -195,7 +185,8 @@ export function compileRendererJs(done) {
                     }
                 }
             }),
-            // new webpack.IgnorePlugin(/font-manager/),
+            // preserve require() for native modules
+            new webpack.ExternalsPlugin('commonjs', ['font-manager']),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),
