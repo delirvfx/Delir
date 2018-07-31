@@ -95,11 +95,10 @@ export const createClip = operation((context, { layerId, clipRendererId, placedF
 export const createClipWithAsset = operation((context, { targetLayer, asset, placedFrame = 0, durationFrames = 100 }: {
     targetLayer: Delir.Project.Layer,
     asset: Delir.Project.Asset,
-    placedFrame: number,
-    durationFrames: number,
+    placedFrame?: number,
+    durationFrames?: number,
 }) => {
-    const project = ProjectStore.getState().get('project')
-
+    const {project} = context.getStore(ProjectStore).getState()
     if (!project) return
 
     const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
@@ -141,7 +140,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, propN
     frameOnClip: number,
     patch: Partial<Delir.Project.Keyframe>
 }) => {
-    const project = ProjectStore.getState().get('project')
+    const {project} = context.getStore(ProjectStore).getState()
 
     if (!project) return
     const clip = ProjectHelper.findClipById(project, clipId)
@@ -187,7 +186,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     frameOnClip: number,
     patch: Partial<Delir.Project.Keyframe>
 }) => {
-    const project = ProjectStore.getState().get('project')
+    const {project} = context.getStore(ProjectStore).getState()
     if (!project) return
 
     const clip = ProjectHelper.findClipById(project, clipId)
@@ -253,16 +252,20 @@ export const removeAsset = operation((context, { assetId }: { assetId: string })
 })
 
 // TODO: frame position
-export const moveClipToLayer = operation((context, { clipId, targetLayerId }: { clipId: string, targetLayerId: string }) => {
+export const moveClipToLayer = operation((context, { clipId, targetLayerId }: {
+    clipId: string,
+    // FIXME: Rename to destinationLayerId
+    targetLayerId: string
+}) => {
     context.dispatch(ProjectModActions.moveClipToLayerAction, { targetLayerId, clipId })
 })
 
-export const modifyComposition = operation((context, { compId, props }: {
-    compId: string,
+export const modifyComposition = operation((context, { compositionId, props }: {
+    compositionId: string,
     props: Partial<Delir.Project.Composition>
 }) => {
     context.dispatch(ProjectModActions.modifyCompositionAction, {
-        targetCompositionId: compId,
+        targetCompositionId: compositionId,
         patch: props
     })
 })
@@ -320,10 +323,12 @@ export const modifyEffectExpression = operation((context, { clipId, effectId, pr
 })
 
 export const moveLayerOrder = operation((context, { layerId, newIndex }: { layerId: string, newIndex: number }) => {
-    const project = ProjectStore.getState().get('project')
+    const {project} = context.getStore(ProjectStore).getState()
+    console.log(project)
     if (!project) return
 
     const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
+    console.log(comp)
 
     context.dispatch(ProjectModActions.moveLayerOrderAction, {
         parentCompositionId: comp.id,
@@ -332,12 +337,12 @@ export const moveLayerOrder = operation((context, { layerId, newIndex }: { layer
     })
 })
 
-export const removeComposition = operation((context, { compId }: { compId: string }) => {
-    context.dispatch(ProjectModActions.removeCompositionAction, { targetCompositionId: compId })
+export const removeComposition = operation((context, { compositionId }: { compositionId: string }) => {
+    context.dispatch(ProjectModActions.removeCompositionAction, { targetCompositionId: compositionId })
 })
 
-export const removeLayer = operation((context, { clipId }: { clipId: string }) => {
-    context.dispatch(ProjectModActions.removeLayerAction, { targetLayerId: clipId })
+export const removeLayer = operation((context, { layerId }: { layerId: string }) => {
+    context.dispatch(ProjectModActions.removeLayerAction, { targetLayerId: layerId })
 })
 
 export const removeClip = operation((context, { clipId }: { clipId: string }) => {

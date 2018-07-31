@@ -127,7 +127,7 @@ export default class EditorStateStore extends Store<EditorState> {
 
     // @ts-ignore
     private handleupdateProcessingState = listen(AppActions.updateProcessingStateAction, (payload) => {
-        this.updateWith(d => d.processingState = payload.entity.stateText)
+        this.updateWith(d => d.processingState = payload.stateText)
     })
 
     // @ts-ignore
@@ -142,7 +142,7 @@ export default class EditorStateStore extends Store<EditorState> {
 
     // @ts-ignore
     private handleseekPreviewFrame = listen(AppActions.seekPreviewFrameAction, (payload) => {
-        this.updateWith(d => d.currentPreviewFrame = Math.round(payload.entity.frame))
+        this.updateWith(d => d.currentPreviewFrame = Math.round(payload.frame))
     })
 
     // @ts-ignore

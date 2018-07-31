@@ -1,37 +1,22 @@
-import { remote } from 'electron'
+import { connectToStores } from '@ragg/fleur-react'
 import React from 'react'
 
-import AppActions from '../../actions/App'
 import EditorStateStore from '../../stores/EditorStateStore'
-
 import Pane from '../components/pane'
 
-interface State {
+interface ConnectedProps {
     stateText: string
 }
 
-export default class StatusBar extends React.Component<null, State>
-{
-    constructor(...args)
-    {
-        super(...args)
-        this.state = {
-            stateText: EditorStateStore.getState().get('processingState'),
-        }
-
-        EditorStateStore.addListener(() => {
-            this.setState({
-                stateText: EditorStateStore.getState().get('processingState'),
-            })
-        })
-    }
-
+export default connectToStores([EditorStateStore], (context) => ({
+    stateText: context.getStore(EditorStateStore).getState().processingState
+}))(class StatusBar extends React.Component<ConnectedProps> {
     public render()
     {
         return (
             <Pane className='view-status' resizable={false} allowFocus={false}>
-                <div>{this.state.stateText}</div>
+                <div>{this.props.stateText}</div>
             </Pane>
         )
     }
-}
+})

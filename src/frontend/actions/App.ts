@@ -87,7 +87,7 @@ export const changeActiveClip = operation((context, { clipId }: { clipId: string
 //
 // Preview
 //
-export const startPreview = operation((context, { compositionId, beginFrame = 0 }: { compositionId: string, beginFrame: number }) => {
+export const startPreview = operation((context, { compositionId, beginFrame = 0 }: { compositionId: string, beginFrame?: number }) => {
     context.dispatch(AppActions.startPreviewAction, { compositionId, beginFrame })
 })
 
@@ -107,7 +107,7 @@ export const updateProcessingState = operation((context, arg: { stateText: strin
     })
 })
 
-export const seekPreviewFrame = operation((context, { frame = null }: { frame: number | null }) => {
+export const seekPreviewFrame = operation((context, { frame = null }: { frame?: number }) => {
     const state = context.getStore(EditorStateStore).getState()
 
     const {activeComp} = state

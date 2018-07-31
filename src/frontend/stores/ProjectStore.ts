@@ -2,7 +2,7 @@ import { listen, Store } from '@ragg/fleur'
 import * as Delir from 'delir-core'
 import { ProjectHelper } from 'delir-core'
 
-import { ProjectModActions } from '../actions/actions'
+import { AppActions, ProjectModActions } from '../actions/actions'
 
 export interface ProjectStoreState {
     project: Delir.Project.Project | null,
@@ -19,12 +19,12 @@ export default class ProjectStore extends Store<ProjectStoreState>
     }
 
     // @ts-ignore
-    private handleSetActiveProject = listen(ProjectModActions.setActiveProjectAction, (payload) => {
+    private handleSetActiveProject = listen(AppActions.setActiveProjectAction, (payload) => {
         this.updateWith(d => d.project = payload.project)
     })
 
     // @ts-ignore
-    private handleClearActiveProject = listen(ProjectModActions.clearActiveProjectAction, (payload) => {
+    private handleClearActiveProject = listen(AppActions.clearActiveProjectAction, (payload) => {
         this.updateWith(d => d.project = null)
     })
 
@@ -55,7 +55,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     private handleAddClip = listen(ProjectModActions.addClipAction, (payload) => {
         const { project } = this.state
         const { targetLayer, newClip } = payload
-        ProjectHelper.addClip(project, targetLayer, newClip)
+        ProjectHelper.addClip(project!, targetLayer, newClip)
         this.updateLastModified()
     })
 
@@ -73,14 +73,14 @@ export default class ProjectStore extends Store<ProjectStoreState>
         const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
 
         if (propName == null) return
-        ProjectHelper.addKeyframe(project, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
+        ProjectHelper.addKeyframe(project!, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
             frameOnClip: 0,
             value: { assetId: registeredAsset.id },
         }))
 
         const layer = new Delir.Project.Layer()
-        ProjectHelper.addLayer(project, targetComposition, layer)
-        ProjectHelper.addClip(project, layer, clip)
+        ProjectHelper.addLayer(project!, targetComposition, layer)
+        ProjectHelper.addClip(project!, layer, clip)
         this.updateLastModified()
     })
 
@@ -111,7 +111,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     private handleAddEffectKeyframe = listen(ProjectModActions.addEffectKeyframeAction, (payload) => {
         const { project } = this.state
         const { targetClipId, targetEffectId, propName, keyframe } = payload
-        ProjectHelper.addEffectKeyframe(project, targetClipId, targetEffectId, propName, keyframe)
+        ProjectHelper.addEffectKeyframe(project!, targetClipId, targetEffectId, propName, keyframe)
         this.updateLastModified()
     })
 
@@ -119,12 +119,14 @@ export default class ProjectStore extends Store<ProjectStoreState>
     private handleMoveClipToLayer = listen(ProjectModActions.moveClipToLayerAction, (payload) => {
         const { project } = this.state
         const targetClip = ProjectHelper.findClipById(project!, payload.clipId)
-        const sourceLane = ProjectHelper.findParentLayerByClipId(project!, payload.clipId)
-        const destLane = ProjectHelper.findLayerById(project!, payload.targetLayerId)
+        const sourceLayer = ProjectHelper.findParentLayerByClipId(project!, payload.clipId)
+        const destLayer = ProjectHelper.findLayerById(project!, payload.targetLayerId)
 
-        if (targetClip == null || sourceLane == null || destLane == null) {
-            ProjectHelper.deleteClip(project!, targetClip)
-            ProjectHelper.addClip(project!, destLane, targetClip)
+        console.log(payload)
+
+        if (targetClip == null || sourceLayer == null || destLayer == null) {
+            ProjectHelper.deleteClip(project!, targetClip!)
+            ProjectHelper.addClip(project!, destLayer!, targetClip!)
             this.updateLastModified()
         }
     })
@@ -185,7 +187,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     private handleMoveLayerOrder = listen(ProjectModActions.moveLayerOrderAction, (payload) => {
         const { project } = this.state
         const { parentCompositionId, targetLayerId, newIndex } = payload
-        ProjectHelper.moveLayerOrder(project, parentCompositionId, targetLayerId, newIndex)
+        ProjectHelper.moveLayerOrder(project!, parentCompositionId, targetLayerId, newIndex)
         this.updateLastModified()
     })
 
@@ -206,6 +208,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     // @ts-ignore
     private handleRemoveClip = listen(ProjectModActions.removeClipAction, (payload) => {
         const { project } = this.state
+        console.log(this.state)
         ProjectHelper.deleteClip(project!, payload.targetClipId)
         this.updateLastModified()
     })
@@ -239,6 +242,10 @@ export default class ProjectStore extends Store<ProjectStoreState>
         ProjectHelper.deleteEffectFromClip(project, holderClipId, targetEffectId)
         this.updateLastModified()
     })
+
+    public getState() {
+        return this.state
+    }
 
     private updateLastModified = () => {
         // Projectの変更は検知できないし、構造が大きくなる可能性があるので今のところImmutableにもしたくない

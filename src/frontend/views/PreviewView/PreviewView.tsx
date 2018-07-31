@@ -1,35 +1,35 @@
+import { connectToStores } from '@ragg/fleur-react'
 import * as Delir from 'delir-core'
 import * as React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
-
-import connectToStores from '../../utils/Flux/connectToStores'
 
 import DropDown from '../components/dropdown'
 import Pane from '../components/pane'
 
 import RendererService from '../../services/renderer'
 import EditorStateStore from '../../stores/EditorStateStore'
-import ProjectStore from '../../stores/ProjectStore'
 
 import t from './PreviewView.i18n'
 import * as s from './style.styl'
 
-interface PreviewViewProps {
+interface ConnectedProps {
     activeComp?: Delir.Project.Composition
     currentPreviewFrame?: number
 }
 
-interface PreviewViewState {
+interface State {
     scale: number
     scaleListShown: boolean
 }
 
-@connectToStores([EditorStateStore], () => ({
-    activeComp: EditorStateStore.getState().get('activeComp'),
-    currentPreviewFrame: EditorStateStore.getState().get('currentPreviewFrame')
-}))
-export default class PreviewView extends React.Component<PreviewViewProps, PreviewViewState>
-{
+export default connectToStores([EditorStateStore], (context) => {
+    const editorStateStore = context.getStore(EditorStateStore)
+
+    return {
+        activeComp: editorStateStore.getState().activeComp,
+        currentPreviewFrame: editorStateStore.getState().currentPreviewFrame,
+    }
+})(class PreviewView extends React.Component<ConnectedProps, State> {
     public state = {
         scale: 1,
         scaleListShown: false
@@ -38,6 +38,12 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
     public refs: {
         canvas: HTMLCanvasElement
         scaleList: DropDown
+    }
+
+    public componentDidMount()
+    {
+        // RendererService.renderer!.setDestinationCanvas(this.refs.canvas)
+        RendererService.setDestCanvas(this.refs.canvas)
     }
 
     public render()
@@ -78,18 +84,12 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
         )
     }
 
-    protected componentDidMount()
-    {
-        // RendererService.renderer!.setDestinationCanvas(this.refs.canvas)
-        RendererService.setDestCanvas(this.refs.canvas)
-    }
-
     private selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
     {
         this.refs.scaleList.hide()
 
         this.setState({
-            scale: parseInt(e.target.dataset.value, 10) / 100,
+            scale: parseInt(e.currentTarget.dataset.value!, 10) / 100,
             scaleListShown: false,
         })
     }
@@ -106,4 +106,4 @@ export default class PreviewView extends React.Component<PreviewViewProps, Previ
             scale: Math.max(.1, Math.min(this.state.scale + (-e.deltaY / 20), 3))
         })
     }
-}
+})

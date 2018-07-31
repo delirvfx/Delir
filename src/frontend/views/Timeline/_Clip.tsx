@@ -1,16 +1,17 @@
+import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import * as React from 'react'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 import RendererService from '../../services/renderer'
 import { ContextMenu, MenuItem, MenuItemOption, MenuItemProps } from '../components/ContextMenu'
 
 import t from './_Clip.i18n'
 import * as s from './Clip.styl'
 
-interface TimelaneClipProps {
+interface OwnProps {
     clip: Delir.Project.Clip,
     left: number,
     width: number,
@@ -19,7 +20,9 @@ interface TimelaneClipProps {
     onChangeDuration: (displayWidth: number) => any,
 }
 
-interface TimelaneClipState {
+type Props = OwnProps & ContextProp
+
+interface State {
     draggedPxX: number
     dragStartPosition: {clientX: number, clientY: number} | null
     dragStyle: {[prop: string]: string} | null
@@ -28,9 +31,9 @@ interface TimelaneClipState {
     resizeMovedX: number
 }
 
-export default class TimelaneClip extends React.Component<TimelaneClipProps, TimelaneClipState>
+export default withComponentContext(class TimelaneClip extends React.Component<Props, State>
 {
-    public state = {
+    public state: State = {
         draggedPxX: 0,
         dragStartPosition: null,
         dragStyle: {transform: 'translateX(0)'},
@@ -95,7 +98,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
     private selectClip = e =>
     {
-        AppActions.changeActiveClip(this.props.clip.id!)
+        this.props.context.executeOperation(AppActions.changeActiveClip, { clipId: this.props.clip.id! })
     }
 
     private dragStart = e =>
@@ -107,7 +110,9 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
             }
         })
 
-        AppActions.setDragEntity({type: 'clip', clip: this.props.clip})
+        this.props.context.executeOperation(AppActions.setDragEntity, {
+            entity: {type: 'clip', clip: this.props.clip}
+        })
     }
 
     private drag = (e) =>
@@ -125,7 +130,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
     private dragEnd = (e: React.DragEvent<HTMLDivElement>) =>
     {
-        AppActions.clearDragEntity()
+        this.props.context.executeOperation(AppActions.clearDragEntity, {})
 
         this.setState({
             draggedPxX: 0,
@@ -137,18 +142,23 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
     private addEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
     {
-        ProjectModActions.addEffectIntoClipPayload(dataset.clipId, dataset.effectId)
-        AppActions.seekPreviewFrame()
+        this.props.context.executeOperation(ProjectModActions.addEffectIntoClip, {
+            clipId: dataset.clipId,
+            processorId: dataset.effectId
+        })
+        this.props.context.executeOperation(AppActions.seekPreviewFrame, {})
     }
 
     private removeClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
     {
-        ProjectModActions.removeClip(dataset.clipId)
+        this.props.context.executeOperation(ProjectModActions.removeClip, { clipId: dataset.clipId })
     }
 
     private resizeStart = (e: React.DragEvent<HTMLDivElement>) =>
     {
-        AppActions.setDragEntity({type: 'clip-resizing', clip: this.props.clip})
+        this.props.context.executeOperation(AppActions.setDragEntity, {
+            entity: {type: 'clip-resizing', clip: this.props.clip}
+        })
 
         this.setState({
             resizeStartPosition: {clientX: e.clientX},
@@ -172,7 +182,7 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
     private resizeEnd = (e: React.DragEvent<HTMLDivElement>) =>
     {
         e.stopPropagation()
-        AppActions.clearDragEntity()
+        this.props.context.executeOperation(AppActions.clearDragEntity, {})
         this.setState({resizeStartPosition: null, resizeMovedX: 0})
 
         const newWidth = this.props.width + this.state.resizeMovedX
@@ -182,4 +192,4 @@ export default class TimelaneClip extends React.Component<TimelaneClipProps, Tim
 
         this.props.onChangeDuration(newWidth)
     }
-}
+})

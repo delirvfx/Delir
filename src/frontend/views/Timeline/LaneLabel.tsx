@@ -1,9 +1,10 @@
+import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import * as React from 'react'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'
 
-import ProjectModActions from '../../actions/ProjectMod'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 import LabelInput from '../components/label-input'
@@ -11,7 +12,7 @@ import LabelInput from '../components/label-input'
 import t from './LaneLabel.i18n'
 import * as s from './LaneLabel.styl'
 
-interface Props {
+interface OwnProps {
     layer: Delir.Project.Layer
 
     /**
@@ -23,12 +24,13 @@ interface Props {
     onRemove: (layerId: string) => any
 }
 
+type Props = OwnProps & ContextProp
+
 const SortHandle = SortableHandle(() => (
     <i className='fa fa-bars' />
 ))
 
-class LaneLabel extends React.Component<Props>
-{
+const LaneLabel = withComponentContext(class LaneLabel extends React.Component<Props> {
     private layerNameInput: LabelInput
 
     public render()
@@ -65,7 +67,11 @@ class LaneLabel extends React.Component<Props>
     private layerNameChanged = (value: string) =>
     {
         const {layer} = this.props
-        ProjectModActions.modifyLayer(layer.id!, {name: value})
+
+        this.props.context.executeOperation(ProjectModActions.modifyLayer, {
+            layerId: layer.id!,
+            props: {name: value}
+        })
     }
 
     private focusToLayerNameInput = () =>
@@ -78,8 +84,8 @@ class LaneLabel extends React.Component<Props>
     private onSelect = ({ currentTarget }: React.MouseEvent<HTMLLIElement>) => this.props.onSelect(currentTarget.dataset.layerId!)
 
     private onRemove = ({ dataset }: MenuItemOption<{layerId: string}>) => this.props.onRemove(dataset.layerId)
-}
+})
 
-export default SortableElement((props: Props) => (
+export default SortableElement((props: OwnProps) => (
     <LaneLabel layer={props.layer} onSelect={props.onSelect} onRemove={props.onRemove} />
 ))

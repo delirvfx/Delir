@@ -1,16 +1,11 @@
 import * as Delir from 'delir-core'
 import { ProjectHelper } from 'delir-core'
 import { remote } from 'electron'
-import * as _ from 'lodash'
 import { dirname, join } from 'path'
 import deream from '../../deream'
 
-import { KnownPayload } from '../actions/PayloadTypes'
 import dispatcher from '../utils/Flux/Dispatcher'
 import * as Platform from '../utils/platform'
-
-import {DispatchTypes as EditorStateDispatchTypes } from '../actions/App'
-import EditorStateStore from '../stores/EditorStateStore'
 
 let pluginRegistry: Delir.PluginRegistry | null = null
 let pluginLoader: Delir.Services.PluginLoader | null = null

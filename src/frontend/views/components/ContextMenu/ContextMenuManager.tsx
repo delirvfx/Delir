@@ -101,8 +101,6 @@ export default class ContextMenuManager
             window.requestIdleCallback(() => {
                 this.activeMenu && this.activeMenu.unmount()
                 this.activeMenu = null
-
-                __DEV__ && console.log(this._leakCheck)
             })
         })
     }
