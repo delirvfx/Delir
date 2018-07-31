@@ -323,11 +323,9 @@ export const modifyEffectExpression = operation((context, { clipId, effectId, pr
 
 export const moveLayerOrder = operation((context, { layerId, newIndex }: { layerId: string, newIndex: number }) => {
     const {project} = context.getStore(ProjectStore).getState()
-    console.log(project)
     if (!project) return
 
     const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
-    console.log(comp)
 
     context.dispatch(ProjectModActions.moveLayerOrderAction, {
         parentCompositionId: comp.id,
