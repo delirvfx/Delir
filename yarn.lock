@@ -10,9 +10,9 @@
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/7zip/-/7zip-0.0.6.tgz#9cafb171af82329490353b4816f03347aa150a30"
 
-"@ragg/fleur-react@0.0.4":
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.4.tgz#98c278e4eb7164243870004b2fa6e25ea14e3cd0"
+"@ragg/fleur-react@0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.5.tgz#67636163874ff8d35fa8e738818a956edfde7f44"
 
 "@ragg/fleur@0.0.3":
   version "0.0.3"
