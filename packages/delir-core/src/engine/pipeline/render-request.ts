@@ -1,12 +1,12 @@
 import * as _ from 'lodash'
 
 import Composition from '../../project/composition'
-import { KeyframeValueTypes } from '../../project/keyframe'
 import DependencyResolver from './DependencyResolver'
+import { RealParameterValueTypes } from './pipeline'
 import PreRenderingRequest from './pre-rendering-request'
 import WebGLContextPool from './WebGLContextPool'
 
-export default class RenderRequest<T = {[propName: string]: KeyframeValueTypes}>
+export default class RenderRequest<T = {[propName: string]: RealParameterValueTypes}>
 {
     private static _permitKeys = [
         'time',
