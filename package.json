@@ -16,7 +16,7 @@
     "test-core": "cross-env mocha --colors --reporter spec --watch-extensions ts --require ./src/delir-core/src/__spec__/__bootstrap__.js './src/delir-core/**/__spec__/*-spec.{js,ts}'",
     "test-front": "cross-env mocha --colors --reporter spec --watch-extensions ts,tsx --require ./src/frontend/__spec__/__bootstrap__.js './src/frontend/**/__spec__/*-spec.{ts,tsx}'"
   },
-  "workspace": [
+  "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
