@@ -1,0 +1,8 @@
+{
+  "name": "delir",
+  "version": "0.0.0",
+  "main": "main.ts",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {}
+}
