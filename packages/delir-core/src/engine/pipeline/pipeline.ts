@@ -51,8 +51,6 @@ interface RenderProgression {
     rangeEndFrame: number
 }
 
-const tsCompileOption: TypeScript.CompilerOptions = {}
-
 /**
  * Get expression applied values
  */
