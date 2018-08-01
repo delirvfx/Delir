@@ -324,7 +324,6 @@ export default class Pipeline
                     clip,
                     clipRendererCache: this._clipRendererCache,
                     req,
-                    resolver: req.resolver,
                 })
 
                 await clipRenderTask.initialize(req)
