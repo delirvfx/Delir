@@ -15,10 +15,10 @@ const {spawn, spawnSync} = require("child_process");
 
 const paths = {
     src         : {
-        root        : join(__dirname, "./src/"),
-        plugins     : join(__dirname, './src/post-effect-plugins'),
-        browser     : join(__dirname, "./src/browser/"),
-        renderer    : join(__dirname, "./src/frontend/"),
+        root        : join(__dirname, "./packages/"),
+        plugins     : join(__dirname, './packages/post-effect-plugins'),
+        browser     : join(__dirname, "./packages/browser/"),
+        renderer    : join(__dirname, "./packages/frontend/"),
     },
     compiled    : {
         root        : join(__dirname, "./prepublish/"),
@@ -127,7 +127,7 @@ export function compileRendererJs(done) {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
             modules: ["node_modules"],
             alias: {
-                'delir-core': join(__dirname, 'src/delir-core/src/'),
+                'delir-core': join(__dirname, 'packages/delir-core/src/'),
             }
         },
         module: {
@@ -414,7 +414,6 @@ export function watch() {
     g.watch(join(paths.src.renderer, '**/*'), buildRendererWithoutJs)
     g.watch(join(paths.src.renderer, '**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
-    // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }
 
@@ -424,10 +423,6 @@ const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlin
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
 const publish = g.series(clean, build, makeIcon, pack);
-
-// export function navcodecTest() {
-//     g.watch(join(__dirname, 'src/navcodec'), compileNavcodec)
-// }
 
 export {publish, build};
 export default buildAndWatch;
