@@ -99,10 +99,10 @@ export default class RenderRequest<T = {[propName: string]: KeyframeValueTypes}>
 
     constructor(properties: Partial<RenderRequest<T>> = {})
     {
-        const props = _.pick(
-            properties,
-            RenderRequest._permitKeys.concat(RenderRequest._permitOnlyInitializeKey)
-        )
+        const props = _.pick(properties, [
+            ...RenderRequest._permitKeys,
+            ...RenderRequest._permitOnlyInitializeKey
+        ])
 
         Object.assign(this, props)
         Object.freeze(this)
