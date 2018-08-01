@@ -13,6 +13,8 @@ const fs = require("fs-promise");
 const {join} = require("path");
 const {spawn, spawnSync} = require("child_process");
 
+const NATIVE_MODULES = ['font-manager'];
+
 const paths = {
     src         : {
         root        : join(__dirname, "./packages/"),
@@ -39,7 +41,7 @@ export function buildBrowserJs() {
 }
 
 export async function copyPackageJSON(done) {
-    const string = await fs.readFile("./package.json", {encoding: "utf8"});
+    const string = await fs.readFile(join(paths.src.frontend, "package.json"), {encoding: "utf8"});
     const json = JSON.parse(string);
     delete json.devDependencies;
     const newJson = JSON.stringify(json, null, "  ");
@@ -50,41 +52,13 @@ export async function copyPackageJSON(done) {
     done();
 }
 
-export async function symlinkDependencies(done) {
+export async function symlinkNativeModules(done) {
     const prepublishNodeModules = join(paths.compiled.root, "node_modules/")
-    const checkdep = (packageName, depList = []) => {
-        try {
-            let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies || {};
-            let deps = Object.keys(dep);
 
-            for (let dep of deps) {
-                if (depList.indexOf(dep) === -1) {
-                    // console.log("dep: %s", dep);
-                    depList.push(dep);
-                    checkdep(dep, depList);
-                }
-            }
-        } catch (e) { console.log('[symlinkDependencies]', e); }
-    };
+    await rimraf(prepublishNodeModules);
+    await fs.mkdir(prepublishNodeModules);
 
-    try {
-        await rimraf(prepublishNodeModules);
-    } catch (e) {
-        console.log(e);
-    };
-    try {
-        await fs.mkdir(prepublishNodeModules);
-    } catch (e) {
-        console.log(e);
-    };
-
-    const packageJson = require(join(paths.compiled.root, "package.json"));
-    const dependencies = Object.keys(packageJson.dependencies);
-    for (let dep of dependencies) {
-        checkdep(dep, dependencies);
-    }
-
-    for (let dep of dependencies) {
+    for (let dep of NATIVE_MODULES) {
         try {
             if (dep.includes('/')) {
                 const ns = dep.slice(0, dep.indexOf('/'))
@@ -184,7 +158,7 @@ export function compileRendererJs(done) {
                 }
             }),
             // preserve require() for native modules
-            new webpack.ExternalsPlugin('commonjs', ['font-manager']),
+            new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),
@@ -406,12 +380,12 @@ export function watch() {
     g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
     g.watch(join(paths.src.frontend, '**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
-    g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
+    g.watch(join(__dirname, 'node_modules'), symlinkNativeModules)
 }
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
+const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkNativeModules));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
 const publish = g.series(clean, build, makeIcon, pack);
