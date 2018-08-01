@@ -76,6 +76,10 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
     {
         const parameters = req.parameters as any
 
+        if (req.parameters.source == null) {
+            return
+        }
+
         this._video = document.createElement('video')
         this._video.src = `file://${parameters.source.path}`
         this._video.loop = parameters.loop
@@ -100,6 +104,10 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 
     public async render(req: RenderingRequest<VideoRendererParam>)
     {
+        if (!req.parameters.source) {
+            return
+        }
+
         const param = req.parameters
         const ctx = req.destCanvas.getContext('2d')!
         const video = this._video
