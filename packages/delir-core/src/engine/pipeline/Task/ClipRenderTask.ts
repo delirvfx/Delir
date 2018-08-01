@@ -1,3 +1,4 @@
+import { AssetPointerScheme } from '@ragg/delir-core/src/project/scheme/keyframe'
 import * as _ from 'lodash'
 import * as KeyframeHelper from '../../../helper/keyframe-helper'
 import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
@@ -11,6 +12,7 @@ import { compileTypeScript } from '../ExpressionCompiler'
 import { Exposes } from '../ExpressionContext'
 import * as ExpressionContext from '../ExpressionContext'
 import ExpressionVM from '../ExpressionVM'
+import { RealParameterValues, RealParameterValueTypes } from '../pipeline'
 import RenderRequest from '../render-request'
 import EffectRenderTask from './EffectRenderTask'
 
@@ -23,13 +25,14 @@ export default class ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
         const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
 
-        const rendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, rendererParams, clip.keyframes)
+        const rawRendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, rendererParams, clip.keyframes)
+        const rendererInitParam: RealParameterValues = { ...(rawRendererInitParam as any) }
         rendererAssetParamNames.forEach(propName => {
-            rendererInitParam[propName] = rendererInitParam[propName]
-                ? req.resolver.resolveAsset((rendererInitParam[propName] as AssetPointerScheme).assetId)
+            // resolve asset
+            rendererInitParam[propName] = rawRendererInitParam[propName]
+                ? req.resolver.resolveAsset((rawRendererInitParam[propName] as AssetPointerScheme).assetId)
                 : null
         })
-        console.log(rendererInitParam)
 
         let clipRenderer = clipRendererCache.get(clip)
         if (!clipRenderer) {
@@ -37,9 +40,11 @@ export default class ClipRenderTask {
             clipRendererCache.set(clip, clipRenderer)
         }
 
-        const rendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParams, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
+        const rawRendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParams, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
+        const rendererKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = { ...(rawRendererInitParam as any)　}
         rendererAssetParamNames.forEach(propName => {
-            rendererKeyframeLUT[propName] = _.map(rendererKeyframeLUT[propName], value => {
+            // resolve asset
+            rendererKeyframeLUT[propName] = _.map(rawRendererKeyframeLUT[propName], value => {
                 return value ? req.resolver.resolveAsset((value as AssetPointerScheme).assetId) : null
             })
         })
@@ -70,10 +75,10 @@ export default class ClipRenderTask {
     public rendererType: RendererFactory.AvailableRenderer
     public clipPlacedFrame: number
     public clipDurationFrames: number
-    public keyframeLUT: {[paramName: string]: KeyframeHelper.KeyframeParamValueSequence}
+    public keyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } }
     public expressions: { [paramName: string]: (context: Exposes) => any }
     public effectRenderTask: EffectRenderTask[]
-    private initialKeyframeValues: { [paramName: string]: KeyframeValueTypes }
+    private initialKeyframeValues: RealParameterValues
 
     public async initialize(req: RenderRequest) {
         const preRenderReq = req.clone({parameters: this.initialKeyframeValues}).toPreRenderingRequest()

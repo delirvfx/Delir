@@ -9,6 +9,7 @@ import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObs
 
 import PluginRegistry from '../../plugin-support/plugin-registry'
 
+import AssetProxy from '@ragg/delir-core/src/engine/pipeline/AssetProxy'
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
 import * as TypeScript from 'typescript'
@@ -20,6 +21,7 @@ import FPSCounter from '../../helper/FPSCounter'
 import * as KeyframeHelper from '../../helper/keyframe-helper'
 import ProgressPromise from '../../helper/progress-promise'
 import * as ProjectHelper from '../../helper/project-helper'
+import { ColorRGB, ColorRGBA } from '../../values'
 import * as RendererFactory from '../renderer'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionContext'
@@ -49,6 +51,12 @@ interface RenderProgression {
     audioBuffers: Float32Array[]
     currentFrame: number
     rangeEndFrame: number
+}
+
+export type RealParameterValueTypes = number | string | boolean | ColorRGB | ColorRGBA | AssetProxy | null
+
+export interface RealParameterValues {
+    [paramName: string]: RealParameterValueTypes
 }
 
 /**
