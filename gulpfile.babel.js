@@ -17,13 +17,11 @@ const paths = {
     src         : {
         root        : join(__dirname, "./packages/"),
         plugins     : join(__dirname, './packages/post-effect-plugins'),
-        browser     : join(__dirname, "./packages/browser/"),
         frontend    : join(__dirname, "./packages/delir/"),
     },
     compiled    : {
         root        : join(__dirname, "./prepublish/"),
         plugins     : join(__dirname, './prepublish/plugins'),
-        browser     : join(__dirname, "./prepublish/browser/"),
         frontend    : join(__dirname, "./prepublish/delir/"),
     },
     build   : join(__dirname, "./prepublish/"),
@@ -34,11 +32,10 @@ const isWindows = os.type() === 'Windows_NT'
 const __DEV__ = process.env.DELIR_ENV === 'dev'
 
 export function buildBrowserJs() {
-    return g.src([join(paths.src.browser, "**/*.js")])
+    return g.src([join(paths.src.frontend, "browser.js")])
         .pipe($.plumber())
-        .pipe($.changed(paths.compiled.browser))
         .pipe($.babel())
-        .pipe(g.dest(paths.compiled.browser));
+        .pipe(g.dest(paths.compiled.frontend));
 }
 
 export async function copyPackageJSON(done) {
@@ -398,19 +395,14 @@ export async function cleanRendererScripts(done) {
     done();
 }
 
-export async function cleanBrowserScripts(done) {
-    await rimraf(join(paths.compiled.browser, 'scripts'))
-    done();
-}
-
 export function run(done) {
-    const electron = spawn(require("electron"), [paths.compiled.root], {stdio:'inherit'});
+    const electron = spawn(require("electron"), [join(paths.compiled.frontend, 'browser.js')], {stdio:'inherit'});
     electron.on("close", (code) => { code === 0 && run(() => {}); });
     done()
 }
 
 export function watch() {
-    g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
+    g.watch(join(paths.src.frontend, 'browser.js'), buildBrowserJs)
     g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
     g.watch(join(paths.src.frontend, '**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
