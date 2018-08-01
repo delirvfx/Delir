@@ -418,7 +418,7 @@ export default class Pipeline
                     const frameOnComposition = req.frame - clipTask.clipPlacedFrame
 
                     // TODO: frame mapping for set different framerate for sub-composition
-                    renderReq = req.clone({
+                    const compositionRenderReq = req.clone({
                         frameOnComposition,
                         timeOnComposition: frameOnComposition / req.framerate,
 
