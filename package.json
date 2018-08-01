@@ -68,6 +68,9 @@
     "uglifyjs-webpack-plugin": "1.2.7",
     "webpack": "4.16.3"
   },
+  "dependencies": {
+    "font-manager": "0.3.0"
+  },
   "lint-staged": {
     "*.{ts,tsx}": [
       "tslint --fix",
