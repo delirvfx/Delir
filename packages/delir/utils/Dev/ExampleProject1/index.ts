@@ -146,6 +146,14 @@ const videoClip = assign(new Delir.Project.Clip(), {
     renderer: 'video',
     placedFrame: 0,
     durationFrames: 30 * 10,
+    keyframes: {
+        source: [
+            assign(new Delir.Project.Keyframe(), {
+                value: { assetId: videoAsset.id },
+                frameOnClip: 0,
+            })
+        ]
+    }
 })
 
 ProjectHelper.addClip(p, layer1, adjustmentClip)
