@@ -106,10 +106,10 @@ export type AnyParameterTypeDescriptor =
     // | StructureTypeDescripter
 
 export type ParameterValueTypes =
-    | Point2D
-    | Point3D
-    | Size2D
-    | Size3D
+    // | Point2D
+    // | Point3D
+    // | Size2D
+    // | Size3D
     | ColorRGB
     | ColorRGBA
     | string
