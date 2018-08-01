@@ -103,7 +103,7 @@ const textClip = assign(new Delir.Project.Clip(), {
         // ],
     },
     expressions: {
-        text: new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`')
+        text: new Values.Expression('typescript', '`time:${time}\\nframe:${frame}`')
     },
 })
 
