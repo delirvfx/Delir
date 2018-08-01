@@ -6,8 +6,8 @@ import canvasToBuffer from 'electron-canvas-to-buffer'
 import audioBufferToWave from 'audiobuffer-to-wav'
 import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 
-import * as Delir from 'delir-core'
-import {ProjectHelper} from 'delir-core'
+import * as Delir from '@ragg/delir-core'
+import { ProjectHelper } from '@ragg/delir-core'
 
 // import PromiseQueue from './utils/PromiseQueue'
 import * as Exporter from './exporter'

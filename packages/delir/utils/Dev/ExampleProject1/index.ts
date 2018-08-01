@@ -1,5 +1,5 @@
-import * as Delir from 'delir-core'
-import { ProjectHelper, Values } from 'delir-core'
+import * as Delir from '@ragg/delir-core'
+import { ProjectHelper, Values } from '@ragg/delir-core'
 import { join } from 'path'
 
 const dirname = join(process.cwd(), 'packages/delir/utils/Dev/ExampleProject1')

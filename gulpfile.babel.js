@@ -98,9 +98,6 @@ export function compileRendererJs(done) {
         resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
             modules: ["node_modules"],
-            alias: {
-                'delir-core': join(__dirname, 'packages/delir-core/src/'),
-            }
         },
         module: {
             rules: [

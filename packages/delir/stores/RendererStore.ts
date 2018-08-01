@@ -1,6 +1,6 @@
+import * as Delir from '@ragg/delir-core'
+import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
-import * as Delir from 'delir-core'
-import { ProjectHelper } from 'delir-core'
 import { remote } from 'electron'
 import { dirname, join } from 'path'
 import deream from '../../deream'

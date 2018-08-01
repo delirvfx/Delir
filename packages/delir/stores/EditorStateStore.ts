@@ -1,6 +1,6 @@
+import * as Delir from '@ragg/delir-core'
+import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
-import * as Delir from 'delir-core'
-import { ProjectHelper } from 'delir-core'
 import { AppActions, ProjectModActions } from '../actions/actions'
 import { DragEntity } from '../actions/App'
 

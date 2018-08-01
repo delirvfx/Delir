@@ -1,11 +1,11 @@
 import {
+    PluginSupport,
     PostEffectBase,
     PreRenderRequest,
-    PluginSupport,
     RenderRequest,
-    Values,
-    Type
-} from 'delir-core'
+    Type,
+    Values
+} from '@ragg/delir-core'
 
 import * as clamp from 'lodash/clamp'
 
@@ -67,7 +67,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
         gl.shaderSource(vertexShader, ChromakeyPostEffect.VERTEX_SHADER)
         gl.compileShader(vertexShader)
 
-        const fragShader = this.fragShader =gl.createShader(gl.FRAGMENT_SHADER)
+        const fragShader = this.fragShader = gl.createShader(gl.FRAGMENT_SHADER)
         gl.shaderSource(fragShader, ChromakeyPostEffect.FRAGMENT_SHADER)
         gl.compileShader(fragShader)
 
@@ -95,10 +95,10 @@ export default class ChromakeyPostEffect extends PostEffectBase {
         this.vertexBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer)
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            -1,-1,
-            1,-1,
-            1,1,
-            -1,1
+            -1, -1,
+            1, -1,
+            1, 1,
+            -1, 1
         ]), gl.STATIC_DRAW)
 
         // Tex 2D

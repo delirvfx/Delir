@@ -1,6 +1,6 @@
+import * as Delir from '@ragg/delir-core'
 import Fleur from '@ragg/fleur'
 import { createElementWithContext } from '@ragg/fleur-react'
-import * as Delir from 'delir-core'
 import * as os from 'os'
 import * as ReactDOM from 'react-dom'
 

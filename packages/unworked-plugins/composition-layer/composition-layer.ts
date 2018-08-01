@@ -5,17 +5,16 @@ import {
     // PluginPreRenderRequest,
     RenderRequest,
     // Exceptions
-} from 'delir-core'
+} from '@ragg/delir-core'
 
 export default class CompositionLayer extends LayerPluginBase
 {
-    static pluginDidLoad()
+    public static pluginDidLoad()
     {
 
     }
 
-
-    async render(req: RenderRequest)
+    public async render(req: RenderRequest)
     {
 
     }

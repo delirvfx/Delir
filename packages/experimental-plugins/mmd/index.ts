@@ -1,14 +1,14 @@
 import {
-    Type,
-    TypeDescriptor,
+    Exceptions,
     PostEffectBase,
     PreRenderRequest,
     RenderRequest,
-    Exceptions
-} from 'delir-core'
+    Type,
+    TypeDescriptor
+} from '@ragg/delir-core'
 
 import * as Th from 'three'
-import { MMDLoader, MMDHelper } from 'three-mmd-loader'
+import { MMDHelper, MMDLoader } from 'three-mmd-loader'
 
 interface Param {
     camX: number
@@ -17,8 +17,8 @@ interface Param {
     camTargetX: number
     camTargetY: number
     camTargetZ: number
-    model: any|null
-    motion: any|null
+    model: any | null
+    motion: any | null
 }
 
 export default class MMDPostEffect extends PostEffectBase

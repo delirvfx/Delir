@@ -1,5 +1,5 @@
+import * as Delir from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
-import * as Delir from 'delir-core'
 import { remote } from 'electron'
 import { join } from 'path'
 
