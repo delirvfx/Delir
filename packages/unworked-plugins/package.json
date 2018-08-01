@@ -1,5 +1,5 @@
 {
-  "name": "unworked-plugins",
+  "name": "@ragg/delir-unworked-plugins",
   "version": "0.0.0",
   "license": "MIT",
   "dependencies": {
