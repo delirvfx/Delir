@@ -4,12 +4,7 @@ import Keyframe, { KeyframeValueTypes } from '../project/keyframe'
 import ColorRGB from '../values/color-rgb'
 import ColorRGBA from '../values/color-rgba'
 
-import {
-    AnyParameterTypeDescriptor,
-    ParameterValueTypes,
-    TypeDescriptor,
-} from '../plugin-support/type-descriptor'
-
+import { AnyParameterTypeDescriptor, TypeDescriptor } from '../plugin-support/type-descriptor'
 import { AssetPointerScheme } from '../project/scheme/keyframe'
 
 interface KeyFrameLink<T extends KeyframeValueTypes> {
@@ -175,7 +170,7 @@ export function calcKeyframe(
             // 0  10  20
             // |   |   |
             // -> if keyframes empty use defaultValue
-            table[frame] = (propDesc as {defaultValue: ParameterValueTypes}).defaultValue
+            table[frame] = (propDesc as {defaultValue: KeyframeValueTypes}).defaultValue
             continue
         }
 
