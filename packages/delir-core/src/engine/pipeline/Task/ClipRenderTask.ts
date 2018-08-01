@@ -15,11 +15,10 @@ import RenderRequest from '../render-request'
 import EffectRenderTask from './EffectRenderTask'
 
 export default class ClipRenderTask {
-    public static build({clip, effectRenderTask, clipRendererCache, req, resolver}: {
+    public static build({clip, clipRendererCache, req}: {
         clip: Clip
         clipRendererCache: WeakMap<Clip, IRenderer<any>>
         req: RenderRequest,
-        resolver: DependencyResolver
     }): ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
         const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
@@ -62,7 +61,6 @@ export default class ClipRenderTask {
         // FIXME: typing
         task.expressions = rendererExpressions as any
         task.initialKeyframeValues = rendererInitParam
-        task.effectRenderTask = effectRenderTask
 
         return task
     }
