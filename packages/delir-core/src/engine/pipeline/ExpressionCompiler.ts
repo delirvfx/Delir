@@ -1,4 +1,4 @@
-import TypeScript from 'typescript'
+import * as TypeScript from 'typescript'
 
 export const compileTypeScript = (code: string, compilerOption: TypeScript.CompilerOptions = {}) => {
     const option: TypeScript.CompilerOptions = {
