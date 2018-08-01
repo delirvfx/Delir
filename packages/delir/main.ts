@@ -58,11 +58,5 @@ window.addEventListener('DOMContentLoaded', async () => {
 
         await context.executeOperation(AppActions.setActiveProject, { project })
         await context.executeOperation(AppActions.changeActiveComposition, { compositionId: project.compositions[0].id })
-
-        context.executeOperation(AppActions.notify, {
-            message: 'It\'s experimental VFX Application works with JavaScript',
-            title: '👐 <DEV MODE> Hello, welcome to Delir',
-            level: 'info',
-        })
     }
 })
