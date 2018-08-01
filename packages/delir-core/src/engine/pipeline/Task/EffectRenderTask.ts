@@ -75,7 +75,7 @@ export default class EffectRenderTask {
     public effectRenderer: EffectPluginBase
     public effectorProps: TypeDescriptor
     public keyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } }
-    public expressions: { [paramName: string]: (exposes: ExpressionContext.Exposes) => KeyframeValueTypes }
+    public expressions: { [paramName: string]: (exposes: ExpressionContext.Exposes) => RealParameterValueTypes }
     private initialKeyframeValues: RealParameterValues
 
     public async initialize(req: RenderRequest) {

@@ -64,8 +64,8 @@ export interface RealParameterValues {
  */
 export const applyExpression = (
     req: RenderingRequest,
-    beforeExpressionParams: { [prop: string]: ParameterValueTypes },
-    expressions: { [prop: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes },
+    beforeExpressionParams: RealParameterValues,
+    expressions: { [prop: string]: (exposes: ExpressionContext.Exposes) => RealParameterValueTypes },
 ): { [prop: string]: ParameterValueTypes } => {
     return _.mapValues(beforeExpressionParams, (value, propName) => {
         if (expressions[propName!]) {
