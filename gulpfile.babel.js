@@ -158,7 +158,7 @@ export function compileRendererJs(done) {
             // preserve require() for native modules
             new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
             new ForkTsCheckerWebpackPlugin({
-                tsconfig: join(paths.src.frontend, 'package.json'),
+                tsconfig: join(paths.src.frontend, 'tsconfig.json'),
             }),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
