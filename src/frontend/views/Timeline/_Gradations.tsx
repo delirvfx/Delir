@@ -1,16 +1,17 @@
+import { connectToStores } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import * as React from 'react'
 
-import RendererService from '../../services/renderer'
-import {default as TimePixelConversion, MeasurePoint } from '../../utils/TimePixelConversion'
+import TimePixelConversion, { MeasurePoint } from '../../utils/TimePixelConversion'
 
 import { ContextMenu, MenuItem } from '../components/ContextMenu'
 
+import RendererStore, { RenderState } from '../../stores/RendererStore'
 import t from './_Gradations.i18n'
 import * as s from './Gradations.styl'
 
-interface GradationsProps {
+interface OwnProps {
     currentFrame: number
     measures: MeasurePoint[]
     previewPlayed: boolean
@@ -22,13 +23,20 @@ interface GradationsProps {
     onSeeked: (frame: number) => any
 }
 
+interface ConnectedProps {
+    lastRenderState: RenderState | null
+}
+
+type Props = OwnProps & ConnectedProps
+
 interface GradationsState {
     left: number,
     dragSeekEnabled: boolean,
 }
 
-export default class Gradations extends React.Component<GradationsProps, GradationsState>
-{
+export default connectToStores([RendererStore], (context) => ({
+    lastRenderState: context.getStore(RendererStore).getLastRenderState()
+}))(class Gradations extends React.Component<Props, GradationsState> {
     public static defaultProps = {
         scrollLeft: 0,
     }
@@ -86,8 +94,7 @@ export default class Gradations extends React.Component<GradationsProps, Gradati
 
     private _updateCursor = () =>
     {
-        const {activeComposition, scrollLeft, scale, previewPlayed, currentFrame} = this.props
-        const lastRenderState = RendererService.lastRenderState
+        const {activeComposition, scrollLeft, scale, previewPlayed, currentFrame, lastRenderState} = this.props
         const {cursor, measureLayer} = this.refs
 
         const usingCurrentFrame = (previewPlayed && lastRenderState) ? lastRenderState.currentFrame : currentFrame
@@ -166,4 +173,4 @@ export default class Gradations extends React.Component<GradationsProps, Gradati
 
         return components
     }
-}
+})

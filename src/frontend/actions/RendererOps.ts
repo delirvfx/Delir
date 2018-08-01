@@ -32,7 +32,7 @@ export const loadPlugins = operation(async (context) => {
     }
 
     __DEV__ && console.log('Plugin loaded', successes, 'Failed:', fails)
-    context.dispatch(RendererActions.addPlugins, { plugins: loaded })
+    context.dispatch(RendererActions.addPlugins, { plugins: successes })
 })
 
 export const setPreviewCanvas = operation((context, arg: { canvas: HTMLCanvasElement }) => {

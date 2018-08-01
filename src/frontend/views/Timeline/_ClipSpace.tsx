@@ -7,7 +7,6 @@ import * as React from 'react'
 import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
 
-import RendererService from '../../services/renderer'
 import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'

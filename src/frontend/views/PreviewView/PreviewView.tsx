@@ -1,4 +1,4 @@
-import { connectToStores } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as Delir from 'delir-core'
 import * as React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
@@ -6,7 +6,7 @@ import { frameToTimeCode } from '../../utils/Timecode'
 import DropDown from '../components/dropdown'
 import Pane from '../components/pane'
 
-import RendererService from '../../services/renderer'
+import * as RendererOps from '../../actions/RendererOps'
 import EditorStateStore from '../../stores/EditorStateStore'
 
 import t from './PreviewView.i18n'
@@ -17,33 +17,34 @@ interface ConnectedProps {
     currentPreviewFrame?: number
 }
 
+type Props = ConnectedProps & ContextProp
+
 interface State {
     scale: number
     scaleListShown: boolean
 }
 
-export default connectToStores([EditorStateStore], (context) => {
+export default withComponentContext(connectToStores([EditorStateStore], (context) => {
     const editorStateStore = context.getStore(EditorStateStore)
 
     return {
         activeComp: editorStateStore.getState().activeComp,
         currentPreviewFrame: editorStateStore.getState().currentPreviewFrame,
     }
-})(class PreviewView extends React.Component<ConnectedProps, State> {
+})(class PreviewView extends React.Component<Props, State> {
     public state = {
         scale: 1,
         scaleListShown: false
     }
 
-    public refs: {
-        canvas: HTMLCanvasElement
-        scaleList: DropDown
-    }
+    private scaleListRef = React.createRef<DropDown>()
+    private canvasRef = React.createRef<HTMLCanvasElement>()
 
     public componentDidMount()
     {
-        // RendererService.renderer!.setDestinationCanvas(this.refs.canvas)
-        RendererService.setDestCanvas(this.refs.canvas)
+        this.props.context.executeOperation(RendererOps.setPreviewCanvas, {
+            canvas: this.canvasRef.current!
+        })
     }
 
     public render()
@@ -60,13 +61,13 @@ export default connectToStores([EditorStateStore], (context) => {
                 <div className={s.Preview_Inner}>
                     <div className={s.Preview_Header}>{activeComp && activeComp.name}</div>
                     <div className={s.Preview_View} onWheel={this.onWheel}>
-                        <canvas ref='canvas' className={s.PreviewView_Canvas} width={width} height={height} style={{transform: `scale(${this.state.scale})`}}/>
+                        <canvas ref={this.canvasRef} className={s.PreviewView_Canvas} width={width} height={height} style={{transform: `scale(${this.state.scale})`}}/>
                     </div>
                     <div className={s.Preview_Footer}>
                         <label className={s.FooterItem} onClick={this.toggleScaleList}>
                             <i className='fa fa-search' />
                             <span className={s.currentScale}>{currentScale}%</span>
-                            <DropDown ref='scaleList' className={s.dropdown} shownInitial={scaleListShown}>
+                            <DropDown ref={this.scaleListRef} className={s.dropdown} shownInitial={scaleListShown}>
                                 <li data-value='50' onClick={this.selectScale}>50%</li>
                                 <li data-value='100' onClick={this.selectScale}>100%</li>
                                 <li data-value='150' onClick={this.selectScale}>150%</li>
@@ -86,7 +87,7 @@ export default connectToStores([EditorStateStore], (context) => {
 
     private selectScale = (e: React.MouseEvent<HTMLLIElement>) =>
     {
-        this.refs.scaleList.hide()
+        this.scaleListRef.current!.hide()
 
         this.setState({
             scale: parseInt(e.currentTarget.dataset.value!, 10) / 100,
@@ -96,7 +97,7 @@ export default connectToStores([EditorStateStore], (context) => {
 
     private toggleScaleList = (e) =>
     {
-        this.refs.scaleList.toggle()
+        this.scaleListRef.current!.toggle()
     }
 
     private onWheel = e => {
@@ -106,4 +107,4 @@ export default connectToStores([EditorStateStore], (context) => {
             scale: Math.max(.1, Math.min(this.state.scale + (-e.deltaY / 20), 3))
         })
     }
-})
+}))

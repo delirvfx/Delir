@@ -16,9 +16,9 @@ import { default as KeyframeGraph, KeyframePatch } from './KeyframeGraph'
 import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
 
-import RendererService from '../../services/renderer'
-import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
-import {default as ProjectStore, ProjectStoreState } from '../../stores/ProjectStore'
+import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
+import ProjectStore, { ProjectStoreState } from '../../stores/ProjectStore'
+import RendererStore from '../../stores/RendererStore'
 
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
@@ -379,6 +379,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
     private renderEffectProperties = () =>
     {
+        const rendererStore = this.props.context.getStore(RendererStore)
         const { activeClip, editor, project: { project } } = this.props
         const { activeEntity, activePropName } = this.state
         const elements: React.ReactElement<any>[] = []
@@ -387,8 +388,8 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
         activeClip.effects.forEach(effect => {
             try {
-                const processorInfo = RendererService.pluginRegistry.getPostEffectPlugins().find(entry => entry.id === effect.processor)!
-                const descriptors = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)!
+                const processorInfo = rendererStore.getPostEffectPlugins().find(entry => entry.id === effect.processor)!
+                const descriptors = rendererStore.getPostEffectParametersById(effect.processor)!
                 const propElements: React.ReactElement<any>[] = []
 
                 descriptors.forEach(desc => {
@@ -492,6 +493,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
     private _getDescriptorByPropId(propName: string | null)
     {
+        const rendererStore = this.props.context.getStore(RendererStore)
         const activeEntityObject = this.activeEntityObject
 
         if (!activeEntityObject) return null
@@ -502,7 +504,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
             const info = Delir.Engine.Renderers.getInfo(activeEntityObject.renderer)
             parameters = info ? info.parameter.properties : []
         } else if (activeEntityObject instanceof Delir.Project.Effect) {
-            parameters =  RendererService.pluginRegistry.getPostEffectParametersById(activeEntityObject.processor) || []
+            parameters = rendererStore.getPostEffectParametersById(activeEntityObject.processor) || []
         } else {
             throw new Error('Unexpected entity type')
         }

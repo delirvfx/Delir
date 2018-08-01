@@ -12,11 +12,17 @@ interface State {
     project: Delir.Project.Project | null
     composition: Delir.Project.Composition | null
     progress: string | null
-    renderState: {currentFrame: number} | null
+    renderState: RenderState | null
     isInRendering: boolean
 }
 
+export interface RenderState {
+    currentFrame: number
+}
+
 export default class RendererStore extends Store<State> {
+    public static storeName = 'RendererStore'
+
     protected state: State = {
         project: null,
         composition: null,
@@ -45,7 +51,7 @@ export default class RendererStore extends Store<State> {
         if (!this.state.project) return
 
         this.updateWith(d => {
-            d.composition = ProjectHelper.findCompositionById(this.state.project, payload.compositionId)
+            d.composition = ProjectHelper.findCompositionById(this.state.project!, payload.compositionId)
         })
 
         // renderer.stop()
@@ -134,7 +140,7 @@ export default class RendererStore extends Store<State> {
         const targetComposition = this.state.composition!
 
         this.pipeline.setStreamObserver({
-            onFrame: canvas => canvasContext.drawImage(canvas, 0, 0)
+            onFrame: canvas => this.destCanvasCtx!.drawImage(canvas, 0, 0)
         })
 
         this.pipeline!.renderFrame(targetComposition.id, frame).catch(e => console.error(e))
@@ -196,7 +202,15 @@ export default class RendererStore extends Store<State> {
         }
     })
 
-    public lastRenderState() {
+    public getPostEffectPlugins() {
+        return this.pluginRegistry.getPostEffectPlugins()
+    }
+
+    public getPostEffectParametersById(pluginId: string) {
+        return this.pluginRegistry.getPostEffectParametersById(pluginId)
+    }
+
+    public getLastRenderState() {
         return this.state.renderState
     }
 

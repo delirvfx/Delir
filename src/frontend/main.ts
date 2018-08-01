@@ -5,12 +5,14 @@ import * as os from 'os'
 import * as ReactDOM from 'react-dom'
 
 import * as AppActions from './actions/App'
+import * as RendererOps from './actions/RendererOps'
+
 import Monaco from './utils/Monaco'
 import AppView from './views/AppView'
 
-import RendererService from './services/renderer'
 import EditorStateStore from './stores/EditorStateStore'
 import ProjectStore from './stores/ProjectStore'
+import RendererStore from './stores/RendererStore'
 
 // Handle errors
 // process.on('uncaughtException', (e: Error) => {
@@ -25,7 +27,6 @@ import ProjectStore from './stores/ProjectStore'
 
 window.addEventListener('DOMContentLoaded', async () => {
     // initialize app
-    await RendererService.initialize()
     await Monaco.setup()
 
     // Attach platform class to body element
@@ -35,9 +36,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         case 'Linux': document.body.classList.add('platform-linux'); break
     }
 
-    const app = new Fleur({ stores: [ EditorStateStore, ProjectStore ] })
+    const app = new Fleur({ stores: [ EditorStateStore, ProjectStore, RendererStore] })
     const context = window.delir = app.createContext()
-    console.log(context)
 
     // console.log(createElementWithContext)
     // ReactDOM.unstable_deferredUpdates(() => {
@@ -50,7 +50,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     )
     // })
 
-    context.executeOperation(AppActions.setActiveProject, { project: new Delir.Project.Project() })
+    await context.executeOperation(RendererOps.loadPlugins, {})
+    await context.executeOperation(AppActions.setActiveProject, { project: new Delir.Project.Project() })
 
     if (__DEV__) {
         const project = require('./utils/Dev/example-project/ExampleProject1').default
@@ -64,6 +65,4 @@ window.addEventListener('DOMContentLoaded', async () => {
             level: 'info',
         })
     }
-
-    // RendererService.renderer.setDestinationAudioNode(audioContext.destination)
 })
