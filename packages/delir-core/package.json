@@ -7,13 +7,26 @@
   "author": "Ragg <ragg.devpr@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
-  "dependencies": {
-    "@types/bson": "^1.0.2",
-    "@types/lodash": "^4.14.62",
-    "@types/semver": "^5.3.31",
-    "@types/uuid": "^2.0.29"
-  },
   "devDependencies": {
+    "@types/bson": "1.0.3",
+    "@types/fs-promise": "1.0.3",
+    "@types/lodash": "4.14.72",
+    "@types/semver": "5.3.33",
+    "@types/uuid": "3.4.0",
     "@types/webgl2": "0.0.2"
+  },
+  "dependencies": {
+    "aac": "0.1.3",
+    "alac": "0.1.0",
+    "av": "0.4.9",
+    "bezier-easing": "2.0.3",
+    "bson": "1.0.4",
+    "flac": "0.3.0",
+    "font-manager": "0.3.0",
+    "fs-promise": "2.0.3",
+    "lodash": "4.17.4",
+    "mp3": "0.1.0",
+    "semver": "5.4.1",
+    "uuid": "3.1.0"
   }
 }

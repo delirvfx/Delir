@@ -1,15 +1,6 @@
-declare module 'prop-types' {
-    const _: any
-    export default _
-}
-
 declare module 'bezier-easing' {
     const _: any
     export default _
-}
-
-declare module 'fs-promise' {
-    export * from 'mz/fs'
 }
 
 declare module 'electron-canvas-to-buffer' {
@@ -39,7 +30,7 @@ declare module 'keymirror' {
 }
 
 declare module 'node-timecodes' {
-    type TimeCodeOptions = {
+    interface TimeCodeOptions {
         frameRate?: number,
         ms?: boolean,
     }
