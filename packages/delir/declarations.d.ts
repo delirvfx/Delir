@@ -59,4 +59,8 @@ declare interface Window {
     ) => void
 }
 
+declare interface HTMLInputElement {
+    onpointerlockerror: (event: ErrorEvent) => void
+}
+
 declare const __DEV__: boolean
