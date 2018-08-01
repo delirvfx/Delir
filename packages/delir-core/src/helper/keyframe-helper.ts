@@ -80,7 +80,7 @@ export function calcKeyframeValueAt(
         case 'ASSET':
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcAssetKeyFrames)[frame]
         default:
-            throw new Error(`Unsupported parameter type ${desc.type}`)
+            throw new Error('Unsupported parameter type')
     }
 }
 
