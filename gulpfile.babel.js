@@ -13,18 +13,18 @@ const fs = require("fs-promise");
 const {join} = require("path");
 const {spawn, spawnSync} = require("child_process");
 
+const NATIVE_MODULES = ['font-manager'];
+
 const paths = {
     src         : {
-        root        : join(__dirname, "./src/"),
-        plugins     : join(__dirname, './src/post-effect-plugins'),
-        browser     : join(__dirname, "./src/browser/"),
-        renderer    : join(__dirname, "./src/frontend/"),
+        root        : join(__dirname, "./packages/"),
+        plugins     : join(__dirname, './packages/post-effect-plugins'),
+        frontend    : join(__dirname, "./packages/delir/"),
     },
     compiled    : {
         root        : join(__dirname, "./prepublish/"),
         plugins     : join(__dirname, './prepublish/plugins'),
-        browser     : join(__dirname, "./prepublish/browser/"),
-        frontend    : join(__dirname, "./prepublish/frontend/"),
+        frontend    : join(__dirname, "./prepublish/delir/"),
     },
     build   : join(__dirname, "./prepublish/"),
     binary  : join(__dirname, "./release/"),
@@ -34,15 +34,14 @@ const isWindows = os.type() === 'Windows_NT'
 const __DEV__ = process.env.DELIR_ENV === 'dev'
 
 export function buildBrowserJs() {
-    return g.src([join(paths.src.browser, "**/*.js")])
+    return g.src([join(paths.src.frontend, "browser.js")])
         .pipe($.plumber())
-        .pipe($.changed(paths.compiled.browser))
         .pipe($.babel())
-        .pipe(g.dest(paths.compiled.browser));
+        .pipe(g.dest(paths.compiled.frontend));
 }
 
 export async function copyPackageJSON(done) {
-    const string = await fs.readFile("./package.json", {encoding: "utf8"});
+    const string = await fs.readFile(join(paths.src.frontend, "package.json"), {encoding: "utf8"});
     const json = JSON.parse(string);
     delete json.devDependencies;
     const newJson = JSON.stringify(json, null, "  ");
@@ -53,41 +52,13 @@ export async function copyPackageJSON(done) {
     done();
 }
 
-export async function symlinkDependencies(done) {
+export async function symlinkNativeModules(done) {
     const prepublishNodeModules = join(paths.compiled.root, "node_modules/")
-    const checkdep = (packageName, depList = []) => {
-        try {
-            let dep = require(join(__dirname, "node_modules", packageName, "package.json")).dependencies || {};
-            let deps = Object.keys(dep);
 
-            for (let dep of deps) {
-                if (depList.indexOf(dep) === -1) {
-                    // console.log("dep: %s", dep);
-                    depList.push(dep);
-                    checkdep(dep, depList);
-                }
-            }
-        } catch (e) { console.log('[symlinkDependencies]', e); }
-    };
+    await rimraf(prepublishNodeModules);
+    await fs.mkdir(prepublishNodeModules);
 
-    try {
-        await rimraf(prepublishNodeModules);
-    } catch (e) {
-        console.log(e);
-    };
-    try {
-        await fs.mkdir(prepublishNodeModules);
-    } catch (e) {
-        console.log(e);
-    };
-
-    const packageJson = require(join(paths.compiled.root, "package.json"));
-    const dependencies = Object.keys(packageJson.dependencies);
-    for (let dep of dependencies) {
-        checkdep(dep, dependencies);
-    }
-
-    for (let dep of dependencies) {
+    for (let dep of NATIVE_MODULES) {
         try {
             if (dep.includes('/')) {
                 const ns = dep.slice(0, dep.indexOf('/'))
@@ -115,7 +86,7 @@ export function compileRendererJs(done) {
         watch: __DEV__,
         context: paths.src.root,
         entry: {
-            'frontend/main': ['./frontend/main'],
+            'delir/main': ['./delir/main'],
         },
         output: {
             filename: "[name].js",
@@ -127,7 +98,7 @@ export function compileRendererJs(done) {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
             modules: ["node_modules"],
             alias: {
-                'delir-core': join(__dirname, 'src/delir-core/src/'),
+                'delir-core': join(__dirname, 'packages/delir-core/src/'),
             }
         },
         module: {
@@ -187,7 +158,7 @@ export function compileRendererJs(done) {
                 }
             }),
             // preserve require() for native modules
-            new webpack.ExternalsPlugin('commonjs', ['font-manager']),
+            new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),
@@ -294,14 +265,14 @@ export function copyExperimentalPluginsPackageJson() {
 }
 
 export function compilePugTempates() {
-    return g.src(join(paths.src.renderer, "**/[^_]*.pug"))
+    return g.src(join(paths.src.frontend, "**/[^_]*.pug"))
         .pipe($.plumber())
         .pipe($.pug())
         .pipe(g.dest(paths.compiled.frontend));
 }
 
 export function compileStyles() {
-    return g.src(join(paths.src.renderer, "**/[^_]*.styl"))
+    return g.src(join(paths.src.frontend, "**/[^_]*.styl"))
         .pipe($.plumber())
         .pipe($.stylus({
             'include css': true,
@@ -311,12 +282,12 @@ export function compileStyles() {
 }
 
 export function copyFonts() {
-    return g.src(join(paths.src.renderer, "assets/fonts/*"))
+    return g.src(join(paths.src.frontend, "assets/fonts/*"))
         .pipe(g.dest(join(paths.compiled.frontend, "assets/fonts")));
 }
 
 export function copyImage() {
-    return g.src(join(paths.src.renderer, "assets/images/**/*"), {since: g.lastRun('copyImage')})
+    return g.src(join(paths.src.frontend, "assets/images/**/*"), {since: g.lastRun('copyImage')})
         .pipe(g.dest(join(paths.compiled.frontend, "assets/images")));
 }
 
@@ -398,36 +369,26 @@ export async function cleanRendererScripts(done) {
     done();
 }
 
-export async function cleanBrowserScripts(done) {
-    await rimraf(join(paths.compiled.browser, 'scripts'))
-    done();
-}
-
 export function run(done) {
-    const electron = spawn(require("electron"), [paths.compiled.root], {stdio:'inherit'});
+    const electron = spawn(require("electron"), [join(paths.compiled.frontend, 'browser.js')], {stdio:'inherit'});
     electron.on("close", (code) => { code === 0 && run(() => {}); });
     done()
 }
 
 export function watch() {
-    g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
-    g.watch(join(paths.src.renderer, '**/*'), buildRendererWithoutJs)
-    g.watch(join(paths.src.renderer, '**/*.styl'), compileStyles)
+    g.watch(join(paths.src.frontend, 'browser.js'), buildBrowserJs)
+    g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
+    g.watch(join(paths.src.frontend, '**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
-    // g.watch(join(__dirname, 'src/navcodec'), g.parallel(compileNavcodecForElectron, compileNavcodec))
-    g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
+    g.watch(join(__dirname, 'node_modules'), symlinkNativeModules)
 }
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkDependencies));
+const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkNativeModules));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
 const publish = g.series(clean, build, makeIcon, pack);
-
-// export function navcodecTest() {
-//     g.watch(join(__dirname, 'src/navcodec'), compileNavcodec)
-// }
 
 export {publish, build};
 export default buildAndWatch;

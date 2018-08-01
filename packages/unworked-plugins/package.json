@@ -1,0 +1,8 @@
+{
+  "name": "@ragg/delir-unworked-plugins",
+  "version": "0.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "tooloud": "1.0.0"
+  }
+}

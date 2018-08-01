@@ -1,10 +1,10 @@
 .DS_Store
 Thumbs.db
 npm-debug.log
+node_modules/
 
 /src/plugins/proton-layer
 /flow-typed
-/node_modules
 /prepublish
 /release
 /.vscode/extensions.json
