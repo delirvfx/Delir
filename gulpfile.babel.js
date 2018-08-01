@@ -3,10 +3,11 @@ const $ = require("gulp-load-plugins")();
 const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
-const builder = require('electron-builder')
-const nib = require('nib')
-const notifier = require('node-notifier')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+const builder = require('electron-builder');
+const nib = require('nib');
+const notifier = require('node-notifier');
 
 const os = require('os')
 const fs = require("fs-promise");
@@ -159,6 +160,9 @@ export function compileRendererJs(done) {
             }),
             // preserve require() for native modules
             new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
+            new ForkTsCheckerWebpackPlugin({
+                tsconfig: join(paths.src.frontend, 'package.json'),
+            }),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),

@@ -39,6 +39,7 @@
     "electron-icon-maker": "0.0.4",
     "electron-rebuild": "1.8.1",
     "expect.js": "0.3.1",
+    "fork-ts-checker-webpack-plugin": "0.4.3",
     "fs-promise": "2.0.3",
     "gulp": "4.0.0",
     "gulp-babel": "7.0.1",
