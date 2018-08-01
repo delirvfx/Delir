@@ -18,13 +18,13 @@ const paths = {
         root        : join(__dirname, "./packages/"),
         plugins     : join(__dirname, './packages/post-effect-plugins'),
         browser     : join(__dirname, "./packages/browser/"),
-        renderer    : join(__dirname, "./packages/frontend/"),
+        frontend    : join(__dirname, "./packages/delir/"),
     },
     compiled    : {
         root        : join(__dirname, "./prepublish/"),
         plugins     : join(__dirname, './prepublish/plugins'),
         browser     : join(__dirname, "./prepublish/browser/"),
-        frontend    : join(__dirname, "./prepublish/frontend/"),
+        frontend    : join(__dirname, "./prepublish/delir/"),
     },
     build   : join(__dirname, "./prepublish/"),
     binary  : join(__dirname, "./release/"),
@@ -115,7 +115,7 @@ export function compileRendererJs(done) {
         watch: __DEV__,
         context: paths.src.root,
         entry: {
-            'frontend/main': ['./frontend/main'],
+            'delir/main': ['./delir/main'],
         },
         output: {
             filename: "[name].js",
@@ -294,14 +294,14 @@ export function copyExperimentalPluginsPackageJson() {
 }
 
 export function compilePugTempates() {
-    return g.src(join(paths.src.renderer, "**/[^_]*.pug"))
+    return g.src(join(paths.src.frontend, "**/[^_]*.pug"))
         .pipe($.plumber())
         .pipe($.pug())
         .pipe(g.dest(paths.compiled.frontend));
 }
 
 export function compileStyles() {
-    return g.src(join(paths.src.renderer, "**/[^_]*.styl"))
+    return g.src(join(paths.src.frontend, "**/[^_]*.styl"))
         .pipe($.plumber())
         .pipe($.stylus({
             'include css': true,
@@ -311,12 +311,12 @@ export function compileStyles() {
 }
 
 export function copyFonts() {
-    return g.src(join(paths.src.renderer, "assets/fonts/*"))
+    return g.src(join(paths.src.frontend, "assets/fonts/*"))
         .pipe(g.dest(join(paths.compiled.frontend, "assets/fonts")));
 }
 
 export function copyImage() {
-    return g.src(join(paths.src.renderer, "assets/images/**/*"), {since: g.lastRun('copyImage')})
+    return g.src(join(paths.src.frontend, "assets/images/**/*"), {since: g.lastRun('copyImage')})
         .pipe(g.dest(join(paths.compiled.frontend, "assets/images")));
 }
 
@@ -411,8 +411,8 @@ export function run(done) {
 
 export function watch() {
     g.watch(paths.src.browser, g.series(cleanBrowserScripts, buildBrowserJs))
-    g.watch(join(paths.src.renderer, '**/*'), buildRendererWithoutJs)
-    g.watch(join(paths.src.renderer, '**/*.styl'), compileStyles)
+    g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
+    g.watch(join(paths.src.frontend, '**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
     g.watch(join(__dirname, 'node_modules'), symlinkDependencies)
 }
