@@ -8,12 +8,12 @@
   "license": "MIT",
   "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
   "devDependencies": {
-    "@types/bson": "1.0.3",
+    "@types/bson": "1.0.11",
     "@types/fs-promise": "1.0.3",
-    "@types/lodash": "4.14.72",
-    "@types/semver": "5.3.33",
-    "@types/uuid": "3.4.0",
-    "@types/webgl2": "0.0.2"
+    "@types/lodash": "4.14.115",
+    "@types/semver": "5.5.0",
+    "@types/uuid": "3.4.3",
+    "@types/webgl2": "0.0.4"
   },
   "dependencies": {
     "aac": "0.1.3",

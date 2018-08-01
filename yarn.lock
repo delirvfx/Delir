@@ -27,15 +27,15 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@types/bson@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@types/bson/-/bson-1.0.3.tgz#6c26f0876bf9d8cbb06edd4019e29354bf3a03e0"
+"@types/bson@1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@types/bson/-/bson-1.0.11.tgz#c95ad69bb0b3f5c33b4bb6cc86d86cafb273335c"
   dependencies:
     "@types/node" "*"
 
-"@types/classnames@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.0.tgz#f2312039e780bdf89d7d4102a26ec11de5ec58aa"
+"@types/classnames@2.2.6":
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.6.tgz#dbe8a666156d556ed018e15a4c65f08937c3f628"
 
 "@types/electron@1.6.10":
   version "1.6.10"
@@ -51,9 +51,9 @@
   version "2.0.32"
   resolved "https://registry.yarnpkg.com/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
 
-"@types/flux@3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.2.tgz#a73638438ecef59f55339588b704351c3f4bbf10"
+"@types/flux@3.1.7":
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.7.tgz#753e93692fed75fe8da8c4b4107801cada16428a"
   dependencies:
     "@types/fbemitter" "*"
     "@types/react" "*"
@@ -69,33 +69,23 @@
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.1.tgz#1fe48e6e5e2a969cafecf0f24485ae23c72abd30"
 
-"@types/lodash.times@4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@types/lodash.times/-/lodash.times-4.3.2.tgz#1526477b53af175d6d0aba16f7c7082185d77243"
+"@types/lodash.times@4.3.4":
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/@types/lodash.times/-/lodash.times-4.3.4.tgz#cfa5f73b32d36d1b2c1b1443da77944caccea6e9"
   dependencies:
     "@types/lodash" "*"
 
-"@types/lodash@*":
+"@types/lodash@*", "@types/lodash@4.14.115":
   version "4.14.115"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.115.tgz#54d171b2ce12c058742443b5f6754760f701b8f9"
 
-"@types/lodash@4.14.72":
-  version "4.14.72"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.72.tgz#f090cf6eb1fee1647a0efa1ebe18b0b78ed551c6"
+"@types/mocha@5.2.5":
+  version "5.2.5"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.5.tgz#8a4accfc403c124a0bafe8a9fc61a05ec1032073"
 
-"@types/mocha@2.2.41":
-  version "2.2.41"
-  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.41.tgz#e27cf0817153eb9f2713b2d3f6c68f1e1c3ca608"
-
-"@types/mz@*":
+"@types/mz@*", "@types/mz@0.0.32":
   version "0.0.32"
   resolved "https://registry.yarnpkg.com/@types/mz/-/mz-0.0.32.tgz#e8248b4e41424c052edc1725dd33650c313a3659"
-  dependencies:
-    "@types/node" "*"
-
-"@types/mz@0.0.31":
-  version "0.0.31"
-  resolved "https://registry.yarnpkg.com/@types/mz/-/mz-0.0.31.tgz#a4d80c082fefe71e40a7c0f07d1e6555bbbc7b52"
   dependencies:
     "@types/node" "*"
 
@@ -111,9 +101,9 @@
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@types/pug/-/pug-2.0.4.tgz#8772fcd0418e3cd2cc171555d73007415051f4b2"
 
-"@types/react-color@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.13.0.tgz#88d8e94c556ac90f3169633bda6b47eecbf61ed4"
+"@types/react-color@2.13.5":
+  version "2.13.5"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.13.5.tgz#38a5bcbb00c5de85d696a3f5adcd619256a57083"
   dependencies:
     "@types/react" "*"
 
@@ -124,9 +114,9 @@
     "@types/node" "*"
     "@types/react" "*"
 
-"@types/react-sortable-hoc@0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@types/react-sortable-hoc/-/react-sortable-hoc-0.6.0.tgz#0c568c14dd71a28c9b9e7ec81ecca766499c2c0b"
+"@types/react-sortable-hoc@0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@types/react-sortable-hoc/-/react-sortable-hoc-0.6.3.tgz#b9d034ab2728691ef3270ede5f4b4fd1cead52bd"
   dependencies:
     "@types/react" "*"
 
@@ -136,9 +126,9 @@
   dependencies:
     csstype "^2.2.0"
 
-"@types/semver@5.3.33":
-  version "5.3.33"
-  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.3.33.tgz#58ebb6c8c48e161e24f8901915e7184900d341f7"
+"@types/semver@5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.5.0.tgz#146c2a29ee7d3bae4bf2fcb274636e264c813c45"
 
 "@types/typescript@2.0.0":
   version "2.0.0"
@@ -146,15 +136,15 @@
   dependencies:
     typescript "*"
 
-"@types/uuid@3.4.0":
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.0.tgz#91639516fbb892ed3737a2bdc1b030d02b4a09c1"
+"@types/uuid@3.4.3":
+  version "3.4.3"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.3.tgz#121ace265f5569ce40f4f6d0ff78a338c732a754"
   dependencies:
     "@types/node" "*"
 
-"@types/webgl2@0.0.2":
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/@types/webgl2/-/webgl2-0.0.2.tgz#0ea93b1976c7d57ee19abcda3d04ba9aa1787d11"
+"@types/webgl2@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@types/webgl2/-/webgl2-0.0.4.tgz#c3b0f9d6b465c66138e84e64cb3bdf8373c2c279"
 
 "@webassemblyjs/ast@1.5.13":
   version "1.5.13"
