@@ -1,13 +1,13 @@
-import { ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as Delir from 'delir-core'
 import * as React from 'react'
 
 import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
-import RendererService from '../../services/renderer'
 import { ContextMenu, MenuItem, MenuItemOption, MenuItemProps } from '../components/ContextMenu'
 
+import RendererStore from '../../stores/RendererStore'
 import t from './_Clip.i18n'
 import * as s from './Clip.styl'
 
@@ -20,7 +20,11 @@ interface OwnProps {
     onChangeDuration: (displayWidth: number) => any,
 }
 
-type Props = OwnProps & ContextProp
+interface ConnectedProps {
+    postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
+}
+
+type Props = OwnProps  & ConnectedProps & ContextProp
 
 interface State {
     draggedPxX: number
@@ -31,8 +35,9 @@ interface State {
     resizeMovedX: number
 }
 
-export default withComponentContext(class TimelaneClip extends React.Component<Props, State>
-{
+export default withComponentContext(connectToStores([RendererStore], (context) => ({
+    postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins()
+}))(class TimelaneClip extends React.Component<Props, State> {
     public state: State = {
         draggedPxX: 0,
         dragStartPosition: null,
@@ -48,8 +53,7 @@ export default withComponentContext(class TimelaneClip extends React.Component<P
 
     public render()
     {
-        const {clip, active} = this.props
-        const postEffects = RendererService.pluginRegistry.getPostEffectPlugins()
+        const {clip, active, postEffectPlugins} = this.props
 
         return (
             <div className={classnames(s.Clip, {
@@ -73,7 +77,7 @@ export default withComponentContext(class TimelaneClip extends React.Component<P
             >
                 <ContextMenu>
                     <MenuItem label='エフェクト'>
-                        {postEffects.length ? postEffects.map(entry => (
+                        {postEffectPlugins.length ? postEffectPlugins.map(entry => (
                             <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
                         ) : (
                             <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
@@ -192,4 +196,4 @@ export default withComponentContext(class TimelaneClip extends React.Component<P
 
         this.props.onChangeDuration(newWidth)
     }
-})
+}))

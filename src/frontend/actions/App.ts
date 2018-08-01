@@ -6,8 +6,9 @@ import * as fs from 'fs-promise'
 import * as _ from 'lodash'
 import * as path from 'path'
 
-import RendererService from '../services/renderer'
 import EditorStateStore from '../stores/EditorStateStore'
+import RendererStore from '../stores/RendererStore'
+
 import { AppActions } from './actions'
 import t from './App.i18n'
 
@@ -219,10 +220,10 @@ export const saveProject = operation(async (context) => {
 })
 
 export const autoSaveProject = operation(async (context) => {
-    const project = context.getStore(EditorStateStore).getState().project
-    const projectPath = context.getStore(EditorStateStore).getState().projectPath
+    const {project, projectPath} = context.getStore(EditorStateStore).getState()
+    const isInRendering = context.getStore(RendererStore).isInRendering()
 
-    if (RendererService.isInRendering) return
+    if (isInRendering) return
 
     if (!project || !projectPath) {
         context.executeOperation(notify, {

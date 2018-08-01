@@ -50,3 +50,8 @@ export const ProjectModActions = {
     removeEffectKeyframeAction: action<{ clipId: string, effectId: string, targetKeyframeId: string }>(),
     removeEffectFromClipAction: action<{ holderClipId: string, targetEffectId: string }>(),
 }
+
+export const RendererActions = {
+    addPlugins: action<{ plugins: any[] }>(),
+    setPreviewCanvas: action<{ canvas: HTMLCanvasElement }>(),
+}

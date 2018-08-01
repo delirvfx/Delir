@@ -2,8 +2,8 @@ import { operation } from '@ragg/fleur'
 import * as Delir from 'delir-core'
 import { ProjectHelper } from 'delir-core'
 
-import RendererService from '../services/renderer'
 import ProjectStore from '../stores/ProjectStore'
+import RendererStore from '../stores/RendererStore'
 import { ProjectModActions } from './actions'
 import * as AppActions from './App'
 
@@ -186,6 +186,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     frameOnClip: number,
     patch: Partial<Delir.Project.Keyframe>
 }) => {
+    const rendererStore = context.getStore(RendererStore)
     const {project} = context.getStore(ProjectStore).getState()
     if (!project) return
 
@@ -195,7 +196,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     const effect = ProjectHelper.findEffectFromClipById(clip, effectId)
     if (!effect) return
 
-    const props = RendererService.pluginRegistry.getPostEffectParametersById(effect.processor)
+    const props = rendererStore.getPostEffectParametersById(effect.processor)
     const propDesc = props ? props.find(prop => prop.propName === propName) : null
     if (!propDesc) return
 
