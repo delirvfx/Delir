@@ -1,6 +1,16 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "jsx": "react"
-    }
+        "baseUrl": ".",
+        "jsx": "react",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "es2015",
+            "es2016"
+        ]
+    },
+    "files": [
+        "./main.ts"
+    ]
 }
