@@ -9,7 +9,7 @@ const fps = 30
 const durationFrames = fps * 10
 const p = new Delir.Project.Project()
 
-const movieAsset = assign(new Delir.Project.Asset(), {
+const videoAsset = assign(new Delir.Project.Asset(), {
     name: 'BigBuckBunny',
     fileType: 'mp4',
     path: join(dirname, 'big_buck_bunny.mp4'),
@@ -27,7 +27,7 @@ const imageAsset = assign(new Delir.Project.Asset(), {
     path: join(dirname, 'image.jpg'),
 })
 
-; [movieAsset, audioAsset, imageAsset].forEach(a => ProjectHelper.addAsset(p, a))
+; [videoAsset, audioAsset, imageAsset].forEach(a => ProjectHelper.addAsset(p, a))
 
 // Maser Composition
 const composition = assign(new Delir.Project.Composition(), {
@@ -73,7 +73,7 @@ const movieClip = assign(new Delir.Project.Clip(), {
     keyframes: {
         source: [
             assign(new Delir.Project.Keyframe(), {
-                value: {assetId: movieAsset.id},
+                value: {assetId: videoAsset.id},
                 frameOnClip: 0,
             })
         ]
@@ -89,7 +89,7 @@ const textClip = assign(new Delir.Project.Clip(), {
             assign(new Delir.Project.Keyframe(), {value: 'test', frameOnClip: 0})
         ],
         source: [
-            assign(new Delir.Project.Keyframe(), {value: {assetId: movieAsset.id}, frameOnClip: 0})
+            assign(new Delir.Project.Keyframe(), {value: {assetId: videoAsset.id}, frameOnClip: 0})
         ],
         loop: [
             assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
