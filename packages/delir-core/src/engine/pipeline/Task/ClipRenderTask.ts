@@ -2,6 +2,7 @@ import * as _ from 'lodash'
 import * as KeyframeHelper from '../../../helper/keyframe-helper'
 import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
 import { Clip } from '../../../project'
+import { KeyframeValueTypes } from '../../../project/keyframe'
 import { Expression } from '../../../values'
 import * as RendererFactory from '../../renderer'
 import { IRenderer } from '../../renderer/renderer-base'
@@ -29,6 +30,7 @@ export default class ClipRenderTask {
                 ? req.resolver.resolveAsset((rendererInitParam[propName] as AssetPointerScheme).assetId)
                 : null
         })
+        console.log(rendererInitParam)
 
         let clipRenderer = clipRendererCache.get(clip)
         if (!clipRenderer) {
@@ -59,6 +61,7 @@ export default class ClipRenderTask {
         task.keyframeLUT = rendererKeyframeLUT
         // FIXME: typing
         task.expressions = rendererExpressions as any
+        task.initialKeyframeValues = rendererInitParam
         task.effectRenderTask = effectRenderTask
 
         return task

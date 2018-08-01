@@ -65,10 +65,10 @@ export default class PreRenderingRequest<T = {[propName: string]: ParameterValue
 
     constructor(properties: Partial<PreRenderingRequest<T>> = {})
     {
-        const props = _.pick(
-            properties,
-            PreRenderingRequest._permitKeys.concat(PreRenderingRequest._permitOnlyInitializeKey)
-        )
+        const props = _.pick(properties, [
+            ...PreRenderingRequest._permitKeys,
+            ...PreRenderingRequest._permitOnlyInitializeKey
+        ])
 
         Object.assign(this, props)
         Object.freeze(this)

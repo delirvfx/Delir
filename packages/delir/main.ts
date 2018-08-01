@@ -54,15 +54,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     await context.executeOperation(AppActions.setActiveProject, { project: new Delir.Project.Project() })
 
     if (__DEV__) {
-        const project = require('./utils/Dev/example-project/ExampleProject1').default
+        const project = require('./utils/Dev/ExampleProject1').default
 
         await context.executeOperation(AppActions.setActiveProject, { project })
         await context.executeOperation(AppActions.changeActiveComposition, { compositionId: project.compositions[0].id })
-
-        context.executeOperation(AppActions.notify, {
-            message: 'It\'s experimental VFX Application works with JavaScript',
-            title: '👐 <DEV MODE> Hello, welcome to Delir',
-            level: 'info',
-        })
     }
 })
