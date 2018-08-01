@@ -44,9 +44,10 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         this.refs.input.onpointerlockerror = e => console.error(e)
     }
 
+    // FIXME: Follow React 16.3
     public componentWillReceiveProps(nextProps: DragNumberInputProps)
     {
-        this.setState({value: nextProps.value})
+        this.setState({value: nextProps.value!})
     }
 
     public render()
@@ -67,7 +68,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         )
     }
 
-    private onKeyDown = (e: KeyboardEvent) =>
+    private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>
     {
         const {onChange} = this.props
         const {input} = this.refs
@@ -79,7 +80,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         } else if (e.key === 'Escape') {
             input.value = (this.props.value as string || '0')
             input.blur()
-            this.setState({value: +this.props.value})
+            this.setState({value: +this.props.value!})
         } else if (e.key === 'ArrowUp') {
             const value = this._parseValue(this.refs.input.value) + 1
             this.setState({value})
@@ -89,7 +90,7 @@ export default class DragNumberInput extends React.Component<DragNumberInputProp
         }
     }
 
-    private onBlur = (e: FocusEvent) =>
+    private onBlur = (e: React.FocusEvent<HTMLInputElement>) =>
     {
         const value = this._parseValue(this.refs.input.value)
         this.props.onChange && this.props.onChange(value)
