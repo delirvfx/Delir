@@ -11,6 +11,7 @@
         ]
     },
     "files": [
-        "./main.ts"
+        "./main.ts",
+        "./declarations.d.ts"
     ]
 }

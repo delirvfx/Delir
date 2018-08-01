@@ -38,12 +38,26 @@ declare module 'node-timecodes' {
     export function fromSeconds(seconds: number, option?: TimeCodeOptions): string
 }
 
+declare module 'av' {
+    export class Asset extends NodeJS.EventEmitter {
+        public static fromBuffer(buffer: Buffer): Asset
+
+        public format: { channelsPerFrame: number }
+        public decodeToBuffer(listener: (decoded: Float32Array) => void): void
+    }
+}
+
+declare module 'font-manager' {
+    const getAvailableFontsSync: () => {
+        family: string
+    }[]
+
+    export {getAvailableFontsSync}
+}
+
 declare namespace NodeJS {
     export interface Global {
         // Define for electron's `global.require`
         require: NodeRequire
     }
 }
-
-// Typing helpers
-declare type Optionalized<T> = {[P in keyof T]?: T[P]}
