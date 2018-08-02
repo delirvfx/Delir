@@ -1,10 +1,10 @@
-import times from 'lodash.times'
-import * as path from 'path'
-import * as fs from 'mz/fs'
-import {spawn} from 'child_process'
-import canvasToBuffer from 'electron-canvas-to-buffer'
-import audioBufferToWave from 'audiobuffer-to-wav'
 import arrayBufferToBuffer from 'arraybuffer-to-buffer'
+import audioBufferToWave from 'audiobuffer-to-wav'
+import { spawn } from 'child_process'
+import canvasToBuffer from 'electron-canvas-to-buffer'
+import times from 'lodash.times'
+import * as fs from 'mz/fs'
+import * as path from 'path'
 
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
@@ -41,7 +41,7 @@ export default async (
     const durationFrames = comp.durationFrames
 
     const tmpMovieFilePath = path.join(temporaryDir, 'delir-working.mov')
-    const tmpAudioFilePath = path.join(temporaryDir,'delir-working.wav')
+    const tmpAudioFilePath = path.join(temporaryDir, 'delir-working.wav')
 
     let audioDataOffset = 0
     const pcmAudioData = times(comp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * comp.samplingRate * Math.ceil(durationFrames / comp.framerate))))
