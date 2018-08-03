@@ -16,7 +16,6 @@ import ProjectStore from '../../stores/ProjectStore'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 import LabelInput from '../components/label-input'
 import Pane from '../components/pane'
-import { Col, Row, Table, TableBodySelectList, TableHeader } from '../components/table'
 
 import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
 
@@ -107,21 +106,21 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                         onClick={this.openNewCompositionWindow}
                     ></i>
                 </h1>
-                <Table className={s.compositionList}>
-                    <TableHeader>
-                        <Row>
-                            <Col resizable={false} defaultWidth='2rem'></Col>
-                            <Col defaultWidth='10rem'>{t('compositions.name')}</Col>
-                        </Row>
-                    </TableHeader>
-                    <TableBodySelectList onSelectionChanged={() => {}}>
-                        <ContextMenu>
+                <table className={s.compositionList}>
+                    <thead>
+                        <tr>
+                            <td className={s.compositionListIcon}></td>
+                            <td className={s.compositionListName}>{t('compositions.name')}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ContextMenu element='tr'>
                             <MenuItem type='separator' />
                             <MenuItem label={t('compositions.contextMenu.create')} onClick={this.openNewCompositionWindow} />
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
-                            <Row key={comp.id} onDoubleClick={this.changeComposition.bind(null, comp.id)}>
+                            <tr key={comp.id} onDoubleClick={this.changeComposition.bind(null, comp.id)}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label={t('compositions.contextMenu.rename')} onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
@@ -130,36 +129,36 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <Col className={s.IconField}><i className='fa fa-film'></i></Col>
-                                <Col>
+                                <td className={s.IconField}><i className='fa fa-film'></i></td>
+                                <td>
                                     <LabelInput
                                         ref={`comp_name_input#${comp.id}`}
                                         defaultValue={comp.name}
                                         placeholder={t('compositions.namePlaceHolder')}
                                         onChange={this.modifyCompName.bind(this, comp.id)}
                                     />
-                                </Col>
-                            </Row>
+                                </td>
+                            </tr>
                         ))}
-                    </TableBodySelectList>
-                </Table>
+                    </tbody>
+                </table>
                 <h1 className={s.assetsHeading}>
                     Assets
                     <label className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
                         <input ref='assetInput' type='file' style={{display: 'none'}} onChange={this.selectAsset} multiple />
                     </label>
                 </h1>
-                <Table className={s.assetList} onDrop={this.addAsset}>
-                    <TableHeader>
-                        <Row>
-                            <Col resizable={false} defaultWidth='2rem'></Col>
-                            <Col defaultWidth='10rem'>{t('assets.name')}</Col>
-                            <Col defaultWidth='5rem'>{t('assets.fileType')}</Col>
-                        </Row>
-                    </TableHeader>
-                    <TableBodySelectList>
+                <table className={s.assetList} onDrop={this.addAsset}>
+                    <thead>
+                        <tr>
+                            <td resizable={false} defaultWidth='2rem'></td>
+                            <td defaultWidth='10rem'>{t('assets.name')}</td>
+                            <td defaultWidth='5rem'>{t('assets.fileType')}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {assets.map(asset => (
-                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
+                            <tr key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     {/*<MenuItem label='Reload' onClick={() => {}} />*/}
@@ -167,8 +166,8 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <Col className={s.IconField}>{fileIconFromExtension(asset.fileType)}</Col>
-                                <Col>
+                                <td className={s.IconField}>{fileIconFromExtension(asset.fileType)}</td>
+                                <td>
                                     <ContextMenu>
                                         <MenuItem label={t('assets.contextMenu.rename')} onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
                                     </ContextMenu>
@@ -178,12 +177,12 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                         placeholder='Unnamed Asset'
                                         doubleClickToEdit
                                     />
-                                </Col>
-                                <Col>{asset.fileType}</Col>
-                            </Row>
+                                </td>
+                                <td>{asset.fileType}</td>
+                            </tr>
                         ))}
-                    </TableBodySelectList>
-                </Table>
+                    </tbody>
+                </table>
             </Pane>
         )
     }
