@@ -1,13 +1,11 @@
-import { DelirPluginPackageJson, PluginEntry } from '../plugin-support/types'
+import { DelirPluginPackageJson, PluginEntry } from '../../delir-core/src/plugin-support/types'
 
 import * as fs from 'fs-promise'
 import * as _ from 'lodash'
 import * as path from 'path'
 import * as semver from 'semver'
 
-import * as DelirCorePackageJson from '../../package.json'
-import { PluginLoadFailException } from '../exceptions/'
-import { validatePluginPackageJSON } from '../plugin-support/plugin-registry'
+import * as DelirCorePackageJson from '../../delir-core/package.json'
 
 export default class FSPluginLoader
 {
@@ -49,11 +47,11 @@ export default class FSPluginLoader
                 // }
 
                 if (packages[json.name]) {
-                    throw new PluginLoadFailException(`Duplicate plugin ${json.name}`)
+                    throw new Error(`Duplicate plugin ${json.name}`)
                 }
 
                 if (!semver.satisfies(DelirCorePackageJson.version, json.engines['delir-core'])) {
-                    throw new PluginLoadFailException(`Plugin \`${json.delir.name}(${json.name})\` not compatible to current delir-core version `)
+                    throw new Error(`Plugin \`${json.delir.name}(${json.name})\` not compatible to current delir-core version `)
                 }
 
                 packages[json.name] = {

@@ -3,15 +3,16 @@ import { operation } from '@ragg/fleur'
 import { remote } from 'electron'
 import { join } from 'path'
 
+import FSPluginLoader from '../utils/FSPluginLoader'
 import { RendererActions } from './actions'
 import * as AppOps from './App'
 
 export const loadPlugins = operation(async (context) => {
     const userDir = remote.app.getPath('appData')
-    const loader = new Delir.PluginSupport.FSPluginLoader()
+    const loader = new FSPluginLoader()
 
     const loaded = [
-        await loader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
+        // await loader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')),
         await loader.loadPackageDir(join(userDir, '/delir/plugins')),
     ]
 
