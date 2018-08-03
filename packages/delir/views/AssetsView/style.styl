@@ -10,41 +10,39 @@
 
 .assetList
 .compositionList
-    composes table from '../components/table.styl'
-
     width 100%
-    padding-bottom 8px
+    padding-bottom 16px
     flex 1
 
-    border-top 1px solid rgba(255, 255, 255, 0.2)
+    border-top 1px solid rgba(#666, .6)
 
-    // :global
-    //     ._label-input
-    //         width 100%
-    //         line-height 12px
+    thead
+        font-size 12px
 
-    //     .table-body
-    //         overflow auto
+        tr:last-of-type
+            td
+                border-bottom 1px solid rgba(#666, .6)
 
-    //     .table-row, .table-col
-    //         border-right none
-    //         border-bottom none
+    td
+        padding 4px
 
-    //     .table-header
-    //         .table-col
-    //             font-size: 10px
-
-    //     .table-body-selectlist
-    //         thin-scrollbar()
-    //         overflow-y scroll
-
-    //         .table-col
-    //             line-height 12px
-
-.compositionListIcon
+.compositionListIconColumn
     width 2rem
-.compositionListName
+
+.compositionListNameColumn
     width 20rem
+
+.assetListIconColumn
+    width 2rem
+
+.assetListNameColumn
+    width 10rem
+
+.assetListTypeColumn
+    width 5rem
+
+.selected
+    background-color rgba(#fff, .2)
 
 .compositionsHeading
 .assetsHeading

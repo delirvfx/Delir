@@ -61,7 +61,7 @@ export class MenuItem extends React.Component<MenuItemComponentProps, {}>
 }
 
 interface ContextMenuProps {
-    element?: string
+    elementType?: string
 }
 
 export class ContextMenu extends React.Component<ContextMenuProps>
@@ -99,7 +99,7 @@ export class ContextMenu extends React.Component<ContextMenuProps>
 
     public render()
     {
-        const Element = this.props.element!
+        const Element = this.props.elementType!
         return <Element ref={this.root} style={{ display: 'none' }} />
     }
 }
