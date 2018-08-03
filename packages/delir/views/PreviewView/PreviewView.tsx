@@ -95,12 +95,12 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         })
     }
 
-    private toggleScaleList = (e) =>
+    private toggleScaleList = () =>
     {
         this.scaleListRef.current!.toggle()
     }
 
-    private onWheel = e => {
+    private onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
         if (!e.altKey) return
 
         this.setState({

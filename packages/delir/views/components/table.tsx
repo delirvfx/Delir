@@ -123,18 +123,18 @@ interface TableBodySelectListProps {
     onSelectionChanged: (selection: number[]) => any,
 }
 
-interface TableBodySelectListState {
-    lastSelectedIdx: number,
+interface State {
+    lastSelectedIdx: number | null,
     selected: number[],
 }
 
-export class TableBodySelectList extends React.Component<TableBodySelectListProps, TableBodySelectListState>
+export class TableBodySelectList extends React.Component<TableBodySelectListProps, State>
 {
     public static defaultProps = {
         multiple: false,
     }
 
-    public state = {
+    public state: State = {
         lastSelectedIdx: null,
         selected: [],
     }
@@ -145,7 +145,7 @@ export class TableBodySelectList extends React.Component<TableBodySelectListProp
 
         return (
             <div className={classnames('table-body-selectlist', this.props.className)}>
-                {Children.map(this.props.children, (maybeRowChild, idx) => {
+                {Children.map(this.props.children, (maybeRowChild: React.ReactElement<any>, idx) => {
                     if (maybeRowChild.type === Row) {
                         let _rowIdx = rowIdx++
 
@@ -154,7 +154,7 @@ export class TableBodySelectList extends React.Component<TableBodySelectListProp
                             className: classnames(maybeRowChild.props.className, {
                                 'selected': this.state.selected.includes(_rowIdx)
                             }),
-                            onClick: e => {
+                            onClick: (e: React.MouseEvent<any>) => {
                                 this.onClickItem(_rowIdx, e)
                                 maybeRowChild.props.onClick && maybeRowChild.props.onClick(e)
                             },
@@ -227,7 +227,7 @@ interface RowProps {
     _inHeader?: boolean
     _notifyCellResizing?: (x: number) => void
     _widths: number[] | string[]
-    classNames: string
+    className: string
 }
 
 export class Row extends React.Component<RowProps>
@@ -244,14 +244,14 @@ export class Row extends React.Component<RowProps>
 
         return (
             <div {...childProps} className={classnames('table-row', this.props.className)}>
-                {Children.map(this.props.children, (child, idx) => {
+                {Children.map(this.props.children, (child: React.ReactElement<any>, idx) => {
                     if (child.type === Col) {
                         let _colIdx = colIdx++
 
                         if (this.props._inHeader) {
                             return React.cloneElement(child, {
                                 _inHeader: this.props._inHeader,
-                                _notifyCellResizing: this.props._notifyCellResizing.bind(null, idx),
+                                _notifyCellResizing: this.props._notifyCellResizing!.bind(null, idx),
                             })
                         } else {
                             // component maybe in TableBody
@@ -317,7 +317,7 @@ export class Col extends React.Component<ColProps, any>
         )
     }
 
-    private onResizeEnd = e =>
+    private onResizeEnd = (e: React.DragEvent<HTMLDivElement>) =>
     {
         this.props._notifyCellResizing && this.props._notifyCellResizing(e.clientX)
         this.setState({width: e.clientX})

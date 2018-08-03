@@ -217,7 +217,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         this.props.context.executeOperation(ProjectModActions.removeComposition, { compositionId: dataset.compId })
     }
 
-    private modifyCompName = (compositionId, newName) =>
+    private modifyCompName = (compositionId: string, newName: string) =>
     {
         this.props.context.executeOperation(ProjectModActions.modifyComposition, { compositionId, props: { name: newName }})
     }
