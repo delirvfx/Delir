@@ -1,29 +1,7 @@
 {
-    "compileOnSave": false,
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "strictNullChecks": true,
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": false,
-        "allowJs": false,
-        "declaration": true,
-        "jsx": "preserve",
-        "target": "es2016",
-        "module": "es2015",
-        "moduleResolution": "node",
-        "lib": [
-            "dom",
-            "es2015",
-            "es2016",
-            "es2017",
-            "es2017.object"
-        ],
-        "rootDir": "./src/",
-        "baseUrl": ".",
-        "types": [
-            "./src/declarations.d.ts"
-        ]
+        "baseUrl": "./src"
     },
     "files": [
         "./src/index",

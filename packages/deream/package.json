@@ -23,8 +23,8 @@
   },
   "homepage": "https://github.com/Ragg-/deream-stream#readme",
   "devDependencies": {
-    "@types/lodash.times": "4.3.2",
-    "@types/mz": "0.0.31"
+    "@types/lodash.times": "4.3.4",
+    "@types/mz": "0.0.32"
   },
   "dependencies": {
     "arraybuffer-to-buffer": "0.0.4",

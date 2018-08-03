@@ -1,0 +1,17 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "jsx": "react",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "es2015",
+            "es2016"
+        ]
+    },
+    "files": [
+        "./main.ts",
+        "./declarations.d.ts"
+    ]
+}

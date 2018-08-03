@@ -3,10 +3,11 @@ const $ = require("gulp-load-plugins")();
 const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
-const builder = require('electron-builder')
-const nib = require('nib')
-const notifier = require('node-notifier')
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+const builder = require('electron-builder');
+const nib = require('nib');
+const notifier = require('node-notifier');
 
 const os = require('os')
 const fs = require("fs-promise");
@@ -97,9 +98,6 @@ export function compileRendererJs(done) {
         resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx'],
             modules: ["node_modules"],
-            alias: {
-                'delir-core': join(__dirname, 'packages/delir-core/src/'),
-            }
         },
         module: {
             rules: [
@@ -159,6 +157,10 @@ export function compileRendererJs(done) {
             }),
             // preserve require() for native modules
             new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
+            new ForkTsCheckerWebpackPlugin({
+                tsconfig: join(paths.src.frontend, 'tsconfig.json'),
+                workers: 3,
+            }),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),
@@ -187,8 +189,8 @@ export async function compilePlugins(done) {
             'chromakey/index': './chromakey/index',
             'the-world/index': './the-world/index',
             ...(__DEV__ ? {
-                'filler/index': '../experimental-plugins/filler/index',
-                'mmd/index': '../experimental-plugins/mmd/index',
+                // 'filler/index': '../experimental-plugins/filler/index',
+                // 'mmd/index': '../experimental-plugins/mmd/index',
                 // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
                 // 'plane/index': '../experimental-plugins/plane/index',
                 // 'noise/index': '../experimental-plugins/noise/index',
@@ -313,7 +315,7 @@ export async function pack(done) {
     await new Promise((resolve, reject) => {
         spawn(yarnBin, ['install'], {cwd: paths.build})
             .on('error', err => reject(err))
-            .on('close', (code, signal) => code === 0 ? resolve() : reject(new Error(signal)))
+            .on('close', (code, signal) => code === 0 ? resolve() : reject(new Error(code)))
     })
 
     const targets = [

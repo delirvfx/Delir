@@ -5,7 +5,7 @@ import * as parseColor from 'parse-color'
 import * as path from 'path'
 import * as React from 'react'
 
-import { ProjectHelper, Values } from 'delir-core'
+import { ProjectHelper, Values } from '@ragg/delir-core'
 
 import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
@@ -217,7 +217,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         this.props.context.executeOperation(ProjectModActions.removeComposition, { compositionId: dataset.compId })
     }
 
-    private modifyCompName = (compositionId, newName) =>
+    private modifyCompName = (compositionId: string, newName: string) =>
     {
         this.props.context.executeOperation(ProjectModActions.modifyComposition, { compositionId, props: { name: newName }})
     }

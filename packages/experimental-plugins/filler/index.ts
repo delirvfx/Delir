@@ -1,10 +1,10 @@
 import {
-    Type,
-    TypeDescriptor,
     PostEffectBase,
     PreRenderRequest,
     RenderRequest,
-} from 'delir-core'
+    Type,
+    TypeDescriptor,
+} from '@ragg/delir-core'
 
 export default class Filler extends PostEffectBase
 {

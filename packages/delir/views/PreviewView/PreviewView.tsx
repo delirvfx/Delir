@@ -1,5 +1,5 @@
+import * as Delir from '@ragg/delir-core'
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
-import * as Delir from 'delir-core'
 import * as React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 
@@ -95,12 +95,12 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         })
     }
 
-    private toggleScaleList = (e) =>
+    private toggleScaleList = () =>
     {
         this.scaleListRef.current!.toggle()
     }
 
-    private onWheel = e => {
+    private onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
         if (!e.altKey) return
 
         this.setState({

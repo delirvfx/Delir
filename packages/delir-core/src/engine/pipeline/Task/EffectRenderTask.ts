@@ -11,7 +11,7 @@ import DependencyResolver from '../DependencyResolver'
 import { compileTypeScript } from '../ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionContext'
 import ExpressionVM from '../ExpressionVM'
-import { ExpressionExecuters } from '../pipeline'
+import { ExpressionExecuters, RealParameterValues, RealParameterValueTypes } from '../pipeline'
 import RenderRequest from '../render-request'
 
 export default class EffectRenderTask {
@@ -22,7 +22,7 @@ export default class EffectRenderTask {
         req: RenderRequest,
         resolver: DependencyResolver,
     }): EffectRenderTask {
-        const EffectPluginClass = resolver.resolveEffectPlugin(effect.processor)
+        const EffectPluginClass = resolver.resolveEffectPlugin(effect.processor)!
 
         const effectParams = EffectPluginClass.provideParameters()
         const effectAssetParamNames = effectParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
@@ -34,16 +34,20 @@ export default class EffectRenderTask {
             effectCache.set(effect, effectRenderer)
         }
 
-        const initialKeyframeValues = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, effectParams, effect.keyframes)
+        const rawInitialKeyframeValues = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, effectParams, effect.keyframes)
+        const initialKeyframeValues: RealParameterValues = { ...(rawInitialKeyframeValues as any) }
         effectAssetParamNames.forEach(propName => {
-            initialKeyframeValues[propName] = initialKeyframeValues[propName]
-                ? resolver.resolveAsset((initialKeyframeValues[propName] as AssetPointerScheme).assetId)
+            // resolve asset
+            initialKeyframeValues[propName] = rawInitialKeyframeValues[propName]
+                ? resolver.resolveAsset((rawInitialKeyframeValues[propName] as AssetPointerScheme).assetId)
                 : null
         })
 
-        const effectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectParams, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
+        const rawEffectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectParams, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
+        const effectKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = {...(rawEffectKeyframeLUT as any)}
         effectAssetParamNames.forEach(propName => {
-            effectKeyframeLUT[propName] = _.map(effectKeyframeLUT[propName], value => {
+            // resolve asset
+            effectKeyframeLUT[propName] = _.map(rawEffectKeyframeLUT[propName], value => {
                 return value ? resolver.resolveAsset((value as AssetPointerScheme).assetId) : null
             })
         })
@@ -70,9 +74,9 @@ export default class EffectRenderTask {
     public effectEntityId: string
     public effectRenderer: EffectPluginBase
     public effectorProps: TypeDescriptor
-    public keyframeLUT: { [paramName: string]: KeyframeHelper.KeyframeParamValueSequence }
-    public expressions: { [paramName: string]: (exposes: ExpressionContext.Exposes) => KeyframeValueTypes }
-    private initialKeyframeValues: { [paramName: string]: KeyframeValueTypes }
+    public keyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } }
+    public expressions: { [paramName: string]: (exposes: ExpressionContext.Exposes) => RealParameterValueTypes }
+    private initialKeyframeValues: RealParameterValues
 
     public async initialize(req: RenderRequest) {
         const preRenderReq = req.clone({parameters: this.initialKeyframeValues}).toPreRenderingRequest()

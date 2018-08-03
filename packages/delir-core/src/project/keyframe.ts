@@ -2,18 +2,18 @@ import * as _ from 'lodash'
 import * as uuid from 'uuid'
 import toJSON from '../helper/toJSON'
 
+import ColorRGB from '../values/color-rgb'
+import ColorRGBA from '../values/color-rgba'
 // import Point2D from '../values/point-2d'
 // import Point3D from '../values/point-3d'
 // import Size2D from '../values/size-2d'
 // import Size3D from '../values/size-3d'
-import ColorRGB from '../values/color-rgb'
-import ColorRGBA from '../values/color-rgba'
 
 import { AssetPointerScheme, JSONKeyframeValueTypes, KeyframeConfigScheme, KeyframeScheme } from './scheme/keyframe'
 
-export type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | AssetPointerScheme
+export type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | AssetPointerScheme | null
 
-export default class Keyframe
+export default class Keyframe<T extends KeyframeValueTypes = KeyframeValueTypes>
 {
     public static deserialize(keyframeJson: KeyframeScheme)
     {
@@ -55,7 +55,7 @@ export default class Keyframe
     private _id: string = uuid.v4()
 
     private _config: {
-        value: KeyframeValueTypes | null,
+        value: T | null,
         frameOnClip: number | null,
         easeInParam: [number, number],
         easeOutParam: [number, number],
@@ -68,8 +68,8 @@ export default class Keyframe
 
     get id(): string { return this._id = this._id || uuid.v4() }
 
-    get value(): KeyframeValueTypes | null { return this._config.value }
-    set value(value: KeyframeValueTypes | null) { this._config.value = value }
+    get value(): T | null { return this._config.value }
+    set value(value: T | null) { this._config.value = value }
 
     get frameOnClip(): number { return this._config.frameOnClip as number }
     set frameOnClip(frameOnClip: number) { this._config.frameOnClip = frameOnClip }

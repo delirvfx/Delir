@@ -1,6 +1,6 @@
+import * as Delir from '@ragg/delir-core'
+import { ProjectHelper } from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
-import * as Delir from 'delir-core'
-import { ProjectHelper } from 'delir-core'
 
 import ProjectStore from '../stores/ProjectStore'
 import RendererStore from '../stores/RendererStore'

@@ -9,6 +9,7 @@ import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObs
 
 import PluginRegistry from '../../plugin-support/plugin-registry'
 
+import AssetProxy from '@ragg/delir-core/src/engine/pipeline/AssetProxy'
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
 import * as TypeScript from 'typescript'
@@ -20,6 +21,7 @@ import FPSCounter from '../../helper/FPSCounter'
 import * as KeyframeHelper from '../../helper/keyframe-helper'
 import ProgressPromise from '../../helper/progress-promise'
 import * as ProjectHelper from '../../helper/project-helper'
+import { ColorRGB, ColorRGBA } from '../../values'
 import * as RendererFactory from '../renderer'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionContext'
@@ -51,15 +53,19 @@ interface RenderProgression {
     rangeEndFrame: number
 }
 
-const tsCompileOption: TypeScript.CompilerOptions = {}
+export type RealParameterValueTypes = number | string | boolean | ColorRGB | ColorRGBA | AssetProxy | null
+
+export interface RealParameterValues {
+    [paramName: string]: RealParameterValueTypes
+}
 
 /**
  * Get expression applied values
  */
 export const applyExpression = (
     req: RenderingRequest,
-    beforeExpressionParams: { [prop: string]: ParameterValueTypes },
-    expressions: { [prop: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes },
+    beforeExpressionParams: RealParameterValues,
+    expressions: { [prop: string]: (exposes: ExpressionContext.Exposes) => RealParameterValueTypes },
 ): { [prop: string]: ParameterValueTypes } => {
     return _.mapValues(beforeExpressionParams, (value, propName) => {
         if (expressions[propName!]) {
@@ -318,7 +324,6 @@ export default class Pipeline
                     clip,
                     clipRendererCache: this._clipRendererCache,
                     req,
-                    resolver: req.resolver,
                 })
 
                 await clipRenderTask.initialize(req)
@@ -418,7 +423,7 @@ export default class Pipeline
                     const frameOnComposition = req.frame - clipTask.clipPlacedFrame
 
                     // TODO: frame mapping for set different framerate for sub-composition
-                    renderReq = req.clone({
+                    const compositionRenderReq = req.clone({
                         frameOnComposition,
                         timeOnComposition: frameOnComposition / req.framerate,
 

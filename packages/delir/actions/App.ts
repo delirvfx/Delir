@@ -1,6 +1,6 @@
+import * as Delir from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
 import { BSON } from 'bson'
-import * as Delir from 'delir-core'
 import { remote } from 'electron'
 import * as fs from 'fs-promise'
 import * as _ from 'lodash'

@@ -1,6 +1,6 @@
+import * as Delir from '@ragg/delir-core'
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
-import * as Delir from 'delir-core'
 import * as _ from 'lodash'
 import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'

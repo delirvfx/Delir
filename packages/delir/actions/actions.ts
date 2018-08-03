@@ -1,5 +1,5 @@
+import * as Delir from '@ragg/delir-core'
 import { action } from '@ragg/fleur'
-import * as Delir from 'delir-core'
 import { DragEntity } from './App'
 
 export const AppActions = {
