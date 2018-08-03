@@ -60,9 +60,17 @@ export class MenuItem extends React.Component<MenuItemComponentProps, {}>
     }
 }
 
-export class ContextMenu extends React.Component
+interface ContextMenuProps {
+    elementType?: string
+}
+
+export class ContextMenu extends React.Component<ContextMenuProps>
 {
-    private root: HTMLDivElement
+    public static defaultProps = {
+        element: 'div'
+    }
+
+    private root = React.createRef<any>()
 
     public componentDidMount()
     {
@@ -71,28 +79,27 @@ export class ContextMenu extends React.Component
         const items = wrapArray(this.props.children as MenuItem[])
 
         if (!items) return
-        ContextMenuManager.instance.register(this.root.parentElement!, items.map(item => toMenuItemJSON(item)))
+        ContextMenuManager.instance.register(this.root.current!.parentElement!, items.map(item => toMenuItemJSON(item)))
     }
 
     public componentDidUpdate()
     {
-        ContextMenuManager.instance.unregister(this.root.parentElement!)
+        ContextMenuManager.instance.unregister(this.root.current!.parentElement!)
 
         const items = wrapArray(this.props.children as MenuItem[])
 
         if (!items) return
-        ContextMenuManager.instance.register(this.root.parentElement!, items.map(item => toMenuItemJSON(item)))
+        ContextMenuManager.instance.register(this.root.current!.parentElement!, items.map(item => toMenuItemJSON(item)))
     }
 
     public componentWillUnMount()
     {
-        ContextMenuManager.instance.unregister(this.root)
+        ContextMenuManager.instance.unregister(this.root.current!)
     }
 
     public render()
     {
-        return <div ref={this.bindRootElement} style={{ display: 'none' }} />
+        const Element = this.props.elementType!
+        return <Element ref={this.root} style={{ display: 'none' }} />
     }
-
-    private bindRootElement = (el: HTMLDivElement) => this.root = el
 }

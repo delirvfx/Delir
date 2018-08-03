@@ -1,5 +1,5 @@
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
-import * as classnames from 'classnames'
+import * as classNames from 'classnames'
 import * as _ from 'lodash'
 import * as parseColor from 'parse-color'
 import * as path from 'path'
@@ -16,7 +16,6 @@ import ProjectStore from '../../stores/ProjectStore'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 import LabelInput from '../components/label-input'
 import Pane from '../components/pane'
-import { Col, Row, Table, TableBodySelectList, TableHeader } from '../components/table'
 
 import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
 
@@ -79,6 +78,8 @@ interface State {
     newCompositionWindowOpened: boolean,
     settingCompositionWindowOpened: boolean,
     settingCompositionQuery: { [name: string]: string | number } | null,
+    selectedCompositionId: string | null
+    selectedAssetId: string | null
 }
 
 type Props = ConnectedProps & ContextProp
@@ -90,11 +91,14 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         newCompositionWindowOpened: false,
         settingCompositionWindowOpened: false,
         settingCompositionQuery: null,
+        selectedCompositionId: null,
+        selectedAssetId: null,
     }
 
     public render()
     {
         const {editor: {project}} = this.props
+        const { selectedCompositionId, selectedAssetId } = this.state
         const assets = project ? Array.from(project.assets) : []
         const compositions = project ? Array.from(project.compositions) : []
 
@@ -103,25 +107,31 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                 <h1 className={s.compositionsHeading}>
                     Compositions
                     <i
-                        className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}
+                        className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}
                         onClick={this.openNewCompositionWindow}
                     ></i>
                 </h1>
-                <Table className={s.compositionList}>
-                    <TableHeader>
-                        <Row>
-                            <Col resizable={false} defaultWidth='2rem'></Col>
-                            <Col defaultWidth='10rem'>{t('compositions.name')}</Col>
-                        </Row>
-                    </TableHeader>
-                    <TableBodySelectList onSelectionChanged={() => {}}>
-                        <ContextMenu>
+                <table className={s.compositionList}>
+                    <thead>
+                        <tr>
+                            <td className={s.compositionListIconColumn}></td>
+                            <td className={s.compositionListNameColumn}>{t('compositions.name')}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ContextMenu elementType='tr'>
                             <MenuItem type='separator' />
                             <MenuItem label={t('compositions.contextMenu.create')} onClick={this.openNewCompositionWindow} />
                             <MenuItem type='separator' />
                         </ContextMenu>
                         {compositions.map(comp => (
-                            <Row key={comp.id} onDoubleClick={this.changeComposition.bind(null, comp.id)}>
+                            <tr
+                                key={comp.id}
+                                className={classNames(comp.id === selectedCompositionId && s.selected)}
+                                onClick={this.handleClickComposition}
+                                onDoubleClick={this.changeComposition}
+                                data-composition-id={comp.id}
+                            >
                                 <ContextMenu>
                                     <MenuItem type='separator' />
                                     <MenuItem label={t('compositions.contextMenu.rename')} onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
@@ -130,45 +140,53 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <Col className={s.IconField}><i className='fa fa-film'></i></Col>
-                                <Col>
+                                <td className={s.IconField}><i className='fa fa-film'></i></td>
+                                <td>
                                     <LabelInput
                                         ref={`comp_name_input#${comp.id}`}
                                         defaultValue={comp.name}
                                         placeholder={t('compositions.namePlaceHolder')}
                                         onChange={this.modifyCompName.bind(this, comp.id)}
                                     />
-                                </Col>
-                            </Row>
+                                </td>
+                            </tr>
                         ))}
-                    </TableBodySelectList>
-                </Table>
+                    </tbody>
+                </table>
                 <h1 className={s.assetsHeading}>
                     Assets
-                    <label className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
+                    <label className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
                         <input ref='assetInput' type='file' style={{display: 'none'}} onChange={this.selectAsset} multiple />
                     </label>
                 </h1>
-                <Table className={s.assetList} onDrop={this.addAsset}>
-                    <TableHeader>
-                        <Row>
-                            <Col resizable={false} defaultWidth='2rem'></Col>
-                            <Col defaultWidth='10rem'>{t('assets.name')}</Col>
-                            <Col defaultWidth='5rem'>{t('assets.fileType')}</Col>
-                        </Row>
-                    </TableHeader>
-                    <TableBodySelectList>
+                <table className={s.assetList} onDrop={this.addAsset}>
+                    <thead>
+                        <tr>
+                            <td className={classNames(s.assetListIconColumn)}></td>
+                            <td className={classNames(s.assetListNameColumn)}>{t('assets.name')}</td>
+                            <td className={classNames(s.assetListTypeColumn)}>{t('assets.fileType')}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {assets.map(asset => (
-                            <Row key={asset.id} data-asset-id={asset.id} draggable onDragStart={this.onAssetsDragStart} onDragEnd={this.onAssetDragEnd}>
-                                <ContextMenu>
+                            <tr
+                                key={asset.id}
+                                className={classNames(asset.id === selectedAssetId && s.selected)}
+                                draggable
+                                onClick={this.handleClickAsset}
+                                onDragStart={this.onAssetsDragStart}
+                                onDragEnd={this.onAssetDragEnd}
+                                data-asset-id={asset.id}
+                            >
+                                <ContextMenu elementType='tr'>
                                     <MenuItem type='separator' />
                                     {/*<MenuItem label='Reload' onClick={() => {}} />*/}
                                     <MenuItem label={t('assets.contextMenu.remove')} data-asset-id={asset.id} onClick={this.removeAsset}/>
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
-                                <Col className={s.IconField}>{fileIconFromExtension(asset.fileType)}</Col>
-                                <Col>
+                                <td className={s.IconField}>{fileIconFromExtension(asset.fileType)}</td>
+                                <td>
                                     <ContextMenu>
                                         <MenuItem label={t('assets.contextMenu.rename')} onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
                                     </ContextMenu>
@@ -178,14 +196,22 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                         placeholder='Unnamed Asset'
                                         doubleClickToEdit
                                     />
-                                </Col>
-                                <Col>{asset.fileType}</Col>
-                            </Row>
+                                </td>
+                                <td>{asset.fileType}</td>
+                            </tr>
                         ))}
-                    </TableBodySelectList>
-                </Table>
+                    </tbody>
+                </table>
             </Pane>
         )
+    }
+
+    private handleClickComposition = ({ currentTarget }: React.MouseEvent<HTMLTableRowElement>) => {
+        this.setState({ selectedCompositionId:  currentTarget.dataset.compositionId! })
+    }
+
+    private handleClickAsset = ({currentTarget}: React.MouseEvent<HTMLTableRowElement>) => {
+        this.setState({ selectedAssetId: currentTarget.dataset.assetId! })
     }
 
     private addAsset = (e: React.DragEvent<HTMLDivElement>) =>
@@ -207,9 +233,11 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         this.props.context.executeOperation(ProjectModActions.removeAsset, { assetId: dataset.assetId })
     }
 
-    private changeComposition = (compId: string) =>
+    private changeComposition = ({currentTarget}: React.MouseEvent<HTMLTableRowElement> ) =>
     {
-        this.props.context.executeOperation(AppActions.changeActiveComposition, { compositionId: compId })
+        this.props.context.executeOperation(AppActions.changeActiveComposition, {
+            compositionId: currentTarget.dataset.compositionId,
+        })
     }
 
     private removeComposition = ({ dataset }: MenuItemOption<{compId: string}>) =>
