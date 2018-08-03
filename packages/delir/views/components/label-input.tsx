@@ -79,7 +79,7 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         }
     }
 
-    private onBlur = (e: React.MouseEvent<HTMLInputElement>) =>
+    private onBlur = (e: React.FocusEvent<HTMLInputElement>) =>
     {
         if (this.state.readOnly) return
 
@@ -99,7 +99,7 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         this.refs.input.select()
     }
 
-    private valueChanged = e =>
+    private valueChanged = () =>
     {
         this.setState({value: this.refs.input.value})
     }

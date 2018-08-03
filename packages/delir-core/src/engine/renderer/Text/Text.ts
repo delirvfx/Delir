@@ -36,7 +36,7 @@ export default class TextLayer implements IRenderer<TextRendererParam>
             'cursive',
             'fantasy',
             'monospace',
-            ...(_(fonts).map(desc => desc.family) as any).uniq().value().sort((a, b) => a < b ? -1 : 1)
+            ...(_(fonts).map(desc => desc.family) as any).uniq().value().sort((a: string, b: string) => a < b ? -1 : 1)
         ]
 
         return Type

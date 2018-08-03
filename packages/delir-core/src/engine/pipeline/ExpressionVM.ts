@@ -5,17 +5,17 @@ interface ExpressionVMOption {
     filename?: string
 }
 
-interface ExpressionContext {
+export interface ExpressionContext {
     time: number
     frame: number
     timeOnComposition: number
     frameOnComposition: number
     width: number
     height: number
-    audioBuffer: Float32Array | null
+    audioBuffer: Float32Array[] | null
     duration: number
     durationFrames: number
-    clipProp: object
+    clipProp: { [paramName: string]: any }
     currentValue: any
 }
 

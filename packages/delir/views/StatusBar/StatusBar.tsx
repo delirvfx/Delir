@@ -1,5 +1,5 @@
 import { connectToStores } from '@ragg/fleur-react'
-import React from 'react'
+import * as React from 'react'
 
 import EditorStateStore from '../../stores/EditorStateStore'
 import Pane from '../components/pane'

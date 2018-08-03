@@ -1,12 +1,12 @@
-import duplexer from 'duplexer3'
-import {spawn, ChildProcess} from 'child_process'
-import {Duplex} from 'stream'
+import { ChildProcess, spawn } from 'child_process'
+import * as duplexer from 'duplexer3'
+import { Duplex } from 'stream'
 
-const isObject = target => Object.getPrototypeOf(target) === Object.prototype
-const hasKey = (target, property) => ({}).hasOwnProperty.call(target, property)
-const entries = object => Object.keys(object).map(key => [key, object[key]])
+const isObject = (target: any): target is Object => Object.getPrototypeOf(target) === Object.prototype
+const hasKey = (target: object, property: string) => ({}).hasOwnProperty.call(target, property)
+const entries = (object: any) => Object.keys(object).map(key => [key, object[key]])
 
-const parseArgs = args => {
+const parseArgs = (args: string | {[name: string]: string}) => {
     // const ignoreKeys = ['y']
 
     if (typeof args === 'string') {
@@ -35,7 +35,7 @@ const parseArgs = args => {
 }
 
 interface ExportOption {
-    args: string|{[arg: string]: string}
+    args: string | {[arg: string]: string}
     inputFramerate: number
     dest: string
     ffmpegBin?: string
@@ -87,10 +87,9 @@ export const video = (options: ExportOption): VideoExporter => {
     const ffmpeg = spawn(_options.ffmpegBin, args)
     ffmpeg.stderr.on('data', chunk => console.log(chunk.toString()))
 
-    const ret = duplexer(ffmpeg.stdin, ffmpeg.stdout)
+    const ret: any = duplexer(ffmpeg.stdin, ffmpeg.stdout)
     ret.ffmpeg = ffmpeg
-
-    return ret
+    return ret as (Duplex & { ffmpeg: ChildProcess })
 }
 
 // module.exports.audio

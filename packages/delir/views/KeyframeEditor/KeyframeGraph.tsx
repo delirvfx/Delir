@@ -5,12 +5,13 @@ import * as React from 'react'
 
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import AppActions from '../../actions/App'
-import ProjectModActions from '../../actions/ProjectMod'
+import * as AppActions from '../../actions/App'
+import * as ProjectModActions from '../../actions/ProjectMod'
 
+import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as s from './KeyframeGraph.styl'
 
-interface Props {
+interface OwnProps {
     width: number
     height: number
     viewBox: string
@@ -19,13 +20,15 @@ interface Props {
     parentClip: Delir.Project.Clip
     entity: Delir.Project.Clip | Delir.Project.Effect | null
     propName: string,
-    descriptor?: Delir.AnyParameterTypeDescriptor
+    descriptor: Delir.AnyParameterTypeDescriptor
     keyframes: Delir.Project.Keyframe[]
     pxPerSec: number
     zoomScale: number
     onKeyframeRemove: (parentClipId: string, keyframeId: string) => void
     onModified: (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) => void
 }
+
+type Props = OwnProps & ContextProp
 
 interface State {
     activeKeyframeId: string | null
@@ -39,14 +42,12 @@ export interface KeyframePatch {
     frameOnClip?: number
 }
 
-export default class KeyframeGraph extends React.Component<Props, State> {
+export default withComponentContext(class KeyframeGraph extends React.Component<Props, State> {
     public state: State = {
         activeKeyframeId: null,
         keyframeMovement: null,
         easingHandleMovement: null,
     }
-
-    public props: Props
 
     private _selectedKeyframeId: string | null = null
     private _initialKeyframePosition: {x: number, y: number} | null = null
@@ -75,7 +76,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 onKeyDown={this.keydownOnKeyframeGraph}
                 tabIndex={-1}
             >
-                {descriptor.animatable && this.renderKeyframes()}
+                {descriptor!.animatable && this.renderKeyframes()}
             </svg>
         )
     }
@@ -123,37 +124,46 @@ export default class KeyframeGraph extends React.Component<Props, State> {
                 const keyframe = keyframes.find(kf => kf.id === this._selectedKeyframeId)!
                 const movedFrame = this._pxToFrame(keyframeMovement.x)
 
-                // ProjectModActions.createOrModifyKeyframeForClip(parentClip.id!, propName, keyframe.frameOnClip, {
-                //     frameOnClip: keyframe.frameOnClip + movedFrame
-                // })
+                this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+                    clipId: parentClip.id!,
+                    propName,
+                    frameOnClip: keyframe.frameOnClip,
+                    patch: { frameOnClip: keyframe.frameOnClip + movedFrame }
+                })
 
                 onModified(parentClip.id, propName, keyframe.frameOnClip, { frameOnClip: keyframe.frameOnClip + movedFrame })
             } else if (this._selectedEasingHandleHolderData) {
                 // Process for easing handle dragged
 
                 const data = this._selectedEasingHandleHolderData
-                const transitionPath = this._selectedEasingHandleHolderData.container.querySelector('[data-transition-path]')!
+                const transitionPath = this._selectedEasingHandleHolderData.container.querySelector('[data-transition-path]')! as HTMLElement
 
                 const keyframes = entity.keyframes[propName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
                 const keyframeIdx = keyframes.findIndex(kf => kf.id === this._selectedEasingHandleHolderData!.keyframeId)!
                 if (keyframeIdx === -1) break process
 
-                const {beginX, beginY, endX, endY} = _.mapValues<string, number>(transitionPath.dataset, val => parseFloat(val))
+                const {beginX, beginY, endX, endY} = _.mapValues(transitionPath.dataset, val => parseFloat(val!))
                 const rect = {width: endX - beginX, height: endY - beginY}
                 const position = {x: data.element.cx.baseVal.value, y: data.element.cy.baseVal.value}
 
                 if (data.type === 'ease-in') {
-                    // ProjectModActions.createOrModifyKeyframeForClip(parentClip.id!, propName, keyframes[keyframeIdx + 1].frameOnClip, {
-                    //     easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
-                    // })
+                    this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+                        clipId: parentClip.id!,
+                        propName,
+                        frameOnClip: keyframes[keyframeIdx + 1].frameOnClip,
+                        patch: { easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height] }
+                    })
                     const keyframe = keyframes[keyframeIdx + 1]
                     onModified(parentClip.id, propName, keyframe.frameOnClip, {
                         easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 } else if (data.type === 'ease-out') {
-                    // ProjectModActions.createOrModifyKeyframeForClip(parentClip.id!, propName, keyframes[keyframeIdx].frameOnClip, {
-                    //     easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
-                    // })
+                    this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+                        clipId: parentClip.id!,
+                        propName,
+                        frameOnClip: keyframes[keyframeIdx].frameOnClip,
+                        patch: { easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height] }
+                    })
                     const keyframe = keyframes[keyframeIdx]
                     onModified(parentClip.id, propName, keyframe.frameOnClip, {
                         easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
@@ -185,7 +195,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     private mouseDownOnEasingHandle = (e: React.MouseEvent<SVGCircleElement>) =>
     {
-        const {dataset} = e.currentTarget
+        const {dataset} = e.currentTarget as any
         this._selectedEasingHandleHolderData = {
             type: dataset.isEaseIn ? 'ease-in' : 'ease-out',
             keyframeId: dataset.keyframeId,
@@ -197,7 +207,7 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
     private mouseDownOnKeyframe = (e: React.MouseEvent<SVGGElement>) =>
     {
-        this._selectedKeyframeId = e.currentTarget.dataset.keyframeId
+        this._selectedKeyframeId = (e.currentTarget as any).dataset.keyframeId
         this._keyframeDragged = false
         this._initialKeyframePosition = {x: e.screenX, y: e.screenY}
     }
@@ -207,7 +217,9 @@ export default class KeyframeGraph extends React.Component<Props, State> {
         const {parentClip} = this.props
         if (!parentClip) return
 
-        AppActions.seekPreviewFrame(parentClip.placedFrame + (currentTarget.dataset.frame | 0))
+        this.props.context.executeOperation(AppActions.seekPreviewFrame, {
+            frame: parentClip.placedFrame + parseInt(currentTarget.dataset!.frame!, 10)
+        })
     }
 
     private renderKeyframes()
@@ -537,4 +549,4 @@ export default class KeyframeGraph extends React.Component<Props, State> {
 
         return []
     }
-}
+})

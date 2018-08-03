@@ -37,6 +37,12 @@
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.6.tgz#dbe8a666156d556ed018e15a4c65f08937c3f628"
 
+"@types/duplexer3@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@types/duplexer3/-/duplexer3-0.1.0.tgz#6f244ff4883f83b5dd34d66ab4502571ef72d7a2"
+  dependencies:
+    "@types/node" "*"
+
 "@types/electron@1.6.10":
   version "1.6.10"
   resolved "https://registry.yarnpkg.com/@types/electron/-/electron-1.6.10.tgz#7e87888ed3888767cca68e92772c2c8ea46bc873"
@@ -69,13 +75,7 @@
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.1.tgz#1fe48e6e5e2a969cafecf0f24485ae23c72abd30"
 
-"@types/lodash.times@4.3.4":
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/@types/lodash.times/-/lodash.times-4.3.4.tgz#cfa5f73b32d36d1b2c1b1443da77944caccea6e9"
-  dependencies:
-    "@types/lodash" "*"
-
-"@types/lodash@*", "@types/lodash@4.14.115":
+"@types/lodash@4.14.115":
   version "4.14.115"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.115.tgz#54d171b2ce12c058742443b5f6754760f701b8f9"
 
@@ -5071,10 +5071,6 @@ lodash.sortby@^4.7.0:
 lodash.startswith@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/lodash.startswith/-/lodash.startswith-4.2.1.tgz#c598c4adce188a27e53145731cdc6c0e7177600c"
-
-lodash.times@4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/lodash.times/-/lodash.times-4.3.2.tgz#3e1f2565c431754d54ab57f2ed1741939285ca1d"
 
 lodash.uniq@^4.3.0:
   version "4.5.0"

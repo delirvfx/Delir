@@ -1,13 +1,13 @@
 import * as React from 'react'
 import Portal from '../Portal'
-import {default as ModalWindow, ModalWindowProps } from './ModalWindow'
+import {default as ModalWindow, Props } from './ModalWindow'
 
 export default class Modal {
     private portal: Portal | null
     private modal: ModalWindow | null
-    private modalOption: ModalWindowProps
+    private modalOption: Props
 
-    constructor(modalOption: ModalWindowProps = {})
+    constructor(modalOption: Props = {})
     {
         this.portal = new Portal()
         this.modalOption = modalOption

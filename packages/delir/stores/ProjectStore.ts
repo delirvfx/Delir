@@ -239,7 +239,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     private handleRemoveEffectFromClip = listen(ProjectModActions.removeEffectFromClipAction, (payload) => {
         const { project } = this.state
         const { holderClipId, targetEffectId } = payload
-        ProjectHelper.deleteEffectFromClip(project, holderClipId, targetEffectId)
+        ProjectHelper.deleteEffectFromClip(project!, holderClipId, targetEffectId)
         this.updateLastModified()
     })
 

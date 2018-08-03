@@ -57,7 +57,7 @@ export default class Effect
         Object.seal(this)
     }
 
-    public toPreBSON(): EffectOptionScheme
+    public toPreBSON(): EffectScheme
     {
         return {
             id: this.id,
@@ -65,11 +65,11 @@ export default class Effect
             keyframes: _.mapValues(this.keyframes, (keyframeSeq, propName) => {
                 return keyframeSeq.map(keyframe => keyframe.toPreBSON())
             }),
-            expressions: _.mapValues(this.expressions, expr => expr.toJSON())
+            expressions: _.cloneDeep(this.expressions)
         }
     }
 
-    public toJSON(): EffectOptionScheme
+    public toJSON(): EffectScheme
     {
         return {
             id: this.id,
@@ -77,7 +77,7 @@ export default class Effect
             keyframes: _.mapValues(this.keyframes, (keyframeSeq, propName) => {
                 return keyframeSeq.map(keyframe => keyframe.toJSON())
             }),
-            expressions: _.mapValues(this.expressions, expr => expr.toJSON())
+            expressions: _.cloneDeep(this.expressions)
         }
     }
 }

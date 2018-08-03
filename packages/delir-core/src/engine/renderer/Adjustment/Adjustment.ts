@@ -1,4 +1,3 @@
-import * as clamp from 'lodash/clamp'
 import Type from '../../../plugin-support/type-descriptor'
 import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'

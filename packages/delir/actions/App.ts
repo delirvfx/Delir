@@ -108,7 +108,7 @@ export const updateProcessingState = operation((context, arg: { stateText: strin
     })
 })
 
-export const seekPreviewFrame = operation((context, { frame = null }: { frame?: number }) => {
+export const seekPreviewFrame = operation((context, { frame = undefined }: { frame?: number }) => {
     const state = context.getStore(EditorStateStore).getState()
 
     const {activeComp} = state

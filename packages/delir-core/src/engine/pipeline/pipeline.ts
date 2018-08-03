@@ -1,9 +1,8 @@
 import EffectPluginBase from '../../plugin-support/PostEffectBase'
-import { ParameterValueTypes, TypeDescriptor } from '../../plugin-support/type-descriptor'
+import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
 import Clip from '../../project/clip'
 import Effect from '../../project/effect'
 import Project from '../../project/project'
-import Expression from '../../values/expression'
 import { IRenderer } from '../renderer/renderer-base'
 import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
 
@@ -12,8 +11,6 @@ import PluginRegistry from '../../plugin-support/plugin-registry'
 import AssetProxy from '@ragg/delir-core/src/engine/pipeline/AssetProxy'
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
-import * as TypeScript from 'typescript'
-import * as vm from 'vm'
 import { RenderingAbortedException, RenderingFailedException } from '../../exceptions/'
 import { arraysToAudioBuffer, mergeInto as mergeAudioBufferInto } from '../../helper/Audio'
 import defaults from '../../helper/defaults'
@@ -31,7 +28,7 @@ import EffectRenderTask from './Task/EffectRenderTask'
 import WebGLContextPool from './WebGLContextPool'
 
 export interface ExpressionExecuters {
-    [propName: string]: (exposes: ExpressionContext.Exposes) => ParameterValueTypes
+    [propName: string]: (exposes: ExpressionContext.ContextSource) => ParameterValueTypes
 }
 
 interface LayerRenderTask {
@@ -65,7 +62,7 @@ export interface RealParameterValues {
 export const applyExpression = (
     req: RenderingRequest,
     beforeExpressionParams: RealParameterValues,
-    expressions: { [prop: string]: (exposes: ExpressionContext.Exposes) => RealParameterValueTypes },
+    expressions: { [prop: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes },
 ): { [prop: string]: ParameterValueTypes } => {
     return _.mapValues(beforeExpressionParams, (value, propName) => {
         if (expressions[propName!]) {

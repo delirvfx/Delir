@@ -70,9 +70,9 @@ export default withComponentContext(connectToStores([RendererStore], (context) =
                     ...this.state.dragStyle,
                 }}
                 draggable={true}
-                onClick={this.selectClip}
-                onDragStart={this.dragStart}
-                onDrag={this.drag}
+                onClick={this.handleClick}
+                onDragStart={this.handleDragStart}
+                onDrag={this.handleDrag}
                 onDragEnd={this.dragEnd}
             >
                 <ContextMenu>
@@ -100,12 +100,12 @@ export default withComponentContext(connectToStores([RendererStore], (context) =
         )
     }
 
-    private selectClip = e =>
+    private handleClick = (e: React.DragEvent<HTMLDivElement>) =>
     {
         this.props.context.executeOperation(AppActions.changeActiveClip, { clipId: this.props.clip.id! })
     }
 
-    private dragStart = e =>
+    private handleDragStart = (e: React.DragEvent<HTMLDivElement>) =>
     {
         this.setState({
             dragStartPosition: {
@@ -119,10 +119,10 @@ export default withComponentContext(connectToStores([RendererStore], (context) =
         })
     }
 
-    private drag = (e) =>
+    private handleDrag = (e: React.DragEvent<HTMLDivElement>) =>
     {
+        if (!this.state.dragStartPosition) return
         const movedX = e.clientX - this.state.dragStartPosition.clientX
-        const movedY = e.clientY - this.state.dragStartPosition.clientY
 
         this.setState({
             draggedPxX: movedX,
@@ -141,8 +141,6 @@ export default withComponentContext(connectToStores([RendererStore], (context) =
             dragStyle: {transform: 'translateX(0)'}
         })
     }
-
-    private makeAlias = clipId => { return }
 
     private addEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
     {

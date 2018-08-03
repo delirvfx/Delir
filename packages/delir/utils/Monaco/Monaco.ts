@@ -1,3 +1,4 @@
+// @ts-ignore `import 'monaco-editor'` can't resolve in webpack
 import {} from 'monaco-editor'
 import { dirname } from 'path'
 

@@ -95,6 +95,9 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         selectedAssetId: null,
     }
 
+    private compositionInputRefs: {[assetId: string]: LabelInput} = {}
+    private assetInputRefs: {[assetId: string]: LabelInput} = {}
+
     public render()
     {
         const {editor: {project}} = this.props
@@ -132,18 +135,30 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                 onDoubleClick={this.changeComposition}
                                 data-composition-id={comp.id}
                             >
-                                <ContextMenu>
+                                <ContextMenu elementType='td'>
                                     <MenuItem type='separator' />
-                                    <MenuItem label={t('compositions.contextMenu.rename')} onClick={() => this.refs[`comp_name_input#${comp.id}`].enableAndFocus()} />
-                                    <MenuItem label={t('compositions.contextMenu.remove')} data-comp-id={comp.id} onClick={this.removeComposition} />
-                                    <MenuItem label={t('compositions.contextMenu.preference')} data-comp-id={comp.id} onClick={this.openCompositionSetting} />
+                                    <MenuItem
+                                        label={t('compositions.contextMenu.rename')}
+                                        onClick={this.handleClickRenameComposition}
+                                        data-composition-id={comp.id}
+                                    />
+                                    <MenuItem
+                                        label={t('compositions.contextMenu.remove')}
+                                        data-comp-id={comp.id}
+                                        onClick={this.removeComposition}
+                                    />
+                                    <MenuItem
+                                        label={t('compositions.contextMenu.preference')}
+                                        onClick={this.openCompositionSetting}
+                                        data-composition-id={comp.id}
+                                    />
                                     <MenuItem type='separator' />
                                 </ContextMenu>
 
                                 <td className={s.IconField}><i className='fa fa-film'></i></td>
                                 <td>
                                     <LabelInput
-                                        ref={`comp_name_input#${comp.id}`}
+                                        ref={this.setCompositionNameInputRef(comp.id)}
                                         defaultValue={comp.name}
                                         placeholder={t('compositions.namePlaceHolder')}
                                         onChange={this.modifyCompName.bind(this, comp.id)}
@@ -178,7 +193,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                 onDragEnd={this.onAssetDragEnd}
                                 data-asset-id={asset.id}
                             >
-                                <ContextMenu elementType='tr'>
+                                <ContextMenu elementType='td'>
                                     <MenuItem type='separator' />
                                     {/*<MenuItem label='Reload' onClick={() => {}} />*/}
                                     <MenuItem label={t('assets.contextMenu.remove')} data-asset-id={asset.id} onClick={this.removeAsset}/>
@@ -188,10 +203,14 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                 <td className={s.IconField}>{fileIconFromExtension(asset.fileType)}</td>
                                 <td>
                                     <ContextMenu>
-                                        <MenuItem label={t('assets.contextMenu.rename')} onClick={() => { this.refs[`asset_name_input#${asset.id}`].enableAndFocus()}} />
+                                        <MenuItem
+                                            label={t('assets.contextMenu.rename')}
+                                            onClick={this.handleClickRenameAsset}
+                                            data-asset-id={asset.id}
+                                        />
                                     </ContextMenu>
                                     <LabelInput
-                                        ref={`asset_name_input#${asset.id}`}
+                                        ref={this.setAssetNameInputRef(asset.id)}
                                         defaultValue={asset.name}
                                         placeholder='Unnamed Asset'
                                         doubleClickToEdit
@@ -206,6 +225,14 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         )
     }
 
+    private setAssetNameInputRef = (assetId: string) => (element: LabelInput) => {
+        this.assetInputRefs[assetId] = element
+    }
+
+    private setCompositionNameInputRef = (compositionId: string) => (element: LabelInput) => {
+        this.compositionInputRefs[compositionId] = element
+    }
+
     private handleClickComposition = ({ currentTarget }: React.MouseEvent<HTMLTableRowElement>) => {
         this.setState({ selectedCompositionId:  currentTarget.dataset.compositionId! })
     }
@@ -214,7 +241,15 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         this.setState({ selectedAssetId: currentTarget.dataset.assetId! })
     }
 
-    private addAsset = (e: React.DragEvent<HTMLDivElement>) =>
+    private handleClickRenameComposition = ({ dataset }: MenuItemOption<{compositionId: string}>) => {
+        this.compositionInputRefs[dataset.compositionId].enableAndFocus()
+    }
+
+    private handleClickRenameAsset = ({ dataset }: MenuItemOption<{assetId: string}>) => {
+        this.assetInputRefs[dataset.assetId].enableAndFocus()
+    }
+
+    private addAsset = (e: React.DragEvent<HTMLTableElement>) =>
     {
         _.each(e.dataTransfer.files, (file, idx) => {
             if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
@@ -236,7 +271,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
     private changeComposition = ({currentTarget}: React.MouseEvent<HTMLTableRowElement> ) =>
     {
         this.props.context.executeOperation(AppActions.changeActiveComposition, {
-            compositionId: currentTarget.dataset.compositionId,
+            compositionId: currentTarget.dataset.compositionId!,
         })
     }
 
@@ -266,16 +301,16 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         target.value = ''
     }
 
-    private openCompositionSetting = async ({ dataset }: MenuItemOption<{compId: string}>) =>
+    private openCompositionSetting = async ({ dataset }: MenuItemOption<{compositionId: string}>) =>
     {
         if (!this.props.editor.project) return
-        const { compId } = dataset
+        const { compositionId } = dataset
 
-        const comp = ProjectHelper.findCompositionById(this.props.editor.project, compId)!
+        const comp = ProjectHelper.findCompositionById(this.props.editor.project, compositionId)!
         const req = await CompositionSettingModal.show({composition: comp})
 
         if (!req) return
-        this.props.context.executeOperation(ProjectModActions.modifyComposition, { compositionId: compId, props: castToCompositionProps(req as any) })
+        this.props.context.executeOperation(ProjectModActions.modifyComposition, { compositionId: compositionId, props: castToCompositionProps(req as any) })
     }
 
     private openNewCompositionWindow =  async () =>
@@ -286,7 +321,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         this.props.context.executeOperation(ProjectModActions.createComposition, { ...castToCompositionProps(req as any) })
     }
 
-    private onAssetsDragStart = ({target}: {target: HTMLElement}) =>
+    private onAssetsDragStart = ({currentTarget}: React.DragEvent<HTMLTableRowElement>) =>
     {
         const {editor: {project}} = this.props
         if (!project) return
@@ -294,7 +329,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         this.props.context.executeOperation(AppActions.setDragEntity, {
             entity: {
                 type: 'asset',
-                asset: ProjectHelper.findAssetById(project, target.dataset.assetId!)!,
+                asset: ProjectHelper.findAssetById(project, currentTarget.dataset.assetId!)!,
             }
         })
     }

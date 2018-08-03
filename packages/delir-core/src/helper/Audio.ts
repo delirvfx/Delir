@@ -1,8 +1,8 @@
 import * as _ from 'lodash'
 
-export const resampling = async (sourceSamplingRate: number, destSamplingRate: number, inputs: Float32Array[], length?: number): Promise<Float32Array[]> => {
-    const chs = Array.isArray(inputs) ? inputs.length : inputs.numberOfChannels
-    length = length == null ? (Array.isArray(inputs) ? inputs[0].length : inputs.length) : length
+export const resampling = async (sourceSamplingRate: number, destSamplingRate: number, inputs: Float32Array[]): Promise<Float32Array[]> => {
+    const chs = inputs.length
+    const {length} = inputs[0]
 
     const context = new OfflineAudioContext(chs, length, destSamplingRate)
     const inputBuffer = context.createBuffer(chs, length, sourceSamplingRate)
