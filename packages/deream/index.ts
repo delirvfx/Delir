@@ -2,7 +2,6 @@ import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 import audioBufferToWave from 'audiobuffer-to-wav'
 import { spawn } from 'child_process'
 import canvasToBuffer from 'electron-canvas-to-buffer'
-import times from 'lodash.times'
 import * as fs from 'mz/fs'
 import * as path from 'path'
 
@@ -25,7 +24,8 @@ interface ExportOptions {
 export default async (
     options: ExportOptions
 ): Promise<void> => {
-    const {project, rootCompId, temporaryDir, exportPath, pluginRegistry, onProgress, ffmpegBin} = options
+    const {project, rootCompId, temporaryDir, exportPath, pluginRegistry, ffmpegBin} = options
+    const onProgress = options.onProgress || (() => {})
 
     //
     // export via deream
@@ -44,7 +44,7 @@ export default async (
     const tmpAudioFilePath = path.join(temporaryDir, 'delir-working.wav')
 
     let audioDataOffset = 0
-    const pcmAudioData = times(comp.audioChannels, () => new Float32Array(new ArrayBuffer(4 /* bytes */ * comp.samplingRate * Math.ceil(durationFrames / comp.framerate))))
+    const pcmAudioData = Array.from(Array(comp.audioChannels)).map(() => new Float32Array(new ArrayBuffer(4 /* bytes */ * comp.samplingRate * Math.ceil(durationFrames / comp.framerate))))
 
     const exporter = Exporter.video({
         args: {
@@ -91,7 +91,7 @@ export default async (
 
             //     await new Promise(resolve => exporter.write(buffer, resolve))
             // })
-            exporter.write(canvasToBuffer(canvas))
+            exporter.write(canvasToBuffer(canvas, 'image/png'))
         },
         onAudioBuffered: buffers => {
             for (let ch = 0, l = comp.audioChannels; ch < l; ch++) {
@@ -132,7 +132,7 @@ export default async (
 
     onProgress({state: 'Concat and encoding...'})
     await new Promise((resolve, reject) => {
-        const ffmpeg = spawn(ffmpegBin, [
+        const ffmpeg = spawn(ffmpegBin || 'ffmpeg', [
             '-y',
             // '-f',
             // 'utvideo',

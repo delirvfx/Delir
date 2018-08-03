@@ -81,18 +81,12 @@ export default class EditorStateStore extends Store<EditorState> {
     private handleRemoveLayer = listen(ProjectModActions.removeLayerAction, ({ targetLayerId }) => {
         const { activeClip } = this.state
         if (!activeClip) return
+        if (!this.state.project) return
 
         const clipContainedLayer = ProjectHelper.findParentLayerByClipId(this.state.project, activeClip.id)
 
         // Reset selected clip if removed layer contains selected clip
-        if (!clipContainedLayer) {
-            this.updateWith(d => d.activeClip = null)
-        }
-
-        const contains = !!clipContainedLayer.clips.find(clip => clip.id === activeClip.id)
-        if (contains) {
-            this.updateWith(d => d.activeClip = null)
-        }
+        clipContainedLayer && this.updateWith(d => d.activeClip = null)
     })
 
     // @ts-ignore

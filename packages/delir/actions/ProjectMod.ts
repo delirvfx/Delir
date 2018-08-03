@@ -101,7 +101,8 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
     const {project} = context.getStore(ProjectStore).getState()
     if (!project) return
 
-    const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => entry.handlableFileTypes.includes(asset.fileType))
+    const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers()
+        .filter((entry) => entry.handlableFileTypes.includes(asset.fileType))
 
     // TODO: Support selection
     if (processablePlugins.length === 0) {
@@ -245,7 +246,7 @@ export const addEffectIntoClip = operation((context, { clipId, processorId }: {
 }) => {
     const effect = new Delir.Project.Effect()
     effect.processor = processorId
-    context.dispatch(ProjectModActions.addEffectIntoClipPayloadAction, { clipId, effect })
+    context.dispatch(ProjectModActions.addEffectIntoClipAction, { clipId, effect })
 })
 
 export const removeAsset = operation((context, { assetId }: { assetId: string }) => {

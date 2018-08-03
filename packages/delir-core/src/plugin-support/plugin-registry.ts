@@ -1,11 +1,9 @@
 import * as _ from 'lodash'
 import * as semver from 'semver'
 
-import checkPropTypes from '../helper/checkPropTypes'
-import PluginBase from './plugin-base'
 import EffectPluginBase from './PostEffectBase'
 import { AnyParameterTypeDescriptor } from './type-descriptor'
-import { DelirPluginPackageJson, PluginEntry, PluginSummary, PluginTypes } from './types'
+import { PluginEntry, PluginSummary } from './types'
 
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
@@ -13,36 +11,21 @@ import UnknownPluginReferenceException from '../exceptions/unknown-plugin-refere
 
 import * as DelirCorePackageJson from '../../package.json'
 
-// export const validatePluginPackageJSON = (packageJson: any)=> {
-//     return checkPropTypes<any>({
-//         name: PropTypes.string.isRequired,
-//         version: (props, propName) => { if (!semver.valid(props[propName])) return new Error('Invalid version specified.') },
-//         main: PropTypes.string,
-//         engines: PropTypes.shape({
-//             'delir-core': (props: any, propName: string) => { if (!semver.validRange(props[propName])) return new Error('Invalid engines.delir version specified.') },
-//         }).isRequired,
-//         delir: PropTypes.shape({
-//             name: PropTypes.string.isRequired,
-//             type: PropTypes.oneOf(['post-effect']).isRequired,
-//             // acceptFileTypes: (props: any, propName: string, section: string) => {
-//             //     if (!_.values(props[propName]).every((v: string) => typeof v === 'string')) return new Error(`Invalid file type handler definition in \`${section}\`.`)
-//             //     if (!_.keys(props[propName]).every((v: string) => v.toLowerCase() === v)) return new Error(`File type extension must be lowercase in \`${section}\`.`)
-//             // },
-//         }).isRequired
-//     }, packageJson, `package.json of ${packageJson.name}`)
-// }
-
 export const validatePluginPackageJSON = () => true
 
 export default class PluginRegistry {
-    private _plugins: {[type: string]: {[packageName: string]: Readonly<PluginEntry>}} = {'post-effect': {}}
+    private _plugins: {
+        'post-effect': {[packageName: string]: Readonly<PluginEntry>}
+    } = {
+        'post-effect': {}
+    }
 
     public addEntries(entries: PluginEntry[])
     {
         for (const entry of entries) {
-            if (this._plugins[entry.id] != null) {
-                throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
-            }
+            // if (this._plugins[entry.id] != null) {
+            //     throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
+            // }
 
             // const result = validatePluginPackageJSON(entry.packageJson)
 
@@ -88,7 +71,7 @@ export default class PluginRegistry {
         }
 
         if (entry.class.prototype instanceof EffectPluginBase) {
-            return (entry.class as typeof EffectPluginBase).provideParameters().properties
+            return (entry.class as any as typeof EffectPluginBase).provideParameters().properties
         }
 
         throw new PluginAssertionFailedException(`plugin ${id} can't provide parameters`)
@@ -101,11 +84,11 @@ export default class PluginRegistry {
      */
     public getPlugin(id: string): Readonly<PluginEntry>
     {
-        if (this._plugins[id] == null) {
+        if (this._plugins['post-effect'][id] == null) {
             throw new UnknownPluginReferenceException(`plugin ${id} doesn't loaded`)
         }
 
-        return this._plugins[id]
+        return this._plugins['post-effect'][id]
     }
 
     /**

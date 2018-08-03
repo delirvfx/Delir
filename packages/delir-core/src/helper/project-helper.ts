@@ -291,7 +291,7 @@ export function deleteEffectFromClip(
         ? targetEffectId
         : findEffectFromClipById(clip, targetEffectId)
 
-    _.remove(clip.effects, effect)
+    _.remove(clip.effects, effect!)
 }
 
 export function deleteKeyframe(

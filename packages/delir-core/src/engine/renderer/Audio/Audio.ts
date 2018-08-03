@@ -11,7 +11,7 @@ import Asset from '../../../project/asset'
 
 import 'aac'
 import 'alac/src/decoder'
-import AV from 'av/node'
+import * as AV from 'av/node'
 import 'flac'
 import * as fs from 'fs'
 import 'mp3'
@@ -78,14 +78,12 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
             return
         }
 
-        let format: AVFormat
-        const buffers = await new Promise<Float32Array[]>((resolve, reject) => {
+        const {buffers, format} = await new Promise<{buffers: Float32Array[], format: AVFormat}>((resolve, reject) => {
             const fileBuffer = fs.readFileSync(params.source.path)
             const asset = AV.Asset.fromBuffer(fileBuffer)
 
             asset.on('error', (e: string) => reject(new Error(e)))
-            asset.decodeToBuffer(async decoded => {
-                format = asset.format
+            asset.decodeToBuffer(async (decoded: Float32Array) => {
                 const numOfChannels: number = asset.format.channelsPerFrame
                 const length = (decoded.length / numOfChannels)
                 let buffers: Float32Array[] = []
@@ -102,7 +100,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
                 buffers = await resampling(format.sampleRate, req.samplingRate, buffers)
 
-                resolve(buffers)
+                resolve({buffers, format: asset.format})
             })
         })
 

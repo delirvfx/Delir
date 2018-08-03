@@ -48,15 +48,15 @@ export default class ProgressPromise<T, PT = any>
             this._abortCallbacks!.push(callback)
         }
 
-        const notifier = (progress: () => void) => {
+        const notifier = (message: PT) => {
             if (this._isCompleted) return
-            this._progressListeners.forEach(listener => listener(progress))
+            this._progressListeners.forEach(listener => listener(message))
         }
 
         this._promise.promise.then(() => this._isCompleted = true)
 
         try {
-            const returnValue = resolver(this._promise.resolve, this._promise.reject, onAbort, notifier)
+            resolver(this._promise.resolve, this._promise.reject, onAbort, notifier)
         } catch (e) {
             this._promise.reject(e)
         }

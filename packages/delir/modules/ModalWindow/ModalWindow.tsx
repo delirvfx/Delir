@@ -10,7 +10,7 @@ import Portal from '../Portal'
 
 import * as s from './ModalWindow.styl'
 
-export interface ModalWindowProps {
+export interface Props {
     show?: boolean
     url?: string
     width?: number
@@ -21,16 +21,16 @@ export interface ModalWindowProps {
     onResponse?: (param: {[name: string]: string | number}) => any
 }
 
-interface ModalWindowState {
+interface State {
     show: boolean
     onTransitionEnd?: () => void
 }
 
-export const show = <T extends JSX.Element = any>(component: T, props: ModalWindowProps = {show: true}): Portal => {
+export const show = <T extends JSX.Element = any>(component: T, props: Props = {show: true}): Portal => {
     return Portal.mount(<ModalWindow {...props}>{component}</ModalWindow>)
 }
 
-export default class ModalWindow extends React.Component<ModalWindowProps, ModalWindowState>
+export default class ModalWindow extends React.Component<Props, State>
 {
     public static defaultProps = {
         show: false,
@@ -40,12 +40,12 @@ export default class ModalWindow extends React.Component<ModalWindowProps, Modal
 
     private window: Electron.BrowserWindow
 
-    constructor(props: ModalWindowProps, context: any)
+    constructor(props: Props)
     {
-        super(props, context)
+        super(props)
 
         this.state = {
-            show: this.props.show
+            show: this.props.show || false
         }
     }
 
@@ -55,7 +55,7 @@ export default class ModalWindow extends React.Component<ModalWindowProps, Modal
 
         return (
             <div className={classnames(s.root, {[s['--show']]: this.state.show})} onTransitionEnd={this.transitionEnd}>
-                {children ? children : <webview className={s.webview} src={url} autosize='on' style={{width, height}} />}
+                {children ? children : <webview className={s.webview} src={url} autosize style={{width, height}} />}
             </div>
         )
     }

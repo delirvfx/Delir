@@ -6,16 +6,16 @@ import Portal from '../../modules/Portal'
 
 import * as s from './dropdown.styl'
 
-interface DropdownProps {
+interface Props {
     shownInitial?: boolean
     className?: string
 }
 
-interface DropdownState {
+interface State {
     show: boolean
 }
 
-export default class Dropdown extends PureComponent<DropdownProps, DropdownState> {
+export default class Dropdown extends PureComponent<Props, State> {
     public static defaultProps = {
         shownInitial: false,
     }
@@ -24,8 +24,8 @@ export default class Dropdown extends PureComponent<DropdownProps, DropdownState
         inspector: HTMLDivElement
     }
 
-    public state = {
-        show: this.props.shownInitial
+    public state: State = {
+        show: this.props.shownInitial || false
     }
 
     private _portal: Portal = new Portal()

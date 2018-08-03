@@ -9,7 +9,7 @@ import * as RendererFactory from '../../renderer'
 import { IRenderer } from '../../renderer/renderer-base'
 import DependencyResolver from '../DependencyResolver'
 import { compileTypeScript } from '../ExpressionCompiler'
-import { Exposes } from '../ExpressionContext'
+import { ContextSource } from '../ExpressionContext'
 import * as ExpressionContext from '../ExpressionContext'
 import ExpressionVM from '../ExpressionVM'
 import { RealParameterValues, RealParameterValueTypes } from '../pipeline'
@@ -51,8 +51,8 @@ export default class ClipRenderTask {
 
         const rendererExpressions = _(clip.expressions).mapValues((expr: Expression) => {
             const code = compileTypeScript(expr.code)
-            return (exposes: ExpressionContext.Exposes) => {
-                return ExpressionVM.execute(code, ExpressionContext.makeContext(exposes), {filename: `${clip.id}.expression.ts`})
+            return (exposes: ExpressionContext.ContextSource) => {
+                return ExpressionVM.execute(code, ExpressionContext.buildContext(exposes), {filename: `${clip.id}.expression.ts`})
             }
         }).pickBy(value => value !== null).value()
 
@@ -76,7 +76,7 @@ export default class ClipRenderTask {
     public clipPlacedFrame: number
     public clipDurationFrames: number
     public keyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } }
-    public expressions: { [paramName: string]: (context: Exposes) => any }
+    public expressions: { [paramName: string]: (context: ContextSource) => any }
     public effectRenderTask: EffectRenderTask[]
     private initialKeyframeValues: RealParameterValues
 

@@ -64,7 +64,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         activeComp && this.props.context.executeOperation(AppActions.renderDestinate, { compositionId: activeComp.id! })
     }
 
-    private titleBarDoubleClicked = e =>
+    private titleBarDoubleClicked = () =>
     {
         const browserWindow = remote.getCurrentWindow()
         browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()

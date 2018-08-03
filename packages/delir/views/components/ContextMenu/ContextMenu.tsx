@@ -50,6 +50,7 @@ interface MenuItemComponentProps {
     onClick?: (props: MenuItemOption) => any
     checked?: boolean
     enabled?: boolean
+    // data-
 }
 
 export class MenuItem extends React.Component<MenuItemComponentProps, {}>
@@ -66,8 +67,8 @@ interface ContextMenuProps {
 
 export class ContextMenu extends React.Component<ContextMenuProps>
 {
-    public static defaultProps = {
-        element: 'div'
+    public static defaultProps: Partial<ContextMenuProps> = {
+        elementType: 'div'
     }
 
     private root = React.createRef<any>()

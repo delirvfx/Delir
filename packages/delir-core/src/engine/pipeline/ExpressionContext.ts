@@ -1,50 +1,35 @@
 import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
-import { Clip } from '../../project'
+import { ExpressionContext } from './ExpressionVM'
 import RenderingRequest from './render-request'
 
-export interface Exposes {
+export interface ContextSource {
     req: RenderingRequest
     clipProperties: {[propName: string]: ParameterValueTypes}
     currentValue: any
 }
 
-export const makeContext = (exposes: Exposes) => {
-    const clipPropertyProxy = new Proxy(exposes.clipProperties, {
+export const buildContext = (contextSource: ContextSource): ExpressionContext => {
+    const clipPropertyProxy = new Proxy(contextSource.clipProperties, {
         set: () => { throw new Error('Illegal property setting in expression') }
     })
 
-    const PROP_PROXIES = {
-        time                : {enumerable: true, get: () => exposes.req.time },
-        frame               : {enumerable: true, get: () => exposes.req.frame },
-        timeOnComposition   : {enumerable: true, get: () => exposes.req.timeOnComposition },
-        frameOnComposition  : {enumerable: true, get: () => exposes.req.frameOnComposition },
-        width               : {enumerable: true, get: () => exposes.req.width },
-        height              : {enumerable: true, get: () => exposes.req.height },
-        audioBuffer         : {enumerable: true, get: () => exposes.req.destAudioBuffer },
-        duration            : {enumerable: true, get: () => exposes.req.durationFrames / exposes.req.framerate },
-        durationFrames      : {enumerable: true, get: () => exposes.req.durationFrames },
-        clipProp            : {enumerable: true, get: () => clipPropertyProxy },
-        currentValue        : {enumerable: true, get: () => exposes.currentValue },
+    return {
+        time                : contextSource.req.time,
+        frame               : contextSource.req.frame,
+        timeOnComposition   : contextSource.req.timeOnComposition,
+        frameOnComposition  : contextSource.req.frameOnComposition,
+        width               : contextSource.req.width,
+        height              : contextSource.req.height,
+        audioBuffer         : contextSource.req.destAudioBuffer,
+        duration            : contextSource.req.durationFrames / contextSource.req.framerate,
+        durationFrames      : contextSource.req.durationFrames,
+        clipProp            : clipPropertyProxy,
+        currentValue        : contextSource.currentValue,
     }
-
-    const expressionContext = {}
-    Object.defineProperties(expressionContext, PROP_PROXIES)
-
-    const context = {}
-    Object.defineProperties(context, PROP_PROXIES)
-    Object.defineProperties(context, {
-        console : {get: () => console},
-        ctx     : {get: () => expressionContext},
-    })
-
-    return context
 }
 
 export const expressionContextTypeDefinition = `
-interface Clip {}
-
 declare const ctx: {
-    time: number
     time: number
     frame: number
     timeOnComposition: number

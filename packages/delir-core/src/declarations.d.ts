@@ -1,10 +1,10 @@
 declare module 'bezier-easing' {
     const _: any
-    export default _
+    export = _
 }
 
 declare module 'electron-canvas-to-buffer' {
-    const _: (canvas: HTMLCanvasElement, mimeType: string) => Buffer
+    const _: (canvas: HTMLCanvasElement, mimeType?: string, quality?: number) => Buffer
     export default _
 }
 
@@ -38,6 +38,11 @@ declare module 'node-timecodes' {
     export function fromSeconds(seconds: number, option?: TimeCodeOptions): string
 }
 
+declare module 'av/node' {
+    const _: any
+    export = _
+}
+
 declare module 'av' {
     export class Asset extends NodeJS.EventEmitter {
         public static fromBuffer(buffer: Buffer): Asset
@@ -54,6 +59,11 @@ declare module 'font-manager' {
 
     export {getAvailableFontsSync}
 }
+
+// declare module 'fs-extra' {
+//     const _: any
+//     export default _
+// }
 
 declare namespace NodeJS {
     export interface Global {

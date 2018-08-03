@@ -54,8 +54,8 @@ export default class EffectRenderTask {
 
         const effectExpressions = _(effect.expressions).mapValues((expr: Expression) => {
             const code = compileTypeScript(expr.code)
-            return (exposes: ExpressionContext.Exposes) => {
-                return ExpressionVM.execute(code, ExpressionContext.makeContext(exposes), { filename: `${clip.id}.effect.expression.ts` })
+            return (exposes: ExpressionContext.ContextSource) => {
+                return ExpressionVM.execute(code, ExpressionContext.buildContext(exposes), { filename: `${clip.id}.effect.expression.ts` })
             }
         }).pickBy(value => value !== null).value()
 
@@ -75,7 +75,7 @@ export default class EffectRenderTask {
     public effectRenderer: EffectPluginBase
     public effectorProps: TypeDescriptor
     public keyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } }
-    public expressions: { [paramName: string]: (exposes: ExpressionContext.Exposes) => RealParameterValueTypes }
+    public expressions: { [paramName: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes }
     private initialKeyframeValues: RealParameterValues
 
     public async initialize(req: RenderRequest) {

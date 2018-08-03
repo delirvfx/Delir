@@ -75,7 +75,8 @@ export default class Clip
         durationFrames: number | null,
         keyframeInterpolationMethod: string,
     } = {
-        renderer: null,
+        // FIXME: Ensure that you can guarantee that it is not null
+        renderer: null as any,
         placedFrame: null,
         durationFrames: null,
         keyframeInterpolationMethod: 'linear',

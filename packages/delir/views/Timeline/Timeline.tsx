@@ -60,7 +60,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
 
     public refs: {
         scaleList: DropDown
-        keyframeView: KeyframeEditor
+        keyframeView: InstanceType<typeof KeyframeEditor>
         timelineLayers: HTMLUListElement
         timelineLabels: HTMLDivElement
     }
@@ -122,7 +122,11 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                     </div>
                                 </div>
 
-                                <div ref='timelineLabels' className='timeline-labels' onScroll={this._scrollSync}>
+                                <div
+                                    ref='timelineLabels'
+                                    className='timeline-labels'
+                                    onScroll={this._scrollSync}
+                                >
                                     <ContextMenu>
                                         <MenuItem type='separator' />
                                         <MenuItem label={t('contextMenu.addLayer')} onClick={this.onLayerCreate} enabled={!!activeComp} />
@@ -196,14 +200,14 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         const {timelineLayers, keyframeView} = this.refs
 
         const timelineHeight = timelineLayers.getBoundingClientRect().height
-        const keyFrameViewHeight = ReactDOM.findDOMNode(keyframeView).getBoundingClientRect().height
+        const keyFrameViewHeight = (ReactDOM.findDOMNode(keyframeView!) as Element).getBoundingClientRect().height
 
         this.setState({
             cursorHeight: timelineHeight + keyFrameViewHeight + 1
         })
     }
 
-    private _scrollSync = (e: React.WheelEvent<HTMLElement>) =>
+    private _scrollSync = (e: React.UIEvent<HTMLElement>) =>
     {
         this.setState({
             timelineScrollLeft: e.currentTarget.scrollLeft,

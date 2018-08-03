@@ -63,7 +63,7 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
                     <MenuItem type='separator' />
                     <MenuItem label={t('contextMenu.createClip')}>
                         {_.map(Delir.Engine.Renderers.RENDERERS, (renderer, idx) =>
-                            <MenuItem keys={idx} label={t(['renderers', renderer.rendererId])} data-renderer-id={renderer.rendererId} onClick={this.addNewClip} />
+                            <MenuItem key={idx} label={t(['renderers', renderer.rendererId])} data-renderer-id={renderer.rendererId} onClick={this.addNewClip} />
                         )}
                     </MenuItem>
                     <MenuItem type='separator' />
@@ -92,7 +92,7 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
                                 width={width}
                                 left={left}
                                 active={clip === activeClip}
-                                onChangePlace={this._changeClipPlace.bind(this, clip)}
+                                onChangePlace={this.handleChangeClipPlace.bind(this, clip)}
                                 onChangeDuration={this.changeClipDuration.bind(null, clip)}
                             />
                         )
@@ -165,7 +165,7 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
         this.setState({dragovered: true})
     }
 
-    private _changeClipPlace = (clip, movedX) =>
+    private handleChangeClipPlace = (clip: Delir.Project.Clip, movedX: number) =>
     {
         console.log(movedX)
     }

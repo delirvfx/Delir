@@ -6,8 +6,6 @@ import Project from './project'
 
 import { CompositionConfigScheme, CompositionScheme } from './scheme/composition'
 
-import toJSON from '../helper/toJSON'
-
 export default class Composition
 {
 
@@ -99,7 +97,7 @@ export default class Composition
     {
         return {
             id: this.id,
-            config: toJSON(this.config),
+            config: _.cloneDeep(this.config) as any,
             layers: this.layers.map(layer => layer.toPreBSON()),
         }
     }
@@ -108,7 +106,7 @@ export default class Composition
     {
         return {
             id: this.id,
-            config: toJSON(this.config),
+            config: _.cloneDeep(this.config) as any,
             layers: this.layers.map(layer => layer.toJSON()),
         }
     }

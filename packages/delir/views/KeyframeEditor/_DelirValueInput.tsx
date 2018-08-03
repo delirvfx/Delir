@@ -2,8 +2,6 @@ import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 import { ChromePicker } from 'react-color'
 
-import AppActions from '../../actions/App'
-
 import DragNumberInput from '../components/drag-number-input'
 import Dropdown from '../components/dropdown'
 
@@ -210,14 +208,16 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
 
             case 'COLOR_RGB': {
                 const {colorPicker} = this.ref
-                const rgb = colorPicker.current!.state.rgb
+                // FIXME: Use onChange handler argument
+                const rgb = (colorPicker.current!.state as any).rgb
                 this.props.onChange(descriptor, new Delir.Values.ColorRGB(rgb.r, rgb.g, rgb.b))
                 break
             }
 
             case 'COLOR_RGBA': {
                 const {colorPicker} = this.ref
-                const rgba = colorPicker.current!.state.rgb
+                // FIXME: Use onChange handler argument
+                const rgba = (colorPicker.current!.state as any).rgb
                 this.props.onChange(descriptor, new Delir.Values.ColorRGBA(rgba.r, rgba.g, rgba.b, rgba.a))
                 break
             }
@@ -230,7 +230,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
 
             case 'ASSET': {
                 const {assetSelect} = this.ref
-                const newAsset = Array.from(this.props.assets!).find(asset => asset.id! === assetSelect.value) || null
+                const newAsset = Array.from(this.props.assets!).find(asset => asset.id! === assetSelect.current!.value) || null
                 this.props.onChange(descriptor, newAsset)
                 break
             }
@@ -283,7 +283,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
         e.stopPropagation()
     }
 
-    private closeColorPicker = (e: React.KeyboardEvent<HTMLDivElement>) =>
+    private closeColorPicker = (e: React.MouseEvent<HTMLButtonElement>) =>
     {
         const {colorPickerDropdown} = this.ref
         colorPickerDropdown.current!.hide()

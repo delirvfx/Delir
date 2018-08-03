@@ -165,7 +165,13 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                 </span>
                                 <span className={s.propItemName}>{desc.label}</span>
                                 <div className={s.propItemInput}>
-                                    <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.valueChanged} />
+                                    <DelirValueInput
+                                        key={desc.propName}
+                                        assets={project ? project.assets : null}
+                                        descriptor={desc}
+                                        value={value!}
+                                        onChange={this.valueChanged}
+                                    />
                                 </div>
                             </div>
                         )
@@ -173,7 +179,12 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                     {this.renderEffectProperties()}
                 </Pane>
                 <Pane>
-                    <div ref='svgParent' className={s.keyframeContainer} tabIndex={-1} onKeyDown={this.onKeydownOnKeyframeGraph} onWheel={this._scaleTimeline}>
+                    <div
+                        ref='svgParent'
+                        className={s.keyframeContainer}
+                        tabIndex={-1}
+                        onWheel={this._scaleTimeline}
+                    >
                         {editorOpened && (
                             <ExpressionEditor
                                 entityId={`${activeEntityObject!.id}-${activePropName}`}
@@ -425,7 +436,13 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                             </span>
                             <span className={s.propItemName}>{desc.label}</span>
                             <div className={s.propItemInput}>
-                                <DelirValueInput key={desc.propName} assets={project ? project.assets : null} descriptor={desc} value={value} onChange={this.effectValueChanged.bind(null, effect.id)} />
+                                <DelirValueInput
+                                    key={desc.propName}
+                                    assets={project ? project.assets : null}
+                                    descriptor={desc}
+                                    value={value!}
+                                    onChange={this.effectValueChanged.bind(null, effect.id)}
+                                />
                             </div>
                         </div>
                     ))

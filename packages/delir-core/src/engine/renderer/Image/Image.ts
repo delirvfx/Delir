@@ -65,7 +65,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
             })
     }
 
-    private _image: HTMLImageElement
+    private _image: HTMLImageElement | null = null
 
     public async beforeRender(req: PreRenderingRequest<ImageRendererParams>)
     {
@@ -80,8 +80,8 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
         this._image.src = `file://${parameters.source.path}`
 
         await new Promise((resolve, reject) => {
-            this._image.addEventListener('load', () => resolve(), {once: true} as any)
-            this._image.addEventListener('error', () => reject(new Error(`ImageLayer: Image not found (URL: ${this._image.src})`)), {once: true}  as any)
+            this._image!.addEventListener('load', () => resolve(), {once: true} as any)
+            this._image!.addEventListener('error', () => reject(new Error(`ImageLayer: Image not found (URL: ${this._image!.src})`)), {once: true}  as any)
         })
     }
 
