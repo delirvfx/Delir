@@ -19,7 +19,7 @@ export default {
         durationFrames: number,
         scale: number,
     }) {
-        return (durationFrames / framerate) * pxPerSec * (scale || 1)
+        return (durationFrames / framerate) * pxPerSec * scale
     },
 
     /**
@@ -36,7 +36,7 @@ export default {
         pixel: number,
         scale: number,
     }) {
-        return Math.round((pixel / (scale || 1)) * (pxPerSec / framerate))
+        return Math.round((pixel / scale) * (pxPerSec / framerate))
     },
 
     secondsToPx({
@@ -50,7 +50,7 @@ export default {
         seconds: number,
         scale: number,
     }) {
-        return seconds * (pxPerSec / framerate) * (scale || 1)
+        return seconds * (pxPerSec / framerate) * scale
     },
 
     pxToSeconds({
@@ -64,7 +64,7 @@ export default {
         pixel: number,
         scale: number,
     }) {
-        return pixel * (framerate / pxPerSec) * (scale || 1)
+        return pixel * (framerate / pxPerSec) * scale
     },
 
     buildMeasures({
