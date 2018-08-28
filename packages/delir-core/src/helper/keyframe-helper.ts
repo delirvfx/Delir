@@ -202,10 +202,6 @@ export function calcKeyframe(
             ? (frame - (clipPlacedFrame + activeKeyFrame.active.frameOnClip)) / ((clipPlacedFrame + activeKeyFrame.next.frameOnClip) - (clipPlacedFrame + activeKeyFrame.active.frameOnClip))
             : 1
 
-        if (!activeKeyFrame.next || !activeKeyFrame.active) {
-            debugger
-        }
-
         table[frame] = transformer(bezier(progressRate), frame, activeKeyFrame)
 
         if (propDesc.animatable === false) {

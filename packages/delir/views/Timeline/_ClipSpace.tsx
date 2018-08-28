@@ -8,6 +8,7 @@ import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
 
 import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
+import RendererStore from '../../stores/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
@@ -23,7 +24,8 @@ interface OwnProps {
 }
 
 interface ConnectedProps {
-    editor: EditorState,
+    editor: EditorState
+    postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
 }
 
 type Props = OwnProps & ConnectedProps & ContextProp
@@ -35,8 +37,9 @@ interface State {
 /**
  * ClipSpace
  */
-export default withComponentContext(connectToStores([EditorStateStore], context => ({
+export default withComponentContext(connectToStores([EditorStateStore, RendererStore], context => ({
     editor: context.getStore(EditorStateStore).getState(),
+    postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins(),
 }))(class ClipSpace extends React.Component<Props, State> {
     public state: State = {
         dragovered: false,
@@ -44,20 +47,20 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
 
     public render()
     {
-        const {layer, activeClip, framerate, pxPerSec, scale} = this.props
+        const {layer, activeClip, framerate, pxPerSec, scale, postEffectPlugins} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
         const clips = Array.from<Delir.Project.Clip>(layer.clips)
+        const convertOption = { pxPerSec, framerate, scale }
 
         return (
             <li
+                key={layer.id}
                 className={classnames('timeline-lane', {
                     dragover: this.state.dragovered,
                     '--expand': clips.findIndex(clip => !!(activeClip && clip.id === activeClip.id)) !== -1,
                 })}
-                data-lane-id={layer.id}
-                onDragOver={this._onDragOver}
-                onDragLeave={this._onDragLeave}
-                onDrop={this._onDrop}
+                onDrop={this.handleOnDrop}
+                onMouseUp={this.handleMouseUp}
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
@@ -71,18 +74,13 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
 
                 <div className='timeline-lane-clips'>
                     {clips.map(clip => {
-                        const opt = {
-                            pxPerSec: pxPerSec,
-                            framerate: framerate,
-                            scale: scale,
-                        }
                         const width = TimePixelConversion.framesToPixel({
                             durationFrames: clip.durationFrames | 0,
-                            ...opt,
+                            ...convertOption,
                         })
                         const left = TimePixelConversion.framesToPixel({
                             durationFrames: clip.placedFrame | 0,
-                            ...opt,
+                            ...convertOption,
                         })
 
                         return (
@@ -92,8 +90,9 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
                                 width={width}
                                 left={left}
                                 active={clip === activeClip}
-                                onChangePlace={this.handleChangeClipPlace.bind(this, clip)}
-                                onChangeDuration={this.changeClipDuration.bind(null, clip)}
+                                postEffectPlugins={postEffectPlugins}
+                                onChangePlace={this.handleChangeClipPlace}
+                                onChangeDuration={this.changeClipDuration}
                             />
                         )
                     })}
@@ -102,7 +101,7 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
         )
     }
 
-    private _onDrop = (e: React.DragEvent<HTMLLIElement>) =>
+    private handleOnDrop = (e: React.DragEvent<HTMLLIElement>) =>
     {
         const {dragEntity, activeComp} = this.props.editor
 
@@ -118,29 +117,6 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
                 asset,
                 placedFrame
             })
-        } else if (dragEntity.type === 'clip') {
-            // Drop Clip into ClipSpace
-            const {clip} = dragEntity
-            const isChildClip = !! _.find(this.props.layer.clips, {id: clip.id})
-
-            if (isChildClip) {
-                const placedFrame = TimePixelConversion.pixelToFrames({
-                    pxPerSec: this.props.pxPerSec,
-                    framerate: this.props.framerate,
-                    pixel: e.pageX - e.currentTarget.getBoundingClientRect().left - (e.nativeEvent as DragEvent).offsetX,
-                    scale: this.props.scale,
-                })
-
-                this.props.context.executeOperation(ProjectModActions.modifyClip, {
-                    clipId: dragEntity.clip.id!,
-                    props: { placedFrame }
-                })
-            } else {
-                this.props.context.executeOperation(ProjectModActions.moveClipToLayer, {
-                    clipId: clip.id!,
-                    destLayerId: this.props.layer.id!
-                })
-            }
         } else {
             return
         }
@@ -152,27 +128,41 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
         e.stopPropagation()
     }
 
-    private _onDragLeave = (e: React.DragEvent<HTMLLIElement>) =>
-    {
-        this.setState({dragovered: false})
-    }
+    private handleMouseUp = (e: React.MouseEvent<HTMLLIElement>) => {
+        const { editor: { dragEntity }, layer } = this.props
 
-    private _onDragOver = (e: React.DragEvent<HTMLLIElement>) =>
-    {
-        const {editor: {dragEntity}} = this.props
         if (!dragEntity || dragEntity.type !== 'clip') return
 
-        this.setState({dragovered: true})
+        console.log(layer, dragEntity)
+
+        const isChildClip = !!layer.clips.find(clip => clip.id! === dragEntity.clip.id!)
+
+        if (!isChildClip) {
+            this.props.context.executeOperation(ProjectModActions.moveClipToLayer, {
+                clipId: dragEntity.clip.id!,
+                destLayerId: this.props.layer.id!
+            })
+            this.props.context.executeOperation(AppActions.clearDragEntity, {})
+        }
     }
 
-    private handleChangeClipPlace = (clip: Delir.Project.Clip, movedX: number) =>
+    private handleChangeClipPlace = (clipId: string, newPlacedPx: number) =>
     {
-        console.log(movedX)
+        const newPlacedFrame = TimePixelConversion.pixelToFrames({
+            pxPerSec: this.props.pxPerSec,
+            framerate: this.props.framerate,
+            pixel: newPlacedPx,
+            scale: this.props.scale,
+        })
+
+        this.props.context.executeOperation(ProjectModActions.modifyClip, {
+            clipId,
+            props: { placedFrame: newPlacedFrame }
+        })
     }
 
-    private changeClipDuration = (clip: Delir.Project.Clip, newWidth: number) =>
+    private changeClipDuration = (clipId: string, newWidth: number) =>
     {
-
         const newDurationFrames = TimePixelConversion.pixelToFrames({
             pxPerSec: this.props.pxPerSec,
             framerate: this.props.framerate,
@@ -181,7 +171,7 @@ export default withComponentContext(connectToStores([EditorStateStore], context 
         })
 
         this.props.context.executeOperation(ProjectModActions.modifyClip, {
-            clipId: clip.id,
+            clipId: clipId,
             props: { durationFrames: newDurationFrames }
         })
     }

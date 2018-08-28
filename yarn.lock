@@ -1905,6 +1905,10 @@ classnames@2.2.5:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
 
+classnames@^2.2.5:
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
+
 clean-css@^4.1.11:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-4.1.11.tgz#2ecdf145aba38f54740f26cefd0ff3e03e125d6a"
@@ -6594,6 +6598,10 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+re-resizable@4.7.1:
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/re-resizable/-/re-resizable-4.7.1.tgz#3eca5bb94a6059d14311786cfd2d430bc9f7fba0"
+
 react-color@2.13.4:
   version "2.13.4"
   resolved "https://registry.yarnpkg.com/react-color/-/react-color-2.13.4.tgz#43f1cc5e0b63ac37c9bb192a3bdce65b151f6c35"
@@ -6613,9 +6621,24 @@ react-dom@16.4.1:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
+react-draggable@3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-3.0.5.tgz#c031e0ed4313531f9409d6cd84c8ebcec0ddfe2d"
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.6.0"
+
 react-is@^16.4.1:
   version "16.4.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.1.tgz#d624c4650d2c65dbd52c72622bbf389435d9776e"
+
+react-rnd@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/react-rnd/-/react-rnd-9.0.1.tgz#7460cac67956fea3718cc8d072d229a1f5bc534c"
+  dependencies:
+    re-resizable "4.7.1"
+    react-draggable "3.0.5"
+    tslib "1.9.3"
 
 react-sortable-hoc@0.6.7:
   version "0.6.7"
@@ -7879,7 +7902,7 @@ ts-node@7.0.0:
     source-map-support "^0.5.6"
     yn "^2.0.0"
 
-tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
+tslib@1.9.3, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
 
