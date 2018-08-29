@@ -157,6 +157,7 @@ const p5jsClip = assign(new Delir.Project.Clip(), {
             assign(new Delir.Project.Keyframe(), {
                 frameOnClip: 0,
                 value: `
+// Link: https://p5js.org/examples/simulate-snowflakes.html
 let snowflakes = []; // array to hold snowflake objects
 let img
 
