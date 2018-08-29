@@ -57,9 +57,9 @@
   version "2.0.32"
   resolved "https://registry.yarnpkg.com/@types/fbemitter/-/fbemitter-2.0.32.tgz#8ed204da0f54e9c8eaec31b1eec91e25132d082c"
 
-"@types/flux@3.1.7":
-  version "3.1.7"
-  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.7.tgz#753e93692fed75fe8da8c4b4107801cada16428a"
+"@types/flux@3.1.8":
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/@types/flux/-/flux-3.1.8.tgz#987fbf0220d98aa23276c9635a8ef1e505f7c4a4"
   dependencies:
     "@types/fbemitter" "*"
     "@types/react" "*"
@@ -75,9 +75,9 @@
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@types/keymirror/-/keymirror-0.1.1.tgz#1fe48e6e5e2a969cafecf0f24485ae23c72abd30"
 
-"@types/lodash@4.14.115":
-  version "4.14.115"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.115.tgz#54d171b2ce12c058742443b5f6754760f701b8f9"
+"@types/lodash@4.14.116":
+  version "4.14.116"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.116.tgz#5ccf215653e3e8c786a58390751033a9adca0eb9"
 
 "@types/mocha@5.2.5":
   version "5.2.5"
@@ -97,33 +97,46 @@
   version "8.10.22"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.22.tgz#c095d7c668908d48b95ae11fcc4a6d6b1c116a35"
 
+"@types/prop-types@*":
+  version "15.5.5"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.5.tgz#17038dd322c2325f5da650a94d5f9974943625e3"
+  dependencies:
+    "@types/react" "*"
+
 "@types/pug@^2.0.4":
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@types/pug/-/pug-2.0.4.tgz#8772fcd0418e3cd2cc171555d73007415051f4b2"
 
-"@types/react-color@2.13.5":
-  version "2.13.5"
-  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.13.5.tgz#38a5bcbb00c5de85d696a3f5adcd619256a57083"
+"@types/react-color@2.13.6":
+  version "2.13.6"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-2.13.6.tgz#8ba9c600fbc4c6c43037d3a5eeeff77c0db995d7"
   dependencies:
     "@types/react" "*"
 
-"@types/react-dom@16.0.6":
-  version "16.0.6"
-  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.0.6.tgz#f1a65a4e7be8ed5d123f8b3b9eacc913e35a1a3c"
+"@types/react-dom@16.0.7":
+  version "16.0.7"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.0.7.tgz#54d0f867a76b90597e8432030d297982f25c20ba"
   dependencies:
     "@types/node" "*"
     "@types/react" "*"
 
-"@types/react-sortable-hoc@0.6.3":
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/@types/react-sortable-hoc/-/react-sortable-hoc-0.6.3.tgz#b9d034ab2728691ef3270ede5f4b4fd1cead52bd"
+"@types/react-sortable-hoc@0.6.4":
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@types/react-sortable-hoc/-/react-sortable-hoc-0.6.4.tgz#aa3f8dc8565fdf0673d8ad80ca0730be3a379664"
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@16.4.7":
+"@types/react@*":
   version "16.4.7"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.4.7.tgz#f33f6d759a7e1833befa15224d68942d178a5a3f"
   dependencies:
+    csstype "^2.2.0"
+
+"@types/react@16.4.12":
+  version "16.4.12"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.4.12.tgz#c554005770b06c7cbcd6b0b19721e180deab7a02"
+  dependencies:
+    "@types/prop-types" "*"
     csstype "^2.2.0"
 
 "@types/semver@5.5.0":
