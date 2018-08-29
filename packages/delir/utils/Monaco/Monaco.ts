@@ -1,5 +1,5 @@
+import * as Delir from '@ragg/delir-core'
 import * as monaco from 'monaco-editor'
-import { dirname } from 'path'
 
 type AvailableLibrary =
     | 'lib.es5.d.ts'
@@ -58,6 +58,27 @@ export default class Monaco {
 
         this.activeLibrarySetDisposer = () => disposables.forEach(d => d.dispose())
     }
-    private static librarySet: {[setName: string]: (AvailableLibrary | LibraryEntry)[]} = Object.create(null)
+
+    private static librarySet: {[setName: string]: (AvailableLibrary | LibraryEntry)[]} = {
+        expressionEditor: [
+            'lib.es5.d.ts',
+            'lib.es2015.collection.d.ts',
+            'lib.es2015.core.d.ts',
+            'lib.es2015.generator.d.ts',
+            'lib.es2015.iterable.d.ts',
+            'lib.es2015.promise.d.ts',
+            'lib.es2015.proxy.d.ts',
+            'lib.es2015.reflect.d.ts',
+            'lib.es2015.symbol.d.ts',
+            'lib.es2015.symbol.wellknown.d.ts',
+            'lib.es2016.array.include.d.ts',
+            'console.d.ts',
+            {
+                name: 'ExpressionAPI.d.ts',
+                typedef: Delir.Engine.expressionContextTypeDefinition,
+            },
+        ]
+    }
+
     private static activeLibrarySetDisposer: () => void | null
 }

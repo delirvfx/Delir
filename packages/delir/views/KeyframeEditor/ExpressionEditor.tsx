@@ -8,11 +8,6 @@ import Button from '../components/Button'
 
 import * as s from './ExpressionEditor.styl'
 
-const expressionAPITypeDef = {
-    name: 'ExpressionAPI.d.ts',
-    typedef: Delir.Engine.expressionContextTypeDefinition,
-}
-
 interface Props {
     title: string | null
     entityId: string | null
@@ -32,28 +27,12 @@ namespace ExpressionEditor {
     }
 }
 
-class ExpressionEditor extends React.Component<Props> {
+export default class ExpressionEditor extends React.Component<Props> {
     private _editor: monaco.editor.IStandaloneCodeEditor
     private editorElement: HTMLDivElement
 
     public componentDidMount()
     {
-        MonacoUtil.registerLibrarySet('expression', [
-            'lib.es5.d.ts',
-            'lib.es2015.collection.d.ts',
-            'lib.es2015.core.d.ts',
-            'lib.es2015.generator.d.ts',
-            'lib.es2015.iterable.d.ts',
-            'lib.es2015.promise.d.ts',
-            'lib.es2015.proxy.d.ts',
-            'lib.es2015.reflect.d.ts',
-            'lib.es2015.symbol.d.ts',
-            'lib.es2015.symbol.wellknown.d.ts',
-            'lib.es2016.array.include.d.ts',
-            'console.d.ts',
-            expressionAPITypeDef,
-        ])
-
         this._editor = monaco.editor.create(this.editorElement, {
             language: 'javascript',
             codeLens: true,
@@ -104,7 +83,7 @@ class ExpressionEditor extends React.Component<Props> {
     }
 
     private onFocusEditor = () => {
-        MonacoUtil.activateLibrarySet('expression')
+        MonacoUtil.activateLibrarySet('expressionEditor')
     }
 
     private closeWithSave = () =>
@@ -117,5 +96,3 @@ class ExpressionEditor extends React.Component<Props> {
         this.props.onClose({saved: false, code: null})
     }
 }
-
-export default ExpressionEditor
