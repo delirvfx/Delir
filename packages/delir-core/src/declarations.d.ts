@@ -60,7 +60,7 @@ declare module 'font-manager' {
     export {getAvailableFontsSync}
 }
 
-declare module 'processing-js' {
+declare module 'p5' {
     const _: any
     export = _
 }

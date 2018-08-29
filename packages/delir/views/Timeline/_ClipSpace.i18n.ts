@@ -11,7 +11,7 @@ export default I18n({
             image: '🖼️ 画像',
             text: '📝 テキスト',
             adjustment: '✨ 調整クリップ',
-            processing: '🔡 Processing'
+            p5js: '🔡 p5.js スクリプト'
         }
     },
     en: {
@@ -24,7 +24,7 @@ export default I18n({
             image: '🖼️ Image',
             text: '📝 Text',
             adjustment: '✨ Adjustment clip',
-            processing: '🔡 Processing'
+            p5js: '🔡 p5.js script'
         }
     }
 })

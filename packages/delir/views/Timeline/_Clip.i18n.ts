@@ -12,7 +12,7 @@ export default I18n({
             image: 'image',
             text: 'text',
             adjustment: 'adjust',
-            processing: 'Processing',
+            p5js: 'p5.js',
         },
     },
     en: {
@@ -26,7 +26,7 @@ export default I18n({
             image: 'image',
             text: 'text',
             adjustment: 'adjust',
-            processing: 'Processing',
+            p5js: 'p5.js',
         },
     }
 })

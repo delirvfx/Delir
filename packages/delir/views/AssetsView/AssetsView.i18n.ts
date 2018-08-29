@@ -18,6 +18,7 @@ export default I18n({
             contextMenu: {
                 rename: '名前を変更',
                 remove: '削除',
+                copyAssetURI: 'アセットのURIをコピー',
             },
         },
     },
@@ -38,6 +39,7 @@ export default I18n({
             contextMenu: {
                 rename: 'Rename',
                 remove: 'Remove',
+                copyAssetURI: 'Copy asset URI',
             },
         },
     }

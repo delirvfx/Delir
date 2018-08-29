@@ -1,21 +1,18 @@
-import 'processing-js'
 import * as VM from 'vm'
+import P5Hooks from './P5Hooks'
 
 import Type from '../../../plugin-support/type-descriptor'
-import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'
 import RenderingRequest from '../../pipeline/render-request'
 import { IRenderer } from '../renderer-base'
-
-import Asset from '../../../project/asset'
 
 interface SketchRendererParams {
     sketch: string
 }
 
-export default class ProcessingRenderer implements IRenderer<SketchRendererParams>
+export default class P5jsRenderer implements IRenderer<SketchRendererParams>
 {
-    public static get rendererId(): string { return 'processing' }
+    public static get rendererId(): string { return 'p5js' }
 
     public static provideAssetAssignMap() {
         return {}
@@ -25,59 +22,75 @@ export default class ProcessingRenderer implements IRenderer<SketchRendererParam
     {
         return Type.code('sketch', {
             label: 'Sketch',
-            langType: 'processing',
+            langType: 'p5js',
             defaultValue: `
-                void setup() {
+                function setup() {
 
                 }
-                void draw() {
+
+                function draw() {
 
                 }
             `
         })
     }
 
-    private vmContext: any
+    private vmGlobal: any
     private vmScope: any
-    private processing: any
+    private p5ex: P5Hooks
     private canvas: HTMLCanvasElement
 
     public async beforeRender(req: PreRenderingRequest<SketchRendererParams>)
     {
-        const compiledSketch = Processing.compile(req.parameters.sketch)
+        this.p5ex = new P5Hooks(req.resolver)
 
         // Make VM environment
         this.vmScope = this.makeVmScopeVariables(req)
 
-        const vm = new VM.Script(compiledSketch.sourceCode, {})
-        this.vmContext = VM.createContext(
-            new Proxy({ console: global.console }, {
-                get: (target: any, propKey) => {
-                    if (target[propKey]) return target[propKey]
-                    else return this.vmScope[propKey]
+        this.vmGlobal = VM.createContext(new Proxy({
+            console: global.console,
+            p5: this.p5ex.p5
+        }, {
+            get: (target: any, propKey) => {
+                if (target[propKey]) {
+                    return target[propKey]
+                } else if (this.p5ex.p5[propKey]) {
+                    // Expose p5 drawing methods
+                    return typeof this.p5ex.p5[propKey] === 'function' ? this.p5ex.p5[propKey].bind(this.p5ex.p5) : this.p5ex.p5[propKey]
+                } else {
+                    // Dynamic exposing
+                    return this.vmScope[propKey]
                 }
-            })
-        )
+            }
+        }))
+
+        const vm = new VM.Script(req.parameters.sketch, {})
 
         // Make VM scope binded sketch object
-        const sketch = new Processing.Sketch(vm.runInContext(this.vmContext))
-        const originalSetup = sketch.setup
+        vm.runInContext(this.vmGlobal)
 
-        // Initialize canvas and Processing
-        this.canvas = document.createElement('canvas')
-        this.canvas.width = req.width
-        this.canvas.height = req.height
+        this.canvas = this.p5ex.p5.canvas
+        this.p5ex.p5.createCanvas(req.width, req.height)
 
-        this.processing = new Processing(this.canvas, sketch)
-        this.processing.size(req.width, req.height)
-        this.processing.background(0, 0)
-        this.processing.noLoop()
+        if (typeof this.vmGlobal.setup === 'function') {
+            this.vmGlobal.setup()
+        }
     }
 
     public async render(req: RenderingRequest<SketchRendererParams>)
     {
+        await new Promise(resolve => {
+            const intervalId = setInterval(() => {
+                if (this.p5ex.preloadCount === 0) {
+                    resolve()
+                    clearInterval(intervalId)
+                    return
+                }
+             })
+        })
+
         this.vmScope = this.makeVmScopeVariables(req)
-        this.processing.draw && this.processing.draw()
+        this.vmGlobal.draw && this.vmGlobal.draw()
         req.destCanvas.getContext('2d')!.drawImage(this.canvas, 0, 0)
     }
 
