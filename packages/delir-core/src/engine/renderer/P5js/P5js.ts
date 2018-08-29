@@ -22,7 +22,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
     {
         return Type.code('sketch', {
             label: 'Sketch',
-            langType: 'p5js',
+            langType: 'javascript',
             defaultValue: `
                 function setup() {
 
