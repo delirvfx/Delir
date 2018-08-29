@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
+const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const builder = require('electron-builder');
 const nib = require('nib');
 const notifier = require('node-notifier');
@@ -85,14 +86,14 @@ export function compileRendererJs(done) {
         mode: __DEV__ ? 'development' : 'production',
         target: "electron-renderer",
         watch: __DEV__,
-        context: paths.src.root,
+        context: paths.src.frontend,
         entry: {
-            'delir/main': ['./delir/main'],
+            'main': ['./main'],
         },
         output: {
             filename: "[name].js",
             sourceMapFilename: "map/[file].map",
-            path: paths.compiled.root,
+            path: paths.compiled.frontend,
         },
         devtool: __DEV__ ? "#source-map" : 'none',
         resolve: {
@@ -142,6 +143,14 @@ export function compileRendererJs(done) {
                         },
                     ],
                 },
+                {
+                    test: /\.css$/,
+                    include: /node_modules\/monaco-editor/,
+                    use: [
+                        'style-loader',
+                        'css-loader',
+                    ],
+                }
             ]
         },
         plugins: [
@@ -157,6 +166,7 @@ export function compileRendererJs(done) {
             }),
             // preserve require() for native modules
             new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
+            new MonacoEditorWebpackPlugin(),
             new ForkTsCheckerWebpackPlugin({
                 tsconfig: join(paths.src.frontend, 'tsconfig.json'),
                 workers: 3,

@@ -1,7 +1,8 @@
 import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 
-import Monaco from '../../utils/Monaco'
+import * as monaco from 'monaco-editor'
+import MonacoUtil from '../../utils/Monaco'
 
 import Button from '../components/Button'
 
@@ -37,7 +38,7 @@ class ExpressionEditor extends React.Component<Props> {
 
     public componentDidMount()
     {
-        Monaco.registerLibrarySet('expression', [
+        MonacoUtil.registerLibrarySet('expression', [
             'lib.es5.d.ts',
             'lib.es2015.collection.d.ts',
             'lib.es2015.core.d.ts',
@@ -64,7 +65,7 @@ class ExpressionEditor extends React.Component<Props> {
 
         this._editor.createContextKey('cond1', true)
         this._editor.createContextKey('cond2', true)
-        this._editor.onDidFocusEditor(this.onFocusEditor)
+        this._editor.onDidFocusEditorText(this.onFocusEditor)
         this._editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.closeWithSave, 'cond1')
         // this._editor.addCommand(monaco.KeyCode.Escape, this.closeWithoutSave, 'cond2')
     }
@@ -103,7 +104,7 @@ class ExpressionEditor extends React.Component<Props> {
     }
 
     private onFocusEditor = () => {
-        Monaco.activateLibrarySet('expression')
+        MonacoUtil.activateLibrarySet('expression')
     }
 
     private closeWithSave = () =>

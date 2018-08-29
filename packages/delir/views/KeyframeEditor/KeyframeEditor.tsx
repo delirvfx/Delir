@@ -393,7 +393,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         const rendererStore = this.props.context.getStore(RendererStore)
         const { activeClip, editor, project: { project } } = this.props
         const { activeEntity, activePropName } = this.state
-        const elements: React.ReactElement<any>[] = []
+        const elements: React.ReactNode[] = []
 
         if (!activeClip) return null
 
@@ -401,7 +401,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
             try {
                 const processorInfo = rendererStore.getPostEffectPlugins().find(entry => entry.id === effect.processor)!
                 const descriptors = rendererStore.getPostEffectParametersById(effect.processor)!
-                const propElements: React.ReactElement<any>[] = []
+                const propElements: React.ReactNode[] = []
 
                 descriptors.forEach(desc => {
                     const hasKeyframe = desc.animatable && (effect.keyframes[desc.paramName] || []).length !== 0

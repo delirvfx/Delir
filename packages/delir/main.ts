@@ -7,7 +7,6 @@ import * as ReactDOM from 'react-dom'
 import * as AppActions from './actions/App'
 import * as RendererOps from './actions/RendererOps'
 
-import Monaco from './utils/Monaco'
 import AppView from './views/AppView'
 
 import EditorStateStore from './stores/EditorStateStore'
@@ -26,9 +25,6 @@ import RendererStore from './stores/RendererStore'
 // })
 
 window.addEventListener('DOMContentLoaded', async () => {
-    // initialize app
-    await Monaco.setup()
-
     // Attach platform class to body element
     switch (os.type()) {
         case 'Windows_NT': document.body.classList.add('platform-win'); break

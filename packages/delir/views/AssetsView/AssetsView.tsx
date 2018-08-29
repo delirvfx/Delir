@@ -255,7 +255,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         this.assetInputRefs[dataset.assetId].enableAndFocus()
     }
 
-    private handleCopyAssetURI = ({ dataset }: MenuItemOption<{assetId: string}) => {
+    private handleCopyAssetURI = ({ dataset }: MenuItemOption<{assetId: string}>) => {
         clipboard.writeText(`delir:${dataset.assetId}`)
     }
 

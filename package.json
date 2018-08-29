@@ -53,6 +53,7 @@
     "jsdom-global": "3.0.2",
     "lint-staged": "7.2.0",
     "mocha": "5.2.0",
+    "monaco-editor-webpack-plugin": "1.5.1",
     "nib": "1.1.2",
     "node-notifier": "5.2.1",
     "raw-loader": "0.5.1",

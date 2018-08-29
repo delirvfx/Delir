@@ -1,5 +1,4 @@
-// @ts-ignore `import 'monaco-editor'` can't resolve in webpack
-import {} from 'monaco-editor'
+import * as monaco from 'monaco-editor'
 import { dirname } from 'path'
 
 type AvailableLibrary =
@@ -38,55 +37,6 @@ const typeDefinitionLibs = {
 }
 
 export default class Monaco {
-
-    public static setup(): Promise<void>
-    {
-        if ((window as any).monaco) return Promise.resolve()
-
-        return new Promise(resolve => {
-            const {global} = (window as any)
-
-            // Avoid to module resolving by webpack. (global.require.resolve)
-            // webpack resolves module as module number, it breaks dirname(string).
-            const baseDir = 'file://' + dirname(global.require.resolve('monaco-editor/min/vs/loader.js'))
-
-            // Stash node's `require`
-            const nodeRequire = global.require
-
-            // Stash `global.module` for monaco's fucking css loader
-            const _globalModule = global.module
-            global.module = void 0
-            global.process.browser = true
-
-            const loaderLoadedHandler = () => {
-                // Stash AMDLoader's require / restore node's require
-                const amdRequire = global.require
-                global.require = nodeRequire
-                global.define.amd = true
-
-                amdRequire.config({
-                    paths: {
-                        vs: baseDir,
-                    },
-                })
-
-                amdRequire(['vs/editor/editor.main'], () => {
-                    global.module = _globalModule
-                    delete global.process.browser
-
-                    resolve()
-                })
-            }
-
-            // Load monaco-editor
-            const script = document.createElement('script')
-            script.src = baseDir + '/loader.js'
-            script.async = false
-            script.onload = loaderLoadedHandler
-            document.head.appendChild(script)
-        })
-    }
-
     public static registerLibrarySet(name: string, libs: (AvailableLibrary | LibraryEntry)[])
     {
         this.librarySet[name] = libs
