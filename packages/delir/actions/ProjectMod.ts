@@ -123,11 +123,11 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
         durationFrames,
     })
 
-    const propName = Delir.Engine.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
+    const paramName = Delir.Engine.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
 
-    if (!propName) return
+    if (!paramName) return
 
-    ProjectHelper.addKeyframe(project!, newClip, propName, Object.assign(new Delir.Project.Keyframe(), {
+    ProjectHelper.addKeyframe(project!, newClip, paramName, Object.assign(new Delir.Project.Keyframe(), {
         frameOnClip: 0,
         value: { assetId: asset.id },
     }))
@@ -135,9 +135,9 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
     context.dispatch(ProjectModActions.addClipAction, { targetLayer, newClip })
 })
 
-export const createOrModifyKeyframeForClip = operation((context, { clipId, propName, frameOnClip, patch }: {
+export const createOrModifyKeyframeForClip = operation((context, { clipId, paramName, frameOnClip, patch }: {
     clipId: string,
-    propName: string,
+    paramName: string,
     frameOnClip: number,
     patch: Partial<Delir.Project.Keyframe>
 }) => {
@@ -149,7 +149,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, propN
     if (!clip) return
 
     const props = Delir.Engine.Renderers.getInfo(clip.renderer!).parameter.properties
-    const propDesc = props ? props.find(prop => prop.propName === propName) : null
+    const propDesc = props ? props.find(prop => prop.paramName === paramName) : null
     if (!propDesc) return
 
     frameOnClip = Math.round(frameOnClip)
@@ -158,7 +158,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, propN
         frameOnClip = 0
     }
 
-    const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, propName, frameOnClip)
+    const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, paramName, frameOnClip)
 
     if (keyframe) {
         context.dispatch(ProjectModActions.modifyKeyframeAction, {
@@ -174,16 +174,16 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, propN
 
         context.dispatch(ProjectModActions.addKeyframeAction, {
             targetClip: clip,
-            propName,
+            paramName,
             keyframe: newKeyframe
         })
     }
 })
 
-export const createOrModifyKeyframeForEffect = operation((context, { clipId, effectId, propName, frameOnClip, patch }: {
+export const createOrModifyKeyframeForEffect = operation((context, { clipId, effectId, paramName, frameOnClip, patch }: {
     clipId: string,
     effectId: string,
-    propName: string,
+    paramName: string,
     frameOnClip: number,
     patch: Partial<Delir.Project.Keyframe>
 }) => {
@@ -198,14 +198,14 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     if (!effect) return
 
     const props = rendererStore.getPostEffectParametersById(effect.processor)
-    const propDesc = props ? props.find(prop => prop.propName === propName) : null
+    const propDesc = props ? props.find(prop => prop.paramName === paramName) : null
     if (!propDesc) return
 
     if (propDesc.animatable === false) {
         frameOnClip = 0
     }
 
-    const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, propName, frameOnClip)
+    const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, paramName, frameOnClip)
 
     if (keyframe) {
         context.dispatch(ProjectModActions.modifyEffectKeyframeAction, {
@@ -221,7 +221,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
         context.dispatch(ProjectModActions.addEffectKeyframeAction, {
             targetClipId: clipId,
             targetEffectId: effectId,
-            propName: propName,
+            paramName,
             keyframe: newKeyframe,
         })
     }

@@ -23,7 +23,7 @@ export default class ClipRenderTask {
         req: RenderRequest,
     }): ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
-        const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
+        const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
 
         const rawRendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, rendererParams, clip.keyframes)
         const rendererInitParam: RealParameterValues = { ...(rawRendererInitParam as any) }
@@ -42,6 +42,7 @@ export default class ClipRenderTask {
 
         const rawRendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParams, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
         const rendererKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = { ...(rawRendererInitParam as any)　}
+        debugger
         rendererAssetParamNames.forEach(propName => {
             // resolve asset
             rendererKeyframeLUT[propName] = _.map(rawRendererKeyframeLUT[propName], value => {

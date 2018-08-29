@@ -94,8 +94,8 @@ export default class ProjectStore extends Store<ProjectStoreState>
     // @ts-ignore
     private handleAddKeyframe = listen(ProjectModActions.addKeyframeAction, (payload) => {
         const { project } = this.state
-        const { targetClip, propName, keyframe } = payload
-        ProjectHelper.addKeyframe(project!, targetClip, propName, keyframe)
+        const { targetClip, paramName, keyframe } = payload
+        ProjectHelper.addKeyframe(project!, targetClip, paramName, keyframe)
         this.updateLastModified()
     })
 
@@ -110,8 +110,8 @@ export default class ProjectStore extends Store<ProjectStoreState>
     // @ts-ignore
     private handleAddEffectKeyframe = listen(ProjectModActions.addEffectKeyframeAction, (payload) => {
         const { project } = this.state
-        const { targetClipId, targetEffectId, propName, keyframe } = payload
-        ProjectHelper.addEffectKeyframe(project!, targetClipId, targetEffectId, propName, keyframe)
+        const { targetClipId, targetEffectId, paramName, keyframe } = payload
+        ProjectHelper.addEffectKeyframe(project!, targetClipId, targetEffectId, paramName, keyframe)
         this.updateLastModified()
     })
 

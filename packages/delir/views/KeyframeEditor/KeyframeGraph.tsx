@@ -19,13 +19,13 @@ interface OwnProps {
     composition: Delir.Project.Composition
     parentClip: Delir.Project.Clip
     entity: Delir.Project.Clip | Delir.Project.Effect | null
-    propName: string,
+    paramName: string,
     descriptor: Delir.AnyParameterTypeDescriptor
     keyframes: Delir.Project.Keyframe[]
     pxPerSec: number
     zoomScale: number
     onKeyframeRemove: (parentClipId: string, keyframeId: string) => void
-    onModified: (parentClipId: string, propName: string, frameOnClip: number, patch: KeyframePatch) => void
+    onModified: (parentClipId: string, paramName: string, frameOnClip: number, patch: KeyframePatch) => void
 }
 
 type Props = OwnProps & ContextProp
@@ -106,10 +106,10 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         e.preventDefault()
         e.stopPropagation()
 
-        const { parentClip, entity, propName, keyframes, onModified } = this.props
+        const { parentClip, entity, paramName, keyframes, onModified } = this.props
 
         const {keyframeMovement} = this.state
-        if (!parentClip || !propName || !entity) return
+        if (!parentClip || !paramName || !entity) return
 
         process: {
             if (this._selectedKeyframeId) {
@@ -126,19 +126,19 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
                 this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
                     clipId: parentClip.id!,
-                    propName,
+                    paramName,
                     frameOnClip: keyframe.frameOnClip,
                     patch: { frameOnClip: keyframe.frameOnClip + movedFrame }
                 })
 
-                onModified(parentClip.id, propName, keyframe.frameOnClip, { frameOnClip: keyframe.frameOnClip + movedFrame })
+                onModified(parentClip.id, paramName, keyframe.frameOnClip, { frameOnClip: keyframe.frameOnClip + movedFrame })
             } else if (this._selectedEasingHandleHolderData) {
                 // Process for easing handle dragged
 
                 const data = this._selectedEasingHandleHolderData
                 const transitionPath = this._selectedEasingHandleHolderData.container.querySelector('[data-transition-path]')! as HTMLElement
 
-                const keyframes = entity.keyframes[propName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
+                const keyframes = entity.keyframes[paramName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
                 const keyframeIdx = keyframes.findIndex(kf => kf.id === this._selectedEasingHandleHolderData!.keyframeId)!
                 if (keyframeIdx === -1) break process
 
@@ -149,23 +149,23 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
                 if (data.type === 'ease-in') {
                     this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
                         clipId: parentClip.id!,
-                        propName,
+                        paramName,
                         frameOnClip: keyframes[keyframeIdx + 1].frameOnClip,
                         patch: { easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height] }
                     })
                     const keyframe = keyframes[keyframeIdx + 1]
-                    onModified(parentClip.id, propName, keyframe.frameOnClip, {
+                    onModified(parentClip.id, paramName, keyframe.frameOnClip, {
                         easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 } else if (data.type === 'ease-out') {
                     this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
                         clipId: parentClip.id!,
-                        propName,
+                        paramName,
                         frameOnClip: keyframes[keyframeIdx].frameOnClip,
                         patch: { easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height] }
                     })
                     const keyframe = keyframes[keyframeIdx]
-                    onModified(parentClip.id, propName, keyframe.frameOnClip, {
+                    onModified(parentClip.id, paramName, keyframe.frameOnClip, {
                         easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 }
