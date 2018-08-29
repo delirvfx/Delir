@@ -58,8 +58,11 @@ const layer3 = assign(new Delir.Project.Layer(), {
 const layer4 = assign(new Delir.Project.Layer(), {
     name: 'VERY CUTE 🐰-CHAN',
 })
+const layer5 = assign(new Delir.Project.Layer(), {
+    name: 'GENERATIVE',
+})
 
-; [layer4, layer3, layer2, layer1].forEach(lane => {
+; [layer5, layer4, layer3, layer2, layer1].forEach(lane => {
     ProjectHelper.addLayer(p, composition, lane)
 })
 
@@ -93,6 +96,9 @@ const textClip = assign(new Delir.Project.Clip(), {
         ],
         loop: [
             assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
+        ],
+        color: [
+            assign(new Delir.Project.Keyframe(), { value: new Delir.Values.ColorRGBA(0, 0, 0, 1), frameOnClip: 0 })
         ],
         // x: [
         //     assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
@@ -156,27 +162,66 @@ const videoClip = assign(new Delir.Project.Clip(), {
     }
 })
 
+const processingClip = assign(new Delir.Project.Clip(), {
+    renderer: 'processing',
+    placedFrame: 0,
+    durationFrames: 30 * 10,
+    keyframes: {
+        sketch: [
+            assign(new Delir.Project.Keyframe(), {
+                frameOnClip: 0,
+                value: `
+float x = 300;
+float y = 200;
+int r = 180;
+// PImage i;
+void setup() {
+    console.log(console);
+    console.log(delir.ctx.width);
+    // i = loadImage("test.jpg")
+}
+
+void draw(){
+    // fill(0, 10);
+    noStroke();
+    // rect(0, 0, 600, 400);
+    noFill();
+    x = x + random(-2, 2);
+    y = y + random(-2, 2);
+    stroke(random(255), random(255), 255);
+    ellipse(x, y, r, r);
+    stroke(random(255), random(255), 255);
+    ellipse(x - 100 + random(-2, 2), y - 100 + random(-2, 2), r + random(-2, 2), r + random(-2, 2));
+    // image(i, 0, 0)
+}
+`
+            })
+        ]
+    }
+})
+
 ProjectHelper.addClip(p, layer1, adjustmentClip)
 ProjectHelper.addClip(p, layer2, textClip)
 ProjectHelper.addClip(p, layer4, videoClip)
+ProjectHelper.addClip(p, layer5, processingClip)
 
 //
 // Effects
 //
-ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Project.Effect(), {
-    processor: '@ragg/delir-posteffect-chromakey',
-    // keyframes: {
-    //     color: [
-    //         assign(new Delir.Project.Keyframe(), {
-    //             frameOnClip: 40,
-    //             value: new Delir.Values.ColorRGBA(30, 170, 200, 1),
-    //         }),
-    //         assign(new Delir.Project.Keyframe(), {
-    //             frameOnClip: 200,
-    //             value: new Delir.Values.ColorRGBA(200, 170, 30, 1),
-    //         }),
-    //     ]
-    // }
-}))
+// ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Project.Effect(), {
+//     processor: '@ragg/delir-posteffect-chromakey',
+//     // keyframes: {
+//     //     color: [
+//     //         assign(new Delir.Project.Keyframe(), {
+//     //             frameOnClip: 40,
+//     //             value: new Delir.Values.ColorRGBA(30, 170, 200, 1),
+//     //         }),
+//     //         assign(new Delir.Project.Keyframe(), {
+//     //             frameOnClip: 200,
+//     //             value: new Delir.Values.ColorRGBA(200, 170, 30, 1),
+//     //         }),
+//     //     ]
+//     // }
+// }))
 
 export default p

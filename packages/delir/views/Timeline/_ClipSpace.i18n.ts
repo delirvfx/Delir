@@ -11,6 +11,7 @@ export default I18n({
             image: '🖼️ 画像',
             text: '📝 テキスト',
             adjustment: '✨ 調整クリップ',
+            processing: '🔡 Processing'
         }
     },
     en: {
@@ -23,6 +24,7 @@ export default I18n({
             image: '🖼️ Image',
             text: '📝 Text',
             adjustment: '✨ Adjustment clip',
+            processing: '🔡 Processing'
         }
     }
 })

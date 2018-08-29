@@ -19,7 +19,7 @@ export const RENDERERS: {[name: string]: IRendererStatic} = {
     image: ImageRenderer,
     text: TextRenderer,
     adjustment: AdjustmentRenderer,
-    processing: ProcessingRenderer
+    processing: ProcessingRenderer,
 }
 
 interface PluginInfo {

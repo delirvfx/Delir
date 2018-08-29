@@ -42,7 +42,6 @@ export default class ClipRenderTask {
 
         const rawRendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParams, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
         const rendererKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = { ...(rawRendererKeyframeLUT as any)　}
-        debugger
         rendererAssetParamNames.forEach(paramName => {
             // resolve asset
             rendererKeyframeLUT[paramName] = _.map(rawRendererKeyframeLUT[paramName], value => {
