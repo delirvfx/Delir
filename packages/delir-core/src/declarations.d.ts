@@ -60,6 +60,11 @@ declare module 'font-manager' {
     export {getAvailableFontsSync}
 }
 
+declare module 'processing-js' {
+    const _: any
+    export = _
+}
+
 // declare module 'fs-extra' {
 //     const _: any
 //     export default _
