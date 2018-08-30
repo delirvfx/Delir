@@ -1,5 +1,5 @@
 import ColorRGB from '../../Values/color-rgb'
-import ColorRGBA from '../../Values/color-rgba'
+import ColorRGBA from '../../Values/ColorRGBA'
 import Keyframe from '../keyframe'
 
 import assign from '../../__spec__/Utils/assign'

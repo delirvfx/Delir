@@ -2,7 +2,7 @@ import * as uuid from 'uuid'
 
 import AssetPointer from '../Values/AssetPointer'
 import ColorRGB from '../Values/color-rgb'
-import ColorRGBA from '../Values/color-rgba'
+import ColorRGBA from '../Values/ColorRGBA'
 import Expression from '../Values/Expression'
 
 export type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | Expression | AssetPointer | null
