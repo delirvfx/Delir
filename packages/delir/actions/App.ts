@@ -4,6 +4,7 @@ import { BSON } from 'bson'
 import { remote } from 'electron'
 import * as fs from 'fs-promise'
 import * as _ from 'lodash'
+import * as MsgPack from 'msgpack5'
 import * as path from 'path'
 
 import EditorStateStore from '../stores/EditorStateStore'
@@ -155,9 +156,8 @@ export const openProject = operation(async (context) => {
 
     if (!path.length) return
 
-    const projectBson = await fs.readFile(path[0])
-    const projectJson = (new BSON()).deserialize(projectBson)
-
+    const projectMpk = await fs.readFile(path[0])
+    const projectJson = MsgPack().decode(projectMpk).project
     const migratedProject = Delir.ProjectMigrator.migrate(projectJson)
 
     await context.executeOperation(setActiveProject, {
@@ -166,52 +166,16 @@ export const openProject = operation(async (context) => {
     })
 })
 
-export const overwriteProject = operation(async (context) => {
-    const state = context.getStore(EditorStateStore).getState()
-    const { project, projectPath } = state
-
-    if (!project) return
-
-    if (!projectPath) {
-        await context.executeOperation(saveProject, {})
-        return
-    }
-
-    const bson = new BSON()
-
-    await fs.writeFile(projectPath, bson.serialize(project.toPreBSON()))
-
-    await context.executeOperation(notify, {
-        message: 'Project saved',
-        title: '',
-        level: 'info',
-        timeout: 1000
-    })
-})
-
-export const saveProject = operation(async (context) => {
+export const saveProject = operation(async (context, { path, silent = false }: { path: string, silent: boolean }) => {
     const project = context.getStore(EditorStateStore).getState().project
 
     if (!project) return
 
-    const path = remote.dialog.showSaveDialog({
-        title: 'Save as ...',
-        buttonLabel: 'Save',
-        filters: [
-            {
-                name: 'Delir Project File',
-                extensions: ['delir']
-            }
-        ],
-    })
-
-    if (!path) return
-
-    const bson = new BSON()
-    await fs.writeFile(path, bson.serialize(project.toPreBSON()))
+    await fs.writeFile(path, MsgPack().encode({　project: project.toPreBSON() }))
 
     context.executeOperation(setActiveProject, { project, path }) // update path
-    await context.executeOperation(notify, {
+
+    !silent && await context.executeOperation(notify, {
         message: t('saved'),
         title: '',
         level: 'info',
@@ -240,8 +204,8 @@ export const autoSaveProject = operation(async (context) => {
     const autoSaveFileName = `${frag.name}.auto-saved${frag.ext}`
     const autoSavePath = path.join(frag.dir, autoSaveFileName)
 
-    const bson = new BSON()
-    await fs.writeFile(autoSavePath, bson.serialize(project.toPreBSON()))
+    await context.executeOperation(saveProject, { path: autoSavePath, silent: true })
+
     context.executeOperation(notify, {
         message: t('autoSaved', { fileName: autoSaveFileName }),
         title: '',
@@ -249,3 +213,5 @@ export const autoSaveProject = operation(async (context) => {
         timeout: 2000
     })
 })
+
+console.log(MsgPack().encode({ a: 'b' }))

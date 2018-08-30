@@ -81,12 +81,49 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 {
                     label: t('file.save'),
                     accelerator: 'CmdOrCtrl+S',
-                    click: () => context.executeOperation(AppActions.overwriteProject, {})
+                    click: () => {
+                        const state = context.getStore(EditorStateStore).getState()
+                        let path: string | null = state.projectPath
+
+                        if (!path) {
+                            path = remote.dialog.showSaveDialog({
+                                title: t('modals.saveAs.title'),
+                                buttonLabel: t('modals.saveAs.save'),
+                                filters: [
+                                    {
+                                        name: 'Delir Project File',
+                                        extensions: ['delir']
+                                    }
+                                ],
+                            })
+
+                            // cancelled
+                            if (!path) return
+                        }
+
+                        context.executeOperation(AppActions.saveProject, { path })
+                    }
                 },
                 {
                     label: t('file.saveAs'),
                     accelerator: 'CmdOrCtrl+Shift+S',
-                    click: () => context.executeOperation(AppActions.saveProject, {})
+                    click: () => {
+                        const path = remote.dialog.showSaveDialog({
+                            title: t('modals.saveAs.title'),
+                            buttonLabel: t('modals.saveAs.save'),
+                            filters: [
+                                {
+                                    name: 'Delir Project File',
+                                    extensions: ['delir']
+                                }
+                            ],
+                        })
+
+                        // cancelled
+                        if (!path) return
+
+                        context.executeOperation(AppActions.saveProject, { path })
+                    }
                 },
                 {type: 'separator'},
                 {
