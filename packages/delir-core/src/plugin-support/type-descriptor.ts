@@ -5,6 +5,7 @@ import defaults from '../helper/defaults'
 import {
     ColorRGB,
     ColorRGBA,
+    Expression,
     Point2D,
     Point3D,
     Size2D,
@@ -81,7 +82,7 @@ export interface AssetTypeDescripter extends ParameterTypeDescriptor<'ASSET'> {
 }
 export interface CodeTypeDescripter extends ParameterTypeDescriptor<'CODE'> {
     langType: string
-    defaultValue?: string
+    defaultValue?: Expression
 }
 // export interface ArrayOfTypeDescripter extends ParameterTypeDescriptor<'ARRAY'> {
 //     subType: TypeDescriptor
@@ -317,7 +318,7 @@ export class TypeDescriptor {
         return this
     }
 
-    public code(paramName: string, conf: { label: string, enabled?: boolean, langType: string, defaultValue?: string })
+    public code(paramName: string, conf: { label: string, enabled?: boolean, langType: string, defaultValue?: Expression })
     {
         const { defaultValue, label, enabled, langType } = defaults(conf, { enabled: true })
         this.properties.push({type: 'CODE', paramName, label, defaultValue, langType, enabled, animatable: false })
@@ -418,7 +419,7 @@ export default class Type
         return (new TypeDescriptor()).asset(paramName, option)
     }
 
-    public static code(paramName: string, option: { label: string, defaultValue?: string, enabled?: boolean, langType: string })
+    public static code(paramName: string, option: { label: string, defaultValue?: Expression, enabled?: boolean, langType: string })
     {
         return (new TypeDescriptor()).code(paramName, option)
     }

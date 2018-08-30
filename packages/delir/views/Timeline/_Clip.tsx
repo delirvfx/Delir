@@ -53,6 +53,7 @@ export default withComponentContext(class TimelaneClip extends React.Component<P
                     [s['Clip--text']]: clip.renderer === 'text',
                     [s['Clip--image']]: clip.renderer === 'image',
                     [s['Clip--adjustment']]: clip.renderer === 'adjustment',
+                    [s['Clip--p5js']]: clip.renderer === 'p5js',
                 })}
                 dragAxis='x'
                 default={{ x: this.props.left, y: 2, width: this.props.width, height: 'auto' }}

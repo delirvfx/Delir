@@ -109,10 +109,9 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         mouseWheel(this.refs.svgParent, this.handleScrolling)
     }
 
-    public componentWillReceiveProps(nextProps: Props)
-    {
-        if (!nextProps.activeClip) {
-            this.setState({activeParam: null, editorOpened: false})
+    public componentDidUpdate(prevProps: Props) {
+        if (this.props.activeClip && prevProps.activeClip && this.props.activeClip.id !== prevProps.activeClip.id) {
+            this.setState({activeParam: null, editorOpened: false, scriptParamEditorOpened: false})
         }
     }
 
@@ -224,7 +223,9 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                     activeClip.placedFrame,
                                     activeParamDescriptor,
                                     activeClip.keyframes[activeParam.paramName] || []
-                                ) : { code: '' }
+                                ) : new Delir.Values.Expression('javascript', '')
+
+                            console.log(value)
 
                             return (
                                 <ScriptParamEditor
@@ -506,7 +507,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                             <div
                                 key={activeClip!.id + desc.paramName}
                                 className={classnames(s.propItem, {
-                                    [s['propItem--active']]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParamName === desc.paramName,
+                                    [s['propItem--active']]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParam.paramName === desc.paramName,
                                 })}
                                 onClick={this.selectProperty}
                             >
