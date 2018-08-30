@@ -77,7 +77,6 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
                 if (this.p5ex.preloadCount === 0) {
                     resolve()
                     clearInterval(intervalId)
-                    return
                 }
              })
         })
