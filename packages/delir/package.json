@@ -5,8 +5,8 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "@ragg/fleur": "0.0.3",
-    "@ragg/fleur-react": "0.0.5",
+    "@ragg/fleur": "0.0.5",
+    "@ragg/fleur-react": "0.0.6",
     "@types/bson": "1.0.11",
     "@types/classnames": "2.2.6",
     "@types/electron": "1.6.10",
