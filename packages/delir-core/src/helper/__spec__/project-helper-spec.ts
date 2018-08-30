@@ -8,7 +8,7 @@ import Keyframe from '../../project/keyframe'
 import Layer from '../../project/layer'
 import Project from '../../project/project'
 
-import ColorRGB from '../../Values/color-rgb'
+import ColorRGB from '../../Values/ColorRGB'
 
 const propNotWritable = (obj, prop) => {
     return Object.getOwnPropertyDescriptor(obj, prop).writable === false

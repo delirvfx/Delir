@@ -6,7 +6,7 @@ import toJSON from '../helper/toJSON'
 // import Point3D from '../Values/point-3d'
 // import Size2D from '../Values/size-2d'
 // import Size3D from '../Values/size-3d'
-import ColorRGB from '../Values/color-rgb'
+import ColorRGB from '../Values/ColorRGB'
 import ColorRGBA from '../Values/ColorRGBA'
 import Expression from '../Values/Expression'
 

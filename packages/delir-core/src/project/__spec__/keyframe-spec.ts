@@ -1,4 +1,4 @@
-import ColorRGB from '../../Values/color-rgb'
+import ColorRGB from '../../Values/ColorRGB'
 import ColorRGBA from '../../Values/ColorRGBA'
 import Keyframe from '../keyframe'
 

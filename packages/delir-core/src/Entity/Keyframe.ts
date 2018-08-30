@@ -1,7 +1,7 @@
 import * as uuid from 'uuid'
 
 import AssetPointer from '../Values/AssetPointer'
-import ColorRGB from '../Values/color-rgb'
+import ColorRGB from '../Values/ColorRGB'
 import ColorRGBA from '../Values/ColorRGBA'
 import Expression from '../Values/Expression'
 

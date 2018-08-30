@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
-import ColorRGB from '../Values/color-rgb'
+import ColorRGB from '../Values/ColorRGB'
 import Layer from './layer'
 import Project from './project'
 
