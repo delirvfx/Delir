@@ -8,9 +8,9 @@ import { AssetPointerScheme } from '../../project/scheme/keyframe'
 import { Expression } from '../../values'
 import DependencyResolver from '../DependencyResolver'
 import {  RealParameterValues, RealParameterValueTypes } from '../Engine'
-import { compileTypeScript } from '../ExpressionCompiler'
-import * as ExpressionContext from '../ExpressionContext'
-import ExpressionVM from '../ExpressionVM'
+import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
+import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
+import ExpressionVM from '../ExpressionSupport/ExpressionVM'
 import RenderRequest from '../RenderRequest'
 
 export default class EffectRenderTask {

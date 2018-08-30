@@ -6,10 +6,9 @@ import { Clip } from '../../project'
 import { AssetPointerScheme } from '../../project/scheme/keyframe'
 import { Expression } from '../../values'
 import { RealParameterValues, RealParameterValueTypes } from '../Engine'
-import { compileTypeScript } from '../ExpressionCompiler'
-import * as ExpressionContext from '../ExpressionContext'
-import { ContextSource } from '../ExpressionContext'
-import ExpressionVM from '../ExpressionVM'
+import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
+import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
+import ExpressionVM from '../ExpressionSupport/ExpressionVM'
 import * as RendererFactory from '../renderer'
 import { IRenderer } from '../renderer/renderer-base'
 import RenderRequest from '../RenderRequest'
@@ -75,7 +74,7 @@ export default class ClipRenderTask {
     public clipPlacedFrame: number
     public clipDurationFrames: number
     public keyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } }
-    public expressions: { [paramName: string]: (context: ContextSource) => any }
+    public expressions: { [paramName: string]: (context: ExpressionContext.ContextSource) => any }
     public effectRenderTask: EffectRenderTask[]
     private initialKeyframeValues: RealParameterValues
 
