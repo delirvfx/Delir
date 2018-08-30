@@ -1,5 +1,6 @@
 import * as uuid from 'uuid'
 import ColorRGB from '../Values/ColorRGB'
+import Layer from './Layer'
 
 export default class Composition {
     public id: string
@@ -11,6 +12,7 @@ export default class Composition {
     public samplingRate: number
     public audioChannels: number
     public backgroundColor: ColorRGB
+    public layers: Layer[] = []
 
     constructor() {
         this.id = uuid.v4()
