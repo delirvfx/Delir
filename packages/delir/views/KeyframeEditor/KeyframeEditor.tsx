@@ -13,6 +13,7 @@ import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
 import ProjectStore, { ProjectStoreState } from '../../stores/ProjectStore'
 import RendererStore from '../../stores/RendererStore'
 
+import Button from '../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption, MenuItemProps } from '../components/ContextMenu'
 import Pane from '../components/pane'
 import Workspace from '../components/workspace'
@@ -184,13 +185,17 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                 </span>
                                 <span className={s.propItemName}>{desc.label}</span>
                                 <div className={s.propItemInput}>
-                                    <DelirValueInput
-                                        key={desc.paramName}
-                                        assets={project ? project.assets : null}
-                                        descriptor={desc}
-                                        value={value!}
-                                        onChange={this.valueChanged}
-                                    />
+                                    {desc.type === 'CODE' ? (
+                                        <Button type='normal' onClick={this.handleOpenScriptParamEditor}>{t('editScriptParam')}</Button>
+                                    ) : (
+                                        <DelirValueInput
+                                            key={desc.paramName}
+                                            assets={project ? project.assets : null}
+                                            descriptor={desc}
+                                            value={value!}
+                                            onChange={this.valueChanged}
+                                        />
+                                    )}
                                 </div>
                             </div>
                         )
@@ -212,20 +217,21 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                 onClose={this.onCloseEditor}
                             />
                         )}
-                        {activeParam && activeParamDescriptor && activeParamDescriptor.type === 'CODE' && (() => {
+                        {scriptParamEditorOpened && activeParam && activeParamDescriptor && activeParamDescriptor.type === 'CODE' && (() => {
                             const value = activeClip
                                 ? Delir.KeyframeHelper.calcKeyframeValueAt(
                                     editor.currentPreviewFrame,
                                     activeClip.placedFrame,
                                     activeParamDescriptor,
                                     activeClip.keyframes[activeParam.paramName] || []
-                                ) : ''
+                                ) : { code: '' }
 
                             return (
                                 <ScriptParamEditor
+                                    title={activeParamDescriptor.label}
                                     target={activeParam}
-                                    code={value as string}
-                                    onClose={this.onCloseScriptParamEditor}
+                                    code={(value as Delir.Values.Expression).code}
+                                    onClose={this.handleCloseScriptParamEditor}
                                 />
                             )
                         })()}
@@ -258,7 +264,11 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         )
     }
 
-    private onCloseScriptParamEditor = (result: EditorResult) => {
+    private handleOpenScriptParamEditor = () => {
+        this.setState({ scriptParamEditorOpened: true })
+    }
+
+    private handleCloseScriptParamEditor = (result: EditorResult) => {
         if (!result.saved) {
             this.setState({ scriptParamEditorOpened: false })
             return
@@ -266,6 +276,8 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
         const { activeClip } = this.props
         if (!activeClip) return
+
+        this.setState({ scriptParamEditorOpened: false })
 
         this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
             clipId: activeClip.id,

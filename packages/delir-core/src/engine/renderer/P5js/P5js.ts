@@ -2,12 +2,13 @@ import * as VM from 'vm'
 import P5Hooks from './P5Hooks'
 
 import Type from '../../../plugin-support/type-descriptor'
+import Expression from '../../../values/expression'
 import PreRenderingRequest from '../../pipeline/pre-rendering-request'
 import RenderingRequest from '../../pipeline/render-request'
 import { IRenderer } from '../renderer-base'
 
 interface SketchRendererParams {
-    sketch: string
+    sketch: Expression
 }
 
 export default class P5jsRenderer implements IRenderer<SketchRendererParams>
@@ -64,7 +65,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
             }
         }))
 
-        const vm = new VM.Script(req.parameters.sketch, {})
+        const vm = new VM.Script(req.parameters.sketch.code, {})
 
         // Make VM scope binded sketch object
         vm.runInContext(this.vmGlobal)

@@ -7,12 +7,14 @@ export default I18n({
             removeEffect: 'エフェクトを削除',
         },
         pluginMissing: '不明なプラグイン: :processorId',
+        editScriptParam: '編集',
     },
     en: {
         contextMenu: {
             expression: 'Edit Expression',
             removeEffect: 'Remove effect',
         },
-        pluginMissing: 'Missing plugin: :processorId'
+        pluginMissing: 'Missing plugin: :processorId',
+        editScriptParam: 'Edit'
     }
 })

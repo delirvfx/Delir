@@ -3,21 +3,23 @@ import * as React from 'react'
 
 import MonacoUtil from '../../utils/Monaco'
 import Button from '../components/Button'
-import { TargetParam } from './KeyframeEditor'
+import { EditorResult, TargetParam } from './KeyframeEditor'
 import * as s from './ScriptParamEditor.styl'
 
 interface Props {
+    title: string
     code: string
     target: TargetParam
+    onClose: (result: EditorResult) => void
 }
 
 export default class ScriptParamEditor extends React.Component<Props> {
-    private _editor: monaco.editor.IStandaloneCodeEditor
+    private editor: monaco.editor.IStandaloneCodeEditor
     private editorElement = React.createRef<HTMLDivElement>()
 
     public componentDidMount()
     {
-        this._editor = monaco.editor.create(this.editorElement.current!, {
+        this.editor = monaco.editor.create(this.editorElement.current!, {
             language: 'javascript',
             codeLens: true,
             automaticLayout: true,
@@ -26,41 +28,48 @@ export default class ScriptParamEditor extends React.Component<Props> {
             value: this.props.code ? this.props.code : '',
         })
 
-        this._editor.createContextKey('cond1', true)
-        this._editor.createContextKey('cond2', true)
-        this._editor.onDidFocusEditorText(this.onFocusEditor)
-        // this._editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.closeWithSave, 'cond1')
-        // this._editor.addCommand(monaco.KeyCode.Escape, this.closeWithoutSave, 'cond2')
+        this.editor.createContextKey('cond1', true)
+        this.editor.createContextKey('cond2', true)
+        this.editor.onDidFocusEditorText(this.handleFocusEditor)
+        this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClickWithSave, 'cond1')
+        this.editor.addCommand(monaco.KeyCode.Escape, this.handleClickCloseWithoutSave, 'cond2')
+    }
+
+    public componentWillUnmount() {
+        this.editor.dispose()
     }
 
     public render() {
+        const {title} = this.props
+
         return (
             <div className={s.ScriptParamEditor}>
                 <div className={s.toolbar}>
-                    {/* <span className={s.title}>Expression: {title}</span> */}
-                    <Button type='normal' onClick={this.closeWithoutSave}>変更を破棄</Button>
-                    <Button type='primary' onClick={this.closeWithSave}>保存</Button>
+                    <span className={s.title}>Code: {title}</span>
+                    <Button type='normal' onClick={this.handleClickCloseWithoutSave}>変更を破棄</Button>
+                    <Button type='primary' onClick={this.handleClickWithSave}>保存</Button>
                 </div>
                 <div ref={this.editorElement} className={s.editor} />
             </div>
         )
     }
 
-    private onFocusEditor = () => {
+    private handleFocusEditor = () => {
         MonacoUtil.activateLibrarySet('scriptEditor')
     }
 
-    private closeWithSave = () =>
+    private handleClickWithSave = () =>
     {
         this.props.onClose({
             saved: true,
-            code: this._editor.getValue(),
+            code: this.editor.getValue(),
             target: this.props.target
         })
     }
 
-    private closeWithoutSave = () =>
+    private handleClickCloseWithoutSave = () =>
     {
+        console.log('close')
         this.props.onClose({
             saved: false,
             code: null,

@@ -11,7 +11,7 @@ import * as s from './delir-value-input.styl'
 interface DelirValueInputProps {
     assets: Delir.Project.Asset[] | null
     descriptor: Delir.AnyParameterTypeDescriptor,
-    value: string | number | boolean | {assetId: string} | Delir.Values.Point2D | Delir.Values.Point3D | Delir.Values.ColorRGB | Delir.Values.ColorRGBA
+    value: string | number | boolean | {assetId: string} | Delir.Values.Point2D | Delir.Values.Point3D | Delir.Values.Expression | Delir.Values.ColorRGB | Delir.Values.ColorRGBA
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
 }
 
@@ -163,6 +163,10 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                 )
                 break
             }
+
+            case 'CODE':
+                component = null
+            break
 
             // case 'ARRAY':
             default:
