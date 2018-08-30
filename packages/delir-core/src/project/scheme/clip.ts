@@ -1,4 +1,4 @@
-import { ExpressionJSON } from '../../values/expression'
+import { ExpressionJSON } from '../../Values/expression'
 import { EffectScheme } from './effect'
 import { KeyframeScheme } from './keyframe'
 

@@ -1,5 +1,5 @@
 import * as uuid from 'uuid'
-import ColorRGB from '../values/color-rgb'
+import ColorRGB from '../Values/color-rgb'
 
 export default class Composition {
     public id: string

@@ -7,7 +7,7 @@ import PreRenderingRequest from '../../PreRenderingRequest'
 import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'
 
-import ColorRGBA from '../../../values/color-rgba'
+import ColorRGBA from '../../../Values/color-rgba'
 
 interface TextRendererParam {
     text: string

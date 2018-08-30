@@ -1,8 +1,8 @@
 import * as bezierEasing from 'bezier-easing'
 
 import Keyframe, { KeyframeValueTypes } from '../project/keyframe'
-import ColorRGB from '../values/color-rgb'
-import ColorRGBA from '../values/color-rgba'
+import ColorRGB from '../Values/color-rgb'
+import ColorRGBA from '../Values/color-rgba'
 
 import { AnyParameterTypeDescriptor, TypeDescriptor } from '../plugin-support/type-descriptor'
 import { AssetPointerScheme } from '../project/scheme/keyframe'

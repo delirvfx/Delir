@@ -2,7 +2,7 @@ import * as Engine from './engine'
 import * as Exceptions from './exceptions'
 import * as PluginSupport from './plugin-support'
 import * as Project from './project/index'
-import * as Values from './values'
+import * as Values from './Values'
 
 import PreRenderRequest from './engine/PreRenderingRequest'
 import RenderRequest from './engine/RenderRequest'

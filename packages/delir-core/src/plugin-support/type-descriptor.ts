@@ -10,7 +10,7 @@ import {
     Point3D,
     Size2D,
     Size3D,
-} from '../values'
+} from '../Values'
 
 export type ParameterType =
     // | 'POINT_2D'

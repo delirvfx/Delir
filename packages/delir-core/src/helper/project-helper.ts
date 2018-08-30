@@ -9,7 +9,7 @@ import Effect from '../project/effect'
 import Keyframe from '../project/keyframe'
 import Layer from '../project/layer'
 import Project from '../project/project'
-import Expression from '../values/expression'
+import Expression from '../Values/expression'
 
 import PluginRegistory from '../plugin-support/plugin-registry'
 

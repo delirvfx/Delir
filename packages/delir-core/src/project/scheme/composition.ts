@@ -1,4 +1,4 @@
-import { ColorRgbJSON } from '../../values/color-rgb'
+import { ColorRgbJSON } from '../../Values/color-rgb'
 import { LayerScheme } from './layer'
 
 export interface CompositionConfigScheme {

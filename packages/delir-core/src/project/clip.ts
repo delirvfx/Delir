@@ -2,7 +2,7 @@ import * as _ from 'lodash'
 import * as uuid from 'uuid'
 
 import { AvailableRenderer } from '../engine/Renderer'
-import Expression from '../values/expression'
+import Expression from '../Values/expression'
 import Effect from './effect'
 import Keyframe from './keyframe'
 import { ClipConfigScheme, ClipScheme } from './scheme/clip'
