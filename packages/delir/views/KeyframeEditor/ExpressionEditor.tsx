@@ -7,24 +7,13 @@ import MonacoUtil from '../../utils/Monaco'
 import Button from '../components/Button'
 
 import * as s from './ExpressionEditor.styl'
+import { EditorResult, TargetParam } from './KeyframeEditor'
 
 interface Props {
     title: string | null
-    entityId: string | null
     code: string | null
-    onClose: (result: ExpressionEditor.EditorResult) => void
-}
-
-// tslint:disable-next-line no-namespace
-namespace ExpressionEditor {
-    export type EditorResult = {
-        /** if save cancelled then it value to be false */
-        saved: true
-        code: string
-    } | {
-        saved: false
-        code: null
-    }
+    target: TargetParam
+    onClose: (result: EditorResult) => void
 }
 
 export default class ExpressionEditor extends React.Component<Props> {
@@ -88,11 +77,19 @@ export default class ExpressionEditor extends React.Component<Props> {
 
     private closeWithSave = () =>
     {
-        this.props.onClose({saved: true, code: this._editor.getValue()})
+        this.props.onClose({
+            saved: true,
+            code: this._editor.getValue(),
+            target: this.props.target
+        })
     }
 
     private closeWithoutSave = () =>
     {
-        this.props.onClose({saved: false, code: null})
+        this.props.onClose({
+            saved: false,
+            code: null,
+            target: this.props.target
+        })
     }
 }

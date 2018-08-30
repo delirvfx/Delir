@@ -6,13 +6,6 @@ import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
-import { ContextMenu, MenuItem, MenuItemProps } from '../components/ContextMenu'
-import Pane from '../components/pane'
-import Workspace from '../components/workspace'
-import DelirValueInput from './_DelirValueInput'
-import ExpressionEditor from './ExpressionEditor'
-import { default as KeyframeGraph, KeyframePatch } from './KeyframeGraph'
-
 import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
 
@@ -20,8 +13,28 @@ import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
 import ProjectStore, { ProjectStoreState } from '../../stores/ProjectStore'
 import RendererStore from '../../stores/RendererStore'
 
+import { ContextMenu, MenuItem, MenuItemOption, MenuItemProps } from '../components/ContextMenu'
+import Pane from '../components/pane'
+import Workspace from '../components/workspace'
+import DelirValueInput from './_DelirValueInput'
+import ExpressionEditor from './ExpressionEditor'
+import KeyframeGraph, { KeyframePatch } from './KeyframeGraph'
+import ScriptParamEditor from './ScriptParamEditor'
+
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
+
+export interface TargetParam {
+    type: 'clip' | 'effect'
+    entityId: string
+    paramName: string
+}
+
+export interface EditorResult {
+    saved: boolean
+    code: string | null
+    target: TargetParam
+}
 
 interface OwnProps {
     activeComposition: Delir.Project.Composition | null
@@ -40,12 +53,13 @@ interface ConnectedProps {
 }
 
 interface State {
-    activePropName: string | null
-    activeEntity: { type: 'clip' | 'effect', entityId: string } | null
+    // activeParamName: string | null
+    activeParam: TargetParam | null
     graphWidth: number
     graphHeight: number
     keyframeViewViewBox: string | undefined
     editorOpened: boolean
+    scriptParamEditorOpened: boolean
 }
 
 type Props = OwnProps & ConnectedProps & ContextProp
@@ -57,11 +71,11 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
     private get activeEntityObject(): Delir.Project.Clip | Delir.Project.Effect | null {
         const { activeClip } = this.props
-        const { activeEntity } = this.state
+        const { activeParam } = this.state
 
         if (activeClip) {
-            if (activeEntity && activeEntity.type === 'effect') {
-                return activeClip.effects.find(e => e.id === activeEntity.entityId)!
+            if (activeParam && activeParam.type === 'effect') {
+                return activeClip.effects.find(e => e.id === activeParam.entityId)!
             } else {
                 return activeClip
             }
@@ -74,12 +88,13 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
     }
 
     public state: State = {
-        activePropName: null,
-        activeEntity: null,
+        // activeParamName: null,
+        activeParam: null,
         graphWidth: 0,
         graphHeight: 0,
         keyframeViewViewBox: undefined,
         editorOpened: false,
+        scriptParamEditorOpened: false,
     }
 
     public refs: {
@@ -96,36 +111,34 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
     public componentWillReceiveProps(nextProps: Props)
     {
         if (!nextProps.activeClip) {
-            this.setState({activePropName: null, editorOpened: false})
+            this.setState({activeParam: null, editorOpened: false})
         }
     }
 
     public render()
     {
         const {activeClip, project: {project}, editor, scrollLeft} = this.props
-        const {activePropName, activeEntity, keyframeViewViewBox, graphWidth, graphHeight, editorOpened} = this.state
+        const {activeParam, keyframeViewViewBox, graphWidth, graphHeight, editorOpened, scriptParamEditorOpened} = this.state
         const activeEntityObject = this.activeEntityObject
 
-        const activePropDescriptor = this._getDescriptorByPropId(activePropName)
+        const activeParamDescriptor = activeParam ? this._getDescriptorByParamName(activeParam.paramName) : null
         const descriptors = activeClip
             ? Delir.Engine.Renderers.getInfo(activeClip.renderer).parameter.properties || []
             : []
 
-        const expressionCode = (!activeEntityObject || !activePropName) ? null : (
-            activeEntityObject.expressions[activePropName]
-                ? activeEntityObject.expressions[activePropName].code
+        const expressionCode = (!activeEntityObject || !activeParam) ? null : (
+            activeEntityObject.expressions[activeParam.paramName]
+                ? activeEntityObject.expressions[activeParam.paramName].code
                 : null
         )
 
         let keyframes: Delir.Project.Keyframe[] | null = null
-        if (activeClip && activeEntity) {
-            if (activePropName) {
-                if (activeEntity.type === 'effect') {
-                    const activeEffect = activeClip.effects.find(e => e.id === activeEntity.entityId)
-                    keyframes = activeEffect ? activeEffect.keyframes[activePropName] : null
-                } else {
-                    keyframes = activeClip.keyframes[activePropName]
-                }
+        if (activeClip && activeParam) {
+            if (activeParam.type === 'effect') {
+                const activeEffect = activeClip.effects.find(e => e.id === activeParam.entityId)
+                keyframes = activeEffect ? activeEffect.keyframes[activeParam.paramName] : null
+            } else {
+                keyframes = activeClip.keyframes[activeParam.paramName]
             }
         }
 
@@ -143,15 +156,21 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                             <div
                                 key={activeClip!.id + desc.paramName}
                                 className={classnames(s.propItem, {
-                                    [s['propItem--active']]: activeEntity && activeEntity.type === 'clip' && activePropName === desc.paramName,
+                                    [s['propItem--active']]: activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName,
                                 })}
                                 data-entity-type='clip'
                                 data-entity-id={activeClip.id}
-                                data-prop-name={desc.paramName}
+                                data-param-name={desc.paramName}
                                 onClick={this.selectProperty}
                             >
                                 <ContextMenu>
-                                    <MenuItem label={t('contextMenu.expression')} onClick={() => this._openExpressionEditor(desc.paramName) } />
+                                    <MenuItem
+                                        label={t('contextMenu.expression')}
+                                        data-entity-type='clip'
+                                        data-entity-id={activeClip.id}
+                                        data-param-name={desc.paramName}
+                                        onClick={this._openExpressionEditor}
+                                    />
                                 </ContextMenu>
                                 <span className={classnames(
                                         s.propKeyframeIndicator,
@@ -185,26 +204,43 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                         tabIndex={-1}
                         onWheel={this._scaleTimeline}
                     >
-                        {editorOpened && (
+                        {activeParam && editorOpened && (
                             <ExpressionEditor
-                                entityId={`${activeEntityObject!.id}-${activePropName}`}
-                                title={activePropDescriptor!.label}
+                                title={activeParamDescriptor!.label}
                                 code={expressionCode}
+                                target={activeParam}
                                 onClose={this.onCloseEditor}
                             />
                         )}
+                        {activeParam && activeParamDescriptor && activeParamDescriptor.type === 'CODE' && (() => {
+                            const value = activeClip
+                                ? Delir.KeyframeHelper.calcKeyframeValueAt(
+                                    editor.currentPreviewFrame,
+                                    activeClip.placedFrame,
+                                    activeParamDescriptor,
+                                    activeClip.keyframes[activeParam.paramName] || []
+                                ) : ''
+
+                            return (
+                                <ScriptParamEditor
+                                    target={activeParam}
+                                    code={value as string}
+                                    onClose={this.onCloseScriptParamEditor}
+                                />
+                            )
+                        })()}
                         <div className={s.measureContainer}>
                             <div ref='mesures' className={s.measureLayer} style={{transform: `translateX(-${scrollLeft}px)`}}>
                                 {...this._renderMeasure()}
                             </div>
                         </div>
-                        {activePropDescriptor && activeClip && keyframes && (
+                        {activeClip && activeParamDescriptor && activeParam && keyframes && (
                             <KeyframeGraph
                                 composition={editor.activeComp!}
                                 parentClip={activeClip}
                                 entity={activeEntityObject}
-                                paramName={activePropName!}
-                                descriptor={activePropDescriptor}
+                                paramName={activeParam.paramName!}
+                                descriptor={activeParamDescriptor}
                                 width={graphWidth}
                                 height={graphHeight}
                                 viewBox={keyframeViewViewBox!}
@@ -222,34 +258,49 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         )
     }
 
-    private onCloseEditor = async (result: ExpressionEditor.EditorResult) => {
+    private onCloseScriptParamEditor = (result: EditorResult) => {
         if (!result.saved) {
-            this.setState({editorOpened: false})
+            this.setState({ scriptParamEditorOpened: false })
             return
         }
 
         const { activeClip } = this.props
-        const { activeEntity, activePropName } = this.state
+        if (!activeClip) return
 
-        if (!activeClip || !activeEntity || !activePropName) return
+        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+            clipId: activeClip.id,
+            frameOnClip: 0,
+            paramName: result.target.paramName,
+            patch: { value: new Delir.Values.Expression('javascript', result.code!) }
+        })
+    }
 
-        if (activeEntity.type === 'clip') {
+    private onCloseEditor = (result: EditorResult) => {
+        if (!result.saved) {
+            this.setState({ editorOpened: false })
+            return
+        }
+
+        const { activeClip } = this.props
+        if (!activeClip) return
+
+        if (result.target.type === 'clip') {
             this.props.context.executeOperation(ProjectModActions.modifyClipExpression, {
                 clipId: activeClip.id,
-                property: activePropName,
+                property: result.target.paramName,
                 expr: {
-                language: 'typescript',
-                code: result.code,
+                    language: 'typescript',
+                    code: result.code!,
                 }
             })
         } else {
             this.props.context.executeOperation(ProjectModActions.modifyEffectExpression, {
                 clipId: activeClip.id,
-                effectId: activeEntity.entityId,
-                property: activePropName,
+                effectId: result.target.entityId,
+                property: result.target.paramName,
                 expr: {
                     language: 'typescript',
-                    code: result.code,
+                    code: result.code!,
                 }
             })
         }
@@ -287,11 +338,11 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         const { entityType, entityId, paramName } = currentTarget.dataset as {[_: string]: string}
 
         this.setState({
-            activeEntity: {
+            activeParam: {
                 type: entityType as 'clip' | 'effect',
                 entityId,
+                paramName,
             },
-            activePropName: paramName,
         })
     }
 
@@ -315,7 +366,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
     private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) =>
     {
         const {activeClip, editor: {currentPreviewFrame}} = this.props
-        const { activeEntity } = this.state
+        const { activeParam } = this.state
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
@@ -332,10 +383,10 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
     private keyframeModified = (parentClipId: string, paramName: string, frameOnClip: number, patch: KeyframePatch) =>
     {
-        const { activeEntity } = this.state
-        if (!activeEntity) return
+        const { activeParam } = this.state
+        if (!activeParam) return
 
-        if (activeEntity.type === 'clip') {
+        if (activeParam.type === 'clip') {
             this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
                 clipId: parentClipId,
                 paramName,
@@ -345,7 +396,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         } else {
             this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForEffect, {
                 clipId: parentClipId,
-                effectId: activeEntity.entityId,
+                effectId: activeParam.entityId,
                 paramName,
                 frameOnClip,
                 patch
@@ -355,29 +406,29 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
     private keyframeRemoved = (parentClipId: string, keyframeId: string) =>
     {
-        const { activeEntity } = this.state
-        if (!activeEntity) return
+        const { activeParam } = this.state
+        if (!activeParam) return
 
-        if (activeEntity.type === 'clip') {
-            this.props.context.executeOperation(ProjectModActions.removeKeyframe, { keyframeId: activeEntity.entityId })
+        if (activeParam.type === 'clip') {
+            this.props.context.executeOperation(ProjectModActions.removeKeyframe, { keyframeId: activeParam.entityId })
         } else {
             this.props.context.executeOperation(ProjectModActions.removeKeyframeForEffect, {
                 clipId: parentClipId,
-                effectId: activeEntity.entityId,
+                effectId: activeParam.entityId,
                 keyframeId
             })
         }
     }
 
-    private _openExpressionEditor = (paramName: string) => {
-        const {activeClip} = this.props
-        this.setState({editorOpened: true, activePropName: paramName})
+    private _openExpressionEditor = ({ dataset }: MenuItemOption<{ type: 'clip' | 'effect', entityId: string, paramName: string }>) => {
+        const { type, entityId, paramName } = dataset
+        this.setState({editorOpened: true, activeParam: { type, entityId, paramName }})
         this.forceUpdate()
     }
 
     private removeEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
     {
-        this.setState({ editorOpened: false, activePropName: null, activeEntity: null }, () => {
+        this.setState({ editorOpened: false, activeParam: null }, () => {
             this.props.context.executeOperation(ProjectModActions.removeEffect, {
                 holderClipId: dataset.clipId,
                 effectId: dataset.effectId
@@ -392,7 +443,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
     {
         const rendererStore = this.props.context.getStore(RendererStore)
         const { activeClip, editor, project: { project } } = this.props
-        const { activeEntity, activePropName } = this.state
+        const { activeParam } = this.state
 
         if (!activeClip) return null
 
@@ -443,15 +494,18 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                             <div
                                 key={activeClip!.id + desc.paramName}
                                 className={classnames(s.propItem, {
-                                    [s['propItem--active']]: activeEntity && activeEntity.type === 'effect' && activeEntity.entityId === effect.id && activePropName === desc.paramName,
+                                    [s['propItem--active']]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParamName === desc.paramName,
                                 })}
-                                data-prop-name={desc.paramName}
-                                data-entity-type='effect'
-                                data-entity-id={effect.id}
                                 onClick={this.selectProperty}
                             >
                                 <ContextMenu>
-                                    <MenuItem label={t('contextMenu.expression')} onClick={() => this._openExpressionEditor(desc.paramName) } />
+                                    <MenuItem
+                                        label={t('contextMenu.expression')}
+                                        data-entity-type='effect'
+                                        data-entity-id={effect.id}
+                                        data-param-name={desc.paramName}
+                                        onClick={this._openExpressionEditor}
+                                    />
                                 </ContextMenu>
                                 <span className={classnames(
                                         s.propKeyframeIndicator,
@@ -507,7 +561,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         return components
     }
 
-    private _getDescriptorByPropId(paramName: string | null)
+    private _getDescriptorByParamName(paramName: string | null)
     {
         const rendererStore = this.props.context.getStore(RendererStore)
         const activeEntityObject = this.activeEntityObject

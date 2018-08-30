@@ -77,7 +77,8 @@ export default class Monaco {
                 name: 'ExpressionAPI.d.ts',
                 typedef: Delir.Engine.expressionContextTypeDefinition,
             },
-        ]
+        ],
+        scriptEditor: [],
     }
 
     private static activeLibrarySetDisposer: () => void | null

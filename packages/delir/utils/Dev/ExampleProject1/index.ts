@@ -246,20 +246,20 @@ ProjectHelper.addClip(p, layer5, videoClip)
 //
 // Effects
 //
-// ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Project.Effect(), {
-//     processor: '@ragg/delir-posteffect-chromakey',
-//     // keyframes: {
-//     //     color: [
-//     //         assign(new Delir.Project.Keyframe(), {
-//     //             frameOnClip: 40,
-//     //             value: new Delir.Values.ColorRGBA(30, 170, 200, 1),
-//     //         }),
-//     //         assign(new Delir.Project.Keyframe(), {
-//     //             frameOnClip: 200,
-//     //             value: new Delir.Values.ColorRGBA(200, 170, 30, 1),
-//     //         }),
-//     //     ]
-//     // }
-// }))
+ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Project.Effect(), {
+    processor: '@ragg/delir-posteffect-chromakey',
+    // keyframes: {
+    //     color: [
+    //         assign(new Delir.Project.Keyframe(), {
+    //             frameOnClip: 40,
+    //             value: new Delir.Values.ColorRGBA(30, 170, 200, 1),
+    //         }),
+    //         assign(new Delir.Project.Keyframe(), {
+    //             frameOnClip: 200,
+    //             value: new Delir.Values.ColorRGBA(200, 170, 30, 1),
+    //         }),
+    //     ]
+    // }
+}))
 
 export default p
