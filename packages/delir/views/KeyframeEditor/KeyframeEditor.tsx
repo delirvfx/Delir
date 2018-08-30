@@ -147,7 +147,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 <Pane className={s.propList}>
                     {activeClip && descriptors.map(desc => {
                         const value = activeClip
-                            ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, activeClip.keyframes[desc.paramName] || [])
+                            ? Delir.KeyframeCalcurator.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, activeClip.keyframes[desc.paramName] || [])
                             : undefined
 
                         const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.paramName] || []).length !== 0
@@ -218,7 +218,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                         )}
                         {scriptParamEditorOpened && activeParam && activeParamDescriptor && activeParamDescriptor.type === 'CODE' && (() => {
                             const value = activeClip
-                                ? Delir.KeyframeHelper.calcKeyframeValueAt(
+                                ? Delir.KeyframeCalcurator.calcKeyframeValueAt(
                                     editor.currentPreviewFrame,
                                     activeClip.placedFrame,
                                     activeParamDescriptor,
@@ -500,7 +500,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                         const hasKeyframe = desc.animatable && (effect.keyframes[desc.paramName] || []).length !== 0
 
                         const value = activeClip
-                            ? Delir.KeyframeHelper.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, effect.keyframes[desc.paramName] || [])
+                            ? Delir.KeyframeCalcurator.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, effect.keyframes[desc.paramName] || [])
                             : undefined
 
                         return (

@@ -1,6 +1,5 @@
 import * as _ from 'lodash'
 
-import * as KeyframeHelper from '../../helper/keyframe-helper'
 import EffectPluginBase from '../../plugin-support/PostEffectBase'
 import { TypeDescriptor } from '../../plugin-support/type-descriptor'
 import { Clip, Effect } from '../../project'
@@ -11,6 +10,7 @@ import {  RealParameterValues, RealParameterValueTypes } from '../Engine'
 import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
 import ExpressionVM from '../ExpressionSupport/ExpressionVM'
+import * as KeyframeCalcurator from '../KeyframeCalcurator'
 import RenderRequest from '../RenderRequest'
 
 export default class EffectRenderTask {
@@ -33,7 +33,7 @@ export default class EffectRenderTask {
             effectCache.set(effect, effectRenderer)
         }
 
-        const rawInitialKeyframeValues = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, effectParams, effect.keyframes)
+        const rawInitialKeyframeValues = KeyframeCalcurator.calcKeyframeValuesAt(0, clip.placedFrame, effectParams, effect.keyframes)
         const initialKeyframeValues: RealParameterValues = { ...(rawInitialKeyframeValues as any) }
         effectAssetParamNames.forEach(propName => {
             // resolve asset
@@ -42,7 +42,7 @@ export default class EffectRenderTask {
                 : null
         })
 
-        const rawEffectKeyframeLUT = KeyframeHelper.calcKeyFrames(effectParams, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
+        const rawEffectKeyframeLUT = KeyframeCalcurator.calcKeyFrames(effectParams, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
         const effectKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = {...(rawEffectKeyframeLUT as any)}
         effectAssetParamNames.forEach(propName => {
             // resolve asset

@@ -11,7 +11,7 @@ import PluginRegistry from './plugin-support/plugin-registry'
 import PostEffectBase from './plugin-support/PostEffectBase'
 import Type, { AnyParameterTypeDescriptor, TypeDescriptor } from './plugin-support/type-descriptor'
 
-import * as KeyframeHelper from './helper/keyframe-helper'
+import * as KeyframeCalcurator from './engine/KeyframeCalcurator'
 import * as ProjectHelper from './helper/project-helper'
 import ProjectMigrator from './helper/ProjectMigrator'
 
@@ -38,7 +38,7 @@ export {
 
     // import shorthand
     ProjectHelper,
-    KeyframeHelper,
+    KeyframeCalcurator,
     ProjectMigrator,
 
     // Types
