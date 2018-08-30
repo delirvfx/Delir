@@ -60,6 +60,11 @@ declare module 'font-manager' {
     export {getAvailableFontsSync}
 }
 
+declare module 'p5' {
+    const _: any
+    export = _
+}
+
 // declare module 'fs-extra' {
 //     const _: any
 //     export default _

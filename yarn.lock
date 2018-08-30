@@ -10,13 +10,13 @@
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/7zip/-/7zip-0.0.6.tgz#9cafb171af82329490353b4816f03347aa150a30"
 
-"@ragg/fleur-react@0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.5.tgz#67636163874ff8d35fa8e738818a956edfde7f44"
+"@ragg/fleur-react@0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.6.tgz#102f85df3bf67a139b34b83942a443f861ac5654"
 
-"@ragg/fleur@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.3.tgz#dca4d9ba776b29664672659537499bde0db26703"
+"@ragg/fleur@0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.5.tgz#9db852a4d7fc3d1c46099cd6da5f88d1113f69b8"
   dependencies:
     immer "1.5.0"
     invariant "2.2.4"
@@ -2630,10 +2630,6 @@ electron-builder@20.28.3:
     sanitize-filename "^1.6.1"
     update-notifier "^2.5.0"
     yargs "^12.0.1"
-
-electron-canvas-to-buffer@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/electron-canvas-to-buffer/-/electron-canvas-to-buffer-2.0.0.tgz#da92cd7342e47b3b0dde2a3ae79978e5a0761681"
 
 electron-devtools-installer@2.2.4:
   version "2.2.4"
@@ -5374,9 +5370,13 @@ mocha@5.2.0:
     mkdirp "0.5.1"
     supports-color "5.4.0"
 
-monaco-editor@0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.9.0.tgz#c50c53251c47b7ff12e09f0f83cfd32a44dfe6ec"
+monaco-editor-webpack-plugin@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/monaco-editor-webpack-plugin/-/monaco-editor-webpack-plugin-1.5.1.tgz#2f2ff876d522e25042e5621bc81cb9eee6743010"
+
+monaco-editor@0.14.3:
+  version "0.14.3"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.14.3.tgz#7cc4a4096a3821f52fea9b10489b527ef3034e22"
 
 mouse-wheel@1.2.0:
   version "1.2.0"
@@ -5887,6 +5887,10 @@ p-map@^1.1.1:
 p-try@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-2.0.0.tgz#85080bb87c64688fa47996fe8f7dfbe8211760b1"
+
+p5@0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/p5/-/p5-0.7.1.tgz#8283e7e9eb928cdb957541d32be2b0ff7f2251e0"
 
 package-json@^4.0.0:
   version "4.0.0"

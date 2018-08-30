@@ -1,58 +1,27 @@
 import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 
-import Monaco from '../../utils/Monaco'
+import * as monaco from 'monaco-editor'
+import MonacoUtil from '../../utils/Monaco'
 
 import Button from '../components/Button'
 
 import * as s from './ExpressionEditor.styl'
-
-const expressionAPITypeDef = {
-    name: 'ExpressionAPI.d.ts',
-    typedef: Delir.Engine.expressionContextTypeDefinition,
-}
+import { EditorResult, TargetParam } from './KeyframeEditor'
 
 interface Props {
     title: string | null
-    entityId: string | null
     code: string | null
-    onClose: (result: ExpressionEditor.EditorResult) => void
+    target: TargetParam
+    onClose: (result: EditorResult) => void
 }
 
-// tslint:disable-next-line no-namespace
-namespace ExpressionEditor {
-    export type EditorResult = {
-        /** if save cancelled then it value to be false */
-        saved: true
-        code: string
-    } | {
-        saved: false
-        code: null
-    }
-}
-
-class ExpressionEditor extends React.Component<Props> {
+export default class ExpressionEditor extends React.Component<Props> {
     private _editor: monaco.editor.IStandaloneCodeEditor
     private editorElement: HTMLDivElement
 
     public componentDidMount()
     {
-        Monaco.registerLibrarySet('expression', [
-            'lib.es5.d.ts',
-            'lib.es2015.collection.d.ts',
-            'lib.es2015.core.d.ts',
-            'lib.es2015.generator.d.ts',
-            'lib.es2015.iterable.d.ts',
-            'lib.es2015.promise.d.ts',
-            'lib.es2015.proxy.d.ts',
-            'lib.es2015.reflect.d.ts',
-            'lib.es2015.symbol.d.ts',
-            'lib.es2015.symbol.wellknown.d.ts',
-            'lib.es2016.array.include.d.ts',
-            'console.d.ts',
-            expressionAPITypeDef,
-        ])
-
         this._editor = monaco.editor.create(this.editorElement, {
             language: 'javascript',
             codeLens: true,
@@ -64,7 +33,7 @@ class ExpressionEditor extends React.Component<Props> {
 
         this._editor.createContextKey('cond1', true)
         this._editor.createContextKey('cond2', true)
-        this._editor.onDidFocusEditor(this.onFocusEditor)
+        this._editor.onDidFocusEditorText(this.onFocusEditor)
         this._editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.closeWithSave, 'cond1')
         // this._editor.addCommand(monaco.KeyCode.Escape, this.closeWithoutSave, 'cond2')
     }
@@ -103,18 +72,24 @@ class ExpressionEditor extends React.Component<Props> {
     }
 
     private onFocusEditor = () => {
-        Monaco.activateLibrarySet('expression')
+        MonacoUtil.activateLibrarySet('expressionEditor')
     }
 
     private closeWithSave = () =>
     {
-        this.props.onClose({saved: true, code: this._editor.getValue()})
+        this.props.onClose({
+            saved: true,
+            code: this._editor.getValue(),
+            target: this.props.target
+        })
     }
 
     private closeWithoutSave = () =>
     {
-        this.props.onClose({saved: false, code: null})
+        this.props.onClose({
+            saved: false,
+            code: null,
+            target: this.props.target
+        })
     }
 }
-
-export default ExpressionEditor

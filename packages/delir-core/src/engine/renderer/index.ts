@@ -7,10 +7,11 @@ import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-ref
 import AdjustmentRenderer from './Adjustment/Adjustment'
 import AudioRenderer from './Audio/Audio'
 import ImageRenderer from './Image/Image'
+import P5jsRenderer from './P5js/P5js'
 import TextRenderer from './Text/Text'
 import VideoRenderer from './Video/Video'
 
-export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment'
+export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment' | 'p5js'
 
 export const RENDERERS: {[name: string]: IRendererStatic} = {
     audio: AudioRenderer,
@@ -18,6 +19,7 @@ export const RENDERERS: {[name: string]: IRendererStatic} = {
     image: ImageRenderer,
     text: TextRenderer,
     adjustment: AdjustmentRenderer,
+    p5js: P5jsRenderer,
 }
 
 interface PluginInfo {

@@ -3,11 +3,9 @@ import * as _ from 'lodash'
 import * as KeyframeHelper from '../../../helper/keyframe-helper'
 import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
 import { Clip } from '../../../project'
-import { KeyframeValueTypes } from '../../../project/keyframe'
 import { Expression } from '../../../values'
 import * as RendererFactory from '../../renderer'
 import { IRenderer } from '../../renderer/renderer-base'
-import DependencyResolver from '../DependencyResolver'
 import { compileTypeScript } from '../ExpressionCompiler'
 import { ContextSource } from '../ExpressionContext'
 import * as ExpressionContext from '../ExpressionContext'
@@ -23,7 +21,7 @@ export default class ClipRenderTask {
         req: RenderRequest,
     }): ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
-        const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
+        const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
 
         const rawRendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, rendererParams, clip.keyframes)
         const rendererInitParam: RealParameterValues = { ...(rawRendererInitParam as any) }
@@ -41,10 +39,10 @@ export default class ClipRenderTask {
         }
 
         const rawRendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParams, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
-        const rendererKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = { ...(rawRendererInitParam as any)　}
-        rendererAssetParamNames.forEach(propName => {
+        const rendererKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = { ...(rawRendererKeyframeLUT as any)　}
+        rendererAssetParamNames.forEach(paramName => {
             // resolve asset
-            rendererKeyframeLUT[propName] = _.map(rawRendererKeyframeLUT[propName], value => {
+            rendererKeyframeLUT[paramName] = _.map(rawRendererKeyframeLUT[paramName], value => {
                 return value ? req.resolver.resolveAsset((value as AssetPointerScheme).assetId) : null
             })
         })

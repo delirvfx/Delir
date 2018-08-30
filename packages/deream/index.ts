@@ -1,7 +1,7 @@
 import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 import audioBufferToWave from 'audiobuffer-to-wav'
 import { spawn } from 'child_process'
-import canvasToBuffer from 'electron-canvas-to-buffer'
+import { nativeImage } from 'electron'
 import * as fs from 'mz/fs'
 import * as path from 'path'
 
@@ -91,7 +91,9 @@ export default async (
 
             //     await new Promise(resolve => exporter.write(buffer, resolve))
             // })
-            exporter.write(canvasToBuffer(canvas, 'image/png'))
+
+            const png = nativeImage.createFromDataURL(canvas.toDataURL('image/png'))
+            exporter.write(png.toPNG())
         },
         onAudioBuffered: buffers => {
             for (let ch = 0, l = comp.audioChannels; ch < l; ch++) {

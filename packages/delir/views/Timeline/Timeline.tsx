@@ -88,7 +88,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
     {
         const {scale, timelineScrollLeft} = this.state
         const {activeComp, activeClip, currentPreviewFrame, previewPlayed} = this.props.editor
-        const {id: compId, framerate} = activeComp ? activeComp : {id: '', framerate: 30}
+        const {framerate} = activeComp ? activeComp : {framerate: 30}
         const layers: Delir.Project.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
         const measures = !activeComp ? [] : TimePixelConversion.buildMeasures({
@@ -223,7 +223,6 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
     private onLayerSort: SortEndHandler = ({ oldIndex, newIndex }) =>
     {
         const { editor: { activeComp } } = this.props
-        console.log(oldIndex, newIndex, activeComp)
         if (!activeComp) return
 
         const layer = activeComp.layers[oldIndex]

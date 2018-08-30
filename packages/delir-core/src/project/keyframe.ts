@@ -2,16 +2,17 @@ import * as _ from 'lodash'
 import * as uuid from 'uuid'
 import toJSON from '../helper/toJSON'
 
-import ColorRGB from '../values/color-rgb'
-import ColorRGBA from '../values/color-rgba'
 // import Point2D from '../values/point-2d'
 // import Point3D from '../values/point-3d'
 // import Size2D from '../values/size-2d'
 // import Size3D from '../values/size-3d'
+import ColorRGB from '../values/color-rgb'
+import ColorRGBA from '../values/color-rgba'
+import Expression from '../values/expression'
 
 import { AssetPointerScheme, JSONKeyframeValueTypes, KeyframeConfigScheme, KeyframeScheme } from './scheme/keyframe'
 
-export type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | AssetPointerScheme | null
+export type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | Expression | AssetPointerScheme | null
 
 export default class Keyframe<T extends KeyframeValueTypes = KeyframeValueTypes>
 {

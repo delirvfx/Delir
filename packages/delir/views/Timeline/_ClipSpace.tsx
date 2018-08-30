@@ -133,8 +133,6 @@ export default withComponentContext(connectToStores([EditorStateStore, RendererS
 
         if (!dragEntity || dragEntity.type !== 'clip') return
 
-        console.log(layer, dragEntity)
-
         const isChildClip = !!layer.clips.find(clip => clip.id! === dragEntity.clip.id!)
 
         if (!isChildClip) {

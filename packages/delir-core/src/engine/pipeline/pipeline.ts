@@ -28,7 +28,7 @@ import EffectRenderTask from './Task/EffectRenderTask'
 import WebGLContextPool from './WebGLContextPool'
 
 export interface ExpressionExecuters {
-    [propName: string]: (exposes: ExpressionContext.ContextSource) => ParameterValueTypes
+    [paramName: string]: (exposes: ExpressionContext.ContextSource) => ParameterValueTypes
 }
 
 interface LayerRenderTask {
@@ -62,12 +62,12 @@ export interface RealParameterValues {
 export const applyExpression = (
     req: RenderingRequest,
     beforeExpressionParams: RealParameterValues,
-    expressions: { [prop: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes },
-): { [prop: string]: ParameterValueTypes } => {
-    return _.mapValues(beforeExpressionParams, (value, propName) => {
-        if (expressions[propName!]) {
+    expressions: { [param: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes },
+): { [param: string]: ParameterValueTypes } => {
+    return _.mapValues(beforeExpressionParams, (value, paramName) => {
+        if (expressions[paramName!]) {
             // TODO: Value type Validation
-            const result = expressions[propName!]({
+            const result = expressions[paramName!]({
                 req,
                 clipProperties: beforeExpressionParams,
                 currentValue: value
@@ -402,7 +402,7 @@ export default class Pipeline
 
                 // Lookup current frame prop value from pre-calculated lookup-table
                 const beforeExpressionParams = _.fromPairs(clipTask.rendererParams.properties.map(desc => {
-                    return [desc.propName, clipTask.keyframeLUT[desc.propName][req.frame]]
+                    return [desc.paramName, clipTask.keyframeLUT[desc.paramName][req.frame]]
                 }))
 
                 // Apply expression
@@ -434,8 +434,8 @@ export default class Pipeline
                 // Post process effects
                 for (const effectTask of clipTask.effectRenderTask) {
                     const beforeExpressionEffectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => {
-                        return [desc.propName, effectTask.keyframeLUT[desc.propName][req.frame]]
-                    })) as {[propName: string]: ParameterValueTypes}
+                        return [desc.paramName, effectTask.keyframeLUT[desc.paramName][req.frame]]
+                    })) as {[paramName: string]: ParameterValueTypes}
 
                     const afterExpressionEffectorParams = applyExpression(clipScopeReq, beforeExpressionEffectorParams, effectTask.expressions)
 

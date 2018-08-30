@@ -25,7 +25,7 @@ export default class EffectRenderTask {
         const EffectPluginClass = resolver.resolveEffectPlugin(effect.processor)!
 
         const effectParams = EffectPluginClass.provideParameters()
-        const effectAssetParamNames = effectParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.propName)
+        const effectAssetParamNames = effectParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
 
         let effectRenderer = effectCache.get(effect)
 

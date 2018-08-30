@@ -1,5 +1,6 @@
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classNames from 'classnames'
+import { clipboard } from 'electron'
 import * as _ from 'lodash'
 import * as parseColor from 'parse-color'
 import * as path from 'path'
@@ -198,6 +199,11 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
                                     {/*<MenuItem label='Reload' onClick={() => {}} />*/}
                                     <MenuItem label={t('assets.contextMenu.remove')} data-asset-id={asset.id} onClick={this.removeAsset}/>
                                     <MenuItem type='separator' />
+                                    <MenuItem
+                                        label={t('assets.contextMenu.copyAssetURI')}
+                                        data-asset-id={asset.id}
+                                        onClick={this.handleCopyAssetURI}
+                                    />
                                 </ContextMenu>
 
                                 <td className={s.IconField}>{fileIconFromExtension(asset.fileType)}</td>
@@ -247,6 +253,10 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
 
     private handleClickRenameAsset = ({ dataset }: MenuItemOption<{assetId: string}>) => {
         this.assetInputRefs[dataset.assetId].enableAndFocus()
+    }
+
+    private handleCopyAssetURI = ({ dataset }: MenuItemOption<{assetId: string}>) => {
+        clipboard.writeText(`delir:${dataset.assetId}`)
     }
 
     private addAsset = (e: React.DragEvent<HTMLTableElement>) =>

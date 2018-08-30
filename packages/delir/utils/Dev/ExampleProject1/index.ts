@@ -23,8 +23,8 @@ const audioAsset = assign(new Delir.Project.Asset(), {
 
 const imageAsset = assign(new Delir.Project.Asset(), {
     name: 'Image',
-    fileType: 'jpg',
-    path: join(dirname, 'image.jpg'),
+    fileType: 'png',
+    path: join(dirname, 'image.png'),
 })
 
 ; [videoAsset, audioAsset, imageAsset].forEach(a => ProjectHelper.addAsset(p, a))
@@ -58,8 +58,11 @@ const layer3 = assign(new Delir.Project.Layer(), {
 const layer4 = assign(new Delir.Project.Layer(), {
     name: 'VERY CUTE 🐰-CHAN',
 })
+const layer5 = assign(new Delir.Project.Layer(), {
+    name: 'GENERATIVE',
+})
 
-; [layer4, layer3, layer2, layer1].forEach(lane => {
+; [layer5, layer4, layer3, layer2, layer1].forEach(lane => {
     ProjectHelper.addLayer(p, composition, lane)
 })
 
@@ -93,6 +96,9 @@ const textClip = assign(new Delir.Project.Clip(), {
         ],
         loop: [
             assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
+        ],
+        color: [
+            assign(new Delir.Project.Keyframe(), { value: new Delir.Values.ColorRGBA(0, 0, 0, 1), frameOnClip: 0 })
         ],
         // x: [
         //     assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
@@ -142,6 +148,82 @@ const adjustmentClip = assign(new Delir.Project.Clip(), {
     durationFrames: 30 * 10,
 })
 
+const p5jsClip = assign(new Delir.Project.Clip(), {
+    renderer: 'p5js',
+    placedFrame: 0,
+    durationFrames: 30 * 10,
+    keyframes: {
+        sketch: [
+            assign(new Delir.Project.Keyframe(), {
+                frameOnClip: 0,
+                value: new Delir.Values.Expression('javascript', `
+// Link: https://p5js.org/examples/simulate-snowflakes.html
+let snowflakes = []; // array to hold snowflake objects
+let img
+
+function setup() {
+    // createCanvas(400, 600);
+    // fill(240);
+    noStroke();
+    img = loadImage('delir:${imageAsset.id}')
+}
+
+function draw() {
+    // background('brown');
+    clear();
+    image(img, 0, 0, img.width / 6, img.height / 6);
+    let t = frameCount / 60; // update time
+
+    // create a random number of snowflakes each frame
+    for (var i = 0; i < random(5); i++) {
+        snowflakes.push(new snowflake()); // append snowflake object
+    }
+
+    // loop through snowflakes with a for..of loop
+    for (let flake of snowflakes) {
+        flake.update(t); // update snowflake position
+        flake.display(); // draw snowflake
+    }
+}
+
+// snowflake class
+function snowflake() {
+    // initialize coordinates
+    this.posX = 0;
+    this.posY = random(-50, 0);
+    this.initialangle = random(0, 2 * PI);
+    this.size = random(2, 5);
+
+    // radius of snowflake spiral
+    // chosen so the snowflakes are uniformly spread out in area
+    this.radius = sqrt(random(pow(width / 2, 2)));
+
+    this.update = function(time) {
+        // x position follows a circle
+        let w = 0.6; // angular speed
+        let angle = w * time + this.initialangle;
+        this.posX = width / 2 + this.radius * sin(angle);
+
+        // different size snowflakes fall at slightly different y speeds
+        this.posY += pow(this.size, 0.5);
+
+        // delete snowflake if past end of screen
+        if (this.posY > height) {
+            let index = snowflakes.indexOf(this);
+            snowflakes.splice(index, 1);
+        }
+    };
+
+    this.display = function() {
+        ellipse(this.posX, this.posY, this.size);
+    };
+}
+`)
+            })
+        ]
+    }
+})
+
 const videoClip = assign(new Delir.Project.Clip(), {
     renderer: 'video',
     placedFrame: 0,
@@ -158,7 +240,8 @@ const videoClip = assign(new Delir.Project.Clip(), {
 
 ProjectHelper.addClip(p, layer1, adjustmentClip)
 ProjectHelper.addClip(p, layer2, textClip)
-ProjectHelper.addClip(p, layer4, videoClip)
+ProjectHelper.addClip(p, layer4, p5jsClip)
+ProjectHelper.addClip(p, layer5, videoClip)
 
 //
 // Effects

@@ -21,13 +21,13 @@ export function calcKeyframeValuesAt(
     frame: number,
     clipPlacedFrame: number,
     descriptor: TypeDescriptor,
-    keyframes: {[propName: string]: Keyframe[]},
-): {[propName: string]: KeyframeValueTypes}
+    keyframes: {[paramName: string]: Keyframe[]},
+): {[paramName: string]: KeyframeValueTypes}
 {
     return descriptor.properties.map<[string, KeyframeValueTypes]>(desc => {
         return [
-            desc.propName,
-            calcKeyframeValueAt(frame, clipPlacedFrame, desc, keyframes[desc.propName] || [])
+            desc.paramName,
+            calcKeyframeValueAt(frame, clipPlacedFrame, desc, keyframes[desc.paramName] || [])
         ]
     })
     .reduce((values, entry) => {
@@ -66,6 +66,8 @@ export function calcKeyframeValueAt(
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcFloatKeyFrames)[frame]
         case 'ENUM':
             return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcEnumKeyFrames)[frame]
+        case 'CODE':
+            return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNoAnimatableKeyframes)[frame]
         // case 'CLIP':
         //     return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNoAnimatable)[frame]
         // case 'PULSE':
@@ -81,64 +83,67 @@ export function calcKeyframeValueAt(
 
 export function calcKeyFrames(
     paramTypes: TypeDescriptor | AnyParameterTypeDescriptor[],
-    keyFrames: {[propName: string]: Keyframe[]},
+    keyFrames: {[paramName: string]: Keyframe[]},
     clipPlacedFrame: number,
     beginFrame: number,
     calcFrames: number
-): {[propName: string]: KeyframeParamValueSequence}
+): {[paramName: string]: KeyframeParamValueSequence}
 {
-    const tables: {[propName: string]: KeyframeParamValueSequence} = {}
-    const props = paramTypes instanceof TypeDescriptor ? paramTypes.properties : paramTypes
+    const tables: {[paramName: string]: KeyframeParamValueSequence} = {}
+    const params = paramTypes instanceof TypeDescriptor ? paramTypes.properties : paramTypes
 
-    for (const propDesc of props) {
-        const {propName} = propDesc
-        const propSequence = keyFrames[propName] || []
+    for (const paramDesc of params) {
+        const {paramName} = paramDesc
+        const propSequence = keyFrames[paramName] || []
 
-        switch (propDesc.type) {
+        switch (paramDesc.type) {
             // case 'POINT_2D':
-            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPoint2dKeyFrames)
+            //     tables[paramName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPoint2dKeyFrames)
             // break
             // case 'POINT_3D':
-            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPoint3dKeyFrames)
+            //     tables[paramName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPoint3dKeyFrames)
             // break
             // case 'SIZE_2D':
-            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcSize2dKeyFrames)
+            //     tables[paramName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcSize2dKeyFrames)
             // break
             // case 'SIZE_3D':
-            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcSize3dKeyFrames)
+            //     tables[paramName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcSize3dKeyFrames)
             // break
             case 'COLOR_RGB':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcColorRgbKeyFrames)
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcColorRgbKeyFrames)
             break
             case 'COLOR_RGBA':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcColorRgbaKeyFrames)
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcColorRgbaKeyFrames)
             break
             case 'BOOL':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcBoolKeyFrames)
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcBoolKeyFrames)
             break
             case 'STRING':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcStringKeyFrames)
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcStringKeyFrames)
             break
             case 'NUMBER':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNumberKeyFrames)
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNumberKeyFrames)
             break
             case 'FLOAT':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcFloatKeyFrames)
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcFloatKeyFrames)
             break
             case 'ENUM':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcEnumKeyFrames)
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcEnumKeyFrames)
             break
             // case 'CLIP':
-            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNoAnimatable)
+            //     tables[paramName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNoAnimatable)
             // break
             // case 'PULSE':
-            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPulseKeyFrames)
+            //     tables[paramName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcPulseKeyFrames)
             // break
             // case 'ARRAY':
-            //     tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcArrayOfKeyFrames)
+            //     tables[paramName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcArrayOfKeyFrames)
             // break
             case 'ASSET':
-                tables[propName] = calcKeyframe(propDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcAssetKeyFrames)
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcAssetKeyFrames)
+            break
+            case 'CODE':
+                tables[paramName] = calcKeyframe(paramDesc, propSequence, clipPlacedFrame, beginFrame, calcFrames, calcNoAnimatableKeyframes)
             break
         }
     }
@@ -369,7 +374,7 @@ function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameL
     return keyFrameLink.previous ? (keyFrameLink.previous.value! as AssetPointerScheme) : (keyFrameLink.active!.value as AssetPointerScheme)
 }
 
-function calcNoAnimatable(rate: number, frame: number, keyFrameLink: KeyFrameLink<any>): any
+function calcNoAnimatableKeyframes(rate: number, frame: number, keyFrameLink: KeyFrameLink<any>): any
 {
     return keyFrameLink.active.value
 }
