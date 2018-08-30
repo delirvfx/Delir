@@ -1,5 +1,4 @@
 import { createContext, runInNewContext } from 'vm'
-// import FrameContext from './FrameContext'
 
 interface ExpressionVMOption {
     filename?: string

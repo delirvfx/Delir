@@ -1,6 +1,6 @@
 import { TypeDescriptor } from '../../plugin-support/type-descriptor'
-import PreRenderingRequest from '../pipeline/pre-rendering-request'
-import RenderingRequest from '../pipeline/render-request'
+import PreRenderingRequest from '../PreRenderingRequest'
+import RenderingRequest from '../RenderRequest'
 
 export interface IRendererStatic {
     rendererId: string

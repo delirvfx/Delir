@@ -3,15 +3,15 @@ import * as _ from 'lodash'
 
 export default class RenderResponse
 {
-    static _permitKeys = [
+    public static _permitKeys = [
         'destCanvas',
         // TODO: 'depthBufferCanvas',
         'destAudioBuffer',
     ]
 
-    destCanvas: HTMLCanvasElement
+    public destCanvas: HTMLCanvasElement
     // TODO: depthBufferCanvas: HTMLCanvasElement
-    destAudioBuffer: Array<Float32Array>
+    public destAudioBuffer: Array<Float32Array>
 
     constructor(properties: Object)
     {
@@ -20,7 +20,7 @@ export default class RenderResponse
         Object.freeze(this)
     }
 
-    clone(patch: Object): RenderResponse
+    public clone(patch: Object): RenderResponse
     {
         return new RenderResponse(Object.assign({}, this, patch))
     }

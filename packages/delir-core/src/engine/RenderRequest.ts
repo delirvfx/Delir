@@ -1,9 +1,9 @@
 import * as _ from 'lodash'
 
-import Composition from '../../project/composition'
+import Composition from '../project/composition'
 import DependencyResolver from './DependencyResolver'
-import { RealParameterValueTypes } from './pipeline'
-import PreRenderingRequest from './pre-rendering-request'
+import { RealParameterValueTypes } from './Engine'
+import PreRenderingRequest from './PreRenderingRequest'
 import WebGLContextPool from './WebGLContextPool'
 
 export default class RenderRequest<T = {[propName: string]: RealParameterValueTypes}>

@@ -1,28 +1,26 @@
-import EffectPluginBase from '../../plugin-support/PostEffectBase'
-import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
-import Clip from '../../project/clip'
-import Effect from '../../project/effect'
-import Project from '../../project/project'
-import { IRenderer } from '../renderer/renderer-base'
+import EffectPluginBase from '../plugin-support/PostEffectBase'
+import { ParameterValueTypes } from '../plugin-support/type-descriptor'
+import Clip from '../project/clip'
+import Effect from '../project/effect'
+import Project from '../project/project'
 import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
+import { IRenderer } from './renderer/renderer-base'
 
-import PluginRegistry from '../../plugin-support/plugin-registry'
+import PluginRegistry from '../plugin-support/plugin-registry'
 
-import AssetProxy from '@ragg/delir-core/src/engine/pipeline/AssetProxy'
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
-import { RenderingAbortedException, RenderingFailedException } from '../../exceptions/'
-import { arraysToAudioBuffer, mergeInto as mergeAudioBufferInto } from '../../helper/Audio'
-import defaults from '../../helper/defaults'
-import FPSCounter from '../../helper/FPSCounter'
-import * as KeyframeHelper from '../../helper/keyframe-helper'
-import ProgressPromise from '../../helper/progress-promise'
-import * as ProjectHelper from '../../helper/project-helper'
-import { ColorRGB, ColorRGBA } from '../../values'
-import * as RendererFactory from '../renderer'
+import { RenderingAbortedException, RenderingFailedException } from '../exceptions/'
+import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
+import defaults from '../helper/defaults'
+import FPSCounter from '../helper/FPSCounter'
+import ProgressPromise from '../helper/progress-promise'
+import * as ProjectHelper from '../helper/project-helper'
+import { ColorRGB, ColorRGBA } from '../values'
+import AssetProxy from './AssetProxy'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionContext'
-import RenderingRequest from './render-request'
+import RenderingRequest from './RenderRequest'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
 import WebGLContextPool from './WebGLContextPool'
@@ -80,7 +78,7 @@ export const applyExpression = (
     })
 }
 
-export default class Pipeline
+export default class Engine
 {
     private _fpsCounter: FPSCounter = new FPSCounter()
     private _seqRenderPromise: ProgressPromise<void> | null = null

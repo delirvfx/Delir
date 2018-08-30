@@ -1,4 +1,4 @@
-import WebGLContextBindToken from '../../plugin-support/WebGLContextBindToken'
+import WebGLContextBindToken from '../plugin-support/WebGLContextBindToken'
 
 interface WebGLContextSet {
     used: boolean

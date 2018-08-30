@@ -1,5 +1,5 @@
 import * as Renderer from './renderer/index'
 
-export {expressionContextTypeDefinition} from './pipeline/ExpressionContext'
-export {default as Pipeline} from './pipeline/pipeline'
+export {expressionContextTypeDefinition} from './ExpressionContext'
+export {default as Engine} from './Engine'
 export {Renderer as Renderers}

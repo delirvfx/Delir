@@ -1,10 +1,9 @@
-// @flow
-import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
-import PluginRegistry from '../../plugin-support/plugin-registry'
-import EffectPluginBase, { EffectPluginClass } from '../../plugin-support/PostEffectBase'
-import Project from '../../project/project'
+import UnknownPluginReferenceException from '../exceptions/unknown-plugin-reference-exception'
+import PluginRegistry from '../plugin-support/plugin-registry'
+import EffectPluginBase, { EffectPluginClass } from '../plugin-support/PostEffectBase'
+import Project from '../project/project'
 
-import * as ProjectHelper from '../../helper/project-helper'
+import * as ProjectHelper from '../helper/project-helper'
 import AssetProxy from './AssetProxy'
 
 export default class DependencyResolver

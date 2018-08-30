@@ -31,7 +31,7 @@ export default class RendererStore extends Store<State> {
         isInRendering: false,
     }
 
-    private pipeline = new Delir.Engine.Pipeline()
+    private pipeline = new Delir.Engine.Engine()
     private pluginRegistry = this.pipeline.pluginRegistry
 
     private destCanvas: HTMLCanvasElement | null = null

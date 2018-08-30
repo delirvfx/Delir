@@ -1,18 +1,17 @@
 import * as _ from 'lodash'
 
-import * as KeyframeHelper from '../../../helper/keyframe-helper'
-import EffectPluginBase from '../../../plugin-support/PostEffectBase'
-import { ParameterValueTypes, TypeDescriptor } from '../../../plugin-support/type-descriptor'
-import { Clip, Effect } from '../../../project'
-import { KeyframeValueTypes } from '../../../project/keyframe'
-import { AssetPointerScheme } from '../../../project/scheme/keyframe'
-import { Expression } from '../../../values'
+import * as KeyframeHelper from '../../helper/keyframe-helper'
+import EffectPluginBase from '../../plugin-support/PostEffectBase'
+import { TypeDescriptor } from '../../plugin-support/type-descriptor'
+import { Clip, Effect } from '../../project'
+import { AssetPointerScheme } from '../../project/scheme/keyframe'
+import { Expression } from '../../values'
 import DependencyResolver from '../DependencyResolver'
+import {  RealParameterValues, RealParameterValueTypes } from '../Engine'
 import { compileTypeScript } from '../ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionContext'
 import ExpressionVM from '../ExpressionVM'
-import { ExpressionExecuters, RealParameterValues, RealParameterValueTypes } from '../pipeline'
-import RenderRequest from '../render-request'
+import RenderRequest from '../RenderRequest'
 
 export default class EffectRenderTask {
     public static build({effect, clip, req, resolver, effectCache}: {

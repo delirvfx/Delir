@@ -1,5 +1,5 @@
-import { ParameterValueTypes } from '../../plugin-support/type-descriptor'
-import Composition from '../../project/composition'
+import { ParameterValueTypes } from '../plugin-support/type-descriptor'
+import Composition from '../project/composition'
 import DependencyResolver from './DependencyResolver'
 import WebGLContextPool from './WebGLContextPool'
 

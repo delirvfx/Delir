@@ -3,8 +3,8 @@ import P5Hooks from './P5Hooks'
 
 import Type from '../../../plugin-support/type-descriptor'
 import Expression from '../../../values/expression'
-import PreRenderingRequest from '../../pipeline/pre-rendering-request'
-import RenderingRequest from '../../pipeline/render-request'
+import PreRenderingRequest from '../../PreRenderingRequest'
+import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../renderer-base'
 
 interface SketchRendererParams {
