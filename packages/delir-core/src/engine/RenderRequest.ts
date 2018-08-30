@@ -4,7 +4,6 @@ import Composition from '../project/composition'
 import DependencyResolver from './DependencyResolver'
 import { RealParameterValueTypes } from './Engine'
 import PreRenderingRequest from './PreRenderingRequest'
-import WebGLContextPool from './WebGLContextPool'
 
 export default class RenderRequest<T = {[propName: string]: RealParameterValueTypes}>
 {
@@ -38,7 +37,6 @@ export default class RenderRequest<T = {[propName: string]: RealParameterValueTy
         // 'clipScope',
 
         'parameters',
-        'glContextPool'
     ]
 
     private static _permitOnlyInitializeKey = [
@@ -92,7 +90,6 @@ export default class RenderRequest<T = {[propName: string]: RealParameterValueTy
     // Resolver
     //
     public readonly resolver: DependencyResolver
-    public readonly glContextPool: WebGLContextPool
 
     // alias
     public get seconds(): number { return this.time }
@@ -132,7 +129,6 @@ export default class RenderRequest<T = {[propName: string]: RealParameterValueTy
             parameters: this.parameters,
 
             resolver: this.resolver,
-            glContextPool: this.glContextPool,
         })
     }
 }

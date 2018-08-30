@@ -23,7 +23,6 @@ import * as ExpressionContext from './ExpressionContext'
 import RenderingRequest from './RenderRequest'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
-import WebGLContextPool from './WebGLContextPool'
 
 export interface ExpressionExecuters {
     [paramName: string]: (exposes: ExpressionContext.ContextSource) => ParameterValueTypes
@@ -88,7 +87,6 @@ export default class Engine
     private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver | null = null
-    private webGLContextPool: WebGLContextPool = new WebGLContextPool()
 
     get project() { return this._project }
     set project(project: Project) { this._project = project }
@@ -301,11 +299,10 @@ export default class Engine
 
             rootComposition,
             resolver,
-            glContextPool: this.webGLContextPool,
         })
     }
 
-    private async _taskingStage(this: Pipeline, req: RenderingRequest): Promise<LayerRenderTask[]>
+    private async _taskingStage(this: Engine, req: RenderingRequest): Promise<LayerRenderTask[]>
     {
         const layerTasks: LayerRenderTask[] = []
 
