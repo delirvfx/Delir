@@ -5,7 +5,7 @@ import Type from '../../../plugin-support/type-descriptor'
 import Expression from '../../../values/expression'
 import PreRenderingRequest from '../../PreRenderingRequest'
 import RenderingRequest from '../../RenderRequest'
-import { IRenderer } from '../renderer-base'
+import { IRenderer } from '../RendererBase'
 
 interface SketchRendererParams {
     sketch: Expression

@@ -1,5 +1,5 @@
 import { TypeDescriptor } from '../../plugin-support/type-descriptor'
-import { IRenderer, IRendererStatic } from './renderer-base'
+import { IRenderer, IRendererStatic } from './RendererBase'
 
 import * as _ from 'lodash'
 import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'

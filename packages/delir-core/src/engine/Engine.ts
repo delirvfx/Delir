@@ -4,7 +4,7 @@ import Clip from '../project/clip'
 import Effect from '../project/effect'
 import Project from '../project/project'
 import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
-import { IRenderer } from './renderer/renderer-base'
+import { IRenderer } from './Renderer/RendererBase'
 
 import PluginRegistry from '../plugin-support/plugin-registry'
 
