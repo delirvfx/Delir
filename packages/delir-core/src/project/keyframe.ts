@@ -39,6 +39,8 @@ export default class Keyframe<T extends KeyframeValueTypes = KeyframeValueTypes>
                 realValue = ColorRGBA.fromJSON(jsonValue.value)
             } else if (jsonValue.type === 'asset') {
                 realValue = jsonValue.value
+            } else if (jsonValue.type === 'expression') {
+                realValue = Expression.fromJSON(jsonValue.value)
             } else {
                 const __NEVER__: never = jsonValue
                 throw new Error(`Deserialization failed, unexpected object value on Keyframe#${keyframeJson.id}`)
@@ -110,6 +112,8 @@ export default class Keyframe<T extends KeyframeValueTypes = KeyframeValueTypes>
             value = { type: 'color-rgba', value: this.value.toJSON() }
         } else if (_.isObject(this.value) && _.has(this.value as AssetPointerScheme, 'assetId')) {
             value = { type: 'asset', value: toJSON(this.value as AssetPointerScheme) }
+        } else if (_.isObject(this.value) && this.value instanceof Expression) {
+            value = { type: 'expression', value: this.value.toJSON() }
         } else if (_.isObject(this.value)) {
             throw new Error(`Serialization failed, unexpected value type on Keyframe#${this.id}`)
         } else {

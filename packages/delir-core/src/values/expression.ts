@@ -4,6 +4,10 @@ export interface ExpressionJSON {
 }
 
 export default class Expression {
+    public static fromJSON(json: ExpressionJSON) {
+        return new Expression(json.language, json.code)
+    }
+
     constructor(
         public language: string,
         public code: string,

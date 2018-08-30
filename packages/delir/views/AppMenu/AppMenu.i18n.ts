@@ -37,6 +37,12 @@ export default I18n({
         help: {
             label: 'ヘルプ',
         },
+        modals: {
+            saveAs: {
+                title: '新しいファイルに保存',
+                save: '保存',
+            }
+        },
     },
     en: {
         appMenu: {
@@ -73,6 +79,12 @@ export default I18n({
         },
         help: {
             label: 'Help',
+        },
+        modals: {
+            saveAs: {
+                title: 'Save as ...',
+                save: 'Save',
+            }
         },
     },
 })
