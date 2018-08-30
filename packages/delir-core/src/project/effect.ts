@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 
-import Expression from '../Values/expression'
+import Expression from '../Values/Expression'
 import Keyframe from './keyframe'
 import { EffectOptionScheme, EffectScheme } from './scheme/effect'
 import { KeyframeScheme } from './scheme/keyframe'

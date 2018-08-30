@@ -8,7 +8,7 @@ import toJSON from '../helper/toJSON'
 // import Size3D from '../Values/size-3d'
 import ColorRGB from '../Values/color-rgb'
 import ColorRGBA from '../Values/color-rgba'
-import Expression from '../Values/expression'
+import Expression from '../Values/Expression'
 
 import { AssetPointerScheme, JSONKeyframeValueTypes, KeyframeConfigScheme, KeyframeScheme } from './scheme/keyframe'
 

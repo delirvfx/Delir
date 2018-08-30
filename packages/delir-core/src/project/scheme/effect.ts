@@ -1,4 +1,4 @@
-import Expression from '../../Values/expression'
+import Expression from '../../Values/Expression'
 import { KeyframeScheme } from './keyframe'
 
 export interface EffectOptionScheme {
