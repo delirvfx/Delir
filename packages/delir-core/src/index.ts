@@ -15,9 +15,13 @@ import * as KeyframeHelper from './helper/keyframe-helper'
 import * as ProjectHelper from './helper/project-helper'
 import ProjectMigrator from './helper/ProjectMigrator'
 
+import * as Entity from './Entity'
+
 export {
     // Core (Namaspaces)
+    /** @deprecated */
     Project,
+    Entity,
     Engine,
     PluginSupport,
     Exceptions,

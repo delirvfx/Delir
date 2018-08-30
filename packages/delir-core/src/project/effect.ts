@@ -16,6 +16,7 @@ export default class Effect
 
     get keyframeInterpolationMethod(): string { throw new Error('Effect.keyframeInterpolationMethod not implemented') }
     set keyframeInterpolationMethod(keyframeInterpolationMethod: string) { throw new Error('Effect.keyframeInterpolationMethod not implemented') }
+
     public static deserialize(effectJson: EffectScheme)
     {
         const effect = new Effect()
