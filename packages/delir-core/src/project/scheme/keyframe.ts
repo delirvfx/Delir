@@ -4,6 +4,7 @@
 // import Size3D from '../../values/size-3d'
 import { ColorRgbJSON } from '../../values/color-rgb'
 import { ColorRgbaJSON } from '../../values/color-rgba'
+import { ExpressionJSON } from '../../values/expression'
 
 export interface AssetPointerScheme {
     assetId: string
@@ -16,6 +17,7 @@ export type JSONKeyframeValueTypes =
     | {type: 'color-rgb', value: ColorRgbJSON}
     | {type: 'color-rgba', value: ColorRgbaJSON}
     | {type: 'asset', value: AssetPointerScheme}
+    | {type: 'expression', value: ExpressionJSON}
     // Point2D|Point3D|Size2D|Size3D
 
 export interface KeyframeConfigScheme {
