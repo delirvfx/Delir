@@ -34,6 +34,7 @@
     "mkdirp-promise": "5.0.1",
     "monaco-editor": "0.14.3",
     "mouse-wheel": "1.2.0",
+    "msgpack5": "4.2.0",
     "node-timecodes": "2.4.1",
     "parse-color": "1.0.0",
     "react": "16.4.1",
