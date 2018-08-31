@@ -166,7 +166,7 @@ export const openProject = operation(async (context) => {
     })
 })
 
-export const saveProject = operation(async (context, { path, silent = false }: { path: string, silent: boolean }) => {
+export const saveProject = operation(async (context, { path, silent = false }: { path: string, silent?: boolean }) => {
     const project = context.getStore(EditorStateStore).getState().project
 
     if (!project) return
@@ -213,5 +213,3 @@ export const autoSaveProject = operation(async (context) => {
         timeout: 2000
     })
 })
-
-console.log(MsgPack().encode({ a: 'b' }))

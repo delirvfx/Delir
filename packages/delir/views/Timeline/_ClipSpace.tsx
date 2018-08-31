@@ -48,13 +48,11 @@ export default withComponentContext(connectToStores([EditorStateStore, RendererS
     public render()
     {
         const {layer, activeClip, framerate, pxPerSec, scale, postEffectPlugins} = this.props
-        const keyframes = activeClip ? activeClip.keyframes : {}
-        const clips = Array.from<Delir.Entity.Clip>(layer.clips)
+        const clips = Array.from(layer.clips)
         const convertOption = { pxPerSec, framerate, scale }
 
         return (
             <li
-                key={layer.id}
                 className={classnames('timeline-lane', {
                     dragover: this.state.dragovered,
                     '--expand': clips.findIndex(clip => !!(activeClip && clip.id === activeClip.id)) !== -1,
@@ -135,7 +133,9 @@ export default withComponentContext(connectToStores([EditorStateStore, RendererS
 
         const isChildClip = !!layer.clips.find(clip => clip.id! === dragEntity.clip.id!)
 
-        if (!isChildClip) {
+        if (isChildClip) {
+            this.props.context.executeOperation(AppActions.clearDragEntity, {})
+        } else {
             this.props.context.executeOperation(ProjectModActions.moveClipToLayer, {
                 clipId: dragEntity.clip.id!,
                 destLayerId: this.props.layer.id!

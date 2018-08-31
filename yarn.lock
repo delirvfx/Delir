@@ -635,9 +635,9 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@ragg/fleur-react@0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.6.tgz#102f85df3bf67a139b34b83942a443f861ac5654"
+"@ragg/fleur-react@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.7.tgz#8ec2ce41116a0c3fc7b3bca60fa126ce51f5bf7b"
 
 "@ragg/fleur@0.0.5":
   version "0.0.5"

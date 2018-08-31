@@ -25,6 +25,11 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         )
     }
 
+    public shouldComponentUpdate(nextProps: Props) {
+        return nextProps.editor.previewPlayed !== this.props.editor.previewPlayed
+            || nextProps.editor.activeComp !== this.props.editor.activeComp
+    }
+
     public render()
     {
         return null
@@ -37,7 +42,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
     private _buildMenu(): Electron.MenuItemConstructorOptions[]
     {
         const {context} = this.props
-        const {previewPlayed, activeComp, currentPreviewFrame} = this.props.editor
+        const {previewPlayed, activeComp} = this.props.editor
         const menu: Electron.MenuItemConstructorOptions[] = []
 
         if (Platform.isMacOS()) {
@@ -188,7 +193,8 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                             ? context.executeOperation(AppActions.stopPreview, {})
                             : context.executeOperation(AppActions.startPreview, {
                                 compositionId: activeComp!.id,
-                                beginFrame: currentPreviewFrame
+                                // Delayed get for rendering performance
+                                beginFrame: context.getStore(EditorStateStore).getState().currentPreviewFrame,
                             })
                     } ,
                 },

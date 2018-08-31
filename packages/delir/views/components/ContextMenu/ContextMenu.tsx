@@ -5,18 +5,16 @@ import propToDataset from '../../../utils/propToDataset'
 import ContextMenuManager from './ContextMenuManager'
 
 export interface MenuItemOption<T = {}> {
-    type?: ('normal' | 'separator' | 'submenu' | 'checkbox' | 'radio')
+    type?: Electron.MenuItemConstructorOptions['type']
     label?: string
     icon?: HTMLImageElement | string
     enabled?: boolean
     visible?: boolean
     checked?: boolean
     submenu?: MenuItemOption[]
-    click?: (props: MenuItemProps) => void
+    click?: (options: MenuItemOption) => void
     dataset: T
 }
-
-export type MenuItemProps<T = any> = Readonly<MenuItemOption<T>>
 
 // Generics syntax conflicts JSX syntax, so split typedef and implementation
 type WrapArrayFunction = <T>(obj: T | T[]) => T[] | undefined
@@ -28,7 +26,7 @@ const wrapArray: WrapArrayFunction = (obj) => {
 const toMenuItemJSON = (item: MenuItem): MenuItemOption => {
     const menuItem: MenuItemOption = {
         label: item.props.label,
-        type: item.props.type || 'normal',
+        type: item.props.type,
         click: item.props.onClick,
         checked: item.props.checked,
         enabled: item.props.enabled == null ? true : item.props.enabled,
