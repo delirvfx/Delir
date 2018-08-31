@@ -14,7 +14,7 @@ import ProjectStore, { ProjectStoreState } from '../../stores/ProjectStore'
 import RendererStore from '../../stores/RendererStore'
 
 import Button from '../components/Button'
-import { ContextMenu, MenuItem, MenuItemOption, MenuItemProps } from '../components/ContextMenu'
+import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 import Pane from '../components/pane'
 import Workspace from '../components/workspace'
 import DelirValueInput from './_DelirValueInput'
@@ -439,7 +439,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         this.forceUpdate()
     }
 
-    private removeEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
+    private removeEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
     {
         this.setState({ editorOpened: false, activeParam: null }, () => {
             this.props.context.executeOperation(ProjectModActions.removeEffect, {

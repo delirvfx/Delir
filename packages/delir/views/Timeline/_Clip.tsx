@@ -1,15 +1,14 @@
 import * as Delir from '@ragg/delir-core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
-import { Rnd, RndResizeCallback, RndResizeStartCallback } from 'react-rnd'
+import { DraggableEventHandler } from 'react-draggable'
+import { Rnd, RndResizeCallback } from 'react-rnd'
 
 import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
-import { ContextMenu, MenuItem, MenuItemOption, MenuItemProps } from '../components/ContextMenu'
+import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
-import { DraggableEventHandler } from 'react-draggable'
-import RendererStore from '../../stores/RendererStore'
 import t from './_Clip.i18n'
 import * as s from './Clip.styl'
 
@@ -110,7 +109,7 @@ export default withComponentContext(class TimelaneClip extends React.Component<P
         this.props.onChangeDuration(clip.id, this.props.width + delta.width)
     }
 
-    private addEffect = ({dataset}: MenuItemProps<{clipId: string, effectId: string}>) =>
+    private addEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
     {
         this.props.context.executeOperation(ProjectModActions.addEffectIntoClip, {
             clipId: dataset.clipId,

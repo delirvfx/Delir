@@ -12,11 +12,9 @@ export interface MenuItemOption<T = {}> {
     visible?: boolean
     checked?: boolean
     submenu?: MenuItemOption[]
-    click?: (props: MenuItemProps) => void
+    click?: (options: MenuItemOption) => void
     dataset: T
 }
-
-export type MenuItemProps<T = any> = Readonly<MenuItemOption<T>>
 
 // Generics syntax conflicts JSX syntax, so split typedef and implementation
 type WrapArrayFunction = <T>(obj: T | T[]) => T[] | undefined
