@@ -169,6 +169,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                         data-entity-type='clip'
                                         data-entity-id={activeClip.id}
                                         data-param-name={desc.paramName}
+                                        enabled={desc.animatable}
                                         onClick={this._openExpressionEditor}
                                     />
                                 </ContextMenu>
