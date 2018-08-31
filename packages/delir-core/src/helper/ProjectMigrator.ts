@@ -1,11 +1,11 @@
 import * as _ from 'lodash'
 
 export default {
-    isMigratable: (project: ProjectScheme) => {
+    isMigratable: (project: any) => {
         return false
     },
 
-    migrate: (project: ProjectScheme) => {
+    migrate: (project: any) => {
         return project
     }
 }
