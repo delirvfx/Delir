@@ -133,7 +133,7 @@ export const newProject = operation(async (context) => {
         }
     }
 
-    await context.exeDelir.Entity.setActiveProject, {
+    await context.executeOperation(setActiveProject, {
         project: new Delir.Entity.Project()
     })
 })
@@ -160,7 +160,7 @@ export const openProject = operation(async (context) => {
     const projectJson = MsgPack().decode(projectMpk).project
     const migratedProject = Delir.ProjectMigrator.migrate(projectJson)
 
-    await contextDelir.Entity.ion(setActiveProject, {
+    await context.executeOperation(setActiveProject, {
         project: Delir.Entity.Project.deserialize(migratedProject),
         path: path[0]
     })
