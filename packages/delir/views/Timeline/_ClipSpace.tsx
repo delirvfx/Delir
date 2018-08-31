@@ -8,7 +8,6 @@ import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
 
 import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
-import ProjectStore from '../../stores/ProjectStore'
 import RendererStore from '../../stores/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
