@@ -35,7 +35,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
 
     public render()
     {
-        const {clip, active, postEffectPlugins} = this.props
+        const {clip, active, postEffectPlugins, width, left} = this.props
 
         return (
             <Rnd
@@ -49,7 +49,8 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                     [s['Clip--p5js']]: clip.renderer === 'p5js',
                 })}
                 dragAxis='x'
-                default={{ x: this.props.left, y: 2, width: this.props.width, height: 'auto' }}
+                default={{ x: left, y: 2, width, height: 'auto' }}
+                size={{ width: width, height: 'auto' }}
                 enableResizing={{ left: true, right: true, top: false, bottom: false }}
                 onDragStart={this.handleDragStart}
                 onDragStop={this.handleDragEnd}
