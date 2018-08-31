@@ -1,4 +1,4 @@
-import DependencyResolver from '@ragg/delir-core/src/engine/pipeline/DependencyResolver'
+import DependencyResolver from '@ragg/delir-core/src/Engine/pipeline/DependencyResolver'
 import * as P5 from 'p5'
 
 interface Sketch {

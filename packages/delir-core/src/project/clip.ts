@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 
-import { AvailableRenderer } from '../engine/Renderer'
+import { AvailableRenderer } from '../Engine/Renderer'
 import Expression from '../Values/Expression'
 import Effect from './effect'
 import Keyframe from './keyframe'
