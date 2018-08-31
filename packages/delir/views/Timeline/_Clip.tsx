@@ -28,13 +28,7 @@ interface ConnectedProps {
 
 type Props = OwnProps  & ConnectedProps & ContextProp
 
-interface State {
-}
-
-export default withComponentContext(class TimelaneClip extends React.Component<Props, State> {
-    public state: State = {
-    }
-
+export default withComponentContext(class Clip extends React.Component<Props> {
     public refs: {
         clipRoot: HTMLDivElement
     }
