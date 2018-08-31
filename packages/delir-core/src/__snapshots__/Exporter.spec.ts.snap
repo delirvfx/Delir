@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Export test 1`] = `
+Object {
+  "__type": "entity:Project",
+  "__value": Object {
+    "assets": Array [
+      Object {
+        "__type": "entity:Asset",
+        "__value": Object {
+          "id": "uuid-asset",
+        },
+      },
+    ],
+    "compositions": Array [
+      Object {
+        "__type": "entity:Composition",
+        "__value": Object {
+          "backgroundColor": Object {
+            "__type": "value:ColorRGB",
+            "__value": Object {
+              "_blue": 0,
+              "_green": 0,
+              "_red": 0,
+            },
+          },
+          "id": "uuid-composition",
+          "layers": Array [
+            Object {
+              "__type": "entity:Layer",
+              "__value": Object {
+                "clips": Array [
+                  Object {
+                    "__type": "entity:Clip",
+                    "__value": Object {
+                      "effects": Array [
+                        Object {
+                          "__type": "entity:Effect",
+                          "__value": Object {
+                            "expressions": Object {
+                              "param": Object {
+                                "__type": "value:Expression",
+                                "__value": Object {
+                                  "code": "1",
+                                  "language": "javascript",
+                                },
+                              },
+                            },
+                            "id": "uuid-effect",
+                            "keyframes": Object {
+                              "param": Array [
+                                Object {
+                                  "__type": "entity:Keyframe",
+                                  "__value": Object {
+                                    "id": "uuid-effect-kf-1",
+                                    "value": Object {
+                                      "__type": "value:ColorRGB",
+                                      "__value": Object {
+                                        "_blue": 0,
+                                        "_green": 0,
+                                        "_red": 0,
+                                      },
+                                    },
+                                  },
+                                },
+                              ],
+                              "param2": Array [
+                                Object {
+                                  "__type": "entity:Keyframe",
+                                  "__value": Object {
+                                    "id": "uuid-effect-kf-2",
+                                    "value": Object {
+                                      "__type": "value:AssetPointer",
+                                      "__value": Object {
+                                        "assetId": "",
+                                      },
+                                    },
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        },
+                      ],
+                      "expressions": Object {
+                        "param": Object {
+                          "__type": "value:Expression",
+                          "__value": Object {
+                            "code": "1",
+                            "language": "javascript",
+                          },
+                        },
+                      },
+                      "id": "uuid-clip",
+                      "keyframes": Object {
+                        "param": Array [
+                          Object {
+                            "__type": "entity:Keyframe",
+                            "__value": Object {
+                              "id": "uuid-clip-kf-1",
+                              "value": Object {
+                                "__type": "value:ColorRGB",
+                                "__value": Object {
+                                  "_blue": 0,
+                                  "_green": 0,
+                                  "_red": 0,
+                                },
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                ],
+                "id": "uuid-layer",
+              },
+            },
+          ],
+        },
+      },
+    ],
+    "formatVersion": "2017091401",
+  },
+}
+`;

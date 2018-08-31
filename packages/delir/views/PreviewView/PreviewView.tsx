@@ -13,7 +13,7 @@ import t from './PreviewView.i18n'
 import * as s from './style.styl'
 
 interface ConnectedProps {
-    activeComp?: Delir.Project.Composition
+    activeComp?: Delir.Entity.Composition
     currentPreviewFrame?: number
 }
 

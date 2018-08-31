@@ -72,7 +72,7 @@ export default async (
 
     // const queue = new PromiseQueue()
 
-    const pipeline = new Delir.Engine.Pipeline()
+    const pipeline = new Delir.Engine.Engine()
     pipeline.project = project
     pipeline.pluginRegistry = pluginRegistry
 

@@ -5,7 +5,7 @@ import { SortableContainer } from 'react-sortable-hoc'
 import LaneLabel from './LaneLabel'
 
 interface Props {
-    layers: Delir.Project.Layer[]
+    layers: Delir.Entity.Layer[]
     onLayerSelect: (layerId: string) => void
     onLayerRemove: (layerId: string) => void
 }

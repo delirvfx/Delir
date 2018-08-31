@@ -10,7 +10,7 @@ import * as s from './CompositionSettingModal.styl'
 
 type SettingResult = {[props: string]: string} | void
 
-export const show = (props: {composition?: Delir.Project.Composition} = {}): Promise<SettingResult> => {
+export const show = (props: {composition?: Delir.Entity.Composition} = {}): Promise<SettingResult> => {
     return new Promise((resolve) => {
         const resolver = async (result?: SettingResult) => {
             await modal.hide()
@@ -33,7 +33,7 @@ export const show = (props: {composition?: Delir.Project.Composition} = {}): Pro
 }
 
 interface Props {
-    composition?: Delir.Project.Composition,
+    composition?: Delir.Entity.Composition,
     onConfirm: (opts: {[props: string]: string}) => void,
     onCancel: () => void
 }

@@ -2,16 +2,8 @@
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 
-import Asset from '../project/asset'
-import Clip from '../project/clip'
-import Composition from '../project/composition'
-import Effect from '../project/effect'
-import Keyframe from '../project/keyframe'
-import Layer from '../project/layer'
-import Project from '../project/project'
-import Expression from '../values/expression'
-
-import PluginRegistory from '../plugin-support/plugin-registry'
+import { Asset, Clip, Composition, Effect, Keyframe, Layer, Project } from '../Entity'
+import Expression from '../Values/Expression'
 
 function setFreezedProp(obj: object, name: string, value: any)
 {

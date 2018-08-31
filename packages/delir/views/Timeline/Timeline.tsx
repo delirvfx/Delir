@@ -89,7 +89,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         const {scale, timelineScrollLeft} = this.state
         const {activeComp, activeClip, currentPreviewFrame, previewPlayed} = this.props.editor
         const {framerate} = activeComp ? activeComp : {framerate: 30}
-        const layers: Delir.Project.Layer[] = activeComp ? Array.from(activeComp.layers) : []
+        const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
         const measures = !activeComp ? [] : TimePixelConversion.buildMeasures({
             durationFrames      : activeComp.durationFrames,
@@ -238,7 +238,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
 
         this.props.context.executeOperation(ProjectModActions.addLayer, {
             targetComposition: editor.activeComp,
-            layer: new Delir.Project.Layer()
+            layer: new Delir.Entity.Layer()
         })
     }
 

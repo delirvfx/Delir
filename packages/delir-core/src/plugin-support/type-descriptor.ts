@@ -1,4 +1,4 @@
-import AssetProxy from '../engine/pipeline/AssetProxy'
+import AssetProxy from '../Engine/pipeline/AssetProxy'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
 import defaults from '../helper/defaults'
 
@@ -10,7 +10,7 @@ import {
     Point3D,
     Size2D,
     Size3D,
-} from '../values'
+} from '../Values'
 
 export type ParameterType =
     // | 'POINT_2D'

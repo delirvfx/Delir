@@ -13,7 +13,7 @@ import t from './LaneLabel.i18n'
 import * as s from './LaneLabel.styl'
 
 interface OwnProps {
-    layer: Delir.Project.Layer
+    layer: Delir.Entity.Layer
 
     /**
      * Layer select handler

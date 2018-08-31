@@ -1,5 +1,5 @@
-import PreRenderRequest from '../engine/pipeline/pre-rendering-request'
-import RenderRequest from '../engine/pipeline/render-request'
+import PreRenderRequest from '../Engine/PreRenderingRequest'
+import RenderRequest from '../Engine/RenderRequest'
 
 import PluginBase from './plugin-base'
 import { ParameterValueTypes, TypeDescriptor } from './type-descriptor'

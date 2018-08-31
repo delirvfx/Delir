@@ -5,7 +5,7 @@ import { listen, Store } from '@ragg/fleur'
 import { AppActions, ProjectModActions } from '../actions/actions'
 
 export interface ProjectStoreState {
-    project: Delir.Project.Project | null,
+    project: Delir.Entity.Project | null,
     lastChangeTime: number,
 }
 
@@ -31,7 +31,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     // @ts-ignore
     private handleCreateComposition = listen(ProjectModActions.createCompositionAction, (payload) => {
         const { project } = this.state
-        const newLayer = new Delir.Project.Layer()
+        const newLayer = new Delir.Entity.Layer()
         ProjectHelper.addComposition(project!, payload.composition)
         ProjectHelper.addLayer(project!, payload.composition, newLayer)
         this.updateLastModified()
@@ -73,12 +73,12 @@ export default class ProjectStore extends Store<ProjectStoreState>
         const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
 
         if (propName == null) return
-        ProjectHelper.addKeyframe(project!, clip, propName, Object.assign(new Delir.Project.Keyframe(), {
+        ProjectHelper.addKeyframe(project!, clip, propName, Object.assign(new Delir.Entity.Keyframe(), {
             frameOnClip: 0,
             value: { assetId: registeredAsset.id },
         }))
 
-        const layer = new Delir.Project.Layer()
+        const layer = new Delir.Entity.Layer()
         ProjectHelper.addLayer(project!, targetComposition, layer)
         ProjectHelper.addClip(project!, layer, clip)
         this.updateLastModified()

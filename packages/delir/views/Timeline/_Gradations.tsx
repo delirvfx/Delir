@@ -15,7 +15,7 @@ interface OwnProps {
     currentFrame: number
     measures: MeasurePoint[]
     previewPlayed: boolean
-    activeComposition: Delir.Project.Composition | null,
+    activeComposition: Delir.Entity.Composition | null,
     cursorHeight: number,
     scrollLeft: number,
     scale: number
