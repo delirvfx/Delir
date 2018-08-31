@@ -9,8 +9,8 @@ import { AppActions, RendererActions } from '../actions/actions'
 import * as Platform from '../utils/platform'
 
 interface State {
-    project: Delir.Project.Project | null
-    composition: Delir.Project.Composition | null
+    project: Delir.Entity.Project | null
+    composition: Delir.Entity.Composition | null
     progress: string | null
     renderState: RenderState | null
     isInRendering: boolean

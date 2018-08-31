@@ -7,21 +7,21 @@ const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest a
 
 const fps = 30
 const durationFrames = fps * 10
-const p = new Delir.Project.Project()
+const p = new Delir.Entity.Project()
 
-const videoAsset = assign(new Delir.Project.Asset(), {
+const videoAsset = assign(new Delir.Entity.Asset(), {
     name: 'BigBuckBunny',
     fileType: 'mp4',
     path: join(dirname, 'big_buck_bunny.mp4'),
 })
 
-const audioAsset = assign(new Delir.Project.Asset(), {
+const audioAsset = assign(new Delir.Entity.Asset(), {
     name: 'Audio',
     fileType: 'mp3',
     path: join(dirname, 'audio.mp3'),
 })
 
-const imageAsset = assign(new Delir.Project.Asset(), {
+const imageAsset = assign(new Delir.Entity.Asset(), {
     name: 'Image',
     fileType: 'png',
     path: join(dirname, 'image.png'),
@@ -30,7 +30,7 @@ const imageAsset = assign(new Delir.Project.Asset(), {
 ; [videoAsset, audioAsset, imageAsset].forEach(a => ProjectHelper.addAsset(p, a))
 
 // Maser Composition
-const composition = assign(new Delir.Project.Composition(), {
+const composition = assign(new Delir.Entity.Composition(), {
     name: 'Master Composition',
     width: 640,
     height: 360,
@@ -43,22 +43,22 @@ const composition = assign(new Delir.Project.Composition(), {
 
 ProjectHelper.addComposition(p, composition)
 
-const layer1 = assign(new Delir.Project.Layer(), {
+const layer1 = assign(new Delir.Entity.Layer(), {
     name: 'Audio',
 })
 
-const layer2 = assign(new Delir.Project.Layer(), {
+const layer2 = assign(new Delir.Entity.Layer(), {
     name: '🔥 FIRE 🔥',
 })
 
-const layer3 = assign(new Delir.Project.Layer(), {
+const layer3 = assign(new Delir.Entity.Layer(), {
     name: 'NYAN = ^ . ^ = CAT',
 })
 
-const layer4 = assign(new Delir.Project.Layer(), {
+const layer4 = assign(new Delir.Entity.Layer(), {
     name: 'VERY CUTE 🐰-CHAN',
 })
-const layer5 = assign(new Delir.Project.Layer(), {
+const layer5 = assign(new Delir.Entity.Layer(), {
     name: 'GENERATIVE',
 })
 
@@ -69,13 +69,13 @@ const layer5 = assign(new Delir.Project.Layer(), {
 //
 // Clips
 //
-const movieClip = assign(new Delir.Project.Clip(), {
+const movieClip = assign(new Delir.Entity.Clip(), {
     renderer: 'video',
     placedFrame: 0,
     durationFrames,
     keyframes: {
         source: [
-            assign(new Delir.Project.Keyframe(), {
+            assign(new Delir.Entity.Keyframe(), {
                 value: {assetId: videoAsset.id},
                 frameOnClip: 0,
             })
@@ -83,29 +83,29 @@ const movieClip = assign(new Delir.Project.Clip(), {
     }
 })
 
-const textClip = assign(new Delir.Project.Clip(), {
+const textClip = assign(new Delir.Entity.Clip(), {
     renderer: 'text',
     placedFrame: 0,
     durationFrames,
     keyframes: {
         text: [
-            assign(new Delir.Project.Keyframe(), {value: 'test', frameOnClip: 0})
+            assign(new Delir.Entity.Keyframe(), {value: 'test', frameOnClip: 0})
         ],
         source: [
-            assign(new Delir.Project.Keyframe(), {value: {assetId: videoAsset.id}, frameOnClip: 0})
+            assign(new Delir.Entity.Keyframe(), {value: {assetId: videoAsset.id}, frameOnClip: 0})
         ],
         loop: [
-            assign(new Delir.Project.Keyframe(), {value: true, frameOnClip: 0}),
+            assign(new Delir.Entity.Keyframe(), {value: true, frameOnClip: 0}),
         ],
         color: [
-            assign(new Delir.Project.Keyframe(), { value: new Delir.Values.ColorRGBA(0, 0, 0, 1), frameOnClip: 0 })
+            assign(new Delir.Entity.Keyframe(), { value: new Delir.Values.ColorRGBA(0, 0, 0, 1), frameOnClip: 0 })
         ],
         // x: [
-        //     assign(new Delir.Project.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
-        //     assign(new Delir.Project.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
+        //     assign(new Delir.Entity.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
+        //     assign(new Delir.Entity.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
         // ],
         // y: [
-        //     assign(new Delir.Project.Keyframe(), {value: 130, frameOnClip: 0, easeOutParam: [.4, .5]}),
+        //     assign(new Delir.Entity.Keyframe(), {value: 130, frameOnClip: 0, easeOutParam: [.4, .5]}),
         // ],
     },
     expressions: {
@@ -113,14 +113,14 @@ const textClip = assign(new Delir.Project.Clip(), {
     },
 })
 
-const audioClip = assign(new Delir.Project.Clip(), {
+const audioClip = assign(new Delir.Entity.Clip(), {
     // renderer: 'video'
     renderer: 'audio',
     placedFrame: 0,
     durationFrames,
     keyframes: {
         source: [
-            assign(new Delir.Project.Keyframe(), {
+            assign(new Delir.Entity.Keyframe(), {
                 value: {assetId: audioAsset.id},
                 frameOnClip: 0
             }),
@@ -128,13 +128,13 @@ const audioClip = assign(new Delir.Project.Clip(), {
     }
 })
 
-const imageClip = assign(new Delir.Project.Clip(), {
+const imageClip = assign(new Delir.Entity.Clip(), {
     renderer: 'image',
     placedFrame: 20,
     durationFrames,
     keyframes: {
         source: [
-            assign(new Delir.Project.Keyframe(), {
+            assign(new Delir.Entity.Keyframe(), {
                 value: {assetId: imageAsset.id},
                 frameOnClip: 0,
             })
@@ -142,19 +142,19 @@ const imageClip = assign(new Delir.Project.Clip(), {
     }
 })
 
-const adjustmentClip = assign(new Delir.Project.Clip(), {
+const adjustmentClip = assign(new Delir.Entity.Clip(), {
     renderer: 'adjustment',
     placedFrame: 0,
     durationFrames: 30 * 10,
 })
 
-const p5jsClip = assign(new Delir.Project.Clip(), {
+const p5jsClip = assign(new Delir.Entity.Clip(), {
     renderer: 'p5js',
     placedFrame: 0,
     durationFrames: 30 * 10,
     keyframes: {
         sketch: [
-            assign(new Delir.Project.Keyframe(), {
+            assign(new Delir.Entity.Keyframe(), {
                 frameOnClip: 0,
                 value: new Delir.Values.Expression('javascript', `
 // Link: https://p5js.org/examples/simulate-snowflakes.html
@@ -224,13 +224,13 @@ function snowflake() {
     }
 })
 
-const videoClip = assign(new Delir.Project.Clip(), {
+const videoClip = assign(new Delir.Entity.Clip(), {
     renderer: 'video',
     placedFrame: 0,
     durationFrames: 30 * 10,
     keyframes: {
         source: [
-            assign(new Delir.Project.Keyframe(), {
+            assign(new Delir.Entity.Keyframe(), {
                 value: { assetId: videoAsset.id },
                 frameOnClip: 0,
             })
@@ -246,15 +246,15 @@ ProjectHelper.addClip(p, layer5, videoClip)
 //
 // Effects
 //
-ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Project.Effect(), {
+ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Entity.Effect(), {
     processor: '@ragg/delir-posteffect-chromakey',
     // keyframes: {
     //     color: [
-    //         assign(new Delir.Project.Keyframe(), {
+    //         assign(new Delir.Entity.Keyframe(), {
     //             frameOnClip: 40,
     //             value: new Delir.Values.ColorRGBA(30, 170, 200, 1),
     //         }),
-    //         assign(new Delir.Project.Keyframe(), {
+    //         assign(new Delir.Entity.Keyframe(), {
     //             frameOnClip: 200,
     //             value: new Delir.Values.ColorRGBA(200, 170, 30, 1),
     //         }),

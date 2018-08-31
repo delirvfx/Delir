@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // })
 
     await context.executeOperation(RendererOps.loadPlugins, {})
-    await context.executeOperation(AppActions.setActiveProject, { project: new Delir.Project.Project() })
+    await context.executeOperation(AppActions.setActiveProject, { project: new Delir.Entity.Project() })
 
     if (__DEV__) {
         const project = require('./utils/Dev/ExampleProject1').default

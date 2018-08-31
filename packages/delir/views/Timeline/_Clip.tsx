@@ -14,7 +14,7 @@ import t from './_Clip.i18n'
 import * as s from './Clip.styl'
 
 interface OwnProps {
-    clip: Delir.Project.Clip
+    clip: Delir.Entity.Clip
     left: number
     width: number
     active: boolean

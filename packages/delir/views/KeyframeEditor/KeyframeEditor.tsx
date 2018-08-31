@@ -38,8 +38,8 @@ export interface EditorResult {
 }
 
 interface OwnProps {
-    activeComposition: Delir.Project.Composition | null
-    activeClip: Delir.Project.Clip | null
+    activeComposition: Delir.Entity.Composition | null
+    activeClip: Delir.Entity.Clip | null
     scrollLeft: number
     scale: number
     pxPerSec: number
@@ -70,7 +70,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
     project: context.getStore(ProjectStore).getState()
 }))(class KeyframeEditor extends React.Component<Props, State> {
 
-    private get activeEntityObject(): Delir.Project.Clip | Delir.Project.Effect | null {
+    private get activeEntityObject(): Delir.Entity.Clip | Delir.Entity.Effect | null {
         const { activeClip } = this.props
         const { activeParam } = this.state
 
@@ -132,7 +132,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 : null
         )
 
-        let keyframes: Delir.Project.Keyframe[] | null = null
+        let keyframes: Delir.Entity.Keyframe[] | null = null
         if (activeClip && activeParam) {
             if (activeParam.type === 'effect') {
                 const activeEffect = activeClip.effects.find(e => e.id === activeParam.entityId)
@@ -583,10 +583,10 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
         let parameters: Delir.AnyParameterTypeDescriptor[]
 
-        if (activeEntityObject instanceof Delir.Project.Clip) {
+        if (activeEntityObject instanceof Delir.Entity.Clip) {
             const info = Delir.Engine.Renderers.getInfo(activeEntityObject.renderer)
             parameters = info ? info.parameter.properties : []
-        } else if (activeEntityObject instanceof Delir.Project.Effect) {
+        } else if (activeEntityObject instanceof Delir.Entity.Effect) {
             parameters = rendererStore.getPostEffectParametersById(activeEntityObject.processor) || []
         } else {
             throw new Error('Unexpected entity type')

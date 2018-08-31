@@ -21,27 +21,27 @@ export const createComposition = operation((context, options: {
     samplingRate: number,
     audioChannels: number,
 }) => {
-    const composition = new Delir.Project.Composition()
+    const composition = new Delir.Entity.Composition()
     Object.assign(composition, options)
     context.dispatch(ProjectModActions.createCompositionAction, { composition })
 })
 
 // @deprecated
 export const createLayer = operation((context, { compId }: { compId: string }) => {
-    const layer = new Delir.Project.Layer()
+    const layer = new Delir.Entity.Layer()
     context.dispatch(ProjectModActions.createLayerAction, { targetCompositionId: compId, layer })
 })
 
 export const addLayer = operation((context, { targetComposition, layer }: {
-    targetComposition: Delir.Project.Composition,
-    layer: Delir.Project.Layer
+    targetComposition: Delir.Entity.Composition,
+    layer: Delir.Entity.Layer
 }) => {
     context.dispatch(ProjectModActions.addLayerAction, { targetComposition, layer })
 })
 
 export const addLayerWithAsset = operation((context, { targetComposition, asset }: {
-    targetComposition: Delir.Project.Composition,
-    asset: Delir.Project.Asset
+    targetComposition: Delir.Entity.Composition,
+    asset: Delir.Entity.Asset
 }) => {
     const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => {
         return entry.handlableFileTypes.includes(asset.fileType)
@@ -59,7 +59,7 @@ export const addLayerWithAsset = operation((context, { targetComposition, asset 
         return
     }
 
-    const clip = new Delir.Project.Clip()
+    const clip = new Delir.Entity.Clip()
     Object.assign(clip, {
         renderer: processablePlugins[0].id,
         placedFrame: 0,
@@ -79,7 +79,7 @@ export const createClip = operation((context, { layerId, clipRendererId, placedF
     placedFrame: number,
     durationFrames: number,
 }) => {
-    const newClip = new Delir.Project.Clip()
+    const newClip = new Delir.Entity.Clip()
     Object.assign(newClip, {
         renderer: clipRendererId,
         placedFrame: placedFrame,
@@ -93,8 +93,8 @@ export const createClip = operation((context, { layerId, clipRendererId, placedF
 })
 
 export const createClipWithAsset = operation((context, { targetLayer, asset, placedFrame = 0, durationFrames = 100 }: {
-    targetLayer: Delir.Project.Layer,
-    asset: Delir.Project.Asset,
+    targetLayer: Delir.Entity.Layer,
+    asset: Delir.Entity.Asset,
     placedFrame?: number,
     durationFrames?: number,
 }) => {
@@ -116,7 +116,7 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
         return
     }
 
-    const newClip = new Delir.Project.Clip()
+    const newClip = new Delir.Entity.Clip()
     Object.assign(newClip, {
         renderer: processablePlugins[0].id,
         placedFrame,
@@ -127,7 +127,7 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
 
     if (!paramName) return
 
-    ProjectHelper.addKeyframe(project!, newClip, paramName, Object.assign(new Delir.Project.Keyframe(), {
+    ProjectHelper.addKeyframe(project!, newClip, paramName, Object.assign(new Delir.Entity.Keyframe(), {
         frameOnClip: 0,
         value: { assetId: asset.id },
     }))
@@ -139,7 +139,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
     clipId: string,
     paramName: string,
     frameOnClip: number,
-    patch: Partial<Delir.Project.Keyframe>
+    patch: Partial<Delir.Entity.Keyframe>
 }) => {
     const {project} = context.getStore(ProjectStore).getState()
 
@@ -166,7 +166,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
             patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
         })
     } else {
-        const newKeyframe = new Delir.Project.Keyframe()
+        const newKeyframe = new Delir.Entity.Keyframe()
 
         Object.assign(newKeyframe, Object.assign({
             frameOnClip,
@@ -185,7 +185,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     effectId: string,
     paramName: string,
     frameOnClip: number,
-    patch: Partial<Delir.Project.Keyframe>
+    patch: Partial<Delir.Entity.Keyframe>
 }) => {
     const rendererStore = context.getStore(RendererStore)
     const {project} = context.getStore(ProjectStore).getState()
@@ -215,7 +215,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
             patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
         })
     } else {
-        const newKeyframe = new Delir.Project.Keyframe()
+        const newKeyframe = new Delir.Entity.Keyframe()
         Object.assign(newKeyframe, Object.assign({ frameOnClip }, patch))
 
         context.dispatch(ProjectModActions.addEffectKeyframeAction, {
@@ -232,7 +232,7 @@ export const addAsset = operation((context, { name, fileType, path }: {
     fileType: string,
     path: string
 }) => {
-    const asset = new Delir.Project.Asset()
+    const asset = new Delir.Entity.Asset()
     asset.name = name
     asset.fileType = fileType
     asset.path = path
@@ -244,7 +244,7 @@ export const addEffectIntoClip = operation((context, { clipId, processorId }: {
     clipId: string,
     processorId: string
 }) => {
-    const effect = new Delir.Project.Effect()
+    const effect = new Delir.Entity.Effect()
     effect.processor = processorId
     context.dispatch(ProjectModActions.addEffectIntoClipAction, { clipId, effect })
 })
@@ -263,7 +263,7 @@ export const moveClipToLayer = operation((context, { clipId, destLayerId }: {
 
 export const modifyComposition = operation((context, { compositionId, props }: {
     compositionId: string,
-    props: Partial<Delir.Project.Composition>
+    props: Partial<Delir.Entity.Composition>
 }) => {
     context.dispatch(ProjectModActions.modifyCompositionAction, {
         targetCompositionId: compositionId,
@@ -273,7 +273,7 @@ export const modifyComposition = operation((context, { compositionId, props }: {
 
 export const modifyLayer = operation((context, { layerId, props }: {
     layerId: string,
-    props: Partial<Delir.Project.Layer>
+    props: Partial<Delir.Entity.Layer>
 }) => {
     context.dispatch(ProjectModActions.modifyLayerAction, {
         targetLayerId: layerId,
@@ -283,7 +283,7 @@ export const modifyLayer = operation((context, { layerId, props }: {
 
 export const modifyClip = operation((context, { clipId, props }: {
     clipId: string,
-    props: Partial<Delir.Project.Clip>
+    props: Partial<Delir.Entity.Clip>
 }) => {
     context.dispatch(ProjectModActions.modifyClipAction, {
         targetClipId: clipId,

@@ -13,10 +13,10 @@ export interface NotificationEntry {
 }
 
 export interface EditorState {
-    project: Delir.Project.Project | null
+    project: Delir.Entity.Project | null
     projectPath: string | null
-    activeComp: Delir.Project.Composition | null
-    activeClip: Delir.Project.Clip | null
+    activeComp: Delir.Entity.Composition | null
+    activeClip: Delir.Entity.Clip | null
     dragEntity: DragEntity | null
     processingState: string | null
     previewPlayed: boolean

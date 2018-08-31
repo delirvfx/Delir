@@ -16,8 +16,8 @@ import Clip from './_Clip'
 import t from './_ClipSpace.i18n'
 
 interface OwnProps {
-    layer: Delir.Project.Layer
-    activeClip: Delir.Project.Clip | null
+    layer: Delir.Entity.Layer
+    activeClip: Delir.Entity.Clip | null
     framerate: number
     pxPerSec: number
     scale: number
@@ -49,7 +49,7 @@ export default withComponentContext(connectToStores([EditorStateStore, RendererS
     {
         const {layer, activeClip, framerate, pxPerSec, scale, postEffectPlugins} = this.props
         const keyframes = activeClip ? activeClip.keyframes : {}
-        const clips = Array.from<Delir.Project.Clip>(layer.clips)
+        const clips = Array.from<Delir.Entity.Clip>(layer.clips)
         const convertOption = { pxPerSec, framerate, scale }
 
         return (

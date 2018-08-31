@@ -14,9 +14,9 @@ import { AppActions } from './actions'
 import t from './App.i18n'
 
 export type DragEntity =
-    | { type: 'asset', asset: Delir.Project.Asset }
-    | { type: 'clip', clip: Delir.Project.Clip }
-    | { type: 'clip-resizing', clip: Delir.Project.Clip }
+    | { type: 'asset', asset: Delir.Entity.Asset }
+    | { type: 'clip', clip: Delir.Entity.Clip }
+    | { type: 'clip-resizing', clip: Delir.Entity.Clip }
 
 //
 // App services
@@ -37,11 +37,11 @@ export const openPluginDirectory = operation((context, arg: {}) => {
 
 //
 // Editor Store
-//
-export const setActiveProject = operation((context, arg: { project: Delir.Project.Project, path?: string }) => {
+//Delir.Entity.
+export const setActiveProject = operation((context, arg: { project: Delir.Entity.Project, path?: string }) => {
     context.dispatch(AppActions.setActiveProjectAction, {
         project: arg.project,
-        path: arg.path
+        path: arg.path,
     })
 })
 
@@ -133,8 +133,8 @@ export const newProject = operation(async (context) => {
         }
     }
 
-    await context.executeOperation(setActiveProject, {
-        project: new Delir.Project.Project()
+    await context.exeDelir.Entity.setActiveProject, {
+        project: new Delir.Entity.Project()
     })
 })
 
@@ -160,8 +160,8 @@ export const openProject = operation(async (context) => {
     const projectJson = MsgPack().decode(projectMpk).project
     const migratedProject = Delir.ProjectMigrator.migrate(projectJson)
 
-    await context.executeOperation(setActiveProject, {
-        project: Delir.Project.Project.deserialize(migratedProject),
+    await contextDelir.Entity.ion(setActiveProject, {
+        project: Delir.Entity.Project.deserialize(migratedProject),
         path: path[0]
     })
 })
