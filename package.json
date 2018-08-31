@@ -22,11 +22,6 @@
   "devDependencies": {
     "@types/expect.js": "0.3.29",
     "@types/mocha": "5.2.5",
-    "babel-core": "6.26.3",
-    "babel-plugin-transform-class-properties": "6.24.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "6.26.2",
-    "babel-plugin-transform-object-rest-spread": "6.26.0",
-    "babel-preset-env": "1.7.0",
     "clean-webpack-plugin": "0.1.19",
     "cross-env": "5.2.0",
     "css-loader": "1.0.0",
