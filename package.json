@@ -20,6 +20,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@babel/register": "7.0.0",
     "@types/expect.js": "0.3.29",
     "@types/mocha": "5.2.5",
     "clean-webpack-plugin": "0.1.19",
