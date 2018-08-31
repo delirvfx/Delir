@@ -69,6 +69,11 @@
     "webpack": "4.17.1"
   },
   "dependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
     "font-manager": "0.3.0"
   },
   "lint-staged": {
