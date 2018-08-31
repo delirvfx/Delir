@@ -213,5 +213,3 @@ export const autoSaveProject = operation(async (context) => {
         timeout: 2000
     })
 })
-
-console.log(MsgPack().encode({ a: 'b' }))

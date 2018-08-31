@@ -13,7 +13,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
 {
     public static storeName = 'ProjectStore'
 
-    protected state = {
+    protected state: ProjectStoreState = {
         project: null,
         lastChangeTime: 0,
     }
@@ -206,7 +206,6 @@ export default class ProjectStore extends Store<ProjectStoreState>
     // @ts-ignore
     private handleRemoveClip = listen(ProjectModActions.removeClipAction, (payload) => {
         const { project } = this.state
-        console.log(this.state)
         ProjectHelper.deleteClip(project!, payload.targetClipId)
         this.updateLastModified()
     })
