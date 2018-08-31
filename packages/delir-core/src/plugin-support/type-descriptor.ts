@@ -36,7 +36,7 @@ export interface ParameterTypeDescriptor<T extends ParameterType> {
     paramName: string
     label: string
     enabled: boolean
-    animatable: boolean | null
+    animatable: boolean
 }
 
 // export interface Point2DTypeDescripter extends ParameterTypeDescriptor<'POINT_2D'> {

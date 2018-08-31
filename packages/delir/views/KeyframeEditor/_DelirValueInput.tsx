@@ -137,7 +137,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                     <>
                         <select ref={this.ref.enumSelect} value={value ? (value as string) : ''} onChange={this.valueChanged}>
                             <option></option>
-                            {descriptor.selection.map(item => <option value={item}>{item}</option>)}
+                            {descriptor.selection.map(item => <option key={item} value={item}>{item}</option>)}
                         </select>
                     </>
                 )
@@ -155,7 +155,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                             {acceptedAssets.length > 0 && (
                                 <>
                                     <option />
-                                    {...acceptedAssets.map(asset => (<option value={asset.id as string}>{asset.name}</option>))}
+                                    {...acceptedAssets.map(asset => (<option key={asset.id} value={asset.id as string}>{asset.name}</option>))}
                                 </>
                             )}
                         </select>

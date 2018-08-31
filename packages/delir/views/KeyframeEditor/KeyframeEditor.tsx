@@ -154,7 +154,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
                         return (
                             <div
-                                key={activeClip!.id + desc.paramName}
+                                key={activeClip.id + desc.paramName}
                                 className={classnames(s.propItem, {
                                     [s['propItem--active']]: activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName,
                                 })}
@@ -169,6 +169,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                         data-entity-type='clip'
                                         data-entity-id={activeClip.id}
                                         data-param-name={desc.paramName}
+                                        enabled={desc.animatable}
                                         onClick={this._openExpressionEditor}
                                     />
                                 </ContextMenu>
@@ -188,7 +189,6 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                         <Button type='normal' onClick={this.handleOpenScriptParamEditor}>{t('editScriptParam')}</Button>
                                     ) : (
                                         <DelirValueInput
-                                            key={desc.paramName}
                                             assets={project ? project.assets : null}
                                             descriptor={desc}
                                             value={value!}
@@ -224,8 +224,6 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                     activeParamDescriptor,
                                     activeClip.keyframes[activeParam.paramName] || []
                                 ) : new Delir.Values.Expression('javascript', '')
-
-                            console.log(value)
 
                             return (
                                 <ScriptParamEditor
@@ -474,7 +472,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
             if (!processorInfo) {
                 return (
-                    <div className={classnames(s.propItem, s['propItem--effectContainer'])}　title={t('pluginMissing', {processorId: effect.processor})}>
+                    <div key={effect.id} className={classnames(s.propItem, s['propItem--effectContainer'])}　title={t('pluginMissing', {processorId: effect.processor})}>
                         <div key={effect.id} className={classnames(s.propItem, s['propItem--header'], s['propItem--pluginMissing'])}>
                             <ContextMenu>
                                 <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
@@ -487,7 +485,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
             }
 
             return (
-                <div className={classnames(s.propItem, s['propItem--effectContainer'])}>
+                <div key={effect.id} className={classnames(s.propItem, s['propItem--effectContainer'])}>
                     <div key={effect.id} className={classnames(s.propItem, s['propItem--header'])}>
                         <ContextMenu>
                             <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
