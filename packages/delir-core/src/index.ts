@@ -19,8 +19,6 @@ import * as Entity from './Entity'
 
 export {
     // Core (Namaspaces)
-    /** @deprecated */
-    Project,
     Entity,
     Engine,
     PluginSupport,
