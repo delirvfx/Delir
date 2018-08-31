@@ -166,7 +166,7 @@ export const openProject = operation(async (context) => {
     })
 })
 
-export const saveProject = operation(async (context, { path, silent = false }: { path: string, silent: boolean }) => {
+export const saveProject = operation(async (context, { path, silent = false }: { path: string, silent?: boolean }) => {
     const project = context.getStore(EditorStateStore).getState().project
 
     if (!project) return
