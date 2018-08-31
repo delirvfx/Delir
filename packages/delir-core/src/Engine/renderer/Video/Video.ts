@@ -1,11 +1,12 @@
 import * as _ from 'lodash'
+
 import Type from '../../../plugin-support/type-descriptor'
 import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
 import PreRenderingRequest from '../../PreRenderingRequest'
 import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'
 
-import Asset from '../../../project/asset'
+import { Asset } from '../../../Entity'
 
 interface VideoRendererParam {
     source: Asset

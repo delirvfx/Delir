@@ -7,7 +7,7 @@ import PreRenderingRequest from '../../PreRenderingRequest'
 import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'
 
-import Asset from '../../../project/asset'
+import { Asset } from '../../../Entity'
 
 import 'aac'
 import 'alac/src/decoder'

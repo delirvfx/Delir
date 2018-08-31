@@ -1,5 +1,5 @@
-import DependencyResolver from '@ragg/delir-core/src/Engine/pipeline/DependencyResolver'
 import * as P5 from 'p5'
+import DependencyResolver from '../../DependencyResolver'
 
 interface Sketch {
     setup(): void

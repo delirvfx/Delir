@@ -1,8 +1,6 @@
+import Keyframe from '../Entity/Keyframe'
 import Type from '../plugin-support/type-descriptor'
-import Keyframe from '../project/keyframe'
 import * as KeyframeHelper from './KeyframeCalcurator'
-
-import assign from '../../__spec__/Utils/assign'
 
 describe('KeyframeHelper', () => {
     describe('test #calcKeyframe via #calcKeyframeValueAt', () => {

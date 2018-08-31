@@ -1,14 +1,8 @@
 // @flow
 import * as ProjectHelper from '../project-helper'
 
-import Asset from '../../project/asset'
-import Clip from '../../project/clip'
-import Composition from '../../project/composition'
-import Keyframe from '../../project/keyframe'
 import Layer from '../../project/layer'
 import Project from '../../project/project'
-
-import ColorRGB from '../../Values/ColorRGB'
 
 const propNotWritable = (obj, prop) => {
     return Object.getOwnPropertyDescriptor(obj, prop).writable === false

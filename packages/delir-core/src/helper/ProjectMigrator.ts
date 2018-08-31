@@ -1,4 +1,3 @@
-import { ClipScheme } from '../project/scheme/clip'
 import { KeyframeConfigScheme } from '../project/scheme/keyframe'
 import { ProjectScheme } from '../project/scheme/project'
 

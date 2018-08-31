@@ -4,8 +4,6 @@ import PreRenderingRequest from '../../PreRenderingRequest'
 import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'
 
-import Asset from '../../../project/asset'
-
 interface Param {
     opacity: number
 }

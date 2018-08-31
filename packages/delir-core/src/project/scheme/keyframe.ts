@@ -2,9 +2,9 @@
 // import Point3D from '../../values/point-3d'
 // import Size2D from '../../values/size-2d'
 // import Size3D from '../../values/size-3d'
-import { ColorRgbJSON } from '../../values/color-rgb'
-import { ColorRgbaJSON } from '../../values/color-rgba'
-import { ExpressionJSON } from '../../values/expression'
+import { ColorRgbJSON } from '../../Values/ColorRGB'
+import { ColorRgbaJSON } from '../../Values/ColorRGBA'
+import { ExpressionJSON } from '../../Values/Expression'
 
 export interface AssetPointerScheme {
     assetId: string

@@ -1,8 +1,8 @@
-import { ParameterValueTypes } from '../plugin-support/type-descriptor'
-import Composition from '../project/composition'
-import DependencyResolver from './DependencyResolver'
-
 import * as _ from 'lodash'
+
+import { Composition } from '../Entity'
+import { ParameterValueTypes } from '../plugin-support/type-descriptor'
+import DependencyResolver from './DependencyResolver'
 
 export default class PreRenderingRequest<T = {[propName: string]: ParameterValueTypes}>
 {

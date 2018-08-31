@@ -1,4 +1,4 @@
-import Asset from '../project/asset'
+import { Asset } from '../Entity'
 
 export default class AssetProxy
 {

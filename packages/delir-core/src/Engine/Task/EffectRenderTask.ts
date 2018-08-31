@@ -1,10 +1,9 @@
 import * as _ from 'lodash'
 
+import { Clip, Effect } from '../../Entity'
 import EffectPluginBase from '../../plugin-support/PostEffectBase'
 import { TypeDescriptor } from '../../plugin-support/type-descriptor'
-import { Clip, Effect } from '../../project'
-import { AssetPointerScheme } from '../../project/scheme/keyframe'
-import { Expression } from '../../Values'
+import { AssetPointer, Expression } from '../../Values'
 import DependencyResolver from '../DependencyResolver'
 import {  RealParameterValues, RealParameterValueTypes } from '../Engine'
 import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
@@ -38,7 +37,7 @@ export default class EffectRenderTask {
         effectAssetParamNames.forEach(propName => {
             // resolve asset
             initialKeyframeValues[propName] = rawInitialKeyframeValues[propName]
-                ? resolver.resolveAsset((rawInitialKeyframeValues[propName] as AssetPointerScheme).assetId)
+                ? resolver.resolveAsset((rawInitialKeyframeValues[propName] as AssetPointer).assetId)
                 : null
         })
 
@@ -47,7 +46,7 @@ export default class EffectRenderTask {
         effectAssetParamNames.forEach(propName => {
             // resolve asset
             effectKeyframeLUT[propName] = _.map(rawEffectKeyframeLUT[propName], value => {
-                return value ? resolver.resolveAsset((value as AssetPointerScheme).assetId) : null
+                return value ? resolver.resolveAsset((value as AssetPointer).assetId) : null
             })
         })
 

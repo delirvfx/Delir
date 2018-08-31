@@ -1,11 +1,11 @@
 import * as bezierEasing from 'bezier-easing'
 
-import Keyframe, { KeyframeValueTypes } from '../project/keyframe'
+import { Keyframe, KeyframeValueTypes } from '../Entity'
 import ColorRGB from '../Values/ColorRGB'
 import ColorRGBA from '../Values/ColorRGBA'
 
 import { AnyParameterTypeDescriptor, TypeDescriptor } from '../plugin-support/type-descriptor'
-import { AssetPointerScheme } from '../project/scheme/keyframe'
+import { AssetPointer } from '../Values'
 
 interface KeyFrameLink<T extends KeyframeValueTypes> {
     previous: Keyframe<T> | null
@@ -369,9 +369,9 @@ function calcEnumKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLi
 //     return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
 // }
 
-function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<AssetPointerScheme>): AssetPointerScheme
+function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<AssetPointer>): AssetPointer
 {
-    return keyFrameLink.previous ? (keyFrameLink.previous.value! as AssetPointerScheme) : (keyFrameLink.active!.value as AssetPointerScheme)
+    return keyFrameLink.previous ? (keyFrameLink.previous.value! as AssetPointer) : (keyFrameLink.active!.value as AssetPointer)
 }
 
 function calcNoAnimatableKeyframes(rate: number, frame: number, keyFrameLink: KeyFrameLink<any>): any

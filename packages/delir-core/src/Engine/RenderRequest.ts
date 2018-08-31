@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 
-import Composition from '../project/composition'
+import { Composition } from '../Entity'
 import DependencyResolver from './DependencyResolver'
 import { RealParameterValueTypes } from './Engine'
 import PreRenderingRequest from './PreRenderingRequest'

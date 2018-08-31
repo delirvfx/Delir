@@ -1,9 +1,8 @@
 import * as _ from 'lodash'
 
+import { Clip } from '../../Entity'
 import { TypeDescriptor } from '../../plugin-support/type-descriptor'
-import { Clip } from '../../project'
-import { AssetPointerScheme } from '../../project/scheme/keyframe'
-import { Expression } from '../../Values'
+import { AssetPointer, Expression } from '../../Values'
 import { RealParameterValues, RealParameterValueTypes } from '../Engine'
 import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
@@ -28,7 +27,7 @@ export default class ClipRenderTask {
         rendererAssetParamNames.forEach(propName => {
             // resolve asset
             rendererInitParam[propName] = rawRendererInitParam[propName]
-                ? req.resolver.resolveAsset((rawRendererInitParam[propName] as AssetPointerScheme).assetId)
+                ? req.resolver.resolveAsset((rawRendererInitParam[propName] as AssetPointer).assetId)
                 : null
         })
 
@@ -43,7 +42,7 @@ export default class ClipRenderTask {
         rendererAssetParamNames.forEach(paramName => {
             // resolve asset
             rendererKeyframeLUT[paramName] = _.map(rawRendererKeyframeLUT[paramName], value => {
-                return value ? req.resolver.resolveAsset((value as AssetPointerScheme).assetId) : null
+                return value ? req.resolver.resolveAsset((value as AssetPointer).assetId) : null
             })
         })
 
