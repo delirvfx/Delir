@@ -11,7 +11,7 @@ export default I18n({
             ignoreMissingEffect: '行方不明のエフェクトを無視する',
             ignoreMissingEffectDesc: 'エフェクトのインストール漏れを警告されたい場合はチェックを外してください',
         },
-        close: '閉じる',
+        close: '閉じる (Esc)',
     },
     en: {
         sidebar: {
@@ -23,6 +23,6 @@ export default I18n({
             ignoreMissingEffect: 'Ignore missing effect',
             ignoreMissingEffectDesc: 'Please remove the check if you want to be warned about omission of effect installation',
         },
-        close: 'Close',
+        close: 'Close (Esc)',
     },
 })

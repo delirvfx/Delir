@@ -6,7 +6,6 @@ import * as PreferenceOps from '../../domain/Preference/operations'
 import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Preference/PreferenceStore'
 
 import Button from '../../views/components/Button'
-import Link from '../../views/components/Link'
 
 import t from './Preference.i18n'
 import * as s from './style.styl'
@@ -55,10 +54,11 @@ export default withComponentContext(connectToStores([PreferenceStore], (context)
                 <div className={s.contentRegion}>
                     <div className={s.content}>
                         {activePanel === 'renderer-general' && this.renderRendererGeneralPane()}
+                        <div className={s.contentFoot}>
+                            <Button type='normal' onClick={this.props.onClose}>{t('close')}</Button>
+                        </div>
                     </div>
                 </div>
-
-                {/* <Button type='normal' className={s.AboutModal_Closer} onClick={this.props.onClose}>{t('close')}</Button> */}
             </div>
         )
     }
