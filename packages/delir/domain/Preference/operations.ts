@@ -51,7 +51,6 @@ export const restoreApplicationPreference = operation((context) => {
 
 export const savePreferences = operation(async (context) => {
     const preference = context.getStore(PreferenceStore).dehydrate()
-    console.log(preference)
     await new Promise((resolve, reject) => writeFile(preferencePath, JSON.stringify(preference), (err) => {
         err ? reject(err) : resolve()
     }))
