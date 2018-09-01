@@ -21,6 +21,7 @@ export interface EditorState {
     processingState: string | null
     previewPlayed: boolean
     currentPreviewFrame: number
+    preferenceOpened: boolean
     notifications: NotificationEntry[]
 }
 
@@ -36,6 +37,7 @@ export default class EditorStateStore extends Store<EditorState> {
         processingState: null,
         previewPlayed: false,
         currentPreviewFrame: 0,
+        preferenceOpened: true,
         notifications: []
     }
 
@@ -158,6 +160,11 @@ export default class EditorStateStore extends Store<EditorState> {
             const idx = d.notifications.findIndex(entry => entry!.id === payload.id)
             d.notifications.splice(idx, 1)
         })
+    })
+
+    // @ts-ignore
+    private handleChangePreferenceOpenState = listen(AppActions.changePreferenceOpenStateAction, ({ open }) => {
+        this.updateWith(draft => draft.preferenceOpened = open)
     })
 
     public getState() {

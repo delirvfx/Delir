@@ -6,9 +6,11 @@ import * as ReactDOM from 'react-dom'
 
 import * as AppActions from './actions/App'
 import * as RendererOps from './actions/RendererOps'
+import * as PreferenceOps from './domain/Preference/operations'
 
 import AppView from './views/AppView'
 
+import PreferenceStore from '@ragg/delir/domain/Preference/PreferenceStore'
 import EditorStateStore from './stores/EditorStateStore'
 import ProjectStore from './stores/ProjectStore'
 import RendererStore from './stores/RendererStore'
@@ -32,7 +34,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         case 'Linux': document.body.classList.add('platform-linux'); break
     }
 
-    const app = new Fleur({ stores: [ EditorStateStore, ProjectStore, RendererStore] })
+    const app = new Fleur({ stores: [ EditorStateStore, ProjectStore, RendererStore, PreferenceStore ] })
     const context = window.delir = app.createContext()
 
     // console.log(createElementWithContext)
@@ -47,6 +49,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // })
 
     await context.executeOperation(RendererOps.loadPlugins, {})
+    await context.executeOperation(PreferenceOps.restoreApplicationPreference, {})
     await context.executeOperation(AppActions.setActiveProject, { project: new Delir.Entity.Project() })
 
     if (__DEV__) {

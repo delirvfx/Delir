@@ -11,6 +11,7 @@ import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
 import NavigationView from '../NavigationView'
 import Notifications from '../Notifications'
+import Preference from '../Preference'
 import PreviewView from '../PreviewView/'
 import StatusBar from '../StatusBar'
 import Timeline from '../Timeline'
@@ -49,6 +50,8 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
     public render()
     {
+        const { preferenceOpened } = this.props.editor
+
         return (
             <div className='_container' onDrop={this.prevent}>
                 <AppMenu />
@@ -64,6 +67,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 </Workspace>
                 <StatusBar />
                 <Notifications />
+                {preferenceOpened && <Preference onClose={this.handlePreferenceClose} />}
             </div>
         )
     }
@@ -72,8 +76,11 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         e.preventDefault()
     }
 
-    private projectAutoSaveTimer = () =>
-    {
+    private projectAutoSaveTimer = () => {
         this.props.context.executeOperation(AppActions.autoSaveProject, {})
+    }
+
+    private handlePreferenceClose = () => {
+        this.props.context.executeOperation(AppActions.changePreferenceOpenState, { open: false })
     }
 }))

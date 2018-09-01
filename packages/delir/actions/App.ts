@@ -7,6 +7,7 @@ import * as _ from 'lodash'
 import * as MsgPack from 'msgpack5'
 import * as path from 'path'
 
+import PreferenceStore from '../domain/Preference/PreferenceStore'
 import EditorStateStore from '../stores/EditorStateStore'
 import RendererStore from '../stores/RendererStore'
 
@@ -90,7 +91,13 @@ export const changeActiveClip = operation((context, { clipId }: { clipId: string
 // Preview
 //
 export const startPreview = operation((context, { compositionId, beginFrame = 0 }: { compositionId: string, beginFrame?: number }) => {
-    context.dispatch(AppActions.startPreviewAction, { compositionId, beginFrame })
+    const preference = context.getStore(PreferenceStore).getPreferences()
+
+    context.dispatch(AppActions.startPreviewAction, {
+        compositionId,
+        beginFrame,
+        ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
+    })
 })
 
 export const stopPreview = operation((context) => {
@@ -98,8 +105,11 @@ export const stopPreview = operation((context) => {
 })
 
 export const renderDestinate = operation((context, arg: { compositionId: string }) => {
+    const preference = context.getStore(PreferenceStore).getPreferences()
+
     context.dispatch(AppActions.renderDestinateAction, {
-        compositionId: arg.compositionId
+        compositionId: arg.compositionId,
+        ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
     })
 })
 
@@ -213,3 +223,9 @@ export const autoSaveProject = operation(async (context) => {
         timeout: 2000
     })
 })
+
+export const changePreferenceOpenState = operation((context, { open }: { open: boolean }) => {
+    context.dispatch(AppActions.changePreferenceOpenStateAction, { open })
+})
+
+// console.log(remote.app.getPath('userData'))
