@@ -41,6 +41,7 @@ interface Props {
 
 class CompositionSettingModal extends React.PureComponent<Props, any>
 {
+    private formRef = React.createRef<HTMLFormElement>()
 
     public render()
     {
@@ -60,7 +61,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
 
         return (
             <div className={s.newCompModalRoot}>
-                <form ref='form' className={FormStyle.formHorizontal}>
+                <form ref={this.formRef} className={FormStyle.formHorizontal} onSubmit={this.handleSubmit}>
                     <div className='formGroup'>
                         <label className='label'>{t('fields.compositionName')}:</label>
                         <div className='input'>
@@ -136,9 +137,17 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
             </div>
         )
     }
+
+    private handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        this.onConfirm()
+    }
+
     private onConfirm = () =>
     {
-        const opts = serialize((this.refs.form as HTMLFormElement), {hash: true})
+        const opts = serialize(this.formRef.current!, {hash: true})
         this.props.onConfirm(opts as {[p: string]: string})
     }
 
