@@ -14,7 +14,7 @@
     "declare": "cross-env tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "precommit": "lint-staged",
     "test-core": "jest -c packages/delir-core/jest.config.js",
-    "test-front": "cross-env mocha --colors --reporter spec --watch-extensions ts,tsx --require ./src/frontend/__spec__/__bootstrap__.js './src/frontend/**/__spec__/*-spec.{ts,tsx}'"
+    "test-front": "jest -c packages/delir/jest.config.js"
   },
   "workspaces": [
     "packages/*"
