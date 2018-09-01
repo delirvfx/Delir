@@ -113,6 +113,7 @@ export default class RendererStore extends Store<State> {
         const promise = this.pipeline.renderSequencial(targetComposition.id, {
             beginFrame: payload.beginFrame,
             loop: true,
+            ignoreMissingEffect: payload.ignoreMissingEffect,
         })
 
         promise.progress(progress => {
@@ -187,6 +188,7 @@ export default class RendererStore extends Store<State> {
                 rootCompId: this.state.composition.id,
                 exportPath: file,
                 pluginRegistry: this.pluginRegistry,
+                ignoreMissingEffect: payload.ignoreMissingEffect,
                 temporaryDir: remote.app.getPath('temp'),
                 ffmpegBin,
                 onProgress: progress => {
