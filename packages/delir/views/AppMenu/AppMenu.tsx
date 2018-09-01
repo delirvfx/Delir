@@ -39,34 +39,42 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         AboutModal.show()
     }
 
+    private handleOpenPreference = () => {
+        this.props.context.executeOperation(AppActions.changePreferenceOpenState, { open: true })
+    }
+
     private _buildMenu(): Electron.MenuItemConstructorOptions[]
     {
         const {context} = this.props
         const {previewPlayed, activeComp} = this.props.editor
         const menu: Electron.MenuItemConstructorOptions[] = []
 
-        if (Platform.isMacOS()) {
-            menu.push({
-                label: remote.app.getName(),
-                submenu: [
-                    {
-                        label: t('appMenu.about'),
-                        click: this.openAbout,
-                    },
-                    {type: 'separator'},
-                    {
-                        label: t('appMenu.openPluginDir'),
-                        click: () => context.executeOperation(AppActions.openPluginDirectory, {})
-                    },
-                    {type: 'separator'},
-                    {
-                        label: t('appMenu.quit'),
-                        accelerator: 'CmdOrCtrl+Q',
-                        role: 'quit',
-                    }
-                ],
-            })
-        }
+        menu.push({
+            label: remote.app.getName(),
+            submenu: [
+                {
+                    label: t('appMenu.about'),
+                    click: this.openAbout,
+                },
+                {type: 'separator'},
+                {
+                    label: t('appMenu.preference'),
+                    accelerator: 'CmdOrCtrl+,',
+                    click: this.handleOpenPreference,
+                },
+                {type: 'separator'},
+                {
+                    label: t('appMenu.openPluginDir'),
+                    click: () => context.executeOperation(AppActions.openPluginDirectory, {})
+                },
+                {type: 'separator'},
+                {
+                    label: t('appMenu.quit'),
+                    accelerator: 'CmdOrCtrl+Q',
+                    role: 'quit',
+                }
+            ],
+        })
 
         menu.push({
             label: t('file.label'),
@@ -220,23 +228,6 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                         },
                     }
                 ]
-            })
-        }
-
-        if (Platform.isWindows()) {
-            menu.push({
-                label: t('help.label'),
-                submenu: [
-                    {
-                        label: t('appMenu.about'),
-                        click: this.openAbout,
-                    },
-                    {type: 'separator'},
-                    {
-                        label: t('appMenu.openPluginDir'),
-                        click: () => context.executeOperation(AppActions.openPluginDirectory, {})
-                    },
-                ],
             })
         }
 
