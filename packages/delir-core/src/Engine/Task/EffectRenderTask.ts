@@ -1,6 +1,7 @@
 import * as _ from 'lodash'
 
 import { Clip, Effect } from '../../Entity'
+import { EffectPluginMissingException } from '../../exceptions'
 import EffectPluginBase from '../../plugin-support/PostEffectBase'
 import { TypeDescriptor } from '../../plugin-support/type-descriptor'
 import { AssetPointer, Expression } from '../../Values'
@@ -21,6 +22,10 @@ export default class EffectRenderTask {
         resolver: DependencyResolver,
     }): EffectRenderTask {
         const EffectPluginClass = resolver.resolveEffectPlugin(effect.processor)!
+
+        if (EffectPluginClass == null) {
+            throw new EffectPluginMissingException(`Missing effect plugin ${effect.processor}`, { effectId: effect.processor })
+        }
 
         const effectParams = EffectPluginClass.provideParameters()
         const effectAssetParamNames = effectParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
