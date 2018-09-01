@@ -18,7 +18,7 @@ type Props = ConnectedProps & ContextProp
 
 export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
     editor: context.getStore(EditorStateStore).getState()
-}))(class AppMenu extends React.PureComponent<Props> {
+}))(class AppMenu extends React.Component<Props> {
     public componentDidUpdate() {
         remote.Menu.setApplicationMenu(
             remote.Menu.buildFromTemplate(this._buildMenu())
