@@ -37,7 +37,7 @@ export default class EditorStateStore extends Store<EditorState> {
         processingState: null,
         previewPlayed: false,
         currentPreviewFrame: 0,
-        preferenceOpened: true,
+        preferenceOpened: false,
         notifications: []
     }
 
