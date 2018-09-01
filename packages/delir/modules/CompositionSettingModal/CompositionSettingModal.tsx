@@ -2,7 +2,8 @@ import * as Delir from '@ragg/delir-core'
 import * as serialize from 'form-serialize'
 import * as React from 'react'
 
-import　 ModalWindow from '../../modules/ModalWindow/Controller'
+import ModalWindow from '../../modules/ModalWindow/Controller'
+import Button from '../../views/components/Button'
 import FormStyle from '../../views/components/Form'
 
 import t from './CompositionSettingModal.i18n'
@@ -128,8 +129,8 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                     </div>
 
                     <div className={s.modalFooter}>
-                        <button id='cancel' className='button' type='button' onClick={this.onCancel} style={{marginRight: '8px'}}>{t('cancel')}</button>
-                        <button className='button primary' type='button' onClick={this.onConfirm}>{comp ? t('apply') : t('create')}</button>
+                        <Button type='normal' onClick={this.onCancel}>{t('cancel')}</Button>
+                        <Button type='primary' onClick={this.onConfirm}>{comp ? t('apply') : t('create')}</Button>
                     </div>
                 </form>
             </div>
