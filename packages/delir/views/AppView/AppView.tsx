@@ -1,5 +1,6 @@
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as React from 'react'
+import { CSSTransitionGroup } from 'react-transition-group'
 
 import * as AppActions from '../../actions/App'
 import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
@@ -15,6 +16,8 @@ import Preference from '../Preference'
 import PreviewView from '../PreviewView/'
 import StatusBar from '../StatusBar'
 import Timeline from '../Timeline'
+
+import * as s from './style.styl'
 
 interface ConnectedProps {
     editor: EditorState
@@ -67,7 +70,17 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 </Workspace>
                 <StatusBar />
                 <Notifications />
-                {preferenceOpened && <Preference onClose={this.handlePreferenceClose} />}
+                <CSSTransitionGroup
+                    component='div'
+                    transitionName={{
+                        enter: s.preferenceEnter,
+                        enterActive: s.preferenceEnterActive,
+                        leave: s.preferenceLeave,
+                        leaveActive: s.preferenceLeaveActive,
+                    }}
+                >
+                    {preferenceOpened && <Preference onClose={this.handlePreferenceClose} />}
+                </CSSTransitionGroup>
             </div>
         )
     }
