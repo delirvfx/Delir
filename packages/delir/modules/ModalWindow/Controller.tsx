@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Portal from '../Portal'
-import {default as ModalWindow, Props } from './ModalWindow'
+import ModalWindow, { Props } from './ModalWindow'
 
 export default class Modal {
     private portal: Portal | null
