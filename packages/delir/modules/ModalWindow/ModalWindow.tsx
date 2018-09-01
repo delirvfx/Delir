@@ -18,7 +18,6 @@ export interface Props {
     closable?: boolean
     query?: {[name: string]: string | number}
     onHide?: () => any
-    onResponse?: (param: {[name: string]: string | number}) => any
 }
 
 interface State {
@@ -37,8 +36,6 @@ export default class ModalWindow extends React.Component<Props, State>
         url: 'about:blank',
         closable: true,
     }
-
-    private window: Electron.BrowserWindow
 
     constructor(props: Props)
     {

@@ -12,11 +12,12 @@ import { ProjectHelper } from '@ragg/delir-core'
 import * as Exporter from './exporter'
 
 interface ExportOptions {
-    project: Delir.Project.Project
+    project: Delir.Entity.Project
     rootCompId: string
     temporaryDir: string
     exportPath: string
     pluginRegistry: Delir.PluginRegistry
+    ignoreMissingEffect?: boolean
     onProgress?: (progress: {state: string}) => void
     ffmpegBin?: string
 }
@@ -109,7 +110,10 @@ export default async (
     })
 
     // queue.run()
-    await pipeline.renderSequencial(rootCompId, {loop: false})
+    await pipeline.renderSequencial(rootCompId, {
+        loop: false,
+        ignoreMissingEffect: options.ignoreMissingEffect
+    })
     // await queue.waitEmpty()
 
     // queue.stop()

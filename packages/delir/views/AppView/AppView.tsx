@@ -1,5 +1,6 @@
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as React from 'react'
+import { CSSTransitionGroup } from 'react-transition-group'
 
 import * as AppActions from '../../actions/App'
 import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
@@ -11,9 +12,12 @@ import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
 import NavigationView from '../NavigationView'
 import Notifications from '../Notifications'
+import Preference from '../Preference'
 import PreviewView from '../PreviewView/'
 import StatusBar from '../StatusBar'
 import Timeline from '../Timeline'
+
+import * as s from './style.styl'
 
 interface ConnectedProps {
     editor: EditorState
@@ -49,6 +53,8 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
     public render()
     {
+        const { preferenceOpened } = this.props.editor
+
         return (
             <div className='_container' onDrop={this.prevent}>
                 <AppMenu />
@@ -64,6 +70,17 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 </Workspace>
                 <StatusBar />
                 <Notifications />
+                <CSSTransitionGroup
+                    component='div'
+                    transitionName={{
+                        enter: s.preferenceEnter,
+                        enterActive: s.preferenceEnterActive,
+                        leave: s.preferenceLeave,
+                        leaveActive: s.preferenceLeaveActive,
+                    }}
+                >
+                    {preferenceOpened && <Preference onClose={this.handlePreferenceClose} />}
+                </CSSTransitionGroup>
             </div>
         )
     }
@@ -72,8 +89,11 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         e.preventDefault()
     }
 
-    private projectAutoSaveTimer = () =>
-    {
+    private projectAutoSaveTimer = () => {
         this.props.context.executeOperation(AppActions.autoSaveProject, {})
+    }
+
+    private handlePreferenceClose = () => {
+        this.props.context.executeOperation(AppActions.changePreferenceOpenState, { open: false })
     }
 }))

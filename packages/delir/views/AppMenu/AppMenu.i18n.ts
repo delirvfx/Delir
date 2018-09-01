@@ -4,6 +4,7 @@ export default I18n({
     ja: {
         appMenu: {
             about: 'Delirについて',
+            preference: '環境設定',
             openPluginDir: 'プラグインディレクトリを開く',
             quit: 'Delirを終了',
         },
@@ -47,6 +48,7 @@ export default I18n({
     en: {
         appMenu: {
             about: 'About Delir',
+            preference: 'Preference',
             openPluginDir: 'Open plugins directory',
             quit: 'Quit Delir',
         },

@@ -2,7 +2,8 @@ import * as Delir from '@ragg/delir-core'
 import * as serialize from 'form-serialize'
 import * as React from 'react'
 
-import　 ModalWindow from '../../modules/ModalWindow/Controller'
+import ModalWindow from '../../modules/ModalWindow/Controller'
+import Button from '../../views/components/Button'
 import FormStyle from '../../views/components/Form'
 
 import t from './CompositionSettingModal.i18n'
@@ -40,6 +41,7 @@ interface Props {
 
 class CompositionSettingModal extends React.PureComponent<Props, any>
 {
+    private formRef = React.createRef<HTMLFormElement>()
 
     public render()
     {
@@ -59,7 +61,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
 
         return (
             <div className={s.newCompModalRoot}>
-                <form ref='form' className={FormStyle.formHorizontal}>
+                <form ref={this.formRef} className={FormStyle.formHorizontal} onSubmit={this.handleSubmit}>
                     <div className='formGroup'>
                         <label className='label'>{t('fields.compositionName')}:</label>
                         <div className='input'>
@@ -128,16 +130,24 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
                     </div>
 
                     <div className={s.modalFooter}>
-                        <button id='cancel' className='button' type='button' onClick={this.onCancel} style={{marginRight: '8px'}}>{t('cancel')}</button>
-                        <button className='button primary' type='button' onClick={this.onConfirm}>{comp ? t('apply') : t('create')}</button>
+                        <Button type='normal' onClick={this.onCancel}>{t('cancel')}</Button>
+                        <Button type='primary' onClick={this.onConfirm}>{comp ? t('apply') : t('create')}</Button>
                     </div>
                 </form>
             </div>
         )
     }
+
+    private handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        this.onConfirm()
+    }
+
     private onConfirm = () =>
     {
-        const opts = serialize((this.refs.form as HTMLFormElement), {hash: true})
+        const opts = serialize(this.formRef.current!, {hash: true})
         this.props.onConfirm(opts as {[p: string]: string})
     }
 

@@ -9,7 +9,7 @@ import PluginRegistry from '../plugin-support/plugin-registry'
 
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
-import { RenderingAbortedException, RenderingFailedException } from '../exceptions/'
+import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../exceptions/'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'
@@ -36,6 +36,7 @@ interface RenderingOption {
     beginFrame: number
     endFrame: number
     loop: boolean
+    ignoreMissingEffect: boolean
 }
 
 interface RenderProgression {
@@ -141,10 +142,11 @@ export default class Engine
 
     public renderSequencial(compositionId: string, options: Partial<RenderingOption> = {}): ProgressPromise<void, RenderProgression>
     {
-        const _options: RenderingOption = defaults(options, {
+        const renderingOption: RenderingOption = defaults(options, {
             beginFrame: 0,
             loop: false,
             endFrame: -1,
+            ignoreMissingEffect: false,
         })
 
         this.stopCurrentRendering()
@@ -157,8 +159,8 @@ export default class Engine
                 this._seqRenderPromise = null
             })
 
-            let request = this._initStage(compositionId, _options.beginFrame)
-            const renderTasks = await this._taskingStage(request)
+            let request = this._initStage(compositionId, renderingOption)
+            const renderTasks = await this._taskingStage(request, renderingOption)
             this._fpsCounter.reset()
 
             const reqDestCanvasCtx = request.destCanvas.getContext('2d')!
@@ -169,7 +171,7 @@ export default class Engine
             let lastAudioBufferTime = -1
 
             const render = _.throttle(async () => {
-                const currentFrame = _options.beginFrame + renderedFrames
+                const currentFrame = renderingOption.beginFrame + renderedFrames
                 const currentTime = currentFrame / framerate
 
                 // 最後のバッファリングから１秒経過 & 次のフレームがレンダリングの終わりでなければバッファリング
@@ -212,8 +214,8 @@ export default class Engine
                     }
                 }
 
-                if (_options.beginFrame + renderedFrames >= lastFrame) {
-                    if (_options.loop) {
+                if (renderingOption.beginFrame + renderedFrames >= lastFrame) {
+                    if (renderingOption.loop) {
                         renderedFrames = 0
                         lastAudioBufferTime = -1
                     } else {
@@ -235,7 +237,7 @@ export default class Engine
                 notifier({
                     state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${request.framerate} fps)`,
                     currentFrame: request.frame,
-                    rangeEndFrame: _options.endFrame,
+                    rangeEndFrame: renderingOption.endFrame,
                     isAudioBuffered: isAudioBufferingNeeded,
                     audioBuffers: request.destAudioBuffer,
                 })
@@ -248,7 +250,7 @@ export default class Engine
         })
     }
 
-    private _initStage(compositionId: string, beginFrame: number): RenderingRequest
+    private _initStage(compositionId: string, option: RenderingOption): RenderingRequest
     {
         if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
         if (!this._pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
@@ -273,7 +275,7 @@ export default class Engine
 
         const audioBuffers = _.times(rootComposition.audioChannels, () => new Float32Array(new ArrayBuffer(bufferSizeBytePerSec)))
 
-        const currentFrame = beginFrame
+        const currentFrame = option.beginFrame
         const currentTime = currentFrame / rootComposition.framerate
 
         return new RenderingRequest({
@@ -301,7 +303,7 @@ export default class Engine
         })
     }
 
-    private async _taskingStage(this: Engine, req: RenderingRequest): Promise<LayerRenderTask[]>
+    private async _taskingStage(req: RenderingRequest, option: RenderingOption): Promise<LayerRenderTask[]>
     {
         const layerTasks: LayerRenderTask[] = []
 
@@ -322,16 +324,24 @@ export default class Engine
                 // Initialize effects
                 const effects: EffectRenderTask[] = []
                 for (const effect of clip.effects) {
-                    const effectRenderTask = EffectRenderTask.build({
-                        effect,
-                        clip,
-                        req,
-                        effectCache: this._effectCache,
-                        resolver: req.resolver
-                    })
+                    try {
+                        const effectRenderTask = EffectRenderTask.build({
+                            effect,
+                            clip,
+                            req,
+                            effectCache: this._effectCache,
+                            resolver: req.resolver
+                        })
 
-                    await effectRenderTask.initialize(req)
-                    effects.push(effectRenderTask)
+                        await effectRenderTask.initialize(req)
+                        effects.push(effectRenderTask)
+                    } catch (e) {
+                        if (e instanceof EffectPluginMissingException && option.ignoreMissingEffect) {
+                            continue
+                        } else {
+                            throw e
+                        }
+                    }
                 }
 
                 clipRenderTask.effectRenderTask = effects
