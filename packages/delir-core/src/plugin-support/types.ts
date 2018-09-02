@@ -32,6 +32,7 @@ export interface PluginEntryFragment {
 
 export interface PluginEntry {
     id: string
+    /** @deprecated */
     name: string
     type: PluginTypes
     packageJson: DelirPluginPackageJson
