@@ -1,33 +1,27 @@
-// @flow
-import * as ProjectHelper from '../project-helper'
-
-import Layer from '../../project/layer'
-import Project from '../../project/project'
-
-const propNotWritable = (obj, prop) => {
-    return Object.getOwnPropertyDescriptor(obj, prop).writable === false
-}
+import { Layer } from '../Entity'
+import * as Exporter from '../Exporter'
+import * as ProjectHelper from './project-helper'
 
 describe('ProjectHelper', () => {
-    const baseProject = require('../../../fixtures/project/latest.delir.json')
+    const baseProject = require('../../spec/fixture/project/2017091401.delir.json')
 
     describe('#moveLayerOrder', () => {
         it('Should correct moving layer order', () => {
-            const project = Project.deserialize(baseProject)
+            const project = Exporter.deserialize(baseProject)
             const layers = project.compositions[0].layers
             const firstLayer = layers[0]
 
             // Move layer(idx=0) to idx=1
             ProjectHelper.moveLayerOrder(project, project.compositions[0].id, layers[0].id, 1)
-            expect(layers[1].id).to.be(firstLayer.id)
+            expect(layers[1].id).toBe(firstLayer.id)
         })
 
         it('Should throw exception if out of composition layer specified', () => {
             expect(() => {
-                const project = Project.deserialize(baseProject)
+                const project = Exporter.deserialize(baseProject)
                 const outOfCompLayer = new Layer()
                 ProjectHelper.moveLayerOrder(project, project.compositions[0].id, outOfCompLayer.id, 1)
-            }).to.throwError()
+            }).toThrowError()
         })
     })
 })
