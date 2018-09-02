@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 
 import { Clip } from '../../Entity'
-import { TypeDescriptor } from '../../plugin-support/type-descriptor'
+import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
 import { AssetPointer, Expression } from '../../Values'
 import { RealParameterValues, RealParameterValueTypes } from '../Engine'
 import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'

@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 
 import { Composition } from '../Entity'
-import { ParameterValueTypes } from '../plugin-support/type-descriptor'
+import { ParameterValueTypes } from '../PluginSupport/type-descriptor'
 import DependencyResolver from './DependencyResolver'
 
 export default class PreRenderingRequest<T = {[propName: string]: ParameterValueTypes}>
