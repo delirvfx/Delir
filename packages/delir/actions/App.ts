@@ -167,10 +167,9 @@ export const openProject = operation(async (context) => {
 
     const projectMpk = await fs.readFile(path[0])
     const projectJson = MsgPack().decode(projectMpk).project
-    const migratedProject = Delir.ProjectMigrator.migrate(projectJson)
 
     await context.executeOperation(setActiveProject, {
-        project: Delir.Entity.Project.deserialize(migratedProject),
+        project: Delir.Exporter.deserialize(projectJson),
         path: path[0]
     })
 })
@@ -180,7 +179,9 @@ export const saveProject = operation(async (context, { path, silent = false }: {
 
     if (!project) return
 
-    await fs.writeFile(path, MsgPack().encode({　project: project.toPreBSON() }))
+    await fs.writeFile(path, MsgPack().encode({　
+        project: Delir.Exporter.serialize(project)
+    }) as any as Buffer)
 
     context.executeOperation(setActiveProject, { project, path }) // update path
 
