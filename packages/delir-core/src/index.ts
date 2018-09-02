@@ -1,7 +1,6 @@
 import * as Engine from './Engine'
 import * as Exceptions from './exceptions'
 import * as PluginSupport from './PluginSupport'
-import * as Project from './project/index'
 import * as Values from './Values'
 
 import PreRenderRequest from './Engine/PreRenderingRequest'
