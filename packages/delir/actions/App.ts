@@ -174,16 +174,23 @@ export const openProject = operation(async (context) => {
     })
 })
 
-export const saveProject = operation(async (context, { path, silent = false }: { path: string, silent?: boolean }) => {
+export const saveProject = operation(async (
+    context,
+    { path, silent = false, keepPath = false }: { path: string, silent?: boolean, keepPath?: boolean }
+) => {
     const project = context.getStore(EditorStateStore).getState().project
-
     if (!project) return
 
     await fs.writeFile(path, MsgPack().encode({　
         project: Delir.Exporter.serialize(project)
     }) as any as Buffer)
 
-    context.executeOperation(setActiveProject, { project, path }) // update path
+    let newPath: string | null = path
+    if (keepPath) {
+        newPath = context.getStore(EditorStateStore).getState().projectPath
+    }
+
+    context.executeOperation(setActiveProject, { project, ...(keepPath ? {} : {path: newPath || undefined}) }) // update path
 
     !silent && await context.executeOperation(notify, {
         message: t('saved'),
@@ -214,7 +221,7 @@ export const autoSaveProject = operation(async (context) => {
     const autoSaveFileName = `${frag.name}.auto-saved${frag.ext}`
     const autoSavePath = path.join(frag.dir, autoSaveFileName)
 
-    await context.executeOperation(saveProject, { path: autoSavePath, silent: true })
+    await context.executeOperation(saveProject, { path: autoSavePath, silent: true, keepPath: true })
 
     context.executeOperation(notify, {
         message: t('autoSaved', { fileName: autoSaveFileName }),
