@@ -20,7 +20,7 @@ export default class PluginRegistry {
         'post-effect': {}
     }
 
-    public addEntries(entries: PluginEntry[])
+    public registerPlugin(entries: PluginEntry[])
     {
         for (const entry of entries) {
             // if (this._plugins[entry.id] != null) {
@@ -34,7 +34,7 @@ export default class PluginRegistry {
             // }
 
             if (!semver.satisfies(DelirCorePackageJson.version, entry.packageJson.engines['delir-core'])) {
-                throw new PluginLoadFailException(`Plugin \`${entry.name}(${entry.id})\` not compatible to current delir-core version `)
+                throw new PluginLoadFailException(`Plugin \`${entry.id}\` not compatible to current delir-core version`)
             }
 
             // entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
@@ -99,9 +99,7 @@ export default class PluginRegistry {
         return _.map(this._plugins['post-effect'], (entry, id) => {
             return {
                 id: entry.id,
-                name: entry.name,
-                type: entry.pluginInfo.type,
-                path: entry.packageRoot,
+                type: entry.packageJson.delir.type,
                 package: _.cloneDeep(entry.packageJson),
             }
         })

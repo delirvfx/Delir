@@ -35,11 +35,9 @@ export default class FSPluginLoader
                 const packageRoot = dir
                 const content = (await fs.readFile(path.join(packageRoot, 'package.json'))).toString()
                 const json: DelirPluginPackageJson = JSON.parse(content)
-                let entryPath = path.join(packageRoot, 'index')
-
-                if (json.main) {
-                    entryPath = path.join(packageRoot, json.main)
-                }
+                const entryPath = json.main
+                    ? path.join(packageRoot, json.main)
+                    : path.join(packageRoot, 'index')
 
                 // const validate = validatePluginPackageJSON(json)
                 // if (!validate.valid) {
@@ -51,41 +49,28 @@ export default class FSPluginLoader
                 }
 
                 if (!semver.satisfies(DelirCorePackageJson.version, json.engines['delir-core'])) {
-                    throw new Error(`Plugin \`${json.delir.name}(${json.name})\` not compatible to current delir-core version `)
+                    throw new Error(`Plugin \`${json.name}\` not compatible to current delir-core version`)
+                }
+
+                let pluginClass = global.require(entryPath)
+
+                // resolve babel's module exposing
+                if (pluginClass.__esModule && pluginClass.default) {
+                    pluginClass = pluginClass.default
+                } else {
+                    pluginClass = pluginClass
                 }
 
                 packages[json.name] = {
                     id: json.name,
-                    name: json.delir.name,
                     type: json.delir.type,
                     packageJson: json,
-                    pluginInfo: json.delir,
-                    packageRoot,
-                    entryPath,
-                    class: null!, // load later
+                    class: pluginClass, // load later
                 }
             } catch (e) {
-                console.log(e)
                 failedPackages.push({package: dir, reason: e.message, error: e})
             }
         }))
-
-        _.each(packages, (packageInfo, id) => {
-            try {
-                // avoid webpack module resolving
-                const _class = global.require(packageInfo.entryPath)
-
-                // resolve babel's module exposing
-                if (_class.__esModule && _class.default) {
-                    packageInfo.class = _class.default
-                } else {
-                    packageInfo.class = _class
-                }
-            } catch (e) {
-                delete packages[packageInfo.id]
-                failedPackages.push({package: packageInfo.id, reason: `Failed to requiring plugin \`${id}\`. (${e.message})`, error: e})
-            }
-        })
 
         return {
             loaded: _.values(packages),

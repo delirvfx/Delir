@@ -28,16 +28,14 @@ describe('EffectRenderTask', () => {
     describe('ignoreMissingEffect', () => {
         it('Should not throw EffectPluginMissingException with missing effect', () => {
             const resolver = new DependencyResolver(project, registry)
-            registry.addEntries([{
+            registry.registerPlugin([{
                 id: 'existing-effect',
-                name: 'existing-effect',
-                class: null as any,
+                class: EffectPluginBase as any,
                 packageJson: {
                     name: 'existing-effect',
                     author: '',
                     version: '0.0.0',
                     delir: {
-                        name: 'existing-effect',
                         type: 'post-effect',
                     },
                     engines: {
@@ -45,20 +43,15 @@ describe('EffectRenderTask', () => {
                     },
                 },
                 type: 'post-effect',
-                entryPath: '',
-                packageRoot: '',
-                pluginInfo: {
-                    name: 'existing-effect',
-                    type: 'post-effect',
-                }
             }])
 
             const effect = new Effect()
-            effect.processor = 'missing-processor'
+            effect.processor = 'existing-effect'
             clip.effects.push(effect)
 
             const request = new RenderRequest({
                 rootComposition: project.compositions[0],
+                durationFrames: 100,
             })
 
             expect(() => {
@@ -66,10 +59,10 @@ describe('EffectRenderTask', () => {
                     effect,
                     clip,
                     effectCache: new WeakMap(),
-                    req: null as any,
+                    req: request,
                     resolver,
                 })
-            }).toThrow(EffectPluginMissingException)
+            }).not.toThrow()
         })
 
         it('Should throw EffectPluginMissingException with missing effect', () => {
@@ -82,6 +75,7 @@ describe('EffectRenderTask', () => {
 
             const request = new RenderRequest({
                 rootComposition: project.compositions[0],
+                durationFrames: 100,
             })
 
             expect(() => {
@@ -89,7 +83,7 @@ describe('EffectRenderTask', () => {
                     effect,
                     clip,
                     effectCache: new WeakMap(),
-                    req: null as any,
+                    req: request,
                     resolver,
                 })
             }).toThrow(EffectPluginMissingException)
