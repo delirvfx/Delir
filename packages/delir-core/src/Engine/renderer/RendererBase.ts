@@ -1,4 +1,4 @@
-import { TypeDescriptor } from '../../plugin-support/type-descriptor'
+import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
 import PreRenderingRequest from '../PreRenderingRequest'
 import RenderingRequest from '../RenderRequest'
 

@@ -1,11 +1,11 @@
 import { Clip, Effect, Project } from '../Entity'
-import EffectPluginBase from '../plugin-support/PostEffectBase'
-import { ParameterValueTypes } from '../plugin-support/type-descriptor'
+import EffectPluginBase from '../PluginSupport/PostEffectBase'
+import { ParameterValueTypes } from '../PluginSupport/type-descriptor'
 
 import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
 import { IRenderer } from './Renderer/RendererBase'
 
-import PluginRegistry from '../plugin-support/plugin-registry'
+import PluginRegistry from '../PluginSupport/plugin-registry'
 
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'

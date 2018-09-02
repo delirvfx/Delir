@@ -4,7 +4,7 @@ import { Keyframe, KeyframeValueTypes } from '../Entity'
 import ColorRGB from '../Values/ColorRGB'
 import ColorRGBA from '../Values/ColorRGBA'
 
-import { AnyParameterTypeDescriptor, TypeDescriptor } from '../plugin-support/type-descriptor'
+import { AnyParameterTypeDescriptor, TypeDescriptor } from '../PluginSupport/type-descriptor'
 import { AssetPointer } from '../Values'
 
 interface KeyFrameLink<T extends KeyframeValueTypes> {

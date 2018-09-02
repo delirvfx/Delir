@@ -59,7 +59,7 @@ export default class RendererStore extends Store<State> {
 
     // @ts-ignore: unused private but listener
     private handleAddPlugins = listen(RendererActions.addPlugins, (payload) => {
-        this.pluginRegistry.addEntries(payload.plugins)
+        this.pluginRegistry.registerPlugin(payload.plugins)
     })
 
     // @ts-ignore: unused private but listener

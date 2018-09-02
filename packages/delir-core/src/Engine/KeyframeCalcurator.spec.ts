@@ -1,5 +1,5 @@
 import Keyframe from '../Entity/Keyframe'
-import Type from '../plugin-support/type-descriptor'
+import Type from '../PluginSupport/type-descriptor'
 import * as KeyframeHelper from './KeyframeCalcurator'
 
 describe('KeyframeHelper', () => {

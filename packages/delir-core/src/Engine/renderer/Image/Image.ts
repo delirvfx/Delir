@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import Type from '../../../plugin-support/type-descriptor'
+import Type from '../../../PluginSupport/type-descriptor'
 import PreRenderingRequest from '../../PreRenderingRequest'
 import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'

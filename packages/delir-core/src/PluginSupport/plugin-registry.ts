@@ -1,3 +1,4 @@
+import * as Joi from 'joi'
 import * as _ from 'lodash'
 import * as semver from 'semver'
 
@@ -11,16 +12,36 @@ import UnknownPluginReferenceException from '../exceptions/unknown-plugin-refere
 
 import * as DelirCorePackageJson from '../../package.json'
 
-export const validatePluginPackageJSON = () => true
+// SEE: https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39
+const SEMVER_REGEXP = /^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
+
+const effectPluginPackageJSONSchema = Joi.object().keys({
+    name: Joi.string().required(),
+    version: Joi.string().regex(SEMVER_REGEXP).required(),
+    author: [Joi.string(), Joi.array().items(Joi.string())],
+    main: Joi.string().optional(),
+    engines: Joi.object().keys({
+        'delir-core': Joi.string().regex(SEMVER_REGEXP).required(),
+    }),
+    delir: Joi.object().keys({
+        type: Joi.valid('post-effect'),
+    }).strict(),
+}).options({ allowUnknown: true })
 
 export default class PluginRegistry {
+    public static validateEffectPluginPackageJSON(packageJSON: any) {
+        return Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null
+            && semver.valid(packageJSON.engines['delir-core']) != null
+            && semver.valid(packageJSON.version) != null
+    }
+
     private _plugins: {
         'post-effect': {[packageName: string]: Readonly<PluginEntry>}
     } = {
         'post-effect': {}
     }
 
-    public addEntries(entries: PluginEntry[])
+    public registerPlugin(entries: PluginEntry[])
     {
         for (const entry of entries) {
             // if (this._plugins[entry.id] != null) {
@@ -34,7 +55,7 @@ export default class PluginRegistry {
             // }
 
             if (!semver.satisfies(DelirCorePackageJson.version, entry.packageJson.engines['delir-core'])) {
-                throw new PluginLoadFailException(`Plugin \`${entry.name}(${entry.id})\` not compatible to current delir-core version `)
+                throw new PluginLoadFailException(`Plugin \`${entry.id}\` not compatible to current delir-core version`)
             }
 
             // entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
@@ -99,9 +120,7 @@ export default class PluginRegistry {
         return _.map(this._plugins['post-effect'], (entry, id) => {
             return {
                 id: entry.id,
-                name: entry.name,
-                type: entry.pluginInfo.type,
-                path: entry.packageRoot,
+                type: entry.packageJson.delir.type,
                 package: _.cloneDeep(entry.packageJson),
             }
         })

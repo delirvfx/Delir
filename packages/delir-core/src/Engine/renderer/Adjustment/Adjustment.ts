@@ -1,5 +1,5 @@
-import Type from '../../../plugin-support/type-descriptor'
-import { TypeDescriptor } from '../../../plugin-support/type-descriptor'
+import Type from '../../../PluginSupport/type-descriptor'
+import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
 import PreRenderingRequest from '../../PreRenderingRequest'
 import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'
