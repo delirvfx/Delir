@@ -6,7 +6,6 @@ import * as React from 'react'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import * as AppActions from '../../actions/App'
-import * as ProjectModActions from '../../actions/ProjectMod'
 
 import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as s from './KeyframeGraph.styl'
@@ -135,14 +134,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
                 if (!keyframeMovement) break process
 
                 const keyframe = keyframes.find(kf => kf.id === this.selectedKeyframeId)!
-                const movedFrame = this._pxToFrame(keyframeMovement.x)
-
-                this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
-                    clipId: parentClip.id!,
-                    paramName,
-                    frameOnClip: keyframe.frameOnClip,
-                    patch: { frameOnClip: keyframe.frameOnClip + movedFrame }
-                })
+                const movedFrame = this.pxToFrame(keyframeMovement.x)
 
                 onModified(parentClip.id, paramName, keyframe.frameOnClip, { frameOnClip: keyframe.frameOnClip + movedFrame })
             } else if (this.draggedEasingHandler) {
@@ -160,23 +152,11 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
                 const position = {x: data.element.cx.baseVal.value, y: data.element.cy.baseVal.value}
 
                 if (data.type === 'ease-in') {
-                    this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
-                        clipId: parentClip.id!,
-                        paramName,
-                        frameOnClip: keyframes[keyframeIdx + 1].frameOnClip,
-                        patch: { easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height] }
-                    })
                     const keyframe = keyframes[keyframeIdx + 1]
                     onModified(parentClip.id, paramName, keyframe.frameOnClip, {
                         easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
                     })
                 } else if (data.type === 'ease-out') {
-                    this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
-                        clipId: parentClip.id!,
-                        paramName,
-                        frameOnClip: keyframes[keyframeIdx].frameOnClip,
-                        patch: { easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height] }
-                    })
                     const keyframe = keyframes[keyframeIdx]
                     onModified(parentClip.id, paramName, keyframe.frameOnClip, {
                         easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height]
@@ -441,7 +421,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         })
     }
 
-    private _pxToFrame(x: number): number
+    private pxToFrame(x: number): number
     {
         // const {props: {pxPerSec, scale, editor: {activeComp}}} = this
         const {pxPerSec, zoomScale, composition} = this.props
