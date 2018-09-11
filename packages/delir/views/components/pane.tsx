@@ -22,7 +22,7 @@ export default class Pane extends React.Component<PaneProps, any>
             allowFocus,
             resizable,
             children,
-            ...props
+            ...rest
         } = this.props
 
         return (
@@ -31,7 +31,7 @@ export default class Pane extends React.Component<PaneProps, any>
                     '_workspace-pane--allow-focus': allowFocus,
                 })}
                 tabIndex={allowFocus ? -1 : void 0}
-                {...props}
+                {...rest as any /* TODO: @types/react is broken... 😭 check fixing */}
             >
                 {resizable ? <div className='_workspace-pane-handle' /> : null}
                 {React.Children.map(children, child => child)}

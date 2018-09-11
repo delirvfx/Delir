@@ -6,7 +6,12 @@ const openExternal = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
 }
 
-export default (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
-    const {onClick, children, ...passingProps} = props
-    return <a {...passingProps} onClick={openExternal}>{children}</a>
+interface Props {
+    href: string
+    children: React.ReactChild
+}
+
+export default (props: Props) => {
+    const {href, children} = props
+    return <a href={href} onClick={openExternal}>{children}</a>
 }
