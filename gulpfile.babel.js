@@ -177,19 +177,30 @@ export function compileRendererJs(done) {
                             },
                         },
                         {
-                            loader: 'stylus-loader'
+                            loader: 'stylus-loader',
+                            options: {
+                                'include css': true,
+                                use: [require('nib')()],
+                            },
                         },
                     ],
                 },
                 {
                     test: /\.css$/,
-                    include: /node_modules\/monaco-editor/,
                     use: [
                         'style-loader',
                         'css-loader',
                     ],
-                }
-            ]
+                },
+                {
+                    test: /\.(eot|svg|ttf|woff|woff2)$/,
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name][hash].[ext]',
+                        publicPath: '',
+                    },
+                },
+            ],
         },
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: paths.compiled.frontend}),
@@ -227,7 +238,7 @@ export function compileRendererJs(done) {
     })
 }
 
-export async function compilePlugins(done) {
+export function compilePlugins(done) {
     webpack({
         mode: __DEV__ ? 'development' : 'production',
         target: "electron-renderer",
@@ -321,21 +332,6 @@ export function compilePugTempates() {
         .pipe(g.dest(paths.compiled.frontend));
 }
 
-export function compileStyles() {
-    return g.src(join(paths.src.frontend, "**/[^_]*.styl"))
-        .pipe($.plumber())
-        .pipe($.stylus({
-            'include css': true,
-            use : [require("nib")()]
-        }))
-        .pipe(g.dest(paths.compiled.frontend));
-}
-
-export function copyFonts() {
-    return g.src(join(paths.src.frontend, "assets/fonts/*"))
-        .pipe(g.dest(join(paths.compiled.frontend, "assets/fonts")));
-}
-
 export function copyImage() {
     return g.src(join(paths.src.frontend, "assets/images/**/*"), {since: g.lastRun('copyImage')})
         .pipe(g.dest(join(paths.compiled.frontend, "assets/images")));
@@ -427,13 +423,12 @@ export function run(done) {
 export function watch() {
     g.watch(join(paths.src.frontend, 'browser.js'), buildBrowserJs)
     g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
-    g.watch(join(paths.src.frontend, '**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
     g.watch(join(__dirname, 'node_modules'), symlinkNativeModules)
 }
 
-const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
+const buildRendererWithoutJs = g.parallel(compilePugTempates, copyImage);
+const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);

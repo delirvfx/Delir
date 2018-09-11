@@ -8,6 +8,9 @@ import * as EditorOps from './domain/Editor/operations'
 import * as PreferenceOps from './domain/Preference/operations'
 import * as RendererOps from './domain/Renderer/operations'
 
+import './assets/styles/font-awesome.min.css'
+import './assets/styles/style.styl'
+
 import AppView from './views/AppView'
 
 import PreferenceStore from '@ragg/delir/domain/Preference/PreferenceStore'
