@@ -49,11 +49,11 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         easingHandleMovement: null,
     }
 
-    private _selectedKeyframeId: string | null = null
+    private selectedKeyframeId: string | null = null
     private _initialKeyframePosition: {x: number, y: number} | null = null
     private _keyframeDragged: boolean = false
 
-    private _selectedEasingHandleHolderData: {
+    private draggedEasingHandler: {
         type: 'ease-in' | 'ease-out',
         keyframeId: string,
         element: SVGCircleElement,
@@ -83,7 +83,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
     private mouseMoveOnSvg = (e: React.MouseEvent<SVGElement>) =>
     {
-        if (this._selectedKeyframeId) {
+        if (this.selectedKeyframeId) {
             this._keyframeDragged = true
 
             this.setState({
@@ -91,11 +91,11 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
                     x: e.screenX - this._initialKeyframePosition!.x,
                 }
             })
-        } else if (this._selectedEasingHandleHolderData) {
+        } else if (this.draggedEasingHandler) {
             this.setState({
                 easingHandleMovement: {
-                    x: e.screenX - this._selectedEasingHandleHolderData.initialPosition!.x,
-                    y: e.screenY - this._selectedEasingHandleHolderData.initialPosition!.y,
+                    x: e.screenX - this.draggedEasingHandler.initialPosition!.x,
+                    y: e.screenY - this.draggedEasingHandler.initialPosition!.y,
                 },
             })
         }
@@ -112,16 +112,16 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         if (!parentClip || !paramName || !entity) return
 
         process: {
-            if (this._selectedKeyframeId) {
+            if (this.selectedKeyframeId) {
                 // Process for keyframe dragged
                 if (!this._keyframeDragged) {
-                    this.setState({activeKeyframeId: this._selectedKeyframeId, keyframeMovement: null})
+                    this.setState({activeKeyframeId: this.selectedKeyframeId, keyframeMovement: null})
                     break process
                 }
 
                 if (!keyframeMovement) break process
 
-                const keyframe = keyframes.find(kf => kf.id === this._selectedKeyframeId)!
+                const keyframe = keyframes.find(kf => kf.id === this.selectedKeyframeId)!
                 const movedFrame = this._pxToFrame(keyframeMovement.x)
 
                 this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
@@ -132,14 +132,14 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
                 })
 
                 onModified(parentClip.id, paramName, keyframe.frameOnClip, { frameOnClip: keyframe.frameOnClip + movedFrame })
-            } else if (this._selectedEasingHandleHolderData) {
+            } else if (this.draggedEasingHandler) {
                 // Process for easing handle dragged
 
-                const data = this._selectedEasingHandleHolderData
-                const transitionPath = this._selectedEasingHandleHolderData.container.querySelector('[data-transition-path]')! as HTMLElement
+                const data = this.draggedEasingHandler
+                const transitionPath = this.draggedEasingHandler.container.querySelector('[data-transition-path]')! as HTMLElement
 
                 const keyframes = entity.keyframes[paramName].slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
-                const keyframeIdx = keyframes.findIndex(kf => kf.id === this._selectedEasingHandleHolderData!.keyframeId)!
+                const keyframeIdx = keyframes.findIndex(kf => kf.id === this.draggedEasingHandler!.keyframeId)!
                 if (keyframeIdx === -1) break process
 
                 const {beginX, beginY, endX, endY} = _.mapValues(transitionPath.dataset, val => parseFloat(val!))
@@ -173,9 +173,9 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         }
 
         // Clear dragging state
-        this._selectedKeyframeId = null
+        this.selectedKeyframeId = null
         this._keyframeDragged = false
-        this._selectedEasingHandleHolderData = null
+        this.draggedEasingHandler = null
         this.setState({
             keyframeMovement: null,
             easingHandleMovement: null,
@@ -189,14 +189,15 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
         if ((e.key === 'Delete' || e.key === 'Backspace') && activeKeyframeId) {
             onKeyframeRemove(parentClip.id, activeKeyframeId)
-            this._selectedKeyframeId = null
+            this.selectedKeyframeId = null
         }
     }
 
     private mouseDownOnEasingHandle = (e: React.MouseEvent<SVGCircleElement>) =>
     {
         const {dataset} = e.currentTarget as any
-        this._selectedEasingHandleHolderData = {
+
+        this.draggedEasingHandler = {
             type: dataset.isEaseIn ? 'ease-in' : 'ease-out',
             keyframeId: dataset.keyframeId,
             element: e.currentTarget,
@@ -207,7 +208,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
     private mouseDownOnKeyframe = (e: React.MouseEvent<SVGGElement>) =>
     {
-        this._selectedKeyframeId = (e.currentTarget as any).dataset.keyframeId
+        this.selectedKeyframeId = (e.currentTarget as any).dataset.keyframeId
         this._keyframeDragged = false
         this._initialKeyframePosition = {x: e.screenX, y: e.screenY}
     }
@@ -247,91 +248,91 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
     private _renderNumberKeyframes(keyframes: Delir.Entity.Keyframe[])
     {
         const {keyframeMovement, easingHandleMovement} = this.state
-        const points = this._buildKeyframePoints(keyframes)
+        const points = this.buildKeyframePoints(keyframes)
         const NO_TRANSFORM = {x: 0, y: 0}
-        const easingHandleHolderData = this._selectedEasingHandleHolderData
+        const selectedEasingHandler = this.draggedEasingHandler
 
-        return points.map((p, idx) => {
-            const transform = (keyframeMovement && p.id === this._selectedKeyframeId) ? keyframeMovement : NO_TRANSFORM
-            const easingHandleTransform = (easingHandleMovement && p.id === this._selectedEasingHandleHolderData!.keyframeId) ? easingHandleMovement : NO_TRANSFORM
-            const easeOutHandleTransform = (easingHandleHolderData && easingHandleHolderData!.type === 'ease-out') ? easingHandleTransform : NO_TRANSFORM
-            const easeInHandleTransform = (easingHandleHolderData && easingHandleHolderData!.type === 'ease-in') ? easingHandleTransform : NO_TRANSFORM
+        return points.map((point, idx) => {
+            const keyframeDragMovement = (keyframeMovement && point.keyframeId === this.selectedKeyframeId) ? keyframeMovement : NO_TRANSFORM
+            const easingHandleDragMovement = (easingHandleMovement && point.keyframeId === this.draggedEasingHandler!.keyframeId) ? easingHandleMovement : NO_TRANSFORM
+            const easeOutHandleDragMovement = (selectedEasingHandler && selectedEasingHandler!.type === 'ease-out') ? easingHandleDragMovement : NO_TRANSFORM
+            const easeIntHandleDragMovement = (selectedEasingHandler && selectedEasingHandler!.type === 'ease-in') ? easingHandleDragMovement : NO_TRANSFORM
 
             return (
-                <g key={p.id} data-index={idx}>
-                    {p.transition && (
+                <g key={point.keyframeId} data-index={idx}>
+                    {point.transitionPath && (
                         <path
                             stroke='#fff'
                             fill='none'
                             strokeWidth='1'
                             d={`
-                                M ${p.transition.x} ${p.transition.y}
-                                C ${p.transition.xh + easeOutHandleTransform.x} ${p.transition.yh + easeOutHandleTransform.y}
-                                  ${p.transition.xxh + easeInHandleTransform.x} ${p.transition.yyh + easeInHandleTransform.y}
-                                  ${p.transition.xx} ${p.transition.yy}
+                                M ${point.transitionPath.begin.x} ${point.transitionPath.begin.y}
+                                C ${point.transitionPath.begin.handleX + easeOutHandleDragMovement.x} ${point.transitionPath.begin.handleY + easeOutHandleDragMovement.y}
+                                  ${point.transitionPath.end.handleX + easeIntHandleDragMovement.x} ${point.transitionPath.end.handleY + easeIntHandleDragMovement.y}
+                                  ${point.transitionPath.end.x} ${point.transitionPath.end.y}
                             `}
-                            data-begin-x={p.transition.x}
-                            data-begin-y={p.transition.y}
-                            data-end-x={p.transition.xx}
-                            data-end-y={p.transition.yy}
+                            data-begin-x={point.transitionPath.begin.x}
+                            data-begin-y={point.transitionPath.begin.y}
+                            data-end-x={point.transitionPath.end.x}
+                            data-end-y={point.transitionPath.end.y}
                             data-transition-path
                         />
                     )}
-                    {p.easeOutLine && (
+                    {point.easeOutLine && (
                         <path
                             className={s.keyframeLineToHandle}
                             strokeWidth='1'
                             d={`
-                                M ${p.easeOutLine.x} ${p.easeOutLine.y}
-                                L ${p.easeOutLine.xx + easeOutHandleTransform.x} ${p.easeOutLine.yy + easeOutHandleTransform.y}
+                                M ${point.easeOutLine.x} ${point.easeOutLine.y}
+                                L ${point.easeOutLine.endX + easeOutHandleDragMovement.x} ${point.easeOutLine.endY + easeOutHandleDragMovement.y}
                             `}
                             data-ease-out-handle-path
                         />
                     )}
-                    {p.nextEaseInLine && (
+                    {point.nextEaseInLine && (
                         <path
                             className={s.keyframeLineToHandle}
                             strokeWidth='1'
                             d={`
-                                M ${p.nextEaseInLine.x} ${p.nextEaseInLine.y}
-                                L ${p.nextEaseInLine.xx + easeInHandleTransform.x} ${p.nextEaseInLine.yy + easeInHandleTransform.y}
+                                M ${point.nextEaseInLine.x} ${point.nextEaseInLine.y}
+                                L ${point.nextEaseInLine.endX + easeIntHandleDragMovement.x} ${point.nextEaseInLine.endY + easeIntHandleDragMovement.y}
                             `}
                             data-ease-in-handle-path
                         />
                     )}
                     <g
-                        transform={`translate(${p.point.x + transform.x - 4} ${p.point.y - 4})`}
+                        transform={`translate(${point.point.x + keyframeDragMovement.x - 4} ${point.point.y - 4})`}
                         onDoubleClick={this.doubleClickOnKeyframe}
                         onMouseDown={this.mouseDownOnKeyframe}
                         onMouseUp={this.mouseUpOnSvg}
-                        data-keyframe-id={p.id}
-                        data-frame={p.frame}
+                        data-keyframe-id={point.keyframeId}
+                        data-frame={point.frame}
                     >
                         <rect className={classnames(s.keyframeInner, {
-                            [s['keyframeInner--selected']]: p.id === this.state.activeKeyframeId
+                            [s['keyframeInner--selected']]: point.keyframeId === this.state.activeKeyframeId
                         })} width='8' height='8'  />
                     </g>
-                    {p.nextEaseInHandle && (
+                    {point.nextEaseInHandle && (
                         <circle
-                            cx={p.nextEaseInHandle.x + easeInHandleTransform.x}
-                            cy={p.nextEaseInHandle.y + easeInHandleTransform.y}
+                            cx={point.nextEaseInHandle.x + easeIntHandleDragMovement.x}
+                            cy={point.nextEaseInHandle.y + easeIntHandleDragMovement.y}
                             fill='#7100bf'
                             r='4'
                             onMouseDown={this.mouseDownOnEasingHandle}
                             onMouseUp={this.mouseUpOnSvg}
-                            data-keyframe-id={p.id}
+                            data-keyframe-id={point.keyframeId}
                             data-is-ease-in
                         />
                     )}
-                    {p.easeOutHandle && (
+                    {point.easeOutHandle && (
                         <circle
-                            cx={p.easeOutHandle.x + easeOutHandleTransform.x}
-                            cy={p.easeOutHandle.y + easeOutHandleTransform.y}
+                            cx={point.easeOutHandle.x + easeOutHandleDragMovement.x}
+                            cy={point.easeOutHandle.y + easeOutHandleDragMovement.y}
                             fill='#7100bf'
                             r='4'
                             onMouseDown={this.mouseDownOnEasingHandle}
                             onMouseUp={this.mouseUpOnSvg}
-                            data-keyframe-id={p.id}
+                            data-keyframe-id={point.keyframeId}
                             data-is-ease-out
                         />
                     )}
@@ -348,13 +349,13 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
         if (!parentClip) return []
 
-        const clipPlacedPositionX = this._frameToPx(parentClip.placedFrame) - scrollLeft
+        const clipPlacedPositionX = this.frameToPx(parentClip.placedFrame) - scrollLeft
         const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
 
         return orderedKeyframes.map((kf, idx) => {
-            const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
-            const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
-            const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
+            const x = clipPlacedPositionX + this.frameToPx(kf.frameOnClip)
+            const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this.frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
+            const transform = (this.state.keyframeMovement && kf.id === this.selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
                 <g ref={kf.id}>
@@ -397,13 +398,13 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         const halfHeight = height / 2
 
         if (!parentClip) return []
-        const clipPlacedPositionX = this._frameToPx(parentClip.placedFrame) - scrollLeft
+        const clipPlacedPositionX = this.frameToPx(parentClip.placedFrame) - scrollLeft
         const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
 
         return orderedKeyframes.map((kf, idx) => {
-            const x = clipPlacedPositionX + this._frameToPx(kf.frameOnClip)
-            const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this._frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
-            const transform = (this.state.keyframeMovement && kf.id === this._selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
+            const x = clipPlacedPositionX + this.frameToPx(kf.frameOnClip)
+            const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this.frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
+            const transform = (this.state.keyframeMovement && kf.id === this.selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
                 <g ref={kf.id}>
@@ -437,7 +438,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         })
     }
 
-    private _frameToPx(frame: number): number
+    private frameToPx(frame: number): number
     {
         const {pxPerSec, zoomScale, composition} = this.props
 
@@ -462,14 +463,19 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         })
     }
 
-    private _buildKeyframePoints = (keyframes: Delir.Entity.Keyframe[]): {
-        id: string,
+    /**
+     * Calculate keyframe place points
+     */
+    private buildKeyframePoints = (keyframes: Delir.Entity.Keyframe[]): {
+        keyframeId: string,
         frame: number,
         point: {x: number, y: number},
-        hasNextKeyframe: boolean,
-        transition: {x: number, y: number, xh: number, yh: number, xxh: number, yyh: number, xx: number, yy: number} | null,
-        easeOutLine: {x: number, y: number, xx: number, yy: number} | null,
-        nextEaseInLine: {x: number, y: number, xx: number, yy: number} | null,
+        transitionPath: {
+            begin: {x: number, y: number, handleX: number, handleY: number },
+            end: { x: number, y: number, handleX: number, handleY: number }
+        } | null,
+        easeOutLine: {x: number, y: number, endX: number, endY: number} | null,
+        nextEaseInLine: {x: number, y: number, endX: number, endY: number} | null,
         easeOutHandle: {x: number, y: number} | null,
         nextEaseInHandle: {x: number, y: number} | null,
     }[] =>
@@ -479,7 +485,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         if (!descriptor || descriptor.animatable === false) return []
 
         const orderedKeyframes = keyframes.slice(0).sort((a, b) => a.frameOnClip - b.frameOnClip)
-        const clipPlacedPositionX = this._frameToPx(parentClip.placedFrame)
+        const clipPlacedPositionX = this.frameToPx(parentClip.placedFrame)
 
         if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
             const maxValue = orderedKeyframes.reduce((memo, kf, idx, list) => {
@@ -510,39 +516,41 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
                 // let previousY = 0
                 let nextX = 0
                 let nextY = 0
-                let handleEoX = 0
-                let handleEoY = 0
+                let easeOutHandleX = 0
+                let easeOutHandleY = 0
                 // let handleEiX = 0
                 // let handleEiY = 0
-                let nextKeyframeEiX = 0
-                let nextKeyframeEiY = 0
+                let nextKeyframeEaseInX = 0
+                let nextKeyframeEaseInY = 0
 
-                const beginX = clipPlacedPositionX + this._frameToPx(keyframe.frameOnClip) - scrollLeft
+                const beginX = clipPlacedPositionX + this.frameToPx(keyframe.frameOnClip) - scrollLeft
                 const beginY = height - height * (((keyframe.value as number) - minValue) / minMaxRange)
 
                 if (nextKeyframe) {
                     // Next keyframe position
-                    nextX = clipPlacedPositionX + this._frameToPx(nextKeyframe.frameOnClip) - scrollLeft
+                    nextX = clipPlacedPositionX + this.frameToPx(nextKeyframe.frameOnClip) - scrollLeft
                     nextY = height - height * (((nextKeyframe.value as number) - minValue) / minMaxRange)
 
                     // Handle of control transition to next keyframe
-                    handleEoX = ((nextX - beginX) * keyframe.easeOutParam[0]) + beginX
-                    handleEoY = ((nextY - beginY) * keyframe.easeOutParam[1]) + beginY // ((endPointY - beginY) * nextKeyframe.easeOutParam[1]) + beginY
+                    easeOutHandleX = ((nextX - beginX) * keyframe.easeOutParam[0]) + beginX
+                    easeOutHandleY = ((nextY - beginY) * keyframe.easeOutParam[1]) + beginY // ((endPointY - beginY) * nextKeyframe.easeOutParam[1]) + beginY
 
-                    nextKeyframeEiX = ((nextX - beginX) * nextKeyframe.easeInParam[0]) + beginX
-                    nextKeyframeEiY = ((nextY - beginY) * nextKeyframe.easeInParam[1]) + beginY
+                    nextKeyframeEaseInX = ((nextX - beginX) * nextKeyframe.easeInParam[0]) + beginX
+                    nextKeyframeEaseInY = ((nextY - beginY) * nextKeyframe.easeInParam[1]) + beginY
                 }
 
                 return {
-                    id: keyframe.id,
+                    keyframeId: keyframe.id,
                     frame: keyframe.frameOnClip,
                     point: {x: beginX, y: beginY},
-                    hasNextKeyframe: !!nextKeyframe,
-                    transition: nextKeyframe ? {x: beginX, y: beginY, xh: handleEoX, yh: handleEoY, xxh: nextKeyframeEiX, yyh: nextKeyframeEiY, xx: nextX, yy: nextY} : null,
-                    easeOutLine: nextKeyframe ? {x: beginX, y: beginY, xx: handleEoX, yy: handleEoY} : null,
-                    nextEaseInLine: nextKeyframe ? {x: nextX, y: nextY, xx: nextKeyframeEiX, yy: nextKeyframeEiY} : null,
-                    easeOutHandle: nextKeyframe ? {x: handleEoX, y: handleEoY} : null,
-                    nextEaseInHandle: nextKeyframe ? {x: nextKeyframeEiX, y: nextKeyframeEiY} : null,
+                    transitionPath: nextKeyframe ? {
+                        begin: { x: beginX, y: beginY, handleX: easeOutHandleX, handleY: easeOutHandleY },
+                        end: { x: nextX, y: nextY, handleX: nextKeyframeEaseInX, handleY: nextKeyframeEaseInY },
+                    } : null,
+                    easeOutLine: nextKeyframe ? {x: beginX, y: beginY, endX: easeOutHandleX, endY: easeOutHandleY} : null,
+                    nextEaseInLine: nextKeyframe ? {x: nextX, y: nextY, endX: nextKeyframeEaseInX, endY: nextKeyframeEaseInY} : null,
+                    easeOutHandle: nextKeyframe ? {x: easeOutHandleX, y: easeOutHandleY} : null,
+                    nextEaseInHandle: nextKeyframe ? {x: nextKeyframeEaseInX, y: nextKeyframeEaseInY} : null,
                 }
             })
         }
