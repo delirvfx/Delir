@@ -1,7 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
 import { remote } from 'electron'
-import * as fs from 'fs-promise'
+import * as fs from 'fs-extra'
 import * as _ from 'lodash'
 import * as MsgPack from 'msgpack5'
 import * as path from 'path'

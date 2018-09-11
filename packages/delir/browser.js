@@ -10,7 +10,7 @@ process.on('uncaughtException', e => {
     }
 })
 
-import mkdirp from 'mkdirp-promise'
+import fs from 'fs-extra'
 import path from 'path'
 import yargs from 'yargs'
 import {BrowserWindow, Menu, app} from 'electron'
@@ -41,7 +41,7 @@ const install = async () => {
     const userDir = app.getPath('appData')
 
     try {
-        await mkdirp(path.join(userDir, 'delir/plugins'))
+        await fs.mkdirp(path.join(userDir, 'delir/plugins'))
     } catch (e) {
         throw e
     }

@@ -1,6 +1,6 @@
 import { DelirPluginPackageJson, PluginEntry } from '@ragg/delir-core/src/PluginSupport/types'
 
-import * as fs from 'fs-promise'
+import * as fs from 'fs-extra'
 import * as _ from 'lodash'
 import * as path from 'path'
 import * as semver from 'semver'

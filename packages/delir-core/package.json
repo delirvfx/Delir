@@ -8,7 +8,6 @@
   "license": "MIT",
   "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
   "devDependencies": {
-    "@types/fs-promise": "1.0.3",
     "@types/jest": "23.3.2",
     "@types/joi": "13.4.4",
     "@types/lodash": "4.14.116",
@@ -26,7 +25,6 @@
     "bezier-easing": "2.0.3",
     "flac": "0.3.0",
     "font-manager": "0.3.0",
-    "fs-promise": "2.0.3",
     "joi": "13.6.0",
     "lodash": "4.17.4",
     "mp3": "0.1.0",
