@@ -12,7 +12,7 @@ import AppView from './views/AppView'
 
 import PreferenceStore from '@ragg/delir/domain/Preference/PreferenceStore'
 import EditorStore from './domain/Editor/EditorStore'
-import ProjectStore from './stores/ProjectStore'
+import ProjectStore from './domain/Project/ProjectStore'
 import RendererStore from './stores/RendererStore'
 
 // Handle errors

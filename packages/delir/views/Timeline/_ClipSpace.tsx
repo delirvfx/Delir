@@ -4,8 +4,8 @@ import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
 
-import * as ProjectModActions from '../../actions/ProjectMod'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as ProjectOps from '../../domain/Project/operations'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import RendererStore from '../../stores/RendererStore'
@@ -110,7 +110,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
             const {asset} = dragEntity
             const {framerate, pxPerSec, scale} = this.props
             const placedFrame = TimePixelConversion.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
-            this.props.context.executeOperation(ProjectModActions.createClipWithAsset, {
+            this.props.context.executeOperation(ProjectOps.createClipWithAsset, {
                 targetLayer: this.props.layer,
                 asset,
                 placedFrame
@@ -136,7 +136,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
         if (isChildClip) {
             this.props.context.executeOperation(EditorOps.clearDragEntity, {})
         } else {
-            this.props.context.executeOperation(ProjectModActions.moveClipToLayer, {
+            this.props.context.executeOperation(ProjectOps.moveClipToLayer, {
                 clipId: dragEntity.clip.id!,
                 destLayerId: this.props.layer.id!
             })
@@ -153,7 +153,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
             scale: this.props.scale,
         })
 
-        this.props.context.executeOperation(ProjectModActions.modifyClip, {
+        this.props.context.executeOperation(ProjectOps.modifyClip, {
             clipId,
             props: { placedFrame: newPlacedFrame }
         })
@@ -168,7 +168,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
             scale: this.props.scale,
         })
 
-        this.props.context.executeOperation(ProjectModActions.modifyClip, {
+        this.props.context.executeOperation(ProjectOps.modifyClip, {
             clipId: clipId,
             props: { durationFrames: newDurationFrames }
         })
@@ -176,7 +176,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
     private addNewClip = ({ dataset }: MenuItemOption<{rendererId: string}>) =>
     {
-        this.props.context.executeOperation(ProjectModActions.createClip, {
+        this.props.context.executeOperation(ProjectOps.createClip, {
             layerId: this.props.layer.id!,
             clipRendererId: dataset.rendererId,
             placedFrame: 0,

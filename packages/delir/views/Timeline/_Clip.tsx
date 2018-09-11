@@ -5,8 +5,8 @@ import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
 
-import * as ProjectModActions from '../../actions/ProjectMod'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as ProjectOps from '../../domain/Project/operations'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
 import t from './_Clip.i18n'
@@ -106,7 +106,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
 
     private addEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
     {
-        this.props.context.executeOperation(ProjectModActions.addEffectIntoClip, {
+        this.props.context.executeOperation(ProjectOps.addEffectIntoClip, {
             clipId: dataset.clipId,
             processorId: dataset.effectId
         })
@@ -115,6 +115,6 @@ export default withComponentContext(class Clip extends React.Component<Props> {
 
     private removeClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
     {
-        this.props.context.executeOperation(ProjectModActions.removeClip, { clipId: dataset.clipId })
+        this.props.context.executeOperation(ProjectOps.removeClip, { clipId: dataset.clipId })
     }
 })

@@ -6,11 +6,11 @@ import * as ReactDOM from 'react-dom'
 import { SortEndHandler } from 'react-sortable-hoc'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import * as ProjectModActions from '../../actions/ProjectMod'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as ProjectOps from '../../domain/Project/operations'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
-import ProjectStore from '../../stores/ProjectStore'
+import ProjectStore from '../../domain/Project/ProjectStore'
 
 import Pane from '../components/pane'
 import Workspace from '../components/workspace'
@@ -226,7 +226,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
         if (!activeComp) return
 
         const layer = activeComp.layers[oldIndex]
-        this.props.context.executeOperation(ProjectModActions.moveLayerOrder, { layerId: layer.id, newIndex })
+        this.props.context.executeOperation(ProjectOps.moveLayerOrder, { layerId: layer.id, newIndex })
         this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
     }
 
@@ -236,7 +236,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
 
         if (!editor.activeComp) return
 
-        this.props.context.executeOperation(ProjectModActions.addLayer, {
+        this.props.context.executeOperation(ProjectOps.addLayer, {
             targetComposition: editor.activeComp,
             layer: new Delir.Entity.Layer()
         })
@@ -245,7 +245,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
     private onLayerRemove = (layerId: string) =>
     {
         if (!this.props.editor.activeComp) return
-        this.props.context.executeOperation(ProjectModActions.removeLayer, { layerId })
+        this.props.context.executeOperation(ProjectOps.removeLayer, { layerId })
     }
 
     private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) =>
@@ -297,7 +297,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
 
         if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
         const {asset} = dragEntity
-        this.props.context.executeOperation(ProjectModActions.addLayerWithAsset, { targetComposition: activeComp, asset })
+        this.props.context.executeOperation(ProjectOps.addLayerWithAsset, { targetComposition: activeComp, asset })
     }
 
     private _onSeeked = (frame: number) =>

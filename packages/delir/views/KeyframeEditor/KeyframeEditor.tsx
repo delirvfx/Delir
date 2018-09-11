@@ -6,11 +6,11 @@ import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
-import * as ProjectModActions from '../../actions/ProjectMod'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as ProjectOps from '../../domain/Project/operations'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
-import ProjectStore, { ProjectStoreState } from '../../stores/ProjectStore'
+import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
 import RendererStore from '../../stores/RendererStore'
 
 import Button from '../components/Button'
@@ -278,7 +278,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         this.setState({ scriptParamEditorOpened: false })
 
-        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
             clipId: activeClip.id,
             frameOnClip: 0,
             paramName: result.target.paramName,
@@ -296,7 +296,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         if (!activeClip) return
 
         if (result.target.type === 'clip') {
-            this.props.context.executeOperation(ProjectModActions.modifyClipExpression, {
+            this.props.context.executeOperation(ProjectOps.modifyClipExpression, {
                 clipId: activeClip.id,
                 property: result.target.paramName,
                 expr: {
@@ -305,7 +305,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                 }
             })
         } else {
-            this.props.context.executeOperation(ProjectModActions.modifyEffectExpression, {
+            this.props.context.executeOperation(ProjectOps.modifyEffectExpression, {
                 clipId: activeClip.id,
                 effectId: result.target.entityId,
                 property: result.target.paramName,
@@ -364,7 +364,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
 
-        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
             clipId: activeClip.id!,
             paramName: desc.paramName,
             frameOnClip,
@@ -381,7 +381,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForEffect, {
+        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
             clipId: activeClip.id,
             effectId,
             paramName: desc.paramName,
@@ -398,14 +398,14 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         if (!activeParam) return
 
         if (activeParam.type === 'clip') {
-            this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+            this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
                 clipId: parentClipId,
                 paramName,
                 frameOnClip,
                 patch
             })
         } else {
-            this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForEffect, {
+            this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
                 clipId: parentClipId,
                 effectId: activeParam.entityId,
                 paramName,
@@ -421,9 +421,9 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         if (!activeParam) return
 
         if (activeParam.type === 'clip') {
-            this.props.context.executeOperation(ProjectModActions.removeKeyframe, { keyframeId: activeParam.entityId })
+            this.props.context.executeOperation(ProjectOps.removeKeyframe, { keyframeId: activeParam.entityId })
         } else {
-            this.props.context.executeOperation(ProjectModActions.removeKeyframeForEffect, {
+            this.props.context.executeOperation(ProjectOps.removeKeyframeForEffect, {
                 clipId: parentClipId,
                 effectId: activeParam.entityId,
                 keyframeId
@@ -440,7 +440,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
     private removeEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
     {
         this.setState({ editorOpened: false, activeParam: null }, () => {
-            this.props.context.executeOperation(ProjectModActions.removeEffect, {
+            this.props.context.executeOperation(ProjectOps.removeEffect, {
                 holderClipId: dataset.clipId,
                 effectId: dataset.effectId
             })

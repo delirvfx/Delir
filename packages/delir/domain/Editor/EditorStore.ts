@@ -1,7 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
-import { ProjectModActions } from '../../actions/actions'
+import { ProjectActions } from '../Project/actions'
 import { EditorActions } from './actions'
 import { DragEntity } from './operations'
 
@@ -72,7 +72,7 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     // @ts-ignore
-    private handleRemoveClip = listen(ProjectModActions.removeClipAction, (payload) => {
+    private handleRemoveClip = listen(ProjectActions.removeClipAction, (payload) => {
         const { activeClip } = this.state
 
         if (activeClip && activeClip.id === payload.targetClipId) {
@@ -81,7 +81,7 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     // @ts-ignore
-    private handleRemoveLayer = listen(ProjectModActions.removeLayerAction, ({ targetLayerId }) => {
+    private handleRemoveLayer = listen(ProjectActions.removeLayerAction, ({ targetLayerId }) => {
         const { activeClip } = this.state
         if (!activeClip) return
         if (!this.state.project) return
