@@ -30,7 +30,7 @@ const AboutModal = (props: {onClosed: () => void}) => {
                 <dd><Link href='https://twitter.com/@DelirVFX'>Twitter: @DelirVFX</Link></dd>
 
                 <dt>GitHub</dt>
-                <dd><Link href='https://github.com/Ragg-/Delir'>https://github.com/Ragg-/Delir</Link></dd>
+                <dd><Link href='https://github.com/ra-gg/Delir'>https://github.com/ra-gg/Delir</Link></dd>
 
                 <dt>Discord</dt>
                 <dd><Link href='https://discord.gg/rrr2z2E'>DelirVFX</Link></dd>
