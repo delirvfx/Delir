@@ -1,4 +1,4 @@
-import { DelirPluginPackageJson, PluginEntry } from '../../delir-core/src/PluginSupport/types'
+import { DelirPluginPackageJson, PluginEntry } from '@ragg/delir-core/src/PluginSupport/types'
 
 import * as fs from 'fs-promise'
 import * as _ from 'lodash'
