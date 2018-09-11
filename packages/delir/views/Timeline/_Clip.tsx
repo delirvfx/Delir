@@ -49,7 +49,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                     [s['Clip--p5js']]: clip.renderer === 'p5js',
                 })}
                 dragAxis='x'
-                default={{ x: left, y: 2, width, height: 'auto' }}
+                position={{ x: left, y: 2 }}
                 size={{ width: width, height: 'auto' }}
                 enableResizing={{ left: true, right: true, top: false, bottom: false }}
                 onDragStart={this.handleDragStart}
