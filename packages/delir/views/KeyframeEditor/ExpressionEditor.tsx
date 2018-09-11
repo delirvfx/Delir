@@ -42,7 +42,7 @@ export default class ExpressionEditor extends React.Component<Props> {
     {
         // Only update contents on target entity changed
         // (Guard from parent component controll to reset content)
-        return nextProps.entityId !== this.props.entityId
+        return nextProps.target.entityId !== this.props.target.entityId
     }
 
     public componentDidUpdate()
