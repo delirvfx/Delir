@@ -57,7 +57,7 @@ describe('Export', () => {
         })
     })
 
-    it('test', () => {
+    it('Should correct serialize / desrialize project', () => {
         const serialized = Exporter.serialize(project)
         expect(serialized).toMatchSnapshot()
         expect(Exporter.deserialize(serialized)).toEqual(project)
