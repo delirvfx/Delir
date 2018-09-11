@@ -2,9 +2,9 @@ import { operation } from '@ragg/fleur'
 import { remote } from 'electron'
 import { join } from 'path'
 
-import FSPluginLoader from '../../utils/FSPluginLoader'
 import * as EditorOps from '../Editor/operations'
 import { RendererActions } from './actions'
+import FSPluginLoader from './FSPluginLoader'
 
 export const loadPlugins = operation(async (context) => {
     const userDir = remote.app.getPath('appData')
