@@ -234,6 +234,18 @@ const videoClip = assign(new Delir.Entity.Clip(), {
                 value: { assetId: videoAsset.id },
                 frameOnClip: 0,
             })
+        ],
+        x: [
+            assign(new Delir.Entity.Keyframe(), {
+                value: 0,
+                frameOnClip: 0,
+                easeOutParam: [1, 0]
+            }),
+            assign(new Delir.Entity.Keyframe(), {
+                value: 300,
+                frameOnClip: 300,
+                easeInParam: [1, 1],
+            }),
         ]
     }
 })
