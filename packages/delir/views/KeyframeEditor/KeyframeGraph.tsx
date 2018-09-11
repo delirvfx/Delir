@@ -460,37 +460,24 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
         if (descriptor.type === 'NUMBER' || descriptor.type === 'FLOAT') {
             const maxValue = orderedKeyframes.reduce((memo, kf, idx, list) => {
-                // const prev = list[idx - 1]
-                // const next = list[idx + 1]
-                // const prevValue = (prev && kf.easeInParam[1] > 1) ? (prev.value as number) * kf.easeInParam[1] : -Infinity
-                // const nextValue = (next && kf.easeOutParam[1] > 1) ? (next.value as number) * kf.easeOutParam[1] : -Infinity
-
                 return Math.max(memo, kf.value as number) // , prevValue, nextValue)
             }, -Infinity) + 10
-            const minValue = orderedKeyframes.reduce((memo, kf, idx, list) => {
-                // const prev = list[idx - 1]
-                // const next = list[idx + 1]
-                // const prevValue = (prev && kf.easeInParam[1] < 0) ? (prev.value as number) * kf.easeInParam[1] : +Infinity
-                // const nextValue = (next && kf.easeOutParam[1] < 0) ? (next.value as number) * kf.easeOutParam[1] : +Infinity
 
+            const minValue = orderedKeyframes.reduce((memo, kf, idx, list) => {
                 return Math.min(memo, kf.value as number) // , prevValue, nextValue)
             }, +Infinity) + -10
+
             const absMinValue = Math.abs(minValue)
             const minMaxRange = maxValue - minValue
 
             // Calc keyframe and handle points
             return orderedKeyframes.map((keyframe, idx) => {
-                // const previousKeyframe: Delir.Entity.Keyframe|undefined = orderedKeyframes[idx - 1]
                 const nextKeyframe: Delir.Entity.Keyframe | undefined = orderedKeyframes[idx + 1]
 
-                // let previousX = 0
-                // let previousY = 0
                 let nextX = 0
                 let nextY = 0
                 let easeOutHandleX = 0
                 let easeOutHandleY = 0
-                // let handleEiX = 0
-                // let handleEiY = 0
                 let nextKeyframeEaseInX = 0
                 let nextKeyframeEaseInY = 0
 
