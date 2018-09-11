@@ -2,8 +2,8 @@ import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
 
-import RendererStore from '../../stores/RendererStore'
 import * as EditorOps from '../Editor/operations'
+import RendererStore from '../Renderer/RendererStore'
 import { ProjectActions } from './actions'
 import ProjectStore from './ProjectStore'
 

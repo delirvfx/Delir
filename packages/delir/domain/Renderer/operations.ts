@@ -2,8 +2,8 @@ import { operation } from '@ragg/fleur'
 import { remote } from 'electron'
 import { join } from 'path'
 
-import * as EditorOps from '../domain/Editor/operations'
-import FSPluginLoader from '../utils/FSPluginLoader'
+import FSPluginLoader from '../../utils/FSPluginLoader'
+import * as EditorOps from '../Editor/operations'
 import { RendererActions } from './actions'
 
 export const loadPlugins = operation(async (context) => {

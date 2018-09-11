@@ -7,7 +7,7 @@ import TimePixelConversion, { MeasurePoint } from '../../utils/TimePixelConversi
 
 import { ContextMenu, MenuItem } from '../components/ContextMenu'
 
-import RendererStore, { RenderState } from '../../stores/RendererStore'
+import RendererStore, { RenderState } from '../../domain/Renderer/RendererStore'
 import t from './_Gradations.i18n'
 import * as s from './Gradations.styl'
 

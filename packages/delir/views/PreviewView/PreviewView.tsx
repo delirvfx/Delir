@@ -6,8 +6,8 @@ import { frameToTimeCode } from '../../utils/Timecode'
 import DropDown from '../components/dropdown'
 import Pane from '../components/pane'
 
-import * as RendererOps from '../../actions/RendererOps'
 import EditorStore from '../../domain/Editor/EditorStore'
+import * as RendererOps from '../../domain/Renderer/operations'
 
 import t from './PreviewView.i18n'
 import * as s from './style.styl'

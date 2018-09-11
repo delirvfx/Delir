@@ -11,7 +11,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
-import RendererStore from '../../stores/RendererStore'
+import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Button from '../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'

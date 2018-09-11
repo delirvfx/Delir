@@ -8,7 +8,7 @@ import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
-import RendererStore from '../../stores/RendererStore'
+import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 

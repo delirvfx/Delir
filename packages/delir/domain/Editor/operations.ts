@@ -6,8 +6,8 @@ import * as _ from 'lodash'
 import * as MsgPack from 'msgpack5'
 import * as path from 'path'
 
-import RendererStore from '../../stores/RendererStore'
 import PreferenceStore from '../Preference/PreferenceStore'
+import RendererStore from '../Renderer/RendererStore'
 import EditorStore from './EditorStore'
 
 import { EditorActions } from './actions'

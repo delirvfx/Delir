@@ -4,16 +4,16 @@ import { createElementWithContext } from '@ragg/fleur-react'
 import * as os from 'os'
 import * as ReactDOM from 'react-dom'
 
-import * as RendererOps from './actions/RendererOps'
 import * as EditorOps from './domain/Editor/operations'
 import * as PreferenceOps from './domain/Preference/operations'
+import * as RendererOps from './domain/Renderer/operations'
 
 import AppView from './views/AppView'
 
 import PreferenceStore from '@ragg/delir/domain/Preference/PreferenceStore'
 import EditorStore from './domain/Editor/EditorStore'
 import ProjectStore from './domain/Project/ProjectStore'
-import RendererStore from './stores/RendererStore'
+import RendererStore from './domain/Renderer/RendererStore'
 
 // Handle errors
 // process.on('uncaughtException', (e: Error) => {

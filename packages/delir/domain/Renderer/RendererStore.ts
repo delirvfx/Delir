@@ -1,14 +1,14 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
+import deream from '@ragg/deream'
 import { listen, Store } from '@ragg/fleur'
 import { remote } from 'electron'
-import { dirname, join } from 'path'
-import deream from '../../deream'
+import { dirname } from 'path'
 
-import { RendererActions } from '../actions/actions'
-import { EditorActions } from '../domain/Editor/actions'
+import { EditorActions } from '../Editor/actions'
+import { RendererActions } from './actions'
 
-import * as Platform from '../utils/platform'
+import * as Platform from '../../utils/platform'
 
 interface State {
     project: Delir.Entity.Project | null
