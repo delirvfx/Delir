@@ -4,7 +4,7 @@ import * as semver from 'semver'
 
 import EffectPluginBase from './PostEffectBase'
 import { AnyParameterTypeDescriptor } from './type-descriptor'
-import { PluginEntry, PluginSummary } from './types'
+import { DelirPluginPackageJson, PluginEntry, PluginSummary } from './types'
 
 import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
 import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
@@ -24,12 +24,13 @@ const effectPluginPackageJSONSchema = Joi.object().keys({
         'delir-core': Joi.string().regex(SEMVER_REGEXP).required(),
     }),
     delir: Joi.object().keys({
+        name: Joi.string().required(),
         type: Joi.valid('post-effect'),
     }).strict(),
 }).options({ allowUnknown: true })
 
 export default class PluginRegistry {
-    public static validateEffectPluginPackageJSON(packageJSON: any) {
+    public static validateEffectPluginPackageJSON(packageJSON: any): packageJSON is DelirPluginPackageJson {
         return Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null
             && semver.valid(packageJSON.engines['delir-core']) != null
             && semver.valid(packageJSON.version) != null
@@ -120,6 +121,7 @@ export default class PluginRegistry {
         return _.map(this._plugins['post-effect'], (entry, id) => {
             return {
                 id: entry.id,
+                name: entry.packageJson.delir.name,
                 type: entry.packageJson.delir.type,
                 package: _.cloneDeep(entry.packageJson),
             }

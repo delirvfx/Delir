@@ -3,6 +3,7 @@ import PluginBase from './plugin-base'
 export type PluginTypes = 'post-effect'
 
 export interface PackageJSONDelirSection {
+    name: string
     type: PluginTypes
     // acceptFileTypes?: {[extension: string]: string}
 }
@@ -28,6 +29,7 @@ export interface PluginEntry {
 
 export interface PluginSummary {
     id: string
+    name: string
     type: PluginTypes
     package: DelirPluginPackageJson
 }
