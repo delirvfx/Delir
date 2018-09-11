@@ -1,8 +1,9 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
-import { AppActions, ProjectModActions } from '../actions/actions'
-import { DragEntity } from '../actions/App'
+import { ProjectModActions } from '../../actions/actions'
+import { EditorActions } from './actions'
+import { DragEntity } from './operations'
 
 export interface NotificationEntry {
     id: string
@@ -25,8 +26,8 @@ export interface EditorState {
     notifications: NotificationEntry[]
 }
 
-export default class EditorStateStore extends Store<EditorState> {
-    public static storeName = 'EditorStateStore'
+export default class EditorStore extends Store<EditorState> {
+    public static storeName = 'EditorStore'
 
     protected state: EditorState = {
         project: null,
@@ -42,7 +43,7 @@ export default class EditorStateStore extends Store<EditorState> {
     }
 
     // @ts-ignore
-    private handlesetActiveProject = listen(AppActions.setActiveProjectAction, (payload) => {
+    private handlesetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
         __DEV__ && console.log('✨ Project activated', payload.project)
 
         this.updateWith(draft => {
@@ -58,7 +59,7 @@ export default class EditorStateStore extends Store<EditorState> {
     })
 
     // @ts-ignore
-    private handleclearActiveProject = listen(AppActions.clearActiveProjectAction, () => {
+    private handleclearActiveProject = listen(EditorActions.clearActiveProjectAction, () => {
         __DEV__ && console.log('💥 Project deactivated')
 
         this.updateWith(draft => {
@@ -92,17 +93,17 @@ export default class EditorStateStore extends Store<EditorState> {
     })
 
     // @ts-ignore
-    private handlesetDragEntity = listen(AppActions.setDragEntityAction, (payload) => {
+    private handlesetDragEntity = listen(EditorActions.setDragEntityAction, (payload) => {
         this.updateWith(d => d.dragEntity = payload)
     })
 
     // @ts-ignore
-    private handleclearDragEntity = listen(AppActions.clearDragEntityAction, () => {
+    private handleclearDragEntity = listen(EditorActions.clearDragEntityAction, () => {
         this.updateWith(d => d.dragEntity = null)
     })
 
     // @ts-ignore
-    private handleChangeActiveComposition = listen(AppActions.changeActiveCompositionAction, ({ compositionId }) => {
+    private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, ({ compositionId }) => {
         if (this.state.project == null) return
 
         const comp = ProjectHelper.findCompositionById(this.state.project, compositionId)
@@ -114,7 +115,7 @@ export default class EditorStateStore extends Store<EditorState> {
     })
 
     // @ts-ignore
-    private handlechangeActiveClip = listen(AppActions.changeActiveClipAction, (payload) => {
+    private handlechangeActiveClip = listen(EditorActions.changeActiveClipAction, (payload) => {
         if (this.state.project == null) return
 
         const clip = ProjectHelper.findClipById(this.state.project, payload.clipId)
@@ -122,27 +123,27 @@ export default class EditorStateStore extends Store<EditorState> {
     })
 
     // @ts-ignore
-    private handleupdateProcessingState = listen(AppActions.updateProcessingStateAction, (payload) => {
+    private handleupdateProcessingState = listen(EditorActions.updateProcessingStateAction, (payload) => {
         this.updateWith(d => d.processingState = payload.stateText)
     })
 
     // @ts-ignore
-    private handlestartPreview = listen(AppActions.startPreviewAction, () => {
+    private handlestartPreview = listen(EditorActions.startPreviewAction, () => {
         this.updateWith(d => d.previewPlayed = true)
     })
 
     // @ts-ignore
-    private handlestopPreview = listen(AppActions.stopPreviewAction, () => {
+    private handlestopPreview = listen(EditorActions.stopPreviewAction, () => {
         this.updateWith(d => d.previewPlayed = false)
     })
 
     // @ts-ignore
-    private handleseekPreviewFrame = listen(AppActions.seekPreviewFrameAction, (payload) => {
+    private handleseekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, (payload) => {
         this.updateWith(d => d.currentPreviewFrame = Math.round(payload.frame))
     })
 
     // @ts-ignore
-    private handleaddMessage = listen(AppActions.addMessageAction, (payload) => {
+    private handleaddMessage = listen(EditorActions.addMessageAction, (payload) => {
         this.updateWith(d => {
             d.notifications.push({
                 id: payload.id,
@@ -155,7 +156,7 @@ export default class EditorStateStore extends Store<EditorState> {
     })
 
     // @ts-ignore
-    private handleRemoveMessage = listen(AppActions.removeMessageAction, (payload) => {
+    private handleRemoveMessage = listen(EditorActions.removeMessageAction, (payload) => {
         this.updateWith(d => {
             const idx = d.notifications.findIndex(entry => entry!.id === payload.id)
             d.notifications.splice(idx, 1)
@@ -163,7 +164,7 @@ export default class EditorStateStore extends Store<EditorState> {
     })
 
     // @ts-ignore
-    private handleChangePreferenceOpenState = listen(AppActions.changePreferenceOpenStateAction, ({ open }) => {
+    private handleChangePreferenceOpenState = listen(EditorActions.changePreferenceOpenStateAction, ({ open }) => {
         this.updateWith(draft => draft.preferenceOpened = open)
     })
 

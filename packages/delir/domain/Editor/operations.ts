@@ -6,12 +6,12 @@ import * as _ from 'lodash'
 import * as MsgPack from 'msgpack5'
 import * as path from 'path'
 
-import PreferenceStore from '../domain/Preference/PreferenceStore'
-import EditorStateStore from '../stores/EditorStateStore'
-import RendererStore from '../stores/RendererStore'
+import RendererStore from '../../stores/RendererStore'
+import PreferenceStore from '../Preference/PreferenceStore'
+import EditorStore from './EditorStore'
 
-import { AppActions } from './actions'
-import t from './App.i18n'
+import { EditorActions } from './actions'
+import t from './operations.i18n'
 
 export type DragEntity =
     | { type: 'asset', asset: Delir.Entity.Asset }
@@ -39,18 +39,18 @@ export const openPluginDirectory = operation((context, arg: {}) => {
 // Editor Store
 //Delir.Entity.
 export const setActiveProject = operation((context, arg: { project: Delir.Entity.Project, path?: string }) => {
-    context.dispatch(AppActions.setActiveProjectAction, {
+    context.dispatch(EditorActions.setActiveProjectAction, {
         project: arg.project,
         path: arg.path,
     })
 })
 
 export const setDragEntity = operation((context, arg: { entity: DragEntity }) => {
-    context.dispatch(AppActions.setDragEntityAction, arg.entity)
+    context.dispatch(EditorActions.setDragEntityAction, arg.entity)
 })
 
 export const clearDragEntity = operation((context, arg: {}) => {
-    context.dispatch(AppActions.clearDragEntityAction, {})
+    context.dispatch(EditorActions.clearDragEntityAction, {})
 })
 
 export const notify = operation((context, arg: {
@@ -62,7 +62,7 @@ export const notify = operation((context, arg: {
 }) => {
     const id = _.uniqueId('notify')
 
-    context.dispatch(AppActions.addMessageAction, {
+    context.dispatch(EditorActions.addMessageAction, {
         id,
         title: arg.title,
         message: arg.message,
@@ -71,7 +71,7 @@ export const notify = operation((context, arg: {
     })
 
     if (arg.timeout != null) {
-        setTimeout(() => { context.dispatch(AppActions.removeMessageAction, { id }) }, arg.timeout)
+        setTimeout(() => { context.dispatch(EditorActions.removeMessageAction, { id }) }, arg.timeout)
     }
 })
 
@@ -79,11 +79,11 @@ export const notify = operation((context, arg: {
 // Change active element
 //
 export const changeActiveComposition = operation((context, { compositionId }: { compositionId: string }) => {
-    context.dispatch(AppActions.changeActiveCompositionAction, { compositionId })
+    context.dispatch(EditorActions.changeActiveCompositionAction, { compositionId })
 })
 
 export const changeActiveClip = operation((context, { clipId }: { clipId: string }) => {
-    context.dispatch(AppActions.changeActiveClipAction, { clipId })
+    context.dispatch(EditorActions.changeActiveClipAction, { clipId })
 })
 
 //
@@ -92,7 +92,7 @@ export const changeActiveClip = operation((context, { clipId }: { clipId: string
 export const startPreview = operation((context, { compositionId, beginFrame = 0 }: { compositionId: string, beginFrame?: number }) => {
     const preference = context.getStore(PreferenceStore).getPreferences()
 
-    context.dispatch(AppActions.startPreviewAction, {
+    context.dispatch(EditorActions.startPreviewAction, {
         compositionId,
         beginFrame,
         ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
@@ -100,40 +100,40 @@ export const startPreview = operation((context, { compositionId, beginFrame = 0 
 })
 
 export const stopPreview = operation((context) => {
-    context.dispatch(AppActions.stopPreviewAction, {})
+    context.dispatch(EditorActions.stopPreviewAction, {})
 })
 
 export const renderDestinate = operation((context, arg: { compositionId: string }) => {
     const preference = context.getStore(PreferenceStore).getPreferences()
 
-    context.dispatch(AppActions.renderDestinateAction, {
+    context.dispatch(EditorActions.renderDestinateAction, {
         compositionId: arg.compositionId,
         ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
     })
 })
 
 export const updateProcessingState = operation((context, arg: { stateText: string }) => {
-    context.dispatch(AppActions.updateProcessingStateAction, {
+    context.dispatch(EditorActions.updateProcessingStateAction, {
         stateText: arg.stateText
     })
 })
 
 export const seekPreviewFrame = operation((context, { frame = undefined }: { frame?: number }) => {
-    const state = context.getStore(EditorStateStore).getState()
+    const state = context.getStore(EditorStore).getState()
 
     const {activeComp} = state
     if (!activeComp) return
 
     frame = _.isNumber(frame) ? frame : state.currentPreviewFrame
     const overloadGuardedFrame = _.clamp(frame, 0, activeComp.durationFrames)
-    context.dispatch(AppActions.seekPreviewFrameAction, { frame: overloadGuardedFrame })
+    context.dispatch(EditorActions.seekPreviewFrameAction, { frame: overloadGuardedFrame })
 })
 
 //
 // Import & Export
 //
 export const newProject = operation(async (context) => {
-    const project = context.getStore(EditorStateStore).getState().project
+    const project = context.getStore(EditorStore).getState().project
 
     if (project) {
         const acceptDiscard = window.confirm('現在のプロジェクトの変更を破棄して新しいプロジェクトを開きますか？')
@@ -148,7 +148,7 @@ export const newProject = operation(async (context) => {
 })
 
 export const openProject = operation(async (context) => {
-    const project = context.getStore(EditorStateStore).getState().project
+    const project = context.getStore(EditorStore).getState().project
 
     if (project) {
         const acceptDiscard = window.confirm('現在のプロジェクトの変更を破棄してプロジェクトを開きますか？')
@@ -178,7 +178,7 @@ export const saveProject = operation(async (
     context,
     { path, silent = false, keepPath = false }: { path: string, silent?: boolean, keepPath?: boolean }
 ) => {
-    const project = context.getStore(EditorStateStore).getState().project
+    const project = context.getStore(EditorStore).getState().project
     if (!project) return
 
     await fs.writeFile(path, MsgPack().encode({　
@@ -187,7 +187,7 @@ export const saveProject = operation(async (
 
     let newPath: string | null = path
     if (keepPath) {
-        newPath = context.getStore(EditorStateStore).getState().projectPath
+        newPath = context.getStore(EditorStore).getState().projectPath
     }
 
     context.executeOperation(setActiveProject, { project, ...(keepPath ? {} : {path: newPath || undefined}) }) // update path
@@ -201,7 +201,7 @@ export const saveProject = operation(async (
 })
 
 export const autoSaveProject = operation(async (context) => {
-    const {project, projectPath} = context.getStore(EditorStateStore).getState()
+    const {project, projectPath} = context.getStore(EditorStore).getState()
     const isInRendering = context.getStore(RendererStore).isInRendering()
 
     if (isInRendering) return
@@ -232,7 +232,7 @@ export const autoSaveProject = operation(async (context) => {
 })
 
 export const changePreferenceOpenState = operation((context, { open }: { open: boolean }) => {
-    context.dispatch(AppActions.changePreferenceOpenStateAction, { open })
+    context.dispatch(EditorActions.changePreferenceOpenStateAction, { open })
 })
 
 // console.log(remote.app.getPath('userData'))

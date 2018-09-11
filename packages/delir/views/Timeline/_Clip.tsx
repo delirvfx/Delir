@@ -5,8 +5,8 @@ import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
 
-import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
+import * as EditorOps from '../../domain/Editor/operations'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
 import t from './_Clip.i18n'
@@ -80,12 +80,12 @@ export default withComponentContext(class Clip extends React.Component<Props> {
 
     private handleClick = (e: React.DragEvent<HTMLDivElement>) =>
     {
-        this.props.context.executeOperation(AppActions.changeActiveClip, { clipId: this.props.clip.id! })
+        this.props.context.executeOperation(EditorOps.changeActiveClip, { clipId: this.props.clip.id! })
     }
 
     private handleDragStart: DraggableEventHandler = (e) =>
     {
-        this.props.context.executeOperation(AppActions.setDragEntity, {
+        this.props.context.executeOperation(EditorOps.setDragEntity, {
             entity: {type: 'clip', clip: this.props.clip}
         })
     }
@@ -110,7 +110,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
             clipId: dataset.clipId,
             processorId: dataset.effectId
         })
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, {})
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
     }
 
     private removeClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>

@@ -6,10 +6,10 @@ import * as ReactDOM from 'react-dom'
 import { SortEndHandler } from 'react-sortable-hoc'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
+import * as EditorOps from '../../domain/Editor/operations'
 
-import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../stores/ProjectStore'
 
 import Pane from '../components/pane'
@@ -51,8 +51,8 @@ const PX_PER_SEC = 30
  *     └ ClipSpace
  *       └ Clip
  */
-export default withComponentContext(connectToStores([EditorStateStore, ProjectStore], context => ({
-    editor: context.getStore(EditorStateStore).getState(),
+export default withComponentContext(connectToStores([EditorStore, ProjectStore], context => ({
+    editor: context.getStore(EditorStore).getState(),
 }))(class Timeline extends React.Component<Props, State> {
     public props: Props & {
         editor: EditorState,
@@ -227,7 +227,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
 
         const layer = activeComp.layers[oldIndex]
         this.props.context.executeOperation(ProjectModActions.moveLayerOrder, { layerId: layer.id, newIndex })
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, {})
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
     }
 
     private onLayerCreate = () =>
@@ -285,7 +285,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         const {dragEntity, activeComp} = this.props.editor
 
         if (!activeComp) {
-            this.props.context.executeOperation(AppActions.notify, {
+            this.props.context.executeOperation(EditorOps.notify, {
                 message: 'Must be select any composition before add assets to timeline',
                 title: 'Woops',
                 level: 'error',
@@ -302,6 +302,6 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
 
     private _onSeeked = (frame: number) =>
     {
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, { frame })
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame })
     }
 }))

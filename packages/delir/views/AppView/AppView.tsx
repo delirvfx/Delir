@@ -2,8 +2,8 @@ import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 
-import * as AppActions from '../../actions/App'
-import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import * as EditorOps from '../../domain/Editor/operations'
 
 import Pane from '../components/pane'
 import Workspace from '../components/workspace'
@@ -25,8 +25,8 @@ interface ConnectedProps {
 
 type Props = ConnectedProps & ContextProp
 
-export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
-    editor: context.getStore(EditorStateStore).getState()
+export default withComponentContext(connectToStores([EditorStore], (context) => ({
+    editor: context.getStore(EditorStore).getState()
 }))(class AppView extends React.PureComponent<Props> {
     public componentDidMount()
     {
@@ -43,8 +43,8 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
         if (e.code === 'Space') {
             previewPlayed
-                ? this.props.context.executeOperation(AppActions.stopPreview, {})
-                : this.props.context.executeOperation(AppActions.startPreview, {
+                ? this.props.context.executeOperation(EditorOps.stopPreview, {})
+                : this.props.context.executeOperation(EditorOps.startPreview, {
                     compositionId: activeComp!.id,
                     beginFrame: currentPreviewFrame
                  })
@@ -90,10 +90,10 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
     }
 
     private projectAutoSaveTimer = () => {
-        this.props.context.executeOperation(AppActions.autoSaveProject, {})
+        this.props.context.executeOperation(EditorOps.autoSaveProject, {})
     }
 
     private handlePreferenceClose = () => {
-        this.props.context.executeOperation(AppActions.changePreferenceOpenState, { open: false })
+        this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
     }
 }))

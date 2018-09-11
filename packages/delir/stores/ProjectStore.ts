@@ -2,7 +2,8 @@ import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
 
-import { AppActions, ProjectModActions } from '../actions/actions'
+import { ProjectModActions } from '../actions/actions'
+import { EditorActions } from '../domain/Editor/actions'
 
 export interface ProjectStoreState {
     project: Delir.Entity.Project | null,
@@ -19,12 +20,12 @@ export default class ProjectStore extends Store<ProjectStoreState>
     }
 
     // @ts-ignore
-    private handleSetActiveProject = listen(AppActions.setActiveProjectAction, (payload) => {
+    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
         this.updateWith(d => d.project = payload.project)
     })
 
     // @ts-ignore
-    private handleClearActiveProject = listen(AppActions.clearActiveProjectAction, (payload) => {
+    private handleClearActiveProject = listen(EditorActions.clearActiveProjectAction, (payload) => {
         this.updateWith(d => d.project = null)
     })
 

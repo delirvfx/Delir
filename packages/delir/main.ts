@@ -4,14 +4,14 @@ import { createElementWithContext } from '@ragg/fleur-react'
 import * as os from 'os'
 import * as ReactDOM from 'react-dom'
 
-import * as AppActions from './actions/App'
 import * as RendererOps from './actions/RendererOps'
+import * as EditorOps from './domain/Editor/operations'
 import * as PreferenceOps from './domain/Preference/operations'
 
 import AppView from './views/AppView'
 
 import PreferenceStore from '@ragg/delir/domain/Preference/PreferenceStore'
-import EditorStateStore from './stores/EditorStateStore'
+import EditorStore from './domain/Editor/EditorStore'
 import ProjectStore from './stores/ProjectStore'
 import RendererStore from './stores/RendererStore'
 
@@ -34,7 +34,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         case 'Linux': document.body.classList.add('platform-linux'); break
     }
 
-    const app = new Fleur({ stores: [ EditorStateStore, ProjectStore, RendererStore, PreferenceStore ] })
+    const app = new Fleur({ stores: [ EditorStore, ProjectStore, RendererStore, PreferenceStore ] })
     const context = window.delir = app.createContext()
 
     // console.log(createElementWithContext)
@@ -50,12 +50,12 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     await context.executeOperation(RendererOps.loadPlugins, {})
     await context.executeOperation(PreferenceOps.restoreApplicationPreference, {})
-    await context.executeOperation(AppActions.setActiveProject, { project: new Delir.Entity.Project() })
+    await context.executeOperation(EditorOps.setActiveProject, { project: new Delir.Entity.Project() })
 
     if (__DEV__) {
         const project = require('./utils/Dev/ExampleProject1').default
 
-        await context.executeOperation(AppActions.setActiveProject, { project })
-        await context.executeOperation(AppActions.changeActiveComposition, { compositionId: project.compositions[0].id })
+        await context.executeOperation(EditorOps.setActiveProject, { project })
+        await context.executeOperation(EditorOps.changeActiveComposition, { compositionId: project.compositions[0].id })
     }
 })

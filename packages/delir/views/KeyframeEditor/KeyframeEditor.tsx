@@ -6,10 +6,10 @@ import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
-import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
+import * as EditorOps from '../../domain/Editor/operations'
 
-import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import ProjectStore, { ProjectStoreState } from '../../stores/ProjectStore'
 import RendererStore from '../../stores/RendererStore'
 
@@ -65,8 +65,8 @@ interface State {
 
 type Props = OwnProps & ConnectedProps & ContextProp
 
-export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
-    editor: context.getStore(EditorStateStore).getState(),
+export default withComponentContext(connectToStores([EditorStore], (context) => ({
+    editor: context.getStore(EditorStore).getState(),
     project: context.getStore(ProjectStore).getState()
 }))(class KeyframeEditor extends React.Component<Props, State> {
 
@@ -371,7 +371,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
             patch: { value }
         })
 
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, { frame: this.props.editor.currentPreviewFrame })
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame: this.props.editor.currentPreviewFrame })
     }
 
     private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) =>
@@ -389,7 +389,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
             patch: {value}
         })
 
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, { frame: currentPreviewFrame })
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame: currentPreviewFrame })
     }
 
     private keyframeModified = (parentClipId: string, paramName: string, frameOnClip: number, patch: KeyframePatch) =>
@@ -444,7 +444,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 holderClipId: dataset.clipId,
                 effectId: dataset.effectId
             })
-            this.props.context.executeOperation(AppActions.seekPreviewFrame, {
+            this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
                 frame: this.props.editor.currentPreviewFrame
             })
         })

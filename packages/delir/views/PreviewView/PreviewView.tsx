@@ -7,7 +7,7 @@ import DropDown from '../components/dropdown'
 import Pane from '../components/pane'
 
 import * as RendererOps from '../../actions/RendererOps'
-import EditorStateStore from '../../stores/EditorStateStore'
+import EditorStore from '../../domain/Editor/EditorStore'
 
 import t from './PreviewView.i18n'
 import * as s from './style.styl'
@@ -24,12 +24,12 @@ interface State {
     scaleListShown: boolean
 }
 
-export default withComponentContext(connectToStores([EditorStateStore], (context) => {
-    const editorStateStore = context.getStore(EditorStateStore)
+export default withComponentContext(connectToStores([EditorStore], (context) => {
+    const editorStore = context.getStore(EditorStore)
 
     return {
-        activeComp: editorStateStore.getState().activeComp,
-        currentPreviewFrame: editorStateStore.getState().currentPreviewFrame,
+        activeComp: editorStore.getState().activeComp,
+        currentPreviewFrame: editorStore.getState().currentPreviewFrame,
     }
 })(class PreviewView extends React.Component<Props, State> {
     public state = {

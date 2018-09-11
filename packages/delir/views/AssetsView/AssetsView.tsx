@@ -8,10 +8,10 @@ import * as React from 'react'
 
 import { ProjectHelper, Values } from '@ragg/delir-core'
 
-import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
+import * as EditorOps from '../../domain/Editor/operations'
 
-import { default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../stores/ProjectStore'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
@@ -85,8 +85,8 @@ interface State {
 
 type Props = ConnectedProps & ContextProp
 
-export default withComponentContext(connectToStores([EditorStateStore, ProjectStore], (context) => ({
-    editor: context.getStore(EditorStateStore).getState(),
+export default withComponentContext(connectToStores([EditorStore, ProjectStore], (context) => ({
+    editor: context.getStore(EditorStore).getState(),
 }))(class AssetsView extends React.Component<Props, State> {
     public state = {
         newCompositionWindowOpened: false,
@@ -280,7 +280,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
 
     private changeComposition = ({currentTarget}: React.MouseEvent<HTMLTableRowElement> ) =>
     {
-        this.props.context.executeOperation(AppActions.changeActiveComposition, {
+        this.props.context.executeOperation(EditorOps.changeActiveComposition, {
             compositionId: currentTarget.dataset.compositionId!,
         })
     }
@@ -336,7 +336,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         const {editor: {project}} = this.props
         if (!project) return
 
-        this.props.context.executeOperation(AppActions.setDragEntity, {
+        this.props.context.executeOperation(EditorOps.setDragEntity, {
             entity: {
                 type: 'asset',
                 asset: ProjectHelper.findAssetById(project, currentTarget.dataset.assetId!)!,
@@ -346,6 +346,6 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
 
     private onAssetDragEnd = () =>
     {
-        this.props.context.executeOperation(AppActions.clearDragEntity, {})
+        this.props.context.executeOperation(EditorOps.clearDragEntity, {})
     }
 }))

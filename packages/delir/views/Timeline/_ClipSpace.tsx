@@ -4,10 +4,10 @@ import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
 
-import * as AppActions from '../../actions/App'
 import * as ProjectModActions from '../../actions/ProjectMod'
+import * as EditorOps from '../../domain/Editor/operations'
 
-import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import RendererStore from '../../stores/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
@@ -37,8 +37,8 @@ interface State {
 /**
  * ClipSpace
  */
-export default withComponentContext(connectToStores([EditorStateStore, RendererStore], context => ({
-    editor: context.getStore(EditorStateStore).getState(),
+export default withComponentContext(connectToStores([EditorStore, RendererStore], context => ({
+    editor: context.getStore(EditorStore).getState(),
     postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins(),
 }))(class ClipSpace extends React.Component<Props, State> {
     public state: State = {
@@ -119,7 +119,7 @@ export default withComponentContext(connectToStores([EditorStateStore, RendererS
             return
         }
 
-        this.props.context.executeOperation(AppActions.clearDragEntity, {})
+        this.props.context.executeOperation(EditorOps.clearDragEntity, {})
         this.setState({dragovered: false})
 
         e.preventDefault()
@@ -134,13 +134,13 @@ export default withComponentContext(connectToStores([EditorStateStore, RendererS
         const isChildClip = !!layer.clips.find(clip => clip.id! === dragEntity.clip.id!)
 
         if (isChildClip) {
-            this.props.context.executeOperation(AppActions.clearDragEntity, {})
+            this.props.context.executeOperation(EditorOps.clearDragEntity, {})
         } else {
             this.props.context.executeOperation(ProjectModActions.moveClipToLayer, {
                 clipId: dragEntity.clip.id!,
                 destLayerId: this.props.layer.id!
             })
-            this.props.context.executeOperation(AppActions.clearDragEntity, {})
+            this.props.context.executeOperation(EditorOps.clearDragEntity, {})
         }
     }
 

@@ -1,11 +1,10 @@
-import * as Delir from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
 import { remote } from 'electron'
 import { join } from 'path'
 
+import * as EditorOps from '../domain/Editor/operations'
 import FSPluginLoader from '../utils/FSPluginLoader'
 import { RendererActions } from './actions'
-import * as AppOps from './App'
 
 export const loadPlugins = operation(async (context) => {
     const userDir = remote.app.getPath('appData')
@@ -23,7 +22,7 @@ export const loadPlugins = operation(async (context) => {
         const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
         const message = fails.map((fail: any) => fail.reason).join('\n\n')
 
-        await context.executeOperation(AppOps.notify, {
+        await context.executeOperation(EditorOps.notify, {
             message: `${failedPlugins}`,
             title: `Failed to load ${fails.length} plugins`,
             level: 'error',

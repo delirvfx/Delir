@@ -5,7 +5,7 @@ import * as React from 'react'
 
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import * as AppActions from '../../actions/App'
+import * as EditorOps from '../../domain/Editor/operations'
 
 import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as s from './KeyframeGraph.styl'
@@ -211,7 +211,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         const {parentClip} = this.props
         if (!parentClip) return
 
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, {
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
             frame: parentClip.placedFrame + parseInt(currentTarget.dataset!.frame!, 10)
         })
     }

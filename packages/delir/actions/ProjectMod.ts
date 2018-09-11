@@ -2,10 +2,10 @@ import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
 
+import * as EditorOps from '../domain/Editor/operations'
 import ProjectStore from '../stores/ProjectStore'
 import RendererStore from '../stores/RendererStore'
 import { ProjectModActions } from './actions'
-import * as AppActions from './App'
 
 //
 // Modify project
@@ -49,7 +49,7 @@ export const addLayerWithAsset = operation((context, { targetComposition, asset 
 
     // TODO: Support selection
     if (processablePlugins.length === 0) {
-        context.executeOperation(AppActions.notify, {
+        context.executeOperation(EditorOps.notify, {
             message: `plugin not available for \`${asset.fileType}\``,
             title: '😢 Supported plugin not available',
             level: 'info',
@@ -106,7 +106,7 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
 
     // TODO: Support selection
     if (processablePlugins.length === 0) {
-        context.executeOperation(AppActions.notify, {
+        context.executeOperation(EditorOps.notify, {
             message: `plugin not available for \`${asset.fileType}\``,
             title: '😢 Supported plugin not available',
             level: 'info',

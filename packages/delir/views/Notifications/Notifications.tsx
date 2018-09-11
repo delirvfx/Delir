@@ -2,7 +2,7 @@ import { connectToStores } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 
-import EditorStateStore, { NotificationEntry } from '../../stores/EditorStateStore'
+import EditorStore, { NotificationEntry } from '../../domain/Editor/EditorStore'
 
 import * as s from './style.styl'
 
@@ -10,8 +10,8 @@ interface NotificationsProps {
     entries: NotificationEntry[]
 }
 
-export default connectToStores([EditorStateStore], (context) => ({
-    entries: context.getStore(EditorStateStore).getState().notifications,
+export default connectToStores([EditorStore], (context) => ({
+    entries: context.getStore(EditorStore).getState().notifications,
 }))(class Notifications extends React.Component<NotificationsProps, any> {
     public render()
     {
