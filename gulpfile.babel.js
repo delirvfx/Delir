@@ -42,10 +42,16 @@ export function buildBrowserJs() {
         .pipe(g.dest(paths.compiled.frontend));
 }
 
-export async function copyPackageJSON(done) {
+export async function buildPublishPackageJSON(done) {
     const string = await fs.readFile(join(paths.src.frontend, "package.json"), {encoding: "utf8"});
     const json = JSON.parse(string);
+
     delete json.devDependencies;
+    json.dependencies = {
+        // install only native modules
+        'font-manager': '0.3.0',
+    }
+
     const newJson = JSON.stringify(json, null, "  ");
 
     try { await fs.mkdir(paths.compiled.root); } catch (e) {}
@@ -317,7 +323,6 @@ export function makeIcon() {
 }
 
 export async function pack(done) {
-    const pjson = require("./package.json");
     const yarnBin = isWindows ? 'yarn.cmd' : 'yarn'
 
     await rimraf(join(paths.build, 'node_modules'))
@@ -397,7 +402,7 @@ export function watch() {
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
 const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkNativeModules));
+const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
 const publish = g.series(clean, build, makeIcon, pack);
