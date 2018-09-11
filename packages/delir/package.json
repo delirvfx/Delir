@@ -14,7 +14,7 @@
     "@types/keymirror": "0.1.1",
     "@types/lodash": "4.14.116",
     "@types/msgpack5": "3.4.1",
-    "@types/react": "16.4.12",
+    "@types/react": "16.4.14",
     "@types/react-color": "2.13.6",
     "@types/react-dom": "16.0.7",
     "@types/react-sortable-hoc": "0.6.4",
