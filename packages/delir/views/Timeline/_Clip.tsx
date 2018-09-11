@@ -62,7 +62,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                     <ContextMenu>
                         <MenuItem label='エフェクト'>
                             {postEffectPlugins.length ? postEffectPlugins.map(entry => (
-                                <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
+                                <MenuItem label={entry.id} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
                             ) : (
                                 <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
                             )}

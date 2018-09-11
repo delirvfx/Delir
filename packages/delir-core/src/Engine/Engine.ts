@@ -120,9 +120,16 @@ export default class Engine
             let aborted = false
             onAbort(() => aborted = true)
 
-            const request = this._initStage(compositionId, beginFrame)
+            const renderingOption: RenderingOption = {
+                beginFrame,
+                endFrame: beginFrame,
+                ignoreMissingEffect: false,
+                loop: false,
+            }
 
-            const renderTasks = await this._taskingStage(request)
+            const request = this._initStage(compositionId, renderingOption)
+
+            const renderTasks = await this._taskingStage(request, renderingOption)
             await this._renderStage(request, renderTasks)
 
             if (this._streamObserver) {
