@@ -38,16 +38,16 @@ See [plugin-example](https://github.com/Ragg-/Delir/tree/alpha-release/src/delir
   Ctrl+C to interrupt
 
 ### Path to code
-- src
-  - **browser**  -- BrowserProcess codes
-  - **delir-core**  -- Core module codes (Project structure, calculation, renderer)
-  - **deream** -- Renderered frame exporter for ffmpeg (deprecated)
+- packages
+  - **delir**  -- Electron frontend of Delir
+    - **domain**  -- Operation / Action / Store / Utils set by domain
+      - **Editor**  -- Editor state and actions
+      - **Preference**  -- Editor preference state and actions
+      - **Project**  -- Project(Document) state and actions
+      - **Renderer**  -- Delir engine state and actions
+    - **modules**  -- Modal windows
+    - **utils**  -- View utilities non relate some domain
+    - **views**  -- View components
+  - **delir-core**  -- Core module codes (Project structure, engine, calculation, renderer)
+  - **deream** -- Renderered frame exporter for ffmpeg
   - **plugins** -- Built-in Delir plugins (build with webpack)
-  - **renderer** -- RendererProcess codes. It is composed with Flux architecture.
-    - **actions** -- ActionCreator classes
-    - **devel** -- Codes for development (Fixture project contained)
-    - **helpers** -- Helper libraries (it [MUST] be staticaly)
-    - **services** -- Store+ActionCreator composed classes (Delir renderer delegation, etc...)
-    - **stores** -- Store classes
-    - **views** -- View components
-      - **components** -- Application shared components
