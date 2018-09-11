@@ -170,7 +170,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                         data-entity-id={activeClip.id}
                                         data-param-name={desc.paramName}
                                         enabled={desc.animatable}
-                                        onClick={this._openExpressionEditor}
+                                        onClick={this.openExpressionEditor}
                                     />
                                 </ContextMenu>
                                 <span className={classnames(
@@ -397,21 +397,31 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         const { activeParam } = this.state
         if (!activeParam) return
 
-        if (activeParam.type === 'clip') {
-            this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
-                clipId: parentClipId,
-                paramName,
-                frameOnClip,
-                patch
-            })
-        } else {
-            this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
-                clipId: parentClipId,
-                effectId: activeParam.entityId,
-                paramName,
-                frameOnClip,
-                patch
-            })
+        switch (activeParam.type) {
+            case 'clip': {
+                this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
+                    clipId: parentClipId,
+                    paramName,
+                    frameOnClip,
+                    patch
+                })
+                break
+            }
+
+            case 'effect': {
+                this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
+                    clipId: parentClipId,
+                    effectId: activeParam.entityId,
+                    paramName,
+                    frameOnClip,
+                    patch
+                })
+                break
+            }
+
+            default: {
+                throw new Error('unreachable')
+            }
         }
     }
 
@@ -431,9 +441,9 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         }
     }
 
-    private _openExpressionEditor = ({ dataset }: MenuItemOption<{ type: 'clip' | 'effect', entityId: string, paramName: string }>) => {
-        const { type, entityId, paramName } = dataset
-        this.setState({editorOpened: true, activeParam: { type, entityId, paramName }})
+    private openExpressionEditor = ({ dataset }: MenuItemOption<{ entityType: 'clip' | 'effect', entityId: string, paramName: string }>) => {
+        const { entityType, entityId, paramName } = dataset
+        this.setState({editorOpened: true, activeParam: { type: entityType, entityId, paramName }})
         this.forceUpdate()
     }
 
@@ -515,7 +525,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                         data-entity-type='effect'
                                         data-entity-id={effect.id}
                                         data-param-name={desc.paramName}
-                                        onClick={this._openExpressionEditor}
+                                        onClick={this.openExpressionEditor}
                                     />
                                 </ContextMenu>
                                 <span className={classnames(
