@@ -63,7 +63,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
     public render()
     {
-        const {width, height, viewBox, descriptor} = this.props
+        const {width, height, viewBox, descriptor, keyframes} = this.props
 
         return (
             <svg
@@ -76,7 +76,20 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
                 onKeyDown={this.keydownOnKeyframeGraph}
                 tabIndex={-1}
             >
-                {descriptor!.animatable && this.renderKeyframes()}
+                {descriptor.animatable && (() => {
+                    switch (descriptor.type) {
+                        case 'COLOR_RGB':
+                        case 'COLOR_RGBA':
+                            return this._renderColorKeyframes(keyframes)
+
+                        case 'FLOAT':
+                        case 'NUMBER':
+                            return this._renderNumberKeyframes(keyframes)
+
+                        case 'STRING':
+                            return this._renderStringKeyframes(keyframes)
+                    }
+                })()}
             </svg>
         )
     }
@@ -221,28 +234,6 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         this.props.context.executeOperation(AppActions.seekPreviewFrame, {
             frame: parentClip.placedFrame + parseInt(currentTarget.dataset!.frame!, 10)
         })
-    }
-
-    private renderKeyframes()
-    {
-        const {descriptor, keyframes} = this.props
-        // const {activePropName} = this.state
-        // const descriptor = this._getDescriptorByPropName(activePropName)
-
-        // if (!clip || !activePropName || !clip!.keyframes[activePropName] || !descriptor) return []
-
-        switch (descriptor.type) {
-            case 'COLOR_RGB':
-            case 'COLOR_RGBA':
-                return this._renderColorKeyframes(keyframes)
-
-            case 'FLOAT':
-            case 'NUMBER':
-                return this._renderNumberKeyframes(keyframes)
-
-            case 'STRING':
-                return this._renderStringKeyframes(keyframes)
-        }
     }
 
     private _renderNumberKeyframes(keyframes: Delir.Entity.Keyframe[])
