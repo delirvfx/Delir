@@ -10,3 +10,4 @@ node_modules/
 /release
 /.vscode/extensions.json
 /build-assets/icons
+/tmp

@@ -1,6 +1,5 @@
 const g = require("gulp");
 const $ = require("gulp-load-plugins")();
-const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -9,11 +8,13 @@ const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const builder = require('electron-builder');
 const nib = require('nib');
 const notifier = require('node-notifier');
+const download = require('download')
 
 const os = require('os')
-const fs = require("fs-promise");
+const fs = require('fs-extra')
+const path = require('path')
 const {join} = require("path");
-const {spawn, spawnSync} = require("child_process");
+const {spawn} = require("child_process");
 
 const NATIVE_MODULES = ['font-manager'];
 
@@ -63,7 +64,7 @@ export async function buildPublishPackageJSON(done) {
 export async function symlinkNativeModules(done) {
     const prepublishNodeModules = join(paths.compiled.root, "node_modules/")
 
-    await rimraf(prepublishNodeModules);
+    await fs.remove(prepublishNodeModules);
     await fs.mkdir(prepublishNodeModules);
 
     for (let dep of NATIVE_MODULES) {
@@ -85,6 +86,37 @@ export async function symlinkNativeModules(done) {
     }
 
     done();
+}
+
+export async function downloadAndDeployFFmpeg() {
+    const ffmpegBinUrl = {
+        mac: {
+            archiveUrl: 'https://ffmpeg.zeranoe.com/builds/macos64/static/ffmpeg-4.0.2-macos64-static.zip',
+            binFile: 'ffmpeg',
+            binDist: join(paths.binary, 'mac/Delir.app/Contents/Resources/ffmpeg'),
+            licenseDist: join(paths.binary, 'mac/Delir.app/Contents/Resources/FFMPEG_LICENSE.txt'),
+        },
+        windows: {
+            archiveUrl: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.0.2-win64-static.zip',
+            binFile: 'ffmpeg.exe',
+            binDist: join(paths.binary, 'win-unpacked/ffmpeg.exe'),
+            licenseDist: join(paths.binary, 'win-unpacked/FFMPEG_LICENSE.txt'),
+        },
+    }
+
+    const downloadDir = join(__dirname, 'tmp/ffmpeg')
+
+    await fs.remove(downloadDir)
+    await fs.mkdirp(downloadDir)
+
+    console.log('Downloading ffmpeg...')
+
+    await Promise.all(Object.entries(ffmpegBinUrl).map(async ([platform, { archiveUrl, binFile, binDist, licenseDist }]) => {
+        const dirname = path.parse(archiveUrl.slice(archiveUrl.lastIndexOf('/'))).name
+        await download(archiveUrl, downloadDir, { extract: true })
+        await fs.copy(join(downloadDir, dirname, 'bin', binFile), binDist)
+        await fs.copy(join(downloadDir, dirname, 'LICENSE.txt'), licenseDist)
+    }))
 }
 
 export function compileRendererJs(done) {
@@ -325,7 +357,7 @@ export function makeIcon() {
 export async function pack(done) {
     const yarnBin = isWindows ? 'yarn.cmd' : 'yarn'
 
-    await rimraf(join(paths.build, 'node_modules'))
+    await fs.remove(join(paths.build, 'node_modules'))
 
     await new Promise((resolve, reject) => {
         spawn(yarnBin, ['install'], {cwd: paths.build})
@@ -372,7 +404,7 @@ export async function pack(done) {
 }
 
 export async function clean(done) {
-    await rimraf(paths.compiled.root)
+    await fs.remove(paths.compiled.root)
 
     if (fs.existsSync(join(paths.compiled.root, "node_modules"))) {
         try { await fs.unlink(join(paths.compiled.root, "node_modules")); } catch (e) {}
@@ -382,7 +414,7 @@ export async function clean(done) {
 }
 
 export async function cleanRendererScripts(done) {
-    await rimraf(join(paths.compiled.frontend, 'scripts'))
+    await fs.remove(join(paths.compiled.frontend, 'scripts'))
     done();
 }
 
@@ -405,7 +437,7 @@ const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compileP
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules));
 const build = g.series(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
-const publish = g.series(clean, build, makeIcon, pack);
+const publish = g.series(clean, build, makeIcon, pack, downloadAndDeployFFmpeg);
 
 export {publish, build};
 export default buildAndWatch;
