@@ -1,26 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { action } from '@ragg/fleur'
 
-import { DragEntity } from './App'
-
-export const AppActions = {
-    setActiveProjectAction: action<{ project: Delir.Entity.Project, path?: string }>(),
-    clearActiveProjectAction: action<null>(),
-    setDragEntityAction: action<DragEntity>(),
-    clearDragEntityAction: action<{}>(),
-    changeActiveCompositionAction: action<{ compositionId: string }>(),
-    changeActiveClipAction: action<{ clipId: string }>(),
-    startPreviewAction: action<{ compositionId: string, beginFrame: number, ignoreMissingEffect: boolean }>(),
-    stopPreviewAction: action<{}>(),
-    renderDestinateAction: action<{ compositionId: string, ignoreMissingEffect: boolean }>(),
-    updateProcessingStateAction: action<{ stateText: string }>(),
-    addMessageAction: action<{ id: string, title?: string, level: 'info' | 'error', message: string, detail?: string }>(),
-    removeMessageAction: action<{ id: string }>(),
-    seekPreviewFrameAction: action<{ frame: number }>(),
-    changePreferenceOpenStateAction: action<{ open: boolean }>()
-}
-
-export const ProjectModActions = {
+export const ProjectActions = {
     createCompositionAction: action<{ composition: Delir.Entity.Composition }>(),
     createLayerAction: action<{ targetCompositionId: string, layer: Delir.Entity.Layer }>(),
     createClipAction: action<{ targetLayerId: string, newClip: Delir.Entity.Clip }>(),
@@ -51,9 +32,4 @@ export const ProjectModActions = {
     removeKeyframeAction: action<{ targetKeyframeId: string }>(),
     removeEffectKeyframeAction: action<{ clipId: string, effectId: string, targetKeyframeId: string }>(),
     removeEffectFromClipAction: action<{ holderClipId: string, targetEffectId: string }>(),
-}
-
-export const RendererActions = {
-    addPlugins: action<{ plugins: any[] }>(),
-    setPreviewCanvas: action<{ canvas: HTMLCanvasElement }>(),
 }

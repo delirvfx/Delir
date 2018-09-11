@@ -2,10 +2,10 @@ import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
 
-import ProjectStore from '../stores/ProjectStore'
-import RendererStore from '../stores/RendererStore'
-import { ProjectModActions } from './actions'
-import * as AppActions from './App'
+import * as EditorOps from '../Editor/operations'
+import RendererStore from '../Renderer/RendererStore'
+import { ProjectActions } from './actions'
+import ProjectStore from './ProjectStore'
 
 //
 // Modify project
@@ -23,20 +23,20 @@ export const createComposition = operation((context, options: {
 }) => {
     const composition = new Delir.Entity.Composition()
     Object.assign(composition, options)
-    context.dispatch(ProjectModActions.createCompositionAction, { composition })
+    context.dispatch(ProjectActions.createCompositionAction, { composition })
 })
 
 // @deprecated
 export const createLayer = operation((context, { compId }: { compId: string }) => {
     const layer = new Delir.Entity.Layer()
-    context.dispatch(ProjectModActions.createLayerAction, { targetCompositionId: compId, layer })
+    context.dispatch(ProjectActions.createLayerAction, { targetCompositionId: compId, layer })
 })
 
 export const addLayer = operation((context, { targetComposition, layer }: {
     targetComposition: Delir.Entity.Composition,
     layer: Delir.Entity.Layer
 }) => {
-    context.dispatch(ProjectModActions.addLayerAction, { targetComposition, layer })
+    context.dispatch(ProjectActions.addLayerAction, { targetComposition, layer })
 })
 
 export const addLayerWithAsset = operation((context, { targetComposition, asset }: {
@@ -49,7 +49,7 @@ export const addLayerWithAsset = operation((context, { targetComposition, asset 
 
     // TODO: Support selection
     if (processablePlugins.length === 0) {
-        context.executeOperation(AppActions.notify, {
+        context.executeOperation(EditorOps.notify, {
             message: `plugin not available for \`${asset.fileType}\``,
             title: '😢 Supported plugin not available',
             level: 'info',
@@ -66,7 +66,7 @@ export const addLayerWithAsset = operation((context, { targetComposition, asset 
         durationFrames: targetComposition.framerate,
     })
 
-    context.dispatch(ProjectModActions.addLayerWithAssetAction, {
+    context.dispatch(ProjectActions.addLayerWithAssetAction, {
         targetComposition,
         clip,
         asset,
@@ -86,7 +86,7 @@ export const createClip = operation((context, { layerId, clipRendererId, placedF
         durationFrames: durationFrames,
     })
 
-    context.dispatch(ProjectModActions.createClipAction, {
+    context.dispatch(ProjectActions.createClipAction, {
         newClip,
         targetLayerId: layerId,
     })
@@ -106,7 +106,7 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
 
     // TODO: Support selection
     if (processablePlugins.length === 0) {
-        context.executeOperation(AppActions.notify, {
+        context.executeOperation(EditorOps.notify, {
             message: `plugin not available for \`${asset.fileType}\``,
             title: '😢 Supported plugin not available',
             level: 'info',
@@ -132,7 +132,7 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
         value: { assetId: asset.id },
     }))
 
-    context.dispatch(ProjectModActions.addClipAction, { targetLayer, newClip })
+    context.dispatch(ProjectActions.addClipAction, { targetLayer, newClip })
 })
 
 export const createOrModifyKeyframeForClip = operation((context, { clipId, paramName, frameOnClip, patch }: {
@@ -161,7 +161,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
     const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, paramName, frameOnClip)
 
     if (keyframe) {
-        context.dispatch(ProjectModActions.modifyKeyframeAction, {
+        context.dispatch(ProjectActions.modifyKeyframeAction, {
             targetKeyframeId: keyframe.id,
             patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
         })
@@ -172,7 +172,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
             frameOnClip,
         }, patch))
 
-        context.dispatch(ProjectModActions.addKeyframeAction, {
+        context.dispatch(ProjectActions.addKeyframeAction, {
             targetClip: clip,
             paramName,
             keyframe: newKeyframe
@@ -208,7 +208,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, paramName, frameOnClip)
 
     if (keyframe) {
-        context.dispatch(ProjectModActions.modifyEffectKeyframeAction, {
+        context.dispatch(ProjectActions.modifyEffectKeyframeAction, {
             targetClipId: clipId,
             effectId: effectId,
             targetKeyframeId: keyframe.id,
@@ -218,7 +218,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
         const newKeyframe = new Delir.Entity.Keyframe()
         Object.assign(newKeyframe, Object.assign({ frameOnClip }, patch))
 
-        context.dispatch(ProjectModActions.addEffectKeyframeAction, {
+        context.dispatch(ProjectActions.addEffectKeyframeAction, {
             targetClipId: clipId,
             targetEffectId: effectId,
             paramName,
@@ -237,7 +237,7 @@ export const addAsset = operation((context, { name, fileType, path }: {
     asset.fileType = fileType
     asset.path = path
 
-    context.dispatch(ProjectModActions.addAssetAction, { asset })
+    context.dispatch(ProjectActions.addAssetAction, { asset })
 })
 
 export const addEffectIntoClip = operation((context, { clipId, processorId }: {
@@ -246,11 +246,11 @@ export const addEffectIntoClip = operation((context, { clipId, processorId }: {
 }) => {
     const effect = new Delir.Entity.Effect()
     effect.processor = processorId
-    context.dispatch(ProjectModActions.addEffectIntoClipAction, { clipId, effect })
+    context.dispatch(ProjectActions.addEffectIntoClipAction, { clipId, effect })
 })
 
 export const removeAsset = operation((context, { assetId }: { assetId: string }) => {
-    context.dispatch(ProjectModActions.removeAssetAction, { targetAssetId: assetId })
+    context.dispatch(ProjectActions.removeAssetAction, { targetAssetId: assetId })
 })
 
 // TODO: frame position
@@ -258,14 +258,14 @@ export const moveClipToLayer = operation((context, { clipId, destLayerId }: {
     clipId: string,
     destLayerId: string
 }) => {
-    context.dispatch(ProjectModActions.moveClipToLayerAction, { destLayerId: destLayerId, clipId })
+    context.dispatch(ProjectActions.moveClipToLayerAction, { destLayerId: destLayerId, clipId })
 })
 
 export const modifyComposition = operation((context, { compositionId, props }: {
     compositionId: string,
     props: Partial<Delir.Entity.Composition>
 }) => {
-    context.dispatch(ProjectModActions.modifyCompositionAction, {
+    context.dispatch(ProjectActions.modifyCompositionAction, {
         targetCompositionId: compositionId,
         patch: props
     })
@@ -275,7 +275,7 @@ export const modifyLayer = operation((context, { layerId, props }: {
     layerId: string,
     props: Partial<Delir.Entity.Layer>
 }) => {
-    context.dispatch(ProjectModActions.modifyLayerAction, {
+    context.dispatch(ProjectActions.modifyLayerAction, {
         targetLayerId: layerId,
         patch: props,
     })
@@ -285,7 +285,7 @@ export const modifyClip = operation((context, { clipId, props }: {
     clipId: string,
     props: Partial<Delir.Entity.Clip>
 }) => {
-    context.dispatch(ProjectModActions.modifyClipAction, {
+    context.dispatch(ProjectActions.modifyClipAction, {
         targetClipId: clipId,
         patch: props,
     })
@@ -296,7 +296,7 @@ export const modifyClipExpression = operation((context, { clipId, property, expr
     property: string,
     expr: { language: string, code: string }
 }) => {
-    context.dispatch(ProjectModActions.modifyClipExpressionAction, {
+    context.dispatch(ProjectActions.modifyClipExpressionAction, {
         targetClipId: clipId,
         targetProperty: property,
         expr: {
@@ -312,7 +312,7 @@ export const modifyEffectExpression = operation((context, { clipId, effectId, pr
     property: string,
     expr: { language: string, code: string }
 }) => {
-    context.dispatch(ProjectModActions.modifyEffectExpressionAction, {
+    context.dispatch(ProjectActions.modifyEffectExpressionAction, {
         targetClipId: clipId,
         targetEffectId: effectId,
         targetProperty: property,
@@ -329,7 +329,7 @@ export const moveLayerOrder = operation((context, { layerId, newIndex }: { layer
 
     const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
 
-    context.dispatch(ProjectModActions.moveLayerOrderAction, {
+    context.dispatch(ProjectActions.moveLayerOrderAction, {
         parentCompositionId: comp.id,
         targetLayerId: layerId,
         newIndex,
@@ -337,19 +337,19 @@ export const moveLayerOrder = operation((context, { layerId, newIndex }: { layer
 })
 
 export const removeComposition = operation((context, { compositionId }: { compositionId: string }) => {
-    context.dispatch(ProjectModActions.removeCompositionAction, { targetCompositionId: compositionId })
+    context.dispatch(ProjectActions.removeCompositionAction, { targetCompositionId: compositionId })
 })
 
 export const removeLayer = operation((context, { layerId }: { layerId: string }) => {
-    context.dispatch(ProjectModActions.removeLayerAction, { targetLayerId: layerId })
+    context.dispatch(ProjectActions.removeLayerAction, { targetLayerId: layerId })
 })
 
 export const removeClip = operation((context, { clipId }: { clipId: string }) => {
-    context.dispatch(ProjectModActions.removeClipAction, { targetClipId: clipId })
+    context.dispatch(ProjectActions.removeClipAction, { targetClipId: clipId })
 })
 
 export const removeKeyframe = operation((context, { keyframeId }: { keyframeId: string }) => {
-    context.dispatch(ProjectModActions.removeKeyframeAction, { targetKeyframeId: keyframeId })
+    context.dispatch(ProjectActions.removeKeyframeAction, { targetKeyframeId: keyframeId })
 })
 
 export const removeKeyframeForEffect = operation((context, { clipId, effectId, keyframeId }: {
@@ -357,12 +357,12 @@ export const removeKeyframeForEffect = operation((context, { clipId, effectId, k
     effectId: string,
     keyframeId: string
 }) => {
-    context.dispatch(ProjectModActions.removeEffectKeyframeAction, { clipId, effectId, targetKeyframeId: keyframeId })
+    context.dispatch(ProjectActions.removeEffectKeyframeAction, { clipId, effectId, targetKeyframeId: keyframeId })
 })
 
 export const removeEffect = operation((context, { holderClipId, effectId }: {
     holderClipId: string,
     effectId: string
 }) => {
-    context.dispatch(ProjectModActions.removeEffectFromClipAction, { holderClipId, targetEffectId: effectId })
+    context.dispatch(ProjectActions.removeEffectFromClipAction, { holderClipId, targetEffectId: effectId })
 })

@@ -2,7 +2,8 @@ import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
 
-import { AppActions, ProjectModActions } from '../actions/actions'
+import { EditorActions } from '../Editor/actions'
+import { ProjectActions } from './actions'
 
 export interface ProjectStoreState {
     project: Delir.Entity.Project | null,
@@ -19,17 +20,17 @@ export default class ProjectStore extends Store<ProjectStoreState>
     }
 
     // @ts-ignore
-    private handleSetActiveProject = listen(AppActions.setActiveProjectAction, (payload) => {
+    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
         this.updateWith(d => d.project = payload.project)
     })
 
     // @ts-ignore
-    private handleClearActiveProject = listen(AppActions.clearActiveProjectAction, (payload) => {
+    private handleClearActiveProject = listen(EditorActions.clearActiveProjectAction, (payload) => {
         this.updateWith(d => d.project = null)
     })
 
     // @ts-ignore
-    private handleCreateComposition = listen(ProjectModActions.createCompositionAction, (payload) => {
+    private handleCreateComposition = listen(ProjectActions.createCompositionAction, (payload) => {
         const { project } = this.state
         const newLayer = new Delir.Entity.Layer()
         ProjectHelper.addComposition(project!, payload.composition)
@@ -38,21 +39,21 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleCreateLayer = listen(ProjectModActions.createLayerAction, (payload) => {
+    private handleCreateLayer = listen(ProjectActions.createLayerAction, (payload) => {
         const { project } = this.state
         ProjectHelper.addLayer(project!, payload.targetCompositionId, payload.layer)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleCreateClip = listen(ProjectModActions.createClipAction, (payload) => {
+    private handleCreateClip = listen(ProjectActions.createClipAction, (payload) => {
         const { project } = this.state
         ProjectHelper.addClip(project!, payload.targetLayerId, payload.newClip)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleAddClip = listen(ProjectModActions.addClipAction, (payload) => {
+    private handleAddClip = listen(ProjectActions.addClipAction, (payload) => {
         const { project } = this.state
         const { targetLayer, newClip } = payload
         ProjectHelper.addClip(project!, targetLayer, newClip)
@@ -60,14 +61,14 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleAddLayer = listen(ProjectModActions.addLayerAction, (payload) => {
+    private handleAddLayer = listen(ProjectActions.addLayerAction, (payload) => {
         const { project } = this.state
         ProjectHelper.addLayer(project!, payload.targetComposition, payload.layer)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleAddLayerWithAsset = listen(ProjectModActions.addLayerWithAssetAction, (payload) => {
+    private handleAddLayerWithAsset = listen(ProjectActions.addLayerWithAssetAction, (payload) => {
         const { project } = this.state
         const { targetComposition, clip, asset: registeredAsset } = payload
         const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
@@ -85,14 +86,14 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleAddAsset = listen(ProjectModActions.addAssetAction, (payload) => {
+    private handleAddAsset = listen(ProjectActions.addAssetAction, (payload) => {
         const { project } = this.state
         ProjectHelper.addAsset(project!, payload.asset)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleAddKeyframe = listen(ProjectModActions.addKeyframeAction, (payload) => {
+    private handleAddKeyframe = listen(ProjectActions.addKeyframeAction, (payload) => {
         const { project } = this.state
         const { targetClip, paramName, keyframe } = payload
         ProjectHelper.addKeyframe(project!, targetClip, paramName, keyframe)
@@ -100,7 +101,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleAddEffectIntoClipPayload = listen(ProjectModActions.addEffectIntoClipPayloadAction, (payload) => {
+    private handleAddEffectIntoClipPayload = listen(ProjectActions.addEffectIntoClipPayloadAction, (payload) => {
         const { project } = this.state
         const { clipId, effect } = payload
         ProjectHelper.addEffect(project!, clipId, effect)
@@ -108,7 +109,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleAddEffectKeyframe = listen(ProjectModActions.addEffectKeyframeAction, (payload) => {
+    private handleAddEffectKeyframe = listen(ProjectActions.addEffectKeyframeAction, (payload) => {
         const { project } = this.state
         const { targetClipId, targetEffectId, paramName, keyframe } = payload
         ProjectHelper.addEffectKeyframe(project!, targetClipId, targetEffectId, paramName, keyframe)
@@ -116,7 +117,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleMoveClipToLayer = listen(ProjectModActions.moveClipToLayerAction, (payload) => {
+    private handleMoveClipToLayer = listen(ProjectActions.moveClipToLayerAction, (payload) => {
         const { project } = this.state
         const targetClip = ProjectHelper.findClipById(project!, payload.clipId)
         const sourceLayer = ProjectHelper.findParentLayerByClipId(project!, payload.clipId)
@@ -130,28 +131,28 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleModifyComposition = listen(ProjectModActions.modifyCompositionAction, (payload) => {
+    private handleModifyComposition = listen(ProjectActions.modifyCompositionAction, (payload) => {
         const { project } = this.state
         ProjectHelper.modifyComposition(project!, payload.targetCompositionId, payload.patch)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleModifyLayer = listen(ProjectModActions.modifyLayerAction, (payload) => {
+    private handleModifyLayer = listen(ProjectActions.modifyLayerAction, (payload) => {
         const { project } = this.state
         ProjectHelper.modifyLayer(project!, payload.targetLayerId, payload.patch)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleModifyClip = listen(ProjectModActions.modifyClipAction, (payload) => {
+    private handleModifyClip = listen(ProjectActions.modifyClipAction, (payload) => {
         const { project } = this.state
         ProjectHelper.modifyClip(project!, payload.targetClipId, payload.patch)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleModifyClipExpression = listen(ProjectModActions.modifyClipExpressionAction, (payload) => {
+    private handleModifyClipExpression = listen(ProjectActions.modifyClipExpressionAction, (payload) => {
         const { project } = this.state
         const { targetClipId, targetProperty, expr } = payload
         ProjectHelper.modifyClipExpression(project!, targetClipId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
@@ -159,7 +160,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleModifyEffectExpression = listen(ProjectModActions.modifyEffectExpressionAction, (payload) => {
+    private handleModifyEffectExpression = listen(ProjectActions.modifyEffectExpressionAction, (payload) => {
         const { project } = this.state
         const { targetClipId, targetEffectId, targetProperty, expr } = payload
         ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
@@ -167,14 +168,14 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleModifyKeyframe = listen(ProjectModActions.modifyKeyframeAction, (payload) => {
+    private handleModifyKeyframe = listen(ProjectActions.modifyKeyframeAction, (payload) => {
         const { project } = this.state
         ProjectHelper.modifyKeyframe(project!, payload.targetKeyframeId, payload.patch)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleModifyEffectKeyframe = listen(ProjectModActions.modifyEffectKeyframeAction, (payload) => {
+    private handleModifyEffectKeyframe = listen(ProjectActions.modifyEffectKeyframeAction, (payload) => {
         const { project } = this.state
         const { targetClipId, effectId, targetKeyframeId, patch } = payload
         ProjectHelper.modifyEffectKeyframe(project!, targetClipId, effectId, targetKeyframeId, patch)
@@ -182,7 +183,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleMoveLayerOrder = listen(ProjectModActions.moveLayerOrderAction, (payload) => {
+    private handleMoveLayerOrder = listen(ProjectActions.moveLayerOrderAction, (payload) => {
         const { project } = this.state
         const { parentCompositionId, targetLayerId, newIndex } = payload
         ProjectHelper.moveLayerOrder(project!, parentCompositionId, targetLayerId, newIndex)
@@ -190,42 +191,42 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleRemoveComposition = listen(ProjectModActions.removeCompositionAction, (payload) => {
+    private handleRemoveComposition = listen(ProjectActions.removeCompositionAction, (payload) => {
         const { project } = this.state
         ProjectHelper.deleteComposition(project!, payload.targetCompositionId)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleRemoveLayer = listen(ProjectModActions.removeLayerAction, (payload) => {
+    private handleRemoveLayer = listen(ProjectActions.removeLayerAction, (payload) => {
         const { project } = this.state
         ProjectHelper.deleteLayer(project!, payload.targetLayerId)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleRemoveClip = listen(ProjectModActions.removeClipAction, (payload) => {
+    private handleRemoveClip = listen(ProjectActions.removeClipAction, (payload) => {
         const { project } = this.state
         ProjectHelper.deleteClip(project!, payload.targetClipId)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleRemoveAsset = listen(ProjectModActions.removeAssetAction, (payload) => {
+    private handleRemoveAsset = listen(ProjectActions.removeAssetAction, (payload) => {
         const { project } = this.state
         ProjectHelper.deleteAsset(project!, payload.targetAssetId)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleRemoveKeyframe = listen(ProjectModActions.removeKeyframeAction, (payload) => {
+    private handleRemoveKeyframe = listen(ProjectActions.removeKeyframeAction, (payload) => {
         const { project } = this.state
         ProjectHelper.deleteKeyframe(project!, payload.targetKeyframeId)
         this.updateLastModified()
     })
 
     // @ts-ignore
-    private handleRemoveEffectKeyframe = listen(ProjectModActions.removeEffectKeyframeAction, (payload) => {
+    private handleRemoveEffectKeyframe = listen(ProjectActions.removeEffectKeyframeAction, (payload) => {
         const { project } = this.state
         const { clipId, effectId, targetKeyframeId } = payload
         ProjectHelper.deleteEffectKeyframe(project!, clipId, effectId, targetKeyframeId)
@@ -233,7 +234,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleRemoveEffectFromClip = listen(ProjectModActions.removeEffectFromClipAction, (payload) => {
+    private handleRemoveEffectFromClip = listen(ProjectActions.removeEffectFromClipAction, (payload) => {
         const { project } = this.state
         const { holderClipId, targetEffectId } = payload
         ProjectHelper.deleteEffectFromClip(project!, holderClipId, targetEffectId)

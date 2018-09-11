@@ -6,12 +6,12 @@ import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
-import * as AppActions from '../../actions/App'
-import * as ProjectModActions from '../../actions/ProjectMod'
+import * as EditorOps from '../../domain/Editor/operations'
+import * as ProjectOps from '../../domain/Project/operations'
 
-import EditorStateStore, { EditorState } from '../../stores/EditorStateStore'
-import ProjectStore, { ProjectStoreState } from '../../stores/ProjectStore'
-import RendererStore from '../../stores/RendererStore'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
+import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Button from '../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
@@ -65,8 +65,8 @@ interface State {
 
 type Props = OwnProps & ConnectedProps & ContextProp
 
-export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
-    editor: context.getStore(EditorStateStore).getState(),
+export default withComponentContext(connectToStores([EditorStore], (context) => ({
+    editor: context.getStore(EditorStore).getState(),
     project: context.getStore(ProjectStore).getState()
 }))(class KeyframeEditor extends React.Component<Props, State> {
 
@@ -170,7 +170,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                         data-entity-id={activeClip.id}
                                         data-param-name={desc.paramName}
                                         enabled={desc.animatable}
-                                        onClick={this._openExpressionEditor}
+                                        onClick={this.openExpressionEditor}
                                     />
                                 </ContextMenu>
                                 <span className={classnames(
@@ -278,7 +278,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
         this.setState({ scriptParamEditorOpened: false })
 
-        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
             clipId: activeClip.id,
             frameOnClip: 0,
             paramName: result.target.paramName,
@@ -296,7 +296,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         if (!activeClip) return
 
         if (result.target.type === 'clip') {
-            this.props.context.executeOperation(ProjectModActions.modifyClipExpression, {
+            this.props.context.executeOperation(ProjectOps.modifyClipExpression, {
                 clipId: activeClip.id,
                 property: result.target.paramName,
                 expr: {
@@ -305,7 +305,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 }
             })
         } else {
-            this.props.context.executeOperation(ProjectModActions.modifyEffectExpression, {
+            this.props.context.executeOperation(ProjectOps.modifyEffectExpression, {
                 clipId: activeClip.id,
                 effectId: result.target.entityId,
                 property: result.target.paramName,
@@ -364,14 +364,14 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
 
-        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
+        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
             clipId: activeClip.id!,
             paramName: desc.paramName,
             frameOnClip,
             patch: { value }
         })
 
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, { frame: this.props.editor.currentPreviewFrame })
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame: this.props.editor.currentPreviewFrame })
     }
 
     private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) =>
@@ -381,7 +381,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForEffect, {
+        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
             clipId: activeClip.id,
             effectId,
             paramName: desc.paramName,
@@ -389,7 +389,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
             patch: {value}
         })
 
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, { frame: currentPreviewFrame })
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame: currentPreviewFrame })
     }
 
     private keyframeModified = (parentClipId: string, paramName: string, frameOnClip: number, patch: KeyframePatch) =>
@@ -397,21 +397,31 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         const { activeParam } = this.state
         if (!activeParam) return
 
-        if (activeParam.type === 'clip') {
-            this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForClip, {
-                clipId: parentClipId,
-                paramName,
-                frameOnClip,
-                patch
-            })
-        } else {
-            this.props.context.executeOperation(ProjectModActions.createOrModifyKeyframeForEffect, {
-                clipId: parentClipId,
-                effectId: activeParam.entityId,
-                paramName,
-                frameOnClip,
-                patch
-            })
+        switch (activeParam.type) {
+            case 'clip': {
+                this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
+                    clipId: parentClipId,
+                    paramName,
+                    frameOnClip,
+                    patch
+                })
+                break
+            }
+
+            case 'effect': {
+                this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
+                    clipId: parentClipId,
+                    effectId: activeParam.entityId,
+                    paramName,
+                    frameOnClip,
+                    patch
+                })
+                break
+            }
+
+            default: {
+                throw new Error('unreachable')
+            }
         }
     }
 
@@ -421,9 +431,9 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         if (!activeParam) return
 
         if (activeParam.type === 'clip') {
-            this.props.context.executeOperation(ProjectModActions.removeKeyframe, { keyframeId: activeParam.entityId })
+            this.props.context.executeOperation(ProjectOps.removeKeyframe, { keyframeId: activeParam.entityId })
         } else {
-            this.props.context.executeOperation(ProjectModActions.removeKeyframeForEffect, {
+            this.props.context.executeOperation(ProjectOps.removeKeyframeForEffect, {
                 clipId: parentClipId,
                 effectId: activeParam.entityId,
                 keyframeId
@@ -431,20 +441,20 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         }
     }
 
-    private _openExpressionEditor = ({ dataset }: MenuItemOption<{ type: 'clip' | 'effect', entityId: string, paramName: string }>) => {
-        const { type, entityId, paramName } = dataset
-        this.setState({editorOpened: true, activeParam: { type, entityId, paramName }})
+    private openExpressionEditor = ({ dataset }: MenuItemOption<{ entityType: 'clip' | 'effect', entityId: string, paramName: string }>) => {
+        const { entityType, entityId, paramName } = dataset
+        this.setState({editorOpened: true, activeParam: { type: entityType, entityId, paramName }})
         this.forceUpdate()
     }
 
     private removeEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
     {
         this.setState({ editorOpened: false, activeParam: null }, () => {
-            this.props.context.executeOperation(ProjectModActions.removeEffect, {
+            this.props.context.executeOperation(ProjectOps.removeEffect, {
                 holderClipId: dataset.clipId,
                 effectId: dataset.effectId
             })
-            this.props.context.executeOperation(AppActions.seekPreviewFrame, {
+            this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
                 frame: this.props.editor.currentPreviewFrame
             })
         })
@@ -515,7 +525,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                                         data-entity-type='effect'
                                         data-entity-id={effect.id}
                                         data-param-name={desc.paramName}
-                                        onClick={this._openExpressionEditor}
+                                        onClick={this.openExpressionEditor}
                                     />
                                 </ContextMenu>
                                 <span className={classnames(

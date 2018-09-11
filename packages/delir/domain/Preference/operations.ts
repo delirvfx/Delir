@@ -3,7 +3,7 @@ import { remote } from 'electron'
 import { existsSync, readFileSync, writeFile } from 'fs'
 import * as path from 'path'
 
-import * as AppOps from '../../actions/App'
+import * as EditorOps from '../Editor/operations'
 import { PreferenceActions } from './actions'
 
 import PreferenceStore from '@ragg/delir/domain/Preference/PreferenceStore'
@@ -23,7 +23,7 @@ export const restoreApplicationPreference = operation((context) => {
     try {
         preference = JSON.parse(json)
     } catch {
-        context.executeOperation(AppOps.notify, {
+        context.executeOperation(EditorOps.notify, {
             title: 'App preference loading failed',
             message: 'preferences.json invalid. Use initial preference instead.',
             level: 'error',
@@ -36,7 +36,7 @@ export const restoreApplicationPreference = operation((context) => {
     const error = validateSchema(preference)
 
     if (error) {
-        context.executeOperation(AppOps.notify, {
+        context.executeOperation(EditorOps.notify, {
             title: 'App preference loading failed',
             message: 'preferences.json invalid. Use initial preference instead.\n' + error.message,
             level: 'error',

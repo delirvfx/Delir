@@ -3,8 +3,8 @@ import { remote } from 'electron'
 import * as path from 'path'
 import * as React from 'react'
 
-import * as AppActions from '../../actions/App'
-import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import * as EditorOps from '../../domain/Editor/operations'
 
 import Pane from '../components/pane'
 
@@ -16,8 +16,8 @@ interface ConnectedProps {
 
 type Props = ConnectedProps & ContextProp
 
-export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
-    editor: context.getStore(EditorStateStore).getState()
+export default withComponentContext(connectToStores([EditorStore], (context) => ({
+    editor: context.getStore(EditorStore).getState()
 }))(class NavigationView extends React.Component<Props>
 {
     public render()
@@ -51,17 +51,17 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
         const {activeComp} = this.props.editor
         if (! activeComp) return
 
-        this.props.context.executeOperation(AppActions.startPreview, { compositionId: activeComp.id! })
+        this.props.context.executeOperation(EditorOps.startPreview, { compositionId: activeComp.id! })
     }
 
     private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
-        this.props.context.executeOperation(AppActions.stopPreview, {})
+        this.props.context.executeOperation(EditorOps.stopPreview, {})
     }
 
     private onClickDest = () =>
     {
         const {activeComp} = this.props.editor
-        activeComp && this.props.context.executeOperation(AppActions.renderDestinate, { compositionId: activeComp.id! })
+        activeComp && this.props.context.executeOperation(EditorOps.renderDestinate, { compositionId: activeComp.id! })
     }
 
     private titleBarDoubleClicked = () =>

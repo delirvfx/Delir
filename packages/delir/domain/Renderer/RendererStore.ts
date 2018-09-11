@@ -1,12 +1,14 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
+import deream from '@ragg/deream'
 import { listen, Store } from '@ragg/fleur'
 import { remote } from 'electron'
-import { dirname, join } from 'path'
-import deream from '../../deream'
+import { dirname } from 'path'
 
-import { AppActions, RendererActions } from '../actions/actions'
-import * as Platform from '../utils/platform'
+import { EditorActions } from '../Editor/actions'
+import { RendererActions } from './actions'
+
+import * as Platform from '../../utils/platform'
 
 interface State {
     project: Delir.Entity.Project | null
@@ -41,13 +43,13 @@ export default class RendererStore extends Store<State> {
     private audioBuffer: AudioBuffer | null = null
 
     // @ts-ignore: unused private but listener
-    private handleSetActiveProject = listen(AppActions.setActiveProjectAction, (payload) => {
+    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
         this.pipeline.project = payload.project
         this.updateWith(d => { d.project = payload.project })
     })
 
     // @ts-ignore: unused private but listener
-    private handleChangeActiveComposition = listen(AppActions.changeActiveCompositionAction, (payload) => {
+    private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, (payload) => {
         if (!this.state.project) return
 
         this.updateWith(d => {
@@ -69,7 +71,7 @@ export default class RendererStore extends Store<State> {
     })
 
     // @ts-ignore: unused private but listener
-    private handleStartPreveiew = listen(AppActions.startPreviewAction, (payload) => {
+    private handleStartPreveiew = listen(EditorActions.startPreviewAction, (payload) => {
         if (!this.state.project || !this.state.composition || !this.destCanvas || !this.destCanvasCtx) return
 
         const {project} = this.state
@@ -122,7 +124,7 @@ export default class RendererStore extends Store<State> {
 
         promise.catch(e => {
             if (e instanceof Delir.Exceptions.RenderingAbortedException) {
-                // AppActions.updateProcessingState('Stop.')
+                // EditorOps.updateProcessingState('Stop.')
                 return
             }
 
@@ -131,12 +133,12 @@ export default class RendererStore extends Store<State> {
     })
 
     // @ts-ignore: unused private but listener
-    private handleStopPreview = listen(AppActions.stopPreviewAction, () => {
+    private handleStopPreview = listen(EditorActions.stopPreviewAction, () => {
         this.pipeline.stopCurrentRendering()
     })
 
     // @ts-ignore: unused private but listener
-    private handleSeekPreviewFrame = listen(AppActions.seekPreviewFrameAction, (payload) => {
+    private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, (payload) => {
         const {frame} = payload
         const targetComposition = this.state.composition!
 
@@ -148,7 +150,7 @@ export default class RendererStore extends Store<State> {
     })
 
     // @ts-ignore: unused private but listener
-    private handleRenderDestinate = listen(AppActions.renderDestinateAction, async (payload) => {
+    private handleRenderDestinate = listen(EditorActions.renderDestinateAction, async (payload) => {
         const appPath = dirname(remote.app.getPath('exe'))
         const ffmpegBin = __DEV__ ? 'ffmpeg' : require('path').resolve(
             appPath,
@@ -174,8 +176,8 @@ export default class RendererStore extends Store<State> {
         // awaitを噛ませてステータスを確実に出す
         // await new Promise(resolve => {
         //     setImmediate(() => {
-        //         AppActions.autoSaveProject()
-        //         AppActions.updateProcessingState('Rendering: Initializing')
+        //         EditorOps.autoSaveProject()
+        //         EditorOps.updateProcessingState('Rendering: Initializing')
         //         resolve()
         //     })
         // })
@@ -193,7 +195,7 @@ export default class RendererStore extends Store<State> {
                 ffmpegBin,
                 onProgress: progress => {
                     setTimeout(() => {
-                        // AppActions.updateProcessingState(progress.state)
+                        // EditorOps.updateProcessingState(progress.state)
                     }, 0)
                 }
             })

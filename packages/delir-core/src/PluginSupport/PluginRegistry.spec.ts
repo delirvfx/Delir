@@ -12,6 +12,7 @@ describe('PluginRegistry', () => {
                 node: '10.0.0',
             },
             delir: {
+                name: 'Effect',
                 type: 'post-effect',
             },
             extraField: {},
@@ -29,6 +30,7 @@ describe('PluginRegistry', () => {
                 // 'delir-core': '0.0.0.1',
             },
             delir: {
+                name: 'Effect',
                 // type: 'post-effect'
                 type: 'post-effect-lol',
             },

@@ -4,7 +4,7 @@ import * as classnames from 'classnames'
 import * as React from 'react'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'
 
-import * as ProjectModActions from '../../actions/ProjectMod'
+import * as ProjectOps from '../../domain/Project/operations'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 import LabelInput from '../components/label-input'
@@ -68,7 +68,7 @@ const LaneLabel = withComponentContext(class LaneLabel extends React.Component<P
     {
         const {layer} = this.props
 
-        this.props.context.executeOperation(ProjectModActions.modifyLayer, {
+        this.props.context.executeOperation(ProjectOps.modifyLayer, {
             layerId: layer.id!,
             props: {name: value}
         })

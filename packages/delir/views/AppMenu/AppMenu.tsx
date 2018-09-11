@@ -3,9 +3,9 @@ import * as Electron from 'electron'
 import { remote } from 'electron'
 import * as React from 'react'
 
-import * as AppActions from '../../actions/App'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import * as EditorOps from '../../domain/Editor/operations'
 import * as AboutModal from '../../modules/AboutModal'
-import {default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
 import * as Platform from '../../utils/platform'
 
 import t from './AppMenu.i18n'
@@ -16,8 +16,8 @@ interface ConnectedProps {
 
 type Props = ConnectedProps & ContextProp
 
-export default withComponentContext(connectToStores([EditorStateStore], (context) => ({
-    editor: context.getStore(EditorStateStore).getState()
+export default withComponentContext(connectToStores([EditorStore], (context) => ({
+    editor: context.getStore(EditorStore).getState()
 }))(class AppMenu extends React.Component<Props> {
     public componentDidUpdate() {
         remote.Menu.setApplicationMenu(
@@ -40,7 +40,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
     }
 
     private handleOpenPreference = () => {
-        this.props.context.executeOperation(AppActions.changePreferenceOpenState, { open: true })
+        this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
     }
 
     private _buildMenu(): Electron.MenuItemConstructorOptions[]
@@ -65,7 +65,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 {type: 'separator'},
                 {
                     label: t('appMenu.openPluginDir'),
-                    click: () => context.executeOperation(AppActions.openPluginDirectory, {})
+                    click: () => context.executeOperation(EditorOps.openPluginDirectory, {})
                 },
                 {type: 'separator'},
                 {
@@ -82,20 +82,20 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                 {
                     label: t('file.newProject'),
                     accelerator: 'CmdOrCtrl+N',
-                    click: () => context.executeOperation(AppActions.newProject, {})
+                    click: () => context.executeOperation(EditorOps.newProject, {})
                 },
                 {type: 'separator'},
                 {
                     label: t('file.openProject'),
                     accelerator: 'CmdOrCtrl+O',
-                    click: () => context.executeOperation(AppActions.openProject, {})
+                    click: () => context.executeOperation(EditorOps.openProject, {})
                 },
                 {type: 'separator'},
                 {
                     label: t('file.save'),
                     accelerator: 'CmdOrCtrl+S',
                     click: () => {
-                        const state = context.getStore(EditorStateStore).getState()
+                        const state = context.getStore(EditorStore).getState()
                         let path: string | null = state.projectPath
 
                         if (!path) {
@@ -114,7 +114,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                             if (!path) return
                         }
 
-                        context.executeOperation(AppActions.saveProject, { path })
+                        context.executeOperation(EditorOps.saveProject, { path })
                     }
                 },
                 {
@@ -135,7 +135,7 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                         // cancelled
                         if (!path) return
 
-                        context.executeOperation(AppActions.saveProject, { path })
+                        context.executeOperation(EditorOps.saveProject, { path })
                     }
                 },
                 {type: 'separator'},
@@ -143,9 +143,9 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                     label: t('file.rendering'),
                     accelerator: 'CmdOrCtrl+Shift+R',
                     click() {
-                        const comp = context.getStore(EditorStateStore).getState().activeComp
+                        const comp = context.getStore(EditorStore).getState().activeComp
                         if (!comp) return
-                        context.executeOperation(AppActions.renderDestinate, { compositionId: comp.id! })
+                        context.executeOperation(EditorOps.renderDestinate, { compositionId: comp.id! })
                     }
                 },
                 ...(Platform.isWindows() ? [
@@ -198,11 +198,11 @@ export default withComponentContext(connectToStores([EditorStateStore], (context
                     enabled: !!activeComp,
                     click: () => {
                         previewPlayed
-                            ? context.executeOperation(AppActions.stopPreview, {})
-                            : context.executeOperation(AppActions.startPreview, {
+                            ? context.executeOperation(EditorOps.stopPreview, {})
+                            : context.executeOperation(EditorOps.startPreview, {
                                 compositionId: activeComp!.id,
                                 // Delayed get for rendering performance
-                                beginFrame: context.getStore(EditorStateStore).getState().currentPreviewFrame,
+                                beginFrame: context.getStore(EditorStore).getState().currentPreviewFrame,
                             })
                     } ,
                 },

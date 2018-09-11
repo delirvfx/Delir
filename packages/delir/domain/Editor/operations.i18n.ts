@@ -1,5 +1,5 @@
-import I18n from '../utils/I18n'
-import { isMacOS } from '../utils/platform'
+import I18n from '../../utils/I18n'
+import { isMacOS } from '../../utils/platform'
 
 export default I18n({
     ja: {

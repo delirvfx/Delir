@@ -5,8 +5,8 @@ import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
 
-import * as AppActions from '../../actions/App'
-import * as ProjectModActions from '../../actions/ProjectMod'
+import * as EditorOps from '../../domain/Editor/operations'
+import * as ProjectOps from '../../domain/Project/operations'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
 import t from './_Clip.i18n'
@@ -80,12 +80,12 @@ export default withComponentContext(class Clip extends React.Component<Props> {
 
     private handleClick = (e: React.DragEvent<HTMLDivElement>) =>
     {
-        this.props.context.executeOperation(AppActions.changeActiveClip, { clipId: this.props.clip.id! })
+        this.props.context.executeOperation(EditorOps.changeActiveClip, { clipId: this.props.clip.id! })
     }
 
     private handleDragStart: DraggableEventHandler = (e) =>
     {
-        this.props.context.executeOperation(AppActions.setDragEntity, {
+        this.props.context.executeOperation(EditorOps.setDragEntity, {
             entity: {type: 'clip', clip: this.props.clip}
         })
     }
@@ -106,15 +106,15 @@ export default withComponentContext(class Clip extends React.Component<Props> {
 
     private addEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
     {
-        this.props.context.executeOperation(ProjectModActions.addEffectIntoClip, {
+        this.props.context.executeOperation(ProjectOps.addEffectIntoClip, {
             clipId: dataset.clipId,
             processorId: dataset.effectId
         })
-        this.props.context.executeOperation(AppActions.seekPreviewFrame, {})
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
     }
 
     private removeClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
     {
-        this.props.context.executeOperation(ProjectModActions.removeClip, { clipId: dataset.clipId })
+        this.props.context.executeOperation(ProjectOps.removeClip, { clipId: dataset.clipId })
     }
 })

@@ -8,11 +8,11 @@ import * as React from 'react'
 
 import { ProjectHelper, Values } from '@ragg/delir-core'
 
-import * as AppActions from '../../actions/App'
-import * as ProjectModActions from '../../actions/ProjectMod'
+import * as EditorOps from '../../domain/Editor/operations'
+import * as ProjectOps from '../../domain/Project/operations'
 
-import { default as EditorStateStore, EditorState } from '../../stores/EditorStateStore'
-import ProjectStore from '../../stores/ProjectStore'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import ProjectStore from '../../domain/Project/ProjectStore'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 import LabelInput from '../components/label-input'
@@ -85,8 +85,8 @@ interface State {
 
 type Props = ConnectedProps & ContextProp
 
-export default withComponentContext(connectToStores([EditorStateStore, ProjectStore], (context) => ({
-    editor: context.getStore(EditorStateStore).getState(),
+export default withComponentContext(connectToStores([EditorStore, ProjectStore], (context) => ({
+    editor: context.getStore(EditorStore).getState(),
 }))(class AssetsView extends React.Component<Props, State> {
     public state = {
         newCompositionWindowOpened: false,
@@ -264,7 +264,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         _.each(e.dataTransfer.files, (file, idx) => {
             if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
 
-            this.props.context.executeOperation(ProjectModActions.addAsset, {
+            this.props.context.executeOperation(ProjectOps.addAsset, {
                 name: file.name,
                 fileType: path.extname(file.name).slice(1),
                 path: file.path,
@@ -275,24 +275,24 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
     private removeAsset = ({ dataset }: MenuItemOption<{assetId: string}>) =>
     {
         // TODO: Check references
-        this.props.context.executeOperation(ProjectModActions.removeAsset, { assetId: dataset.assetId })
+        this.props.context.executeOperation(ProjectOps.removeAsset, { assetId: dataset.assetId })
     }
 
     private changeComposition = ({currentTarget}: React.MouseEvent<HTMLTableRowElement> ) =>
     {
-        this.props.context.executeOperation(AppActions.changeActiveComposition, {
+        this.props.context.executeOperation(EditorOps.changeActiveComposition, {
             compositionId: currentTarget.dataset.compositionId!,
         })
     }
 
     private removeComposition = ({ dataset }: MenuItemOption<{compId: string}>) =>
     {
-        this.props.context.executeOperation(ProjectModActions.removeComposition, { compositionId: dataset.compId })
+        this.props.context.executeOperation(ProjectOps.removeComposition, { compositionId: dataset.compId })
     }
 
     private modifyCompName = (compositionId: string, newName: string) =>
     {
-        this.props.context.executeOperation(ProjectModActions.modifyComposition, { compositionId, props: { name: newName }})
+        this.props.context.executeOperation(ProjectOps.modifyComposition, { compositionId, props: { name: newName }})
     }
 
     private selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
@@ -301,7 +301,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         const files = Array.from(target.files!)
 
         files.forEach(file => {
-            this.props.context.executeOperation(ProjectModActions.addAsset, {
+            this.props.context.executeOperation(ProjectOps.addAsset, {
                 name: file.name,
                 fileType: path.extname(file.name).slice(1),
                 path: file.path,
@@ -320,7 +320,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         const req = await CompositionSettingModal.show({composition: comp})
 
         if (!req) return
-        this.props.context.executeOperation(ProjectModActions.modifyComposition, { compositionId: compositionId, props: castToCompositionProps(req as any) })
+        this.props.context.executeOperation(ProjectOps.modifyComposition, { compositionId: compositionId, props: castToCompositionProps(req as any) })
     }
 
     private openNewCompositionWindow =  async () =>
@@ -328,7 +328,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         const req = await CompositionSettingModal.show()
 
         if (!req) return
-        this.props.context.executeOperation(ProjectModActions.createComposition, { ...castToCompositionProps(req as any) })
+        this.props.context.executeOperation(ProjectOps.createComposition, { ...castToCompositionProps(req as any) })
     }
 
     private onAssetsDragStart = ({currentTarget}: React.DragEvent<HTMLTableRowElement>) =>
@@ -336,7 +336,7 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
         const {editor: {project}} = this.props
         if (!project) return
 
-        this.props.context.executeOperation(AppActions.setDragEntity, {
+        this.props.context.executeOperation(EditorOps.setDragEntity, {
             entity: {
                 type: 'asset',
                 asset: ProjectHelper.findAssetById(project, currentTarget.dataset.assetId!)!,
@@ -346,6 +346,6 @@ export default withComponentContext(connectToStores([EditorStateStore, ProjectSt
 
     private onAssetDragEnd = () =>
     {
-        this.props.context.executeOperation(AppActions.clearDragEntity, {})
+        this.props.context.executeOperation(EditorOps.clearDragEntity, {})
     }
 }))
