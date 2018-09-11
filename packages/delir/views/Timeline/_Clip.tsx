@@ -49,7 +49,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                     [s['Clip--p5js']]: clip.renderer === 'p5js',
                 })}
                 dragAxis='x'
-                default={{ x: left, y: 2, width, height: 'auto' }}
+                position={{ x: left, y: 2 }}
                 size={{ width: width, height: 'auto' }}
                 enableResizing={{ left: true, right: true, top: false, bottom: false }}
                 onDragStart={this.handleDragStart}
@@ -62,7 +62,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                     <ContextMenu>
                         <MenuItem label='エフェクト'>
                             {postEffectPlugins.length ? postEffectPlugins.map(entry => (
-                                <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
+                                <MenuItem label={entry.id} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
                             ) : (
                                 <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
                             )}

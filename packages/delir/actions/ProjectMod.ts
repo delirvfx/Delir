@@ -152,7 +152,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
     const propDesc = props ? props.find(prop => prop.paramName === paramName) : null
     if (!propDesc) return
 
-    frameOnClip = Math.round(frameOnClip)
+    frameOnClip = frameOnClip < 0 ? 0 : Math.round(frameOnClip)
 
     if (propDesc.animatable === false) {
         frameOnClip = 0

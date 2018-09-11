@@ -5,7 +5,7 @@ import * as _ from 'lodash'
 import * as path from 'path'
 import * as semver from 'semver'
 
-import * as DelirCorePackageJson from '../../delir-core/package.json'
+import * as DelirCorePackageJson from '@ragg/delir-core/package.json'
 
 export default class FSPluginLoader
 {
