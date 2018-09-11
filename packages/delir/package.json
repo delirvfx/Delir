@@ -1,7 +1,7 @@
 {
   "name": "@ragg/delir",
   "version": "0.0.0",
-  "main": "main.ts",
+  "main": "delir/main.js",
   "license": "MIT",
   "private": true,
   "devDependencies": {
