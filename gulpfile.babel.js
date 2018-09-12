@@ -286,9 +286,9 @@ export function compilePlugins(done) {
         watch: __DEV__,
         context: paths.src.plugins,
         entry: {
-            'chromakey/index': './chromakey/index',
             'the-world/index': './the-world/index',
             ...(__DEV__ ? {
+                // 'chromakey/index': '../experimental-plugins/chromakey/index',
                 // 'filler/index': '../experimental-plugins/filler/index',
                 // 'mmd/index': '../experimental-plugins/mmd/index',
                 // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
