@@ -423,7 +423,8 @@ export async function pack(done) {
                 // nodeGypRebuild: true,
                 directories: {
                     app: paths.build,
-                    output: paths.release,                },
+                    output: paths.release,
+                },
                 mac: {
                     target: 'dir',
                     type: "distribution",
@@ -443,8 +444,16 @@ export async function zipPackage() {
     const version = require('./package.json').version
 
     await Promise.all([
-        new Promise((resolve, reject) => zipDir(join(paths.release, 'mac'), join(paths.release, `Delir-${version}-mac.zip`), err => { err ? reject(err) : resolve() })),
-        new Promise((resolve, reject) => zipDir(join(paths.release, 'win-unpacked'), join(paths.release, `Delir-${version}-win.zip`), err => { err ? reject(err) : resolve() })),
+        new Promise((resolve, reject) => zipDir(
+            join(paths.release, 'mac'),
+            { saveTo: join(paths.release, `Delir-${version}-mac.zip`) },
+            err => { err ? reject(err) : resolve() }
+        )),
+        new Promise((resolve, reject) => zipDir(
+            join(paths.release, 'win-unpacked'),
+            { saveTo: join(paths.release, `Delir-${version}-win.zip`) },
+            err => { err ? reject(err) : resolve() }
+        )),
     ])
 }
 
