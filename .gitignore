@@ -4,9 +4,8 @@ npm-debug.log
 yarn-error.log
 node_modules/
 
-/src/plugins/proton-layer
-/flow-typed
 /prepublish
 /release
+/tmp
 /.vscode/extensions.json
 /build-assets/icons

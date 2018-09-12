@@ -1,6 +1,5 @@
 const g = require("gulp");
 const $ = require("gulp-load-plugins")();
-const rimraf = require("rimraf-promise");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
@@ -9,11 +8,14 @@ const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const builder = require('electron-builder');
 const nib = require('nib');
 const notifier = require('node-notifier');
+const download = require('download')
+const zipDir = require('zip-dir')
 
 const os = require('os')
-const fs = require("fs-promise");
+const fs = require('fs-extra')
+const path = require('path')
 const {join} = require("path");
-const {spawn, spawnSync} = require("child_process");
+const {spawn} = require("child_process");
 
 const NATIVE_MODULES = ['font-manager'];
 
@@ -29,23 +31,69 @@ const paths = {
         frontend    : join(__dirname, "./prepublish/delir/"),
     },
     build   : join(__dirname, "./prepublish/"),
-    binary  : join(__dirname, "./release/"),
+    release : join(__dirname, "./release/"),
 };
 
 const isWindows = os.type() === 'Windows_NT'
 const __DEV__ = process.env.DELIR_ENV === 'dev'
 
-export function buildBrowserJs() {
-    return g.src([join(paths.src.frontend, "browser.js")])
-        .pipe($.plumber())
-        .pipe($.babel())
-        .pipe(g.dest(paths.compiled.frontend));
+export function buildBrowserJs(done) {
+    webpack({
+        mode: __DEV__ ? 'development' : 'production',
+        target: 'electron-main',
+        node: {
+            __dirname: false,
+        },
+        watch: __DEV__,
+        context: paths.src.frontend,
+        entry: {
+            'browser': ['./browser'],
+        },
+        output: {
+            filename: '[name].js',
+            sourceMapFilename: 'map/[file].map',
+            path: paths.compiled.frontend,
+        },
+        devtool: __DEV__ ? '#source-map' : 'none',
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    loader: 'babel-loader',
+                    exclude: /node_modules/,
+                },
+            ],
+        },
+        plugins: [
+            ...(__DEV__ ? [
+                new webpack.ExternalsPlugin('commonjs', ['devtron', 'electron-devtools-installer']),
+            ] : [
+                new webpack.optimize.AggressiveMergingPlugin(),
+                new UglifyJSPlugin(),
+            ])
+        ]
+    },  function(err, stats) {
+        err && console.error(err)
+        stats.compilation.errors.length && stats.compilation.errors.forEach(e => {
+            console.error(e.message)
+            e.module && console.error(e.module.userRequest)
+        });
+
+        notifier.notify({ title: 'Delir browser build', message: 'Browser compiled' })
+        done()
+    })
 }
 
-export async function copyPackageJSON(done) {
-    const string = await fs.readFile(join(paths.src.frontend, "package.json"), {encoding: "utf8"});
+export async function buildPublishPackageJSON(done) {
+    const string = await fs.readFile(join(paths.src.frontend, 'package.json'), {encoding: "utf8"});
     const json = JSON.parse(string);
+
     delete json.devDependencies;
+    json.dependencies = {
+        // install only native modules
+        'font-manager': '0.3.0',
+    }
+
     const newJson = JSON.stringify(json, null, "  ");
 
     try { await fs.mkdir(paths.compiled.root); } catch (e) {}
@@ -57,7 +105,7 @@ export async function copyPackageJSON(done) {
 export async function symlinkNativeModules(done) {
     const prepublishNodeModules = join(paths.compiled.root, "node_modules/")
 
-    await rimraf(prepublishNodeModules);
+    await fs.remove(prepublishNodeModules);
     await fs.mkdir(prepublishNodeModules);
 
     for (let dep of NATIVE_MODULES) {
@@ -79,6 +127,37 @@ export async function symlinkNativeModules(done) {
     }
 
     done();
+}
+
+export async function downloadAndDeployFFmpeg() {
+    const ffmpegBinUrl = {
+        mac: {
+            archiveUrl: 'https://ffmpeg.zeranoe.com/builds/macos64/static/ffmpeg-4.0.2-macos64-static.zip',
+            binFile: 'ffmpeg',
+            binDist: join(paths.release,'mac/Delir.app/Contents/Resources/ffmpeg'),
+            licenseDist: join(paths.release,'mac/Delir.app/Contents/Resources/FFMPEG_LICENSE.txt'),
+        },
+        windows: {
+            archiveUrl: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.0.2-win64-static.zip',
+            binFile: 'ffmpeg.exe',
+            binDist: join(paths.release,'win-unpacked/ffmpeg.exe'),
+            licenseDist: join(paths.release,'win-unpacked/FFMPEG_LICENSE.txt'),
+        },
+    }
+
+    const downloadDir = join(__dirname, 'tmp/ffmpeg')
+
+    await fs.remove(downloadDir)
+    await fs.mkdirp(downloadDir)
+
+    console.log('Downloading ffmpeg...')
+
+    await Promise.all(Object.entries(ffmpegBinUrl).map(async ([platform, { archiveUrl, binFile, binDist, licenseDist }]) => {
+        const dirname = path.parse(archiveUrl.slice(archiveUrl.lastIndexOf('/'))).name
+        await download(archiveUrl, downloadDir, { extract: true })
+        await fs.copy(join(downloadDir, dirname, 'bin', binFile), binDist)
+        await fs.copy(join(downloadDir, dirname, 'LICENSE.txt'), licenseDist)
+    }))
 }
 
 export function compileRendererJs(done) {
@@ -139,19 +218,30 @@ export function compileRendererJs(done) {
                             },
                         },
                         {
-                            loader: 'stylus-loader'
+                            loader: 'stylus-loader',
+                            options: {
+                                'include css': true,
+                                use: [require('nib')()],
+                            },
                         },
                     ],
                 },
                 {
                     test: /\.css$/,
-                    include: /node_modules\/monaco-editor/,
                     use: [
                         'style-loader',
                         'css-loader',
                     ],
-                }
-            ]
+                },
+                {
+                    test: /\.(eot|svg|ttf|woff|woff2|gif)$/,
+                    loader: 'file-loader',
+                    options: {
+                        name: '[name][hash].[ext]',
+                        publicPath: '',
+                    },
+                },
+            ],
         },
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: paths.compiled.frontend}),
@@ -189,16 +279,16 @@ export function compileRendererJs(done) {
     })
 }
 
-export async function compilePlugins(done) {
+export function compilePlugins(done) {
     webpack({
         mode: __DEV__ ? 'development' : 'production',
         target: "electron-renderer",
         watch: __DEV__,
         context: paths.src.plugins,
         entry: {
-            'chromakey/index': './chromakey/index',
             'the-world/index': './the-world/index',
             ...(__DEV__ ? {
+                // 'chromakey/index': '../experimental-plugins/chromakey/index',
                 // 'filler/index': '../experimental-plugins/filler/index',
                 // 'mmd/index': '../experimental-plugins/mmd/index',
                 // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
@@ -283,21 +373,6 @@ export function compilePugTempates() {
         .pipe(g.dest(paths.compiled.frontend));
 }
 
-export function compileStyles() {
-    return g.src(join(paths.src.frontend, "**/[^_]*.styl"))
-        .pipe($.plumber())
-        .pipe($.stylus({
-            'include css': true,
-            use : [require("nib")()]
-        }))
-        .pipe(g.dest(paths.compiled.frontend));
-}
-
-export function copyFonts() {
-    return g.src(join(paths.src.frontend, "assets/fonts/*"))
-        .pipe(g.dest(join(paths.compiled.frontend, "assets/fonts")));
-}
-
 export function copyImage() {
     return g.src(join(paths.src.frontend, "assets/images/**/*"), {since: g.lastRun('copyImage')})
         .pipe(g.dest(join(paths.compiled.frontend, "assets/images")));
@@ -317,10 +392,9 @@ export function makeIcon() {
 }
 
 export async function pack(done) {
-    const pjson = require("./package.json");
     const yarnBin = isWindows ? 'yarn.cmd' : 'yarn'
 
-    await rimraf(join(paths.build, 'node_modules'))
+    await fs.remove(join(paths.build, 'node_modules'))
 
     await new Promise((resolve, reject) => {
         spawn(yarnBin, ['install'], {cwd: paths.build})
@@ -349,16 +423,16 @@ export async function pack(done) {
                 // nodeGypRebuild: true,
                 directories: {
                     app: paths.build,
-                    output: paths.binary,
+                    output: paths.release,
                 },
                 mac: {
-                    target: 'zip',
+                    target: 'dir',
                     type: "distribution",
                     category: "AudioVideo",
                     icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
                 },
                 win: {
-                    target: 'zip',
+                    target: 'dir',
                     icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
                 },
             },
@@ -366,8 +440,26 @@ export async function pack(done) {
     }
 }
 
+export async function zipPackage() {
+    const version = require('./package.json').version
+
+    await Promise.all([
+        new Promise((resolve, reject) => zipDir(
+            join(paths.release, 'mac'),
+            { saveTo: join(paths.release, `Delir-${version}-mac.zip`) },
+            err => { err ? reject(err) : resolve() }
+        )),
+        new Promise((resolve, reject) => zipDir(
+            join(paths.release, 'win-unpacked'),
+            { saveTo: join(paths.release, `Delir-${version}-win.zip`) },
+            err => { err ? reject(err) : resolve() }
+        )),
+    ])
+}
+
 export async function clean(done) {
-    await rimraf(paths.compiled.root)
+    await fs.remove(paths.release)
+    await fs.remove(paths.compiled.root)
 
     if (fs.existsSync(join(paths.compiled.root, "node_modules"))) {
         try { await fs.unlink(join(paths.compiled.root, "node_modules")); } catch (e) {}
@@ -377,7 +469,7 @@ export async function clean(done) {
 }
 
 export async function cleanRendererScripts(done) {
-    await rimraf(join(paths.compiled.frontend, 'scripts'))
+    await fs.remove(join(paths.compiled.frontend, 'scripts'))
     done();
 }
 
@@ -390,17 +482,16 @@ export function run(done) {
 export function watch() {
     g.watch(join(paths.src.frontend, 'browser.js'), buildBrowserJs)
     g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
-    g.watch(join(paths.src.frontend, '**/*.styl'), compileStyles)
     g.watch(join(paths.src.root, '**/package.json'), g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson))
     g.watch(join(__dirname, 'node_modules'), symlinkNativeModules)
 }
 
-const buildRendererWithoutJs = g.parallel(compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, compileStyles, copyFonts, copyImage);
-const buildBrowser = g.parallel(buildBrowserJs, g.series(copyPackageJSON, symlinkNativeModules));
-const build = g.series(buildRenderer, buildBrowser);
+const buildRendererWithoutJs = g.parallel(compilePugTempates, copyImage);
+const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, copyImage);
+const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules));
+const build = g.parallel(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
-const publish = g.series(clean, build, makeIcon, pack);
+const publish = g.series(clean, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage);
 
 export {publish, build};
 export default buildAndWatch;

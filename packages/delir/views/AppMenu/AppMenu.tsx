@@ -19,10 +19,12 @@ type Props = ConnectedProps & ContextProp
 export default withComponentContext(connectToStores([EditorStore], (context) => ({
     editor: context.getStore(EditorStore).getState()
 }))(class AppMenu extends React.Component<Props> {
+    public componentDidMount() {
+        this.setApplicationMenu()
+    }
+
     public componentDidUpdate() {
-        remote.Menu.setApplicationMenu(
-            remote.Menu.buildFromTemplate(this._buildMenu())
-        )
+        this.setApplicationMenu()
     }
 
     public shouldComponentUpdate(nextProps: Props) {
@@ -43,7 +45,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
     }
 
-    private _buildMenu(): Electron.MenuItemConstructorOptions[]
+    private setApplicationMenu(): Electron.MenuItemConstructorOptions[]
     {
         const {context} = this.props
         const {previewPlayed, activeComp} = this.props.editor
@@ -209,7 +211,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             ]
         })
 
-        if (/* __DEV__ */ true) {
+        if (__DEV__) {
             menu.push({
                 label: t('develop.label'),
                 submenu: [
@@ -231,6 +233,6 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             })
         }
 
-        return menu
+        remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(menu))
     }
 }))

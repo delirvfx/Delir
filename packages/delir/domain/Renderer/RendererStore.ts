@@ -1,6 +1,6 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
-import deream from '@ragg/deream'
+import deream, { RenderingProgress } from '@ragg/deream'
 import { listen, Store } from '@ragg/fleur'
 import { remote } from 'electron'
 import { dirname } from 'path'
@@ -14,8 +14,9 @@ interface State {
     project: Delir.Entity.Project | null
     composition: Delir.Entity.Composition | null
     progress: string | null
-    renderState: RenderState | null
+    previewRenderState: RenderState | null
     isInRendering: boolean
+    exportRenderState: RenderingProgress | null
 }
 
 export interface RenderState {
@@ -29,8 +30,9 @@ export default class RendererStore extends Store<State> {
         project: null,
         composition: null,
         progress: null,
-        renderState: null,
+        previewRenderState: null,
         isInRendering: false,
+        exportRenderState: null,
     }
 
     private pipeline = new Delir.Engine.Engine()
@@ -92,7 +94,7 @@ export default class RendererStore extends Store<State> {
 
         this.pipeline.setStreamObserver({
             onFrame: (canvas, status) => {
-                this.updateWith(d => d.renderState = {currentFrame: status.frame})
+                this.updateWith(d => d.previewRenderState = {currentFrame: status.frame})
                 this.destCanvasCtx!.drawImage(canvas, 0, 0)
             },
             onAudioBuffered: buffers => {
@@ -195,7 +197,7 @@ export default class RendererStore extends Store<State> {
                 ffmpegBin,
                 onProgress: progress => {
                     setTimeout(() => {
-                        // EditorOps.updateProcessingState(progress.state)
+                        this.updateWith(draft => draft.exportRenderState = progress)
                     }, 0)
                 }
             })
@@ -215,7 +217,11 @@ export default class RendererStore extends Store<State> {
     }
 
     public getLastRenderState() {
-        return this.state.renderState
+        return this.state.previewRenderState
+    }
+
+    public getExportingState() {
+        return this.state.exportRenderState
     }
 
     public isInRendering() {
