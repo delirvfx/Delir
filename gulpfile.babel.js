@@ -36,15 +36,55 @@ const paths = {
 const isWindows = os.type() === 'Windows_NT'
 const __DEV__ = process.env.DELIR_ENV === 'dev'
 
-export function buildBrowserJs() {
-    return g.src([join(paths.src.frontend, "browser.js")])
-        .pipe($.plumber())
-        .pipe($.babel())
-        .pipe(g.dest(paths.compiled.frontend));
+export function buildBrowserJs(done) {
+    webpack({
+        mode: __DEV__ ? 'development' : 'production',
+        target: 'electron-main',
+        node: {
+            __dirname: false,
+        },
+        watch: __DEV__,
+        context: paths.src.frontend,
+        entry: {
+            'browser': ['./browser'],
+        },
+        output: {
+            filename: '[name].js',
+            sourceMapFilename: 'map/[file].map',
+            path: paths.compiled.frontend,
+        },
+        devtool: __DEV__ ? '#source-map' : 'none',
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    loader: 'babel-loader',
+                    exclude: /node_modules/,
+                },
+            ],
+        },
+        plugins: [
+            ...(__DEV__ ? [
+                new webpack.ExternalsPlugin('commonjs', ['devtron', 'electron-devtools-installer']),
+            ] : [
+                new webpack.optimize.AggressiveMergingPlugin(),
+                new UglifyJSPlugin(),
+            ])
+        ]
+    },  function(err, stats) {
+        err && console.error(err)
+        stats.compilation.errors.length && stats.compilation.errors.forEach(e => {
+            console.error(e.message)
+            e.module && console.error(e.module.userRequest)
+        });
+
+        notifier.notify({ title: 'Delir browser build', message: 'Browser compiled' })
+        done()
+    })
 }
 
 export async function buildPublishPackageJSON(done) {
-    const string = await fs.readFile(join(paths.src.frontend, "package.json"), {encoding: "utf8"});
+    const string = await fs.readFile(join(paths.src.frontend, 'package.json'), {encoding: "utf8"});
     const json = JSON.parse(string);
 
     delete json.devDependencies;
@@ -430,7 +470,7 @@ export function watch() {
 const buildRendererWithoutJs = g.parallel(compilePugTempates, copyImage);
 const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules));
-const build = g.series(buildRenderer, buildBrowser);
+const build = g.parallel(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
 const publish = g.series(clean, build, makeIcon, pack, downloadAndDeployFFmpeg);
 

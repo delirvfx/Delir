@@ -26,6 +26,7 @@
     "@babel/plugin-transform-modules-commonjs": "7.0.0",
     "@babel/preset-env": "7.0.0",
     "@babel/register": "7.0.0",
+    "babel-loader": "8.0.2",
     "clean-webpack-plugin": "0.1.19",
     "cross-env": "5.2.0",
     "css-loader": "1.0.0",
