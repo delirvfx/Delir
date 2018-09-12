@@ -211,7 +211,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             ]
         })
 
-        if (/* __DEV__ */ true) {
+        if (__DEV__) {
             menu.push({
                 label: t('develop.label'),
                 submenu: [
