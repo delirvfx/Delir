@@ -11,6 +11,20 @@ import { ProjectHelper } from '@ragg/delir-core'
 // import PromiseQueue from './utils/PromiseQueue'
 import * as Exporter from './exporter'
 
+export enum RenderingStep {
+    Started = 'started',
+    Rendering = 'rendering',
+    Encoding = 'encoding',
+    Concat = 'concat',
+    Completed = 'completed',
+}
+
+export interface RenderingProgress {
+    step: RenderingStep
+    /** number of 0 to 1 */
+    progression: number
+}
+
 interface ExportOptions {
     project: Delir.Entity.Project
     rootCompId: string
@@ -18,7 +32,7 @@ interface ExportOptions {
     exportPath: string
     pluginRegistry: Delir.PluginRegistry
     ignoreMissingEffect?: boolean
-    onProgress?: (progress: {state: string}) => void
+    onProgress?: (progress: RenderingProgress) => void
     ffmpegBin?: string
 }
 
@@ -31,7 +45,7 @@ export default async (
     //
     // export via deream
     //
-    onProgress({state: 'Rendering started'})
+    onProgress({ step: RenderingStep.Started, progression: 0 })
 
     const comp = ProjectHelper.findCompositionById(project, rootCompId)
 
@@ -104,8 +118,8 @@ export default async (
             audioDataOffset++
         },
         onStateChanged: state => {
-            const progression =  Math.floor((state.frame / state.durationFrame) * 100)
-            onProgress({state: `Rendering: ${progression}% `})
+            const progression = state.frame / state.durationFrame
+            onProgress({ step: RenderingStep.Rendering, progression })
         }
     })
 
@@ -119,7 +133,7 @@ export default async (
     // queue.stop()
     exporter.end()
 
-    onProgress({state: 'Encoding video/audio'})
+    onProgress({ step: RenderingStep.Encoding, progression: 0 })
 
     await Promise.all<any>([
         (async () => {
@@ -136,7 +150,8 @@ export default async (
         })(),
     ])
 
-    onProgress({state: 'Concat and encoding...'})
+    onProgress({ step: RenderingStep.Concat, progression: 0 })
+
     await new Promise((resolve, reject) => {
         const ffmpeg = spawn(ffmpegBin || 'ffmpeg', [
             '-y',
@@ -172,7 +187,7 @@ export default async (
         ffmpeg.on('exit', (code: number) => code === 0 ? resolve() : reject(new Error(`Failed to mixing (Reason: ${lastMessage})`)))
     })
 
-    onProgress({state: 'Rendering completed'})
+    onProgress({ step: RenderingStep.Completed, progression: 100 })
 
     try { fs.unlinkSync(tmpMovieFilePath) } catch (e) {}
     try { fs.unlinkSync(tmpAudioFilePath) } catch (e) {}

@@ -234,7 +234,7 @@ export function compileRendererJs(done) {
                     ],
                 },
                 {
-                    test: /\.(eot|svg|ttf|woff|woff2)$/,
+                    test: /\.(eot|svg|ttf|woff|woff2|gif)$/,
                     loader: 'file-loader',
                     options: {
                         name: '[name][hash].[ext]',
