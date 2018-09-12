@@ -115,118 +115,122 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
                         onClick={this.openNewCompositionWindow}
                     ></i>
                 </h1>
-                <table className={s.compositionList}>
-                    <thead>
-                        <tr>
-                            <td className={s.compositionListIconColumn}></td>
-                            <td className={s.compositionListNameColumn}>{t('compositions.name')}</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <ContextMenu elementType='tr'>
-                            <MenuItem type='separator' />
-                            <MenuItem label={t('compositions.contextMenu.create')} onClick={this.openNewCompositionWindow} />
-                            <MenuItem type='separator' />
-                        </ContextMenu>
-                        {compositions.map(comp => (
-                            <tr
-                                key={comp.id}
-                                className={classNames(comp.id === selectedCompositionId && s.selected)}
-                                onClick={this.handleClickComposition}
-                                onDoubleClick={this.changeComposition}
-                                data-composition-id={comp.id}
-                            >
-                                <ContextMenu elementType='td'>
-                                    <MenuItem type='separator' />
-                                    <MenuItem
-                                        label={t('compositions.contextMenu.rename')}
-                                        onClick={this.handleClickRenameComposition}
-                                        data-composition-id={comp.id}
-                                    />
-                                    <MenuItem
-                                        label={t('compositions.contextMenu.remove')}
-                                        data-comp-id={comp.id}
-                                        onClick={this.removeComposition}
-                                    />
-                                    <MenuItem
-                                        label={t('compositions.contextMenu.preference')}
-                                        onClick={this.openCompositionSetting}
-                                        data-composition-id={comp.id}
-                                    />
-                                    <MenuItem type='separator' />
-                                </ContextMenu>
-
-                                <td className={s.IconField}><i className='fa fa-film'></i></td>
-                                <td>
-                                    <LabelInput
-                                        ref={this.setCompositionNameInputRef(comp.id)}
-                                        defaultValue={comp.name}
-                                        placeholder={t('compositions.namePlaceHolder')}
-                                        onChange={this.modifyCompName.bind(this, comp.id)}
-                                    />
-                                </td>
+                <div className={s.compositionsTableContainer}>
+                    <table className={s.compositionList}>
+                        <thead>
+                            <tr>
+                                <td className={s.compositionListIconColumn}></td>
+                                <td className={s.compositionListNameColumn}>{t('compositions.name')}</td>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <ContextMenu elementType='tr'>
+                                <MenuItem type='separator' />
+                                <MenuItem label={t('compositions.contextMenu.create')} onClick={this.openNewCompositionWindow} />
+                                <MenuItem type='separator' />
+                            </ContextMenu>
+                            {compositions.map(comp => (
+                                <tr
+                                    key={comp.id}
+                                    className={classNames(comp.id === selectedCompositionId && s.selected)}
+                                    onClick={this.handleClickComposition}
+                                    onDoubleClick={this.changeComposition}
+                                    data-composition-id={comp.id}
+                                >
+                                    <ContextMenu elementType='td'>
+                                        <MenuItem type='separator' />
+                                        <MenuItem
+                                            label={t('compositions.contextMenu.rename')}
+                                            onClick={this.handleClickRenameComposition}
+                                            data-composition-id={comp.id}
+                                        />
+                                        <MenuItem
+                                            label={t('compositions.contextMenu.remove')}
+                                            data-comp-id={comp.id}
+                                            onClick={this.removeComposition}
+                                        />
+                                        <MenuItem
+                                            label={t('compositions.contextMenu.preference')}
+                                            onClick={this.openCompositionSetting}
+                                            data-composition-id={comp.id}
+                                        />
+                                        <MenuItem type='separator' />
+                                    </ContextMenu>
+
+                                    <td className={s.IconField}><i className='fa fa-film'></i></td>
+                                    <td>
+                                        <LabelInput
+                                            ref={this.setCompositionNameInputRef(comp.id)}
+                                            defaultValue={comp.name}
+                                            placeholder={t('compositions.namePlaceHolder')}
+                                            onChange={this.modifyCompName.bind(this, comp.id)}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 <h1 className={s.assetsHeading}>
                     Assets
                     <label className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
                         <input ref='assetInput' type='file' style={{display: 'none'}} onChange={this.selectAsset} multiple />
                     </label>
                 </h1>
-                <table className={s.assetList} onDrop={this.addAsset}>
-                    <thead>
-                        <tr>
-                            <td className={classNames(s.assetListIconColumn)}></td>
-                            <td className={classNames(s.assetListNameColumn)}>{t('assets.name')}</td>
-                            <td className={classNames(s.assetListTypeColumn)}>{t('assets.fileType')}</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {assets.map(asset => (
-                            <tr
-                                key={asset.id}
-                                className={classNames(asset.id === selectedAssetId && s.selected)}
-                                draggable
-                                onClick={this.handleClickAsset}
-                                onDragStart={this.onAssetsDragStart}
-                                onDragEnd={this.onAssetDragEnd}
-                                data-asset-id={asset.id}
-                            >
-                                <ContextMenu elementType='td'>
-                                    <MenuItem type='separator' />
-                                    {/*<MenuItem label='Reload' onClick={() => {}} />*/}
-                                    <MenuItem label={t('assets.contextMenu.remove')} data-asset-id={asset.id} onClick={this.removeAsset}/>
-                                    <MenuItem type='separator' />
-                                    <MenuItem
-                                        label={t('assets.contextMenu.copyAssetURI')}
-                                        data-asset-id={asset.id}
-                                        onClick={this.handleCopyAssetURI}
-                                    />
-                                </ContextMenu>
-
-                                <td className={s.IconField}>{fileIconFromExtension(asset.fileType)}</td>
-                                <td>
-                                    <ContextMenu>
+                <div className={s.assetsTableContainer} onDrop={this.handleDropAsset}>
+                    <table className={s.assetList}>
+                        <thead>
+                            <tr>
+                                <td className={classNames(s.assetListIconColumn)}></td>
+                                <td className={classNames(s.assetListNameColumn)}>{t('assets.name')}</td>
+                                <td className={classNames(s.assetListTypeColumn)}>{t('assets.fileType')}</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {assets.map(asset => (
+                                <tr
+                                    key={asset.id}
+                                    className={classNames(asset.id === selectedAssetId && s.selected)}
+                                    draggable
+                                    onClick={this.handleClickAsset}
+                                    onDragStart={this.onAssetsDragStart}
+                                    onDragEnd={this.onAssetDragEnd}
+                                    data-asset-id={asset.id}
+                                >
+                                    <ContextMenu elementType='td'>
+                                        <MenuItem type='separator' />
+                                        {/*<MenuItem label='Reload' onClick={() => {}} />*/}
+                                        <MenuItem label={t('assets.contextMenu.remove')} data-asset-id={asset.id} onClick={this.removeAsset}/>
+                                        <MenuItem type='separator' />
                                         <MenuItem
-                                            label={t('assets.contextMenu.rename')}
-                                            onClick={this.handleClickRenameAsset}
+                                            label={t('assets.contextMenu.copyAssetURI')}
                                             data-asset-id={asset.id}
+                                            onClick={this.handleCopyAssetURI}
                                         />
                                     </ContextMenu>
-                                    <LabelInput
-                                        ref={this.setAssetNameInputRef(asset.id)}
-                                        defaultValue={asset.name}
-                                        placeholder='Unnamed Asset'
-                                        doubleClickToEdit
-                                    />
-                                </td>
-                                <td>{asset.fileType}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+
+                                    <td className={s.IconField}>{fileIconFromExtension(asset.fileType)}</td>
+                                    <td>
+                                        <ContextMenu>
+                                            <MenuItem
+                                                label={t('assets.contextMenu.rename')}
+                                                onClick={this.handleClickRenameAsset}
+                                                data-asset-id={asset.id}
+                                            />
+                                        </ContextMenu>
+                                        <LabelInput
+                                            ref={this.setAssetNameInputRef(asset.id)}
+                                            defaultValue={asset.name}
+                                            placeholder='Unnamed Asset'
+                                            doubleClickToEdit
+                                        />
+                                    </td>
+                                    <td>{asset.fileType}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </Pane>
         )
     }
@@ -259,7 +263,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
         clipboard.writeText(`delir:${dataset.assetId}`)
     }
 
-    private addAsset = (e: React.DragEvent<HTMLTableElement>) =>
+    private handleDropAsset = (e: React.DragEvent<HTMLDivElement>) =>
     {
         _.each(e.dataTransfer.files, (file, idx) => {
             if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
