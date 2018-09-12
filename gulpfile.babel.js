@@ -449,6 +449,7 @@ export async function zipPackage() {
 }
 
 export async function clean(done) {
+    await fs.remove(paths.release)
     await fs.remove(paths.compiled.root)
 
     if (fs.existsSync(join(paths.compiled.root, "node_modules"))) {
