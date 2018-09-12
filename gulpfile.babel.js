@@ -9,6 +9,7 @@ const builder = require('electron-builder');
 const nib = require('nib');
 const notifier = require('node-notifier');
 const download = require('download')
+const zipDir = require('zip-dir')
 
 const os = require('os')
 const fs = require('fs-extra')
@@ -30,7 +31,7 @@ const paths = {
         frontend    : join(__dirname, "./prepublish/delir/"),
     },
     build   : join(__dirname, "./prepublish/"),
-    binary  : join(__dirname, "./release/"),
+    release : join(__dirname, "./release/"),
 };
 
 const isWindows = os.type() === 'Windows_NT'
@@ -133,14 +134,14 @@ export async function downloadAndDeployFFmpeg() {
         mac: {
             archiveUrl: 'https://ffmpeg.zeranoe.com/builds/macos64/static/ffmpeg-4.0.2-macos64-static.zip',
             binFile: 'ffmpeg',
-            binDist: join(paths.binary, 'mac/Delir.app/Contents/Resources/ffmpeg'),
-            licenseDist: join(paths.binary, 'mac/Delir.app/Contents/Resources/FFMPEG_LICENSE.txt'),
+            binDist: join(paths.release,'mac/Delir.app/Contents/Resources/ffmpeg'),
+            licenseDist: join(paths.release,'mac/Delir.app/Contents/Resources/FFMPEG_LICENSE.txt'),
         },
         windows: {
             archiveUrl: 'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.0.2-win64-static.zip',
             binFile: 'ffmpeg.exe',
-            binDist: join(paths.binary, 'win-unpacked/ffmpeg.exe'),
-            licenseDist: join(paths.binary, 'win-unpacked/FFMPEG_LICENSE.txt'),
+            binDist: join(paths.release,'win-unpacked/ffmpeg.exe'),
+            licenseDist: join(paths.release,'win-unpacked/FFMPEG_LICENSE.txt'),
         },
     }
 
@@ -422,21 +423,29 @@ export async function pack(done) {
                 // nodeGypRebuild: true,
                 directories: {
                     app: paths.build,
-                    output: paths.binary,
-                },
+                    output: paths.release,                },
                 mac: {
-                    target: 'zip',
+                    target: 'dir',
                     type: "distribution",
                     category: "AudioVideo",
                     icon: join(__dirname, 'build-assets/icons/mac/icon.icns'),
                 },
                 win: {
-                    target: 'zip',
+                    target: 'dir',
                     icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
                 },
             },
         })
     }
+}
+
+export async function zipPackage() {
+    const version = require('./package.json').version
+
+    await Promise.all([
+        new Promise((resolve, reject) => zipDir(join(paths.release, 'mac'), join(paths.release, `Delir-${version}-mac.zip`), err => { err ? reject(err) : resolve() })),
+        new Promise((resolve, reject) => zipDir(join(paths.release, 'win-unpacked'), join(paths.release, `Delir-${version}-win.zip`), err => { err ? reject(err) : resolve() })),
+    ])
 }
 
 export async function clean(done) {
@@ -472,7 +481,7 @@ const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compileP
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules));
 const build = g.parallel(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
-const publish = g.series(clean, build, makeIcon, pack, downloadAndDeployFFmpeg);
+const publish = g.series(clean, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage);
 
 export {publish, build};
 export default buildAndWatch;
