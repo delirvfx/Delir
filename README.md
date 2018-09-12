@@ -19,18 +19,13 @@ See [plugin-example](https://github.com/Ragg-/Delir/tree/alpha-release/src/delir
   - ffmpeg
     `brew install ffmpeg`
 
-2. clone this repository
+2. Clone this repository
   ```
   git clone git@github.com:Ragg-/delir.git
   git checkout release/0.0.0-alpha.4
   ```
 
-3. install dependent node modules
-  ```
-  ./setup.sh
-  ```
-
-4. Start development
+3. Install dependency and start development
   ```
   yarn dev
   ```
