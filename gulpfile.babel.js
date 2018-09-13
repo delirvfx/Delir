@@ -302,16 +302,6 @@ export function compilePlugins(done) {
             libraryTarget: 'commonjs-module',
         },
         devtool: __DEV__ ? "#source-map" : 'none',
-        externals: [
-            (ctx, request, callback) => {
-                if (request !== 'delir-core') return callback()
-                callback(null, `require('${request}')`)
-                // if (/^(?!\.\.?\/|\!\!?)/.test(request)) {
-                //     // throughs non relative requiring ('./module', '../module', '!!../module')
-                //     return callback(null, `require('${request}')`)
-                // }
-            }
-        ],
         resolve: {
             extensions: ['.js', '.ts'],
             modules: ["node_modules"],
@@ -336,6 +326,7 @@ export function compilePlugins(done) {
         plugins: [
             new CleanWebpackPlugin([''], {verbose: true, root: join(paths.compiled.root, 'plugins')}),
             new webpack.DefinePlugin({__DEV__: JSON.stringify(__DEV__)}),
+            new webpack.ExternalsPlugin('commonjs', ['delir-core', '@ragg/delir-core']),
             ...(__DEV__ ? [] : [
                 new webpack.optimize.AggressiveMergingPlugin(),
                 new UglifyJSPlugin(),
