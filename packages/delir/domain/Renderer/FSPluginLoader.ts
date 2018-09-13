@@ -1,11 +1,13 @@
-import { DelirPluginPackageJson, PluginEntry } from '@ragg/delir-core/src/PluginSupport/types'
-
 import * as fs from 'fs-extra'
 import * as _ from 'lodash'
 import * as path from 'path'
 import * as semver from 'semver'
 
+import { PluginBase } from '@ragg/delir-core'
 import * as DelirCorePackageJson from '@ragg/delir-core/package.json'
+import { DelirPluginPackageJson, PluginEntry } from '@ragg/delir-core/src/PluginSupport/types'
+
+import PluginScriptLoader from './PluginScriptLoader'
 
 export default class FSPluginLoader
 {
@@ -37,7 +39,7 @@ export default class FSPluginLoader
                 const json: DelirPluginPackageJson = JSON.parse(content)
                 const entryPath = json.main
                     ? path.join(packageRoot, json.main)
-                    : path.join(packageRoot, 'index')
+                    : path.join(packageRoot, 'index.js')
 
                 // const validate = validatePluginPackageJSON(json)
                 // if (!validate.valid) {
@@ -52,20 +54,21 @@ export default class FSPluginLoader
                     throw new Error(`Plugin \`${json.name}\` not compatible to current delir-core version`)
                 }
 
-                let pluginClass = global.require(entryPath)
+                const exports = PluginScriptLoader.load(entryPath)
+                let pluginClass: typeof PluginBase
 
                 // resolve babel's module exposing
-                if (pluginClass.__esModule && pluginClass.default) {
-                    pluginClass = pluginClass.default
+                if (exports.default) {
+                    pluginClass = exports.default
                 } else {
-                    pluginClass = pluginClass
+                    pluginClass = exports
                 }
 
                 packages[json.name] = {
                     id: json.name,
                     type: json.delir.type,
                     packageJson: json,
-                    class: pluginClass, // load later
+                    class: pluginClass,
                 }
             } catch (e) {
                 failedPackages.push({package: dir, reason: e.message, error: e})
