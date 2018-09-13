@@ -107,7 +107,7 @@ export default class TextLayer implements IRenderer<TextRendererParam>
         ctx.translate(param.x, param.y)
         ctx.rotate(rad)
 
-        ctx.globalAlpha = _.clamp(param.opacity / 100, 0, 1)
+        ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
         ctx.textBaseline = 'top'
         ctx.fillStyle = param.color.toString()
         ctx.font = `${param.weight} ${param.size}px/${lineHeight} ${family}`

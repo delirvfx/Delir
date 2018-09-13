@@ -93,7 +93,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
         const img = this._image
         const rad = param.rotate * Math.PI / 180
 
-        ctx.globalAlpha = _.clamp(param.opacity / 100, 0, 100)
+        ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
         ctx.translate(param.x, param.y)
         ctx.scale(param.scale / 100, param.scale / 100)
         ctx.translate(img.width / 2, img.height / 2)
