@@ -45,7 +45,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
     }
 
-    private setApplicationMenu(): Electron.MenuItemConstructorOptions[]
+    private setApplicationMenu()
     {
         const {context} = this.props
         const {previewPlayed, activeComp} = this.props.editor
