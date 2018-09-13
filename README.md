@@ -32,6 +32,14 @@ See [plugin-example](https://github.com/Ragg-/Delir/tree/alpha-release/src/delir
 
   Ctrl+C to interrupt
 
+#### Production building
+Now only building for development machine platform. (mac / win)
+Native module can not build for another platform.
+
+```
+yarn build
+```
+
 ### Path to code
 - packages
   - **delir**  -- Electron frontend of Delir
