@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 import * as _ from 'lodash'
 
 import { resampling } from '../../../helper/Audio'
@@ -8,13 +9,6 @@ import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
-
-import 'aac'
-import 'alac/src/decoder'
-import * as AV from 'av/node'
-import 'flac'
-import * as fs from 'fs'
-import 'mp3'
 
 interface AVFormat {
     bitrate: number
