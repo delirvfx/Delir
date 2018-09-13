@@ -1,4 +1,4 @@
-const { PostEffectBase, Values, Type } = require("@ragg/delir-core");
+const { Values, Type } = require("@ragg/delir-core");
 
 module.exports.default = class MockPlugin {
     /**
