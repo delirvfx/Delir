@@ -1,10 +1,8 @@
 import {
-    PluginSupport,
     PostEffectBase,
     PreRenderRequest,
     RenderRequest,
     Type,
-    Values
 } from '@ragg/delir-core'
 
 import * as clamp from 'lodash/clamp'
@@ -49,10 +47,10 @@ export default class TheWorldPostEffect extends PostEffectBase {
         const { canvas } = this.bufCtx
 
         if (req.frameOnClip === 0) {
-            this.bufCtx.drawImage(req.srcCanvas, 0, 0)
+            this.bufCtx.drawImage(req.srcCanvas!, 0, 0)
         }
 
-        const destCtx = req.destCanvas.getContext('2d')
+        const destCtx = req.destCanvas.getContext('2d')!
         destCtx.globalAlpha = clamp(param.opacity, 0, 100) / 100
         destCtx.clearRect(0, 0, req.width, req.height)
         destCtx.drawImage(canvas, 0, 0)
