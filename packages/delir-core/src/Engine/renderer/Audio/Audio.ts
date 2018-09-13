@@ -59,8 +59,8 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
     }
 
     private _audio: {
-        source: string
-        format: AVFormat
+        sourcePath: string
+        numberOfChannels: number
         buffers: Float32Array[]
     }
 
@@ -68,39 +68,21 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
     {
         const params = req.parameters
 
-        if ((this._audio || {} as any).source === params.source.path) {
+        if (this._audio && this._audio.sourcePath === params.source.path) {
             return
         }
 
-        const {buffers, format} = await new Promise<{buffers: Float32Array[], format: AVFormat}>((resolve, reject) => {
-            const fileBuffer = fs.readFileSync(params.source.path)
-            const asset = AV.Asset.fromBuffer(fileBuffer)
+        // `AudioContext` cause depletion, use OfflineAudioContext
+        const context = new OfflineAudioContext(1, req.audioChannels, req.samplingRate)
+        const content = fs.readFileSync(params.source.path)
+        const audioBuffer = await context.decodeAudioData(content.buffer as ArrayBuffer)
+        const buffers = _.times(audioBuffer.numberOfChannels, ch => audioBuffer.getChannelData(ch))
 
-            asset.on('error', (e: string) => reject(new Error(e)))
-            asset.decodeToBuffer(async (decoded: Float32Array) => {
-                const numOfChannels: number = asset.format.channelsPerFrame
-                const length = (decoded.length / numOfChannels)
-                let buffers: Float32Array[] = []
-
-                for (let ch = 0; ch < numOfChannels; ch++) {
-                    const chBuffer: Float32Array = new Float32Array(length)
-
-                    for (let i = 0; i < length; i++) {
-                        chBuffer[i] = decoded[ch + i * numOfChannels]
-                    }
-
-                    buffers.push(chBuffer)
-                }
-
-                buffers = await resampling(format.sampleRate, req.samplingRate, buffers)
-
-                resolve({buffers, format: asset.format})
-            })
-        })
+        await resampling(audioBuffer.sampleRate, req.samplingRate, buffers)
 
         this._audio = {
-            source: params.source.path,
-            format,
+            sourcePath: params.source.path,
+            numberOfChannels: audioBuffer.numberOfChannels,
             buffers,
         }
     }
@@ -125,7 +107,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
 
         const slices: Float32Array[] = new Array(req.audioChannels)
 
-        for (let ch = 0, l = source.format.channelsPerFrame; ch < l; ch++) {
+        for (let ch = 0, l = source.numberOfChannels; ch < l; ch++) {
             const buffer = source.buffers[ch]
             slices[ch] = buffer.slice(begin, end)
         }
@@ -133,8 +115,8 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         // Resampling & gaining
         const context = new OfflineAudioContext(req.audioChannels, req.neededSamples, req.samplingRate)
 
-        const inputBuffer = context.createBuffer(source.format.channelsPerFrame, req.neededSamples, req.samplingRate)
-        _.times(source.format.channelsPerFrame, ch => inputBuffer.copyToChannel(slices[ch], ch))
+        const inputBuffer = context.createBuffer(source.numberOfChannels, req.neededSamples, req.samplingRate)
+        _.times(source.numberOfChannels, ch => inputBuffer.copyToChannel(slices[ch], ch))
 
         const gain = context.createGain()
         gain.gain.value = volume
