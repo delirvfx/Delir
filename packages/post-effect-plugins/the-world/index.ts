@@ -1,10 +1,8 @@
 import {
-    PluginSupport,
     PostEffectBase,
     PreRenderRequest,
     RenderRequest,
     Type,
-    Values
 } from '@ragg/delir-core'
 
 import * as clamp from 'lodash/clamp'
@@ -22,6 +20,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
             .float('opacity', {label: 'Opacity', defaultValue: 100, animatable: true})
     }
 
+    private canvas: HTMLCanvasElement
     private bufCtx: CanvasRenderingContext2D
 
     /**
@@ -36,6 +35,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
         canvas.width = req.width
         canvas.height = req.height
 
+        this.canvas = canvas
         this.bufCtx = canvas.getContext('2d')!
     }
 
@@ -46,15 +46,14 @@ export default class TheWorldPostEffect extends PostEffectBase {
     public async render(req: RenderRequest<Params>)
     {
         const param = req.parameters
-        const { canvas } = this.bufCtx
 
         if (req.frameOnClip === 0) {
-            this.bufCtx.drawImage(req.srcCanvas, 0, 0)
+            this.bufCtx.drawImage(req.srcCanvas!, 0, 0)
         }
 
-        const destCtx = req.destCanvas.getContext('2d')
+        const destCtx = req.destCanvas.getContext('2d')!
         destCtx.globalAlpha = clamp(param.opacity, 0, 100) / 100
         destCtx.clearRect(0, 0, req.width, req.height)
-        destCtx.drawImage(canvas, 0, 0)
+        destCtx.drawImage(this.canvas, 0, 0)
     }
 }

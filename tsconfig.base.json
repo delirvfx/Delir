@@ -12,7 +12,7 @@
         "forceConsistentCasingInFileNames": true,
         "allowJs": true,
         "target": "es2016",
-        "module": "es2015",
+        "module": "commonjs",
         "moduleResolution": "node",
         "jsx": "react",
         "lib": [

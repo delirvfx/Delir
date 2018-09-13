@@ -8,7 +8,7 @@
     "@types/classnames": "2.2.6",
     "@types/electron": "1.6.10",
     "@types/flux": "3.1.8",
-    "@types/fs-extra": "5.0.4",
+    "@types/fs-extra": "^5.0.4",
     "@types/jest": "23.3.2",
     "@types/joi": "13.4.4",
     "@types/keymirror": "0.1.1",

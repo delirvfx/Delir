@@ -15,7 +15,7 @@ declare module 'devtron' {
 declare module 'mouse-wheel' {
     const _: (
         element: Element,
-        callback: (dx: number, dy:number) => void,
+        callback: (dx: number, dy: number) => void,
         noScroll?: boolean
     ) => void
 
@@ -61,11 +61,6 @@ declare module 'form-serialize' {
 
     namespace serialize {}
     export = serialize
-}
-
-declare module 'fs-extra' {
-    const _: any
-    export default _
 }
 
 declare interface SVGGElement {

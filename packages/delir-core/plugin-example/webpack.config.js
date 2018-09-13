@@ -19,17 +19,6 @@ module.exports = {
         extensions: [".js", ".ts"],
         modules: ["node_modules"],
     },
-    externals: [
-        (context, request, callback) => {
-            // Resolve `delir-core` module from Delir runtime version
-            if (/^delir-core/.test(request)) {
-                callback(null, `require("${request}")`);
-                return;
-            }
-
-            callback();
-        }
-    ],
     module: {
         rules: [
             {
@@ -37,10 +26,12 @@ module.exports = {
                 loader: "awesome-typescript-loader",
                 options: {
                     // If you want to type checking, please set 'false' to this option.
-                    // But delir-core typings is very broken. TypeScript warns to delir-core's broken typing...
                     transpileOnly: true
                 }
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.ExternalsPlugin('commonjs', ['delir-core']),
+    ]
 };

@@ -44,13 +44,11 @@ export default class RendererStore extends Store<State> {
     private audioContext: AudioContext | null = null
     private audioBuffer: AudioBuffer | null = null
 
-    // @ts-ignore: unused private but listener
     private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
         this.pipeline.project = payload.project
         this.updateWith(d => { d.project = payload.project })
     })
 
-    // @ts-ignore: unused private but listener
     private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, (payload) => {
         if (!this.state.project) return
 
@@ -61,18 +59,15 @@ export default class RendererStore extends Store<State> {
         // renderer.stop()
     })
 
-    // @ts-ignore: unused private but listener
     private handleAddPlugins = listen(RendererActions.addPlugins, (payload) => {
         this.pluginRegistry.registerPlugin(payload.plugins)
     })
 
-    // @ts-ignore: unused private but listener
     private handleSetPreviewCanvas = listen(RendererActions.setPreviewCanvas, (payload) => {
         this.destCanvas = payload.canvas
         this.destCanvasCtx = this.destCanvas.getContext('2d')!
     })
 
-    // @ts-ignore: unused private but listener
     private handleStartPreveiew = listen(EditorActions.startPreviewAction, (payload) => {
         if (!this.state.project || !this.state.composition || !this.destCanvas || !this.destCanvasCtx) return
 
@@ -134,12 +129,10 @@ export default class RendererStore extends Store<State> {
         })
     })
 
-    // @ts-ignore: unused private but listener
     private handleStopPreview = listen(EditorActions.stopPreviewAction, () => {
         this.pipeline.stopCurrentRendering()
     })
 
-    // @ts-ignore: unused private but listener
     private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, (payload) => {
         const {frame} = payload
         const targetComposition = this.state.composition!
@@ -151,7 +144,6 @@ export default class RendererStore extends Store<State> {
         this.pipeline!.renderFrame(targetComposition.id, frame).catch(e => console.error(e))
     })
 
-    // @ts-ignore: unused private but listener
     private handleRenderDestinate = listen(EditorActions.renderDestinateAction, async (payload) => {
         const appPath = dirname(remote.app.getPath('exe'))
         const ffmpegBin = __DEV__ ? 'ffmpeg' : require('path').resolve(

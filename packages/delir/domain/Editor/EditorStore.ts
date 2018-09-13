@@ -42,7 +42,6 @@ export default class EditorStore extends Store<EditorState> {
         notifications: []
     }
 
-    // @ts-ignore
     private handlesetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
         __DEV__ && console.log('✨ Project activated', payload.project)
 
@@ -58,7 +57,6 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    // @ts-ignore
     private handleclearActiveProject = listen(EditorActions.clearActiveProjectAction, () => {
         __DEV__ && console.log('💥 Project deactivated')
 
@@ -71,7 +69,6 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    // @ts-ignore
     private handleRemoveClip = listen(ProjectActions.removeClipAction, (payload) => {
         const { activeClip } = this.state
 
@@ -80,7 +77,6 @@ export default class EditorStore extends Store<EditorState> {
         }
     })
 
-    // @ts-ignore
     private handleRemoveLayer = listen(ProjectActions.removeLayerAction, ({ targetLayerId }) => {
         const { activeClip } = this.state
         if (!activeClip) return
@@ -92,17 +88,14 @@ export default class EditorStore extends Store<EditorState> {
         clipContainedLayer && this.updateWith(d => d.activeClip = null)
     })
 
-    // @ts-ignore
     private handlesetDragEntity = listen(EditorActions.setDragEntityAction, (payload) => {
         this.updateWith(d => d.dragEntity = payload)
     })
 
-    // @ts-ignore
     private handleclearDragEntity = listen(EditorActions.clearDragEntityAction, () => {
         this.updateWith(d => d.dragEntity = null)
     })
 
-    // @ts-ignore
     private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, ({ compositionId }) => {
         if (this.state.project == null) return
 
@@ -114,7 +107,6 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    // @ts-ignore
     private handlechangeActiveClip = listen(EditorActions.changeActiveClipAction, (payload) => {
         if (this.state.project == null) return
 
@@ -122,27 +114,22 @@ export default class EditorStore extends Store<EditorState> {
         this.updateWith(d => d.activeClip = clip)
     })
 
-    // @ts-ignore
     private handleupdateProcessingState = listen(EditorActions.updateProcessingStateAction, (payload) => {
         this.updateWith(d => d.processingState = payload.stateText)
     })
 
-    // @ts-ignore
     private handlestartPreview = listen(EditorActions.startPreviewAction, () => {
         this.updateWith(d => d.previewPlayed = true)
     })
 
-    // @ts-ignore
     private handlestopPreview = listen(EditorActions.stopPreviewAction, () => {
         this.updateWith(d => d.previewPlayed = false)
     })
 
-    // @ts-ignore
     private handleseekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, (payload) => {
         this.updateWith(d => d.currentPreviewFrame = Math.round(payload.frame))
     })
 
-    // @ts-ignore
     private handleaddMessage = listen(EditorActions.addMessageAction, (payload) => {
         this.updateWith(d => {
             d.notifications.push({
@@ -155,7 +142,6 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    // @ts-ignore
     private handleRemoveMessage = listen(EditorActions.removeMessageAction, (payload) => {
         this.updateWith(d => {
             const idx = d.notifications.findIndex(entry => entry!.id === payload.id)
@@ -163,7 +149,6 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    // @ts-ignore
     private handleChangePreferenceOpenState = listen(EditorActions.changePreferenceOpenStateAction, ({ open }) => {
         this.updateWith(draft => draft.preferenceOpened = open)
     })
