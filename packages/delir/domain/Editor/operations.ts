@@ -38,7 +38,7 @@ export const openPluginDirectory = operation((context, arg: {}) => {
 //
 // Editor Store
 //Delir.Entity.
-export const setActiveProject = operation((context, arg: { project: Delir.Entity.Project, path?: string }) => {
+export const setActiveProject = operation((context, arg: { project: Delir.Entity.Project, path?: string | null }) => {
     context.dispatch(EditorActions.setActiveProjectAction, {
         project: arg.project,
         path: arg.path,
@@ -190,7 +190,7 @@ export const saveProject = operation(async (
         newPath = context.getStore(EditorStore).getState().projectPath
     }
 
-    context.executeOperation(setActiveProject, { project, ...(keepPath ? {} : {path: newPath || undefined}) }) // update path
+    context.executeOperation(setActiveProject, { project, path: newPath }) // update path
 
     !silent && await context.executeOperation(notify, {
         message: t('saved'),
