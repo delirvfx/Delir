@@ -1,3 +1,5 @@
+import * as _ from 'lodash'
+
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
 import PreRenderingRequest from '../../PreRenderingRequest'
@@ -27,6 +29,8 @@ export default class AdjustmentRenderer implements IRenderer<Param>
 
     public async render(req: RenderingRequest<Param>)
     {
-        req.destCanvas.getContext('2d')!.drawImage(req.srcCanvas!, 0, 0)
+        const ctx = req.destCanvas.getContext('2d')!
+        ctx.globalAlpha = _.clamp(req.parameters.opacity, 0, 100) / 100
+        ctx.drawImage(req.srcCanvas!, 0, 0)
     }
 }
