@@ -935,10 +935,6 @@
     "@webassemblyjs/wast-parser" "1.5.13"
     long "^3.2.0"
 
-aac@0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/aac/-/aac-0.1.3.tgz#eb56b6b7b073cc8c43b2db027dbad33073e14a48"
-
 abab@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"
@@ -950,10 +946,6 @@ abab@^2.0.0:
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
-
-abc@0.5.x:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/abc/-/abc-0.5.1.tgz#56e6a4b56ed691aada9049a7ad38825892ec61b3"
 
 accessibility-developer-tools@^2.11.0:
   version "2.12.0"
@@ -1025,10 +1017,6 @@ ajv@^6.1.0, ajv@^6.5.2:
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.1"
-
-alac@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/alac/-/alac-0.1.0.tgz#da1bf3bd5d0801d019fc389c4caf8cab85bafd13"
 
 align-text@^0.1.1, align-text@^0.1.3:
   version "0.1.4"
@@ -1416,14 +1404,6 @@ audiobuffer-to-wav@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/audiobuffer-to-wav/-/audiobuffer-to-wav-1.0.0.tgz#d5b432271455e7fee56b111cd0f8d620d7f9e105"
 
-av@0.4.9:
-  version "0.4.9"
-  resolved "https://registry.yarnpkg.com/av/-/av-0.4.9.tgz#8c7165f739580a541ec95071423492b3ffdc6e20"
-  dependencies:
-    coffeeify "^0.6.0"
-  optionalDependencies:
-    speaker "^0.3.0"
-
 aws-sign2@~0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/aws-sign2/-/aws-sign2-0.6.0.tgz#14342dd38dbcc94d0e5b87d763cd63612c0e794f"
@@ -1705,10 +1685,6 @@ bignumber.js@^2.1.0:
 binary-extensions@^1.0.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.8.0.tgz#48ec8d16df4377eae5fa5884682480af4d95c774"
-
-bindings@^1.2.1:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.3.0.tgz#b346f6ecf6a95f5a815c5839fc7cdb22502f1ed7"
 
 bl@^1.0.0:
   version "1.2.2"
@@ -2280,20 +2256,6 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
-coffee-script@~1.7.0:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/coffee-script/-/coffee-script-1.7.1.tgz#62996a861780c75e6d5069d13822723b73404bfc"
-  dependencies:
-    mkdirp "~0.3.5"
-
-coffeeify@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/coffeeify/-/coffeeify-0.6.0.tgz#75caba9b2e92c7836c92465c883b6acc9d894652"
-  dependencies:
-    coffee-script "~1.7.0"
-    convert-source-map "~0.3.3"
-    through "~2.3.4"
-
 collection-map@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/collection-map/-/collection-map-0.1.0.tgz#4cff91d25108d79f4edeecce6ecee3e488f267c2"
@@ -2443,10 +2405,6 @@ content-disposition@^0.5.2:
 convert-source-map@^1.1.0, convert-source-map@^1.4.0, convert-source-map@^1.5.0, convert-source-map@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.5.1.tgz#b8278097b9bc229365de5c62cf5fcaed8b5599e5"
-
-convert-source-map@~0.3.3:
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-0.3.5.tgz#f1d802950af7dd2631a1febe0596550c86ab3190"
 
 copy-concurrently@^1.0.0:
   version "1.0.5"
@@ -3706,13 +3664,6 @@ fined@^1.0.1:
     lodash.pick "^4.2.1"
     parse-filepath "^1.0.1"
 
-flac@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/flac/-/flac-0.3.0.tgz#e59e410c3b4856ac97ff588a1f54304ac318933c"
-  dependencies:
-    abc "0.5.x"
-    fsa "0.5.x"
-
 flagged-respawn@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/flagged-respawn/-/flagged-respawn-1.0.0.tgz#4e79ae9b2eb38bf86b3bb56bf3e0a56aa5fcabd7"
@@ -3904,10 +3855,6 @@ fs-write-stream-atomic@^1.0.8:
 fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
-
-fsa@0.5.x:
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/fsa/-/fsa-0.5.1.tgz#c5552c80563dda02f8c683ecac9f57c1951613db"
 
 fsevents@^1.2.2, fsevents@^1.2.3:
   version "1.2.4"
@@ -6309,10 +6256,6 @@ mkdirp@0.5.1, mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdi
   dependencies:
     minimist "0.0.8"
 
-mkdirp@~0.3.5:
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.3.5.tgz#de3e5f8961c88c787ee1368df849ac4413eca8d7"
-
 monaco-editor-webpack-plugin@1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/monaco-editor-webpack-plugin/-/monaco-editor-webpack-plugin-1.5.1.tgz#2f2ff876d522e25042e5621bc81cb9eee6743010"
@@ -6339,10 +6282,6 @@ move-concurrently@^1.0.1:
     mkdirp "^0.5.1"
     rimraf "^2.5.4"
     run-queue "^1.0.3"
-
-mp3@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/mp3/-/mp3-0.1.0.tgz#e53e4723e34698ee3ffddcdb60bf88356a4910c1"
 
 ms@0.7.2:
   version "0.7.2"
@@ -6373,7 +6312,7 @@ mz@2.6.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@>=2.10.0, nan@^2.2.0, nan@^2.9.2:
+nan@>=2.10.0, nan@^2.9.2:
   version "2.10.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
 
@@ -8529,15 +8468,6 @@ spdx-license-ids@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.0.tgz#7a7cd28470cc6d3a1cfe6d66886f6bc430d3ac87"
 
-speaker@^0.3.0:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/speaker/-/speaker-0.3.1.tgz#19965f87b54be291554826c2c9338e0afd5b7594"
-  dependencies:
-    bindings "^1.2.1"
-    debug "^2.2.0"
-    nan "^2.2.0"
-    readable-stream "^2.0.5"
-
 speedometer@~0.1.2:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/speedometer/-/speedometer-0.1.4.tgz#9876dbd2a169d3115402d48e6ea6329c8816a50d"
@@ -8953,7 +8883,7 @@ through2@~0.2.3:
     readable-stream "~1.1.9"
     xtend "~2.1.1"
 
-through@^2.3.6, through@~2.3.4:
+through@^2.3.6:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
 
