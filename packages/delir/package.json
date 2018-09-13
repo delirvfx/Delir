@@ -1,5 +1,5 @@
 {
-  "name": "@ragg/delir",
+  "name": "delir",
   "version": "0.0.0",
   "main": "delir/browser.js",
   "license": "MIT",
