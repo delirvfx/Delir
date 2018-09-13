@@ -17,12 +17,10 @@ export default class PreferenceStore extends Store<Preference> {
         },
     }
 
-    // @ts-ignore
     private restorePreference = listen(PreferenceActions.restorePreference, ({ preference }) => {
         this.updateWith(draft => Object.assign(draft, preference))
     })
 
-    // @ts-ignore
     private handlePreferenceChange = listen(PreferenceActions.changePreference, ({ patch }) => {
         this.updateWith(draft => { Object.assign(draft, patch) })
     })
