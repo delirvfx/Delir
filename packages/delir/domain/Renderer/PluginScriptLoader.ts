@@ -44,4 +44,3 @@ export default class PluginScriptLoader {
         return requireFunc
     }
 }
-require.extensions
