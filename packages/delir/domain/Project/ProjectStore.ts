@@ -101,7 +101,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     })
 
     // @ts-ignore
-    private handleAddEffectIntoClipPayload = listen(ProjectActions.addEffectIntoClipPayloadAction, (payload) => {
+    private handleAddEffectIntoClipPayload = listen(ProjectActions.addEffectIntoClipAction, (payload) => {
         const { project } = this.state
         const { clipId, effect } = payload
         ProjectHelper.addEffect(project!, clipId, effect)
