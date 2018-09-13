@@ -13,8 +13,8 @@ import './assets/styles/style.styl'
 
 import AppView from './views/AppView'
 
-import PreferenceStore from '@ragg/delir/domain/Preference/PreferenceStore'
 import EditorStore from './domain/Editor/EditorStore'
+import PreferenceStore from './domain/Preference/PreferenceStore'
 import ProjectStore from './domain/Project/ProjectStore'
 import RendererStore from './domain/Renderer/RendererStore'
 

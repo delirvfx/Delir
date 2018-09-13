@@ -52,7 +52,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         const menu: Electron.MenuItemConstructorOptions[] = []
 
         menu.push({
-            label: remote.app.getName(),
+            label: 'Delir',
             submenu: [
                 {
                     label: t('appMenu.about'),

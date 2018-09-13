@@ -151,8 +151,9 @@ class CompositionSettingModal extends React.PureComponent<Props, any>
         this.props.onConfirm(opts as {[p: string]: string})
     }
 
-    private onCancel = () =>
+    private onCancel = (e: React.MouseEvent<HTMLButtonElement>) =>
     {
+        e.preventDefault()
         this.props.onCancel()
     }
 }

@@ -384,6 +384,7 @@ export function makeIcon() {
 
 export async function pack(done) {
     const yarnBin = isWindows ? 'yarn.cmd' : 'yarn'
+    const electronVersion = require('./package.json').devDependencies.electron
 
     await fs.remove(join(paths.build, 'node_modules'))
 
@@ -407,7 +408,7 @@ export async function pack(done) {
                 appId: 'studio.delir',
                 copyright: '© 2017 Ragg',
                 productName: 'Delir',
-                electronVersion: '1.7.3',
+                electronVersion,
                 asar: true,
                 asarUnpack: ["node_modules/"],
                 npmRebuild: true,

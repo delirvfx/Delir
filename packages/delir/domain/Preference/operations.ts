@@ -6,7 +6,7 @@ import * as path from 'path'
 import * as EditorOps from '../Editor/operations'
 import { PreferenceActions } from './actions'
 
-import PreferenceStore from '@ragg/delir/domain/Preference/PreferenceStore'
+import PreferenceStore from './PreferenceStore'
 import { validateSchema } from './validation'
 
 const userDir = remote.app.getPath('userData')
