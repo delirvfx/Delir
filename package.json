@@ -3,7 +3,7 @@
   "name": "delir",
   "productName": "delir",
   "description": "Video production with JavaScript",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "author": "Ragg <ragg.devpr@gmail.com>",
   "license": "MIT",
   "main": "browser/main.js",
