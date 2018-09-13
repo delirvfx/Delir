@@ -26,4 +26,10 @@ describe('PluginScriptLoader', () => {
 
         expect(_require('fs')).toEqual(require('fs'))
     })
+
+    it('Can use specified global variables', () => {
+        expect(() => {
+            PluginScriptLoader.load(path.join(__dirname, './specFixtures/globals.js'))
+        }).not.toThrow()
+    })
 })
