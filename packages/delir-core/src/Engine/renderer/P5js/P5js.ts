@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import * as VM from 'vm'
 import P5Hooks from './P5Hooks'
 
@@ -9,6 +10,7 @@ import { IRenderer } from '../RendererBase'
 
 interface SketchRendererParams {
     sketch: Expression
+    opacity: number
 }
 
 export default class P5jsRenderer implements IRenderer<SketchRendererParams>
@@ -21,11 +23,17 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
 
     public static provideParameters()
     {
-        return Type.code('sketch', {
-            label: 'Sketch',
-            langType: 'javascript',
-            defaultValue: new Expression('javascript', 'function setup() {\n    \n}\n\nfunction draw() {\n    \n}\n')
-        })
+        return Type
+            .code('sketch', {
+                label: 'Sketch',
+                langType: 'javascript',
+                defaultValue: new Expression('javascript', 'function setup() {\n    \n}\n\nfunction draw() {\n    \n}\n')
+            })
+            .number('opacity', {
+                label: 'Opacity',
+                animatable: true,
+                defaultValue: 100,
+            })
     }
 
     private vmGlobal: any
@@ -83,7 +91,10 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
 
         this.vmScope = this.makeVmScopeVariables(req)
         this.vmGlobal.draw && this.vmGlobal.draw()
-        req.destCanvas.getContext('2d')!.drawImage(this.canvas, 0, 0)
+
+        const ctx = req.destCanvas.getContext('2d')!
+        ctx.globalAlpha = _.clamp(req.parameters.opacity, 0, 100) / 100
+        ctx.drawImage(this.canvas, 0, 0)
     }
 
     private makeVmScopeVariables(req: PreRenderingRequest<any> | RenderingRequest<any>)
