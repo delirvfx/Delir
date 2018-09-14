@@ -211,27 +211,25 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             ]
         })
 
-        if (__DEV__) {
-            menu.push({
-                label: t('develop.label'),
-                submenu: [
-                    {
-                        label: t('develop.reload'),
-                        accelerator: 'CmdOrCtrl+R',
-                        click(item, focusedWindow) {
-                            if (focusedWindow) focusedWindow.reload()
-                        }
-                    },
-                    {
-                        label: t('develop.toggleDevTool'),
-                        accelerator: 'CmdOrCtrl+Alt+I',
-                        click(item, focusedWindow) {
-                            if (focusedWindow) focusedWindow.webContents.toggleDevTools()
-                        },
+        menu.push({
+            label: t('develop.label'),
+            submenu: [
+                {
+                    label: t('develop.reload'),
+                    accelerator: 'CmdOrCtrl+R',
+                    click(item, focusedWindow) {
+                        if (focusedWindow) focusedWindow.reload()
                     }
-                ]
-            })
-        }
+                },
+                {
+                    label: t('develop.toggleDevTool'),
+                    accelerator: 'CmdOrCtrl+Alt+I',
+                    click(item, focusedWindow) {
+                        if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+                    },
+                }
+            ]
+        })
 
         remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(menu))
     }
