@@ -26,7 +26,7 @@ interface ConnectedProps {
     postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
 }
 
-type Props = OwnProps  & ConnectedProps & ContextProp
+type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(class Clip extends React.Component<Props> {
     public refs: {
@@ -60,7 +60,8 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                     onClick={this.handleClick}
                 >
                     <ContextMenu>
-                        <MenuItem label='エフェクト'>
+                        <MenuItem label={t('contextMenu.seekToHeadOfClip')} onClick={this.handleSeekToHeadOfClip} />
+                        <MenuItem label={t('contextMenu.effect')}>
                             {postEffectPlugins.length ? postEffectPlugins.map(entry => (
                                 <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
                             ) : (
@@ -68,6 +69,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                             )}
                         </MenuItem>
                         {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
+                        <MenuItem type='separator' />
                         <MenuItem label={t('contextMenu.remove')} data-clip-id={clip.id} onClick={this.removeClip} />
                         <MenuItem type='separator' />
                     </ContextMenu>
@@ -116,5 +118,10 @@ export default withComponentContext(class Clip extends React.Component<Props> {
     private removeClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
     {
         this.props.context.executeOperation(ProjectOps.removeClip, { clipId: dataset.clipId })
+    }
+
+    private handleSeekToHeadOfClip = () => {
+        const { clip } = this.props
+        this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame: clip.placedFrame })
     }
 })

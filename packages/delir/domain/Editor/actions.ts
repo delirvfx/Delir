@@ -4,7 +4,7 @@ import { action } from '@ragg/fleur'
 import { DragEntity } from './operations'
 
 export const EditorActions = {
-    setActiveProjectAction: action<{ project: Delir.Entity.Project, path?: string }>(),
+    setActiveProjectAction: action<{ project: Delir.Entity.Project, path?: string | null }>(),
     clearActiveProjectAction: action<null>(),
     setDragEntityAction: action<DragEntity>(),
     clearDragEntityAction: action<{}>(),

@@ -1,5 +1,5 @@
-import arrayBufferToBuffer from 'arraybuffer-to-buffer'
-import audioBufferToWave from 'audiobuffer-to-wav'
+import arrayBufferToBuffer = require('arraybuffer-to-buffer')
+import audioBufferToWave = require('audiobuffer-to-wav')
 import { spawn } from 'child_process'
 import { nativeImage } from 'electron'
 import * as fs from 'mz/fs'
@@ -43,7 +43,7 @@ export default async (
     const onProgress = options.onProgress || (() => {})
 
     //
-    // export via deream
+    // export via dereamp
     //
     onProgress({ step: RenderingStep.Started, progression: 0 })
 

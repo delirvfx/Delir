@@ -13,6 +13,8 @@ interface SketchRendererParams {
     opacity: number
 }
 
+const VM_GLOBAL_WHITELIST = ['Array', 'Math', 'Date']
+
 export default class P5jsRenderer implements IRenderer<SketchRendererParams>
 {
     public static get rendererId(): string { return 'p5js' }
@@ -37,7 +39,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
     }
 
     private vmGlobal: any
-    private vmScope: any
+    private vmExposedVariables: any
     private p5ex: P5Hooks
     private canvas: HTMLCanvasElement
 
@@ -46,21 +48,23 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
         this.p5ex = new P5Hooks(req.resolver)
 
         // Make VM environment
-        this.vmScope = this.makeVmScopeVariables(req)
+        this.vmExposedVariables = this.makeVmExposeVariables(req)
 
         this.vmGlobal = VM.createContext(new Proxy({
             console: global.console,
-            p5: this.p5ex.p5
+            p5: this.p5ex.p5,
         }, {
-            get: (target: any, propKey) => {
+            get: (target: any, propKey: string) => {
                 if (target[propKey]) {
                     return target[propKey]
                 } else if (this.p5ex.p5[propKey]) {
                     // Expose p5 drawing methods
                     return typeof this.p5ex.p5[propKey] === 'function' ? this.p5ex.p5[propKey].bind(this.p5ex.p5) : this.p5ex.p5[propKey]
+                } else if (VM_GLOBAL_WHITELIST.includes(propKey)) {
+                    return (global as any)[propKey]
                 } else {
                     // Dynamic exposing
-                    return this.vmScope[propKey]
+                    return this.vmExposedVariables[propKey]
                 }
             }
         }))
@@ -89,7 +93,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
              })
         })
 
-        this.vmScope = this.makeVmScopeVariables(req)
+        this.vmExposedVariables = this.makeVmExposeVariables(req)
         this.vmGlobal.draw && this.vmGlobal.draw()
 
         const ctx = req.destCanvas.getContext('2d')!
@@ -97,7 +101,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
         ctx.drawImage(this.canvas, 0, 0)
     }
 
-    private makeVmScopeVariables(req: PreRenderingRequest<any> | RenderingRequest<any>)
+    private makeVmExposeVariables(req: PreRenderingRequest<any> | RenderingRequest<any>)
     {
         return {
             delir: {

@@ -48,7 +48,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         easingHandleMovement: null,
     }
 
-    private selectedKeyframeId: string | null = null
+    private draggedKeyframeId: string | null = null
     private _initialKeyframePosition: {x: number, y: number} | null = null
     private _keyframeDragged: boolean = false
 
@@ -95,7 +95,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
     private mouseMoveOnSvg = (e: React.MouseEvent<SVGElement>) =>
     {
-        if (this.selectedKeyframeId) {
+        if (this.draggedKeyframeId) {
             this._keyframeDragged = true
 
             this.setState({
@@ -124,16 +124,16 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         if (!parentClip || !paramName || !entity) return
 
         process: {
-            if (this.selectedKeyframeId) {
+            if (this.draggedKeyframeId) {
                 // Process for keyframe dragged
                 if (!this._keyframeDragged) {
-                    this.setState({activeKeyframeId: this.selectedKeyframeId, keyframeMovement: null})
+                    this.setState({activeKeyframeId: this.draggedKeyframeId, keyframeMovement: null})
                     break process
                 }
 
                 if (!keyframeMovement) break process
 
-                const keyframe = keyframes.find(kf => kf.id === this.selectedKeyframeId)!
+                const keyframe = keyframes.find(kf => kf.id === this.draggedKeyframeId)!
                 const movedFrame = this.pxToFrame(keyframeMovement.x)
 
                 onModified(parentClip.id, paramName, keyframe.frameOnClip, { frameOnClip: keyframe.frameOnClip + movedFrame })
@@ -166,7 +166,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         }
 
         // Clear dragging state
-        this.selectedKeyframeId = null
+        this.draggedKeyframeId = null
         this._keyframeDragged = false
         this.draggedEasingHandler = null
         this.setState({
@@ -182,7 +182,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
         if ((e.key === 'Delete' || e.key === 'Backspace') && activeKeyframeId) {
             onKeyframeRemove(parentClip.id, activeKeyframeId)
-            this.selectedKeyframeId = null
+            this.draggedKeyframeId = null
         }
     }
 
@@ -201,7 +201,8 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
 
     private mouseDownOnKeyframe = (e: React.MouseEvent<SVGGElement>) =>
     {
-        this.selectedKeyframeId = (e.currentTarget as any).dataset.keyframeId
+        this.draggedKeyframeId = (e.currentTarget as any).dataset.keyframeId
+        this.setState({ activeKeyframeId: this.draggedKeyframeId })
         this._keyframeDragged = false
         this._initialKeyframePosition = {x: e.screenX, y: e.screenY}
     }
@@ -224,7 +225,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         const selectedEasingHandler = this.draggedEasingHandler
 
         return points.map((point, idx) => {
-            const keyframeDragMovement = (keyframeMovement && point.keyframeId === this.selectedKeyframeId) ? keyframeMovement : NO_TRANSFORM
+            const keyframeDragMovement = (keyframeMovement && point.keyframeId === this.draggedKeyframeId) ? keyframeMovement : NO_TRANSFORM
             const easingHandleDragMovement = (easingHandleMovement && point.keyframeId === this.draggedEasingHandler!.keyframeId) ? easingHandleMovement : NO_TRANSFORM
             const easeOutHandleDragMovement = (selectedEasingHandler && selectedEasingHandler!.type === 'ease-out') ? easingHandleDragMovement : NO_TRANSFORM
             const easeIntHandleDragMovement = (selectedEasingHandler && selectedEasingHandler!.type === 'ease-in') ? easingHandleDragMovement : NO_TRANSFORM
@@ -326,7 +327,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         return orderedKeyframes.map((kf, idx) => {
             const x = clipPlacedPositionX + this.frameToPx(kf.frameOnClip)
             const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this.frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
-            const transform = (this.state.keyframeMovement && kf.id === this.selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
+            const transform = (this.state.keyframeMovement && kf.id === this.draggedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
                 <g ref={kf.id}>
@@ -375,7 +376,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         return orderedKeyframes.map((kf, idx) => {
             const x = clipPlacedPositionX + this.frameToPx(kf.frameOnClip)
             const nextX = orderedKeyframes[idx + 1] ? clipPlacedPositionX + this.frameToPx(orderedKeyframes[idx + 1].frameOnClip) : null
-            const transform = (this.state.keyframeMovement && kf.id === this.selectedKeyframeId) ? this.state.keyframeMovement : {x: 0}
+            const transform = (this.state.keyframeMovement && kf.id === this.draggedKeyframeId) ? this.state.keyframeMovement : {x: 0}
 
             return (
                 <g ref={kf.id}>

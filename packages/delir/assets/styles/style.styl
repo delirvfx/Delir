@@ -134,7 +134,6 @@ global-reset()
 
     ._input
     ._label-input
-    ._drag-number-input
         display inline-block
         min-width 1rem
         min-height 1em
@@ -153,21 +152,6 @@ global-reset()
             border-bottom 1px solid transparent
             user-select none
             cursor default
-
-    ._drag-number-input
-        text-align right
-
-        color #ff7a00
-        border-bottom 1px dotted #ff7a00
-        cursor ew-resize
-
-        &[readonly]
-            color var(--text-disabled)
-            cursor default
-
-    body.platform-win
-        ._drag-number-input
-            cursor text
 
     ._select-list
         .select-list-item
