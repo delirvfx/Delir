@@ -16,12 +16,12 @@ declare module 'audiobuffer-to-wav' {
     }
 
     const _: (buffer: AudioBufferLike, opts: {float32: boolean}) => ArrayBuffer
-    export default _
+    export = _
 }
 
 declare module 'arraybuffer-to-buffer' {
     const _: (ab: ArrayBuffer) => Buffer
-    export default _
+    export = _
 }
 
 declare module 'keymirror' {

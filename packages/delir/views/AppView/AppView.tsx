@@ -42,11 +42,11 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         if (document.activeElement && document.activeElement.matches('input:not(:disabled),textarea:not(:disabled),select:not(:disabled)')) return
 
-        if (e.code === 'Space') {
+        if (e.code === 'Space' && activeComp) {
             previewPlayed
                 ? this.props.context.executeOperation(EditorOps.stopPreview, {})
                 : this.props.context.executeOperation(EditorOps.startPreview, {
-                    compositionId: activeComp!.id,
+                    compositionId: activeComp.id,
                     beginFrame: currentPreviewFrame
                  })
         }
