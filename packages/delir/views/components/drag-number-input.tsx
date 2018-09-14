@@ -118,7 +118,13 @@ export default class DragNumberInput extends React.Component<Props, State>
 
     private handleBlur = (e: React.FocusEvent<HTMLInputElement>) =>
     {
-        const value = this.parseValue(this.input.current!.value)
+        let value = this.parseValue(this.input.current!.value)
+
+        if (this.input.current!.value.trim() === '') {
+            value = this.props.value != null ? this.parseValue(this.props.value) : 0
+            this.noEmitChangeOnBlur = true
+        }
+
         this.setState({ value }, () => {
             this.noEmitChangeOnBlur === false && this.props.onChange && this.props.onChange(value)
             this.noEmitChangeOnBlur = false
