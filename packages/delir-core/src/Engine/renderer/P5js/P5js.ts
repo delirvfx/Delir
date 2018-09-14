@@ -13,6 +13,8 @@ interface SketchRendererParams {
     opacity: number
 }
 
+const VM_GLOBAL_WHITELIST = ['Array', 'Math', 'Date']
+
 export default class P5jsRenderer implements IRenderer<SketchRendererParams>
 {
     public static get rendererId(): string { return 'p5js' }
@@ -52,12 +54,14 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
             console: global.console,
             p5: this.p5ex.p5
         }, {
-            get: (target: any, propKey) => {
+            get: (target: any, propKey: string) => {
                 if (target[propKey]) {
                     return target[propKey]
                 } else if (this.p5ex.p5[propKey]) {
                     // Expose p5 drawing methods
                     return typeof this.p5ex.p5[propKey] === 'function' ? this.p5ex.p5[propKey].bind(this.p5ex.p5) : this.p5ex.p5[propKey]
+                } else if (VM_GLOBAL_WHITELIST.includes(propKey)) {
+                    return global[propKey]
                 } else {
                     // Dynamic exposing
                     return this.vmScope[propKey]
