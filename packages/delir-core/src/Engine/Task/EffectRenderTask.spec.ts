@@ -36,10 +36,11 @@ describe('EffectRenderTask', () => {
                     author: '',
                     version: '0.0.0',
                     delir: {
+                        name: 'exit-effect',
                         type: 'post-effect',
                     },
                     engines: {
-                        'delir-core': '0.4.0'
+                        'delir-core': '0.5.0',
                     },
                 },
                 type: 'post-effect',
