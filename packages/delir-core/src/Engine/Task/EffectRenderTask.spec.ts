@@ -40,7 +40,7 @@ describe('EffectRenderTask', () => {
                         type: 'post-effect',
                     },
                     engines: {
-                        'delir-core': '0.5.0',
+                        'delir-core': '0.5.x',
                     },
                 },
                 type: 'post-effect',

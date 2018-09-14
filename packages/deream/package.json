@@ -30,6 +30,6 @@
     "arraybuffer-to-buffer": "0.0.4",
     "audiobuffer-to-wav": "1.0.0",
     "duplexer3": "0.1.4",
-    "mz": "2.6.0"
+    "mz": "2.7.0"
   }
 }
