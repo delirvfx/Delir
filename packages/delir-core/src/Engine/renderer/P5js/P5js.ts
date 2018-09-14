@@ -61,7 +61,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
                     // Expose p5 drawing methods
                     return typeof this.p5ex.p5[propKey] === 'function' ? this.p5ex.p5[propKey].bind(this.p5ex.p5) : this.p5ex.p5[propKey]
                 } else if (VM_GLOBAL_WHITELIST.includes(propKey)) {
-                    return global[propKey]
+                    return (global as any)[propKey]
                 } else {
                     // Dynamic exposing
                     return this.vmScope[propKey]
