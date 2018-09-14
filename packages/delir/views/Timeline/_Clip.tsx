@@ -60,7 +60,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                     onClick={this.handleClick}
                 >
                     <ContextMenu>
-                        <MenuItem label='エフェクト'>
+                        <MenuItem label={t('contextMenu.effect')}>
                             {postEffectPlugins.length ? postEffectPlugins.map(entry => (
                                 <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
                             ) : (
