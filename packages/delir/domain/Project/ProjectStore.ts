@@ -38,6 +38,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
     private handleAddClip = listen(ProjectActions.addClipAction, (payload) => {
         const { project } = this.state
         const { targetLayerId, newClip } = payload
+        console.log(targetLayerId, newClip)
         ProjectHelper.addClip(project!, targetLayerId, newClip)
         this.updateLastModified()
     })
@@ -73,8 +74,8 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleAddKeyframe = listen(ProjectActions.addKeyframeAction, (payload) => {
         const { project } = this.state
-        const { targetClip, paramName, keyframe } = payload
-        ProjectHelper.addKeyframe(project!, targetClip, paramName, keyframe)
+        const { targetClipId, paramName, keyframe } = payload
+        ProjectHelper.addKeyframe(project!, targetClipId, paramName, keyframe)
         this.updateLastModified()
     })
 

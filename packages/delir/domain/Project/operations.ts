@@ -12,9 +12,11 @@ import ProjectStore from './ProjectStore'
 
 import AddAssetCommand from './Commands/AddAssetCommand'
 import AddClipCommand from './Commands/AddClipCommand'
+import AddKeyframeCommand from './Commands/AddKeyframeCommand'
 import AddLayerCommand from './Commands/AddLayerCommand'
 import CreateCompositionCommand from './Commands/CreateCompositionCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
+import ModifyKeyframeCommand from './Commands/ModifyKeyframeCommand'
 
 //
 // Modify project
@@ -159,11 +161,10 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
     frameOnClip: number,
     patch: Partial<Delir.Entity.Keyframe>
 }) => {
-    const {project} = context.getStore(ProjectStore).getState()
-
+    const project = context.getStore(ProjectStore).getProject()
     if (!project) return
-    const clip = ProjectHelper.findClipById(project, clipId)
 
+    const clip = ProjectHelper.findClipById(project, clipId)
     if (!clip) return
 
     const props = Delir.Engine.Renderers.getInfo(clip.renderer!).parameter.properties
@@ -179,19 +180,23 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
     const keyframe = ProjectHelper.findKeyframeFromClipByPropAndFrame(clip, paramName, frameOnClip)
 
     if (keyframe) {
+        context.dispatch(HistoryActions.pushHistory, {
+            command: new ModifyKeyframeCommand(keyframe.id, {...keyframe}, patch)
+        })
+
         context.dispatch(ProjectActions.modifyKeyframeAction, {
             targetKeyframeId: keyframe.id,
             patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
         })
     } else {
-        const newKeyframe = new Delir.Entity.Keyframe()
+        const newKeyframe = safeAssign(new Delir.Entity.Keyframe(), { frameOnClip }, patch)
 
-        Object.assign(newKeyframe, Object.assign({
-            frameOnClip,
-        }, patch))
+        context.dispatch(HistoryActions.pushHistory, {
+            command: new AddKeyframeCommand(clipId, paramName, newKeyframe)
+        })
 
         context.dispatch(ProjectActions.addKeyframeAction, {
-            targetClip: clip,
+            targetClipId: clipId,
             paramName,
             keyframe: newKeyframe
         })
