@@ -20,6 +20,7 @@ import CreateCompositionCommand from './Commands/CreateCompositionCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
 import ModifyEffectKeyframeCommand from './Commands/ModifyEffectKeyframeCommand'
 import ModifyKeyframeCommand from './Commands/ModifyKeyframeCommand'
+import RemoveAssetCommand from './Commands/RemoveAssetCommand'
 
 //
 // Modify project
@@ -288,6 +289,15 @@ export const addEffectIntoClip = operation((context, { clipId, processorId }: {
 })
 
 export const removeAsset = operation((context, { assetId }: { assetId: string }) => {
+    const project = context.getStore(ProjectStore).getProject()
+    if (!project) return
+
+    const asset = ProjectHelper.findAssetById(project, assetId)
+    if (!asset) return
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new RemoveAssetCommand(asset)
+    })
     context.dispatch(ProjectActions.removeAssetAction, { targetAssetId: assetId })
 })
 
