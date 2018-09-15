@@ -12,10 +12,12 @@ import ProjectStore from './ProjectStore'
 
 import AddAssetCommand from './Commands/AddAssetCommand'
 import AddClipCommand from './Commands/AddClipCommand'
+import AddEffectKeyframeCommand from './Commands/AddEffectKeyframeCommand'
 import AddKeyframeCommand from './Commands/AddKeyframeCommand'
 import AddLayerCommand from './Commands/AddLayerCommand'
 import CreateCompositionCommand from './Commands/CreateCompositionCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
+import ModifyEffectKeyframeCommand from './Commands/ModifyEffectKeyframeCommand'
 import ModifyKeyframeCommand from './Commands/ModifyKeyframeCommand'
 
 //
@@ -211,7 +213,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     patch: Partial<Delir.Entity.Keyframe>
 }) => {
     const rendererStore = context.getStore(RendererStore)
-    const {project} = context.getStore(ProjectStore).getState()
+    const project = context.getStore(ProjectStore).getProject()
     if (!project) return
 
     const clip = ProjectHelper.findClipById(project, clipId)
@@ -231,6 +233,10 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     const keyframe = ProjectHelper.findKeyframeFromEffectByPropAndFrame(effect, paramName, frameOnClip)
 
     if (keyframe) {
+        context.dispatch(HistoryActions.pushHistory, {
+            command: new ModifyEffectKeyframeCommand(clipId, effectId, keyframe.id, {...keyframe}, patch),
+        })
+
         context.dispatch(ProjectActions.modifyEffectKeyframeAction, {
             targetClipId: clipId,
             effectId: effectId,
@@ -238,8 +244,11 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
             patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
         })
     } else {
-        const newKeyframe = new Delir.Entity.Keyframe()
-        Object.assign(newKeyframe, Object.assign({ frameOnClip }, patch))
+        const newKeyframe = safeAssign(new Delir.Entity.Keyframe(), { frameOnClip }, patch)
+
+        context.dispatch(HistoryActions.pushHistory, {
+            command: new AddEffectKeyframeCommand(clipId, effectId, paramName, newKeyframe)
+        })
 
         context.dispatch(ProjectActions.addEffectKeyframeAction, {
             targetClipId: clipId,
