@@ -18,6 +18,7 @@ import { AddKeyframeCommand } from './Commands/AddKeyframeCommand'
 import { AddLayerCommand } from './Commands/AddLayerCommand'
 import { CreateCompositionCommand } from './Commands/CreateCompositionCommand'
 import { ModifyClipCommand } from './Commands/ModifyClipCommand'
+import { ModifyClipExpressionCommand } from './Commands/ModifyClipExpressionCommand'
 import { ModifyCompositionCommand } from './Commands/ModifyCompositionCommand'
 import { ModifyEffectKeyframeCommand } from './Commands/ModifyEffectKeyframeCommand'
 import { ModifyKeyframeCommand } from './Commands/ModifyKeyframeCommand'
@@ -380,18 +381,27 @@ export const modifyClip = operation((context, { clipId, params }: {
     })
 })
 
-export const modifyClipExpression = operation((context, { clipId, property, expr }: {
+export const modifyClipExpression = operation((context, { clipId, paramName, expr }: {
     clipId: string,
-    property: string,
+    paramName: string,
     expr: { language: string, code: string }
 }) => {
+    const project = context.getStore(ProjectStore).getProject()
+    if (!project) return
+
+    const clip = ProjectHelper.findClipById(project, clipId)
+    if (!clip) return
+
+    const newExpression = new Delir.Values.Expression(expr.language, expr.code)
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new ModifyClipExpressionCommand(clipId, paramName, clip.expressions[paramName], newExpression)
+    })
+
     context.dispatch(ProjectActions.modifyClipExpressionAction, {
         targetClipId: clipId,
-        targetProperty: property,
-        expr: {
-            language: expr.language,
-            code: expr.code,
-        }
+        targetProperty: paramName,
+        expression: newExpression,
     })
 })
 

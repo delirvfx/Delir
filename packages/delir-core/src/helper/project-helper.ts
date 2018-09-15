@@ -370,13 +370,17 @@ export function modifyClipExpression(
     project: Project,
     targetClipId: Clip | string,
     property: string,
-    expr: Expression,
+    expr: Expression | null,
 ) {
     const clip = targetClipId instanceof Clip
         ? targetClipId
         : findClipById(project, targetClipId)!
 
-    clip.expressions[property] = expr
+    if (expr == null) {
+        delete clip.expressions[property]
+    } else {
+        clip.expressions[property] = expr
+    }
 }
 
 export function modifyEffectExpression(
@@ -384,7 +388,7 @@ export function modifyEffectExpression(
     targetClipId: Clip | string,
     targetEffectId: Effect | string,
     property: string,
-    expr: Expression,
+    expr: Expression | null,
 ) {
     const clip = targetClipId instanceof Clip
         ? targetClipId
@@ -394,7 +398,11 @@ export function modifyEffectExpression(
         ? targetEffectId
         : findEffectFromClipById(clip, targetEffectId)
 
-    effect!.expressions[property] = expr
+    if (expr == null) {
+        delete effect!.expressions[property]
+    } else {
+        effect!.expressions[property] = expr
+    }
 }
 
 export function modifyEffect(

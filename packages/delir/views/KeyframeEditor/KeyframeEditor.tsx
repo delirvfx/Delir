@@ -423,7 +423,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         if (result.target.type === 'clip') {
             this.props.context.executeOperation(ProjectOps.modifyClipExpression, {
                 clipId: activeClip.id,
-                property: result.target.paramName,
+                paramName: result.target.paramName,
                 expr: {
                     language: 'typescript',
                     code: result.code!,
