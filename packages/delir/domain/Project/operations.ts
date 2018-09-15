@@ -21,6 +21,7 @@ import { ModifyClipCommand } from './Commands/ModifyClipCommand'
 import { ModifyCompositionCommand } from './Commands/ModifyCompositionCommand'
 import { ModifyEffectKeyframeCommand } from './Commands/ModifyEffectKeyframeCommand'
 import { ModifyKeyframeCommand } from './Commands/ModifyKeyframeCommand'
+import { ModifyLayerCommand } from './Commands/ModifyLayerCommand'
 import { MoveClipToLayerCommand } from './Commands/MoveClipToLayerCommand'
 import { RemoveAssetCommand } from './Commands/RemoveAssetCommand'
 
@@ -339,13 +340,23 @@ export const modifyComposition = operation((context, { compositionId, patch }: {
     })
 })
 
-export const modifyLayer = operation((context, { layerId, props }: {
+export const modifyLayer = operation((context, { layerId, patch }: {
     layerId: string,
-    props: Partial<Delir.Entity.Layer>
+    patch: Partial<Delir.Entity.Layer>
 }) => {
+    const project = context.getStore(ProjectStore).getProject()
+    if (!project) return
+
+    const layer = ProjectHelper.findLayerById(project, layerId)
+    if (!layer) return
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new ModifyLayerCommand(layerId, {...layer}, patch)
+    })
+
     context.dispatch(ProjectActions.modifyLayerAction, {
         targetLayerId: layerId,
-        patch: props,
+        patch: patch,
     })
 })
 
