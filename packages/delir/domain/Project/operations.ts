@@ -128,8 +128,7 @@ export const addClipWithAsset = operation((context, { targetLayerId, asset, plac
     placedFrame?: number,
     durationFrames?: number,
 }) => {
-    const {project} = context.getStore(ProjectStore).getState()
-    if (!project) return
+    const project = context.getStore(ProjectStore).getProject()!
 
     const processablePlugin = Delir.Engine.Renderers.getAvailableRenderers()
         .filter((entry) => entry.handlableFileTypes.includes(asset.fileType))[0]
@@ -172,11 +171,8 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
     frameOnClip: number,
     patch: Partial<Delir.Entity.Keyframe>
 }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const clip = ProjectHelper.findClipById(project, clipId)
-    if (!clip) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const clip = ProjectHelper.findClipById(project, clipId)!
 
     const props = Delir.Engine.Renderers.getInfo(clip.renderer!).parameter.properties
     const propDesc = props ? props.find(prop => prop.paramName === paramName) : null
@@ -222,14 +218,9 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
     patch: Partial<Delir.Entity.Keyframe>
 }) => {
     const rendererStore = context.getStore(RendererStore)
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const clip = ProjectHelper.findClipById(project, clipId)
-    if (!clip) return
-
-    const effect = ProjectHelper.findEffectFromClipById(clip, effectId)
-    if (!effect) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const clip = ProjectHelper.findClipById(project, clipId)!
+    const effect = ProjectHelper.findEffectFromClipById(clip, effectId)!
 
     const props = rendererStore.getPostEffectParametersById(effect.processor)
     const propDesc = props ? props.find(prop => prop.paramName === paramName) : null
@@ -296,11 +287,8 @@ export const addEffectIntoClip = operation((context, { clipId, processorId }: {
 })
 
 export const removeAsset = operation((context, { assetId }: { assetId: string }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const asset = ProjectHelper.findAssetById(project, assetId)
-    if (!asset) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const asset = ProjectHelper.findAssetById(project, assetId)!
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new RemoveAssetCommand(asset)
@@ -312,11 +300,8 @@ export const moveClipToLayer = operation((context, { clipId, destLayerId }: {
     clipId: string,
     destLayerId: string
 }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const sourceLayer = ProjectHelper.findParentLayerByClipId(project, clipId)
-    if (!sourceLayer) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const sourceLayer = ProjectHelper.findParentLayerByClipId(project, clipId)!
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new MoveClipToLayerCommand(sourceLayer.id, destLayerId, clipId)
@@ -328,11 +313,8 @@ export const modifyComposition = operation((context, { compositionId, patch }: {
     compositionId: string,
     patch: Partial<Delir.Entity.Composition>
 }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const composition = ProjectHelper.findCompositionById(project, compositionId)
-    if (!composition) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const composition = ProjectHelper.findCompositionById(project, compositionId)!
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new ModifyCompositionCommand(compositionId, {...composition}, patch)
@@ -348,11 +330,8 @@ export const modifyLayer = operation((context, { layerId, patch }: {
     layerId: string,
     patch: Partial<Delir.Entity.Layer>
 }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const layer = ProjectHelper.findLayerById(project, layerId)
-    if (!layer) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const layer = ProjectHelper.findLayerById(project, layerId)!
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new ModifyLayerCommand(layerId, {...layer}, patch)
@@ -368,11 +347,8 @@ export const modifyClip = operation((context, { clipId, params }: {
     clipId: string,
     params: Partial<Delir.Entity.Clip>
 }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const clip = ProjectHelper.findClipById(project, clipId)
-    if (!clip) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const clip = ProjectHelper.findClipById(project, clipId)!
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new ModifyClipCommand(clipId, { ...clip }, { ...params })
@@ -389,11 +365,8 @@ export const modifyClipExpression = operation((context, { clipId, paramName, exp
     paramName: string,
     expr: { language: string, code: string }
 }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const clip = ProjectHelper.findClipById(project, clipId)
-    if (!clip) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const clip = ProjectHelper.findClipById(project, clipId)!
 
     const newExpression = new Delir.Values.Expression(expr.language, expr.code)
 
@@ -414,14 +387,9 @@ export const modifyEffectExpression = operation((context, { clipId, effectId, pa
     paramName: string,
     expr: { language: string, code: string }
 }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const clip = ProjectHelper.findClipById(project, clipId)
-    if (!clip) return
-
-    const effect = ProjectHelper.findEffectFromClipById(clip, effectId)
-    if (!effect) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const clip = ProjectHelper.findClipById(project, clipId)!
+    const effect = ProjectHelper.findEffectFromClipById(clip, effectId)!
 
     const newExpression = new Delir.Values.Expression(expr.language, expr.code)
 
@@ -438,11 +406,8 @@ export const modifyEffectExpression = operation((context, { clipId, effectId, pa
 })
 
 export const moveLayerOrder = operation((context, { layerId, newIndex }: { layerId: string, newIndex: number }) => {
-    const {project} = context.getStore(ProjectStore).getState()
-    if (!project) return
-
-    const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)
-    if (!comp) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
 
     const previousIndex = comp.layers.findIndex(layer => layer.id === layerId)
 
@@ -458,11 +423,8 @@ export const moveLayerOrder = operation((context, { layerId, newIndex }: { layer
 })
 
 export const removeComposition = operation((context, { compositionId }: { compositionId: string }) => {
-    const project = context.getStore(ProjectStore).getProject()
-    if (!project) return
-
-    const composition = ProjectHelper.findCompositionById(project, compositionId)
-    if (!composition) return
+    const project = context.getStore(ProjectStore).getProject()!
+    const composition = ProjectHelper.findCompositionById(project, compositionId)!
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new RemoveCompositionCommand(composition)
