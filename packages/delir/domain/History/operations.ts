@@ -1,8 +1,8 @@
 import { operation } from '@ragg/fleur'
 import { HistoryActions } from './actions'
-import HistoryStore, { HistoryCommand } from './HistoryStore'
+import HistoryStore, { Command } from './HistoryStore'
 
-export const pushHistory = operation((context, command: HistoryCommand) => {
+export const pushHistory = operation((context, command: Command) => {
     context.dispatch(HistoryActions.pushHistory, { command })
 })
 

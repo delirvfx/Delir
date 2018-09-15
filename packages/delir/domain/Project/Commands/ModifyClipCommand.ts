@@ -2,10 +2,10 @@ import * as _ from 'lodash'
 
 import { Clip } from '@ragg/delir-core/src/Entity'
 import { OperationContext } from '@ragg/fleur'
-import { HistoryCommand } from '../../History/HistoryStore'
+import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class ModifyClipCommand implements HistoryCommand {
+export default class ModifyClipCommand implements Command {
     private toPreviousPatch: Partial<Clip>
 
     constructor(

@@ -2,14 +2,14 @@ import { listen, OperationContext, Store } from '@ragg/fleur'
 
 import { HistoryActions } from './actions'
 
-export interface HistoryCommand {
+export interface Command {
     undo(context: OperationContext<any>): void
     redo(context: OperationContext<any>): void
 }
 
 interface State {
-    undoStack: HistoryCommand[]
-    redoStack: HistoryCommand[]
+    undoStack: Command[]
+    redoStack: Command[]
 }
 
 export default class HistoryStore extends Store<State> {
@@ -43,11 +43,11 @@ export default class HistoryStore extends Store<State> {
         })
     })
 
-    public getUndoCommand(): HistoryCommand | void {
+    public getUndoCommand(): Command | void {
         return this.state.undoStack[this.state.undoStack.length - 1]
     }
 
-    public getRedoCommand(): HistoryCommand | void {
+    public getRedoCommand(): Command | void {
         return this.state.redoStack[this.state.redoStack.length - 1]
     }
 }

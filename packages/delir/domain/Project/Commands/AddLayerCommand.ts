@@ -1,10 +1,10 @@
 import * as Delir from '@ragg/delir-core'
 import { OperationContext } from '@ragg/fleur'
 
-import { HistoryCommand } from '../../History/HistoryStore'
+import { Command } from '../../History/HistoryStore'
 import { ProjectActions }  from '../actions'
 
-export default class CreateLayerCommand implements HistoryCommand {
+export default class CreateLayerCommand implements Command {
     constructor(
         private targetCompositionId: string,
         private createdLayer: Delir.Entity.Layer,
