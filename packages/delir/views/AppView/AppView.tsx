@@ -1,4 +1,5 @@
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import * as Mousetrap from 'mousetrap'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 
@@ -29,27 +30,18 @@ type Props = ConnectedProps & ContextProp
 export default withComponentContext(connectToStores([EditorStore], (context) => ({
     editor: context.getStore(EditorStore).getState()
 }))(class AppView extends React.PureComponent<Props> {
-    public componentDidMount()
+    public root = React.createRef<HTMLDivElement>()
+    public trap: InstanceType<typeof Mousetrap>
+
+    public  componentDidMount()
     {
         window.addEventListener('dragenter', this.prevent, false)
         window.addEventListener('dragover', this.prevent, false)
-        window.addEventListener('keyup', this.handleShortCut)
+
+        this.trap = new Mousetrap(this.root.current!)
+        this.trap.bind('space', this.handleShortCutPreviewToggle)
+
         window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
-    }
-
-    public handleShortCut = (e: KeyboardEvent) => {
-        const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
-
-        if (document.activeElement && document.activeElement.matches('input:not(:disabled),textarea:not(:disabled),select:not(:disabled)')) return
-
-        if (e.code === 'Space' && activeComp) {
-            previewPlayed
-                ? this.props.context.executeOperation(EditorOps.stopPreview, {})
-                : this.props.context.executeOperation(EditorOps.startPreview, {
-                    compositionId: activeComp.id,
-                    beginFrame: currentPreviewFrame
-                 })
-        }
     }
 
     public render()
@@ -57,7 +49,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         const { preferenceOpened } = this.props.editor
 
         return (
-            <div className='_container' onDrop={this.prevent}>
+            <div ref={this.root} className='_container' onDrop={this.prevent}>
                 <AppMenu />
                 <NavigationView />
                 <Workspace className='app-body' direction='vertical'>
@@ -97,5 +89,20 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
     private handlePreferenceClose = () => {
         this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
+    }
+
+    private handleShortCutPreviewToggle = () => {
+        const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
+
+        if (!activeComp) return
+
+        if (previewPlayed) {
+            this.props.context.executeOperation(EditorOps.stopPreview, {})
+        } else {
+            this.props.context.executeOperation(EditorOps.startPreview, {
+                compositionId: activeComp.id,
+                beginFrame: currentPreviewFrame
+            })
+        }
     }
 }))

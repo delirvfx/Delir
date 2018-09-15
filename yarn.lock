@@ -711,6 +711,10 @@
   version "4.14.116"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.116.tgz#5ccf215653e3e8c786a58390751033a9adca0eb9"
 
+"@types/mousetrap@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@types/mousetrap/-/mousetrap-1.6.0.tgz#c3951ab98b88ff6093cd0b1e4f8591af439141b8"
+
 "@types/msgpack5@3.4.1":
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/@types/msgpack5/-/msgpack5-3.4.1.tgz#79a0bdf1a723abd8496b0dba380ee02a5e41264a"
@@ -6370,6 +6374,10 @@ mouse-wheel@1.2.0:
     right-now "^1.0.0"
     signum "^1.0.0"
     to-px "^1.0.1"
+
+mousetrap@1.6.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/mousetrap/-/mousetrap-1.6.2.tgz#caadd9cf886db0986fb2fee59a82f6bd37527587"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
