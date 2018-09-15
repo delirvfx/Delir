@@ -8,6 +8,7 @@ export const ProjectActions = {
     addLayerAction: action<{ targetCompositionId: string, layer: Delir.Entity.Layer }>(),
     addLayerWithAssetAction: action<{
         targetComposition: Delir.Entity.Composition,
+        layer: Delir.Entity.Layer,
         clip: Delir.Entity.Clip,
         asset: Delir.Entity.Asset,
     }>(),

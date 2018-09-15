@@ -56,16 +56,16 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleAddLayerWithAsset = listen(ProjectActions.addLayerWithAssetAction, (payload) => {
         const { project } = this.state
-        const { targetComposition, clip, asset: registeredAsset } = payload
-        const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
+        const { targetComposition, clip, asset, layer } = payload
+        const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[asset.fileType]
 
         if (propName == null) return
+
         ProjectHelper.addKeyframe(project!, clip, propName, Object.assign(new Delir.Entity.Keyframe(), {
             frameOnClip: 0,
-            value: { assetId: registeredAsset.id },
+            value: { assetId: asset.id },
         }))
 
-        const layer = new Delir.Entity.Layer()
         ProjectHelper.addLayer(project!, targetComposition, layer)
         ProjectHelper.addClip(project!, layer, clip)
         this.updateLastModified()

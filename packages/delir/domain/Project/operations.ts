@@ -1,13 +1,16 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
+import { safeAssign } from '../../utils/safeAssign'
 
 import * as EditorOps from '../Editor/operations'
 import { HistoryActions } from '../History/actions'
+import CommandGroup from '../History/CommandGroup'
 import RendererStore from '../Renderer/RendererStore'
 import { ProjectActions } from './actions'
 import ProjectStore from './ProjectStore'
 
+import AddAssetCommand from './Commands/AddAssetCommand'
 import AddLayerCommand from './Commands/AddLayerCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
 
@@ -42,12 +45,11 @@ export const addLayerWithAsset = operation((context, { targetComposition, asset 
     targetComposition: Delir.Entity.Composition,
     asset: Delir.Entity.Asset
 }) => {
-    const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => {
+    const processableRenderer = Delir.Engine.Renderers.getAvailableRenderers().filter(entry => {
         return entry.handlableFileTypes.includes(asset.fileType)
-    })
+    })[0]
 
-    // TODO: Support selection
-    if (processablePlugins.length === 0) {
+    if (!processableRenderer) {
         context.executeOperation(EditorOps.notify, {
             message: `plugin not available for \`${asset.fileType}\``,
             title: '😢 Supported plugin not available',
@@ -58,17 +60,28 @@ export const addLayerWithAsset = operation((context, { targetComposition, asset 
         return
     }
 
+    const assignablePropName = Delir.Engine.Renderers.getInfo(processableRenderer.id as any).assetAssignMap[asset.fileType]
+    if (assignablePropName == null) return
+
+    const layer = new Delir.Entity.Layer()
     const clip = new Delir.Entity.Clip()
-    Object.assign(clip, {
-        renderer: processablePlugins[0].id,
+
+    safeAssign(clip, {
+        renderer: processableRenderer.id as any,
         placedFrame: 0,
         durationFrames: targetComposition.framerate,
+        keyframes: {
+            [assignablePropName]: [ safeAssign(new Delir.Entity.Keyframe(), { value: { assetId: asset.id } }) ],
+        },
     })
+
+    context.dispatch(HistoryActions.pushHistory, { command: new AddLayerCommand(targetComposition.id, layer) })
 
     context.dispatch(ProjectActions.addLayerWithAssetAction, {
         targetComposition,
         clip,
         asset,
+        layer,
     })
 })
 
@@ -236,6 +249,7 @@ export const addAsset = operation((context, { name, fileType, path }: {
     asset.fileType = fileType
     asset.path = path
 
+    context.dispatch(HistoryActions.pushHistory({ command: new AddAssetCommand(asset) }))
     context.dispatch(ProjectActions.addAssetAction, { asset })
 })
 
