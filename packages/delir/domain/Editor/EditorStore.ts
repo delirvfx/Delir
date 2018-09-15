@@ -69,6 +69,15 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
+    private handleRemoveComposition = listen(ProjectActions.removeCompositionAction, (payload) => {
+        if (this.state.activeComp && this.state.activeComp.id === payload.targetCompositionId) {
+            this.updateWith(draft => {
+                draft.activeComp = null
+                draft.activeClip = null
+            })
+        }
+    })
+
     private handleRemoveClip = listen(ProjectActions.removeClipAction, (payload) => {
         const { activeClip } = this.state
 
