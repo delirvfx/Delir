@@ -50,7 +50,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleAddLayer = listen(ProjectActions.addLayerAction, (payload) => {
         const { project } = this.state
-        ProjectHelper.addLayer(project!, payload.targetComposition, payload.layer)
+        ProjectHelper.addLayer(project!, payload.targetCompositionId, payload.layer)
         this.updateLastModified()
     })
 

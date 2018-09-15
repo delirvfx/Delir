@@ -8,6 +8,7 @@ import RendererStore from '../Renderer/RendererStore'
 import { ProjectActions } from './actions'
 import ProjectStore from './ProjectStore'
 
+import AddLayerCommand from './Commands/AddLayerCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
 
 //
@@ -29,11 +30,12 @@ export const createComposition = operation((context, options: {
     context.dispatch(ProjectActions.createCompositionAction, { composition })
 })
 
-export const addLayer = operation((context, { targetComposition, layer }: {
-    targetComposition: Delir.Entity.Composition,
+export const addLayer = operation((context, { targetCompositionId, layer }: {
+    targetCompositionId: string,
     layer: Delir.Entity.Layer
 }) => {
-    context.dispatch(ProjectActions.addLayerAction, { targetComposition, layer })
+    context.dispatch(HistoryActions.pushHistory, { command: new AddLayerCommand(targetCompositionId, layer) })
+    context.dispatch(ProjectActions.addLayerAction, { targetCompositionId, layer })
 })
 
 export const addLayerWithAsset = operation((context, { targetComposition, asset }: {

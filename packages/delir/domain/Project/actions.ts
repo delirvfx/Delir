@@ -5,7 +5,7 @@ export const ProjectActions = {
     createCompositionAction: action<{ composition: Delir.Entity.Composition }>(),
     createClipAction: action<{ targetLayerId: string, newClip: Delir.Entity.Clip }>(),
     addClipAction: action<{ targetLayer: Delir.Entity.Layer, newClip: Delir.Entity.Clip }>(),
-    addLayerAction: action<{ targetComposition: Delir.Entity.Composition, layer: Delir.Entity.Layer }>(),
+    addLayerAction: action<{ targetCompositionId: string, layer: Delir.Entity.Layer }>(),
     addLayerWithAssetAction: action<{
         targetComposition: Delir.Entity.Composition,
         clip: Delir.Entity.Clip,
