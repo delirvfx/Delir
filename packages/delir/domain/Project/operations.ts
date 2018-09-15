@@ -28,6 +28,7 @@ import { MoveClipToLayerCommand } from './Commands/MoveClipToLayerCommand'
 import { MoveLayerOrderCommand } from './Commands/MoveLayerOrderCommand'
 import { RemoveAssetCommand } from './Commands/RemoveAssetCommand'
 import { RemoveCompositionCommand } from './Commands/RemoveCompositionCommand'
+import { RemoveLayerCommand } from './Commands/RemoveLayerCommand'
 
 //
 // Modify project
@@ -434,6 +435,14 @@ export const removeComposition = operation((context, { compositionId }: { compos
 })
 
 export const removeLayer = operation((context, { layerId }: { layerId: string }) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const removingLayer = ProjectHelper.findLayerById(project, layerId)!
+    const parentComposition = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
+    const index = parentComposition.layers.findIndex(layer => layer.id === removingLayer.id)
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new RemoveLayerCommand(parentComposition.id, removingLayer, index)
+    })
     context.dispatch(ProjectActions.removeLayerAction, { targetLayerId: layerId })
 })
 
