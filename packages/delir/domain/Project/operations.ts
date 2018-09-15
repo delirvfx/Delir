@@ -12,6 +12,7 @@ import ProjectStore from './ProjectStore'
 
 import AddAssetCommand from './Commands/AddAssetCommand'
 import AddLayerCommand from './Commands/AddLayerCommand'
+import CreateCompositionCommand from './Commands/CreateCompositionCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
 
 //
@@ -29,7 +30,9 @@ export const createComposition = operation((context, options: {
     audioChannels: number,
 }) => {
     const composition = new Delir.Entity.Composition()
-    Object.assign(composition, options)
+    safeAssign(composition, options)
+
+    context.dispatch(HistoryActions.pushHistory, { command: new CreateCompositionCommand(composition) })
     context.dispatch(ProjectActions.createCompositionAction, { composition })
 })
 
