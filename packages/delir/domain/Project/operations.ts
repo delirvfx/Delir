@@ -366,10 +366,13 @@ export const modifyClip = operation((context, { clipId, params }: {
 }) => {
     const project = context.getStore(ProjectStore).getProject()
     if (!project) return
+
     const clip = ProjectHelper.findClipById(project, clipId)
     if (!clip) return
 
-    context.dispatch(HistoryActions.pushHistory, { command: new ModifyClipCommand(clipId, { ...clip }, { ...params }) })
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new ModifyClipCommand(clipId, { ...clip }, { ...params })
+    })
 
     context.dispatch(ProjectActions.modifyClipAction, {
         targetClipId: clipId,
