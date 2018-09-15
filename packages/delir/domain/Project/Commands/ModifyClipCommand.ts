@@ -1,19 +1,19 @@
 import * as _ from 'lodash'
 
-import { Clip } from '@ragg/delir-core/src/Entity'
+import * as Delir from '@ragg/delir-core'
 import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export default class ModifyClipCommand implements Command {
-    private toPreviousPatch: Partial<Clip>
+    private toPreviousPatch: Partial<Delir.Entity.Clip>
 
     constructor(
         private targetClipId: string,
-        private unpatched: Partial<Clip>,
-        private patch: Partial<Clip>,
+        unpatched: Partial<Delir.Entity.Clip>,
+        private patch: Partial<Delir.Entity.Clip>,
     ) {
-        this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Clip>
+        this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Clip>
     }
 
     public undo(context: OperationContext<any>) {
