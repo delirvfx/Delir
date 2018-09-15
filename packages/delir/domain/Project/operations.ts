@@ -25,6 +25,7 @@ import { ModifyEffectKeyframeCommand } from './Commands/ModifyEffectKeyframeComm
 import { ModifyKeyframeCommand } from './Commands/ModifyKeyframeCommand'
 import { ModifyLayerCommand } from './Commands/ModifyLayerCommand'
 import { MoveClipToLayerCommand } from './Commands/MoveClipToLayerCommand'
+import { MoveLayerOrderCommand } from './Commands/MoveLayerOrderCommand'
 import { RemoveAssetCommand } from './Commands/RemoveAssetCommand'
 
 //
@@ -439,7 +440,14 @@ export const moveLayerOrder = operation((context, { layerId, newIndex }: { layer
     const {project} = context.getStore(ProjectStore).getState()
     if (!project) return
 
-    const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
+    const comp = ProjectHelper.findParentCompositionByLayerId(project, layerId)
+    if (!comp) return
+
+    const previousIndex = comp.layers.findIndex(layer => layer.id === layerId)
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new MoveLayerOrderCommand(comp.id, layerId, previousIndex, newIndex)
+    })
 
     context.dispatch(ProjectActions.moveLayerOrderAction, {
         parentCompositionId: comp.id,
