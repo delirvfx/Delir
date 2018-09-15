@@ -433,7 +433,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             this.props.context.executeOperation(ProjectOps.modifyEffectExpression, {
                 clipId: activeClip.id,
                 effectId: result.target.entityId,
-                property: result.target.paramName,
+                paramName: result.target.paramName,
                 expr: {
                     language: 'typescript',
                     code: result.code!,

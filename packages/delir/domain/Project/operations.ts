@@ -20,6 +20,7 @@ import { CreateCompositionCommand } from './Commands/CreateCompositionCommand'
 import { ModifyClipCommand } from './Commands/ModifyClipCommand'
 import { ModifyClipExpressionCommand } from './Commands/ModifyClipExpressionCommand'
 import { ModifyCompositionCommand } from './Commands/ModifyCompositionCommand'
+import { ModifyEffectExpressionCommand } from './Commands/ModifyEffectExpressionCommand'
 import { ModifyEffectKeyframeCommand } from './Commands/ModifyEffectKeyframeCommand'
 import { ModifyKeyframeCommand } from './Commands/ModifyKeyframeCommand'
 import { ModifyLayerCommand } from './Commands/ModifyLayerCommand'
@@ -405,20 +406,32 @@ export const modifyClipExpression = operation((context, { clipId, paramName, exp
     })
 })
 
-export const modifyEffectExpression = operation((context, { clipId, effectId, property, expr }: {
+export const modifyEffectExpression = operation((context, { clipId, effectId, paramName, expr }: {
     clipId: string,
     effectId: string,
-    property: string,
+    paramName: string,
     expr: { language: string, code: string }
 }) => {
+    const project = context.getStore(ProjectStore).getProject()
+    if (!project) return
+
+    const clip = ProjectHelper.findClipById(project, clipId)
+    if (!clip) return
+
+    const effect = ProjectHelper.findEffectFromClipById(clip, effectId)
+    if (!effect) return
+
+    const newExpression = new Delir.Values.Expression(expr.language, expr.code)
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new ModifyEffectExpressionCommand(clipId, effectId, paramName, effect.expressions[paramName], newExpression)
+    })
+
     context.dispatch(ProjectActions.modifyEffectExpressionAction, {
         targetClipId: clipId,
         targetEffectId: effectId,
-        targetProperty: property,
-        expr: {
-            language: expr.language,
-            code: expr.code,
-        }
+        paramName: paramName,
+        expression: newExpression,
     })
 })
 

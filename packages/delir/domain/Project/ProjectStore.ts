@@ -132,8 +132,8 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleModifyEffectExpression = listen(ProjectActions.modifyEffectExpressionAction, (payload) => {
         const { project } = this.state
-        const { targetClipId, targetEffectId, targetProperty, expr } = payload
-        ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
+        const { targetClipId, targetEffectId, paramName, expression } = payload
+        ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, paramName, expression)
         this.updateLastModified()
     })
 
