@@ -11,6 +11,7 @@ import { ProjectActions } from './actions'
 import ProjectStore from './ProjectStore'
 
 import AddAssetCommand from './Commands/AddAssetCommand'
+import AddClipCommand from './Commands/AddClipCommand'
 import AddLayerCommand from './Commands/AddLayerCommand'
 import CreateCompositionCommand from './Commands/CreateCompositionCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
@@ -95,12 +96,13 @@ export const addClip = operation((context, { layerId, clipRendererId, placedFram
     durationFrames: number,
 }) => {
     const newClip = new Delir.Entity.Clip()
-    Object.assign(newClip, {
-        renderer: clipRendererId,
+    safeAssign(newClip, {
+        renderer: clipRendererId as any,
         placedFrame: placedFrame,
         durationFrames: durationFrames,
     })
 
+    context.dispatch(HistoryActions.pushHistory, { command: new AddClipCommand(layerId, newClip) })
     context.dispatch(ProjectActions.addClipAction, {
         newClip,
         targetLayerId: layerId,
