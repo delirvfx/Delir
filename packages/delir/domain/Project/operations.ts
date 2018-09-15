@@ -27,6 +27,7 @@ import { ModifyLayerCommand } from './Commands/ModifyLayerCommand'
 import { MoveClipToLayerCommand } from './Commands/MoveClipToLayerCommand'
 import { MoveLayerOrderCommand } from './Commands/MoveLayerOrderCommand'
 import { RemoveAssetCommand } from './Commands/RemoveAssetCommand'
+import { RemoveCompositionCommand } from './Commands/RemoveCompositionCommand'
 
 //
 // Modify project
@@ -43,7 +44,7 @@ export const createComposition = operation((context, options: {
     audioChannels: number,
 }) => {
     const composition = new Delir.Entity.Composition()
-    safeAssign(composition, options)
+    safeAssign(composition, options, { layers: [ new Delir.Entity.Layer() ] })
 
     context.dispatch(HistoryActions.pushHistory, { command: new CreateCompositionCommand(composition) })
     context.dispatch(ProjectActions.createCompositionAction, { composition })
@@ -457,6 +458,16 @@ export const moveLayerOrder = operation((context, { layerId, newIndex }: { layer
 })
 
 export const removeComposition = operation((context, { compositionId }: { compositionId: string }) => {
+    const project = context.getStore(ProjectStore).getProject()
+    if (!project) return
+
+    const composition = ProjectHelper.findCompositionById(project, compositionId)
+    if (!composition) return
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new RemoveCompositionCommand(composition)
+    })
+
     context.dispatch(ProjectActions.removeCompositionAction, { targetCompositionId: compositionId })
 })
 

@@ -29,9 +29,7 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleCreateComposition = listen(ProjectActions.createCompositionAction, (payload) => {
         const { project } = this.state
-        const newLayer = new Delir.Entity.Layer()
         ProjectHelper.addComposition(project!, payload.composition)
-        ProjectHelper.addLayer(project!, payload.composition, newLayer)
         this.updateLastModified()
     })
 
