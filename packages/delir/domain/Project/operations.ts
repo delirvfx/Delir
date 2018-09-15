@@ -12,6 +12,7 @@ import ProjectStore from './ProjectStore'
 
 import AddAssetCommand from './Commands/AddAssetCommand'
 import AddClipCommand from './Commands/AddClipCommand'
+import AddEffectIntoClipCommand from './Commands/AddEffectIntoClipCommand'
 import AddEffectKeyframeCommand from './Commands/AddEffectKeyframeCommand'
 import AddKeyframeCommand from './Commands/AddKeyframeCommand'
 import AddLayerCommand from './Commands/AddLayerCommand'
@@ -279,6 +280,10 @@ export const addEffectIntoClip = operation((context, { clipId, processorId }: {
 }) => {
     const effect = new Delir.Entity.Effect()
     effect.processor = processorId
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new AddEffectIntoClipCommand(clipId, effect)
+    })
     context.dispatch(ProjectActions.addEffectIntoClipAction, { clipId, effect })
 })
 
