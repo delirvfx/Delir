@@ -159,7 +159,6 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
 
                                     <td className={s.IconField}><i className='fa fa-film'></i></td>
                                     <td>
-                                        {console.log(comp.name)}
                                         <LabelInput
                                             ref={this.setCompositionNameInputRef(comp.id)}
                                             defaultValue={comp.name}

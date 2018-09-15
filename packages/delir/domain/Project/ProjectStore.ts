@@ -38,7 +38,6 @@ export default class ProjectStore extends Store<ProjectStoreState>
     private handleAddClip = listen(ProjectActions.addClipAction, (payload) => {
         const { project } = this.state
         const { targetLayerId, newClip } = payload
-        console.log(targetLayerId, newClip)
         ProjectHelper.addClip(project!, targetLayerId, newClip)
         this.updateLastModified()
     })
