@@ -110,8 +110,8 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
             const {asset} = dragEntity
             const {framerate, pxPerSec, scale} = this.props
             const placedFrame = TimePixelConversion.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
-            this.props.context.executeOperation(ProjectOps.createClipWithAsset, {
-                targetLayer: this.props.layer,
+            this.props.context.executeOperation(ProjectOps.addClipWithAsset, {
+                targetLayerId: this.props.layer.id,
                 asset,
                 placedFrame
             })

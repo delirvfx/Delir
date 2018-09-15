@@ -109,8 +109,8 @@ export const addClip = operation((context, { layerId, clipRendererId, placedFram
     })
 })
 
-export const createClipWithAsset = operation((context, { targetLayer, asset, placedFrame = 0, durationFrames = 100 }: {
-    targetLayer: Delir.Entity.Layer,
+export const addClipWithAsset = operation((context, { targetLayerId, asset, placedFrame = 0, durationFrames = 100 }: {
+    targetLayerId: string,
     asset: Delir.Entity.Asset,
     placedFrame?: number,
     durationFrames?: number,
@@ -118,11 +118,11 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
     const {project} = context.getStore(ProjectStore).getState()
     if (!project) return
 
-    const processablePlugins = Delir.Engine.Renderers.getAvailableRenderers()
-        .filter((entry) => entry.handlableFileTypes.includes(asset.fileType))
+    const processablePlugin = Delir.Engine.Renderers.getAvailableRenderers()
+        .filter((entry) => entry.handlableFileTypes.includes(asset.fileType))[0]
 
     // TODO: Support selection
-    if (processablePlugins.length === 0) {
+    if (!processablePlugin) {
         context.executeOperation(EditorOps.notify, {
             message: `plugin not available for \`${asset.fileType}\``,
             title: '😢 Supported plugin not available',
@@ -134,8 +134,8 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
     }
 
     const newClip = new Delir.Entity.Clip()
-    Object.assign(newClip, {
-        renderer: processablePlugins[0].id,
+    safeAssign(newClip, {
+        renderer: processablePlugin.id as any,
         placedFrame,
         durationFrames,
     })
@@ -149,7 +149,8 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
         value: { assetId: asset.id },
     }))
 
-    context.dispatch(ProjectActions.addClipAction, { targetLayerId: targetLayer.id, newClip })
+    context.dispatch(HistoryActions.pushHistory, { command: new AddClipCommand(targetLayerId, newClip) })
+    context.dispatch(ProjectActions.addClipAction, { targetLayerId, newClip })
 })
 
 export const createOrModifyKeyframeForClip = operation((context, { clipId, paramName, frameOnClip, patch }: {
