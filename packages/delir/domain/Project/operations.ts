@@ -3,9 +3,12 @@ import { ProjectHelper } from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
 
 import * as EditorOps from '../Editor/operations'
+import { HistoryActions } from '../History/actions'
 import RendererStore from '../Renderer/RendererStore'
 import { ProjectActions } from './actions'
 import ProjectStore from './ProjectStore'
+
+import ModifyClipCommand from './Commands/ModifyClipCommand'
 
 //
 // Modify project
@@ -281,13 +284,20 @@ export const modifyLayer = operation((context, { layerId, props }: {
     })
 })
 
-export const modifyClip = operation((context, { clipId, props }: {
+export const modifyClip = operation((context, { clipId, params }: {
     clipId: string,
-    props: Partial<Delir.Entity.Clip>
+    params: Partial<Delir.Entity.Clip>
 }) => {
+    const project = context.getStore(ProjectStore).getProject()
+    if (!project) return
+    const clip = ProjectHelper.findClipById(project, clipId)
+    if (!clip) return
+
+    context.dispatch(HistoryActions.pushHistory, { command: new ModifyClipCommand(clipId, { ...clip }, { ...params }) })
+
     context.dispatch(ProjectActions.modifyClipAction, {
         targetClipId: clipId,
-        patch: props,
+        patch: params,
     })
 })
 

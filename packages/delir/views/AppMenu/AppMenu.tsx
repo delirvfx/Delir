@@ -5,6 +5,7 @@ import * as React from 'react'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as HistoryOps from '../../domain/History/operations'
 import * as AboutModal from '../../modules/AboutModal'
 import * as Platform from '../../utils/platform'
 

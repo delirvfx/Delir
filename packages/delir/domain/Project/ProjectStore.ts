@@ -217,6 +217,10 @@ export default class ProjectStore extends Store<ProjectStoreState>
         return this.state
     }
 
+    public getProject() {
+        return this.state.project
+    }
+
     private updateLastModified = () => {
         // Projectの変更は検知できないし、構造が大きくなる可能性があるので今のところImmutableにもしたくない
         this.updateWith(d => d.lastChangeTime = Date.now())

@@ -2,9 +2,11 @@ import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-
 import * as Mousetrap from 'mousetrap'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
+import { makeMousetrapHandler } from '../../utils/makeMousetrapHandler'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as HistoryOps from '../../domain/History/operations'
 
 import Pane from '../components/pane'
 import Workspace from '../components/workspace'
@@ -40,6 +42,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         this.trap = new Mousetrap(this.root.current!)
         this.trap.bind('space', this.handleShortCutPreviewToggle)
+        this.trap.bind(['command+z', 'ctrl+z'], this.handleShortCutUndo)
+        this.trap.bind(['command+shift+z', 'ctrl+shift+z'], this.handleShortCutRedo)
 
         window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
     }
@@ -105,4 +109,16 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             })
         }
     }
+
+    // tslint:disable-next-line: member-ordering
+    private handleShortCutUndo = makeMousetrapHandler((e: KeyboardEvent) => {
+        e.preventDefault()
+        this.props.context.executeOperation(HistoryOps.doUndo, {})
+    })
+
+    // tslint:disable-next-line: member-ordering
+    private handleShortCutRedo = makeMousetrapHandler((e: KeyboardEvent) => {
+        e.preventDefault()
+        this.props.context.executeOperation(HistoryOps.doRedo, {})
+    })
 }))
