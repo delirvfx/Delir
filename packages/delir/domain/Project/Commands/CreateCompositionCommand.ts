@@ -4,7 +4,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class CreateCompositionCommand implements Command {
+export class CreateCompositionCommand implements Command {
     constructor(
         private createdComposition: Delir.Entity.Composition
     ) {}

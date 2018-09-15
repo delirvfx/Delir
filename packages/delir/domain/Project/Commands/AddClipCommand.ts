@@ -4,7 +4,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class AddClipCommand implements Command {
+export class AddClipCommand implements Command {
     constructor(
         private targetLayerId: string,
         private addedClip: Delir.Entity.Clip

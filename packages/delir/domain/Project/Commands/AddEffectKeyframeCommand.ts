@@ -4,7 +4,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class AddEffectKeyframeCommand implements Command {
+export class AddEffectKeyframeCommand implements Command {
     constructor(
         private targetClipId: string,
         private targetEffectId: string,

@@ -5,7 +5,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class ModifyEffectKeyframeCommand implements Command {
+export class ModifyEffectKeyframeCommand implements Command {
     private toPreviousPatch: Partial<Delir.Entity.Keyframe>
 
     constructor(

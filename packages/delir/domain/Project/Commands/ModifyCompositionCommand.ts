@@ -5,7 +5,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class ModifyCompositionCommand implements Command {
+export class ModifyCompositionCommand implements Command {
     private toPreviousPatch: Partial<Delir.Entity.Composition>
 
     constructor(

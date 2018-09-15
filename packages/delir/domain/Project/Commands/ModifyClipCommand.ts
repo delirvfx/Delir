@@ -5,7 +5,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class ModifyClipCommand implements Command {
+export class ModifyClipCommand implements Command {
     private toPreviousPatch: Partial<Delir.Entity.Clip>
 
     constructor(

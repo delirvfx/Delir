@@ -4,7 +4,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class RemoveAssetCommand implements Command {
+export class RemoveAssetCommand implements Command {
     constructor(
         private removedAsset: Delir.Entity.Asset
     ) {}

@@ -3,7 +3,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions }  from '../actions'
 
-export default class MoveClipToLayerCommand implements Command {
+export class MoveClipToLayerCommand implements Command {
     constructor(
         private sourceLayerId: string,
         private destLayerId: string,

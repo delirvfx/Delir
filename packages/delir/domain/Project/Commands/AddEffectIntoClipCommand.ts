@@ -4,7 +4,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
-export default class AddEffectIntoClipCommand implements Command {
+export class AddEffectIntoClipCommand implements Command {
     constructor(
         private clipId: string,
         private addedEffect: Delir.Entity.Effect

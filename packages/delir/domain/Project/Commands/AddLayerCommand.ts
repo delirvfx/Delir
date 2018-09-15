@@ -4,7 +4,7 @@ import { OperationContext } from '@ragg/fleur'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions }  from '../actions'
 
-export default class CreateLayerCommand implements Command {
+export class AddLayerCommand implements Command {
     constructor(
         private targetCompositionId: string,
         private addedLayer: Delir.Entity.Layer,
