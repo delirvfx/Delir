@@ -269,7 +269,7 @@ export const addAsset = operation((context, { name, fileType, path }: {
     asset.fileType = fileType
     asset.path = path
 
-    context.dispatch(HistoryActions.pushHistory({ command: new AddAssetCommand(asset) }))
+    context.dispatch(HistoryActions.pushHistory, { command: new AddAssetCommand(asset) })
     context.dispatch(ProjectActions.addAssetAction, { asset })
 })
 
