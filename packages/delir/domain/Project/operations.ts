@@ -20,6 +20,7 @@ import CreateCompositionCommand from './Commands/CreateCompositionCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
 import ModifyEffectKeyframeCommand from './Commands/ModifyEffectKeyframeCommand'
 import ModifyKeyframeCommand from './Commands/ModifyKeyframeCommand'
+import MoveClipToLayerCommand from './Commands/MoveClipToLayerCommand'
 import RemoveAssetCommand from './Commands/RemoveAssetCommand'
 
 //
@@ -301,11 +302,19 @@ export const removeAsset = operation((context, { assetId }: { assetId: string })
     context.dispatch(ProjectActions.removeAssetAction, { targetAssetId: assetId })
 })
 
-// TODO: frame position
 export const moveClipToLayer = operation((context, { clipId, destLayerId }: {
     clipId: string,
     destLayerId: string
 }) => {
+    const project = context.getStore(ProjectStore).getProject()
+    if (!project) return
+
+    const sourceLayer = ProjectHelper.findParentLayerByClipId(project, clipId)
+    if (!sourceLayer) return
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new MoveClipToLayerCommand(sourceLayer.id, destLayerId, clipId)
+    })
     context.dispatch(ProjectActions.moveClipToLayerAction, { destLayerId: destLayerId, clipId })
 })
 
