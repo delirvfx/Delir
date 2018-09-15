@@ -109,7 +109,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
         return (
             <Pane className={s.assetsView} allowFocus>
                 <h1 className={s.compositionsHeading}>
-                    Compositions
+                    {t('compositions.title')}
                     <i
                         className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}
                         onClick={this.openNewCompositionWindow}
@@ -159,6 +159,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
 
                                     <td className={s.IconField}><i className='fa fa-film'></i></td>
                                     <td>
+                                        {console.log(comp.name)}
                                         <LabelInput
                                             ref={this.setCompositionNameInputRef(comp.id)}
                                             defaultValue={comp.name}
@@ -172,7 +173,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
                     </table>
                 </div>
                 <h1 className={s.assetsHeading}>
-                    Assets
+                    {t('assets.title')}
                     <label className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
                         <input ref='assetInput' type='file' style={{display: 'none'}} onChange={this.selectAsset} multiple />
                     </label>
@@ -296,7 +297,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
 
     private modifyCompName = (compositionId: string, newName: string) =>
     {
-        this.props.context.executeOperation(ProjectOps.modifyComposition, { compositionId, props: { name: newName }})
+        this.props.context.executeOperation(ProjectOps.modifyComposition, { compositionId, patch: { name: newName }})
     }
 
     private selectAsset = ({nativeEvent: e}: React.ChangeEvent<HTMLInputElement>) =>
@@ -324,7 +325,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
         const req = await CompositionSettingModal.show({composition: comp})
 
         if (!req) return
-        this.props.context.executeOperation(ProjectOps.modifyComposition, { compositionId: compositionId, props: castToCompositionProps(req as any) })
+        this.props.context.executeOperation(ProjectOps.modifyComposition, { compositionId: compositionId, patch: castToCompositionProps(req as any) })
     }
 
     private openNewCompositionWindow =  async () =>

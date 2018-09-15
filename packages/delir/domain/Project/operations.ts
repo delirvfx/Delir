@@ -18,6 +18,7 @@ import AddKeyframeCommand from './Commands/AddKeyframeCommand'
 import AddLayerCommand from './Commands/AddLayerCommand'
 import CreateCompositionCommand from './Commands/CreateCompositionCommand'
 import ModifyClipCommand from './Commands/ModifyClipCommand'
+import ModifyCompositionCommand from './Commands/ModifyCompositionCommand'
 import ModifyEffectKeyframeCommand from './Commands/ModifyEffectKeyframeCommand'
 import ModifyKeyframeCommand from './Commands/ModifyKeyframeCommand'
 import MoveClipToLayerCommand from './Commands/MoveClipToLayerCommand'
@@ -318,13 +319,23 @@ export const moveClipToLayer = operation((context, { clipId, destLayerId }: {
     context.dispatch(ProjectActions.moveClipToLayerAction, { destLayerId: destLayerId, clipId })
 })
 
-export const modifyComposition = operation((context, { compositionId, props }: {
+export const modifyComposition = operation((context, { compositionId, patch }: {
     compositionId: string,
-    props: Partial<Delir.Entity.Composition>
+    patch: Partial<Delir.Entity.Composition>
 }) => {
+    const project = context.getStore(ProjectStore).getProject()
+    if (!project) return
+
+    const composition = ProjectHelper.findCompositionById(project, compositionId)
+    if (!composition) return
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new ModifyCompositionCommand(compositionId, {...composition}, patch)
+    })
+
     context.dispatch(ProjectActions.modifyCompositionAction, {
         targetCompositionId: compositionId,
-        patch: props
+        patch,
     })
 })
 
