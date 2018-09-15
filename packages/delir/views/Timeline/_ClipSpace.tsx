@@ -176,7 +176,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
     private addNewClip = ({ dataset }: MenuItemOption<{rendererId: string}>) =>
     {
-        this.props.context.executeOperation(ProjectOps.createClip, {
+        this.props.context.executeOperation(ProjectOps.addClip, {
             layerId: this.props.layer.id!,
             clipRendererId: dataset.rendererId,
             placedFrame: 0,

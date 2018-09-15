@@ -88,7 +88,7 @@ export const addLayerWithAsset = operation((context, { targetComposition, asset 
     })
 })
 
-export const createClip = operation((context, { layerId, clipRendererId, placedFrame = 0, durationFrames = 100 }: {
+export const addClip = operation((context, { layerId, clipRendererId, placedFrame = 0, durationFrames = 100 }: {
     layerId: string,
     clipRendererId: string,
     placedFrame: number,
@@ -101,7 +101,7 @@ export const createClip = operation((context, { layerId, clipRendererId, placedF
         durationFrames: durationFrames,
     })
 
-    context.dispatch(ProjectActions.createClipAction, {
+    context.dispatch(ProjectActions.addClipAction, {
         newClip,
         targetLayerId: layerId,
     })
