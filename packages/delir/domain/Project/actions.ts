@@ -3,7 +3,6 @@ import { action } from '@ragg/fleur'
 
 export const ProjectActions = {
     createCompositionAction: action<{ composition: Delir.Entity.Composition }>(),
-    createLayerAction: action<{ targetCompositionId: string, layer: Delir.Entity.Layer }>(),
     createClipAction: action<{ targetLayerId: string, newClip: Delir.Entity.Clip }>(),
     addClipAction: action<{ targetLayer: Delir.Entity.Layer, newClip: Delir.Entity.Clip }>(),
     addLayerAction: action<{ targetComposition: Delir.Entity.Composition, layer: Delir.Entity.Layer }>(),

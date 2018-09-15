@@ -29,12 +29,6 @@ export const createComposition = operation((context, options: {
     context.dispatch(ProjectActions.createCompositionAction, { composition })
 })
 
-// @deprecated
-export const createLayer = operation((context, { compId }: { compId: string }) => {
-    const layer = new Delir.Entity.Layer()
-    context.dispatch(ProjectActions.createLayerAction, { targetCompositionId: compId, layer })
-})
-
 export const addLayer = operation((context, { targetComposition, layer }: {
     targetComposition: Delir.Entity.Composition,
     layer: Delir.Entity.Layer
