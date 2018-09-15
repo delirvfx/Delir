@@ -149,7 +149,7 @@ export const createClipWithAsset = operation((context, { targetLayer, asset, pla
         value: { assetId: asset.id },
     }))
 
-    context.dispatch(ProjectActions.addClipAction, { targetLayer, newClip })
+    context.dispatch(ProjectActions.addClipAction, { targetLayerId: targetLayer.id, newClip })
 })
 
 export const createOrModifyKeyframeForClip = operation((context, { clipId, paramName, frameOnClip, patch }: {
