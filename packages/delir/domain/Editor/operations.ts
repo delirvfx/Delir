@@ -12,6 +12,7 @@ import EditorStore from './EditorStore'
 
 import { EditorActions } from './actions'
 import t from './operations.i18n'
+import { ParameterTarget } from './types'
 
 export type DragEntity =
     | { type: 'asset', asset: Delir.Entity.Asset }
@@ -84,6 +85,10 @@ export const changeActiveComposition = operation((context, { compositionId }: { 
 
 export const changeActiveClip = operation((context, { clipId }: { clipId: string }) => {
     context.dispatch(EditorActions.changeActiveClipAction, { clipId })
+})
+
+export const changeActiveParam = operation((context, { target }: { target: ParameterTarget | null }) => {
+    context.dispatch(EditorActions.changeActiveParamAction, { target })
 })
 
 //

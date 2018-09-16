@@ -35,7 +35,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
     public root = React.createRef<HTMLDivElement>()
     public trap: InstanceType<typeof Mousetrap>
 
-    public  componentDidMount()
+    public componentDidMount()
     {
         window.addEventListener('dragenter', this.prevent, false)
         window.addEventListener('dragover', this.prevent, false)
