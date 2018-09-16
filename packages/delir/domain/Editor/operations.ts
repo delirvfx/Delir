@@ -36,9 +36,6 @@ export const openPluginDirectory = operation((context, arg: {}) => {
     remote.shell.openItem(pluginsDir)
 })
 
-//
-// Editor Store
-//Delir.Entity.
 export const setActiveProject = operation((context, arg: { project: Delir.Entity.Project, path?: string | null }) => {
     context.dispatch(EditorActions.setActiveProjectAction, {
         project: arg.project,

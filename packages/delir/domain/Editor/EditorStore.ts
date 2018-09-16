@@ -46,7 +46,7 @@ export default class EditorStore extends Store<EditorState> {
         notifications: []
     }
 
-    private handlesetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
+    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
         __DEV__ && console.log('✨ Project activated', payload.project)
 
         this.updateWith(draft => {
@@ -59,17 +59,6 @@ export default class EditorStore extends Store<EditorState> {
                 draft.activeClip = null
                 draft.activeParam = null
             }
-        })
-    })
-
-    private handleclearActiveProject = listen(EditorActions.clearActiveProjectAction, () => {
-        __DEV__ && console.log('💥 Project deactivated')
-
-        this.updateWith(draft => {
-            draft.project = null
-            draft.activeComp = null
-            draft.activeClip = null
-            draft.activeParam = null
         })
     })
 
