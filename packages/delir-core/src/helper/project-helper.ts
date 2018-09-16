@@ -294,9 +294,9 @@ export function deleteKeyframe(
         ? targetKeyframeId
         : findKeyframeById(project, targetKeyframeId)!
 
-    const {clip, propName} = findParentClipAndPropNameByKeyframeId(project, keyframe.id!)!
-    if (!clip.keyframes[propName]) return
-    _.remove(clip.keyframes[propName], kf => kf.id === targetKeyframeId) // TODO: Implement this function Or change keyframe structure
+    const {clip, paramName} = findParentClipAndPropNameByKeyframeId(project, keyframe.id!)!
+    if (!clip.keyframes[paramName]) return
+    _.remove(clip.keyframes[paramName], kf => kf.id === targetKeyframeId) // TODO: Implement this function Or change keyframe structure
 }
 
 export function deleteEffectKeyframe(
@@ -370,13 +370,17 @@ export function modifyClipExpression(
     project: Project,
     targetClipId: Clip | string,
     property: string,
-    expr: Expression,
+    expr: Expression | null,
 ) {
     const clip = targetClipId instanceof Clip
         ? targetClipId
         : findClipById(project, targetClipId)!
 
-    clip.expressions[property] = expr
+    if (expr == null) {
+        delete clip.expressions[property]
+    } else {
+        clip.expressions[property] = expr
+    }
 }
 
 export function modifyEffectExpression(
@@ -384,7 +388,7 @@ export function modifyEffectExpression(
     targetClipId: Clip | string,
     targetEffectId: Effect | string,
     property: string,
-    expr: Expression,
+    expr: Expression | null,
 ) {
     const clip = targetClipId instanceof Clip
         ? targetClipId
@@ -394,7 +398,11 @@ export function modifyEffectExpression(
         ? targetEffectId
         : findEffectFromClipById(clip, targetEffectId)
 
-    effect!.expressions[property] = expr
+    if (expr == null) {
+        delete effect!.expressions[property]
+    } else {
+        effect!.expressions[property] = expr
+    }
 }
 
 export function modifyEffect(
@@ -435,7 +443,7 @@ export function modifyEffectKeyframe(
 
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId
-        : findKeyframeFromEffectById(effect, targetKeyframeId)!
+        : findEffectKeyframeFromEffectById(effect, targetKeyframeId)!
 
     if (!keyframe) return
 
@@ -472,7 +480,29 @@ export function moveLayerOrder(
     }
 
     const prevIndex = composition.layers.indexOf(layer)
-    composition.layers.splice(newIndex, 0, composition.layers.splice(prevIndex, 1)[0])
+    composition.layers.splice(newIndex, 0, ...composition.layers.splice(prevIndex, 1))
+}
+
+export function moveEffectOrder(
+    project: Project,
+    clipId: string,
+    subjectEffectId: string,
+    newIndex: number
+): boolean {
+    const clip = findClipById(project, clipId)
+    if (!clip) return false
+
+    const effect = findEffectFromClipById(clip, subjectEffectId)
+    if (!effect) return false
+
+    if (!clip.effects.includes(effect)) {
+        throw new Error(`Ordering effect not contained in clip "${clip.id}"`)
+    }
+
+    const prevIndex = clip.effects.indexOf(effect)
+    clip.effects.splice(newIndex, 0, ...clip.effects.splice(prevIndex, 1))
+
+    return true
 }
 
 //
@@ -544,6 +574,26 @@ export function findClipById(project: Project, clipId: string): Clip | null
     return targetClip
 }
 
+export function findEffectById(project: Project, effectId: string): Effect | null {
+    let targetEffect: Effect | null = null
+
+    effectSearch:
+        for (const comp of project.compositions) {
+            for (const layer of comp.layers) {
+                for (const clip of layer.clips) {
+                    for (const effect of clip.effects) {
+                        if (effect.id === effectId) {
+                            targetEffect = effect
+                            break effectSearch
+                        }
+                    }
+                }
+            }
+        }
+
+    return targetEffect
+}
+
 export function findEffectFromClipById(clip: Clip, effectId: string): Effect | null
 {
     for (const effect of clip.effects) {
@@ -608,13 +658,13 @@ export function findKeyframeFromClipById(clip: Clip, keyframeId: string): Keyfra
     return targetKeyframe
 }
 
-export function findKeyframeFromEffectById(effect: Effect, keyframeId: string): Keyframe | null
+export function findEffectKeyframeFromEffectById(effect: Effect, keyframeId: string): Keyframe | null
 {
     let targetKeyframe: Keyframe | null = null
 
     keyframeSearch:
-        for (const propName of Object.keys(effect.keyframes)) {
-            for (const keyframe of effect.keyframes[propName]) {
+        for (const paramNEm of Object.keys(effect.keyframes)) {
+            for (const keyframe of effect.keyframes[paramNEm]) {
                 if (keyframe.id === keyframeId) {
                     targetKeyframe = keyframe
                     break keyframeSearch
@@ -662,21 +712,63 @@ export function findKeyframeFromEffectByPropAndFrame(effect: Effect, propName: s
     return target ? target : null
 }
 
-export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, propName: string} | null
+export function findClipFromEffectId(project: Project, effectId: string): Clip | null {
+    let targetClip: Clip | null = null
+
+    searchClip:
+        for (const comp of project.compositions) {
+            for (const layer of comp.layers) {
+                for (const clip of layer.clips) {
+                    for (const effect of clip.effects) {
+                        if (effect.id === effectId) {
+                            targetClip = clip
+                            break searchClip
+                        }
+                    }
+                }
+            }
+        }
+
+    return targetClip
+}
+
+export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, paramName: string} | null
 {
-    let target: {clip: Clip, propName: string} | null = null
+    let target: {clip: Clip, paramName: string} | null = null
 
     keyframeSearch:
         for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 for (const clip of layer.clips) {
-                    for (const propName of Object.keys(clip.keyframes)) {
-                        for (const keyframe of clip.keyframes[propName]) {
+                    for (const paramName of Object.keys(clip.keyframes)) {
+                        for (const keyframe of clip.keyframes[paramName]) {
                             if (keyframe.id === keyframeId) {
-                                target = {clip, propName}
+                                target = {clip, paramName}
                                 break keyframeSearch
                             }
                         }
+                    }
+                }
+            }
+        }
+
+    return target
+}
+
+export function findParentEffectAndParamNameByClipIdAndKeyframeId(project: Project, clipId: string, effectKeyframeId: string): {effect: Effect, paramName: string} | null
+{
+    let target: {effect: Effect, paramName: string} | null = null
+    const clip = findClipById(project, clipId)
+
+    if (!clip) return null
+
+    keyframeSearch:
+        for (const effect of clip.effects) {
+            for (const paramName of Object.keys(effect.keyframes)) {
+                for (const keyframe of effect.keyframes[paramName]) {
+                    if (keyframe.id === effectKeyframeId) {
+                        target = {effect, paramName}
+                        break keyframeSearch
                     }
                 }
             }

@@ -12,6 +12,7 @@ import EditorStore from './EditorStore'
 
 import { EditorActions } from './actions'
 import t from './operations.i18n'
+import { ParameterTarget } from './types'
 
 export type DragEntity =
     | { type: 'asset', asset: Delir.Entity.Asset }
@@ -21,13 +22,6 @@ export type DragEntity =
 //
 // App services
 //
-export const previewProgressed = operation((context, { currentFrame }: { currentFrame: number }) => {
-    context.dispatch
-    // context.dispatch({
-    //     type: 'preview-progressed',
-    //     payload: {currentFrame}
-    // })
-})
 
 export const openPluginDirectory = operation((context, arg: {}) => {
     const userDir = remote.app.getPath('appData')
@@ -35,13 +29,16 @@ export const openPluginDirectory = operation((context, arg: {}) => {
     remote.shell.openItem(pluginsDir)
 })
 
-//
-// Editor Store
-//Delir.Entity.
-export const setActiveProject = operation((context, arg: { project: Delir.Entity.Project, path?: string | null }) => {
+export const setActiveProject = operation((context, payload: { project: Delir.Entity.Project, path?: string | null }) => {
+    const { project: activeProject } = context.getStore(EditorStore).getState()
+
+    if (!activeProject || payload.project !== activeProject) {
+        context.dispatch(EditorActions.clearActiveProjectAction, {})
+    }
+
     context.dispatch(EditorActions.setActiveProjectAction, {
-        project: arg.project,
-        path: arg.path,
+        project: payload.project,
+        path: payload.path,
     })
 })
 
@@ -84,6 +81,10 @@ export const changeActiveComposition = operation((context, { compositionId }: { 
 
 export const changeActiveClip = operation((context, { clipId }: { clipId: string }) => {
     context.dispatch(EditorActions.changeActiveClipAction, { clipId })
+})
+
+export const changeActiveParam = operation((context, { target }: { target: ParameterTarget | null }) => {
+    context.dispatch(EditorActions.changeActiveParamAction, { target })
 })
 
 //

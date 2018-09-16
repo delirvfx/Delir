@@ -2,14 +2,18 @@ import * as monaco from 'monaco-editor'
 import * as React from 'react'
 
 import MonacoUtil from '../../utils/Monaco'
+
 import Button from '../components/Button'
-import { EditorResult, TargetParam } from './KeyframeEditor'
+
+import { ParameterTarget } from '../../domain/Editor/types'
+import { EditorResult } from './KeyframeEditor'
+
 import * as s from './ScriptParamEditor.styl'
 
 interface Props {
     title: string
     code: string
-    target: TargetParam
+    target: ParameterTarget
     onClose: (result: EditorResult) => void
 }
 

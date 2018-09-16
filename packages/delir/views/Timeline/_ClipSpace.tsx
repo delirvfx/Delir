@@ -110,8 +110,8 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
             const {asset} = dragEntity
             const {framerate, pxPerSec, scale} = this.props
             const placedFrame = TimePixelConversion.pixelToFrames({pxPerSec, framerate, pixel: ((e.nativeEvent as any).layerX as number), scale})
-            this.props.context.executeOperation(ProjectOps.createClipWithAsset, {
-                targetLayer: this.props.layer,
+            this.props.context.executeOperation(ProjectOps.addClipWithAsset, {
+                targetLayerId: this.props.layer.id,
                 asset,
                 placedFrame
             })
@@ -155,7 +155,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
         this.props.context.executeOperation(ProjectOps.modifyClip, {
             clipId,
-            props: { placedFrame: newPlacedFrame }
+            patch: { placedFrame: newPlacedFrame }
         })
     }
 
@@ -170,13 +170,13 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
         this.props.context.executeOperation(ProjectOps.modifyClip, {
             clipId: clipId,
-            props: { durationFrames: newDurationFrames }
+            patch: { durationFrames: newDurationFrames }
         })
     }
 
     private addNewClip = ({ dataset }: MenuItemOption<{rendererId: string}>) =>
     {
-        this.props.context.executeOperation(ProjectOps.createClip, {
+        this.props.context.executeOperation(ProjectOps.addClip, {
             layerId: this.props.layer.id!,
             clipRendererId: dataset.rendererId,
             placedFrame: 0,

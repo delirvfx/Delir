@@ -2,14 +2,16 @@ import * as Delir from '@ragg/delir-core'
 import { action } from '@ragg/fleur'
 
 import { DragEntity } from './operations'
+import { ParameterTarget } from './types'
 
 export const EditorActions = {
     setActiveProjectAction: action<{ project: Delir.Entity.Project, path?: string | null }>(),
-    clearActiveProjectAction: action<null>(),
+    clearActiveProjectAction: action<{}>(),
     setDragEntityAction: action<DragEntity>(),
     clearDragEntityAction: action<{}>(),
     changeActiveCompositionAction: action<{ compositionId: string }>(),
     changeActiveClipAction: action<{ clipId: string }>(),
+    changeActiveParamAction: action<{ target: ParameterTarget | null }>(),
     startPreviewAction: action<{ compositionId: string, beginFrame: number, ignoreMissingEffect: boolean }>(),
     stopPreviewAction: action<{}>(),
     renderDestinateAction: action<{ compositionId: string, ignoreMissingEffect: boolean }>(),

@@ -14,6 +14,7 @@ import './assets/styles/style.styl'
 import AppView from './views/AppView'
 
 import EditorStore from './domain/Editor/EditorStore'
+import HistoryStore from './domain/History/HistoryStore'
 import PreferenceStore from './domain/Preference/PreferenceStore'
 import ProjectStore from './domain/Project/ProjectStore'
 import RendererStore from './domain/Renderer/RendererStore'
@@ -37,7 +38,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         case 'Linux': document.body.classList.add('platform-linux'); break
     }
 
-    const app = new Fleur({ stores: [ EditorStore, ProjectStore, RendererStore, PreferenceStore ] })
+    const app = new Fleur({ stores: [ EditorStore, ProjectStore, RendererStore, PreferenceStore, HistoryStore ] })
     const context = window.delir = app.createContext()
 
     // console.log(createElementWithContext)

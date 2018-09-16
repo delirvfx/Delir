@@ -1,9 +1,11 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
+
 import { ProjectActions } from '../Project/actions'
 import { EditorActions } from './actions'
 import { DragEntity } from './operations'
+import { ParameterTarget } from './types'
 
 export interface NotificationEntry {
     id: string
@@ -18,6 +20,7 @@ export interface EditorState {
     projectPath: string | null
     activeComp: Delir.Entity.Composition | null
     activeClip: Delir.Entity.Clip | null
+    activeParam: ParameterTarget | null
     dragEntity: DragEntity | null
     processingState: string | null
     previewPlayed: boolean
@@ -34,6 +37,7 @@ export default class EditorStore extends Store<EditorState> {
         projectPath: null,
         activeComp: null,
         activeClip: null,
+        activeParam: null,
         dragEntity: null,
         processingState: null,
         previewPlayed: false,
@@ -42,7 +46,7 @@ export default class EditorStore extends Store<EditorState> {
         notifications: []
     }
 
-    private handlesetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
+    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
         __DEV__ && console.log('✨ Project activated', payload.project)
 
         this.updateWith(draft => {
@@ -53,27 +57,18 @@ export default class EditorStore extends Store<EditorState> {
             if (payload.project !== this.state.project) {
                 draft.activeComp = null
                 draft.activeClip = null
+                draft.activeParam = null
             }
         })
     })
 
-    private handleclearActiveProject = listen(EditorActions.clearActiveProjectAction, () => {
-        __DEV__ && console.log('💥 Project deactivated')
-
-        this.updateWith(draft => {
-            Object.assign(draft, {
-                project: null,
-                activeComp: null,
-                activeClip: null,
+    private handleRemoveComposition = listen(ProjectActions.removeCompositionAction, (payload) => {
+        if (this.state.activeComp && this.state.activeComp.id === payload.targetCompositionId) {
+            this.updateWith(draft => {
+                draft.activeComp = null
+                draft.activeClip = null
+                draft.activeParam = null
             })
-        })
-    })
-
-    private handleRemoveClip = listen(ProjectActions.removeClipAction, (payload) => {
-        const { activeClip } = this.state
-
-        if (activeClip && activeClip.id === payload.targetClipId) {
-            this.updateWith(draft => draft.activeClip = null)
         }
     })
 
@@ -85,7 +80,28 @@ export default class EditorStore extends Store<EditorState> {
         const clipContainedLayer = ProjectHelper.findParentLayerByClipId(this.state.project, activeClip.id)
 
         // Reset selected clip if removed layer contains selected clip
-        clipContainedLayer && this.updateWith(d => d.activeClip = null)
+        clipContainedLayer && this.updateWith(d => {
+            d.activeClip = null
+            d.activeParam = null
+        })
+    })
+
+    private handleRemoveClip = listen(ProjectActions.removeClipAction, (payload) => {
+        const { activeClip } = this.state
+
+        if (activeClip && activeClip.id === payload.targetClipId) {
+            this.updateWith(draft => {
+                draft.activeClip = null
+                draft.activeParam = null
+            })
+        }
+    })
+
+    private handleRemoveEffect = listen(ProjectActions.removeEffectFromClipAction, (payload) => {
+        const { activeParam } = this.state
+        if (activeParam && activeParam.type === 'effect' && payload.targetEffectId === activeParam.entityId) {
+            this.updateWith(draft => draft.activeParam = null)
+        }
     })
 
     private handlesetDragEntity = listen(EditorActions.setDragEntityAction, (payload) => {
@@ -99,19 +115,40 @@ export default class EditorStore extends Store<EditorState> {
     private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, ({ compositionId }) => {
         if (this.state.project == null) return
 
-        const comp = ProjectHelper.findCompositionById(this.state.project, compositionId)
+        const comp = ProjectHelper.findCompositionById(this.state.project, compositionId)!
+        if (this.state.activeComp && comp.id === this.state.activeComp.id) return
 
         this.updateWith(d => {
             d.activeComp = comp
             d.activeClip = null
+            d.activeParam = null
         })
     })
 
-    private handlechangeActiveClip = listen(EditorActions.changeActiveClipAction, (payload) => {
+    private handleChangeActiveClip = listen(EditorActions.changeActiveClipAction, (payload) => {
         if (this.state.project == null) return
 
         const clip = ProjectHelper.findClipById(this.state.project, payload.clipId)
-        this.updateWith(d => d.activeClip = clip)
+        this.updateWith(d => {
+            d.activeClip = clip
+            d.activeParam = null
+        })
+    })
+
+    private handleChangeActiveParam = listen(EditorActions.changeActiveParamAction, ({target}) => {
+        if (this.state.project == null) return
+
+        this.updateWith(draft => {
+            if (target) {
+                const clip = target.type === 'clip'
+                    ? ProjectHelper.findClipById(this.state.project!, target.entityId)!
+                    : ProjectHelper.findClipFromEffectId(this.state.project!, target.entityId)!
+
+                draft.activeClip = clip
+            }
+
+            draft.activeParam = target
+        })
     })
 
     private handleupdateProcessingState = listen(EditorActions.updateProcessingStateAction, (payload) => {
@@ -152,6 +189,10 @@ export default class EditorStore extends Store<EditorState> {
     private handleChangePreferenceOpenState = listen(EditorActions.changePreferenceOpenStateAction, ({ open }) => {
         this.updateWith(draft => draft.preferenceOpened = open)
     })
+
+    public getActiveParam() {
+        return this.state.activeParam
+    }
 
     public getState() {
         return this.state

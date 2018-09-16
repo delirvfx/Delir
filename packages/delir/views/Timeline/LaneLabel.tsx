@@ -70,7 +70,7 @@ const LaneLabel = withComponentContext(class LaneLabel extends React.Component<P
 
         this.props.context.executeOperation(ProjectOps.modifyLayer, {
             layerId: layer.id!,
-            props: {name: value}
+            patch: {name: value}
         })
     }
 

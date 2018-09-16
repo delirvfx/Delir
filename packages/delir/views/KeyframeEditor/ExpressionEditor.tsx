@@ -1,4 +1,3 @@
-import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 
 import * as monaco from 'monaco-editor'
@@ -6,13 +5,15 @@ import MonacoUtil from '../../utils/Monaco'
 
 import Button from '../components/Button'
 
+import { ParameterTarget } from '../../domain/Editor/types'
+import { EditorResult } from './KeyframeEditor'
+
 import * as s from './ExpressionEditor.styl'
-import { EditorResult, TargetParam } from './KeyframeEditor'
 
 interface Props {
     title: string | null
     code: string | null
-    target: TargetParam
+    target: ParameterTarget
     onClose: (result: EditorResult) => void
 }
 

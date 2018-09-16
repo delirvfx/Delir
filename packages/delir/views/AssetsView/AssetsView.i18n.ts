@@ -3,6 +3,7 @@ import I18n from '../../utils/I18n'
 export default I18n({
     ja: {
         compositions: {
+            title: 'コンポジション',
             name: '名前',
             namePlaceHolder: '名称未設定コンポジション',
             contextMenu: {
@@ -13,6 +14,7 @@ export default I18n({
             },
         },
         assets: {
+            title: 'ファイル',
             name: '名前',
             fileType: '種類',
             contextMenu: {
@@ -24,6 +26,7 @@ export default I18n({
     },
     en: {
         compositions: {
+            title: 'Compositions',
             name: 'Name',
             namePlaceHolder: 'Unnamed Composition',
             contextMenu: {
@@ -34,6 +37,7 @@ export default I18n({
             },
         },
         assets: {
+            title: 'Assets',
             name: 'Name',
             fileType: 'Type',
             contextMenu: {

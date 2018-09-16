@@ -29,49 +29,35 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleCreateComposition = listen(ProjectActions.createCompositionAction, (payload) => {
         const { project } = this.state
-        const newLayer = new Delir.Entity.Layer()
         ProjectHelper.addComposition(project!, payload.composition)
-        ProjectHelper.addLayer(project!, payload.composition, newLayer)
-        this.updateLastModified()
-    })
-
-    private handleCreateLayer = listen(ProjectActions.createLayerAction, (payload) => {
-        const { project } = this.state
-        ProjectHelper.addLayer(project!, payload.targetCompositionId, payload.layer)
-        this.updateLastModified()
-    })
-
-    private handleCreateClip = listen(ProjectActions.createClipAction, (payload) => {
-        const { project } = this.state
-        ProjectHelper.addClip(project!, payload.targetLayerId, payload.newClip)
         this.updateLastModified()
     })
 
     private handleAddClip = listen(ProjectActions.addClipAction, (payload) => {
         const { project } = this.state
-        const { targetLayer, newClip } = payload
-        ProjectHelper.addClip(project!, targetLayer, newClip)
+        const { targetLayerId, newClip } = payload
+        ProjectHelper.addClip(project!, targetLayerId, newClip)
         this.updateLastModified()
     })
 
     private handleAddLayer = listen(ProjectActions.addLayerAction, (payload) => {
         const { project } = this.state
-        ProjectHelper.addLayer(project!, payload.targetComposition, payload.layer)
+        ProjectHelper.addLayer(project!, payload.targetCompositionId, payload.layer)
         this.updateLastModified()
     })
 
     private handleAddLayerWithAsset = listen(ProjectActions.addLayerWithAssetAction, (payload) => {
         const { project } = this.state
-        const { targetComposition, clip, asset: registeredAsset } = payload
-        const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[registeredAsset.fileType]
+        const { targetComposition, clip, asset, layer } = payload
+        const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[asset.fileType]
 
         if (propName == null) return
+
         ProjectHelper.addKeyframe(project!, clip, propName, Object.assign(new Delir.Entity.Keyframe(), {
             frameOnClip: 0,
-            value: { assetId: registeredAsset.id },
+            value: { assetId: asset.id },
         }))
 
-        const layer = new Delir.Entity.Layer()
         ProjectHelper.addLayer(project!, targetComposition, layer)
         ProjectHelper.addClip(project!, layer, clip)
         this.updateLastModified()
@@ -85,15 +71,21 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleAddKeyframe = listen(ProjectActions.addKeyframeAction, (payload) => {
         const { project } = this.state
-        const { targetClip, paramName, keyframe } = payload
-        ProjectHelper.addKeyframe(project!, targetClip, paramName, keyframe)
+        const { targetClipId, paramName, keyframe } = payload
+        ProjectHelper.addKeyframe(project!, targetClipId, paramName, keyframe)
         this.updateLastModified()
     })
 
     private handleAddEffectIntoClipPayload = listen(ProjectActions.addEffectIntoClipAction, (payload) => {
         const { project } = this.state
-        const { clipId, effect } = payload
+        const { clipId, effect, index } = payload
+
         ProjectHelper.addEffect(project!, clipId, effect)
+
+        if (index != null) {
+            ProjectHelper.moveEffectOrder(project!, clipId, effect.id, index)
+        }
+
         this.updateLastModified()
     })
 
@@ -137,15 +129,15 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleModifyClipExpression = listen(ProjectActions.modifyClipExpressionAction, (payload) => {
         const { project } = this.state
-        const { targetClipId, targetProperty, expr } = payload
-        ProjectHelper.modifyClipExpression(project!, targetClipId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
+        const { targetClipId, targetProperty, expression } = payload
+        ProjectHelper.modifyClipExpression(project!, targetClipId, targetProperty, expression)
         this.updateLastModified()
     })
 
     private handleModifyEffectExpression = listen(ProjectActions.modifyEffectExpressionAction, (payload) => {
         const { project } = this.state
-        const { targetClipId, targetEffectId, targetProperty, expr } = payload
-        ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, targetProperty, new Delir.Values.Expression(expr.language, expr.code))
+        const { targetClipId, targetEffectId, paramName, expression } = payload
+        ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, paramName, expression)
         this.updateLastModified()
     })
 
@@ -215,6 +207,10 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     public getState() {
         return this.state
+    }
+
+    public getProject() {
+        return this.state.project
     }
 
     private updateLastModified = () => {
