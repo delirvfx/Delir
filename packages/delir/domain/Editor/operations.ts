@@ -37,7 +37,7 @@ export const openPluginDirectory = operation((context, arg: {}) => {
 })
 
 export const setActiveProject = operation((context, payload: { project: Delir.Entity.Project, path?: string | null }) => {
-    const activeProject = context.getStore(EditorStore).getProject()
+    const { project: activeProject } = context.getStore(EditorStore).getState()
 
     if (!activeProject || payload.project !== activeProject) {
         context.dispatch(EditorActions.clearActiveProjectAction, {})
