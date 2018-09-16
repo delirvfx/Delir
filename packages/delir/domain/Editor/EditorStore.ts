@@ -145,8 +145,20 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    private handleChangeActiveParam = listen(EditorActions.changeActiveParamAction, (payload) => {
-        this.updateWith(draft => draft.activeParam = payload.target)
+    private handleChangeActiveParam = listen(EditorActions.changeActiveParamAction, ({target}) => {
+        if (this.state.project == null) return
+
+        this.updateWith(draft => {
+            if (target) {
+                const clip = target.type === 'clip'
+                    ? ProjectHelper.findClipById(this.state.project!, target.entityId)!
+                    : ProjectHelper.findClipFromEffectId(this.state.project!, target.entityId)!
+
+                draft.activeClip = clip
+            }
+
+            draft.activeParam = target
+        })
     })
 
     private handleupdateProcessingState = listen(EditorActions.updateProcessingStateAction, (payload) => {

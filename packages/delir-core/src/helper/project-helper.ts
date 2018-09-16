@@ -712,6 +712,26 @@ export function findKeyframeFromEffectByPropAndFrame(effect: Effect, propName: s
     return target ? target : null
 }
 
+export function findClipFromEffectId(project: Project, effectId: string): Clip | null {
+    let targetClip: Clip | null = null
+
+    searchClip:
+        for (const comp of project.compositions) {
+            for (const layer of comp.layers) {
+                for (const clip of layer.clips) {
+                    for (const effect of clip.effects) {
+                        if (effect.id === effectId) {
+                            targetClip = clip
+                            break searchClip
+                        }
+                    }
+                }
+            }
+        }
+
+    return targetClip
+}
+
 export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, paramName: string} | null
 {
     let target: {clip: Clip, paramName: string} | null = null
