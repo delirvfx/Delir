@@ -294,9 +294,9 @@ export function deleteKeyframe(
         ? targetKeyframeId
         : findKeyframeById(project, targetKeyframeId)!
 
-    const {clip, propName} = findParentClipAndPropNameByKeyframeId(project, keyframe.id!)!
-    if (!clip.keyframes[propName]) return
-    _.remove(clip.keyframes[propName], kf => kf.id === targetKeyframeId) // TODO: Implement this function Or change keyframe structure
+    const {clip, paramName} = findParentClipAndPropNameByKeyframeId(project, keyframe.id!)!
+    if (!clip.keyframes[paramName]) return
+    _.remove(clip.keyframes[paramName], kf => kf.id === targetKeyframeId) // TODO: Implement this function Or change keyframe structure
 }
 
 export function deleteEffectKeyframe(
@@ -670,18 +670,18 @@ export function findKeyframeFromEffectByPropAndFrame(effect: Effect, propName: s
     return target ? target : null
 }
 
-export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, propName: string} | null
+export function findParentClipAndPropNameByKeyframeId(project: Project, keyframeId: string): {clip: Clip, paramName: string} | null
 {
-    let target: {clip: Clip, propName: string} | null = null
+    let target: {clip: Clip, paramName: string} | null = null
 
     keyframeSearch:
         for (const comp of project.compositions) {
             for (const layer of comp.layers) {
                 for (const clip of layer.clips) {
-                    for (const propName of Object.keys(clip.keyframes)) {
-                        for (const keyframe of clip.keyframes[propName]) {
+                    for (const paramName of Object.keys(clip.keyframes)) {
+                        for (const keyframe of clip.keyframes[paramName]) {
                             if (keyframe.id === keyframeId) {
-                                target = {clip, propName}
+                                target = {clip, paramName}
                                 break keyframeSearch
                             }
                         }

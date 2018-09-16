@@ -29,6 +29,7 @@ import { MoveLayerOrderCommand } from './Commands/MoveLayerOrderCommand'
 import { RemoveAssetCommand } from './Commands/RemoveAssetCommand'
 import { RemoveClipCommand } from './Commands/RemoveClipCommand'
 import { RemoveCompositionCommand } from './Commands/RemoveCompositionCommand'
+import { RemoveKeyframeCommand } from './Commands/RemoveKeyframeCommand'
 import { RemoveLayerCommand } from './Commands/RemoveLayerCommand'
 
 //
@@ -459,6 +460,13 @@ export const removeClip = operation((context, { clipId }: { clipId: string }) =>
 })
 
 export const removeKeyframe = operation((context, { keyframeId }: { keyframeId: string }) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const keyframe = ProjectHelper.findKeyframeById(project, keyframeId)!
+    const { clip, paramName } = ProjectHelper.findParentClipAndPropNameByKeyframeId(project, keyframeId)!
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new RemoveKeyframeCommand(clip.id, paramName, keyframe),
+    })
     context.dispatch(ProjectActions.removeKeyframeAction, { targetKeyframeId: keyframeId })
 })
 
