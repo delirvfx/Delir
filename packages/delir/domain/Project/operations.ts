@@ -353,9 +353,9 @@ export const modifyLayer = operation((context, { layerId, patch }: {
     })
 })
 
-export const modifyClip = operation((context, { clipId, params }: {
+export const modifyClip = operation((context, { clipId, patch }: {
     clipId: string,
-    params: Partial<Delir.Entity.Clip>
+    patch: Partial<Delir.Entity.Clip>
 }) => {
     const project = context.getStore(ProjectStore).getProject()!
     const clip = ProjectHelper.findClipById(project, clipId)!
@@ -363,12 +363,12 @@ export const modifyClip = operation((context, { clipId, params }: {
     const composition = ProjectHelper.findParentCompositionByLayerId(project, layer.id)!
 
     context.dispatch(HistoryActions.pushHistory, {
-        command: new ModifyClipCommand(composition.id, clipId, { ...clip }, { ...params })
+        command: new ModifyClipCommand(composition.id, clipId, { ...clip }, { ...patch })
     })
 
     context.dispatch(ProjectActions.modifyClipAction, {
         targetClipId: clipId,
-        patch: params,
+        patch: patch,
     })
 })
 

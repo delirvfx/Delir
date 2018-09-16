@@ -160,7 +160,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
         this.props.context.executeOperation(ProjectOps.modifyClip, {
             clipId,
-            params: { placedFrame: newPlacedFrame }
+            patch: { placedFrame: newPlacedFrame }
         })
     }
 
@@ -175,7 +175,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
         this.props.context.executeOperation(ProjectOps.modifyClip, {
             clipId: clipId,
-            params: { durationFrames: newDurationFrames }
+            patch: { durationFrames: newDurationFrames }
         })
     }
 
