@@ -6,6 +6,7 @@ import { ParameterTarget } from './types'
 
 export const EditorActions = {
     setActiveProjectAction: action<{ project: Delir.Entity.Project, path?: string | null }>(),
+    clearActiveProjectAction: action<{}>(),
     setDragEntityAction: action<DragEntity>(),
     clearDragEntityAction: action<{}>(),
     changeActiveCompositionAction: action<{ compositionId: string }>(),
