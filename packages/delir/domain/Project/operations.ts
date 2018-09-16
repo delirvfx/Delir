@@ -27,6 +27,7 @@ import { ModifyLayerCommand } from './Commands/ModifyLayerCommand'
 import { MoveClipToLayerCommand } from './Commands/MoveClipToLayerCommand'
 import { MoveLayerOrderCommand } from './Commands/MoveLayerOrderCommand'
 import { RemoveAssetCommand } from './Commands/RemoveAssetCommand'
+import { RemoveClipCommand } from './Commands/RemoveClipCommand'
 import { RemoveCompositionCommand } from './Commands/RemoveCompositionCommand'
 import { RemoveLayerCommand } from './Commands/RemoveLayerCommand'
 
@@ -447,6 +448,13 @@ export const removeLayer = operation((context, { layerId }: { layerId: string })
 })
 
 export const removeClip = operation((context, { clipId }: { clipId: string }) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const parentLayer = ProjectHelper.findParentLayerByClipId(project, clipId)!
+    const clip = ProjectHelper.findClipById(project, clipId)!
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new RemoveClipCommand(parentLayer.id, clip)
+    })
     context.dispatch(ProjectActions.removeClipAction, { targetClipId: clipId })
 })
 
