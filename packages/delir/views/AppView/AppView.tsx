@@ -40,7 +40,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         window.addEventListener('dragenter', this.prevent, false)
         window.addEventListener('dragover', this.prevent, false)
 
-        this.trap = new Mousetrap(this.root.current!)
+        this.trap = new Mousetrap(document.body)
         this.trap.bind('space', this.handleShortCutPreviewToggle)
         this.trap.bind(['command+z', 'ctrl+z'], this.handleShortCutUndo)
         this.trap.bind(['command+shift+z', 'ctrl+shift+z'], this.handleShortCutRedo)
