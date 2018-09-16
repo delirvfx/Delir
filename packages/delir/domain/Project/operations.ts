@@ -1,6 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { ProjectHelper } from '@ragg/delir-core'
 import { operation } from '@ragg/fleur'
+import * as _ from 'lodash'
 import { safeAssign } from '../../utils/safeAssign'
 
 import * as EditorOps from '../Editor/operations'
@@ -325,6 +326,8 @@ export const modifyComposition = operation((context, { compositionId, patch }: {
     const project = context.getStore(ProjectStore).getProject()!
     const composition = ProjectHelper.findCompositionById(project, compositionId)!
 
+    if (_.isMatch(composition, patch)) return
+
     context.dispatch(HistoryActions.pushHistory, {
         command: new ModifyCompositionCommand(compositionId, {...composition}, patch)
     })
@@ -342,6 +345,8 @@ export const modifyLayer = operation((context, { layerId, patch }: {
     const project = context.getStore(ProjectStore).getProject()!
     const layer = ProjectHelper.findLayerById(project, layerId)!
     const parentComposition = ProjectHelper.findParentCompositionByLayerId(project, layer.id)!
+
+    if (_.isMatch(layer, patch)) return
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new ModifyLayerCommand(layerId, {...layer}, patch, parentComposition.id)
@@ -362,6 +367,8 @@ export const modifyClip = operation((context, { clipId, patch }: {
     const layer = ProjectHelper.findParentLayerByClipId(project, clipId)!
     const composition = ProjectHelper.findParentCompositionByLayerId(project, layer.id)!
 
+    if (_.isMatch(clip, patch)) return
+
     context.dispatch(HistoryActions.pushHistory, {
         command: new ModifyClipCommand(composition.id, clipId, { ...clip }, { ...patch })
     })
@@ -381,6 +388,8 @@ export const modifyClipExpression = operation((context, { clipId, paramName, exp
     const clip = ProjectHelper.findClipById(project, clipId)!
 
     const newExpression = new Delir.Values.Expression(expr.language, expr.code)
+
+    if (_.isMatch(clip.expressions[paramName], newExpression)) return
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new ModifyClipExpressionCommand(clipId, paramName, clip.expressions[paramName], newExpression)
@@ -404,6 +413,8 @@ export const modifyEffectExpression = operation((context, { clipId, effectId, pa
     const effect = ProjectHelper.findEffectFromClipById(clip, effectId)!
 
     const newExpression = new Delir.Values.Expression(expr.language, expr.code)
+
+    if (_.isMatch(effect.expressions[paramName], newExpression)) return
 
     context.dispatch(HistoryActions.pushHistory, {
         command: new ModifyEffectExpressionCommand(clipId, effectId, paramName, effect.expressions[paramName], newExpression)

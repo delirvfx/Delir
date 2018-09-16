@@ -153,11 +153,6 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
             scale: this.props.scale,
         })
 
-        const clip = this.props.layer.clips.find(clip => clip.id === clipId)!
-
-        // Ignore click for stop undo stack pollution
-        if (newPlacedFrame === clip.placedFrame) return
-
         this.props.context.executeOperation(ProjectOps.modifyClip, {
             clipId,
             patch: { placedFrame: newPlacedFrame }
