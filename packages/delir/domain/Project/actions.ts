@@ -13,7 +13,7 @@ export const ProjectActions = {
     }>(),
     addAssetAction: action<{ asset: Delir.Entity.Asset }>(),
     addKeyframeAction: action<{ targetClipId: string, paramName: string, keyframe: Delir.Entity.Keyframe }>(),
-    addEffectIntoClipAction: action<{ clipId: string, effect: Delir.Entity.Effect }>(),
+    addEffectIntoClipAction: action<{ clipId: string, effect: Delir.Entity.Effect, index?: number | null }>(),
     addEffectKeyframeAction: action<{ targetClipId: string, targetEffectId: string, paramName: string, keyframe: Delir.Entity.Keyframe }>(),
     moveClipToLayerAction: action<{ destLayerId: string, clipId: string }>(),
     modifyCompositionAction: action<{ targetCompositionId: string, patch: Partial<Delir.Entity.Composition> }>(),

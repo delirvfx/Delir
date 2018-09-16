@@ -480,7 +480,29 @@ export function moveLayerOrder(
     }
 
     const prevIndex = composition.layers.indexOf(layer)
-    composition.layers.splice(newIndex, 0, composition.layers.splice(prevIndex, 1)[0])
+    composition.layers.splice(newIndex, 0, ...composition.layers.splice(prevIndex, 1))
+}
+
+export function moveEffectOrder(
+    project: Project,
+    clipId: string,
+    subjectEffectId: string,
+    newIndex: number
+): boolean {
+    const clip = findClipById(project, clipId)
+    if (!clip) return false
+
+    const effect = findEffectFromClipById(clip, subjectEffectId)
+    if (!effect) return false
+
+    if (!clip.effects.includes(effect)) {
+        throw new Error(`Ordering effect not contained in clip "${clip.id}"`)
+    }
+
+    const prevIndex = clip.effects.indexOf(effect)
+    clip.effects.splice(newIndex, 0, ...clip.effects.splice(prevIndex, 1))
+
+    return true
 }
 
 //
@@ -550,6 +572,26 @@ export function findClipById(project: Project, clipId: string): Clip | null
         }
 
     return targetClip
+}
+
+export function findEffectById(project: Project, effectId: string): Effect | null {
+    let targetEffect: Effect | null = null
+
+    effectSearch:
+        for (const comp of project.compositions) {
+            for (const layer of comp.layers) {
+                for (const clip of layer.clips) {
+                    for (const effect of clip.effects) {
+                        if (effect.id === effectId) {
+                            targetEffect = effect
+                            break effectSearch
+                        }
+                    }
+                }
+            }
+        }
+
+    return targetEffect
 }
 
 export function findEffectFromClipById(clip: Clip, effectId: string): Effect | null

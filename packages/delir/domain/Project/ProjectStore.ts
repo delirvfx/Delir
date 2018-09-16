@@ -78,8 +78,14 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleAddEffectIntoClipPayload = listen(ProjectActions.addEffectIntoClipAction, (payload) => {
         const { project } = this.state
-        const { clipId, effect } = payload
+        const { clipId, effect, index } = payload
+
         ProjectHelper.addEffect(project!, clipId, effect)
+
+        if (index != null) {
+            ProjectHelper.moveEffectOrder(project!, clipId, effect.id, index)
+        }
+
         this.updateLastModified()
     })
 

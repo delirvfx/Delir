@@ -5,7 +5,6 @@ import { safeAssign } from '../../utils/safeAssign'
 
 import * as EditorOps from '../Editor/operations'
 import { HistoryActions } from '../History/actions'
-import CommandGroup from '../History/CommandGroup'
 import RendererStore from '../Renderer/RendererStore'
 import { ProjectActions } from './actions'
 import ProjectStore from './ProjectStore'
@@ -29,6 +28,7 @@ import { MoveLayerOrderCommand } from './Commands/MoveLayerOrderCommand'
 import { RemoveAssetCommand } from './Commands/RemoveAssetCommand'
 import { RemoveClipCommand } from './Commands/RemoveClipCommand'
 import { RemoveCompositionCommand } from './Commands/RemoveCompositionCommand'
+import { RemoveEffectCommand } from './Commands/RemoveEffectCommand'
 import { RemoveEffectKeyframeCommand } from './Commands/RemoveEffectKeyframeCommand'
 import { RemoveKeyframeCommand } from './Commands/RemoveKeyframeCommand'
 import { RemoveLayerCommand } from './Commands/RemoveLayerCommand'
@@ -490,5 +490,13 @@ export const removeEffect = operation((context, { holderClipId, effectId }: {
     holderClipId: string,
     effectId: string
 }) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const holderClip = ProjectHelper.findClipById(project, holderClipId)!
+    const effect = ProjectHelper.findEffectById(project, effectId)!
+    const index = holderClip.effects.findIndex(effect => effect.id === effectId)
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new RemoveEffectCommand(holderClipId, effect, index),
+    })
     context.dispatch(ProjectActions.removeEffectFromClipAction, { holderClipId, targetEffectId: effectId })
 })
