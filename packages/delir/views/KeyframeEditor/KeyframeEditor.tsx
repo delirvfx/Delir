@@ -559,7 +559,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         if (activeParam.type === 'clip') {
             this.props.context.executeOperation(ProjectOps.removeKeyframe, { keyframeId })
         } else {
-            this.props.context.executeOperation(ProjectOps.removeKeyframeForEffect, {
+            this.props.context.executeOperation(ProjectOps.removeEffectKeyframe, {
                 clipId: parentClipId,
                 effectId: activeParam.entityId,
                 keyframeId

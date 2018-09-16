@@ -29,6 +29,7 @@ import { MoveLayerOrderCommand } from './Commands/MoveLayerOrderCommand'
 import { RemoveAssetCommand } from './Commands/RemoveAssetCommand'
 import { RemoveClipCommand } from './Commands/RemoveClipCommand'
 import { RemoveCompositionCommand } from './Commands/RemoveCompositionCommand'
+import { RemoveEffectKeyframeCommand } from './Commands/RemoveEffectKeyframeCommand'
 import { RemoveKeyframeCommand } from './Commands/RemoveKeyframeCommand'
 import { RemoveLayerCommand } from './Commands/RemoveLayerCommand'
 
@@ -470,11 +471,18 @@ export const removeKeyframe = operation((context, { keyframeId }: { keyframeId: 
     context.dispatch(ProjectActions.removeKeyframeAction, { targetKeyframeId: keyframeId })
 })
 
-export const removeKeyframeForEffect = operation((context, { clipId, effectId, keyframeId }: {
+export const removeEffectKeyframe = operation((context, { clipId, effectId, keyframeId }: {
     clipId: string,
     effectId: string,
     keyframeId: string
 }) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const { effect, paramName } = ProjectHelper.findParentEffectAndParamNameByClipIdAndKeyframeId(project, clipId, keyframeId)!
+    const keyframe = ProjectHelper.findEffectKeyframeFromEffectById(effect, keyframeId)!
+
+    context.dispatch(HistoryActions.pushHistory, {
+        command: new RemoveEffectKeyframeCommand(clipId, effectId, paramName, keyframe)
+    })
     context.dispatch(ProjectActions.removeEffectKeyframeAction, { clipId, effectId, targetKeyframeId: keyframeId })
 })
 

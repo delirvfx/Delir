@@ -443,7 +443,7 @@ export function modifyEffectKeyframe(
 
     const keyframe = targetKeyframeId instanceof Keyframe
         ? targetKeyframeId
-        : findKeyframeFromEffectById(effect, targetKeyframeId)!
+        : findEffectKeyframeFromEffectById(effect, targetKeyframeId)!
 
     if (!keyframe) return
 
@@ -616,13 +616,13 @@ export function findKeyframeFromClipById(clip: Clip, keyframeId: string): Keyfra
     return targetKeyframe
 }
 
-export function findKeyframeFromEffectById(effect: Effect, keyframeId: string): Keyframe | null
+export function findEffectKeyframeFromEffectById(effect: Effect, keyframeId: string): Keyframe | null
 {
     let targetKeyframe: Keyframe | null = null
 
     keyframeSearch:
-        for (const propName of Object.keys(effect.keyframes)) {
-            for (const keyframe of effect.keyframes[propName]) {
+        for (const paramNEm of Object.keys(effect.keyframes)) {
+            for (const keyframe of effect.keyframes[paramNEm]) {
                 if (keyframe.id === keyframeId) {
                     targetKeyframe = keyframe
                     break keyframeSearch
@@ -685,6 +685,28 @@ export function findParentClipAndPropNameByKeyframeId(project: Project, keyframe
                                 break keyframeSearch
                             }
                         }
+                    }
+                }
+            }
+        }
+
+    return target
+}
+
+export function findParentEffectAndParamNameByClipIdAndKeyframeId(project: Project, clipId: string, effectKeyframeId: string): {effect: Effect, paramName: string} | null
+{
+    let target: {effect: Effect, paramName: string} | null = null
+    const clip = findClipById(project, clipId)
+
+    if (!clip) return null
+
+    keyframeSearch:
+        for (const effect of clip.effects) {
+            for (const paramName of Object.keys(effect.keyframes)) {
+                for (const keyframe of effect.keyframes[paramName]) {
+                    if (keyframe.id === effectKeyframeId) {
+                        target = {effect, paramName}
+                        break keyframeSearch
                     }
                 }
             }
