@@ -22,13 +22,6 @@ export type DragEntity =
 //
 // App services
 //
-export const previewProgressed = operation((context, { currentFrame }: { currentFrame: number }) => {
-    context.dispatch
-    // context.dispatch({
-    //     type: 'preview-progressed',
-    //     payload: {currentFrame}
-    // })
-})
 
 export const openPluginDirectory = operation((context, arg: {}) => {
     const userDir = remote.app.getPath('appData')
