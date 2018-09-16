@@ -126,7 +126,8 @@ export default class EditorStore extends Store<EditorState> {
     private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, ({ compositionId }) => {
         if (this.state.project == null) return
 
-        const comp = ProjectHelper.findCompositionById(this.state.project, compositionId)
+        const comp = ProjectHelper.findCompositionById(this.state.project, compositionId)!
+        if (this.state.activeComp && comp.id === this.state.activeComp.id) return
 
         this.updateWith(d => {
             d.activeComp = comp

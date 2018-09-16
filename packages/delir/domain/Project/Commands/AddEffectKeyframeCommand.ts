@@ -1,6 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { OperationContext } from '@ragg/fleur'
 
+import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
@@ -13,6 +14,8 @@ export class AddEffectKeyframeCommand implements Command {
     ) {}
 
     public undo(context: OperationContext<any>) {
+        this.focusToChangedParam(context)
+
         context.dispatch(ProjectActions.removeEffectKeyframeAction, {
             clipId: this.targetClipId,
             effectId: this.targetEffectId,
@@ -21,11 +24,23 @@ export class AddEffectKeyframeCommand implements Command {
     }
 
     public redo(context: OperationContext<any>) {
+        this.focusToChangedParam(context)
+
         context.dispatch(ProjectActions.addEffectKeyframeAction, {
             targetClipId: this.targetClipId,
             targetEffectId: this.targetEffectId,
             paramName: this.paramName,
             keyframe: this.addedKeyframe,
+        })
+    }
+
+    private focusToChangedParam(context: OperationContext<any>) {
+        context.dispatch(EditorActions.changeActiveParamAction, {
+            target: {
+                type: 'effect',
+                entityId: this.targetEffectId,
+                paramName: this.paramName,
+            }
         })
     }
 }

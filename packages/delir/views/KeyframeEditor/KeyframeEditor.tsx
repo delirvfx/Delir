@@ -395,7 +395,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         this.setState({ scriptParamEditorOpened: false })
 
-        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
+        this.props.context.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
             clipId: activeClip.id,
             frameOnClip: 0,
             paramName: result.target.paramName,
@@ -481,7 +481,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
 
-        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
+        this.props.context.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
             clipId: activeClip.id!,
             paramName: desc.paramName,
             frameOnClip,
@@ -515,7 +515,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         switch (activeParam.type) {
             case 'clip': {
-                this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForClip, {
+                this.props.context.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
                     clipId: parentClipId,
                     paramName,
                     frameOnClip,

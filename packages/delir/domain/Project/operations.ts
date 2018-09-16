@@ -18,10 +18,10 @@ import { AddLayerCommand } from './Commands/AddLayerCommand'
 import { CreateCompositionCommand } from './Commands/CreateCompositionCommand'
 import { ModifyClipCommand } from './Commands/ModifyClipCommand'
 import { ModifyClipExpressionCommand } from './Commands/ModifyClipExpressionCommand'
+import { ModifyClipKeyframeCommand } from './Commands/ModifyClipKeyframeCommand'
 import { ModifyCompositionCommand } from './Commands/ModifyCompositionCommand'
 import { ModifyEffectExpressionCommand } from './Commands/ModifyEffectExpressionCommand'
 import { ModifyEffectKeyframeCommand } from './Commands/ModifyEffectKeyframeCommand'
-import { ModifyKeyframeCommand } from './Commands/ModifyKeyframeCommand'
 import { ModifyLayerCommand } from './Commands/ModifyLayerCommand'
 import { MoveClipToLayerCommand } from './Commands/MoveClipToLayerCommand'
 import { MoveLayerOrderCommand } from './Commands/MoveLayerOrderCommand'
@@ -112,14 +112,16 @@ export const addClip = operation((context, { layerId, clipRendererId, placedFram
     placedFrame: number,
     durationFrames: number,
 }) => {
-    const newClip = new Delir.Entity.Clip()
-    safeAssign(newClip, {
+    const project = context.getStore(ProjectStore).getProject()!
+    const composition = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
+
+    const newClip = safeAssign(new Delir.Entity.Clip(), {
         renderer: clipRendererId as any,
         placedFrame: placedFrame,
         durationFrames: durationFrames,
     })
 
-    context.dispatch(HistoryActions.pushHistory, { command: new AddClipCommand(layerId, newClip) })
+    context.dispatch(HistoryActions.pushHistory, { command: new AddClipCommand(composition.id, layerId, newClip) })
     context.dispatch(ProjectActions.addClipAction, {
         newClip,
         targetLayerId: layerId,
@@ -132,8 +134,6 @@ export const addClipWithAsset = operation((context, { targetLayerId, asset, plac
     placedFrame?: number,
     durationFrames?: number,
 }) => {
-    const project = context.getStore(ProjectStore).getProject()!
-
     const processablePlugin = Delir.Engine.Renderers.getAvailableRenderers()
         .filter((entry) => entry.handlableFileTypes.includes(asset.fileType))[0]
 
@@ -149,27 +149,31 @@ export const addClipWithAsset = operation((context, { targetLayerId, asset, plac
         return
     }
 
-    const newClip = new Delir.Entity.Clip()
-    safeAssign(newClip, {
+    const paramName = Delir.Engine.Renderers.getInfo(processablePlugin.id as any).assetAssignMap[asset.fileType]
+    if (!paramName) return
+
+    const newClip = safeAssign(new Delir.Entity.Clip(), {
         renderer: processablePlugin.id as any,
         placedFrame,
         durationFrames,
+        keyframes: {
+            [paramName]: [
+                safeAssign(new Delir.Entity.Keyframe(), {
+                    frameOnClip: 0,
+                    value: { assetId: asset.id },
+                })
+            ]
+        }
     })
 
-    const paramName = Delir.Engine.Renderers.getInfo(newClip.renderer).assetAssignMap[asset.fileType]
+    const project = context.getStore(ProjectStore).getProject()!
+    const parentComposition = ProjectHelper.findParentCompositionByLayerId(project, targetLayerId)!
 
-    if (!paramName) return
-
-    ProjectHelper.addKeyframe(project!, newClip, paramName, Object.assign(new Delir.Entity.Keyframe(), {
-        frameOnClip: 0,
-        value: { assetId: asset.id },
-    }))
-
-    context.dispatch(HistoryActions.pushHistory, { command: new AddClipCommand(targetLayerId, newClip) })
+    context.dispatch(HistoryActions.pushHistory, { command: new AddClipCommand(parentComposition.id, targetLayerId, newClip) })
     context.dispatch(ProjectActions.addClipAction, { targetLayerId, newClip })
 })
 
-export const createOrModifyKeyframeForClip = operation((context, { clipId, paramName, frameOnClip, patch }: {
+export const createOrModifyClipKeyframe = operation((context, { clipId, paramName, frameOnClip, patch }: {
     clipId: string,
     paramName: string,
     frameOnClip: number,
@@ -192,7 +196,7 @@ export const createOrModifyKeyframeForClip = operation((context, { clipId, param
 
     if (keyframe) {
         context.dispatch(HistoryActions.pushHistory, {
-            command: new ModifyKeyframeCommand(keyframe.id, {...keyframe}, patch)
+            command: new ModifyClipKeyframeCommand(keyframe.id, {...keyframe}, patch, clipId, paramName)
         })
 
         context.dispatch(ProjectActions.modifyKeyframeAction, {
@@ -238,7 +242,7 @@ export const createOrModifyKeyframeForEffect = operation((context, { clipId, eff
 
     if (keyframe) {
         context.dispatch(HistoryActions.pushHistory, {
-            command: new ModifyEffectKeyframeCommand(clipId, effectId, keyframe.id, {...keyframe}, patch),
+            command: new ModifyEffectKeyframeCommand(clipId, effectId, paramName, keyframe.id, {...keyframe}, patch),
         })
 
         context.dispatch(ProjectActions.modifyEffectKeyframeAction, {
@@ -306,9 +310,10 @@ export const moveClipToLayer = operation((context, { clipId, destLayerId }: {
 }) => {
     const project = context.getStore(ProjectStore).getProject()!
     const sourceLayer = ProjectHelper.findParentLayerByClipId(project, clipId)!
+    const parentComposition = ProjectHelper.findParentCompositionByLayerId(project, sourceLayer.id)!
 
     context.dispatch(HistoryActions.pushHistory, {
-        command: new MoveClipToLayerCommand(sourceLayer.id, destLayerId, clipId)
+        command: new MoveClipToLayerCommand(sourceLayer.id, destLayerId, clipId, parentComposition.id)
     })
     context.dispatch(ProjectActions.moveClipToLayerAction, { destLayerId: destLayerId, clipId })
 })
@@ -336,9 +341,10 @@ export const modifyLayer = operation((context, { layerId, patch }: {
 }) => {
     const project = context.getStore(ProjectStore).getProject()!
     const layer = ProjectHelper.findLayerById(project, layerId)!
+    const parentComposition = ProjectHelper.findParentCompositionByLayerId(project, layer.id)!
 
     context.dispatch(HistoryActions.pushHistory, {
-        command: new ModifyLayerCommand(layerId, {...layer}, patch)
+        command: new ModifyLayerCommand(layerId, {...layer}, patch, parentComposition.id)
     })
 
     context.dispatch(ProjectActions.modifyLayerAction, {
@@ -353,9 +359,11 @@ export const modifyClip = operation((context, { clipId, params }: {
 }) => {
     const project = context.getStore(ProjectStore).getProject()!
     const clip = ProjectHelper.findClipById(project, clipId)!
+    const layer = ProjectHelper.findParentLayerByClipId(project, clipId)!
+    const composition = ProjectHelper.findParentCompositionByLayerId(project, layer.id)!
 
     context.dispatch(HistoryActions.pushHistory, {
-        command: new ModifyClipCommand(clipId, { ...clip }, { ...params })
+        command: new ModifyClipCommand(composition.id, clipId, { ...clip }, { ...params })
     })
 
     context.dispatch(ProjectActions.modifyClipAction, {
@@ -452,10 +460,11 @@ export const removeLayer = operation((context, { layerId }: { layerId: string })
 export const removeClip = operation((context, { clipId }: { clipId: string }) => {
     const project = context.getStore(ProjectStore).getProject()!
     const parentLayer = ProjectHelper.findParentLayerByClipId(project, clipId)!
+    const composition = ProjectHelper.findParentCompositionByLayerId(project, parentLayer.id)!
     const clip = ProjectHelper.findClipById(project, clipId)!
 
     context.dispatch(HistoryActions.pushHistory, {
-        command: new RemoveClipCommand(parentLayer.id, clip)
+        command: new RemoveClipCommand( parentLayer.id, clip, composition.id)
     })
     context.dispatch(ProjectActions.removeClipAction, { targetClipId: clipId })
 })

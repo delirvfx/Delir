@@ -1,7 +1,8 @@
-import * as _ from 'lodash'
-
 import * as Delir from '@ragg/delir-core'
 import { OperationContext } from '@ragg/fleur'
+import * as _ from 'lodash'
+
+import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
@@ -9,6 +10,7 @@ export class ModifyClipCommand implements Command {
     private toPreviousPatch: Partial<Delir.Entity.Clip>
 
     constructor(
+        private parentCompositionId: string,
         private targetClipId: string,
         unpatched: Partial<Delir.Entity.Clip>,
         private patch: Partial<Delir.Entity.Clip>,
@@ -17,6 +19,8 @@ export class ModifyClipCommand implements Command {
     }
 
     public undo(context: OperationContext<any>) {
+        this.focusToParentComposition(context)
+
         context.dispatch(ProjectActions.modifyClipAction, {
             targetClipId: this.targetClipId,
             patch: this.toPreviousPatch,
@@ -24,9 +28,17 @@ export class ModifyClipCommand implements Command {
     }
 
     public redo(context: OperationContext<any>) {
+        this.focusToParentComposition(context)
+
         context.dispatch(ProjectActions.modifyClipAction, {
             targetClipId: this.targetClipId,
             patch: this.patch,
+        })
+    }
+
+    private focusToParentComposition(context: OperationContext<any>) {
+        context.dispatch(EditorActions.changeActiveCompositionAction, {
+            compositionId: this.parentCompositionId,
         })
     }
 }
