@@ -17,7 +17,7 @@ const typeMap = {
     'value:Expression': Expression,
 }
 
-const serializeJSONNode = (node: any) => {
+export const serializeEntity = (node: any) => {
     if (
         typeof node === 'boolean'
         || typeof node === 'number'
@@ -28,24 +28,24 @@ const serializeJSONNode = (node: any) => {
     }
 
     if (Array.isArray(node)) {
-        return _.map(node, serializeJSONNode)
+        return _.map(node, serializeEntity)
     }
 
     for (const label of Object.keys(typeMap)) {
         if (node instanceof typeMap[label]) {
             return {
                 __type: label,
-                __value: _.mapValues(node, serializeJSONNode),
+                __value: _.mapValues(node, serializeEntity),
             }
         }
     }
 
     if (_.isObject(node)) {
-        return _.mapValues(node, serializeJSONNode)
+        return _.mapValues(node, serializeEntity)
     }
 }
 
-const deserializeJSONNode = (node: any) => {
+export const deserializeEntity = (node: any) => {
     if (
         typeof node === 'boolean'
         || typeof node === 'number'
@@ -56,25 +56,25 @@ const deserializeJSONNode = (node: any) => {
     }
 
     if (Array.isArray(node)) {
-        return _.map(node, deserializeJSONNode)
+        return _.map(node, deserializeEntity)
     }
 
     for (const label of Object.keys(typeMap)) {
         if (node.__type === label) {
             const instance = new typeMap[label]()
-            return Object.assign(instance, _.mapValues(node.__value, deserializeJSONNode))
+            return Object.assign(instance, _.mapValues(node.__value, deserializeEntity))
         }
     }
 
     if (_.isObject(node)) {
-        return _.mapValues(node, deserializeJSONNode)
+        return _.mapValues(node, deserializeEntity)
     }
 }
 
-export const serialize = (project: Project) => {
-    return serializeJSONNode(project)
+export const serializeProject = (project: Project) => {
+    return serializeEntity(project)
 }
 
-export const deserialize = (project: any) => {
-    return deserializeJSONNode(project)
+export const deserializeProject = (project: any) => {
+    return deserializeEntity(project)
 }

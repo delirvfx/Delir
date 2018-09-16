@@ -1,6 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
+import Mousetrap = require('mousetrap')
 import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
@@ -29,8 +30,13 @@ interface ConnectedProps {
 type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(class Clip extends React.Component<Props> {
-    public refs: {
-        clipRoot: HTMLDivElement
+    private trap: InstanceType<typeof Mousetrap>
+    private clipRoot = React.createRef<HTMLDivElement>()
+
+    public componentDidMount() {
+        this.trap = new Mousetrap(this.clipRoot.current!)
+        this.trap.bind(['command+c', 'ctrl+c'], this.handleCopyClip)
+        this.trap.bind(['command+x', 'ctrl+x'], this.handleCutClip)
     }
 
     public render()
@@ -57,20 +63,22 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                 onResizeStop={this.handleResizeEnd}
             >
                 <div
+                    ref={this.clipRoot}
                     onClick={this.handleClick}
+                    tabIndex={-1}
                 >
                     <ContextMenu>
                         <MenuItem label={t('contextMenu.seekToHeadOfClip')} onClick={this.handleSeekToHeadOfClip} />
                         <MenuItem label={t('contextMenu.effect')}>
                             {postEffectPlugins.length ? postEffectPlugins.map(entry => (
-                                <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
+                                <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.handleAddEffect} />)
                             ) : (
                                 <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
                             )}
                         </MenuItem>
                         {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
                         <MenuItem type='separator' />
-                        <MenuItem label={t('contextMenu.remove')} data-clip-id={clip.id} onClick={this.removeClip} />
+                        <MenuItem label={t('contextMenu.remove')} data-clip-id={clip.id} onClick={this.handleRemoveClip} />
                         <MenuItem type='separator' />
                     </ContextMenu>
                     <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>
@@ -106,7 +114,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
         this.props.onChangeDuration(clip.id, this.props.width + delta.width)
     }
 
-    private addEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
+    private handleAddEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
     {
         this.props.context.executeOperation(ProjectOps.addEffectIntoClip, {
             clipId: dataset.clipId,
@@ -115,7 +123,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
         this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
     }
 
-    private removeClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
+    private handleRemoveClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
     {
         this.props.context.executeOperation(ProjectOps.removeClip, { clipId: dataset.clipId })
     }
@@ -123,5 +131,14 @@ export default withComponentContext(class Clip extends React.Component<Props> {
     private handleSeekToHeadOfClip = () => {
         const { clip } = this.props
         this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame: clip.placedFrame })
+    }
+
+    private handleCopyClip = () => {
+        this.props.context.executeOperation(EditorOps.copyEntity, { type: 'clip', entity: this.props.clip })
+    }
+
+    private handleCutClip = () => {
+        this.props.context.executeOperation(EditorOps.copyEntity, { type: 'clip', entity: this.props.clip })
+        this.props.context.executeOperation(ProjectOps.removeClip, { clipId: this.props.clip.id })
     }
 })

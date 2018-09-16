@@ -4,6 +4,7 @@ import { operation } from '@ragg/fleur'
 import * as _ from 'lodash'
 import { safeAssign } from '../../utils/safeAssign'
 
+import EditorStore from '../Editor/EditorStore'
 import * as EditorOps from '../Editor/operations'
 import * as HistoryOps from '../History/operations'
 import RendererStore from '../Renderer/RendererStore'
@@ -519,4 +520,33 @@ export const removeEffect = operation(async (context, { holderClipId, effectId }
         command: new RemoveEffectCommand(holderClipId, effect, index),
     })
     context.dispatch(ProjectActions.removeEffectFromClipAction, { holderClipId, targetEffectId: effectId })
+})
+
+// Clipboard operations
+export const pasteClipEntityIntoLayer = operation(async (context, { layerId }: { layerId: string }) => {
+    const entry = context.getStore(EditorStore).getClipboardEntry()
+    if (!entry || entry.type !== 'clip') return
+
+    const project = context.getStore(ProjectStore).getProject()!
+    const placedFrame = context.getStore(EditorStore).getState().currentPreviewFrame
+    const composition = ProjectHelper.findParentCompositionByLayerId(project, layerId)!
+
+    const clip = Delir.Exporter.deserializeEntity(entry.entityClone) as Delir.Entity.Clip
+    clip.placedFrame = placedFrame
+
+    // Regenerate ids
+    clip.id = new Delir.Entity.Clip().id
+    clip.effects.forEach(effect => { effect.id = new Delir.Entity.Effect().id })
+    _.each(clip.keyframes, keyframes => {
+        keyframes.forEach(keyframe => {keyframe.id = new Delir.Entity.Keyframe().id })
+    })
+
+    await context.executeOperation(HistoryOps.pushHistory, {
+        command: new AddClipCommand(composition.id, layerId, clip)
+    })
+
+    context.dispatch(ProjectActions.addClipAction, {
+        targetLayerId: layerId,
+        newClip: clip,
+    })
 })

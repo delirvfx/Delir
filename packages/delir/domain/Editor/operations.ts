@@ -170,7 +170,7 @@ export const openProject = operation(async (context) => {
     const projectJson = MsgPack().decode(projectMpk).project
 
     await context.executeOperation(setActiveProject, {
-        project: Delir.Exporter.deserialize(projectJson),
+        project: Delir.Exporter.deserializeProject(projectJson),
         path: path[0]
     })
 })
@@ -183,7 +183,7 @@ export const saveProject = operation(async (
     if (!project) return
 
     await fs.writeFile(path, MsgPack().encode({　
-        project: Delir.Exporter.serialize(project)
+        project: Delir.Exporter.serializeProject(project)
     }) as any as Buffer)
 
     let newPath: string | null = path
@@ -236,4 +236,17 @@ export const changePreferenceOpenState = operation((context, { open }: { open: b
     context.dispatch(EditorActions.changePreferenceOpenStateAction, { open })
 })
 
-// console.log(remote.app.getPath('userData'))
+//
+// Clipboard
+//
+export const copyEntity = operation((context, { type, entity }: {
+    type: 'clip'
+    entity: Delir.Entity.Clip
+}) => {
+    context.dispatch(EditorActions.setClipboardEntry, {
+        entry: {
+            type,
+            entityClone: Delir.Exporter.serializeEntity(entity)
+        }
+    })
+})

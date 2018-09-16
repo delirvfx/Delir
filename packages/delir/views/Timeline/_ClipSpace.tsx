@@ -2,6 +2,7 @@ import * as Delir from '@ragg/delir-core'
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
+import Mousetrap = require('mousetrap')
 import * as React from 'react'
 
 import * as EditorOps from '../../domain/Editor/operations'
@@ -45,6 +46,14 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
         dragovered: false,
     }
 
+    private trap: InstanceType<typeof Mousetrap>
+    private root = React.createRef<HTMLDivElement>()
+
+    public componentDidMount() {
+        this.trap = new Mousetrap(this.root.current!)
+        this.trap.bind(['command+v', 'ctrl+v'], this.handlePasteClip)
+    }
+
     public render()
     {
         const {layer, activeClip, framerate, pxPerSec, scale, postEffectPlugins} = this.props
@@ -53,12 +62,14 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
         return (
             <li
+                ref={this.root}
                 className={classnames('timeline-lane', {
                     dragover: this.state.dragovered,
                     '--expand': clips.findIndex(clip => !!(activeClip && clip.id === activeClip.id)) !== -1,
                 })}
                 onDrop={this.handleOnDrop}
                 onMouseUp={this.handleMouseUp}
+                tabIndex={-1}
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
@@ -181,6 +192,12 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
             clipRendererId: dataset.rendererId,
             placedFrame: 0,
             durationFrames: 100
+        })
+    }
+
+    private handlePasteClip = () => {
+        this.props.context.executeOperation(ProjectOps.pasteClipEntityIntoLayer, {
+            layerId: this.props.layer.id,
         })
     }
 }))
