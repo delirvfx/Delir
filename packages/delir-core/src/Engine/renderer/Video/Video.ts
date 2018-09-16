@@ -126,8 +126,8 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 
         ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
         ctx.translate(param.x, param.y)
-        ctx.scale(param.scale / 100, param.scale / 100)
         ctx.translate(video.videoWidth / 2, video.videoHeight / 2)
+        ctx.scale(param.scale / 100, param.scale / 100)
         ctx.rotate(rad)
         ctx.translate(-video.videoWidth / 2, -video.videoHeight / 2)
 

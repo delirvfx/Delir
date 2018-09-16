@@ -95,8 +95,8 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
 
         ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
         ctx.translate(param.x, param.y)
-        ctx.scale(param.scale / 100, param.scale / 100)
         ctx.translate(img.width / 2, img.height / 2)
+        ctx.scale(param.scale / 100, param.scale / 100)
         ctx.rotate(rad)
         ctx.translate(-img.width / 2, -img.height / 2)
 

@@ -73,7 +73,7 @@ export default class TextLayer implements IRenderer<TextRendererParam>
                 animatable: true,
             })
             .float('rotate', {
-                label: 'Rotate',
+                label: 'Rotation',
                 animatable: true,
             })
             .float('opacity', {
@@ -100,24 +100,29 @@ export default class TextLayer implements IRenderer<TextRendererParam>
         const param = req.parameters
         const ctx = req.destCanvas.getContext('2d')!
         const family = ['sans-serif', 'serif', 'cursive', 'fantasy', 'monospace'].includes(param.family) ? param.family : `"${param.family}"`
-        const lineHeight = param.lineHeight / 100
-
+        const lineHeight = param.size * (param.lineHeight / 100)
         const rad = param.rotate * Math.PI / 180
 
+        ctx.font = `${param.weight} ${param.size}px/${lineHeight} ${family}`
+
+        const lines = param.text.split('\n')
+        const height = lines.length * lineHeight
+        const width = lines.reduce((mostLongWidth, line) => Math.max(mostLongWidth, ctx.measureText(line).width), 0)
+
         ctx.translate(param.x, param.y)
+        ctx.translate(width / 2, height / 2)
         ctx.rotate(rad)
+        ctx.translate(-width / 2, -height / 2)
 
         ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
         ctx.textBaseline = 'top'
         ctx.fillStyle = param.color.toString()
-        ctx.font = `${param.weight} ${param.size}px/${lineHeight} ${family}`
 
         let placePointY = 0
-        const unit = param.size * lineHeight
 
-        for (const line of param.text.split('\n')) {
+        for (const line of lines) {
             ctx.fillText(line, 0, placePointY)
-            placePointY += unit
+            placePointY += lineHeight
         }
     }
 }
