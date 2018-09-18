@@ -193,7 +193,6 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     private handleSetClipboardEntry = listen(EditorActions.setClipboardEntry, (payload) => {
-        console.log(payload.entry)
         this.updateWith(draft => draft.clipboard = payload.entry)
     })
 
