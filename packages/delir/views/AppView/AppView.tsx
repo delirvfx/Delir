@@ -2,7 +2,7 @@ import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-
 import * as Mousetrap from 'mousetrap'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
-import { makeMousetrapHandler } from '../../utils/makeMousetrapHandler'
+import { makeMousetrapIgnoreInputHandler } from '../../utils/makeMousetrapHandler'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -111,13 +111,13 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
     }
 
     // tslint:disable-next-line: member-ordering
-    private handleShortCutUndo = makeMousetrapHandler((e: KeyboardEvent) => {
+    private handleShortCutUndo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
         e.preventDefault()
         this.props.context.executeOperation(HistoryOps.doUndo, {})
     })
 
     // tslint:disable-next-line: member-ordering
-    private handleShortCutRedo = makeMousetrapHandler((e: KeyboardEvent) => {
+    private handleShortCutRedo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
         e.preventDefault()
         this.props.context.executeOperation(HistoryOps.doRedo, {})
     })

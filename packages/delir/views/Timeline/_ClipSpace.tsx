@@ -13,6 +13,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
+import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import Clip from './_Clip'
 import t from './_ClipSpace.i18n'
 
@@ -46,13 +47,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
         dragovered: false,
     }
 
-    private trap: InstanceType<typeof Mousetrap>
-    private root = React.createRef<HTMLDivElement>()
-
-    public componentDidMount() {
-        this.trap = new Mousetrap(this.root.current!)
-        this.trap.bind(['command+v', 'ctrl+v'], this.handlePasteClip)
-    }
+    private root = React.createRef<HTMLLIElement>()
 
     public render()
     {
@@ -69,6 +64,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
                 })}
                 onDrop={this.handleOnDrop}
                 onMouseUp={this.handleMouseUp}
+                onFocus={this.handleFocus}
                 tabIndex={-1}
             >
                 <ContextMenu>
@@ -108,6 +104,10 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
                 </div>
             </li>
         )
+    }
+
+    private handleFocus = () => {
+        GlobalEvents.on(GlobalEvent.pasteViaApplicationMenu, this.handleGlobalPaste)
     }
 
     private handleOnDrop = (e: React.DragEvent<HTMLLIElement>) =>
@@ -195,7 +195,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
         })
     }
 
-    private handlePasteClip = () => {
+    private handleGlobalPaste = () => {
         this.props.context.executeOperation(ProjectOps.pasteClipEntityIntoLayer, {
             layerId: this.props.layer.id,
         })

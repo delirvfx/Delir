@@ -12,7 +12,7 @@ import EditorStore from './EditorStore'
 
 import { EditorActions } from './actions'
 import t from './operations.i18n'
-import { ParameterTarget } from './types'
+import { ClipboardEntry, ParameterTarget } from './types'
 
 export type DragEntity =
     | { type: 'asset', asset: Delir.Entity.Asset }
@@ -237,10 +237,10 @@ export const changePreferenceOpenState = operation((context, { open }: { open: b
 })
 
 //
-// Clipboard
+// Internal clipboard
 //
 export const copyEntity = operation((context, { type, entity }: {
-    type: 'clip'
+    type: ClipboardEntry['type']
     entity: Delir.Entity.Clip
 }) => {
     context.dispatch(EditorActions.setClipboardEntry, {

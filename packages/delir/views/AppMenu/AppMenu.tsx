@@ -2,12 +2,12 @@ import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-
 import * as Electron from 'electron'
 import { remote } from 'electron'
 import * as React from 'react'
+import * as Platform from '../../utils/platform'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
-import * as HistoryOps from '../../domain/History/operations'
 import * as AboutModal from '../../modules/AboutModal'
-import * as Platform from '../../utils/platform'
+import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 
 import t from './AppMenu.i18n'
 
@@ -16,6 +16,11 @@ interface ConnectedProps {
 }
 
 type Props = ConnectedProps & ContextProp
+
+const isSelectionInputElement = (el: Element) => {
+    return (el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement)
+        && (el.selectionStart !== el.selectionEnd)
+}
 
 export default withComponentContext(connectToStores([EditorStore], (context) => ({
     editor: context.getStore(EditorStore).getState()
@@ -36,14 +41,6 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
     public render()
     {
         return null
-    }
-
-    private openAbout = () => {
-        AboutModal.show()
-    }
-
-    private handleOpenPreference = () => {
-        this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
     }
 
     private setApplicationMenu()
@@ -176,15 +173,18 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                 },
                 {
                     label: t('edit.cut'),
-                    role: 'cut'
+                    accelerator: 'CmdOrCtrl+X',
+                    click: this.handleCut,
                 },
                 {
                     label: t('edit.copy'),
-                    role: 'copy'
+                    accelerator: 'CmdOrCtrl+C',
+                    click: this.handleCopy,
                 },
                 {
                     label: t('edit.paste'),
-                    role: 'paste'
+                    accelerator: 'CmdOrCtrl+V',
+                    click: this.handlePaste,
                 },
                 {
                     label: t('edit.selectAll'),
@@ -233,5 +233,43 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         })
 
         remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(menu))
+    }
+
+    private openAbout = () => {
+        AboutModal.show()
+    }
+
+    private handleOpenPreference = () => {
+        this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
+    }
+
+    private handleCopy = () => {
+        const {activeElement} = document
+
+        if (isSelectionInputElement(activeElement)) {
+            document.execCommand('copy')
+        } else {
+            GlobalEvents.emit(GlobalEvent.copyViaApplicationMenu, {})
+        }
+    }
+
+    private handleCut = () => {
+        const {activeElement} = document
+
+        if (isSelectionInputElement(activeElement)) {
+            document.execCommand('cut')
+        } else {
+            GlobalEvents.emit(GlobalEvent.cutViaApplicationMenu, {})
+        }
+    }
+
+    private handlePaste = () => {
+        const {activeElement} = document
+
+        if (activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement) {
+            document.execCommand('paste')
+        } else {
+            GlobalEvents.emit(GlobalEvent.pasteViaApplicationMenu, {})
+        }
     }
 }))

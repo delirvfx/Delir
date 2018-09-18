@@ -10,6 +10,7 @@ import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
 
+import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import t from './_Clip.i18n'
 import * as s from './Clip.styl'
 
@@ -30,13 +31,10 @@ interface ConnectedProps {
 type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(class Clip extends React.Component<Props> {
-    private trap: InstanceType<typeof Mousetrap>
     private clipRoot = React.createRef<HTMLDivElement>()
 
     public componentDidMount() {
         this.trap = new Mousetrap(this.clipRoot.current!)
-        this.trap.bind(['command+c', 'ctrl+c'], this.handleCopyClip)
-        this.trap.bind(['command+x', 'ctrl+x'], this.handleCutClip)
     }
 
     public render()
@@ -61,12 +59,10 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                 onDragStart={this.handleDragStart}
                 onDragStop={this.handleDragEnd}
                 onResizeStop={this.handleResizeEnd}
+                onMouseDown={this.handleClick}
+                tabIndex={-1}
             >
-                <div
-                    ref={this.clipRoot}
-                    onClick={this.handleClick}
-                    tabIndex={-1}
-                >
+                <div ref={this.clipRoot}>
                     <ContextMenu>
                         <MenuItem label={t('contextMenu.seekToHeadOfClip')} onClick={this.handleSeekToHeadOfClip} />
                         <MenuItem label={t('contextMenu.effect')}>
@@ -88,8 +84,10 @@ export default withComponentContext(class Clip extends React.Component<Props> {
         )
     }
 
-    private handleClick = (e: React.DragEvent<HTMLDivElement>) =>
+    private handleClick = () =>
     {
+        GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
+        GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
         this.props.context.executeOperation(EditorOps.changeActiveClip, { clipId: this.props.clip.id! })
     }
 
@@ -133,11 +131,14 @@ export default withComponentContext(class Clip extends React.Component<Props> {
         this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame: clip.placedFrame })
     }
 
-    private handleCopyClip = () => {
-        this.props.context.executeOperation(EditorOps.copyEntity, { type: 'clip', entity: this.props.clip })
+    private handleGlobalCopy = () => {
+        this.props.context.executeOperation(EditorOps.copyEntity, {
+            type: 'clip',
+            entity: this.props.clip,
+        })
     }
 
-    private handleCutClip = () => {
+    private handleGlobalCut = () => {
         this.props.context.executeOperation(EditorOps.copyEntity, { type: 'clip', entity: this.props.clip })
         this.props.context.executeOperation(ProjectOps.removeClip, { clipId: this.props.clip.id })
     }

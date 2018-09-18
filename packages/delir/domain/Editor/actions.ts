@@ -19,6 +19,6 @@ export const EditorActions = {
     addMessageAction: action<{ id: string, title?: string, level: 'info' | 'error', message: string, detail?: string }>(),
     removeMessageAction: action<{ id: string }>(),
     seekPreviewFrameAction: action<{ frame: number }>(),
-    setClipboardEntry: action<{entry: ClipboardEntry}>(),
+    setClipboardEntry: action<{ entry: ClipboardEntry }>(),
     changePreferenceOpenStateAction: action<{ open: boolean }>()
 }
