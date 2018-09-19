@@ -7,7 +7,7 @@ describe('ProjectHelper', () => {
 
     describe('#moveLayerOrder', () => {
         it('Should correct moving layer order', () => {
-            const project = Exporter.deserialize(baseProject)
+            const project = Exporter.deserializeProject(baseProject)
             const layers = project.compositions[0].layers
             const firstLayer = layers[0]
 
@@ -18,7 +18,7 @@ describe('ProjectHelper', () => {
 
         it('Should throw exception if out of composition layer specified', () => {
             expect(() => {
-                const project = Exporter.deserialize(baseProject)
+                const project = Exporter.deserializeProject(baseProject)
                 const outOfCompLayer = new Layer()
                 ProjectHelper.moveLayerOrder(project, project.compositions[0].id, outOfCompLayer.id, 1)
             }).toThrowError()
