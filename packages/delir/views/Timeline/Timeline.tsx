@@ -19,9 +19,9 @@ import { ContextMenu, MenuItem } from '../components/ContextMenu'
 import DropDown from '../components/dropdown'
 
 import KeyframeEditor from '../KeyframeEditor'
-import Gradations from './_Gradations'
-import Layers from './_Layers'
+import Gradations from './Gradations'
 import LayerLabelList from './LayerLabelList'
+import Layers from './Layers'
 
 import * as s from './style.styl'
 import t from './Timeline.i18n'

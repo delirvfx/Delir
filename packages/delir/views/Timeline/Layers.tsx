@@ -10,11 +10,11 @@ import * as ProjectOps from '../../domain/Project/operations'
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
-import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
+import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu/ContextMenu'
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
-import Clip from './_Clip'
-import t from './_ClipSpace.i18n'
+import Clip from './Clip'
+import t from './Layers.i18n'
 
 interface OwnProps {
     layer: Delir.Entity.Layer

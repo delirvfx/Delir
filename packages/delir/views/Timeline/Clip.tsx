@@ -8,10 +8,10 @@ import { Rnd, RndResizeCallback } from 'react-rnd'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
-import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
+import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu/ContextMenu'
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
-import t from './_Clip.i18n'
+import t from './Clip.i18n'
 import * as s from './Clip.styl'
 
 interface OwnProps {
