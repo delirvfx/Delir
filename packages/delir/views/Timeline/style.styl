@@ -7,60 +7,59 @@
     flex none
     font-size 12px
 
-    :global
-        .--col-name
-            display inline-flex
-            align-items center
-            flex 1
-            overflow hidden
-            white-space normal
-            text-overflow ellipsis
+.timelineRegion
+    height 50%
 
-        .--col-visibility
-        .--col-lock
-            display inline-flex
-            align-items center
-            width 16px
+.keyframeGraphRegion
+    height 50%
 
-        .timeline-labels-container
-            display flex
-            flex-direction column
-            width 220px
-            flex none
-            background-color $pane-background
+.labelsContainer
+    display flex
+    flex-direction column
+    width 220px
+    flex none
+    background-color $pane-background
 
-        .timeline-labels-header
-            display flex
-            width 100%
-            height 30px
-            padding 0 4px
-            border-bottom 1px solid rgba(#fff, .4)
+.labelsHeader
+    display flex
+    width 100%
+    height 30px
+    padding 0 4px
+    border-bottom 1px solid rgba(#fff, .4)
 
-        .timeline-labels
-            thin-scrollbar()
+    .columnName
+        display inline-flex
+        align-items center
+        flex 1
+        overflow hidden
+        white-space normal
+        text-overflow ellipsis
 
-            display block
-            flex 1
-            overflow auto
-            padding-bottom 20px
+    // .--col-visibility
+    // .--col-lock
+    //     display inline-flex
+    //     align-items center
+    //     width 16px
 
-        .timeline-container
-            display flex
-            flex-direction column
-            flex 1
-            background-color $pane-background
+.labels
+    thin-scrollbar()
 
-        .timeline-lane-container
-            disable-scrollbar()
-            flex 1
-            padding-bottom 20px
-            overflow auto
+    display block
+    flex 1
+    overflow auto
+    padding-bottom 20px
 
-    .Timeline_Region
-        height 50%
+.timelineContainer
+    display flex
+    flex-direction column
+    flex 1
+    background-color $pane-background
 
-    .Timeline_KeyframeGraph
-        height 50%
+.layerContainer
+    disable-scrollbar()
+    flex 1
+    padding-bottom 20px
+    overflow auto
 
 .scaleLabel
     display inline-flex

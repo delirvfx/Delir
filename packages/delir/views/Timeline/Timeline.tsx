@@ -103,12 +103,12 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
         return (
             <Pane className={s.Timeline} allowFocus>
                 <Workspace direction='vertical'>
-                    <Pane className={s.Timeline_Region}>
+                    <Pane className={s.timelineRegion}>
                         <Workspace direction='horizontal' onDrop={this._dropAsset}>
                             {/* Layer Panel */}
-                            <Pane className='timeline-labels-container'>
-                                <div className='timeline-labels-header'>
-                                    <div className='--col-name'>Layers</div>
+                            <Pane className={s.labelsContainer}>
+                                <div className={s.labelsHeader}>
+                                    <div className={s.columnName}>Layers</div>
                                     <div className={s.scaleLabel} onClick={this._toggleScaleList}>
                                         <DropDown ref='scaleList' className={s.scaleList} shownInitial={false}>
                                             <li data-value='50' onClick={this._selectScale}>50%</li>
@@ -124,7 +124,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
 
                                 <div
                                     ref='timelineLabels'
-                                    className='timeline-labels'
+                                    className={s.labels}
                                     onScroll={this._scrollSync}
                                 >
                                     <ContextMenu>
@@ -144,7 +144,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
                                 </div>
                             </Pane>
                             {/* Layer Panel */}
-                            <Pane className='timeline-container' onWheel={this._scaleTimeline}>
+                            <Pane className={s.timelineContainer} onWheel={this._scaleTimeline}>
                                 <Gradations
                                     activeComposition={activeComp}
                                     measures={measures}
@@ -157,7 +157,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
                                     onSeeked={this._onSeeked}
                                 />
 
-                                <ul ref='timelineLayers' className='timeline-lane-container' onScroll={this._scrollSync}>
+                                <ul ref='timelineLayers' className={s.layerContainer} onScroll={this._scrollSync}>
                                     <ContextMenu>
                                         <MenuItem type='separator' />
                                         <MenuItem label={t('contextMenu.addLayer')} onClick={this.onLayerCreate} enabled={!!activeComp} />
@@ -177,7 +177,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
                             </Pane>
                         </Workspace>
                     </Pane>
-                    <Pane className={s.Timeline_KeyframeGraph}>
+                    <Pane className={s.keyframeGraphRegion}>
                         <KeyframeEditor
                             ref='keyframeView'
                             activeComposition={activeComp}
