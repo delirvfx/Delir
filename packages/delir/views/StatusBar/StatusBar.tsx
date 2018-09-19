@@ -1,8 +1,8 @@
 import { connectToStores } from '@ragg/fleur-react'
 import * as React from 'react'
 
+import Pane from '../../components/pane'
 import EditorStore from '../../domain/Editor/EditorStore'
-import Pane from '../components/pane'
 
 interface ConnectedProps {
     stateText: string

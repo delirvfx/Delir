@@ -2,8 +2,8 @@ import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 import { ChromePicker } from 'react-color'
 
-import DragNumberInput from '../components/drag-number-input'
-import Dropdown from '../components/dropdown'
+import DragNumberInput from '../../components/drag-number-input'
+import Dropdown from '../../components/dropdown'
 
 import t from './_DelirValueInput.i18n'
 import * as s from './delir-value-input.styl'

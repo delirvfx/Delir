@@ -14,9 +14,9 @@ import * as ProjectOps from '../../domain/Project/operations'
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../domain/Project/ProjectStore'
 
-import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
-import LabelInput from '../components/label-input'
-import Pane from '../components/pane'
+import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
+import LabelInput from '../../components/label-input'
+import Pane from '../../components/pane'
 
 import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
 

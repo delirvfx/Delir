@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import Button from '../../views/components/Button'
-import Link from '../../views/components/Link'
+import Button from '../../components/Button'
+import Link from '../../components/Link'
 import ModalWindow from '../ModalWindow/Controller'
 
 import * as packageJson from '../../../../package.json'
