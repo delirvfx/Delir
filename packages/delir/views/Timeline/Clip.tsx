@@ -1,7 +1,6 @@
 import * as Delir from '@ragg/delir-core'
 import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
-import Mousetrap = require('mousetrap')
 import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
@@ -32,10 +31,6 @@ type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(class Clip extends React.Component<Props> {
     private clipRoot = React.createRef<HTMLDivElement>()
-
-    public componentDidMount() {
-        this.trap = new Mousetrap(this.clipRoot.current!)
-    }
 
     public render()
     {
