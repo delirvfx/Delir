@@ -65,6 +65,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
                 onDrop={this.handleOnDrop}
                 onMouseUp={this.handleMouseUp}
                 onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
                 tabIndex={-1}
             >
                 <ContextMenu>
@@ -108,6 +109,10 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
     private handleFocus = () => {
         GlobalEvents.on(GlobalEvent.pasteViaApplicationMenu, this.handleGlobalPaste)
+    }
+
+    private handleBlur = () => {
+        GlobalEvents.off(GlobalEvent.pasteViaApplicationMenu, this.handleGlobalPaste)
     }
 
     private handleOnDrop = (e: React.DragEvent<HTMLLIElement>) =>
