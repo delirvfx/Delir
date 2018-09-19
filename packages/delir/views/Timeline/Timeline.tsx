@@ -20,8 +20,8 @@ import DropDown from '../components/dropdown'
 
 import KeyframeEditor from '../KeyframeEditor'
 import Gradations from './Gradations'
+import Layers from './Layer'
 import LayerLabelList from './LayerLabelList'
-import Layers from './Layers'
 
 import * as s from './style.styl'
 import t from './Timeline.i18n'

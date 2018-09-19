@@ -14,7 +14,7 @@ import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import Clip from './Clip'
-import t from './Layers.i18n'
+import t from './Layer.i18n'
 
 interface OwnProps {
     layer: Delir.Entity.Layer
@@ -41,7 +41,7 @@ interface State {
 export default withComponentContext(connectToStores([EditorStore, RendererStore], context => ({
     editor: context.getStore(EditorStore).getState(),
     postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins(),
-}))(class ClipSpace extends React.Component<Props, State> {
+}))(class Layer extends React.Component<Props, State> {
     public state: State = {
         dragovered: false,
     }
