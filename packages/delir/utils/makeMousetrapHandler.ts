@@ -1,5 +1,5 @@
 // Mousetrap is fired event on Input element when _belongsTo is satisfied
-export const makeMousetrapHandler = (fn: (e: KeyboardEvent, combo: string) => void) => {
+export const makeMousetrapIgnoreInputHandler = (fn: (e: KeyboardEvent, combo: string) => void) => {
     return (e: KeyboardEvent, combo: string) => {
         const target: HTMLElement = (e.target || e.srcElement) as HTMLElement
 

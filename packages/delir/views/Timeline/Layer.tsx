@@ -10,10 +10,13 @@ import * as ProjectOps from '../../domain/Project/operations'
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
-import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
+import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu/ContextMenu'
 
-import Clip from './_Clip'
-import t from './_ClipSpace.i18n'
+import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
+import Clip from './Clip'
+
+import t from './Layer.i18n'
+import * as s from './Layer.styl'
 
 interface OwnProps {
     layer: Delir.Entity.Layer
@@ -40,10 +43,12 @@ interface State {
 export default withComponentContext(connectToStores([EditorStore, RendererStore], context => ({
     editor: context.getStore(EditorStore).getState(),
     postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins(),
-}))(class ClipSpace extends React.Component<Props, State> {
+}))(class Layer extends React.Component<Props, State> {
     public state: State = {
         dragovered: false,
     }
+
+    private root = React.createRef<HTMLLIElement>()
 
     public render()
     {
@@ -53,12 +58,15 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
 
         return (
             <li
-                className={classnames('timeline-lane', {
-                    dragover: this.state.dragovered,
-                    '--expand': clips.findIndex(clip => !!(activeClip && clip.id === activeClip.id)) !== -1,
+                ref={this.root}
+                className={classnames(s.Layer, {
+                    [s.dragover]: this.state.dragovered,
                 })}
                 onDrop={this.handleOnDrop}
                 onMouseUp={this.handleMouseUp}
+                onFocus={this.handleFocus}
+                onBlur={this.handleBlur}
+                tabIndex={-1}
             >
                 <ContextMenu>
                     <MenuItem type='separator' />
@@ -70,7 +78,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
                     <MenuItem type='separator' />
                 </ContextMenu>
 
-                <div className='timeline-lane-clips'>
+                <div className={s.clipsContainer}>
                     {clips.map(clip => {
                         const width = TimePixelConversion.framesToPixel({
                             durationFrames: clip.durationFrames | 0,
@@ -97,6 +105,14 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
                 </div>
             </li>
         )
+    }
+
+    private handleFocus = () => {
+        GlobalEvents.on(GlobalEvent.pasteViaApplicationMenu, this.handleGlobalPaste)
+    }
+
+    private handleBlur = () => {
+        GlobalEvents.off(GlobalEvent.pasteViaApplicationMenu, this.handleGlobalPaste)
     }
 
     private handleOnDrop = (e: React.DragEvent<HTMLLIElement>) =>
@@ -181,6 +197,12 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
             clipRendererId: dataset.rendererId,
             placedFrame: 0,
             durationFrames: 100
+        })
+    }
+
+    private handleGlobalPaste = () => {
+        this.props.context.executeOperation(ProjectOps.pasteClipEntityIntoLayer, {
+            layerId: this.props.layer.id,
         })
     }
 }))

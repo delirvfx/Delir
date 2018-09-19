@@ -5,7 +5,7 @@ import { listen, Store } from '@ragg/fleur'
 import { ProjectActions } from '../Project/actions'
 import { EditorActions } from './actions'
 import { DragEntity } from './operations'
-import { ParameterTarget } from './types'
+import { ClipboardEntry, ParameterTarget } from './types'
 
 export interface NotificationEntry {
     id: string
@@ -26,6 +26,7 @@ export interface EditorState {
     previewPlayed: boolean
     currentPreviewFrame: number
     preferenceOpened: boolean
+    clipboard: ClipboardEntry | null
     notifications: NotificationEntry[]
 }
 
@@ -43,7 +44,8 @@ export default class EditorStore extends Store<EditorState> {
         previewPlayed: false,
         currentPreviewFrame: 0,
         preferenceOpened: false,
-        notifications: []
+        clipboard: null,
+        notifications: [],
     }
 
     private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
@@ -190,8 +192,16 @@ export default class EditorStore extends Store<EditorState> {
         this.updateWith(draft => draft.preferenceOpened = open)
     })
 
+    private handleSetClipboardEntry = listen(EditorActions.setClipboardEntry, (payload) => {
+        this.updateWith(draft => draft.clipboard = payload.entry)
+    })
+
     public getActiveParam() {
         return this.state.activeParam
+    }
+
+    public getClipboardEntry() {
+        return this.state.clipboard
     }
 
     public getState() {

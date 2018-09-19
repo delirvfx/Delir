@@ -7,9 +7,10 @@ import { Rnd, RndResizeCallback } from 'react-rnd'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
-import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
+import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu/ContextMenu'
 
-import t from './_Clip.i18n'
+import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
+import t from './Clip.i18n'
 import * as s from './Clip.styl'
 
 interface OwnProps {
@@ -29,9 +30,7 @@ interface ConnectedProps {
 type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(class Clip extends React.Component<Props> {
-    public refs: {
-        clipRoot: HTMLDivElement
-    }
+    private clipRoot = React.createRef<HTMLDivElement>()
 
     public render()
     {
@@ -55,22 +54,22 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                 onDragStart={this.handleDragStart}
                 onDragStop={this.handleDragEnd}
                 onResizeStop={this.handleResizeEnd}
+                onMouseDown={this.handleClick}
+                tabIndex={-1}
             >
-                <div
-                    onClick={this.handleClick}
-                >
+                <div ref={this.clipRoot}>
                     <ContextMenu>
                         <MenuItem label={t('contextMenu.seekToHeadOfClip')} onClick={this.handleSeekToHeadOfClip} />
                         <MenuItem label={t('contextMenu.effect')}>
                             {postEffectPlugins.length ? postEffectPlugins.map(entry => (
-                                <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.addEffect} />)
+                                <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.handleAddEffect} />)
                             ) : (
                                 <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
                             )}
                         </MenuItem>
                         {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
                         <MenuItem type='separator' />
-                        <MenuItem label={t('contextMenu.remove')} data-clip-id={clip.id} onClick={this.removeClip} />
+                        <MenuItem label={t('contextMenu.remove')} data-clip-id={clip.id} onClick={this.handleRemoveClip} />
                         <MenuItem type='separator' />
                     </ContextMenu>
                     <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>
@@ -80,8 +79,10 @@ export default withComponentContext(class Clip extends React.Component<Props> {
         )
     }
 
-    private handleClick = (e: React.DragEvent<HTMLDivElement>) =>
+    private handleClick = () =>
     {
+        GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
+        GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
         this.props.context.executeOperation(EditorOps.changeActiveClip, { clipId: this.props.clip.id! })
     }
 
@@ -106,7 +107,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
         this.props.onChangeDuration(clip.id, this.props.width + delta.width)
     }
 
-    private addEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
+    private handleAddEffect = ({dataset}: MenuItemOption<{clipId: string, effectId: string}>) =>
     {
         this.props.context.executeOperation(ProjectOps.addEffectIntoClip, {
             clipId: dataset.clipId,
@@ -115,7 +116,7 @@ export default withComponentContext(class Clip extends React.Component<Props> {
         this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
     }
 
-    private removeClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
+    private handleRemoveClip = ({ dataset }: MenuItemOption<{clipId: string}>) =>
     {
         this.props.context.executeOperation(ProjectOps.removeClip, { clipId: dataset.clipId })
     }
@@ -123,5 +124,17 @@ export default withComponentContext(class Clip extends React.Component<Props> {
     private handleSeekToHeadOfClip = () => {
         const { clip } = this.props
         this.props.context.executeOperation(EditorOps.seekPreviewFrame, { frame: clip.placedFrame })
+    }
+
+    private handleGlobalCopy = () => {
+        this.props.context.executeOperation(EditorOps.copyEntity, {
+            type: 'clip',
+            entity: this.props.clip,
+        })
+    }
+
+    private handleGlobalCut = () => {
+        this.props.context.executeOperation(EditorOps.copyEntity, { type: 'clip', entity: this.props.clip })
+        this.props.context.executeOperation(ProjectOps.removeClip, { clipId: this.props.clip.id })
     }
 })
