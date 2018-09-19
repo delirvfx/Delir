@@ -19,9 +19,9 @@ import { ContextMenu, MenuItem } from '../components/ContextMenu'
 import DropDown from '../components/dropdown'
 
 import KeyframeEditor from '../KeyframeEditor'
-import ClipSpace from './_ClipSpace'
 import Gradations from './_Gradations'
-import LayerList from './LayerList'
+import Layers from './_Layers'
+import LayerLabelList from './LayerLabelList'
 
 import * as s from './style.styl'
 import t from './Timeline.i18n'
@@ -133,7 +133,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && (
-                                        <LayerList
+                                        <LayerLabelList
                                             layers={layers}
                                             useDragHandle={true}
                                             onSortEnd={this.onLayerSort}
@@ -164,7 +164,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
                                         <MenuItem type='separator' />
                                     </ContextMenu>
                                     {activeComp && layers.map(layer => (
-                                        <ClipSpace
+                                        <Layers
                                             key={layer.id!}
                                             layer={layer}
                                             framerate={framerate}

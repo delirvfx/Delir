@@ -2,7 +2,6 @@ import * as Delir from '@ragg/delir-core'
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
-import Mousetrap = require('mousetrap')
 import * as React from 'react'
 
 import * as EditorOps from '../../domain/Editor/operations'
