@@ -14,7 +14,9 @@ import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import Clip from './Clip'
+
 import t from './Layer.i18n'
+import * as s from './Layer.styl'
 
 interface OwnProps {
     layer: Delir.Entity.Layer
@@ -57,9 +59,8 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
         return (
             <li
                 ref={this.root}
-                className={classnames('timeline-lane', {
-                    dragover: this.state.dragovered,
-                    '--expand': clips.findIndex(clip => !!(activeClip && clip.id === activeClip.id)) !== -1,
+                className={classnames(s.Layer, {
+                    [s.dragover]: this.state.dragovered,
                 })}
                 onDrop={this.handleOnDrop}
                 onMouseUp={this.handleMouseUp}
@@ -76,7 +77,7 @@ export default withComponentContext(connectToStores([EditorStore, RendererStore]
                     <MenuItem type='separator' />
                 </ContextMenu>
 
-                <div className='timeline-lane-clips'>
+                <div className={s.clipsContainer}>
                     {clips.map(clip => {
                         const width = TimePixelConversion.framesToPixel({
                             durationFrames: clip.durationFrames | 0,
