@@ -7,10 +7,10 @@ import * as React from 'react'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
+import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
-import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu/ContextMenu'
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import Clip from './Clip'

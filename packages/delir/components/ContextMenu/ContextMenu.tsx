@@ -1,7 +1,7 @@
 import * as Electron from 'electron'
 import * as React from 'react'
 
-import propToDataset from '../../../utils/propToDataset'
+import propToDataset from '../../utils/propToDataset'
 import ContextMenuManager from './ContextMenuManager'
 
 export interface MenuItemOption<T = {}> {

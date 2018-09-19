@@ -12,11 +12,11 @@ import * as ProjectOps from '../../domain/Project/operations'
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../domain/Project/ProjectStore'
 
-import Pane from '../components/pane'
-import Workspace from '../components/workspace'
+import Pane from '../../components/pane'
+import Workspace from '../../components/workspace'
 
-import { ContextMenu, MenuItem } from '../components/ContextMenu'
-import DropDown from '../components/dropdown'
+import { ContextMenu, MenuItem } from '../../components/ContextMenu'
+import DropDown from '../../components/dropdown'
 
 import KeyframeEditor from '../KeyframeEditor'
 import Gradations from './Gradations'

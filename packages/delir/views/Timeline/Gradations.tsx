@@ -5,7 +5,7 @@ import * as React from 'react'
 
 import TimePixelConversion, { MeasurePoint } from '../../utils/TimePixelConversion'
 
-import { ContextMenu, MenuItem } from '../components/ContextMenu/ContextMenu'
+import { ContextMenu, MenuItem } from '../../components/ContextMenu/ContextMenu'
 
 import RendererStore, { RenderState } from '../../domain/Renderer/RendererStore'
 import t from './Gradations.i18n'

@@ -4,8 +4,8 @@ import * as classnames from 'classnames'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 
+import Button from '../../components/Button/Button'
 import RendererStore from '../../domain/Renderer/RendererStore'
-import Button from '../components/Button/Button'
 
 import t from './RenderingWaiter.i18n'
 import * as s from './style.styl'

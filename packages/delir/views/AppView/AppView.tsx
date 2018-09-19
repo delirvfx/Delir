@@ -8,8 +8,8 @@ import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as HistoryOps from '../../domain/History/operations'
 
-import Pane from '../components/pane'
-import Workspace from '../components/workspace'
+import Pane from '../../components/pane'
+import Workspace from '../../components/workspace'
 
 import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'

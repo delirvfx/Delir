@@ -6,8 +6,8 @@ import { SortableElement, SortableHandle } from 'react-sortable-hoc'
 
 import * as ProjectOps from '../../domain/Project/operations'
 
-import { ContextMenu, MenuItem, MenuItemOption } from '../components/ContextMenu'
-import LabelInput from '../components/label-input'
+import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
+import LabelInput from '../../components/label-input'
 
 import t from './LaneLabel.i18n'
 import * as s from './LaneLabel.styl'

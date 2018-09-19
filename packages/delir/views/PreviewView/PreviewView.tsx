@@ -3,8 +3,8 @@ import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-
 import * as React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 
-import DropDown from '../components/dropdown'
-import Pane from '../components/pane'
+import DropDown from '../../components/dropdown'
+import Pane from '../../components/pane'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as RendererOps from '../../domain/Renderer/operations'

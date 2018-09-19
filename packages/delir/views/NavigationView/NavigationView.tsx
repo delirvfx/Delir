@@ -6,7 +6,7 @@ import * as React from 'react'
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
 
-import Pane from '../components/pane'
+import Pane from '../../components/pane'
 
 import * as s from './style.styl'
 
