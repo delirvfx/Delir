@@ -4,7 +4,7 @@ import * as PluginSupport from './PluginSupport'
 import * as Values from './Values'
 
 import PreRenderRequest from './Engine/PreRenderingRequest'
-import RenderRequest from './Engine/RenderRequest'
+import RenderContext from './Engine/RenderContext'
 import PluginBase from './PluginSupport/plugin-base'
 import PluginRegistry from './PluginSupport/plugin-registry'
 import PostEffectBase from './PluginSupport/PostEffectBase'
@@ -31,7 +31,7 @@ export {
     PluginBase,
     PostEffectBase,
     PreRenderRequest,
-    RenderRequest,
+    RenderContext,
     PluginRegistry,
 
     // import shorthand

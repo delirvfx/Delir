@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 import Type from '../../../PluginSupport/type-descriptor'
 import PreRenderingRequest from '../../PreRenderingRequest'
-import RenderingRequest from '../../RenderRequest'
+import RenderingRequest from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'

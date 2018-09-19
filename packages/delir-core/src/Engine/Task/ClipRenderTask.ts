@@ -8,16 +8,16 @@ import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
 import ExpressionVM from '../ExpressionSupport/ExpressionVM'
 import * as KeyframeHelper from '../KeyframeCalcurator'
+import RenderContext from '../RenderContext'
 import * as RendererFactory from '../Renderer'
 import { IRenderer } from '../Renderer/RendererBase'
-import RenderRequest from '../RenderRequest'
 import EffectRenderTask from './EffectRenderTask'
 
 export default class ClipRenderTask {
     public static build({clip, clipRendererCache, req}: {
         clip: Clip
         clipRendererCache: WeakMap<Clip, IRenderer<any>>
-        req: RenderRequest,
+        req: RenderContext,
     }): ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
         const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
@@ -77,7 +77,7 @@ export default class ClipRenderTask {
     public effectRenderTask: EffectRenderTask[]
     private initialKeyframeValues: RealParameterValues
 
-    public async initialize(req: RenderRequest) {
+    public async initialize(req: RenderContext) {
         const preRenderReq = req.clone({parameters: this.initialKeyframeValues}).toPreRenderingRequest()
         await this.clipRenderer.beforeRender(preRenderReq)
     }

@@ -19,7 +19,7 @@ import { ColorRGB, ColorRGBA } from '../Values'
 import AssetProxy from './AssetProxy'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
-import RenderingRequest from './RenderRequest'
+import RenderingRequest from './RenderContext'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
 

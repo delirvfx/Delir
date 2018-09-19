@@ -3,7 +3,7 @@ import { EffectPluginMissingException } from '../../exceptions'
 import PluginRegistry from '../../PluginSupport/plugin-registry'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
 import DependencyResolver from '../DependencyResolver'
-import RenderRequest from '../RenderRequest'
+import RenderRequest from '../RenderContext'
 import EffectRenderTask from './EffectRenderTask'
 
 describe('EffectRenderTask', () => {

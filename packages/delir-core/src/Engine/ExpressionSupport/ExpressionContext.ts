@@ -1,5 +1,5 @@
 import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
-import RenderingRequest from '../RenderRequest'
+import RenderingRequest from '../RenderContext'
 import { ExpressionContext } from './ExpressionVM'
 
 export interface ContextSource {

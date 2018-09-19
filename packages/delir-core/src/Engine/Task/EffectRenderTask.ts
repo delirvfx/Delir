@@ -11,14 +11,14 @@ import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
 import ExpressionVM from '../ExpressionSupport/ExpressionVM'
 import * as KeyframeCalcurator from '../KeyframeCalcurator'
-import RenderRequest from '../RenderRequest'
+import RenderContext from '../RenderContext'
 
 export default class EffectRenderTask {
     public static build({effect, clip, req, resolver, effectCache}: {
         effect: Effect,
         clip: Clip,
         effectCache: WeakMap<Effect, EffectPluginBase>,
-        req: RenderRequest,
+        req: RenderContext,
         resolver: DependencyResolver,
     }): EffectRenderTask {
         const EffectPluginClass = resolver.resolveEffectPlugin(effect.processor)!
@@ -81,7 +81,7 @@ export default class EffectRenderTask {
     public expressions: { [paramName: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes }
     private initialKeyframeValues: RealParameterValues
 
-    public async initialize(req: RenderRequest) {
+    public async initialize(req: RenderContext) {
         const preRenderReq = req.clone({parameters: this.initialKeyframeValues}).toPreRenderingRequest()
         await this.effectRenderer.initialize(preRenderReq)
     }

@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra'
 import { join } from 'path'
 import { Expression } from '../../../Values'
-import RenderRequest from '../../RenderRequest'
+import RenderRequest from '../../RenderContext'
 import P5jsRenderer from './P5js'
 
 jest.mock('./P5Hooks', () => ({ default: class {
