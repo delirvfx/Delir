@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import Type from '../../../PluginSupport/type-descriptor'
-import PreRenderingRequest from '../../PreRenderingRequest'
+import PreRenderContext from '../../PreRenderContext'
 import RenderingRequest from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
@@ -66,7 +66,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
 
     private _image: HTMLImageElement | null = null
 
-    public async beforeRender(req: PreRenderingRequest<ImageRendererParams>)
+    public async beforeRender(req: PreRenderContext<ImageRendererParams>)
     {
         const parameters = req.parameters
 

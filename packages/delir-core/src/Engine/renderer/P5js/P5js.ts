@@ -4,7 +4,7 @@ import P5Hooks from './P5Hooks'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import Expression from '../../../Values/Expression'
-import PreRenderingRequest from '../../PreRenderingRequest'
+import PreRenderContext from '../../PreRenderContext'
 import RenderingRequest from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
@@ -43,7 +43,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
     private p5ex: P5Hooks
     private canvas: HTMLCanvasElement
 
-    public async beforeRender(req: PreRenderingRequest<SketchRendererParams>)
+    public async beforeRender(req: PreRenderContext<SketchRendererParams>)
     {
         this.p5ex = new P5Hooks(req.resolver)
 
@@ -101,7 +101,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
         ctx.drawImage(this.canvas, 0, 0)
     }
 
-    private makeVmExposeVariables(req: PreRenderingRequest<any> | RenderingRequest<any>)
+    private makeVmExposeVariables(req: PreRenderContext<any> | RenderingRequest<any>)
     {
         return {
             delir: {

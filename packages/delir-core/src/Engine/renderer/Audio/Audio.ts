@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 import { resampling } from '../../../helper/Audio'
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderingRequest from '../../PreRenderingRequest'
+import PreRenderContext from '../../PreRenderContext'
 import RenderingRequest from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
@@ -64,7 +64,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         buffers: Float32Array[]
     }
 
-    public async beforeRender(req: PreRenderingRequest<AudioRendererParam>)
+    public async beforeRender(req: PreRenderContext<AudioRendererParam>)
     {
         const params = req.parameters
 

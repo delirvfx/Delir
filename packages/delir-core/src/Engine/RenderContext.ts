@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 import { Composition } from '../Entity'
 import DependencyResolver from './DependencyResolver'
 import { RealParameterValueTypes } from './Engine'
-import PreRenderingRequest from './PreRenderingRequest'
+import PreRenderContext from './PreRenderContext'
 
 export default class RenderContext<T = {[propName: string]: RealParameterValueTypes}>
 {
@@ -111,9 +111,9 @@ export default class RenderContext<T = {[propName: string]: RealParameterValueTy
         return new RenderContext<T>(Object.assign({}, this, permitPatch))
     }
 
-    public toPreRenderingRequest(): PreRenderingRequest<T>
+    public toPreRenderingRequest(): PreRenderContext<T>
     {
-        return new PreRenderingRequest<T>({
+        return new PreRenderContext<T>({
             width: this.width,
             height: this.height,
             framerate: this.framerate,

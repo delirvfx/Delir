@@ -2,7 +2,7 @@ import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderingRequest from '../../PreRenderingRequest'
+import PreRenderContext from '../../PreRenderContext'
 import RenderingRequest from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
@@ -25,7 +25,7 @@ export default class AdjustmentRenderer implements IRenderer<Param>
             .number('opacity', { label: 'Opacity', defaultValue: 100, animatable: true })
     }
 
-    public async beforeRender(req: PreRenderingRequest<Param>) { return }
+    public async beforeRender(req: PreRenderContext<Param>) { return }
 
     public async render(req: RenderingRequest<Param>)
     {

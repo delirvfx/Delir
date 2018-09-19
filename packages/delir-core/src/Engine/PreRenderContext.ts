@@ -4,7 +4,7 @@ import { Composition } from '../Entity'
 import { ParameterValueTypes } from '../PluginSupport/type-descriptor'
 import DependencyResolver from './DependencyResolver'
 
-export default class PreRenderingRequest<T = {[propName: string]: ParameterValueTypes}>
+export default class PreRenderContext<T = {[propName: string]: ParameterValueTypes}>
 {
     private static _permitKeys = [
         'width',
@@ -59,20 +59,20 @@ export default class PreRenderingRequest<T = {[propName: string]: ParameterValue
     //
     public resolver: DependencyResolver
 
-    constructor(properties: Partial<PreRenderingRequest<T>> = {})
+    constructor(properties: Partial<PreRenderContext<T>> = {})
     {
         const props = _.pick(properties, [
-            ...PreRenderingRequest._permitKeys,
-            ...PreRenderingRequest._permitOnlyInitializeKey
+            ...PreRenderContext._permitKeys,
+            ...PreRenderContext._permitOnlyInitializeKey
         ])
 
         Object.assign(this, props)
         Object.freeze(this)
     }
 
-    public clone(patch: Partial<PreRenderingRequest<T>>): PreRenderingRequest<T>
+    public clone(patch: Partial<PreRenderContext<T>>): PreRenderContext<T>
     {
-        const permitPatch = _.pick(patch, PreRenderingRequest._permitKeys)
-        return new PreRenderingRequest<T>(Object.assign({}, this, permitPatch))
+        const permitPatch = _.pick(patch, PreRenderContext._permitKeys)
+        return new PreRenderContext<T>(Object.assign({}, this, permitPatch))
     }
 }

@@ -1,4 +1,4 @@
-import PreRenderRequest from '../Engine/PreRenderingRequest'
+import PreRenderRequest from '../Engine/PreRenderContext'
 import RenderContext from '../Engine/RenderContext'
 
 import PluginBase from './plugin-base'

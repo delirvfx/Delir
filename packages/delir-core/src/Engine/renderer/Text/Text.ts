@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderingRequest from '../../PreRenderingRequest'
+import PreRenderContext from '../../PreRenderContext'
 import RenderingRequest from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
@@ -90,7 +90,7 @@ export default class TextLayer implements IRenderer<TextRendererParam>
 
     private _bufferCanvas: HTMLCanvasElement
 
-    public async beforeRender(req: PreRenderingRequest<TextRendererParam>)
+    public async beforeRender(req: PreRenderContext<TextRendererParam>)
     {
         this._bufferCanvas = document.createElement('canvas')
     }
