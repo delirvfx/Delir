@@ -23,7 +23,6 @@ interface Uniform {
 const DEFAULT_VERTEX_SHADER = `
 attribute vec2 position;
 
-
 void main(void) {
     gl_Position = vec4(position, 0.0, 1.0);
 }
@@ -215,7 +214,7 @@ export default class WebGLContext {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
         gl.flush()
 
-        dest.getContext('2d')!.clearRect(0, 0, 100, 100) //!.drawImage(this.glCanvas, 0, 0)
+        dest.getContext('2d')!.drawImage(this.glCanvas, 0, 0)
     }
 
     // Uniforms
