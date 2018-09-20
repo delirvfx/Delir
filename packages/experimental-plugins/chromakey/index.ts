@@ -1,8 +1,8 @@
 import {
     PluginSupport,
     PostEffectBase,
-    PreRenderRequest,
-    RenderRequest,
+    PreRenderContext,
+    RenderContext,
     Type,
     Values
 } from '@ragg/delir-core'
@@ -28,6 +28,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
     private static FRAGMENT_SHADER: string = require('./fragment.frag')
 
     private ctxBindToken: PluginSupport.WebGLContextBindToken
+    private gl: WebGL2RenderingContext
     private texCanvas: HTMLCanvasElement
     private texCanvasCtx: CanvasRenderingContext2D
     private fragShader: WebGLShader
@@ -52,10 +53,12 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      * If you want initializing before rendering (likes load audio, image, etc...)
      * Do it in this method.
      */
-    public async initialize(req: PreRenderRequest) {
+    public async initialize(req: PreRenderContext) {
         this.ctxBindToken = req.glContextPool.generateContextBindToken()
         const gl = await req.glContextPool.getContext('webgl')
         const canvas = gl.canvas
+
+        this.gl.cl
 
         this.texCanvas = document.createElement('canvas')
         this.texCanvasCtx = this.texCanvas.getContext('2d')
@@ -119,7 +122,7 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      * Render frame into destination canvas.
      * @param req
      */
-    public async render(req: RenderRequest<Params>)
+    public async render(req: RenderContext<Params>)
     {
         const { srcCanvas, destCanvas, parameters: {threshold, keyColor} } = req
         const destCtx = destCanvas.getContext('2d')

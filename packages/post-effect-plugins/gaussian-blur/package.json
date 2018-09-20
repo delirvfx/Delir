@@ -1,0 +1,14 @@
+{
+    "name": "@ragg/delir-posteffect-gaussian-blur",
+    "version": "0.1.0",
+    "author": "Ragg (https://twitter.com/@_ragg_)",
+    "license": "MIT",
+    "main": "index.js",
+    "engines": {
+        "delir-core": "0.5.x"
+    },
+    "delir": {
+        "name": "Gaussian blur",
+        "type": "post-effect"
+    }
+}

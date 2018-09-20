@@ -76,3 +76,5 @@ declare namespace NodeJS {
         require: NodeRequire
     }
 }
+
+declare interface OffscreenCanvas extends HTMLCanvasElement {}
