@@ -23,9 +23,9 @@ export default class GaussianBlurEffect extends PostEffectBase {
         precision mediump float;
 
         uniform sampler2D source;
-        // uniform float     weight[10];
-        // uniform bool      horizontal;
-        // varying vec2      vTexCoord;
+        uniform float     weight[10];
+        uniform bool      horizontal;
+        varying vec2      vTexCoord;
 
         void main(void){
             // float tFrag = 1.0 / 512.0;
@@ -77,7 +77,7 @@ export default class GaussianBlurEffect extends PostEffectBase {
             // }
 
             // gl_FragColor = vec4(destColor, 1.0);
-            gl_FragColor = vec4(1, 1, 1, 1);
+            gl_FragColor = texture2D(source, vTexCoord);
         }
     `
 
@@ -116,8 +116,8 @@ export default class GaussianBlurEffect extends PostEffectBase {
         }
 
         context.gl.applyProgram(this.program, {
-            // weight: context.gl.uni1fv(weight),
-            // horizontal: context.gl.uni1iv([0]),
+            weight: context.gl.uni1fv(weight),
+            horizontal: context.gl.uni1iv([0]),
         }, context.srcCanvas!, context.destCanvas)
     }
 }

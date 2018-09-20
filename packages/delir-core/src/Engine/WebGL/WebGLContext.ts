@@ -22,8 +22,11 @@ interface Uniform {
 
 const DEFAULT_VERTEX_SHADER = `
 attribute vec2 position;
+attribute vec2 coord;
+varying vec2 vTexCoord;
 
 void main(void) {
+    vTexCoord = coord;
     gl_Position = vec4(position, 0.0, 1.0);
 }
 `
@@ -34,8 +37,8 @@ export default class WebGLContext {
     private copyBufferCanvas: HTMLCanvasElement
 
     public constructor(
-        width: number,
-        height: number
+        private width: number,
+        private height: number
     ) {
         this.glCanvas = new (global as any).OffscreenCanvas(width, height) as HTMLCanvasElement
         this.gl = this.glCanvas.getContext('webgl2')!
@@ -70,12 +73,13 @@ export default class WebGLContext {
 
     public applyProgram(program: WebGLProgram, uniforms: { [uniformName: string]: Uniform }, source: HTMLCanvasElement, dest: HTMLCanvasElement) {
         const { gl, copyBufferCanvas } = this
+
         gl.useProgram(program)
 
         const ctx = copyBufferCanvas.getContext('2d')!
-        const texSize = copyBufferCanvas.width = copyBufferCanvas.height = 2 ** Math.ceil(Math.log2(Math.max(source.width, source.height)))
+        const texSize = copyBufferCanvas.width = copyBufferCanvas.height = 2 ** Math.ceil(Math.log2(Math.max(this.width, this.height)))
         ctx.clearRect(0, 0, texSize, texSize)
-        ctx.drawImage(source, 0, 0)
+        ctx.drawImage(source, 0, 0, texSize, texSize)
 
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -83,11 +87,16 @@ export default class WebGLContext {
         const vertexBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ -1, -1, 1, -1, 1, 1, -1, 1　]), gl.STATIC_DRAW)
-        gl.enableVertexAttribArray(gl.getAttribLocation(program, 'position'))
+        const positionAttrib = gl.getAttribLocation(program, 'position')
+        gl.enableVertexAttribArray(positionAttrib)
+        gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0)
 
         const tex2DBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, tex2DBuffer)
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0, 1, 1, 1, 1, 0, 0, 0 ]), gl.STATIC_DRAW)
+        const coordAttrib = gl.getAttribLocation(program, 'coord')
+        gl.enableVertexAttribArray(coordAttrib)
+        gl.vertexAttribPointer(coordAttrib, 2, gl.FLOAT, false, 0, 0)
 
         const tex = gl.createTexture()
         gl.activeTexture(gl.TEXTURE0)
@@ -214,7 +223,7 @@ export default class WebGLContext {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
         gl.flush()
 
-        dest.getContext('2d')!.drawImage(this.glCanvas, 0, 0)
+        dest.getContext('2d')!.drawImage(this.glCanvas, 0, 0, source.width, source.height)
     }
 
     // Uniforms
