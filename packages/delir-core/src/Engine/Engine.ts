@@ -431,7 +431,7 @@ export default class Engine
                 // Apply expression
                 const afterExpressionParams = applyExpression(clipScopeContext, beforeExpressionParams, effectParams, clipTask.expressions)
 
-                const clipRenderReq = clipScopeContext.clone({
+                const clipRenderContext = clipScopeContext.clone({
                     parameters: afterExpressionParams,
 
                     srcCanvas: clipTask.rendererType === 'adjustment' ? destBufferCanvas : null,
@@ -451,7 +451,7 @@ export default class Engine
                     })
                 }
 
-                await clipTask.clipRenderer.render(clipRenderReq)
+                await clipTask.clipRenderer.render(clipRenderContext)
                 clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
 
                 // Post process effects
