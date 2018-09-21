@@ -378,8 +378,7 @@ export default class Engine
 
             const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
 
-            // SPEC: The rendering order of the same layer at the same time is not defined.
-            //       In the future, want to ensure that there are no more than two clips in a single layer at a given time.
+            // SPEC: The rendering order of the clip in one layer in same time is not defined.
             const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
 
             // Render clips

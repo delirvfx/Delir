@@ -12,6 +12,10 @@ export default class Composition {
     public samplingRate: number
     public audioChannels: number
     public backgroundColor: ColorRGB
+    /**
+     * Layers rendering from [0].
+     * The one that follows will overwrite the previous ones
+     */
     public layers: Layer[] = []
 
     constructor() {
