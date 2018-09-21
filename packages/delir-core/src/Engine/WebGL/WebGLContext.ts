@@ -34,7 +34,7 @@ void main(void) {
 export default class WebGLContext {
     private glCanvas: HTMLCanvasElement
     private gl: WebGL2RenderingContext
-    private copyBufferCanvas: HTMLCanvasElement
+    private texBufferCanvas: HTMLCanvasElement
 
     public constructor(
         private width: number,
@@ -44,8 +44,8 @@ export default class WebGLContext {
         this.gl = this.glCanvas.getContext('webgl2')!
         this.gl.viewport(0, 0, width, height)
 
-        // this.copyBufferCanvas = new (global as any).OffscreenCanvas(width, height)
-        this.copyBufferCanvas = Object.assign(document.createElement('canvas'), {width, height})
+        // texImage2D not support for OffscreenCanvas so using HTMLCanvasElement
+        this.texBufferCanvas = Object.assign(document.createElement('canvas'), {width, height})
     }
 
     public getProgram(fragmentShaderSource: string, vertexShaderSource: string = DEFAULT_VERTEX_SHADER): WebGLProgram {
@@ -72,14 +72,14 @@ export default class WebGLContext {
     }
 
     public applyProgram(program: WebGLProgram, uniforms: { [uniformName: string]: Uniform }, source: HTMLCanvasElement, dest: HTMLCanvasElement) {
-        const { gl, copyBufferCanvas } = this
+        const { gl, texBufferCanvas } = this
 
         gl.useProgram(program)
 
-        const ctx = copyBufferCanvas.getContext('2d')!
-        const texSize = copyBufferCanvas.width = copyBufferCanvas.height = 2 ** Math.ceil(Math.log2(Math.max(this.width, this.height)))
-        ctx.clearRect(0, 0, texSize, texSize)
-        ctx.drawImage(source, 0, 0, texSize, texSize)
+        const texBufferCtx = texBufferCanvas.getContext('2d')!
+        const texSize = texBufferCanvas.width = texBufferCanvas.height = 2 ** Math.ceil(Math.log2(Math.max(this.width, this.height)))
+        texBufferCtx.clearRect(0, 0, texSize, texSize)
+        texBufferCtx.drawImage(source, 0, 0, texSize, texSize)
 
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
@@ -101,7 +101,7 @@ export default class WebGLContext {
         const tex = gl.createTexture()
         gl.activeTexture(gl.TEXTURE0)
         gl.bindTexture(gl.TEXTURE_2D, tex)
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, copyBufferCanvas)
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texBufferCanvas)
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 
