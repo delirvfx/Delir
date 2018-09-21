@@ -40,7 +40,8 @@ export default class WebGLContext {
         private width: number,
         private height: number
     ) {
-        this.glCanvas = new (global as any).OffscreenCanvas(width, height) as HTMLCanvasElement
+        // OffscreenCanvas not updated frame (bug?) so using HTMLCanvasElement
+        this.glCanvas = Object.assign(document.createElement('canvas'), {width, height})
         this.gl = this.glCanvas.getContext('webgl2')!
         this.gl.viewport(0, 0, width, height)
 
