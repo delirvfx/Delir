@@ -78,9 +78,9 @@ export default class WebGLContext {
         gl.useProgram(program)
 
         const texBufferCtx = texBufferCanvas.getContext('2d')!
-        const texSize = texBufferCanvas.width = texBufferCanvas.height = 2 ** Math.ceil(Math.log2(Math.max(this.width, this.height)))
-        texBufferCtx.clearRect(0, 0, texSize, texSize)
-        texBufferCtx.drawImage(source, 0, 0, texSize, texSize)
+        texBufferCanvas.width = source.width
+        texBufferCanvas.height = source.height
+        texBufferCtx.drawImage(source, 0, 0)
 
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
