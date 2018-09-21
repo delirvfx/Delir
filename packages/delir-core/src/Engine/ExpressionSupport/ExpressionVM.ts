@@ -4,6 +4,10 @@ interface ExpressionVMOption {
     filename?: string
 }
 
+interface EffectAttributes {
+    params: { [paramName: string]: any }
+}
+
 export interface ExpressionContext {
     time: number
     frame: number
@@ -16,6 +20,7 @@ export interface ExpressionContext {
     durationFrames: number
     clipProp: { [paramName: string]: any }
     currentValue: any
+    effect(referenceName: string): EffectAttributes
 }
 
 export default class ExpressionVM {

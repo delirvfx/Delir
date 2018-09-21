@@ -1,17 +1,23 @@
+import { proxyFreeze } from '../../helper/proxyFreeze'
 import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
 import RenderContext from '../RenderContext'
 import { ExpressionContext } from './ExpressionVM'
 
+export interface ReferenceableEffectsParams {
+    [referenceName: string]: {
+        [paramName: string]: ParameterValueTypes
+    }
+}
+
 export interface ContextSource {
     context: RenderContext
-    clipProperties: {[propName: string]: ParameterValueTypes}
+    clipParams: {[propName: string]: ParameterValueTypes }
+    clipEffectParams: ReferenceableEffectsParams
     currentValue: any
 }
 
 export const buildContext = (contextSource: ContextSource): ExpressionContext => {
-    const clipPropertyProxy = new Proxy(contextSource.clipProperties, {
-        set: () => { throw new Error('Illegal property setting in expression') }
-    })
+    const clipParamProxy = proxyFreeze(contextSource.clipParams)
 
     return {
         time                : contextSource.context.time,
@@ -23,12 +29,21 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
         audioBuffer         : contextSource.context.destAudioBuffer,
         duration            : contextSource.context.durationFrames / contextSource.context.framerate,
         durationFrames      : contextSource.context.durationFrames,
-        clipProp            : clipPropertyProxy,
+        clipProp            : clipParamProxy,
         currentValue        : contextSource.currentValue,
+        effect              : (referenceName: string) => {
+            const targetEffect = contextSource.clipEffectParams[referenceName]
+            if (targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
+            return { params: proxyFreeze(targetEffect) }
+        },
     }
 }
 
 export const expressionContextTypeDefinition = `
+interface EffectAttributes {
+    params: { [paramName: string]: any }
+}
+
 declare const ctx: {
     time: number
     frame: number
@@ -41,6 +56,7 @@ declare const ctx: {
     durationFrames: number
     clipProp: {[propertyName: string]: any}
     currentValue: any
+    effect(effectName: string): EffectAttributes
 }
 
 declare const time: number;

@@ -6,6 +6,7 @@ import Keyframe from './Keyframe'
 export default class Effect {
     public id: string
     public processor: string
+    public referenceName: string | null = null
     public keyframes: {[keyName: string]: Keyframe[]} = Object.create(null)
     public expressions: {[keyName: string]: Expression} = Object.create(null)
 

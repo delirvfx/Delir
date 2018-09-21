@@ -63,9 +63,9 @@ export default class EffectRenderTask {
         }).pickBy(value => value !== null).value()
 
         const task = new EffectRenderTask()
-        task.effectEntityId = effect.id
+        task.effectEntity = effect
         task.effectRenderer = effectRenderer
-        task.effectorProps = effectParams
+        task.effectorParams = effectParams
         task.keyframeLUT = effectKeyframeLUT
         task.initialKeyframeValues = initialKeyframeValues
         // TODO: Fix typing
@@ -74,9 +74,9 @@ export default class EffectRenderTask {
         return task
     }
 
-    public effectEntityId: string
+    public effectEntity: Effect
     public effectRenderer: EffectPluginBase
-    public effectorProps: TypeDescriptor
+    public effectorParams: TypeDescriptor
     public keyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } }
     public expressions: { [paramName: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes }
     private initialKeyframeValues: RealParameterValues
