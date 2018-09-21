@@ -2,7 +2,7 @@
 Web Technology driven VFX Application
 
 ## How to develop Delir plugin
-See [plugin-example](https://github.com/Ragg-/Delir/tree/alpha-release/src/delir-core/plugin-example)
+See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/delir-core/plugin-example)
 
 ## For developer
 
