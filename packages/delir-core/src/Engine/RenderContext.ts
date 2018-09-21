@@ -3,9 +3,9 @@ import * as _ from 'lodash'
 import { Composition } from '../Entity'
 import DependencyResolver from './DependencyResolver'
 import { RealParameterValueTypes } from './Engine'
-import PreRenderingRequest from './PreRenderingRequest'
+import PreRenderContext from './PreRenderContext'
 
-export default class RenderRequest<T = {[propName: string]: RealParameterValueTypes}>
+export default class RenderContext<T = {[propName: string]: RealParameterValueTypes}>
 {
     private static _permitKeys = [
         'time',
@@ -94,26 +94,26 @@ export default class RenderRequest<T = {[propName: string]: RealParameterValueTy
     // alias
     public get seconds(): number { return this.time }
 
-    constructor(properties: Partial<RenderRequest<T>> = {})
+    constructor(properties: Partial<RenderContext<T>> = {})
     {
         const props = _.pick(properties, [
-            ...RenderRequest._permitKeys,
-            ...RenderRequest._permitOnlyInitializeKey
+            ...RenderContext._permitKeys,
+            ...RenderContext._permitOnlyInitializeKey
         ])
 
         Object.assign(this, props)
         Object.freeze(this)
     }
 
-    public clone(patch: Partial<RenderRequest<T>>): RenderRequest<T>
+    public clone(patch: Partial<RenderContext<T>>): RenderContext<T>
     {
-        const permitPatch = _.pick(patch, RenderRequest._permitKeys)
-        return new RenderRequest<T>(Object.assign({}, this, permitPatch))
+        const permitPatch = _.pick(patch, RenderContext._permitKeys)
+        return new RenderContext<T>(Object.assign({}, this, permitPatch))
     }
 
-    public toPreRenderingRequest(): PreRenderingRequest<T>
+    public toPreRenderContext(): PreRenderContext<T>
     {
-        return new PreRenderingRequest<T>({
+        return new PreRenderContext<T>({
             width: this.width,
             height: this.height,
             framerate: this.framerate,

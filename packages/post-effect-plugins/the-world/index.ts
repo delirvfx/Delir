@@ -1,7 +1,7 @@
 import {
     PostEffectBase,
-    PreRenderRequest,
-    RenderRequest,
+    PreRenderContext,
+    RenderContext,
     Type,
 } from '@ragg/delir-core'
 
@@ -29,11 +29,11 @@ export default class TheWorldPostEffect extends PostEffectBase {
      * If you want initializing before rendering (likes load audio, image, etc...)
      * Do it in this method.
      */
-    public async initialize(req: PreRenderRequest)
+    public async initialize(context: PreRenderContext)
     {
         const canvas = document.createElement('canvas')
-        canvas.width = req.width
-        canvas.height = req.height
+        canvas.width = context.width
+        canvas.height = context.height
 
         this.canvas = canvas
         this.bufCtx = canvas.getContext('2d')!
@@ -41,19 +41,19 @@ export default class TheWorldPostEffect extends PostEffectBase {
 
     /**
      * Render frame into destination canvas.
-     * @param req
+     * @param context
      */
-    public async render(req: RenderRequest<Params>)
+    public async render(context: RenderContext<Params>)
     {
-        const param = req.parameters
+        const param = context.parameters
 
-        if (req.frameOnClip === 0) {
-            this.bufCtx.drawImage(req.srcCanvas!, 0, 0)
+        if (context.frameOnClip === 0) {
+            this.bufCtx.drawImage(context.srcCanvas!, 0, 0)
         }
 
-        const destCtx = req.destCanvas.getContext('2d')!
+        const destCtx = context.destCanvas.getContext('2d')!
         destCtx.globalAlpha = clamp(param.opacity, 0, 100) / 100
-        destCtx.clearRect(0, 0, req.width, req.height)
+        destCtx.clearRect(0, 0, context.width, context.height)
         destCtx.drawImage(this.canvas, 0, 0)
     }
 }

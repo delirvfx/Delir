@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra'
 import { join } from 'path'
 import { Expression } from '../../../Values'
-import RenderRequest from '../../RenderRequest'
+import RenderContext from '../../RenderContext'
 import P5jsRenderer from './P5js'
 
 jest.mock('./P5Hooks', () => ({ default: class {
@@ -15,14 +15,14 @@ describe('P5js', () => {
     const renderer = new P5jsRenderer()
     it('Should accessible specified global objects', async () => {
         const sketch = (await fs.readFile(join(__dirname, 'specFixtures/globals.js'))).toString()
-        const request = new RenderRequest({
+        const request = new RenderContext({
             width: 100,
             height: 100,
             parameters: {
                 sketch: new Expression('javascript', sketch),
                 opacity: 1,
             }
-        }).toPreRenderingRequest()
+        }).toPreRenderContext()
 
         await renderer.beforeRender(request)
     })

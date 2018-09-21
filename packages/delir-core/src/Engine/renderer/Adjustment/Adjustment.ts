@@ -2,8 +2,8 @@ import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderingRequest from '../../PreRenderingRequest'
-import RenderingRequest from '../../RenderRequest'
+import PreRenderContext from '../../PreRenderContext'
+import RenderContext from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
 interface Param {
@@ -25,12 +25,12 @@ export default class AdjustmentRenderer implements IRenderer<Param>
             .number('opacity', { label: 'Opacity', defaultValue: 100, animatable: true })
     }
 
-    public async beforeRender(req: PreRenderingRequest<Param>) { return }
+    public async beforeRender(context: PreRenderContext<Param>) { return }
 
-    public async render(req: RenderingRequest<Param>)
+    public async render(context: RenderContext<Param>)
     {
-        const ctx = req.destCanvas.getContext('2d')!
-        ctx.globalAlpha = _.clamp(req.parameters.opacity, 0, 100) / 100
-        ctx.drawImage(req.srcCanvas!, 0, 0)
+        const ctx = context.destCanvas.getContext('2d')!
+        ctx.globalAlpha = _.clamp(context.parameters.opacity, 0, 100) / 100
+        ctx.drawImage(context.srcCanvas!, 0, 0)
     }
 }

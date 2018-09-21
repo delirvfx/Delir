@@ -4,8 +4,8 @@ import P5Hooks from './P5Hooks'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import Expression from '../../../Values/Expression'
-import PreRenderingRequest from '../../PreRenderingRequest'
-import RenderingRequest from '../../RenderRequest'
+import PreRenderContext from '../../PreRenderContext'
+import RenderContext from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
 interface SketchRendererParams {
@@ -43,12 +43,12 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
     private p5ex: P5Hooks
     private canvas: HTMLCanvasElement
 
-    public async beforeRender(req: PreRenderingRequest<SketchRendererParams>)
+    public async beforeRender(context: PreRenderContext<SketchRendererParams>)
     {
-        this.p5ex = new P5Hooks(req.resolver)
+        this.p5ex = new P5Hooks(context.resolver)
 
         // Make VM environment
-        this.vmExposedVariables = this.makeVmExposeVariables(req)
+        this.vmExposedVariables = this.makeVmExposeVariables(context)
 
         this.vmGlobal = VM.createContext(new Proxy({
             console: global.console,
@@ -69,20 +69,20 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
             }
         }))
 
-        const vm = new VM.Script(req.parameters.sketch.code, {})
+        const vm = new VM.Script(context.parameters.sketch.code, {})
 
         // Make VM scope binded sketch object
         vm.runInContext(this.vmGlobal)
 
         this.canvas = this.p5ex.p5.canvas
-        this.p5ex.p5.createCanvas(req.width, req.height)
+        this.p5ex.p5.createCanvas(context.width, context.height)
 
         if (typeof this.vmGlobal.setup === 'function') {
             this.vmGlobal.setup()
         }
     }
 
-    public async render(req: RenderingRequest<SketchRendererParams>)
+    public async render(context: RenderContext<SketchRendererParams>)
     {
         await new Promise(resolve => {
             const intervalId = setInterval(() => {
@@ -93,26 +93,26 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
              })
         })
 
-        this.vmExposedVariables = this.makeVmExposeVariables(req)
+        this.vmExposedVariables = this.makeVmExposeVariables(context)
         this.vmGlobal.draw && this.vmGlobal.draw()
 
-        const ctx = req.destCanvas.getContext('2d')!
-        ctx.globalAlpha = _.clamp(req.parameters.opacity, 0, 100) / 100
+        const ctx = context.destCanvas.getContext('2d')!
+        ctx.globalAlpha = _.clamp(context.parameters.opacity, 0, 100) / 100
         ctx.drawImage(this.canvas, 0, 0)
     }
 
-    private makeVmExposeVariables(req: PreRenderingRequest<any> | RenderingRequest<any>)
+    private makeVmExposeVariables(context: PreRenderContext<any> | RenderContext<any>)
     {
         return {
             delir: {
                 ctx: {
-                    width: req.width,
-                    height: req.height,
-                    framerate: req.framerate,
-                    time: (req as RenderingRequest).time,
-                    frame: (req as RenderingRequest).frame,
-                    timeOnClip: (req as RenderingRequest).timeOnClip,
-                    frameOnClip: (req as RenderingRequest).frameOnClip,
+                    width: context.width,
+                    height: context.height,
+                    framerate: context.framerate,
+                    time: (context as RenderContext).time,
+                    frame: (context as RenderContext).frame,
+                    timeOnClip: (context as RenderContext).timeOnClip,
+                    frameOnClip: (context as RenderContext).frameOnClip,
                 }
             }
         }

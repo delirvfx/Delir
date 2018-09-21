@@ -11,14 +11,14 @@ import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
 import ExpressionVM from '../ExpressionSupport/ExpressionVM'
 import * as KeyframeCalcurator from '../KeyframeCalcurator'
-import RenderRequest from '../RenderRequest'
+import RenderContext from '../RenderContext'
 
 export default class EffectRenderTask {
-    public static build({effect, clip, req, resolver, effectCache}: {
+    public static build({effect, clip, context, resolver, effectCache}: {
         effect: Effect,
         clip: Clip,
         effectCache: WeakMap<Effect, EffectPluginBase>,
-        req: RenderRequest,
+        context: RenderContext,
         resolver: DependencyResolver,
     }): EffectRenderTask {
         const EffectPluginClass = resolver.resolveEffectPlugin(effect.processor)!
@@ -46,7 +46,7 @@ export default class EffectRenderTask {
                 : null
         })
 
-        const rawEffectKeyframeLUT = KeyframeCalcurator.calcKeyFrames(effectParams, effect.keyframes, clip.placedFrame, 0, req.durationFrames)
+        const rawEffectKeyframeLUT = KeyframeCalcurator.calcKeyFrames(effectParams, effect.keyframes, clip.placedFrame, 0, context.durationFrames)
         const effectKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = {...(rawEffectKeyframeLUT as any)}
         effectAssetParamNames.forEach(propName => {
             // resolve asset
@@ -81,8 +81,8 @@ export default class EffectRenderTask {
     public expressions: { [paramName: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes }
     private initialKeyframeValues: RealParameterValues
 
-    public async initialize(req: RenderRequest) {
-        const preRenderReq = req.clone({parameters: this.initialKeyframeValues}).toPreRenderingRequest()
+    public async initialize(context: RenderContext) {
+        const preRenderReq = context.clone({parameters: this.initialKeyframeValues}).toPreRenderContext()
         await this.effectRenderer.initialize(preRenderReq)
     }
 }
