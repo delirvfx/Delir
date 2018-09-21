@@ -3,6 +3,7 @@ import * as _ from 'lodash'
 import { Composition } from '../Entity'
 import DependencyResolver from './DependencyResolver'
 import { RealParameterValueTypes } from './Engine'
+import { ReferenceableEffectsParams } from './ExpressionSupport/ExpressionContext'
 import PreRenderContext from './PreRenderContext'
 
 export default class RenderContext<T = {[propName: string]: RealParameterValueTypes}>
@@ -85,6 +86,7 @@ export default class RenderContext<T = {[propName: string]: RealParameterValueTy
     // public readonly clipScope: {[prop: string]: any}
 
     public readonly parameters: T
+    public readonly clipEffectParams: ReferenceableEffectsParams
 
     //
     // Resolver

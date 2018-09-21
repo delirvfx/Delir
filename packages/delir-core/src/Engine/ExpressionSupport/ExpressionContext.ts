@@ -1,11 +1,11 @@
-import { proxyFreeze } from '../../helper/proxyFreeze'
+import { proxyDeepFreeze } from '../../helper/proxyFreeze'
 import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
 import RenderContext from '../RenderContext'
 import { ExpressionContext } from './ExpressionVM'
 
 export interface ReferenceableEffectsParams {
-    [referenceName: string]: {
-        [paramName: string]: ParameterValueTypes
+    readonly [referenceName: string]: {
+        readonly [paramName: string]: ParameterValueTypes
     }
 }
 
@@ -17,7 +17,7 @@ export interface ContextSource {
 }
 
 export const buildContext = (contextSource: ContextSource): ExpressionContext => {
-    const clipParamProxy = proxyFreeze(contextSource.clipParams)
+    const clipParamProxy = proxyDeepFreeze(contextSource.clipParams)
 
     return {
         time                : contextSource.context.time,
@@ -34,7 +34,7 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
         effect              : (referenceName: string) => {
             const targetEffect = contextSource.clipEffectParams[referenceName]
             if (targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
-            return { params: proxyFreeze(targetEffect) }
+            return { params: proxyDeepFreeze(targetEffect) }
         },
     }
 }
