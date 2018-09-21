@@ -19,7 +19,7 @@ import { ColorRGB, ColorRGBA } from '../Values'
 import AssetProxy from './AssetProxy'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
-import RenderingRequest from './RenderContext'
+import RenderContext from './RenderContext'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
 
@@ -57,7 +57,7 @@ export interface RealParameterValues {
  * Get expression applied values
  */
 export const applyExpression = (
-    req: RenderingRequest,
+    req: RenderContext,
     beforeExpressionParams: RealParameterValues,
     expressions: { [param: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes },
 ): { [param: string]: ParameterValueTypes } => {
@@ -257,7 +257,7 @@ export default class Engine
         })
     }
 
-    private _initStage(compositionId: string, option: RenderingOption): RenderingRequest
+    private _initStage(compositionId: string, option: RenderingOption): RenderContext
     {
         if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
         if (!this._pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
@@ -285,7 +285,7 @@ export default class Engine
         const currentFrame = option.beginFrame
         const currentTime = currentFrame / rootComposition.framerate
 
-        return new RenderingRequest({
+        return new RenderContext({
             time: currentTime,
             timeOnComposition: currentTime,
 
@@ -310,11 +310,11 @@ export default class Engine
         })
     }
 
-    private async _taskingStage(req: RenderingRequest, option: RenderingOption): Promise<LayerRenderTask[]>
+    private async _taskingStage(context: RenderContext, option: RenderingOption): Promise<LayerRenderTask[]>
     {
         const layerTasks: LayerRenderTask[] = []
 
-        const renderOrderLayers = req.rootComposition.layers.slice(0).reverse()
+        const renderOrderLayers = context.rootComposition.layers.slice(0).reverse()
         for (const layer of renderOrderLayers) {
 
             const clips: ClipRenderTask[] = []
@@ -323,10 +323,10 @@ export default class Engine
                 const clipRenderTask = ClipRenderTask.build({
                     clip,
                     clipRendererCache: this._clipRendererCache,
-                    req,
+                    context,
                 })
 
-                await clipRenderTask.initialize(req)
+                await clipRenderTask.initialize(context)
 
                 // Initialize effects
                 const effects: EffectRenderTask[] = []
@@ -335,12 +335,12 @@ export default class Engine
                         const effectRenderTask = EffectRenderTask.build({
                             effect,
                             clip,
-                            req,
+                            context,
                             effectCache: this._effectCache,
-                            resolver: req.resolver
+                            resolver: context.resolver
                         })
 
-                        await effectRenderTask.initialize(req)
+                        await effectRenderTask.initialize(context)
                         effects.push(effectRenderTask)
                     } catch (e) {
                         if (e instanceof EffectPluginMissingException && option.ignoreMissingEffect) {
@@ -364,62 +364,62 @@ export default class Engine
         return layerTasks
     }
 
-    private async _renderStage(req: RenderingRequest, layerRenderTasks: LayerRenderTask[]): Promise<void>
+    private async _renderStage(context: RenderContext, layerRenderTasks: LayerRenderTask[]): Promise<void>
     {
-        const destBufferCanvas = req.destCanvas
+        const destBufferCanvas = context.destCanvas
         const destBufferCtx = destBufferCanvas.getContext('2d')!
 
-        destBufferCtx.fillStyle = req.rootComposition.backgroundColor.toString()
-        destBufferCtx.fillRect(0, 0, req.width, req.height)
+        destBufferCtx.fillStyle = context.rootComposition.backgroundColor.toString()
+        destBufferCtx.fillRect(0, 0, context.width, context.height)
 
-        const channelAudioBuffers = _.times(req.rootComposition.audioChannels, () => {
-            return new Float32Array(new ArrayBuffer(4 /* bytes */ * req.rootComposition.samplingRate))
+        const channelAudioBuffers = _.times(context.rootComposition.audioChannels, () => {
+            return new Float32Array(new ArrayBuffer(4 /* bytes */ * context.rootComposition.samplingRate))
         })
 
-        const audioBufferingSizeTime = req.neededSamples / req.samplingRate
-        const audioRenderStartRangeFrame = audioBufferingSizeTime * req.framerate
+        const audioBufferingSizeTime = context.neededSamples / context.samplingRate
+        const audioRenderStartRangeFrame = audioBufferingSizeTime * context.framerate
 
         for (const layerTask of layerRenderTasks) {
             const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
-            layerBufferCanvas.width = req.width
-            layerBufferCanvas.height = req.height
+            layerBufferCanvas.width = context.width
+            layerBufferCanvas.height = context.height
 
             const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
 
             // SPEC: The rendering order of the same layer at the same time is not defined.
             //       In the future, want to ensure that there are no more than two clips in a single layer at a given time.
             const renderTargetClips = layerTask.clips.filter(clip => {
-                if (req.isAudioBufferingNeeded && clip.rendererType === 'audio') {
-                    return clip.clipPlacedFrame <= (req.frameOnComposition + audioRenderStartRangeFrame)
-                        && clip.clipPlacedFrame + clip.clipDurationFrames >= req.frameOnComposition
+                if (context.isAudioBufferingNeeded && clip.rendererType === 'audio') {
+                    return clip.clipPlacedFrame <= (context.frameOnComposition + audioRenderStartRangeFrame)
+                        && clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
                 }
 
-                return clip.clipPlacedFrame <= req.frameOnComposition
-                    && clip.clipPlacedFrame + clip.clipDurationFrames >= req.frameOnComposition
+                return clip.clipPlacedFrame <= context.frameOnComposition
+                    && clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
             })
 
             // Render clips
             for (const clipTask of renderTargetClips) {
                 const clipBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
-                clipBufferCanvas.width = req.width
-                clipBufferCanvas.height = req.height
+                clipBufferCanvas.width = context.width
+                clipBufferCanvas.height = context.height
 
                 const clipBufferCtx = clipBufferCanvas.getContext('2d')!
 
-                const clipScopeReq = req.clone({
-                    timeOnClip: req.time - (clipTask.clipPlacedFrame / req.framerate),
-                    frameOnClip: req.frame - clipTask.clipPlacedFrame,
+                const clipScopeContext = context.clone({
+                    timeOnClip: context.time - (clipTask.clipPlacedFrame / context.framerate),
+                    frameOnClip: context.frame - clipTask.clipPlacedFrame,
                 })
 
                 // Lookup current frame prop value from pre-calculated lookup-table
                 const beforeExpressionParams = _.fromPairs(clipTask.rendererParams.properties.map(desc => {
-                    return [desc.paramName, clipTask.keyframeLUT[desc.paramName][req.frame]]
+                    return [desc.paramName, clipTask.keyframeLUT[desc.paramName][context.frame]]
                 }))
 
                 // Apply expression
-                const afterExpressionParams = applyExpression(clipScopeReq, beforeExpressionParams, clipTask.expressions)
+                const afterExpressionParams = applyExpression(clipScopeContext, beforeExpressionParams, clipTask.expressions)
 
-                const clipRenderReq = clipScopeReq.clone({
+                const clipRenderReq = clipScopeContext.clone({
                     parameters: afterExpressionParams,
 
                     srcCanvas: clipTask.rendererType === 'adjustment' ? destBufferCanvas : null,
@@ -428,14 +428,14 @@ export default class Engine
                 })
 
                 if (/* isCompositionClip */ false) {
-                    const frameOnComposition = req.frame - clipTask.clipPlacedFrame
+                    const frameOnComposition = context.frame - clipTask.clipPlacedFrame
 
                     // TODO: frame mapping for set different framerate for sub-composition
-                    const compositionRenderReq = req.clone({
+                    const compositionRenderReq = context.clone({
                         frameOnComposition,
-                        timeOnComposition: frameOnComposition / req.framerate,
+                        timeOnComposition: frameOnComposition / context.framerate,
 
-                        parentComposition: req.rootComposition
+                        parentComposition: context.rootComposition
                     })
                 }
 
@@ -445,12 +445,12 @@ export default class Engine
                 // Post process effects
                 for (const effectTask of clipTask.effectRenderTask) {
                     const beforeExpressionEffectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => {
-                        return [desc.paramName, effectTask.keyframeLUT[desc.paramName][req.frame]]
+                        return [desc.paramName, effectTask.keyframeLUT[desc.paramName][context.frame]]
                     })) as {[paramName: string]: ParameterValueTypes}
 
-                    const afterExpressionEffectorParams = applyExpression(clipScopeReq, beforeExpressionEffectorParams, effectTask.expressions)
+                    const afterExpressionEffectorParams = applyExpression(clipScopeContext, beforeExpressionEffectorParams, effectTask.expressions)
 
-                    const effectRenderReq = clipScopeReq.clone({
+                    const effectRenderReq = clipScopeContext.clone({
                         srcCanvas: clipBufferCanvas,
                         destCanvas: clipBufferCanvas,
                         parameters: afterExpressionEffectorParams,
@@ -474,17 +474,17 @@ export default class Engine
 
                     // SPEC: When there are two or more adjustment clips on the same layer at the same time, the layer buffer is cleared for each that clip rendering
                     //       This is not a problem if there is only one clip at a certain time. (Maybe...)
-                    layerBufferCanvasCtx.clearRect(0, 0, req.width, req.height)
+                    layerBufferCanvasCtx.clearRect(0, 0, context.width, context.height)
                 } else {
                     layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
                 }
 
-                if (req.isAudioBufferingNeeded) {
+                if (context.isAudioBufferingNeeded) {
                     await mergeAudioBufferInto(
-                        req.destAudioBuffer,
+                        context.destAudioBuffer,
                         channelAudioBuffers,
-                        req.audioChannels,
-                        req.samplingRate
+                        context.audioChannels,
+                        context.samplingRate
                     )
 
                     for (const chBuffer of channelAudioBuffers) {

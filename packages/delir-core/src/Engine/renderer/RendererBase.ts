@@ -1,6 +1,6 @@
 import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
 import PreRenderContext from '../PreRenderContext'
-import RenderingRequest from '../RenderContext'
+import RenderContext from '../RenderContext'
 
 export interface IRendererStatic {
     rendererId: string
@@ -12,5 +12,5 @@ export interface IRendererStatic {
 
 export interface IRenderer<T> {
     beforeRender(request: PreRenderContext<T>): Promise<void>
-    render(request: RenderingRequest<T>): Promise<void>
+    render(request: RenderContext<T>): Promise<void>
 }

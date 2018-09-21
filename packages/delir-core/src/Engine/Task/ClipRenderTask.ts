@@ -14,10 +14,10 @@ import { IRenderer } from '../Renderer/RendererBase'
 import EffectRenderTask from './EffectRenderTask'
 
 export default class ClipRenderTask {
-    public static build({clip, clipRendererCache, req}: {
+    public static build({clip, clipRendererCache, context}: {
         clip: Clip
         clipRendererCache: WeakMap<Clip, IRenderer<any>>
-        req: RenderContext,
+        context: RenderContext,
     }): ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
         const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
@@ -27,7 +27,7 @@ export default class ClipRenderTask {
         rendererAssetParamNames.forEach(propName => {
             // resolve asset
             rendererInitParam[propName] = rawRendererInitParam[propName]
-                ? req.resolver.resolveAsset((rawRendererInitParam[propName] as AssetPointer).assetId)
+                ? context.resolver.resolveAsset((rawRendererInitParam[propName] as AssetPointer).assetId)
                 : null
         })
 
@@ -37,12 +37,12 @@ export default class ClipRenderTask {
             clipRendererCache.set(clip, clipRenderer)
         }
 
-        const rawRendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParams, clip.keyframes, clip.placedFrame, 0, req.durationFrames)
+        const rawRendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParams, clip.keyframes, clip.placedFrame, 0, context.durationFrames)
         const rendererKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = { ...(rawRendererKeyframeLUT as any)　}
         rendererAssetParamNames.forEach(paramName => {
             // resolve asset
             rendererKeyframeLUT[paramName] = _.map(rawRendererKeyframeLUT[paramName], value => {
-                return value ? req.resolver.resolveAsset((value as AssetPointer).assetId) : null
+                return value ? context.resolver.resolveAsset((value as AssetPointer).assetId) : null
             })
         })
 
@@ -77,8 +77,8 @@ export default class ClipRenderTask {
     public effectRenderTask: EffectRenderTask[]
     private initialKeyframeValues: RealParameterValues
 
-    public async initialize(req: RenderContext) {
-        const preRenderReq = req.clone({parameters: this.initialKeyframeValues}).toPreRenderingRequest()
+    public async initialize(context: RenderContext) {
+        const preRenderReq = context.clone({parameters: this.initialKeyframeValues}).toPreRenderContext()
         await this.clipRenderer.beforeRender(preRenderReq)
     }
 }

@@ -3,7 +3,7 @@ import { EffectPluginMissingException } from '../../exceptions'
 import PluginRegistry from '../../PluginSupport/plugin-registry'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
 import DependencyResolver from '../DependencyResolver'
-import RenderRequest from '../RenderContext'
+import RenderContext from '../RenderContext'
 import EffectRenderTask from './EffectRenderTask'
 
 describe('EffectRenderTask', () => {
@@ -50,7 +50,7 @@ describe('EffectRenderTask', () => {
             effect.processor = 'existing-effect'
             clip.effects.push(effect)
 
-            const request = new RenderRequest({
+            const context = new RenderContext({
                 rootComposition: project.compositions[0],
                 durationFrames: 100,
             })
@@ -60,7 +60,7 @@ describe('EffectRenderTask', () => {
                     effect,
                     clip,
                     effectCache: new WeakMap(),
-                    req: request,
+                    context,
                     resolver,
                 })
             }).not.toThrow()
@@ -74,7 +74,7 @@ describe('EffectRenderTask', () => {
             effect.processor = 'missing-processor'
             clip.effects.push(effect)
 
-            const request = new RenderRequest({
+            const context = new RenderContext({
                 rootComposition: project.compositions[0],
                 durationFrames: 100,
             })
@@ -84,7 +84,7 @@ describe('EffectRenderTask', () => {
                     effect,
                     clip,
                     effectCache: new WeakMap(),
-                    req: request,
+                    context,
                     resolver,
                 })
             }).toThrow(EffectPluginMissingException)

@@ -111,7 +111,7 @@ export default class RenderContext<T = {[propName: string]: RealParameterValueTy
         return new RenderContext<T>(Object.assign({}, this, permitPatch))
     }
 
-    public toPreRenderingRequest(): PreRenderContext<T>
+    public toPreRenderContext(): PreRenderContext<T>
     {
         return new PreRenderContext<T>({
             width: this.width,

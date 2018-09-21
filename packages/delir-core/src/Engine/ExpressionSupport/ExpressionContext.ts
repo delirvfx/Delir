@@ -1,9 +1,9 @@
 import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
-import RenderingRequest from '../RenderContext'
+import RenderContext from '../RenderContext'
 import { ExpressionContext } from './ExpressionVM'
 
 export interface ContextSource {
-    req: RenderingRequest
+    context: RenderContext
     clipProperties: {[propName: string]: ParameterValueTypes}
     currentValue: any
 }
@@ -14,15 +14,15 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
     })
 
     return {
-        time                : contextSource.req.time,
-        frame               : contextSource.req.frame,
-        timeOnComposition   : contextSource.req.timeOnComposition,
-        frameOnComposition  : contextSource.req.frameOnComposition,
-        width               : contextSource.req.width,
-        height              : contextSource.req.height,
-        audioBuffer         : contextSource.req.destAudioBuffer,
-        duration            : contextSource.req.durationFrames / contextSource.req.framerate,
-        durationFrames      : contextSource.req.durationFrames,
+        time                : contextSource.context.time,
+        frame               : contextSource.context.frame,
+        timeOnComposition   : contextSource.context.timeOnComposition,
+        frameOnComposition  : contextSource.context.frameOnComposition,
+        width               : contextSource.context.width,
+        height              : contextSource.context.height,
+        audioBuffer         : contextSource.context.destAudioBuffer,
+        duration            : contextSource.context.durationFrames / contextSource.context.framerate,
+        durationFrames      : contextSource.context.durationFrames,
         clipProp            : clipPropertyProxy,
         currentValue        : contextSource.currentValue,
     }

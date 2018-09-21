@@ -1,4 +1,4 @@
-import PreRenderRequest from '../Engine/PreRenderContext'
+import PreRenderContext from '../Engine/PreRenderContext'
 import RenderContext from '../Engine/RenderContext'
 
 import PluginBase from './plugin-base'
@@ -17,7 +17,7 @@ export default abstract class EffectPluginBase extends PluginBase
         return new TypeDescriptor()
     }
 
-    public abstract async initialize(req: PreRenderRequest<any>): Promise<void>
+    public abstract async initialize(context: PreRenderContext<any>): Promise<void>
 
-    public abstract async render(req: RenderContext<any>): Promise<void>
+    public abstract async render(context: RenderContext<any>): Promise<void>
 }

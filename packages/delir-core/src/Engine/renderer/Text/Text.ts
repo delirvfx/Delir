@@ -4,7 +4,7 @@ import * as _ from 'lodash'
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
 import PreRenderContext from '../../PreRenderContext'
-import RenderingRequest from '../../RenderContext'
+import RenderContext from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
 import ColorRGBA from '../../../Values/ColorRGBA'
@@ -90,15 +90,15 @@ export default class TextLayer implements IRenderer<TextRendererParam>
 
     private _bufferCanvas: HTMLCanvasElement
 
-    public async beforeRender(req: PreRenderContext<TextRendererParam>)
+    public async beforeRender(context: PreRenderContext<TextRendererParam>)
     {
         this._bufferCanvas = document.createElement('canvas')
     }
 
-    public async render(req: RenderingRequest<TextRendererParam>)
+    public async render(context: RenderContext<TextRendererParam>)
     {
-        const param = req.parameters
-        const ctx = req.destCanvas.getContext('2d')!
+        const param = context.parameters
+        const ctx = context.destCanvas.getContext('2d')!
         const family = ['sans-serif', 'serif', 'cursive', 'fantasy', 'monospace'].includes(param.family) ? param.family : `"${param.family}"`
         const lineHeight = param.size * (param.lineHeight / 100)
         const rad = param.rotate * Math.PI / 180
