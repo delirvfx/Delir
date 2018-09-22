@@ -1,6 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
+import { clipboard } from 'electron'
 import * as _ from 'lodash'
 import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'
@@ -152,6 +153,12 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                         enabled={desc.animatable}
                                         onClick={this.openExpressionEditor}
                                     />
+                                    <MenuItem type='separator' />
+                                    <MenuItem
+                                        label={t('contextMenu.copyParamName')}
+                                        data-param-name={desc.paramName}
+                                        onClick={this.handleCopyParamName}
+                                    />
                                 </ContextMenu>
                                 <span className={classnames(
                                         s.paramKeyframeIndicator,
@@ -295,6 +302,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                     <div key={effect.id} className={classnames(s.paramItem, s.paramItemHeader)}>
                         <ContextMenu>
                             <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
+                            <MenuItem type='separator' />
+                            {effect.referenceName != null && (<MenuItem label={t('contextMenu.copyReferenceName')} data-reference-name={effect.referenceName} onClick={this.handleCopyReferenceName} />)}
                         </ContextMenu>
                         <i className='fa fa-magic' />
                         <LabelInput
@@ -333,6 +342,12 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                         data-entity-id={effect.id}
                                         data-param-name={desc.paramName}
                                         onClick={this.openExpressionEditor}
+                                    />
+                                    <MenuItem type='separator' />
+                                    <MenuItem
+                                        label={t('contextMenu.copyParamName')}
+                                        data-param-name={desc.paramName}
+                                        onClick={this.handleCopyParamName}
                                     />
                                 </ContextMenu>
                                 <span className={classnames(
@@ -387,6 +402,14 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         }
 
         return components
+    }
+
+    private handleCopyReferenceName = ({ dataset: { referenceName } }: MenuItemOption<{referenceName: string}>) => {
+        clipboard.writeText(referenceName)
+    }
+
+    private handleCopyParamName = ({ dataset: { paramName }}: MenuItemOption<{paramName: string}>) => {
+        clipboard.writeText(paramName)
     }
 
     private handleOpenScriptParamEditor = () => {

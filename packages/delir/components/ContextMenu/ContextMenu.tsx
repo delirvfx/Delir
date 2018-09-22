@@ -1,4 +1,5 @@
 import * as Electron from 'electron'
+import * as _ from 'lodash'
 import * as React from 'react'
 
 import propsToDataset from '../../utils/propsToDataset'
@@ -36,11 +37,13 @@ const toMenuItemJSON = (item: MenuItem): MenuItemOption => {
     const subItems = wrapArray(item.props.children as MenuItem[])
 
     if (subItems && subItems.length > 0 && subItems[0] != null) {
-        menuItem.submenu = subItems.map(subItem => toMenuItemJSON(subItem))
+        menuItem.submenu = filterValidMenuItem(subItems).map(subItem => toMenuItemJSON(subItem))
     }
 
     return menuItem
 }
+
+const filterValidMenuItem = (items: MenuItem[]) => items.filter(item => _.isObject(item))
 
 interface MenuItemComponentProps {
     label?: string
@@ -78,7 +81,10 @@ export class ContextMenu extends React.Component<ContextMenuProps>
         const items = wrapArray(this.props.children as MenuItem[])
 
         if (!items) return
-        ContextMenuManager.instance.register(this.root.current!.parentElement!, items.map(item => toMenuItemJSON(item)))
+        ContextMenuManager.instance.register(
+            this.root.current!.parentElement!,
+            filterValidMenuItem(items).map(item => toMenuItemJSON(item))
+        )
     }
 
     public componentDidUpdate()
@@ -88,7 +94,10 @@ export class ContextMenu extends React.Component<ContextMenuProps>
         const items = wrapArray(this.props.children as MenuItem[])
 
         if (!items) return
-        ContextMenuManager.instance.register(this.root.current!.parentElement!, items.map(item => toMenuItemJSON(item)))
+        ContextMenuManager.instance.register(
+            this.root.current!.parentElement!,
+            filterValidMenuItem(items).map(item => toMenuItemJSON(item))
+        )
     }
 
     public componentWillUnMount()
