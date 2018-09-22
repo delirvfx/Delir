@@ -42,7 +42,7 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
 }
 
 export const expressionContextTypeDefinition = `
-interface ClipAttirebutes {
+interface ClipAttributes {
     params: Readonly<{[propertyName: string]: any}>
     effect(effectName: string): EffectAttributes
 }
