@@ -297,8 +297,15 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                             <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
                         </ContextMenu>
                         <i className='fa fa-magic' />
-                        <LabelInput doubleClickToEdit={true} placeholder={processorInfo.name} defaultValue={effect.referenceName || ''} />
-                        {effect.referenceName != null && (<span>{processorInfo.name}</span>)}
+                        <LabelInput
+                            className={s.referenceNameInput}
+                            doubleClickToEdit
+                            placeholder={processorInfo.name}
+                            defaultValue={effect.referenceName || ''}
+                            onChange={this.handleChangeEffectReferenceName}
+                            data-effect-id={effect.id}
+                        />
+                        {effect.referenceName != null && (<span className={s.processorName}>{processorInfo.name}</span>)}
                     </div>
 
                     {descriptors.map(desc => {
@@ -581,6 +588,14 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
                 frame: this.props.editor.currentPreviewFrame
             })
+        })
+    }
+
+    private handleChangeEffectReferenceName = (referenceName: string, {effectId}: {effectId: string}) => {
+        this.props.context.executeOperation(ProjectOps.modifyEffect, {
+            clipId: this.props.activeClip!.id,
+            effectId,
+            patch: { referenceName }
         })
     }
 

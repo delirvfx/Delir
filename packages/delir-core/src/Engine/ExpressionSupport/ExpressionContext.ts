@@ -33,7 +33,7 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
         currentValue        : contextSource.currentValue,
         effect              : (referenceName: string) => {
             const targetEffect = contextSource.clipEffectParams[referenceName]
-            if (targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
+            if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
             return { params: proxyDeepFreeze(targetEffect) }
         },
     }

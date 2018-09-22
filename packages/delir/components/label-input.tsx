@@ -1,52 +1,56 @@
 import * as classnames from 'classnames'
 import * as React from 'react'
 
-interface LabelInputProps {
+import { propsToDataset } from '../utils/propsToDataset'
+
+interface Props {
     className?: string
     name?: string
     defaultValue?: string
     placeholder?: string
-    onChange?: (value: string) => void
+    onChange?: (value: string, dataset: object) => void
     doubleClickToEdit?: boolean
 }
 
-interface LabelInputState {
+interface State {
     readOnly: boolean
     value: string | undefined
 }
 
-export default class LabelInput extends React.Component<LabelInputProps, LabelInputState>
+export default class LabelInput extends React.Component<Props, State>
 {
     public static defaultProps = {
         doubleClickToEdit: false,
     }
 
-    public refs: {
-        input: HTMLInputElement,
-    }
-
-    public state = {
+    public state: State = {
         readOnly: true,
         value: this.props.defaultValue,
+    }
+
+    private inputRef = React.createRef<HTMLInputElement>()
+
+    public componentDidUpdate(prevProps: Props, prevState: State) {
+        if (prevProps.defaultValue !== this.props.defaultValue) {
+            this.setState({ value: this.props.defaultValue })
+        }
     }
 
     public enableAndFocus()
     {
         this.setState({readOnly: false})
-        this.refs.input.focus()
-        this.refs.input.select()
+        this.inputRef.current!.focus()
+        this.inputRef.current!.select()
     }
 
     public render()
     {
-        const {
-            props: {className, name, placeholder},
-            state: {value, readOnly},
-        } = this
+        const {className, name, placeholder} = this.props
+        const {value, readOnly} = this.state
 
         return (
             <input
-                ref='input'
+                ref={this.inputRef}
                 type='text'
                 tabIndex={-1}
                 className={classnames('_label-input', className)}
@@ -64,17 +68,19 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
 
     private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>
     {
-        const {refs: {input}, props: {onChange, defaultValue}} = this
+        const {onChange, defaultValue} = this.props
+        const input = this.inputRef.current!
+        const dataset = propsToDataset(this.props)
 
         if (e.key === 'Enter') {
             if (this.state.readOnly) {
                 this.enableAndFocus()
             } else {
-                onChange && onChange(input.value)
+                onChange && onChange(input.value, dataset)
                 this.setState({readOnly: true, value: input.value})
             }
         } else if (e.key === 'Escape') {
-            onChange && onChange(input.value)
+            onChange && onChange(input.value, dataset)
             this.setState({readOnly: true, value: defaultValue || ''})
         }
     }
@@ -83,7 +89,7 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
     {
         if (this.state.readOnly) return
 
-        this.props.onChange && this.props.onChange(this.refs.input.value)
+        this.props.onChange && this.props.onChange(this.inputRef.current!.value)
         this.setState({readOnly: true})
     }
 
@@ -95,12 +101,12 @@ export default class LabelInput extends React.Component<LabelInputProps, LabelIn
         e.stopPropagation()
 
         this.setState({readOnly: false})
-        this.refs.input.focus()
-        this.refs.input.select()
+        this.inputRef.current!.focus()
+        this.inputRef.current!.select()
     }
 
     private valueChanged = () =>
     {
-        this.setState({value: this.refs.input.value})
+        this.setState({value: this.inputRef.current!.value})
     }
 }

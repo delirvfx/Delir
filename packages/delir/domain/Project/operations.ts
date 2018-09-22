@@ -22,6 +22,7 @@ import { ModifyClipCommand } from './Commands/ModifyClipCommand'
 import { ModifyClipExpressionCommand } from './Commands/ModifyClipExpressionCommand'
 import { ModifyClipKeyframeCommand } from './Commands/ModifyClipKeyframeCommand'
 import { ModifyCompositionCommand } from './Commands/ModifyCompositionCommand'
+import { ModifyEffectCommand } from './Commands/ModifyEffectCommand'
 import { ModifyEffectExpressionCommand } from './Commands/ModifyEffectExpressionCommand'
 import { ModifyEffectKeyframeCommand } from './Commands/ModifyEffectKeyframeCommand'
 import { ModifyLayerCommand } from './Commands/ModifyLayerCommand'
@@ -377,6 +378,27 @@ export const modifyClip = operation(async (context, { clipId, patch }: {
     context.dispatch(ProjectActions.modifyClipAction, {
         targetClipId: clipId,
         patch: patch,
+    })
+})
+
+export const modifyEffect =  operation(async (context, { clipId, effectId, patch }: {
+    clipId: string,
+    effectId: string,
+    patch: Partial<Delir.Entity.Effect>
+}) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const effect = ProjectHelper.findEffectById(project, effectId)!
+
+    if (_.isMatch(effect, patch)) return
+
+    await context.executeOperation(HistoryOps.pushHistory, {
+        command: new ModifyEffectCommand(clipId, effectId, {...effect}, patch)
+    })
+
+    context.dispatch(ProjectActions.modifyEffectAction, {
+        parentClipId: clipId,
+        targetEffectId: effectId,
+        patch,
     })
 })
 

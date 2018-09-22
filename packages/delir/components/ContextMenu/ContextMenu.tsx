@@ -1,7 +1,7 @@
 import * as Electron from 'electron'
 import * as React from 'react'
 
-import propToDataset from '../../utils/propToDataset'
+import propsToDataset from '../../utils/propsToDataset'
 import ContextMenuManager from './ContextMenuManager'
 
 export interface MenuItemOption<T = {}> {
@@ -30,7 +30,7 @@ const toMenuItemJSON = (item: MenuItem): MenuItemOption => {
         click: item.props.onClick,
         checked: item.props.checked,
         enabled: item.props.enabled == null ? true : item.props.enabled,
-        dataset: propToDataset(item.props),
+        dataset: propsToDataset(item.props),
     }
 
     const subItems = wrapArray(item.props.children as MenuItem[])

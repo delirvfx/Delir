@@ -127,6 +127,12 @@ export default class ProjectStore extends Store<ProjectStoreState>
         this.updateLastModified()
     })
 
+    private handleModifyEffect = listen(ProjectActions.modifyEffectAction, (payload) => {
+        const { project } = this.state
+        ProjectHelper.modifyEffect(project!, payload.parentClipId, payload.targetEffectId, payload.patch)
+        this.updateLastModified()
+    })
+
     private handleModifyClipExpression = listen(ProjectActions.modifyClipExpressionAction, (payload) => {
         const { project } = this.state
         const { targetClipId, targetProperty, expression } = payload

@@ -19,6 +19,7 @@ export const ProjectActions = {
     modifyCompositionAction: action<{ targetCompositionId: string, patch: Partial<Delir.Entity.Composition> }>(),
     modifyLayerAction: action<{ targetLayerId: string, patch: Partial<Delir.Entity.Layer> }>(),
     modifyClipAction: action<{ targetClipId: string, patch: Partial<Delir.Entity.Clip> }>(),
+    modifyEffectAction: action<{ parentClipId: string, targetEffectId: string, patch: Partial<Delir.Entity.Effect> }>(),
     modifyClipExpressionAction: action<{ targetClipId: string, targetProperty: string, expression: Delir.Values.Expression | null }>(),
     modifyEffectExpressionAction: action<{ targetClipId: string, targetEffectId: string, paramName: string, expression: Delir.Values.Expression | null }>(),
     modifyKeyframeAction: action<{ targetKeyframeId: string, patch: Partial<Delir.Entity.Keyframe> }>(),
