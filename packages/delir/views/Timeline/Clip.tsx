@@ -62,8 +62,8 @@ export default withComponentContext(class Clip extends React.Component<Props> {
                         <MenuItem label={t('contextMenu.seekToHeadOfClip')} onClick={this.handleSeekToHeadOfClip} />
                         <MenuItem label={t('contextMenu.effect')}>
                             {postEffectPlugins.length ? postEffectPlugins.map(entry => (
-                                <MenuItem label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.handleAddEffect} />)
-                            ) : (
+                                <MenuItem key={entry.id} label={entry.name} data-clip-id={clip.id} data-effect-id={entry.id} onClick={this.handleAddEffect} />
+                            )) : (
                                 <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
                             )}
                         </MenuItem>
