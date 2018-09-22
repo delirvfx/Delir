@@ -5,7 +5,7 @@
     display flex
     flex-flow row
 
-.propList
+.paramList
     thin-scrollbar()
 
     display block
@@ -22,19 +22,19 @@
     padding 0 4px
     line-height 24px
 
-    &.paramItem--active
+    &.paramItemActive
         background-color rgba(#fff, .2)
 
-    &.paramItem--effectContainer
+    &.paramItemEffectContainer
         display block
         margin 4px 0 0
         padding 0
         height: auto
 
-    &.paramItem--pluginMissing
+    &.paramItemPluginMissing
         color rgba($color-error, .5)
 
-    &.paramItem--header
+    &.paramItemHeader
         position: sticky
         top: 0
         z-index: 1
@@ -60,7 +60,7 @@
         display block
         width 100%
 
-.propKeyframeIndicator
+.paramKeyframeIndicator
     flex 0
     display inline-block
     width 16px
@@ -72,10 +72,10 @@
 
     opacity .3
 
-    &.propKeyframeIndicator--hasKeyframe
+    &.paramKeyframeIndicator--hasKeyframe
         opacity 1
 
-    &.propKeyframeIndicator--nonAnimatable::before
+    &.paramKeyframeIndicator--nonAnimatable::before
         content ''
         display inline-block
         width calc(1em + 2px)

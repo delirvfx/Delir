@@ -16,6 +16,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Button from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
+import LabelInput from '../../components/label-input'
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
 import DelirValueInput from './_DelirValueInput'
@@ -123,7 +124,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
-                <Pane className={s.propList}>
+                <Pane className={s.paramList}>
                     {activeClip && descriptors.map(desc => {
                         const value = activeClip
                             ? Delir.KeyframeCalcurator.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, activeClip.keyframes[desc.paramName] || [])
@@ -135,7 +136,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                             <div
                                 key={activeClip.id + desc.paramName}
                                 className={classnames(s.paramItem, {
-                                    [s['paramItem--active']]: activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName,
+                                    [s.paramItemActive]: activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName,
                                 })}
                                 data-entity-type='clip'
                                 data-entity-id={activeClip.id}
@@ -153,10 +154,10 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                     />
                                 </ContextMenu>
                                 <span className={classnames(
-                                        s.propKeyframeIndicator,
+                                        s.paramKeyframeIndicator,
                                         {
-                                            [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                            [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                            [s['paramKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                            [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
                                         })
                                     }
                                 >
@@ -277,26 +278,27 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
             if (!processorInfo) {
                 return (
-                    <div key={effect.id} className={classnames(s.paramItem, s['paramItem--effectContainer'])}　title={t('pluginMissing', {processorId: effect.processor})}>
-                        <div key={effect.id} className={classnames(s.paramItem, s['paramItem--header'], s['paramItem--pluginMissing'])}>
+                    <div key={effect.id} className={classnames(s.paramItem, s.paramItemEffectContainer)}　title={t('pluginMissing', {processorId: effect.processor})}>
+                        <div key={effect.id} className={classnames(s.paramItem, s.paramItemHeader, s.paramItemPluginMissing)}>
                             <ContextMenu>
                                 <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
                             </ContextMenu>
                             <i className='fa fa-exclamation' />
-                            {`${effect.processor}`}
+                            {effect.processor}
                         </div>
                     </div>
                 )
             }
 
             return (
-                <div key={effect.id} className={classnames(s.paramItem, s['paramItem--effectContainer'])}>
-                    <div key={effect.id} className={classnames(s.paramItem, s['paramItem--header'])}>
+                <div key={effect.id} className={classnames(s.paramItem, s.paramItemEffectContainer)}>
+                    <div key={effect.id} className={classnames(s.paramItem, s.paramItemHeader)}>
                         <ContextMenu>
                             <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
                         </ContextMenu>
                         <i className='fa fa-magic' />
-                        {`${processorInfo.name}`}
+                        <LabelInput doubleClickToEdit={true} placeholder={processorInfo.name} defaultValue={effect.referenceName || ''} />
+                        {effect.referenceName != null && (<span>{processorInfo.name}</span>)}
                     </div>
 
                     {descriptors.map(desc => {
@@ -310,7 +312,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                             <div
                                 key={`${activeClip.id}-${effect.id}-${desc.paramName}`}
                                 className={classnames(s.paramItem, {
-                                    [s['paramItem--active']]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParam.paramName === desc.paramName,
+                                    [s.paramItemActive]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParam.paramName === desc.paramName,
                                 })}
                                 data-entity-type='effect'
                                 data-entity-id={effect.id}
@@ -327,10 +329,10 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                     />
                                 </ContextMenu>
                                 <span className={classnames(
-                                        s.propKeyframeIndicator,
+                                        s.paramKeyframeIndicator,
                                         {
-                                            [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                            [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                            [s['paramKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                            [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
                                         })
                                     }
                                 >
