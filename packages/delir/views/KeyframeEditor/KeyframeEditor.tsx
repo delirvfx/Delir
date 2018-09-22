@@ -134,8 +134,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                         return (
                             <div
                                 key={activeClip.id + desc.paramName}
-                                className={classnames(s.propItem, {
-                                    [s['propItem--active']]: activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName,
+                                className={classnames(s.paramItem, {
+                                    [s['paramItem--active']]: activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName,
                                 })}
                                 data-entity-type='clip'
                                 data-entity-id={activeClip.id}
@@ -162,8 +162,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                 >
                                     {desc.animatable && (<i className='twa twa-clock12'></i>)}
                                 </span>
-                                <span className={s.propItemName}>{desc.label}</span>
-                                <div className={s.propItemInput}>
+                                <span className={s.paramItemName}>{desc.label}</span>
+                                <div className={s.paramItemInput}>
                                     {desc.type === 'CODE' ? (
                                         <Button type='normal' onClick={this.handleOpenScriptParamEditor}>{t('editScriptParam')}</Button>
                                     ) : (
@@ -277,8 +277,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
             if (!processorInfo) {
                 return (
-                    <div key={effect.id} className={classnames(s.propItem, s['propItem--effectContainer'])}　title={t('pluginMissing', {processorId: effect.processor})}>
-                        <div key={effect.id} className={classnames(s.propItem, s['propItem--header'], s['propItem--pluginMissing'])}>
+                    <div key={effect.id} className={classnames(s.paramItem, s['paramItem--effectContainer'])}　title={t('pluginMissing', {processorId: effect.processor})}>
+                        <div key={effect.id} className={classnames(s.paramItem, s['paramItem--header'], s['paramItem--pluginMissing'])}>
                             <ContextMenu>
                                 <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
                             </ContextMenu>
@@ -290,8 +290,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             }
 
             return (
-                <div key={effect.id} className={classnames(s.propItem, s['propItem--effectContainer'])}>
-                    <div key={effect.id} className={classnames(s.propItem, s['propItem--header'])}>
+                <div key={effect.id} className={classnames(s.paramItem, s['paramItem--effectContainer'])}>
+                    <div key={effect.id} className={classnames(s.paramItem, s['paramItem--header'])}>
                         <ContextMenu>
                             <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
                         </ContextMenu>
@@ -309,8 +309,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                         return (
                             <div
                                 key={`${activeClip.id}-${effect.id}-${desc.paramName}`}
-                                className={classnames(s.propItem, {
-                                    [s['propItem--active']]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParam.paramName === desc.paramName,
+                                className={classnames(s.paramItem, {
+                                    [s['paramItem--active']]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParam.paramName === desc.paramName,
                                 })}
                                 data-entity-type='effect'
                                 data-entity-id={effect.id}
@@ -336,8 +336,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                 >
                                     {desc.animatable && (<i className='twa twa-clock12'></i>)}
                                 </span>
-                                <span className={s.propItemName}>{desc.label}</span>
-                                <div className={s.propItemInput}>
+                                <span className={s.paramItemName}>{desc.label}</span>
+                                <div className={s.paramItemInput}>
                                     <DelirValueInput
                                         key={desc.paramName}
                                         assets={project ? project.assets : null}
@@ -546,7 +546,6 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         const { activeParam } = this.props
         if (!activeParam) return
 
-        console.log(activeParam , keyframeId)
         if (activeParam.type === 'clip') {
             this.props.context.executeOperation(ProjectOps.removeKeyframe, { keyframeId })
         } else {
