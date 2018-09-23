@@ -179,6 +179,9 @@ function draw() {
         snowflakes.push(new snowflake()); // append snowflake object
     }
 
+    let color = delir.ctx.clip.effect('Color').params.value
+    fill(color.r, color.g, color.b, color.a)
+
     // loop through snowflakes with a for..of loop
     for (let flake of snowflakes) {
         flake.update(t); // update snowflake position
@@ -272,6 +275,23 @@ ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Entity.Effect(), {
     //         }),
     //     ]
     // }
+}))
+
+ProjectHelper.addEffect(p, p5jsClip, assign(new Delir.Entity.Effect(), {
+    processor: '@ragg/delir-posteffect-color-slider',
+    referenceName: 'Color',
+    keyframes: {
+        value: [
+            assign(new Delir.Entity.Keyframe(), {
+                frameOnClip: 0,
+                value: new Delir.Values.ColorRGBA(0, 0, 0, 255)
+            }),
+            assign(new Delir.Entity.Keyframe(), {
+                frameOnClip: 150,
+                value: new Delir.Values.ColorRGBA(255, 255, 255, 255)
+            }),
+        ]
+    }
 }))
 
 export default p
