@@ -37,6 +37,7 @@ const typeDefinitionLibs = {
 }
 
 export default class Monaco {
+
     public static registerLibrarySet(name: string, libs: (AvailableLibrary | LibraryEntry)[])
     {
         this.librarySet[name] = libs
@@ -44,7 +45,7 @@ export default class Monaco {
 
     public static activateLibrarySet(name: string)
     {
-        if (this.activeLibrarySetDisposer) {
+        if (Monaco.currentLibrarySet !== name && this.activeLibrarySetDisposer) {
             this.activeLibrarySetDisposer()
         }
 
@@ -56,8 +57,11 @@ export default class Monaco {
             }
         })
 
+        Monaco.currentLibrarySet = name
         this.activeLibrarySetDisposer = () => disposables.forEach(d => d.dispose())
     }
+
+    private static currentLibrarySet: string
 
     private static librarySet: {[setName: string]: (AvailableLibrary | LibraryEntry)[]} = {
         expressionEditor: [
