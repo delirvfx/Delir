@@ -114,10 +114,12 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
                     frame: (context as RenderContext).frame,
                     timeOnClip: (context as RenderContext).timeOnClip,
                     frameOnClip: (context as RenderContext).frameOnClip,
-                    effect: (referenceName: string) => {
-                        const targetEffect = (context as RenderContext).clipEffectParams[referenceName]
-                        if (targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
-                        return { params: proxyDeepFreeze(targetEffect) }
+                    clip: {
+                        effect: (referenceName: string) => {
+                            const targetEffect = (context as RenderContext).clipEffectParams[referenceName]
+                            if (targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
+                            return { params: proxyDeepFreeze(targetEffect) }
+                        },
                     },
                 },
             }

@@ -38,6 +38,7 @@ export default class RenderContext<T = {[propName: string]: RealParameterValueTy
         // 'clipScope',
 
         'parameters',
+        'clipEffectParams',
     ]
 
     private static _permitOnlyInitializeKey = [
