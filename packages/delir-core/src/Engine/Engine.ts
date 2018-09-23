@@ -443,8 +443,6 @@ export default class Engine
                     }))
                 })
 
-                console.log(referenceableEffectParams)
-
                 // Apply expression
                 const afterExpressionParams = applyExpression(clipScopeContext, beforeExpressionParams, referenceableEffectParams, clipTask.expressions)
 
