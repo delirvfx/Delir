@@ -418,7 +418,7 @@ export default class Engine
                     return [desc.paramName, clipTask.keyframeLUT[desc.paramName][context.frame]]
                 }))
 
-                // Lookup before apply referenceable effect params expression
+                // Lookup before apply expression referenceable effect params expression
                 const effectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
 
                 _.each(clipTask.effectRenderTask, task => {
