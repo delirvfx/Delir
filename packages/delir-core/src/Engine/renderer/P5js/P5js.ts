@@ -117,7 +117,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
                     clip: {
                         effect: (referenceName: string) => {
                             const targetEffect = (context as RenderContext).clipEffectParams[referenceName]
-                            if (targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
+                            if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
                             return { params: proxyDeepFreeze(targetEffect) }
                         },
                     },
