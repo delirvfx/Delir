@@ -4,8 +4,8 @@ import RenderContext from '../RenderContext'
 import { ExpressionContext } from './ExpressionVM'
 
 export interface ReferenceableEffectsParams {
-    readonly [referenceName: string]: {
-        readonly [paramName: string]: ParameterValueTypes
+    [referenceName: string]: {
+        [paramName: string]: ParameterValueTypes
     }
 }
 
