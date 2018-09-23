@@ -419,17 +419,17 @@ export default class Engine
                 }))
 
                 // Lookup before apply expression referenceable effect params expression
-                const effectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
+                const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
 
                 _.each(clipTask.effectRenderTask, task => {
                     if (task.effectEntity.referenceName == null) return
-                    effectParams[task.effectEntity.referenceName] = _.fromPairs(task.effectorParams.properties.map(desc => {
+                    referenceableEffectParams[task.effectEntity.referenceName] = _.fromPairs(task.effectorParams.properties.map(desc => {
                         return [desc.paramName, task.keyframeLUT[desc.paramName][context.frame]]
                     }))
                 })
 
                 // Apply expression
-                const afterExpressionParams = applyExpression(clipScopeContext, beforeExpressionParams, effectParams, clipTask.expressions)
+                const afterExpressionParams = applyExpression(clipScopeContext, beforeExpressionParams, referenceableEffectParams, clipTask.expressions)
 
                 const clipRenderContext = clipScopeContext.clone({
                     parameters: afterExpressionParams,
@@ -460,7 +460,7 @@ export default class Engine
                         return [desc.paramName, effectTask.keyframeLUT[desc.paramName][context.frame]]
                     })) as {[paramName: string]: ParameterValueTypes}
 
-                    const afterExpressionEffectorParams = applyExpression(clipScopeContext, beforeExpressionEffectorParams, effectParams, effectTask.expressions)
+                    const afterExpressionEffectorParams = applyExpression(clipScopeContext, beforeExpressionEffectorParams, referenceableEffectParams, effectTask.expressions)
 
                     const effectRenderReq = clipScopeContext.clone({
                         srcCanvas: clipBufferCanvas,
