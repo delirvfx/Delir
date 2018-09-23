@@ -1,17 +1,23 @@
+import { proxyDeepFreeze } from '../../helper/proxyFreeze'
 import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
 import RenderContext from '../RenderContext'
 import { ExpressionContext } from './ExpressionVM'
 
+export interface ReferenceableEffectsParams {
+    [referenceName: string]: {
+        [paramName: string]: ParameterValueTypes
+    }
+}
+
 export interface ContextSource {
     context: RenderContext
-    clipProperties: {[propName: string]: ParameterValueTypes}
+    clipParams: {[propName: string]: ParameterValueTypes }
+    clipEffectParams: ReferenceableEffectsParams
     currentValue: any
 }
 
 export const buildContext = (contextSource: ContextSource): ExpressionContext => {
-    const clipPropertyProxy = new Proxy(contextSource.clipProperties, {
-        set: () => { throw new Error('Illegal property setting in expression') }
-    })
+    const clipParamProxy = proxyDeepFreeze(contextSource.clipParams)
 
     return {
         time                : contextSource.context.time,
@@ -23,12 +29,28 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
         audioBuffer         : contextSource.context.destAudioBuffer,
         duration            : contextSource.context.durationFrames / contextSource.context.framerate,
         durationFrames      : contextSource.context.durationFrames,
-        clipProp            : clipPropertyProxy,
         currentValue        : contextSource.currentValue,
+        clip: {
+            params: clipParamProxy,
+            effect: (referenceName: string) => {
+                const targetEffect = contextSource.clipEffectParams[referenceName]
+                if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
+                return { params: proxyDeepFreeze(targetEffect) }
+            },
+        }
     }
 }
 
 export const expressionContextTypeDefinition = `
+interface ClipAttributes {
+    params: Readonly<{[propertyName: string]: any}>
+    effect(effectName: string): EffectAttributes
+}
+
+interface EffectAttributes {
+    params: { [paramName: string]: any }
+}
+
 declare const ctx: {
     time: number
     frame: number
@@ -39,20 +61,20 @@ declare const ctx: {
     audioBuffer: Float32Array[]
     duration: number
     durationFrames: number
-    clipProp: {[propertyName: string]: any}
     currentValue: any
+    clip: ClipAttributes
 }
 
-declare const time: number;
-declare const time: number;
-declare const frame: number;
-declare const timeOnComposition: number;
-declare const frameOnComposition: number;
-declare const width: number;
-declare const height: number;
-declare const audioBuffer: Float32Array[];
-declare const duration: number;
-declare const durationFrames: number;
-declare const clipProp: {[propertyName: string]: any};
-declare const currentValue: any;
+declare const time: number
+declare const frame: number
+declare const timeOnComposition: number
+declare const frameOnComposition: number
+declare const width: number
+declare const height: number
+declare const audioBuffer: Float32Array[]
+declare const duration: number
+declare const durationFrames: number
+declare const clipProp: {[propertyName: string]: any}
+declare const currentValue: any
+declare const clip: ClipAttributes
 `

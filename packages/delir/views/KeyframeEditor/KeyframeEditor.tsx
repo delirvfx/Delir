@@ -1,6 +1,7 @@
 import * as Delir from '@ragg/delir-core'
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
+import { clipboard } from 'electron'
 import * as _ from 'lodash'
 import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'
@@ -16,6 +17,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Button from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
+import LabelInput from '../../components/label-input'
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
 import DelirValueInput from './_DelirValueInput'
@@ -123,7 +125,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
         return (
             <Workspace direction='horizontal' className={s.keyframeView}>
-                <Pane className={s.propList}>
+                <Pane className={s.paramList}>
                     {activeClip && descriptors.map(desc => {
                         const value = activeClip
                             ? Delir.KeyframeCalcurator.calcKeyframeValueAt(editor.currentPreviewFrame, activeClip.placedFrame, desc, activeClip.keyframes[desc.paramName] || [])
@@ -134,8 +136,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                         return (
                             <div
                                 key={activeClip.id + desc.paramName}
-                                className={classnames(s.propItem, {
-                                    [s['propItem--active']]: activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName,
+                                className={classnames(s.paramItem, {
+                                    [s.paramItemActive]: activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName,
                                 })}
                                 data-entity-type='clip'
                                 data-entity-id={activeClip.id}
@@ -151,19 +153,25 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                         enabled={desc.animatable}
                                         onClick={this.openExpressionEditor}
                                     />
+                                    <MenuItem type='separator' />
+                                    <MenuItem
+                                        label={t('contextMenu.copyParamName')}
+                                        data-param-name={desc.paramName}
+                                        onClick={this.handleCopyParamName}
+                                    />
                                 </ContextMenu>
                                 <span className={classnames(
-                                        s.propKeyframeIndicator,
+                                        s.paramKeyframeIndicator,
                                         {
-                                            [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                            [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                            [s['paramKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                            [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
                                         })
                                     }
                                 >
                                     {desc.animatable && (<i className='twa twa-clock12'></i>)}
                                 </span>
-                                <span className={s.propItemName}>{desc.label}</span>
-                                <div className={s.propItemInput}>
+                                <span className={s.paramItemName}>{desc.label}</span>
+                                <div className={s.paramItemInput}>
                                     {desc.type === 'CODE' ? (
                                         <Button type='normal' onClick={this.handleOpenScriptParamEditor}>{t('editScriptParam')}</Button>
                                     ) : (
@@ -277,26 +285,36 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
 
             if (!processorInfo) {
                 return (
-                    <div key={effect.id} className={classnames(s.propItem, s['propItem--effectContainer'])}　title={t('pluginMissing', {processorId: effect.processor})}>
-                        <div key={effect.id} className={classnames(s.propItem, s['propItem--header'], s['propItem--pluginMissing'])}>
+                    <div key={effect.id} className={classnames(s.paramItem, s.paramItemEffectContainer)}　title={t('pluginMissing', {processorId: effect.processor})}>
+                        <div key={effect.id} className={classnames(s.paramItem, s.paramItemHeader, s.paramItemPluginMissing)}>
                             <ContextMenu>
                                 <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
                             </ContextMenu>
                             <i className='fa fa-exclamation' />
-                            {`${effect.processor}`}
+                            {effect.processor}
                         </div>
                     </div>
                 )
             }
 
             return (
-                <div key={effect.id} className={classnames(s.propItem, s['propItem--effectContainer'])}>
-                    <div key={effect.id} className={classnames(s.propItem, s['propItem--header'])}>
+                <div key={effect.id} className={classnames(s.paramItem, s.paramItemEffectContainer)}>
+                    <div key={effect.id} className={classnames(s.paramItem, s.paramItemHeader)}>
                         <ContextMenu>
                             <MenuItem label={t('contextMenu.removeEffect')} data-clip-id={activeClip.id} data-effect-id={effect.id} onClick={this.removeEffect} />
+                            <MenuItem type='separator' />
+                            {effect.referenceName != null && (<MenuItem label={t('contextMenu.copyReferenceName')} data-reference-name={effect.referenceName} onClick={this.handleCopyReferenceName} />)}
                         </ContextMenu>
                         <i className='fa fa-magic' />
-                        {`${processorInfo.name}`}
+                        <LabelInput
+                            className={s.referenceNameInput}
+                            doubleClickToEdit
+                            placeholder={processorInfo.name}
+                            defaultValue={effect.referenceName || ''}
+                            onChange={this.handleChangeEffectReferenceName}
+                            data-effect-id={effect.id}
+                        />
+                        {effect.referenceName != null && (<span className={s.processorName}>{processorInfo.name}</span>)}
                     </div>
 
                     {descriptors.map(desc => {
@@ -309,8 +327,8 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                         return (
                             <div
                                 key={`${activeClip.id}-${effect.id}-${desc.paramName}`}
-                                className={classnames(s.propItem, {
-                                    [s['propItem--active']]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParam.paramName === desc.paramName,
+                                className={classnames(s.paramItem, {
+                                    [s.paramItemActive]: activeParam && activeParam.type === 'effect' && activeParam.entityId === effect.id && activeParam.paramName === desc.paramName,
                                 })}
                                 data-entity-type='effect'
                                 data-entity-id={effect.id}
@@ -325,19 +343,25 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                                         data-param-name={desc.paramName}
                                         onClick={this.openExpressionEditor}
                                     />
+                                    <MenuItem type='separator' />
+                                    <MenuItem
+                                        label={t('contextMenu.copyParamName')}
+                                        data-param-name={desc.paramName}
+                                        onClick={this.handleCopyParamName}
+                                    />
                                 </ContextMenu>
                                 <span className={classnames(
-                                        s.propKeyframeIndicator,
+                                        s.paramKeyframeIndicator,
                                         {
-                                            [s['propKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                            [s['propKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                            [s['paramKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                            [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
                                         })
                                     }
                                 >
                                     {desc.animatable && (<i className='twa twa-clock12'></i>)}
                                 </span>
-                                <span className={s.propItemName}>{desc.label}</span>
-                                <div className={s.propItemInput}>
+                                <span className={s.paramItemName}>{desc.label}</span>
+                                <div className={s.paramItemInput}>
                                     <DelirValueInput
                                         key={desc.paramName}
                                         assets={project ? project.assets : null}
@@ -378,6 +402,14 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         }
 
         return components
+    }
+
+    private handleCopyReferenceName = ({ dataset: { referenceName } }: MenuItemOption<{referenceName: string}>) => {
+        clipboard.writeText(referenceName)
+    }
+
+    private handleCopyParamName = ({ dataset: { paramName }}: MenuItemOption<{paramName: string}>) => {
+        clipboard.writeText(paramName)
     }
 
     private handleOpenScriptParamEditor = () => {
@@ -546,7 +578,6 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         const { activeParam } = this.props
         if (!activeParam) return
 
-        console.log(activeParam , keyframeId)
         if (activeParam.type === 'clip') {
             this.props.context.executeOperation(ProjectOps.removeKeyframe, { keyframeId })
         } else {
@@ -580,6 +611,14 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
             this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
                 frame: this.props.editor.currentPreviewFrame
             })
+        })
+    }
+
+    private handleChangeEffectReferenceName = (referenceName: string, {effectId}: {effectId: string}) => {
+        this.props.context.executeOperation(ProjectOps.modifyEffect, {
+            clipId: this.props.activeClip!.id,
+            effectId,
+            patch: { referenceName }
         })
     }
 

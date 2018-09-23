@@ -5,7 +5,7 @@
     display flex
     flex-flow row
 
-.propList
+.paramList
     thin-scrollbar()
 
     display block
@@ -15,26 +15,26 @@
     padding 4px 0
     overflow auto
 
-.propItem
+.paramItem
     display flex
     justify-content space-between
     height 24px
     padding 0 4px
     line-height 24px
 
-    &.propItem--active
+    &.paramItemActive
         background-color rgba(#fff, .2)
 
-    &.propItem--effectContainer
+    &.paramItemEffectContainer
         display block
         margin 4px 0 0
         padding 0
         height: auto
 
-    &.propItem--pluginMissing
+    &.paramItemPluginMissing
         color rgba($color-error, .5)
 
-    &.propItem--header
+    &.paramItemHeader
         position: sticky
         top: 0
         z-index: 1
@@ -50,17 +50,25 @@
             margin-left 4px
             margin-right 8px
 
-.propItemName
+.paramItemName
     flex 1
 
-.propItemInput
+.paramItemInput
     width 5em
 
     :global(._drag-number-input), select
         display block
         width 100%
 
-.propKeyframeIndicator
+.referenceNameInput
+    width 6em
+    margin-right 8px
+
+.processorName
+    color var(--text-subbed)
+    font-size 10px
+
+.paramKeyframeIndicator
     flex 0
     display inline-block
     width 16px
@@ -72,10 +80,10 @@
 
     opacity .3
 
-    &.propKeyframeIndicator--hasKeyframe
+    &.paramKeyframeIndicator--hasKeyframe
         opacity 1
 
-    &.propKeyframeIndicator--nonAnimatable::before
+    &.paramKeyframeIndicator--nonAnimatable::before
         content ''
         display inline-block
         width calc(1em + 2px)

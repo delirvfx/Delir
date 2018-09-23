@@ -287,6 +287,8 @@ export function compilePlugins(done) {
         context: paths.src.plugins,
         entry: {
             'the-world/index': './the-world/index',
+            'numeric-slider/index': './numeric-slider/index',
+            'color-slider/index': './color-slider/index',
             ...(__DEV__ ? {
                 // 'chromakey/index': '../experimental-plugins/chromakey/index',
                 // 'filler/index': '../experimental-plugins/filler/index',

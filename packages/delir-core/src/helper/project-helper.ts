@@ -419,6 +419,10 @@ export function modifyEffect(
         ? targetEffectId
         : findEffectFromClipById(clip, targetEffectId)
 
+    if (patch.referenceName === '') {
+        patch.referenceName = null
+    }
+
     Object.assign(effect, patch)
 }
 

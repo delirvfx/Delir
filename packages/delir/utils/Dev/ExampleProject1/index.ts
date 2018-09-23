@@ -144,8 +144,8 @@ const imageClip = assign(new Delir.Entity.Clip(), {
 
 const adjustmentClip = assign(new Delir.Entity.Clip(), {
     renderer: 'adjustment',
-    placedFrame: 0,
-    durationFrames: 30 * 10,
+    placedFrame: 30,
+    durationFrames: 30,
 })
 
 const p5jsClip = assign(new Delir.Entity.Clip(), {
@@ -178,6 +178,9 @@ function draw() {
     for (var i = 0; i < random(5); i++) {
         snowflakes.push(new snowflake()); // append snowflake object
     }
+
+    let color = delir.ctx.clip.effect('Color').params.value
+    fill(color.r, color.g, color.b, color.a)
 
     // loop through snowflakes with a for..of loop
     for (let flake of snowflakes) {
@@ -259,7 +262,7 @@ ProjectHelper.addClip(p, layer5, videoClip)
 // Effects
 //
 ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Entity.Effect(), {
-    processor: '@ragg/delir-posteffect-chromakey',
+    processor: '@ragg/delir-posteffect-the-world',
     // keyframes: {
     //     color: [
     //         assign(new Delir.Entity.Keyframe(), {
@@ -272,6 +275,23 @@ ProjectHelper.addEffect(p, adjustmentClip, assign(new Delir.Entity.Effect(), {
     //         }),
     //     ]
     // }
+}))
+
+ProjectHelper.addEffect(p, p5jsClip, assign(new Delir.Entity.Effect(), {
+    processor: '@ragg/delir-posteffect-color-slider',
+    referenceName: 'Color',
+    keyframes: {
+        value: [
+            assign(new Delir.Entity.Keyframe(), {
+                frameOnClip: 0,
+                value: new Delir.Values.ColorRGBA(0, 0, 0, 255)
+            }),
+            assign(new Delir.Entity.Keyframe(), {
+                frameOnClip: 150,
+                value: new Delir.Values.ColorRGBA(255, 255, 255, 255)
+            }),
+        ]
+    }
 }))
 
 export default p

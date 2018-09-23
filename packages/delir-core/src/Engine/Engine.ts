@@ -57,16 +57,18 @@ export interface RealParameterValues {
  * Get expression applied values
  */
 export const applyExpression = (
-    req: RenderContext,
+    context: RenderContext,
     beforeExpressionParams: RealParameterValues,
+    clipEffectParams: ExpressionContext.ReferenceableEffectsParams,
     expressions: { [param: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes },
 ): { [param: string]: ParameterValueTypes } => {
     return _.mapValues(beforeExpressionParams, (value, paramName) => {
         if (expressions[paramName!]) {
             // TODO: Value type Validation
             const result = expressions[paramName!]({
-                req,
-                clipProperties: beforeExpressionParams,
+                context,
+                clipParams: beforeExpressionParams,
+                clipEffectParams,
                 currentValue: value
             })
 
@@ -340,7 +342,6 @@ export default class Engine
                             resolver: context.resolver
                         })
 
-                        await effectRenderTask.initialize(context)
                         effects.push(effectRenderTask)
                     } catch (e) {
                         if (e instanceof EffectPluginMissingException && option.ignoreMissingEffect) {
@@ -349,6 +350,22 @@ export default class Engine
                             throw e
                         }
                     }
+                }
+
+                // Lookup before apply expression referenceable effect params expression
+                const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
+
+                _.each(clipRenderTask.effectRenderTask, task => {
+                    if (task.effectEntity.referenceName == null) return
+                    referenceableEffectParams[task.effectEntity.referenceName] = _.fromPairs(task.effectorParams.properties.map(desc => {
+                        return [desc.paramName, task.keyframeLUT[desc.paramName][context.frame]]
+                    }))
+                })
+
+                for (const effectRenderTask of effects) {
+                    await effectRenderTask.initialize(context.clone({
+                        clipEffectParams: referenceableEffectParams,
+                    }))
                 }
 
                 clipRenderTask.effectRenderTask = effects
@@ -416,11 +433,22 @@ export default class Engine
                     return [desc.paramName, clipTask.keyframeLUT[desc.paramName][context.frame]]
                 }))
 
-                // Apply expression
-                const afterExpressionParams = applyExpression(clipScopeContext, beforeExpressionParams, clipTask.expressions)
+                // Lookup before apply expression referenceable effect params expression
+                const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
 
-                const clipRenderReq = clipScopeContext.clone({
+                _.each(clipTask.effectRenderTask, task => {
+                    if (task.effectEntity.referenceName == null) return
+                    referenceableEffectParams[task.effectEntity.referenceName] = _.fromPairs(task.effectorParams.properties.map(desc => {
+                        return [desc.paramName, task.keyframeLUT[desc.paramName][context.frame]]
+                    }))
+                })
+
+                // Apply expression
+                const afterExpressionParams = applyExpression(clipScopeContext, beforeExpressionParams, referenceableEffectParams, clipTask.expressions)
+
+                const clipRenderContext = clipScopeContext.clone({
                     parameters: afterExpressionParams,
+                    clipEffectParams: referenceableEffectParams,
 
                     srcCanvas: clipTask.rendererType === 'adjustment' ? destBufferCanvas : null,
                     destCanvas: clipBufferCanvas,
@@ -439,16 +467,16 @@ export default class Engine
                     })
                 }
 
-                await clipTask.clipRenderer.render(clipRenderReq)
+                await clipTask.clipRenderer.render(clipRenderContext)
                 clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
 
                 // Post process effects
                 for (const effectTask of clipTask.effectRenderTask) {
-                    const beforeExpressionEffectorParams = _.fromPairs(effectTask.effectorProps.properties.map(desc => {
+                    const beforeExpressionEffectorParams = _.fromPairs(effectTask.effectorParams.properties.map(desc => {
                         return [desc.paramName, effectTask.keyframeLUT[desc.paramName][context.frame]]
                     })) as {[paramName: string]: ParameterValueTypes}
 
-                    const afterExpressionEffectorParams = applyExpression(clipScopeContext, beforeExpressionEffectorParams, effectTask.expressions)
+                    const afterExpressionEffectorParams = applyExpression(clipScopeContext, beforeExpressionEffectorParams, referenceableEffectParams, effectTask.expressions)
 
                     const effectRenderReq = clipScopeContext.clone({
                         srcCanvas: clipBufferCanvas,

@@ -4,6 +4,15 @@ interface ExpressionVMOption {
     filename?: string
 }
 
+interface ClipAttributes {
+    params: Readonly<{ [paramName: string]: any }>
+    effect(referenceName: string): EffectAttributes
+}
+
+interface EffectAttributes {
+    params: { [paramName: string]: any }
+}
+
 export interface ExpressionContext {
     time: number
     frame: number
@@ -14,8 +23,8 @@ export interface ExpressionContext {
     audioBuffer: Float32Array[] | null
     duration: number
     durationFrames: number
-    clipProp: { [paramName: string]: any }
     currentValue: any
+    clip: ClipAttributes
 }
 
 export default class ExpressionVM {

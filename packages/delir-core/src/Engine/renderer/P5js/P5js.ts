@@ -2,6 +2,7 @@ import * as _ from 'lodash'
 import * as VM from 'vm'
 import P5Hooks from './P5Hooks'
 
+import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
 import Type from '../../../PluginSupport/type-descriptor'
 import Expression from '../../../Values/Expression'
 import PreRenderContext from '../../PreRenderContext'
@@ -113,7 +114,14 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
                     frame: (context as RenderContext).frame,
                     timeOnClip: (context as RenderContext).timeOnClip,
                     frameOnClip: (context as RenderContext).frameOnClip,
-                }
+                    clip: {
+                        effect: (referenceName: string) => {
+                            const targetEffect = (context as RenderContext).clipEffectParams[referenceName]
+                            if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
+                            return { params: proxyDeepFreeze(targetEffect) }
+                        },
+                    },
+                },
             }
         }
     }
