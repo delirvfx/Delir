@@ -342,7 +342,6 @@ export default class Engine
                             resolver: context.resolver
                         })
 
-                        await effectRenderTask.initialize(context)
                         effects.push(effectRenderTask)
                     } catch (e) {
                         if (e instanceof EffectPluginMissingException && option.ignoreMissingEffect) {
@@ -351,6 +350,22 @@ export default class Engine
                             throw e
                         }
                     }
+                }
+
+                // Lookup before apply expression referenceable effect params expression
+                const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
+
+                _.each(clipRenderTask.effectRenderTask, task => {
+                    if (task.effectEntity.referenceName == null) return
+                    referenceableEffectParams[task.effectEntity.referenceName] = _.fromPairs(task.effectorParams.properties.map(desc => {
+                        return [desc.paramName, task.keyframeLUT[desc.paramName][context.frame]]
+                    }))
+                })
+
+                for (const effectRenderTask of effects) {
+                    await effectRenderTask.initialize(context.clone({
+                        clipEffectParams: referenceableEffectParams,
+                    }))
                 }
 
                 clipRenderTask.effectRenderTask = effects
@@ -428,11 +443,14 @@ export default class Engine
                     }))
                 })
 
+                console.log(referenceableEffectParams)
+
                 // Apply expression
                 const afterExpressionParams = applyExpression(clipScopeContext, beforeExpressionParams, referenceableEffectParams, clipTask.expressions)
 
                 const clipRenderContext = clipScopeContext.clone({
                     parameters: afterExpressionParams,
+                    clipEffectParams: referenceableEffectParams,
 
                     srcCanvas: clipTask.rendererType === 'adjustment' ? destBufferCanvas : null,
                     destCanvas: clipBufferCanvas,
