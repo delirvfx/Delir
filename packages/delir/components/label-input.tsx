@@ -72,7 +72,7 @@ export default class LabelInput extends React.Component<Props, State>
         const input = this.inputRef.current!
         const dataset = propsToDataset(this.props)
 
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !(e.nativeEvent as any).isComposing) {
             if (this.state.readOnly) {
                 this.enableAndFocus()
             } else {
