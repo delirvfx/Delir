@@ -26,6 +26,7 @@
         "new-parens": [ true ],
         "no-consecutive-blank-lines": [ true ],
         "no-string-literal": [ true ],
+        "no-console": [ true ],
         "ordered-imports": [ true ],
         "semicolon": [ true, "never" ],
         "space-before-function-paren": [ true, {
