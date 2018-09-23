@@ -144,8 +144,8 @@ const imageClip = assign(new Delir.Entity.Clip(), {
 
 const adjustmentClip = assign(new Delir.Entity.Clip(), {
     renderer: 'adjustment',
-    placedFrame: 0,
-    durationFrames: 30 * 10,
+    placedFrame: 30,
+    durationFrames: 30,
 })
 
 const p5jsClip = assign(new Delir.Entity.Clip(), {
