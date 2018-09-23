@@ -16,7 +16,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
      */
     public static provideParameters() {
         return Type
-            .colorRgba('value', {label: 'Value', defaultValue: new Values.ColorRGBA(0, 0, 0, 1), animatable: true})
+            .colorRgba('value', {label: 'Value', defaultValue: new Values.ColorRGBA(0, 0, 0, 255), animatable: true})
     }
 
     /**
