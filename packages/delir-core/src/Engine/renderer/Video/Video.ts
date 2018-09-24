@@ -2,11 +2,11 @@ import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderContext from '../../PreRenderContext'
-import RenderContext from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface VideoRendererParam {
     source: Asset
@@ -73,7 +73,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 
     private _video: HTMLVideoElement
 
-    public async beforeRender(context: PreRenderContext<VideoRendererParam>)
+    public async beforeRender(context: ClipPreRenderContext<VideoRendererParam>)
     {
         const parameters = context.parameters as any
 
@@ -103,7 +103,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
         })
     }
 
-    public async render(context: RenderContext<VideoRendererParam>)
+    public async render(context: ClipRenderContext<VideoRendererParam>)
     {
         if (!context.parameters.source) {
             return

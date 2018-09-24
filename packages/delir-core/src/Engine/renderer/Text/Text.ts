@@ -3,8 +3,8 @@ import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderContext from '../../PreRenderContext'
-import RenderContext from '../../RenderContext'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 import ColorRGBA from '../../../Values/ColorRGBA'
@@ -90,12 +90,12 @@ export default class TextLayer implements IRenderer<TextRendererParam>
 
     private _bufferCanvas: HTMLCanvasElement
 
-    public async beforeRender(context: PreRenderContext<TextRendererParam>)
+    public async beforeRender(context: ClipPreRenderContext<TextRendererParam>)
     {
         this._bufferCanvas = document.createElement('canvas')
     }
 
-    public async render(context: RenderContext<TextRendererParam>)
+    public async render(context: ClipRenderContext<TextRendererParam>)
     {
         const param = context.parameters
         const ctx = context.destCanvas.getContext('2d')!

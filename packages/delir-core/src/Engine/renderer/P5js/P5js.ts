@@ -5,18 +5,18 @@ import P5Hooks from './P5Hooks'
 import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
 import Type from '../../../PluginSupport/type-descriptor'
 import Expression from '../../../Values/Expression'
-import PreRenderContext from '../../PreRenderContext'
-import RenderContext from '../../RenderContext'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
-interface SketchRendererParams {
+interface Params {
     sketch: Expression
     opacity: number
 }
 
 const VM_GLOBAL_WHITELIST = ['Array', 'Math', 'Date']
 
-export default class P5jsRenderer implements IRenderer<SketchRendererParams>
+export default class P5jsRenderer implements IRenderer<Params>
 {
     public static get rendererId(): string { return 'p5js' }
 
@@ -44,7 +44,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
     private p5ex: P5Hooks
     private canvas: HTMLCanvasElement
 
-    public async beforeRender(context: PreRenderContext<SketchRendererParams>)
+    public async beforeRender(context: ClipPreRenderContext<Params>)
     {
         this.p5ex = new P5Hooks(context.resolver)
 
@@ -83,7 +83,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
         }
     }
 
-    public async render(context: RenderContext<SketchRendererParams>)
+    public async render(context: ClipRenderContext<Params>)
     {
         await new Promise(resolve => {
             const intervalId = setInterval(() => {
@@ -102,7 +102,7 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
         ctx.drawImage(this.canvas, 0, 0)
     }
 
-    private makeVmExposeVariables(context: PreRenderContext<any> | RenderContext<any>)
+    private makeVmExposeVariables(context: ClipPreRenderContext<Params> | ClipRenderContext<Params>)
     {
         return {
             delir: {
@@ -110,13 +110,13 @@ export default class P5jsRenderer implements IRenderer<SketchRendererParams>
                     width: context.width,
                     height: context.height,
                     framerate: context.framerate,
-                    time: (context as RenderContext).time,
-                    frame: (context as RenderContext).frame,
-                    timeOnClip: (context as RenderContext).timeOnClip,
-                    frameOnClip: (context as RenderContext).frameOnClip,
+                    time: context.time,
+                    frame: context.frame,
+                    timeOnClip: (context as ClipRenderContext<Params>).timeOnClip,
+                    frameOnClip: (context as ClipRenderContext<Params>).frameOnClip,
                     clip: {
                         effect: (referenceName: string) => {
-                            const targetEffect = (context as RenderContext).clipEffectParams[referenceName]
+                            const targetEffect = (context as ClipRenderContext<Params>).clipEffectParams[referenceName]
                             if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
                             return { params: proxyDeepFreeze(targetEffect) }
                         },

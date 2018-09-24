@@ -9,16 +9,17 @@ import DependencyResolver from '../DependencyResolver'
 import {  RealParameterValues, RealParameterValueTypes } from '../Engine'
 import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
+import { ReferenceableEffectsParams } from '../ExpressionSupport/ExpressionContext'
 import ExpressionVM from '../ExpressionSupport/ExpressionVM'
 import * as KeyframeCalcurator from '../KeyframeCalcurator'
-import RenderContext from '../RenderContext'
+import { RenderContextBase } from '../RenderContext/RenderContextBase'
 
 export default class EffectRenderTask {
     public static build({effect, clip, context, resolver, effectCache}: {
         effect: Effect,
         clip: Clip,
         effectCache: WeakMap<Effect, EffectPluginBase>,
-        context: RenderContext,
+        context: RenderContextBase,
         resolver: DependencyResolver,
     }): EffectRenderTask {
         const EffectPluginClass = resolver.resolveEffectPlugin(effect.processor)!
@@ -81,8 +82,12 @@ export default class EffectRenderTask {
     public expressions: { [paramName: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes }
     private initialKeyframeValues: RealParameterValues
 
-    public async initialize(context: RenderContext) {
-        const preRenderReq = context.clone({parameters: this.initialKeyframeValues}).toPreRenderContext()
+    public async initialize(context: RenderContextBase, referenceableEffectParams: ReferenceableEffectsParams) {
+        const preRenderReq = context.toEffectPreRenderContext({
+            parameters: this.initialKeyframeValues,
+            clipEffectParams: referenceableEffectParams,
+        })
+
         await this.effectRenderer.initialize(preRenderReq)
     }
 }
