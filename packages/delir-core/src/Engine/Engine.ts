@@ -23,14 +23,10 @@ import { IRenderContextBase } from './RenderContext/IRenderContextBase'
 import { RenderContextBase } from './RenderContext/RenderContextBase'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
+import { LayerRenderTask } from './Task/LayerRenderTask'
 
 export interface ExpressionExecuters {
     [paramName: string]: (exposes: ExpressionContext.ContextSource) => ParameterValueTypes
-}
-
-interface LayerRenderTask {
-    layerId: string
-    clips: ClipRenderTask[]
 }
 
 interface RenderingOption {
@@ -319,6 +315,7 @@ export default class Engine
 
         const renderOrderLayers = baseContext.rootComposition.layers.slice(0).reverse()
         for (const layer of renderOrderLayers) {
+            const layerRenderTask = LayerRenderTask.build(layer)
 
             const clips: ClipRenderTask[] = []
             for (const clip of layer.clips) {
@@ -369,10 +366,8 @@ export default class Engine
                 clips.push(clipRenderTask)
             }
 
-            layerTasks.push({
-                layerId: layer.id,
-                clips
-            })
+            layerRenderTask.clips = clips
+            layerTasks.push(layerRenderTask)
         }
 
         return layerTasks
