@@ -9,5 +9,5 @@ export class LayerRenderTask {
     }
 
     public layer: Layer
-    public clips: ClipRenderTask[]
+    public clipRenderTasks: ClipRenderTask[]
 }

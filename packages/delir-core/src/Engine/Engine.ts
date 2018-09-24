@@ -366,7 +366,7 @@ export default class Engine
                 clips.push(clipRenderTask)
             }
 
-            layerRenderTask.clips = clips
+            layerRenderTask.clipRenderTasks = clips
             layerTasks.push(layerRenderTask)
         }
 
@@ -397,7 +397,7 @@ export default class Engine
 
             // SPEC: The rendering order of the same layer at the same time is not defined.
             //       In the future, want to ensure that there are no more than two clips in a single layer at a given time.
-            const renderTargetClips = layerTask.clips.filter(clip => {
+            const renderTargetClips = layerTask.clipRenderTasks.filter(clip => {
                 if (context.isAudioBufferingNeeded && clip.rendererType === 'audio') {
                     return clip.clipPlacedFrame <= (context.frameOnComposition + audioRenderStartRangeFrame)
                         && clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
