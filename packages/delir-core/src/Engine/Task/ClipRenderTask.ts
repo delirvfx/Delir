@@ -1,13 +1,8 @@
 import * as _ from 'lodash'
 
+import { TypeDescriptor } from '../..'
 import { Clip } from '../../Entity'
-import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
-import { AssetPointer, Expression } from '../../Values'
-import { RealParameterValues, RealParameterValueTypes } from '../Engine'
-import { compileTypeScript } from '../ExpressionSupport/ExpressionCompiler'
-import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
-import ExpressionVM from '../ExpressionSupport/ExpressionVM'
-import * as KeyframeHelper from '../KeyframeCalcurator'
+import { ParametersTable } from '../ParametersTable'
 import { RenderContextBase } from '../RenderContext/RenderContextBase'
 import * as RendererFactory from '../Renderer'
 import { IRenderer } from '../Renderer/RendererBase'
@@ -20,16 +15,7 @@ export default class ClipRenderTask {
         context: RenderContextBase,
     }): ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
-        const rendererAssetParamNames = rendererParams.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
-
-        const rawRendererInitParam = KeyframeHelper.calcKeyframeValuesAt(0, clip.placedFrame, rendererParams, clip.keyframes)
-        const rendererInitParam: RealParameterValues = { ...(rawRendererInitParam as any) }
-        rendererAssetParamNames.forEach(propName => {
-            // resolve asset
-            rendererInitParam[propName] = rawRendererInitParam[propName]
-                ? context.resolver.resolveAsset((rawRendererInitParam[propName] as AssetPointer).assetId)
-                : null
-        })
+        const keyframeTable = ParametersTable.build(context, clip, clip.keyframes, clip.expressions, rendererParams)
 
         let clipRenderer = clipRendererCache.get(clip)
         if (!clipRenderer) {
@@ -37,49 +23,28 @@ export default class ClipRenderTask {
             clipRendererCache.set(clip, clipRenderer)
         }
 
-        const rawRendererKeyframeLUT = KeyframeHelper.calcKeyFrames(rendererParams, clip.keyframes, clip.placedFrame, 0, context.durationFrames)
-        const rendererKeyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = { ...(rawRendererKeyframeLUT as any)　}
-        rendererAssetParamNames.forEach(paramName => {
-            // resolve asset
-            rendererKeyframeLUT[paramName] = _.map(rawRendererKeyframeLUT[paramName], value => {
-                return value ? context.resolver.resolveAsset((value as AssetPointer).assetId) : null
-            })
-        })
-
-        const rendererExpressions = _(clip.expressions).mapValues((expr: Expression) => {
-            const code = compileTypeScript(expr.code)
-            return (exposes: ExpressionContext.ContextSource) => {
-                return ExpressionVM.execute(code, ExpressionContext.buildContext(exposes), {filename: `${clip.id}.expression.ts`})
-            }
-        }).pickBy(value => value !== null).value()
-
         const task = new ClipRenderTask()
         task.clipRenderer = clipRenderer
-        task.rendererParams = rendererParams
         task.rendererType = clip.renderer
         task.clipPlacedFrame = clip.placedFrame
         task.clipDurationFrames = clip.durationFrames
-        task.keyframeLUT = rendererKeyframeLUT
-        // FIXME: typing
-        task.expressions = rendererExpressions as any
-        task.initialKeyframeValues = rendererInitParam
+        task.paramTypes = rendererParams
+        task.keyframeTable = keyframeTable
 
         return task
     }
 
     public clipRenderer: IRenderer<any>
-    public rendererParams: TypeDescriptor
     public rendererType: RendererFactory.AvailableRenderer
     public clipPlacedFrame: number
     public clipDurationFrames: number
-    public keyframeLUT: { [paramName: string]: { [frame: number]: RealParameterValueTypes } }
-    public expressions: { [paramName: string]: (context: ExpressionContext.ContextSource) => any }
+    public paramTypes: TypeDescriptor
     public effectRenderTask: EffectRenderTask[]
-    private initialKeyframeValues: RealParameterValues
+    public keyframeTable: ParametersTable
 
     public async initialize(context: RenderContextBase) {
         const preRenderReq = context.toClipPreRenderContext({
-            parameters: this.initialKeyframeValues
+            parameters: this.keyframeTable.initialParams
         })
 
         await this.clipRenderer.beforeRender(preRenderReq)

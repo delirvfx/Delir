@@ -358,9 +358,7 @@ export default class Engine
 
                 _.each(clipRenderTask.effectRenderTask, task => {
                     if (task.effectEntity.referenceName == null) return
-                    referenceableEffectParams[task.effectEntity.referenceName] = _.fromPairs(task.effectorParams.properties.map(desc => {
-                        return [desc.paramName, task.keyframeLUT[desc.paramName][baseContext.frame]]
-                    }))
+                    referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(baseContext.frame)
                 })
 
                 for (const effectRenderTask of effects) {
@@ -437,23 +435,20 @@ export default class Engine
                     destAudioBuffer: channelAudioBuffers,
                 })
 
-                // Lookup current frame prop value from pre-calculated lookup-table
-                const beforeExpressionParams = _.fromPairs(clipTask.rendererParams.properties.map(desc => {
-                    return [desc.paramName, clipTask.keyframeLUT[desc.paramName][context.frame]]
-                }))
-
                 // Lookup before apply expression referenceable effect params expression
                 const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
 
                 _.each(clipTask.effectRenderTask, task => {
                     if (task.effectEntity.referenceName == null) return
-                    referenceableEffectParams[task.effectEntity.referenceName] = _.fromPairs(task.effectorParams.properties.map(desc => {
-                        return [desc.paramName, task.keyframeLUT[desc.paramName][context.frame]]
-                    }))
+                    referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(context.frame)
                 })
 
-                // Apply expression
-                const afterExpressionParams = applyExpression(clipRenderContext, beforeExpressionParams, referenceableEffectParams, clipTask.expressions)
+                const beforeClipExpressionParams = clipTask.keyframeTable.getParametersAt(context.frame)
+                const afterExpressionParams = clipTask.keyframeTable.getParameterWithExpressionAt(context.frame, {
+                    context: clipRenderContext,
+                    clipParams: beforeClipExpressionParams,
+                    referenceableEffectParams,
+                })
 
                 clipRenderContext.parameters = afterExpressionParams
                 clipRenderContext.clipEffectParams = referenceableEffectParams
@@ -472,12 +467,11 @@ export default class Engine
                         parameters: {},
                     })
 
-                    const beforeExpressionEffectorParams = _.fromPairs(effectTask.effectorParams.properties.map(desc => {
-                        return [desc.paramName, effectTask.keyframeLUT[desc.paramName][context.frame]]
-                    })) as {[paramName: string]: ParameterValueTypes}
-
-                    const afterExpressionEffectorParams = applyExpression(clipRenderContext, beforeExpressionEffectorParams, referenceableEffectParams, effectTask.expressions)
-                    effectRenderContext.parameters = afterExpressionEffectorParams
+                    effectRenderContext.parameters = effectTask.keyframeTable.getParameterWithExpressionAt(context.frame, {
+                        context: effectRenderContext,
+                        clipParams: beforeClipExpressionParams,
+                        referenceableEffectParams,
+                    })
 
                     await effectTask.effectRenderer.render(effectRenderContext)
 

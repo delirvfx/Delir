@@ -1,4 +1,3 @@
-import * as FontManager from 'font-manager'
 import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
@@ -29,6 +28,14 @@ export default class TextLayer implements IRenderer<TextRendererParam>
     // `getAvailableFontsSync` is very heavy, Cache returned result with _.once
     public static provideParameters = _.once((): TypeDescriptor =>
     {
+        // Delay loading for testing
+        let FontManager: any
+        try {
+            FontManager = require('font-manager')
+        } catch (e) {
+            FontManager = { getAvailableFontsSync: () => [] }
+        }
+
         const fonts = FontManager.getAvailableFontsSync()
         const families: string[] = [
             'sans-serif',

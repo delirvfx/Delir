@@ -1,7 +1,6 @@
 import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
+import { ClipPreRenderContext } from '../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../RenderContext/ClipRenderContext'
-import { EffectPreRenderContext } from '../RenderContext/EffectPreRenderContext'
-import { EffectRenderContext } from '../RenderContext/EffectRenderContext'
 
 export interface IRendererStatic {
     rendererId: string
@@ -12,6 +11,6 @@ export interface IRendererStatic {
 }
 
 export interface IRenderer<T> {
-    beforeRender(request: ClipRenderContext<T> | EffectPreRenderContext<T>): Promise<void>
-    render(request: ClipRenderContext<T> | EffectRenderContext<T>): Promise<void>
+    beforeRender(request: ClipPreRenderContext<T>): Promise<void>
+    render(request: ClipRenderContext<T>): Promise<void>
 }
