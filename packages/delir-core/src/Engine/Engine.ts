@@ -353,7 +353,7 @@ export default class Engine
                 // Lookup before apply expression referenceable effect params expression
                 const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
 
-                _.each(clipRenderTask.effectRenderTask, task => {
+                _.each(clipRenderTask.effectRenderTasks, task => {
                     if (task.effectEntity.referenceName == null) return
                     referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(baseContext.frame)
                 })
@@ -362,7 +362,7 @@ export default class Engine
                     await effectRenderTask.initialize(baseContext, referenceableEffectParams)
                 }
 
-                clipRenderTask.effectRenderTask = effects
+                clipRenderTask.effectRenderTasks = effects
                 clips.push(clipRenderTask)
             }
 
@@ -433,7 +433,7 @@ export default class Engine
                 // Lookup before apply expression referenceable effect params expression
                 const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
 
-                _.each(clipTask.effectRenderTask, task => {
+                _.each(clipTask.effectRenderTasks, task => {
                     if (task.effectEntity.referenceName == null) return
                     referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(context.frame)
                 })
@@ -452,7 +452,7 @@ export default class Engine
                 clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
 
                 // Post process effects
-                for (const effectTask of clipTask.effectRenderTask) {
+                for (const effectTask of clipTask.effectRenderTasks) {
                     const effectRenderContext = context.toEffectRenderContext({
                         timeOnClip,
                         frameOnClip,

@@ -39,7 +39,7 @@ export default class ClipRenderTask {
     public clipPlacedFrame: number
     public clipDurationFrames: number
     public paramTypes: TypeDescriptor
-    public effectRenderTask: EffectRenderTask[]
+    public effectRenderTasks: EffectRenderTask[]
     public keyframeTable: ParametersTable
 
     public async initialize(context: RenderContextBase) {
