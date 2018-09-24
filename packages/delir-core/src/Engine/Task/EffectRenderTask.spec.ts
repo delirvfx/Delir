@@ -3,7 +3,7 @@ import { EffectPluginMissingException } from '../../exceptions'
 import PluginRegistry from '../../PluginSupport/plugin-registry'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
 import DependencyResolver from '../DependencyResolver'
-import RenderContext from '../RenderContext'
+import { RenderContextBase } from '../RenderContext/RenderContextBase'
 import EffectRenderTask from './EffectRenderTask'
 
 describe('EffectRenderTask', () => {
@@ -50,10 +50,10 @@ describe('EffectRenderTask', () => {
             effect.processor = 'existing-effect'
             clip.effects.push(effect)
 
-            const context = new RenderContext({
+            const context = new RenderContextBase({
                 rootComposition: project.compositions[0],
                 durationFrames: 100,
-            })
+            } as any)
 
             expect(() => {
                 EffectRenderTask.build({
@@ -74,10 +74,10 @@ describe('EffectRenderTask', () => {
             effect.processor = 'missing-processor'
             clip.effects.push(effect)
 
-            const context = new RenderContext({
+            const context = new RenderContextBase({
                 rootComposition: project.compositions[0],
                 durationFrames: 100,
-            })
+            } as any)
 
             expect(() => {
                 EffectRenderTask.build({

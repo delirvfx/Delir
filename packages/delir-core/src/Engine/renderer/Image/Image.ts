@@ -1,10 +1,10 @@
 import * as _ from 'lodash'
 import Type from '../../../PluginSupport/type-descriptor'
-import PreRenderContext from '../../PreRenderContext'
-import RenderContext from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface ImageRendererParams {
     source: Asset
@@ -66,7 +66,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
 
     private _image: HTMLImageElement | null = null
 
-    public async beforeRender(context: PreRenderContext<ImageRendererParams>)
+    public async beforeRender(context: ClipPreRenderContext<ImageRendererParams>)
     {
         const parameters = context.parameters
 
@@ -84,7 +84,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
         })
     }
 
-    public async render(context: RenderContext<ImageRendererParams>)
+    public async render(context: ClipRenderContext<ImageRendererParams>)
     {
         if (! this._image) return
 

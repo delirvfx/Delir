@@ -4,11 +4,11 @@ import * as _ from 'lodash'
 import { resampling } from '../../../helper/Audio'
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderContext from '../../PreRenderContext'
-import RenderContext from '../../RenderContext'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface AVFormat {
     bitrate: number
@@ -64,7 +64,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         buffers: Float32Array[]
     }
 
-    public async beforeRender(context: PreRenderContext<AudioRendererParam>)
+    public async beforeRender(context: ClipPreRenderContext<AudioRendererParam>)
     {
         const params = context.parameters
 
@@ -73,9 +73,9 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         }
 
         // `AudioContext` cause depletion, use OfflineAudioContext
-        const context = new OfflineAudioContext(1, context.audioChannels, context.samplingRate)
+        const audioCtx = new OfflineAudioContext(1, context.audioChannels, context.samplingRate)
         const content = fs.readFileSync(params.source.path)
-        const audioBuffer = await context.decodeAudioData(content.buffer as ArrayBuffer)
+        const audioBuffer = await audioCtx.decodeAudioData(content.buffer as ArrayBuffer)
         const buffers = _.times(audioBuffer.numberOfChannels, ch => audioBuffer.getChannelData(ch))
 
         await resampling(audioBuffer.sampleRate, context.samplingRate, buffers)
@@ -87,12 +87,12 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         }
     }
 
-    public async render(context: RenderContext<AudioRendererParam>)
+    public async render(context: ClipRenderContext<AudioRendererParam>)
     {
         return this.renderAudio(context)
     }
 
-    public async renderAudio(context: RenderContext<AudioRendererParam>)
+    public async renderAudio(context: ClipRenderContext<AudioRendererParam>)
     {
         if (!context.isAudioBufferingNeeded) return
 
@@ -113,21 +113,21 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         }
 
         // Resampling & gaining
-        const context = new OfflineAudioContext(context.audioChannels, context.neededSamples, context.samplingRate)
+        const audioCtx = new OfflineAudioContext(context.audioChannels, context.neededSamples, context.samplingRate)
 
-        const inputBuffer = context.createBuffer(source.numberOfChannels, context.neededSamples, context.samplingRate)
+        const inputBuffer = audioCtx.createBuffer(source.numberOfChannels, context.neededSamples, context.samplingRate)
         _.times(source.numberOfChannels, ch => inputBuffer.copyToChannel(slices[ch], ch))
 
-        const gain = context.createGain()
+        const gain = audioCtx.createGain()
         gain.gain.value = volume
-        gain.connect(context.destination)
+        gain.connect(audioCtx.destination)
 
-        const bufferSource = context.createBufferSource()
+        const bufferSource = audioCtx.createBufferSource()
         bufferSource.buffer = inputBuffer
         bufferSource.connect(gain)
         bufferSource.start(0)
 
-        const result = await context.startRendering()
+        const result = await audioCtx.startRendering()
         _.times(context.audioChannels, ch => destBuffers[ch].set(result.getChannelData(ch)))
     }
 }

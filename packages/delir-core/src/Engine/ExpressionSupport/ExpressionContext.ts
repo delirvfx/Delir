@@ -1,6 +1,6 @@
 import { proxyDeepFreeze } from '../../helper/proxyFreeze'
 import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
-import RenderContext from '../RenderContext'
+import { IRenderContextBase } from '../RenderContext/IRenderContextBase'
 import { ExpressionContext } from './ExpressionVM'
 
 export interface ReferenceableEffectsParams {
@@ -10,7 +10,7 @@ export interface ReferenceableEffectsParams {
 }
 
 export interface ContextSource {
-    context: RenderContext
+    context: IRenderContextBase
     clipParams: {[propName: string]: ParameterValueTypes }
     clipEffectParams: ReferenceableEffectsParams
     currentValue: any

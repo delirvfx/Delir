@@ -3,8 +3,8 @@ import * as Exceptions from './exceptions'
 import * as PluginSupport from './PluginSupport'
 import * as Values from './Values'
 
-import PreRenderContext from './Engine/PreRenderContext'
-import RenderContext from './Engine/RenderContext'
+import { EffectPreRenderContext } from './Engine/RenderContext/EffectPreRenderContext'
+import { EffectRenderContext } from './Engine/RenderContext/EffectRenderContext'
 import PluginBase from './PluginSupport/plugin-base'
 import PluginRegistry from './PluginSupport/plugin-registry'
 import PostEffectBase from './PluginSupport/PostEffectBase'
@@ -30,8 +30,8 @@ export {
     TypeDescriptor,
     PluginBase,
     PostEffectBase,
-    PreRenderContext,
-    RenderContext,
+    EffectPreRenderContext,
+    EffectRenderContext,
     PluginRegistry,
 
     // import shorthand

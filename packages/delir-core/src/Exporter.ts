@@ -17,7 +17,7 @@ const typeMap = {
     'value:Expression': Expression,
 }
 
-export const serializeEntity = (node: any) => {
+export const serializeEntity = (node: any): any => {
     if (
         typeof node === 'boolean'
         || typeof node === 'number'
@@ -45,7 +45,7 @@ export const serializeEntity = (node: any) => {
     }
 }
 
-export const deserializeEntity = (node: any) => {
+export const deserializeEntity = (node: any): any => {
     if (
         typeof node === 'boolean'
         || typeof node === 'number'

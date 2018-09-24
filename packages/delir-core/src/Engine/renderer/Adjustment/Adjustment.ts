@@ -2,8 +2,8 @@ import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderContext from '../../PreRenderContext'
-import RenderContext from '../../RenderContext'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 interface Param {
@@ -25,9 +25,9 @@ export default class AdjustmentRenderer implements IRenderer<Param>
             .number('opacity', { label: 'Opacity', defaultValue: 100, animatable: true })
     }
 
-    public async beforeRender(context: PreRenderContext<Param>) { return }
+    public async beforeRender(context: ClipPreRenderContext<Param>) { return }
 
-    public async render(context: RenderContext<Param>)
+    public async render(context: ClipRenderContext<Param>)
     {
         const ctx = context.destCanvas.getContext('2d')!
         ctx.globalAlpha = _.clamp(context.parameters.opacity, 0, 100) / 100

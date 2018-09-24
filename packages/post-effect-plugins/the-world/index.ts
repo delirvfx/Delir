@@ -1,7 +1,7 @@
 import {
+    EffectPreRenderContext,
+    EffectRenderContext,
     PostEffectBase,
-    PreRenderContext,
-    RenderContext,
     Type,
 } from '@ragg/delir-core'
 
@@ -29,7 +29,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
      * If you want initializing before rendering (likes load audio, image, etc...)
      * Do it in this method.
      */
-    public async initialize(context: PreRenderContext)
+    public async initialize(context: EffectPreRenderContext<Params>)
     {
         const canvas = document.createElement('canvas')
         canvas.width = context.width
@@ -43,7 +43,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
      * Render frame into destination canvas.
      * @param context
      */
-    public async render(context: RenderContext<Params>)
+    public async render(context: EffectRenderContext<Params>)
     {
         const param = context.parameters
 

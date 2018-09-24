@@ -89,7 +89,8 @@ export default class LabelInput extends React.Component<Props, State>
     {
         if (this.state.readOnly) return
 
-        this.props.onChange && this.props.onChange(this.inputRef.current!.value)
+        const dataset = propsToDataset(this.props)
+        this.props.onChange && this.props.onChange(this.inputRef.current!.value, dataset)
         this.setState({readOnly: true})
     }
 
