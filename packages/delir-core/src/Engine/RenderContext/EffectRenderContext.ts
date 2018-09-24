@@ -1,4 +1,4 @@
-import { RealParameterValues } from '../Engine'
+import { RealParameterValues } from '../ParametersTable'
 import { IRenderContextBase } from './IRenderContextBase'
 
 export interface EffectRenderContext<T extends {[paramName: string]: any}> extends IRenderContextBase, EffectRenderContextAttributes<T> {}

@@ -3,14 +3,20 @@ import * as _ from 'lodash'
 import { EffectRenderContext } from '..'
 import { Clip, Keyframe } from '../Entity'
 import { ParameterValueTypes, TypeDescriptor } from '../PluginSupport/type-descriptor'
-import { AssetPointer, Expression } from '../Values'
-import { RealParameterValues, RealParameterValueTypes } from './Engine'
+import { AssetPointer, ColorRGB, ColorRGBA, Expression } from '../Values'
+import AssetProxy from './AssetProxy'
 import { compileTypeScript } from './ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
 import ExpressionVM from './ExpressionSupport/ExpressionVM'
 import * as KeyframeCalcurator from './KeyframeCalcurator'
 import { ClipRenderContext } from './RenderContext/ClipRenderContext'
 import { RenderContextBase } from './RenderContext/RenderContextBase'
+
+export type RealParameterValueTypes = number | string | boolean | ColorRGB | ColorRGBA | AssetProxy | null
+
+export interface RealParameterValues {
+    [paramName: string]: RealParameterValueTypes
+}
 
 export class ParametersTable {
     public static build(

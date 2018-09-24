@@ -1,5 +1,5 @@
-import { RealParameterValues } from '../Engine'
 import { ReferenceableEffectsParams } from '../ExpressionSupport/ExpressionContext'
+import { RealParameterValues } from '../ParametersTable'
 import { IRenderContextBase } from './IRenderContextBase'
 
 export interface ClipRenderContext<T extends {[paramName: string]: any}> extends IRenderContextBase, ClipRenderContextAttributes<T> {}
