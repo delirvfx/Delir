@@ -385,9 +385,6 @@ export default class Engine
             return new Float32Array(new ArrayBuffer(4 /* bytes */ * context.rootComposition.samplingRate))
         })
 
-        const audioBufferingSizeTime = context.neededSamples / context.samplingRate
-        const audioRenderStartRangeFrame = audioBufferingSizeTime * context.framerate
-
         for (const layerTask of layerRenderTasks) {
             const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
             layerBufferCanvas.width = context.width
@@ -397,15 +394,7 @@ export default class Engine
 
             // SPEC: The rendering order of the same layer at the same time is not defined.
             //       In the future, want to ensure that there are no more than two clips in a single layer at a given time.
-            const renderTargetClips = layerTask.clipRenderTasks.filter(clip => {
-                if (context.isAudioBufferingNeeded && clip.rendererType === 'audio') {
-                    return clip.clipPlacedFrame <= (context.frameOnComposition + audioRenderStartRangeFrame)
-                        && clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
-                }
-
-                return clip.clipPlacedFrame <= context.frameOnComposition
-                    && clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
-            })
+            const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
 
             // Render clips
             for (const clipTask of renderTargetClips) {
