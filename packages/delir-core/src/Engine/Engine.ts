@@ -44,38 +44,6 @@ interface RenderProgression {
     rangeEndFrame: number
 }
 
-export type RealParameterValueTypes = number | string | boolean | ColorRGB | ColorRGBA | AssetProxy | null
-
-export interface RealParameterValues {
-    [paramName: string]: RealParameterValueTypes
-}
-
-/**
- * Get expression applied values
- */
-export const applyExpression = (
-    context: IRenderContextBase,
-    beforeExpressionParams: RealParameterValues,
-    clipEffectParams: ExpressionContext.ReferenceableEffectsParams,
-    expressions: { [param: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes },
-): { [param: string]: ParameterValueTypes } => {
-    return _.mapValues(beforeExpressionParams, (value, paramName) => {
-        if (expressions[paramName!]) {
-            // TODO: Value type Validation
-            const result = expressions[paramName!]({
-                context,
-                clipParams: beforeExpressionParams,
-                clipEffectParams,
-                currentValue: value
-            })
-
-            return result === void 0 ? value : result
-        }
-
-        return value
-    })
-}
-
 export default class Engine
 {
     private _fpsCounter: FPSCounter = new FPSCounter()
