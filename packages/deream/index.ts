@@ -126,7 +126,8 @@ export default async (
     // queue.run()
     await pipeline.renderSequencial(rootCompId, {
         loop: false,
-        ignoreMissingEffect: options.ignoreMissingEffect
+        ignoreMissingEffect: options.ignoreMissingEffect,
+        realtime: false,
     })
     // await queue.waitEmpty()
 
@@ -183,7 +184,11 @@ export default async (
         ])
 
         let lastMessage: string
-        ffmpeg.stderr.on('data', (buffer: Buffer) => { lastMessage = buffer.toString(); console.log(buffer.toString()) })
+        ffmpeg.stderr.on('data', (buffer: Buffer) => {
+            lastMessage = buffer.toString()
+            // tslint:disable-next-line
+            console.log(buffer.toString())
+        })
         ffmpeg.on('exit', (code: number) => code === 0 ? resolve() : reject(new Error(`Failed to mixing (Reason: ${lastMessage})`)))
     })
 

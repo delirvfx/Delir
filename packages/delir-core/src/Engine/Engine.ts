@@ -34,6 +34,7 @@ interface RenderingOption {
     endFrame: number
     loop: boolean
     ignoreMissingEffect: boolean
+    realtime: boolean
 }
 
 interface RenderProgression {
@@ -92,6 +93,7 @@ export default class Engine
                 endFrame: beginFrame,
                 ignoreMissingEffect: false,
                 loop: false,
+                realtime: false
             }
 
             const request = this._initStage(compositionId, renderingOption)
@@ -121,6 +123,7 @@ export default class Engine
             loop: false,
             endFrame: -1,
             ignoreMissingEffect: false,
+            realtime: false,
         })
 
         this.stopCurrentRendering()
@@ -144,7 +147,19 @@ export default class Engine
             let renderedFrames = 0
             let lastAudioBufferTime = -1
 
-            const render = _.throttle(async () => {
+            const throttle = options.realtime
+                ? (fn: () => void) => _.throttle(fn , 1000 / context.framerate)
+                : (fn: () => void) => fn
+
+            const animationFrame = options.realtime
+                ? requestAnimationFrame
+                : (fn: () => void)  => fn() as unknown as number
+
+            const cancelFrame = options.realtime
+                ? cancelAnimationFrame
+                : clearTimeout
+
+            const render = throttle(async () => {
                 const currentFrame = renderingOption.beginFrame + renderedFrames
                 const currentTime = currentFrame / framerate
 
@@ -193,7 +208,7 @@ export default class Engine
                         renderedFrames = 0
                         lastAudioBufferTime = -1
                     } else {
-                        cancelAnimationFrame(animationFrameId)
+                        cancelFrame(animationFrameId)
                         resolve()
                         return
                     }
@@ -202,7 +217,7 @@ export default class Engine
                 }
 
                 if (aborted) {
-                    cancelAnimationFrame(animationFrameId)
+                    cancelFrame(animationFrameId)
                     reject(new RenderingAbortedException('Rendering aborted.'))
                     return
                 }
@@ -217,10 +232,10 @@ export default class Engine
                 })
 
                 this._fpsCounter.increase()
-                animationFrameId = requestAnimationFrame(render)
-            }, 1000 / context.framerate)
+                animationFrameId = animationFrame(render)
+            })
 
-            animationFrameId = requestAnimationFrame(render)
+            animationFrameId = animationFrame(render)
         })
     }
 
