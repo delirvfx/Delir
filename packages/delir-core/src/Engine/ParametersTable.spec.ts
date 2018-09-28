@@ -27,7 +27,7 @@ describe('KeyframeTable', () => {
                 ],
             },
             expressions: {
-                'x': new Expression('typescript', 'ctx.currentValue * 10')
+                'x': new Expression('typescript', 'currentValue * 10')
             }
         })
 
