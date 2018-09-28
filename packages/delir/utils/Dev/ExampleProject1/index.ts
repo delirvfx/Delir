@@ -109,7 +109,7 @@ const textClip = assign(new Delir.Entity.Clip(), {
         // ],
     },
     expressions: {
-        text: new Values.Expression('typescript', '`time:${time}\\nframe:${frame}`')
+        text: new Values.Expression('typescript', '`time:${thisComp.time}\\nframe:${thisComp.frame}`')
     },
 })
 
@@ -179,7 +179,7 @@ function draw() {
         snowflakes.push(new snowflake()); // append snowflake object
     }
 
-    let color = delir.ctx.clip.effect('Color').params.value
+    let color = thisClip.effect('Color').params.value
     fill(color.r, color.g, color.b, color.a)
 
     // loop through snowflakes with a for..of loop

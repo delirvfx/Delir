@@ -24,8 +24,7 @@ export default class P5jsRenderer implements IRenderer<Params>
         return {}
     }
 
-    public static provideParameters()
-    {
+    public static provideParameters() {
         return Type
             .code('sketch', {
                 label: 'Sketch',
@@ -44,8 +43,7 @@ export default class P5jsRenderer implements IRenderer<Params>
     private p5ex: P5Hooks
     private canvas: HTMLCanvasElement
 
-    public async beforeRender(context: ClipPreRenderContext<Params>)
-    {
+    public async beforeRender(context: ClipPreRenderContext<Params>) {
         this.p5ex = new P5Hooks(context.resolver)
 
         // Make VM environment
@@ -55,20 +53,20 @@ export default class P5jsRenderer implements IRenderer<Params>
             console: global.console,
             p5: this.p5ex.p5,
         }, {
-            get: (target: any, propKey: string) => {
-                if (target[propKey]) {
-                    return target[propKey]
-                } else if (this.p5ex.p5[propKey]) {
-                    // Expose p5 drawing methods
-                    return typeof this.p5ex.p5[propKey] === 'function' ? this.p5ex.p5[propKey].bind(this.p5ex.p5) : this.p5ex.p5[propKey]
-                } else if (VM_GLOBAL_WHITELIST.includes(propKey)) {
-                    return (global as any)[propKey]
-                } else {
-                    // Dynamic exposing
-                    return this.vmExposedVariables[propKey]
+                get: (target: any, propKey: string) => {
+                    if (target[propKey]) {
+                        return target[propKey]
+                    } else if (this.p5ex.p5[propKey]) {
+                        // Expose p5 drawing methods
+                        return typeof this.p5ex.p5[propKey] === 'function' ? this.p5ex.p5[propKey].bind(this.p5ex.p5) : this.p5ex.p5[propKey]
+                    } else if (VM_GLOBAL_WHITELIST.includes(propKey)) {
+                        return (global as any)[propKey]
+                    } else {
+                        // Dynamic exposing
+                        return this.vmExposedVariables[propKey]
+                    }
                 }
-            }
-        }))
+            }))
 
         const vm = new VM.Script(context.parameters.sketch.code, {})
 
@@ -83,15 +81,14 @@ export default class P5jsRenderer implements IRenderer<Params>
         }
     }
 
-    public async render(context: ClipRenderContext<Params>)
-    {
+    public async render(context: ClipRenderContext<Params>) {
         await new Promise(resolve => {
             const intervalId = setInterval(() => {
                 if (this.p5ex.preloadCount === 0) {
                     resolve()
                     clearInterval(intervalId)
                 }
-             })
+            })
         })
 
         this.vmExposedVariables = this.makeVmExposeVariables(context)
@@ -102,25 +99,25 @@ export default class P5jsRenderer implements IRenderer<Params>
         ctx.drawImage(this.canvas, 0, 0)
     }
 
-    private makeVmExposeVariables(context: ClipPreRenderContext<Params> | ClipRenderContext<Params>)
-    {
+    private makeVmExposeVariables(context: ClipPreRenderContext<Params> | ClipRenderContext<Params>) {
         return {
-            delir: {
-                ctx: {
-                    width: context.width,
-                    height: context.height,
-                    framerate: context.framerate,
-                    time: context.time,
-                    frame: context.frame,
-                    timeOnClip: (context as ClipRenderContext<Params>).timeOnClip,
-                    frameOnClip: (context as ClipRenderContext<Params>).frameOnClip,
-                    clip: {
-                        effect: (referenceName: string) => {
-                            const targetEffect = (context as ClipRenderContext<Params>).clipEffectParams[referenceName]
-                            if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
-                            return { params: proxyDeepFreeze(targetEffect) }
-                        },
-                    },
+            thisComp: {
+                width: context.width,
+                height: context.height,
+                time: context.timeOnComposition,
+                frame: context.frameOnComposition,
+                duration: context.durationFrames / context.framerate,
+                durationFrames: context.durationFrames,
+                audioBuffer: null,
+            },
+            thisClip: {
+                time: (context as ClipRenderContext<Params>).timeOnClip,
+                frame: (context as ClipRenderContext<Params>).frameOnClip,
+                params: null,
+                effect: (referenceName: string) => {
+                    const targetEffect = (context as ClipRenderContext<Params>).clipEffectParams[referenceName]
+                    if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
+                    return { params: proxyDeepFreeze(targetEffect) }
                 },
             }
         }
