@@ -2,7 +2,7 @@
 Delirのサンプルプラグイン。
 プラグイン開発のテンプレートとしてご利用ください。
 
-[プラグインテンプレートをダウンロード](https://github.com/ra-gg/Delir/releases/download/untagged-40a78497634d1bd5f52d/plugin-template.zip)
+[プラグインテンプレートをダウンロード](https://github.com/ra-gg/Delir/releases/download/v0.5.2/plugin-template.zip)
 
 ## 開発のはじめ方
 - **事前に`Node.js`と`yarn`のインストールが必要です。**
@@ -88,16 +88,16 @@ return Type
     .colorRgba('color', {label: 'Color', defaultValue: new Delir.Values.ColorRGBA(0, 0, 0, 1)})
 ```
 
-### `async initialize(req: Delir.PreRenderRequest)`
+### `async initialize(context: Delir.PreRenderContext)`
 レンダリング開始前の初期化処理で呼ばれるメソッドです。
 画像などのファイルの読み込みはここで行います。
 
 `req`オブジェクトには、Assetなどの初期値が含まれています。
 
 ```javascript
-async initialize(req: Delir.PreRenderRequest) {
+async initialize(context: Delir.PreRenderContext) {
     // req.parameters に provideParameters メソッドで指定したパラメータ名で初期値が渡されます
-    const parameters = preRenderReq.parameters;
+    const parameters = context.parameters;
     const imageAsset = parameters.image;
 
     if (! imageAsset == null) return;
@@ -110,19 +110,19 @@ async initialize(req: Delir.PreRenderRequest) {
 }
 ```
 
-### `async render(req: RenderRequest)`
+### `async render(context: RenderContext)`
 １フレームのレンダリングを行います。
-`req`オブジェクトには`出力先のcanvas`、 `フレームレート`、`コンポジションのサイズ`、`コンポジション上の現在時間（およびフレーム番号）`、`現在のフレームのパラメータ`などが渡されます。
+`context`オブジェクトには`出力先のcanvas`、 `フレームレート`、`コンポジションのサイズ`、`コンポジション上の現在時間（およびフレーム番号）`、`現在のフレームのパラメータ`などが渡されます。
 
 ```javascript
-async render(req: RenderRequest)
+async render(context: RenderContext)
 {
     if (this.image == null) return;
 
-    const dest = req.destCanvas;
+    const dest = context.destCanvas;
     const context = dest.getContext('2d');
 
-    // req.parametersにprovideParametersメソッドで指定したパラメータ名で、現在のフレームでの値が渡されます
+    // context.parametersにprovideParametersメソッドで指定したパラメータ名で、現在のフレームでの値が渡されます
     const params = req.parameters;
 
     if (params.visibility !== false) {

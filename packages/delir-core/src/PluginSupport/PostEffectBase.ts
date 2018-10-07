@@ -1,8 +1,7 @@
-import PreRenderRequest from '../Engine/PreRenderingRequest'
-import RenderRequest from '../Engine/RenderRequest'
 
+import { EffectPreRenderContext, EffectRenderContext } from '..'
 import PluginBase from './plugin-base'
-import { ParameterValueTypes, TypeDescriptor } from './type-descriptor'
+import { TypeDescriptor } from './type-descriptor'
 
 export interface EffectPluginClass {
     new (): EffectPluginBase
@@ -17,7 +16,7 @@ export default abstract class EffectPluginBase extends PluginBase
         return new TypeDescriptor()
     }
 
-    public abstract async initialize(req: PreRenderRequest<any>): Promise<void>
+    public abstract async initialize(context: EffectPreRenderContext<any>): Promise<void>
 
-    public abstract async render(req: RenderRequest<any>): Promise<void>
+    public abstract async render(context: EffectRenderContext<any>): Promise<void>
 }

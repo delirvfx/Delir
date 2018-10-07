@@ -1,10 +1,10 @@
 import * as _ from 'lodash'
 import Type from '../../../PluginSupport/type-descriptor'
-import PreRenderingRequest from '../../PreRenderingRequest'
-import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface ImageRendererParams {
     source: Asset
@@ -66,9 +66,9 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
 
     private _image: HTMLImageElement | null = null
 
-    public async beforeRender(req: PreRenderingRequest<ImageRendererParams>)
+    public async beforeRender(context: ClipPreRenderContext<ImageRendererParams>)
     {
-        const parameters = req.parameters
+        const parameters = context.parameters
 
         if (!parameters.source) {
             this._image = null
@@ -84,12 +84,12 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
         })
     }
 
-    public async render(req: RenderingRequest<ImageRendererParams>)
+    public async render(context: ClipRenderContext<ImageRendererParams>)
     {
         if (! this._image) return
 
-        const param = req.parameters
-        const ctx = req.destCanvas.getContext('2d')!
+        const param = context.parameters
+        const ctx = context.destCanvas.getContext('2d')!
         const img = this._image
         const rad = param.rotate * Math.PI / 180
 

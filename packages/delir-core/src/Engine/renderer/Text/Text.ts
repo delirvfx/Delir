@@ -1,10 +1,9 @@
-import * as FontManager from 'font-manager'
 import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderingRequest from '../../PreRenderingRequest'
-import RenderingRequest from '../../RenderRequest'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 import ColorRGBA from '../../../Values/ColorRGBA'
@@ -29,6 +28,14 @@ export default class TextLayer implements IRenderer<TextRendererParam>
     // `getAvailableFontsSync` is very heavy, Cache returned result with _.once
     public static provideParameters = _.once((): TypeDescriptor =>
     {
+        // Delay loading for testing
+        let FontManager: any
+        try {
+            FontManager = require('font-manager')
+        } catch (e) {
+            FontManager = { getAvailableFontsSync: () => [] }
+        }
+
         const fonts = FontManager.getAvailableFontsSync()
         const families: string[] = [
             'sans-serif',
@@ -90,15 +97,15 @@ export default class TextLayer implements IRenderer<TextRendererParam>
 
     private _bufferCanvas: HTMLCanvasElement
 
-    public async beforeRender(req: PreRenderingRequest<TextRendererParam>)
+    public async beforeRender(context: ClipPreRenderContext<TextRendererParam>)
     {
         this._bufferCanvas = document.createElement('canvas')
     }
 
-    public async render(req: RenderingRequest<TextRendererParam>)
+    public async render(context: ClipRenderContext<TextRendererParam>)
     {
-        const param = req.parameters
-        const ctx = req.destCanvas.getContext('2d')!
+        const param = context.parameters
+        const ctx = context.destCanvas.getContext('2d')!
         const family = ['sans-serif', 'serif', 'cursive', 'fantasy', 'monospace'].includes(param.family) ? param.family : `"${param.family}"`
         const lineHeight = param.size * (param.lineHeight / 100)
         const rad = param.rotate * Math.PI / 180

@@ -1,58 +1,72 @@
+import { proxyDeepFreeze } from '../../helper/proxyFreeze'
 import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
-import RenderingRequest from '../RenderRequest'
+import { ClipRenderContext } from '../RenderContext/ClipRenderContext'
+import { EffectRenderContext } from '../RenderContext/EffectRenderContext'
 import { ExpressionContext } from './ExpressionVM'
 
+export interface ReferenceableEffectsParams {
+    [referenceName: string]: {
+        [paramName: string]: ParameterValueTypes
+    }
+}
+
 export interface ContextSource {
-    req: RenderingRequest
-    clipProperties: {[propName: string]: ParameterValueTypes}
+    context: ClipRenderContext<any> | EffectRenderContext<any>
+    clipParams: { [propName: string]: ParameterValueTypes }
+    clipEffectParams: ReferenceableEffectsParams
     currentValue: any
 }
 
 export const buildContext = (contextSource: ContextSource): ExpressionContext => {
-    const clipPropertyProxy = new Proxy(contextSource.clipProperties, {
-        set: () => { throw new Error('Illegal property setting in expression') }
-    })
+    const clipParamProxy = proxyDeepFreeze(contextSource.clipParams)
 
     return {
-        time                : contextSource.req.time,
-        frame               : contextSource.req.frame,
-        timeOnComposition   : contextSource.req.timeOnComposition,
-        frameOnComposition  : contextSource.req.frameOnComposition,
-        width               : contextSource.req.width,
-        height              : contextSource.req.height,
-        audioBuffer         : contextSource.req.destAudioBuffer,
-        duration            : contextSource.req.durationFrames / contextSource.req.framerate,
-        durationFrames      : contextSource.req.durationFrames,
-        clipProp            : clipPropertyProxy,
-        currentValue        : contextSource.currentValue,
+        currentValue: contextSource.currentValue,
+        thisComp: {
+            width: contextSource.context.width,
+            height: contextSource.context.height,
+            time: contextSource.context.timeOnComposition,
+            frame: contextSource.context.frameOnComposition,
+            duration: contextSource.context.durationFrames / contextSource.context.framerate,
+            durationFrames: contextSource.context.durationFrames,
+            audioBuffer: contextSource.context.destAudioBuffer,
+        },
+        thisClip: {
+            time: contextSource.context.time,
+            frame: contextSource.context.frame,
+            params: clipParamProxy,
+            effect: (referenceName: string) => {
+                const targetEffect = contextSource.clipEffectParams[referenceName]
+                if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
+                return { params: proxyDeepFreeze(targetEffect) }
+            },
+        }
     }
 }
 
 export const expressionContextTypeDefinition = `
-declare const ctx: {
-    time: number
-    frame: number
-    timeOnComposition: number
-    frameOnComposition: number
+interface CompositionAttributes {
     width: number
     height: number
-    audioBuffer: Float32Array[]
+    time: number
+    frame: number
     duration: number
     durationFrames: number
-    clipProp: {[propertyName: string]: any}
-    currentValue: any
+    audioBuffer: Float32Array[] | null
 }
 
-declare const time: number;
-declare const time: number;
-declare const frame: number;
-declare const timeOnComposition: number;
-declare const frameOnComposition: number;
-declare const width: number;
-declare const height: number;
-declare const audioBuffer: Float32Array[];
-declare const duration: number;
-declare const durationFrames: number;
-declare const clipProp: {[propertyName: string]: any};
-declare const currentValue: any;
+interface ClipAttributes {
+    time: number
+    frame: number
+    params: Readonly<{ [paramName: string]: any }>
+    effect(referenceName: string): EffectAttributes
+}
+
+interface EffectAttributes {
+    params: { [paramName: string]: any }
+}
+
+declare const thisComp: CompositionAttributes
+declare const thisClip: ClipAttributes
+declare const currentValue: any
 `

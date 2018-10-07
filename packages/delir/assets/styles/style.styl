@@ -17,7 +17,7 @@ global-reset()
         --active-pane-border rgba(#6900a8, .5)
 
         --text-color $color-text
-        --text-disabled #aaaaaa
+        --text-subbed $color-text-subbed
 
         --caption-row-background #3a3340
 
@@ -152,6 +152,9 @@ global-reset()
             border-bottom 1px solid transparent
             user-select none
             cursor default
+
+            &:focus
+                border-bottom 1px solid rgba($color-theming, .3)
 
     ._select-list
         .select-list-item

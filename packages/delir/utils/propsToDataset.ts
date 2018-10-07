@@ -1,4 +1,4 @@
-const propDataToObject = <T = any>(props: {[prop: string]: any}): { [K in keyof T]: string } => {
+export const propsToDataset = <T = any>(props: {[prop: string]: any}): { [K in keyof T]: string } => {
     const MATCHER = /^data-(.+?)$/
     const REPLACER = /(-[a-z])/g
 
@@ -13,4 +13,4 @@ const propDataToObject = <T = any>(props: {[prop: string]: any}): { [K in keyof 
     return dataset
 }
 
-export default propDataToObject
+export default propsToDataset

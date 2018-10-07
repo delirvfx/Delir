@@ -42,7 +42,7 @@ const RENDERER_SUMMARY = _.mapValues(RENDERERS, renderer => {
 }) as {[name: string]: PluginInfo}
 
 export function getAvailableRenderers() {
-    return Object.values(_.clone(RENDERER_SUMMARY))
+    return _.values(_.clone(RENDERER_SUMMARY))
 }
 
 export function getInfo(renderer: AvailableRenderer) {

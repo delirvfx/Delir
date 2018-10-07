@@ -113,6 +113,7 @@ export default class RendererStore extends Store<State> {
             beginFrame: payload.beginFrame,
             loop: true,
             ignoreMissingEffect: payload.ignoreMissingEffect,
+            realtime: true,
         })
 
         promise.progress(progress => {
@@ -124,8 +125,6 @@ export default class RendererStore extends Store<State> {
                 // EditorOps.updateProcessingState('Stop.')
                 return
             }
-
-            console.error(e)
         })
     })
 
@@ -141,7 +140,10 @@ export default class RendererStore extends Store<State> {
             onFrame: canvas => this.destCanvasCtx!.drawImage(canvas, 0, 0)
         })
 
-        this.pipeline!.renderFrame(targetComposition.id, frame).catch(e => console.error(e))
+        this.pipeline!.renderFrame(targetComposition.id, frame).catch(e => {
+            // tslint:disable-next-line
+            console.error(e)
+        })
     })
 
     private handleRenderDestinate = listen(EditorActions.renderDestinateAction, async (payload) => {

@@ -2,11 +2,11 @@ import * as _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
-import PreRenderingRequest from '../../PreRenderingRequest'
-import RenderingRequest from '../../RenderRequest'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
+import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
+import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface VideoRendererParam {
     source: Asset
@@ -73,11 +73,11 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 
     private _video: HTMLVideoElement
 
-    public async beforeRender(req: PreRenderingRequest<VideoRendererParam>)
+    public async beforeRender(context: ClipPreRenderContext<VideoRendererParam>)
     {
-        const parameters = req.parameters as any
+        const parameters = context.parameters as any
 
-        if (req.parameters.source == null) {
+        if (context.parameters.source == null) {
             return
         }
 
@@ -103,14 +103,14 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
         })
     }
 
-    public async render(req: RenderingRequest<VideoRendererParam>)
+    public async render(context: ClipRenderContext<VideoRendererParam>)
     {
-        if (!req.parameters.source) {
+        if (!context.parameters.source) {
             return
         }
 
-        const param = req.parameters
-        const ctx = req.destCanvas.getContext('2d')!
+        const param = context.parameters
+        const ctx = context.destCanvas.getContext('2d')!
         const video = this._video
 
         await new Promise((resolve, reject) => {
@@ -118,7 +118,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
             video.addEventListener('seeked', waiter, {once: true} as any)
             setTimeout(waiter, 1000)
 
-            const time = param.offsetTime + req.timeOnClip
+            const time = param.offsetTime + context.timeOnClip
             video.currentTime = param.loop ? time % video.duration : time
         })
 

@@ -4,18 +4,31 @@ interface ExpressionVMOption {
     filename?: string
 }
 
-export interface ExpressionContext {
-    time: number
-    frame: number
-    timeOnComposition: number
-    frameOnComposition: number
+interface CompositionAttributes {
     width: number
     height: number
-    audioBuffer: Float32Array[] | null
+    time: number
+    frame: number
     duration: number
     durationFrames: number
-    clipProp: { [paramName: string]: any }
+    audioBuffer: Float32Array[] | null
+}
+
+interface ClipAttributes {
+    time: number
+    frame: number
+    params: Readonly<{ [paramName: string]: any }>
+    effect(referenceName: string): EffectAttributes
+}
+
+interface EffectAttributes {
+    params: { [paramName: string]: any }
+}
+
+export interface ExpressionContext {
     currentValue: any
+    thisComp: CompositionAttributes
+    thisClip: ClipAttributes
 }
 
 export default class ExpressionVM {
@@ -26,7 +39,6 @@ export default class ExpressionVM {
     ): Result {
         const vmGlobal = Object.freeze({
             console: global.console,
-            ctx: context,
             ...context
         })
 
