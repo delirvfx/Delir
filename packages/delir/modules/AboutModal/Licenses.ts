@@ -97,6 +97,10 @@ export const dependencies = [
         'url': 'https://www.npmjs.com/package/@types/react-sortable-hoc'
     },
     {
+        'name': '@types/react-tabs',
+        'url': 'https://www.npmjs.com/package/@types/react-tabs'
+    },
+    {
         'name': '@types/react-transition-group',
         'url': 'https://www.npmjs.com/package/@types/react-transition-group'
     },
@@ -315,6 +319,10 @@ export const dependencies = [
     {
         'name': 'react-sortable-hoc',
         'url': 'https://github.com/clauderic/react-sortable-hoc'
+    },
+    {
+        'name': 'react-tabs',
+        'url': 'https://github.com/reactjs/react-tabs'
     },
     {
         'name': 'react-test-renderer',

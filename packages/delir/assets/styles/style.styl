@@ -16,12 +16,12 @@ global-reset()
         --pane-border-color rgba(#222, .9)
         --active-pane-border rgba(#6900a8, .5)
 
-        --text-color #fff
+        --text-color $color-text
         --text-disabled #aaaaaa
 
         --caption-row-background #3a3340
 
-        --accent-color #9310c8
+        --color-theming $color-theming
     }
 
     html, body
@@ -144,7 +144,7 @@ global-reset()
         outline none
 
         border none
-        border-bottom 1px solid var(--accent-color)
+        border-bottom 1px solid var(--color-theming)
 
         transition border-bottom-color .1s
 
