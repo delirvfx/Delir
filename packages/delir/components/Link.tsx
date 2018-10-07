@@ -8,10 +8,11 @@ const openExternal = (e: React.MouseEvent<HTMLAnchorElement>) => {
 
 interface Props {
     href: string
+    className?: string
     children: React.ReactChild
 }
 
 export default (props: Props) => {
-    const {href, children} = props
-    return <a href={href} onClick={openExternal}>{children}</a>
+    const {href, className, children} = props
+    return <a href={href} className={className} onClick={openExternal}>{children}</a>
 }

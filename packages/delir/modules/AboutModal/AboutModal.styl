@@ -1,4 +1,5 @@
 @import '../../assets/styles/_variables'
+@import '../../assets/styles/_mixins'
 
 .AboutModal
     width 800px
@@ -37,6 +38,38 @@
         display inline-block
         float left
 
-    .AboutModal_Closer
-        margin-top 16px
-        float right
+.tabList
+    margin-bottom 16px
+
+.tab
+    display inline-block
+    padding 4px 0
+    border-bottom 1px solid transparent
+    transition-property border-bottom
+    transition-duration $animate-bgcolor-duration
+    transition-timing-function $animate-function
+
+    + .tab
+        margin-left 16px
+
+.tabSelected
+    border-bottom 1px solid var(--color-theming)
+
+.licensesTitle
+    margin-bottom 8px
+
+.licenseContainer
+    thin-scrollbar()
+
+    max-height 30vh
+    overflow auto
+
+.licenseList
+    column-count 2
+
+.licenseLink
+    display block
+
+.close
+    margin-top 16px
+    float right

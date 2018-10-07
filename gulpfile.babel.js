@@ -15,7 +15,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const path = require('path')
 const {join} = require("path");
-const {spawn} = require("child_process");
+const {spawn, spawnSync} = require("child_process");
 
 const NATIVE_MODULES = ['font-manager'];
 
@@ -24,6 +24,7 @@ const paths = {
         root        : join(__dirname, "./packages/"),
         plugins     : join(__dirname, './packages/post-effect-plugins'),
         frontend    : join(__dirname, "./packages/delir/"),
+        core: join(__dirname, './packages/delir-core/')
     },
     compiled    : {
         root        : join(__dirname, "./prepublish/"),
@@ -158,6 +159,34 @@ export async function downloadAndDeployFFmpeg() {
         await fs.copy(join(downloadDir, dirname, 'bin', binFile), binDist)
         await fs.copy(join(downloadDir, dirname, 'LICENSE.txt'), licenseDist)
     }))
+}
+
+export async function generateLicenses() {
+    const destination = join(paths.src.frontend, '/modules/AboutModal/Licenses.ts')
+
+    const jsons = [
+        JSON.parse(await fs.readFile(join(__dirname, 'package.json'), { encoding: 'UTF-8' })),
+        JSON.parse(await fs.readFile(join(paths.src.frontend, 'package.json'), { encoding: 'UTF-8' })),
+        JSON.parse(await fs.readFile(join(paths.src.core, 'package.json'), { encoding: 'UTF-8' })),
+    ]
+
+    const deps = jsons.reduce((deps, json) => ({...deps, ...json.dependencies, ...json.devDependencies }), {})
+    const sorted = Object.entries(deps).sort((a, b) => {
+        return a[0] < b[0] ? -1
+            : a[0] > b[0] ? 1
+            : 0
+    })
+
+    const entries = sorted.map(([name]) => {
+        const json = require(require.resolve(`${name}/package.json`, {
+            paths: [　__dirname,　paths.src.frontend,　paths.src.core　]
+        }))
+
+        return { name, url: json.homepage || `https://www.npmjs.com/package/${name}` }
+    })
+
+    const content = `// This is auto generated file\nexport const dependencies = ${JSON.stringify(entries, null, 4)}\n`
+    await fs.writeFile(destination, content)
 }
 
 export function compileRendererJs(done) {
@@ -481,7 +510,7 @@ export function watch() {
 }
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, copyImage);
-const buildRenderer = g.parallel(g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, copyImage);
+const buildRenderer = g.parallel(g.series(generateLicenses, compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)), compilePugTempates, copyImage);
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules));
 const build = g.parallel(buildRenderer, buildBrowser);
 const buildAndWatch = g.series(clean, build, run, watch);
