@@ -49,10 +49,6 @@ export const dependencies = [
         'url': 'https://www.npmjs.com/package/@types/electron'
     },
     {
-        'name': '@types/flux',
-        'url': 'https://www.npmjs.com/package/@types/flux'
-    },
-    {
         'name': '@types/fs-extra',
         'url': 'https://www.npmjs.com/package/@types/fs-extra'
     },
@@ -179,10 +175,6 @@ export const dependencies = [
     {
         'name': 'file-loader',
         'url': 'https://github.com/webpack-contrib/file-loader'
-    },
-    {
-        'name': 'flux',
-        'url': 'http://facebook.github.io/flux/'
     },
     {
         'name': 'font-manager',
