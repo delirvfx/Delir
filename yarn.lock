@@ -757,9 +757,9 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-transition-group@2.0.14":
-  version "2.0.14"
-  resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-2.0.14.tgz#afd0cd785a97f070b55765e9f9d76ff568269001"
+"@types/react-transition-group@1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-1.1.2.tgz#a349e70788a6dc723a5f439217011ef926c27b4f"
   dependencies:
     "@types/react" "*"
 

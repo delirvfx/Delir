@@ -30,6 +30,7 @@
     "@ragg/deream": "*",
     "@ragg/fleur": "0.0.5",
     "@ragg/fleur-react": "0.0.7",
+    "@types/react-transition-group": "1.1.2",
     "classnames": "2.2.6",
     "form-serialize": "0.7.2",
     "fs-extra": "7.0.0",
