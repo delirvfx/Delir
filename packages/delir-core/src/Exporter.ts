@@ -32,7 +32,7 @@ export const serializeEntity = (node: any): any => {
     }
 
     for (const label of Object.keys(typeMap)) {
-        if (node instanceof typeMap[label]) {
+        if (node instanceof (typeMap as any)[label]) {
             return {
                 __type: label,
                 __value: _.mapValues(node, serializeEntity),
@@ -61,7 +61,7 @@ export const deserializeEntity = (node: any): any => {
 
     for (const label of Object.keys(typeMap)) {
         if (node.__type === label) {
-            const instance = new typeMap[label]()
+            const instance = new (typeMap as any)[label]()
             return Object.assign(instance, _.mapValues(node.__value, deserializeEntity))
         }
     }
