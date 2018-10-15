@@ -5,3 +5,4 @@ export {default as PluginAssertionFailedException} from './plugin-assertion-fail
 export {default as RenderingFailedException} from './rendering-failed-exception'
 export {default as RenderingAbortedException} from './rendering-aborted-exception'
 export {default as EffectPluginMissingException} from './EffectPluginMissingException'
+export { UserCodeException } from './UserCodeException'

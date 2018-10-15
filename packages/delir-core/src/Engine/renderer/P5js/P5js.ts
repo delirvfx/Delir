@@ -2,6 +2,7 @@ import * as _ from 'lodash'
 import * as VM from 'vm'
 import P5Hooks from './P5Hooks'
 
+import { UserCodeException } from '../../../Exceptions/UserCodeException'
 import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
 import Type from '../../../PluginSupport/type-descriptor'
 import Expression from '../../../Values/Expression'
@@ -77,7 +78,18 @@ export default class P5jsRenderer implements IRenderer<Params>
         this.p5ex.p5.createCanvas(context.width, context.height)
 
         if (typeof this.vmGlobal.setup === 'function') {
-            this.vmGlobal.setup()
+            try {
+                this.vmGlobal.setup()
+            } catch (e) {
+                throw new UserCodeException('msg', {
+                    sourceError: e,
+                    location: {
+                        type: 'clip',
+                        entityId: context.clip.id,
+                        paramName: 'sketch',
+                    }
+                })
+            }
         }
     }
 
@@ -92,7 +104,19 @@ export default class P5jsRenderer implements IRenderer<Params>
         })
 
         this.vmExposedVariables = this.makeVmExposeVariables(context)
-        this.vmGlobal.draw && this.vmGlobal.draw()
+
+        try {
+            this.vmGlobal.draw && this.vmGlobal.draw()
+        } catch (e) {
+            throw new UserCodeException('msg', {
+                sourceError: e,
+                location: {
+                    type: 'clip',
+                    entityId: context.clip.id,
+                    paramName: 'sketch',
+                }
+            })
+        }
 
         const ctx = context.destCanvas.getContext('2d')!
         ctx.globalAlpha = _.clamp(context.parameters.opacity, 0, 100) / 100

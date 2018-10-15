@@ -51,6 +51,7 @@ export default class EffectRenderTask {
 
     public async initialize(context: RenderContextBase, referenceableEffectParams: ReferenceableEffectsParams) {
         const preRenderReq = context.toEffectPreRenderContext({
+            effect: this.effectEntity,
             parameters: this.keyframeTable.initialParams,
             clipEffectParams: referenceableEffectParams,
         })

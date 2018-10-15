@@ -391,6 +391,7 @@ export default class Engine
                 const frameOnClip = context.frame - clipTask.clipPlacedFrame
 
                 const clipRenderContext = context.toClipRenderContext({
+                    clip: clipTask.clipEntity,
                     timeOnClip,
                     frameOnClip,
 
@@ -426,6 +427,7 @@ export default class Engine
                 // Post process effects
                 for (const effectTask of clipTask.effectRenderTasks) {
                     const effectRenderContext = context.toEffectRenderContext({
+                        effect: effectTask.effectEntity,
                         timeOnClip,
                         frameOnClip,
 
