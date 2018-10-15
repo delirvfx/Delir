@@ -1,5 +1,5 @@
 import { Clip, Composition, Effect, Layer, Project } from '../../Entity'
-import { EffectPluginMissingException } from '../../exceptions'
+import { EffectPluginMissingException } from '../../Exceptions'
 import PluginRegistry from '../../PluginSupport/plugin-registry'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
 import DependencyResolver from '../DependencyResolver'

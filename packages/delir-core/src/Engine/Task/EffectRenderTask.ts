@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 
 import { Clip, Effect } from '../../Entity'
-import { EffectPluginMissingException } from '../../exceptions'
+import { EffectPluginMissingException } from '../../Exceptions'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
 import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
 import DependencyResolver from '../DependencyResolver'

@@ -1,5 +1,5 @@
 import * as Engine from './Engine'
-import * as Exceptions from './exceptions'
+import * as Exceptions from './Exceptions'
 import * as PluginSupport from './PluginSupport'
 import * as Values from './Values'
 

@@ -9,7 +9,7 @@ import PluginRegistry from '../PluginSupport/plugin-registry'
 
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
-import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../exceptions/'
+import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'
