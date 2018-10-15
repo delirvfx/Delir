@@ -15,6 +15,10 @@ interface ConnectedProps {
     editor: EditorState
 }
 
+interface State {
+    devToolsFocused: boolean
+}
+
 type Props = ConnectedProps & ContextProp
 
 const isSelectionInputElement = (el: Element) => {
@@ -24,8 +28,22 @@ const isSelectionInputElement = (el: Element) => {
 
 export default withComponentContext(connectToStores([EditorStore], (context) => ({
     editor: context.getStore(EditorStore).getState()
-}))(class AppMenu extends React.Component<Props> {
+}))(class AppMenu extends React.Component<Props, State> {
+    public state: State = {
+        devToolsFocused: false
+    }
+
     public componentDidMount() {
+        const {webContents} = Electron.remote.getCurrentWindow()
+
+        window.addEventListener('focus', () => {
+            this.setState({ devToolsFocused: false })
+        })
+
+        webContents.on('devtools-focused', () => {
+            this.setState({ devToolsFocused: true })
+        })
+
         this.setApplicationMenu()
     }
 
@@ -33,9 +51,10 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         this.setApplicationMenu()
     }
 
-    public shouldComponentUpdate(nextProps: Props) {
+    public shouldComponentUpdate(nextProps: Props, nextState: State) {
         return nextProps.editor.previewPlayed !== this.props.editor.previewPlayed
             || nextProps.editor.activeComp !== this.props.editor.activeComp
+            || nextState.devToolsFocused !== this.state.devToolsFocused
     }
 
     public render()
@@ -46,6 +65,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
     private setApplicationMenu()
     {
         const {context} = this.props
+        const {devToolsFocused} = this.state
         const {previewPlayed, activeComp} = this.props.editor
         const menu: Electron.MenuItemConstructorOptions[] = []
 
@@ -175,16 +195,19 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                     label: t('edit.cut'),
                     accelerator: 'CmdOrCtrl+X',
                     click: this.handleCut,
+                    ...(devToolsFocused ? { role: 'cut' } : {})
                 },
                 {
                     label: t('edit.copy'),
                     accelerator: 'CmdOrCtrl+C',
                     click: this.handleCopy,
+                    ...(devToolsFocused ? { role: 'copy' } : {})
                 },
                 {
                     label: t('edit.paste'),
                     accelerator: 'CmdOrCtrl+V',
                     click: this.handlePaste,
+                    ...(devToolsFocused ? { role: 'paste' } : {})
                 },
                 {
                     label: t('edit.selectAll'),
