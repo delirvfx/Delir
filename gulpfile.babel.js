@@ -10,6 +10,7 @@ const nib = require('nib');
 const notifier = require('node-notifier');
 const download = require('download')
 const zipDir = require('zip-dir')
+const TypeScript = require('typescript')
 
 const os = require('os')
 const fs = require('fs-extra')

@@ -1,0 +1,21 @@
+{
+  "name": "@ragg/deshape",
+  "version": "0.0.0",
+  "description": "Stand alone svg shape editor",
+  "main": "index.js",
+  "author": "ragg<ragg.devpr@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn start:build & yarn start:tsc & yarn start:server",
+    "start:tsc": "tsc --watch",
+    "start:build": "webpack --mode development --watch",
+    "start:server": "koko -p example -o -P 9000"
+  },
+  "devDependencies": {
+    "@types/webpack": "4.4.16",
+    "koko": "0.6.0",
+    "ts-node": "7.0.1",
+    "webpack": "4.20.2",
+    "webpack-cli": "3.1.2"
+  }
+}
