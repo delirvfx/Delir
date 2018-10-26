@@ -269,7 +269,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
     private handleCopy = () => {
         const {activeElement} = document
 
-        if (isSelectionInputElement(activeElement)) {
+        if (isSelectionInputElement(activeElement!)) {
             document.execCommand('copy')
         } else {
             GlobalEvents.emit(GlobalEvent.copyViaApplicationMenu, {})
@@ -279,7 +279,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
     private handleCut = () => {
         const {activeElement} = document
 
-        if (isSelectionInputElement(activeElement)) {
+        if (isSelectionInputElement(activeElement!)) {
             document.execCommand('cut')
         } else {
             GlobalEvents.emit(GlobalEvent.cutViaApplicationMenu, {})
