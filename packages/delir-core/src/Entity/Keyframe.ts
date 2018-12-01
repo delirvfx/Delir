@@ -26,14 +26,14 @@ class Keyframe<T extends KeyframeValueTypes = KeyframeValueTypes> implements Key
     public frameOnClip: number
 
     /**
-     * right top is [1, 1]
+     * right top is [1, 1] ([x, y])
      *     ◇ < previous keyframe to this keyframe
      * ◇───┘ < ease-in
      */
     public easeInParam: [number, number] = [1, 1]
 
     /**
-     * left bottom is [0, 0]
+     * left bottom is [0, 0] ([x, y])
      *     ◇ < next keyframe
      * ◇───┘ < this keyframe to next keyframe, ease-out
      */
@@ -55,12 +55,12 @@ class Keyframe<T extends KeyframeValueTypes = KeyframeValueTypes> implements Key
 
         this.easeInParam = [
             clamp(this.easeInParam[0], 0, 1),
-            clamp(this.easeInParam[1], 0, 1),
+            this.easeInParam[1]
         ]
 
         this.easeOutParam = [
             clamp(this.easeOutParam[0], 0, 1),
-            clamp(this.easeOutParam[1], 0, 1),
+            this.easeOutParam[1],
         ]
     }
 
