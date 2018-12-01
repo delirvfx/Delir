@@ -25,13 +25,13 @@ export class Project implements ProjectProps {
         this.assets = [...this.assets, asset]
     }
 
-    public removeAsset(assetId: Asset.Id): boolean {
+    public removeAsset(assetId: string): boolean {
         const beforeLength = this.assets.length
         this.assets = this.assets.filter(asset => asset.id !== assetId)
         return this.assets.length !== beforeLength
     }
 
-    public findComposition(compositionId: Composition.Id): Composition | null {
+    public findComposition(compositionId: string): Composition | null {
         return this.compositions.find(composition => composition.id === compositionId) || null
     }
 
@@ -44,13 +44,13 @@ export class Project implements ProjectProps {
         return true
     }
 
-    public removeComposition(compositionId: Composition.Id): boolean {
+    public removeComposition(compositionId: string): boolean {
         const beforeLength = this.compositions.length
         this.compositions = this.compositions.filter(composition => composition.id !== compositionId)
         return this.compositions.length !== beforeLength
     }
 
-    public findLayer(layerId: Layer.Id): Layer | null {
+    public findLayer(layerId: string): Layer | null {
         for (const composition of this.compositions) {
             const layer = composition.findLayer(layerId)
             if (layer) return layer
@@ -59,7 +59,7 @@ export class Project implements ProjectProps {
         return null
     }
 
-    public findClip(clipId: Clip.Id): Clip | null {
+    public findClip(clipId: string): Clip | null {
         for (const composition of this.compositions) {
             for (const layer of composition.layers) {
                 const clip = layer.findClip(clipId)
@@ -70,7 +70,7 @@ export class Project implements ProjectProps {
         return null
     }
 
-    public findLayerOwnerComposition(layerId: Layer.Id): Composition | null {
+    public findLayerOwnerComposition(layerId: string): Composition | null {
         for (const composition of this.compositions) {
             if (composition.findLayer(layerId)) {
                 return composition
@@ -80,11 +80,25 @@ export class Project implements ProjectProps {
         return null
     }
 
-    public findClipOwnerLayer(clipId: Clip.Id): Layer | null {
+    public findClipOwnerLayer(clipId: string): Layer | null {
         for (const composition of this.compositions) {
             for (const layer of composition.layers) {
                 if (layer.findClip(clipId)) {
                     return layer
+                }
+            }
+        }
+
+        return null
+    }
+
+    public findEffectOwnerClip(effectId: string): Clip | null {
+        for (const composition of this.compositions) {
+            for (const layer of composition.layers) {
+                for (const clip of layer.clips) {
+                    if (clip.findEffect(effectId)) {
+                        return clip
+                    }
                 }
             }
         }

@@ -25,7 +25,7 @@ class Layer implements LayerProps {
         safeAssign(this, props)
     }
 
-    public findClip(clipId: Clip.Id): Clip | null {
+    public findClip(clipId: string): Clip | null {
         return this.clips.find(clip => clip.id === clipId) || null
     }
 
@@ -48,13 +48,13 @@ class Layer implements LayerProps {
         return true
     }
 
-    public removeClip(clipId: Clip.Id): boolean {
+    public removeClip(clipId: string): boolean {
         const beforeLength = this.clips.length
         this.clips = this.clips.filter(clip => clip.id !== clipId)
         return this.clips.length !== beforeLength
     }
 
-    public moveClipIntoLayer(clipId: Clip.Id, destLayer: Layer): boolean {
+    public moveClipIntoLayer(clipId: string, destLayer: Layer): boolean {
         const clip = this.findClip(clipId)
         if (!clip) return false
 

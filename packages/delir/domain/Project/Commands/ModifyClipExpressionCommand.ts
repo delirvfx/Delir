@@ -8,7 +8,7 @@ import { ProjectActions } from '../actions'
 
 export class ModifyClipExpressionCommand implements Command {
     constructor(
-        private targetClipId: Delir.Entity.Clip.Id,
+        private targetClipId: string,
         private paramName: string,
         private previousValue: Delir.Values.Expression | null,
         private nextValue: Delir.Values.Expression,

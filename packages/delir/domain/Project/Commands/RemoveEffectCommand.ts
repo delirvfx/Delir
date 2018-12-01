@@ -7,7 +7,7 @@ import { ProjectActions } from '../actions'
 
 export class RemoveEffectCommand implements Command {
     constructor(
-        private holderClipId: Delir.Entity.Clip.Id,
+        private holderClipId: string,
         private removedEffect: Delir.Entity.Effect,
         private beforeRemoveIndex: number,
     ) {}

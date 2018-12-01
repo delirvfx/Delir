@@ -7,8 +7,8 @@ import { ProjectActions } from '../actions'
 
 export class AddEffectKeyframeCommand implements Command {
     constructor(
-        private targetClipId: Delir.Entity.Clip.Id,
-        private targetEffectId: Delir.Entity.Effect.Id,
+        private targetClipId: string,
+        private targetEffectId: string,
         private paramName: string,
         private addedKeyframe: Delir.Entity.Keyframe
     ) {}

@@ -5,7 +5,7 @@ export class Animatable {
     public keyframes: { [paramName: string]: ReadonlyArray<Keyframe> } = Object.create(null)
     public expressions: { [paramName: string]: Expression } = Object.create(null)
 
-    public findKeyframe(keyframeId: Keyframe.Id): Keyframe | null {
+    public findKeyframe(keyframeId: string): Keyframe | null {
         for (const paramName of Object.keys(this.keyframes)) {
             const keyframe = this.keyframes[paramName].find(keyframe => keyframe.id === keyframeId)
             if (keyframe) return keyframe

@@ -7,7 +7,7 @@ import { ProjectActions } from '../actions'
 
 export class AddKeyframeCommand implements Command {
     constructor(
-        private targetClipId: Delir.Entity.Clip.Id,
+        private targetClipId: string,
         private paramName: string,
         private addedKeyframe: Delir.Entity.Keyframe
     ) {}

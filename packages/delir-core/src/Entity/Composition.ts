@@ -42,7 +42,7 @@ class Composition implements CompositionProps {
         safeAssign(this, props)
     }
 
-    public findLayer(layerId: Layer.Id): Layer | null {
+    public findLayer(layerId: string): Layer | null {
         return this.layers.find(layer => layer.id === layerId) || null
     }
 
@@ -55,13 +55,13 @@ class Composition implements CompositionProps {
         this.layers = [...this.layers].splice(index, 0, layer)
     }
 
-    public removeLayer(layerId: Layer.Id): boolean {
+    public removeLayer(layerId: string): boolean {
         const beforeLength = this.layers.length
         this.layers = this.layers.filter(layer => layer.id !== layerId)
         return this.layers.length !== beforeLength
     }
 
-    public moveLayerIndex(layerId: Layer.Id, newIndex: number): boolean {
+    public moveLayerIndex(layerId: string, newIndex: number): boolean {
         const index = this.layers.findIndex(layer => layer.id === layerId)
         if (index === -1) return false
 

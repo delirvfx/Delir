@@ -33,7 +33,7 @@ class Clip extends Animatable implements ClipProps {
         safeAssign(this, props)
     }
 
-    public findEffect(effectId: Effect.Id): Effect | null {
+    public findEffect(effectId: string): Effect | null {
         return this.effects.find(effect => effect.id === effectId) || null
     }
 
@@ -46,13 +46,13 @@ class Clip extends Animatable implements ClipProps {
         this.effects = [...this.effects].splice(index, 0, effect)
     }
 
-    public removeEffect(effectId: Effect.Id): boolean {
+    public removeEffect(effectId: string): boolean {
         const beforeLength = this.effects.length
         this.effects = this.effects.filter(effect => effect.id !== effectId)
         return this.effects.length !== beforeLength
     }
 
-    public moveEffectIndex(effectId: Effect.Id, newIndex: number): boolean {
+    public moveEffectIndex(effectId: string, newIndex: number): boolean {
         const index = this.effects.findIndex(effect => effect.id === effectId)
         if (index === -1) return false
 
