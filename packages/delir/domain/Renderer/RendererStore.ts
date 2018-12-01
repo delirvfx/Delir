@@ -1,5 +1,4 @@
 import * as Delir from '@ragg/delir-core'
-import { ProjectHelper } from '@ragg/delir-core'
 import deream, { RenderingProgress } from '@ragg/deream'
 import { listen, Store } from '@ragg/fleur'
 import { remote } from 'electron'
@@ -49,11 +48,12 @@ export default class RendererStore extends Store<State> {
         this.updateWith(d => { d.project = payload.project })
     })
 
-    private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, (payload) => {
-        if (!this.state.project) return
+    private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, ({compositionId}) => {
+        const {project } = this.state
+        if (!project) return
 
         this.updateWith(d => {
-            d.composition = ProjectHelper.findCompositionById(this.state.project!, payload.compositionId)
+            d.composition = project.findComposition(compositionId)
         })
 
         // renderer.stop()
@@ -68,11 +68,11 @@ export default class RendererStore extends Store<State> {
         this.destCanvasCtx = this.destCanvas.getContext('2d')!
     })
 
-    private handleStartPreveiew = listen(EditorActions.startPreviewAction, (payload) => {
+    private handleStartPreveiew = listen(EditorActions.startPreviewAction, ({compositionId, beginFrame, ignoreMissingEffect}) => {
         if (!this.state.project || !this.state.composition || !this.destCanvas || !this.destCanvasCtx) return
 
         const {project} = this.state
-        const targetComposition = ProjectHelper.findCompositionById(project, payload.compositionId)
+        const targetComposition = project.findComposition(compositionId)
         if (!targetComposition) return
 
         if (this.audioContext) {
@@ -110,9 +110,9 @@ export default class RendererStore extends Store<State> {
         })
 
         const promise = this.pipeline.renderSequencial(targetComposition.id, {
-            beginFrame: payload.beginFrame,
+            beginFrame: beginFrame,
             loop: true,
-            ignoreMissingEffect: payload.ignoreMissingEffect,
+            ignoreMissingEffect: ignoreMissingEffect,
             realtime: true,
         })
 

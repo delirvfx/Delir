@@ -1,5 +1,4 @@
 import * as Delir from '@ragg/delir-core'
-import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
 
 import { ProjectActions } from '../Project/actions'
@@ -49,6 +48,7 @@ export default class EditorStore extends Store<EditorState> {
     }
 
     private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
+        // tslint:disable-next-line:no-console
         __DEV__ && console.log('✨ Project activated', payload.project)
 
         this.updateWith(draft => {
@@ -75,14 +75,14 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     private handleRemoveLayer = listen(ProjectActions.removeLayerAction, ({ targetLayerId }) => {
-        const { activeClip } = this.state
+        const { activeClip, project } = this.state
         if (!activeClip) return
         if (!this.state.project) return
 
-        const clipContainedLayer = ProjectHelper.findParentLayerByClipId(this.state.project, activeClip.id)
+        const clipOwnedLayer = project!.findClipOwnerLayer(activeClip.id)
 
         // Reset selected clip if removed layer contains selected clip
-        clipContainedLayer && this.updateWith(d => {
+        clipOwnedLayer && this.updateWith(d => {
             d.activeClip = null
             d.activeParam = null
         })
@@ -107,7 +107,7 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     private handlesetDragEntity = listen(EditorActions.setDragEntityAction, (payload) => {
-        this.updateWith(d => d.dragEntity = payload)
+        this.updateWith(d => d.dragEntity = payload as DragEntity)
     })
 
     private handleclearDragEntity = listen(EditorActions.clearDragEntityAction, () => {
@@ -115,10 +115,11 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, ({ compositionId }) => {
-        if (this.state.project == null) return
+        const {project, activeComp} = this.state
+        if (project == null) return
 
-        const comp = ProjectHelper.findCompositionById(this.state.project, compositionId)!
-        if (this.state.activeComp && comp.id === this.state.activeComp.id) return
+        const comp = project.findComposition(compositionId)!
+        if (activeComp && comp.id === activeComp.id) return
 
         this.updateWith(d => {
             d.activeComp = comp
@@ -128,9 +129,10 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     private handleChangeActiveClip = listen(EditorActions.changeActiveClipAction, (payload) => {
-        if (this.state.project == null) return
+        const { project } = this.state
+        if (project == null) return
 
-        const clip = ProjectHelper.findClipById(this.state.project, payload.clipId)
+        const clip = project.findClip(payload.clipId)
         this.updateWith(d => {
             d.activeClip = clip
             d.activeParam = null
@@ -138,13 +140,14 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     private handleChangeActiveParam = listen(EditorActions.changeActiveParamAction, ({target}) => {
-        if (this.state.project == null) return
+        const {project} = this.state
+        if (project == null) return
 
         this.updateWith(draft => {
             if (target) {
                 const clip = target.type === 'clip'
-                    ? ProjectHelper.findClipById(this.state.project!, target.entityId)!
-                    : ProjectHelper.findClipFromEffectId(this.state.project!, target.entityId)!
+                    ? project.findClip(target.entityId)
+                    : project.findEffectOwnerClip(target.entityId)
 
                 draft.activeClip = clip
             }

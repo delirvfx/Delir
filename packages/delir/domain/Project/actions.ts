@@ -6,11 +6,11 @@ export const ProjectActions = {
         composition: Delir.Entity.Composition
     }>(),
     addClipAction: action<{
-        targetLayerId: Delir.Entity.Layer.Id,
+        targetLayerId: string,
         newClip: Delir.Entity.Clip
     }>(),
     addLayerAction: action<{
-        targetCompositionId: Delir.Entity.Composition.Id,
+        targetCompositionId: string,
         layer: Delir.Entity.Layer
     }>(),
     addLayerWithAssetAction: action<{
@@ -23,94 +23,94 @@ export const ProjectActions = {
         asset: Delir.Entity.Asset
     }>(),
     addKeyframeAction: action<{
-        targetClipId: Delir.Entity.Clip.Id,
+        targetClipId: string,
         paramName: string,
         keyframe: Delir.Entity.Keyframe
     }>(),
     addEffectIntoClipAction: action<{
-        clipId: Delir.Entity.Clip.Id,
+        clipId: string,
         effect: Delir.Entity.Effect,
         index?: number | null
     }>(),
     addEffectKeyframeAction: action<{
-        targetClipId: Delir.Entity.Clip.Id,
-        targetEffectId: Delir.Entity.Effect.Id,
+        targetClipId: string,
+        targetEffectId: string,
         paramName: string,
         keyframe: Delir.Entity.Keyframe
     }>(),
     moveClipToLayerAction: action<{
-        destLayerId: Delir.Entity.Layer.Id,
-        clipId: Delir.Entity.Clip.Id
+        destLayerId: string,
+        clipId: string
     }>(),
     modifyCompositionAction: action<{
-        targetCompositionId: Delir.Entity.Composition.Id,
+        targetCompositionId: string,
         patch: Partial<Delir.Entity.Composition>
     }>(),
     modifyLayerAction: action<{
-        targetLayerId: Delir.Entity.Layer.Id,
+        targetLayerId: string,
         patch: Partial<Delir.Entity.Layer>
     }>(),
     modifyClipAction: action<{
-        targetClipId: Delir.Entity.Clip.Id,
+        targetClipId: string,
         patch: Partial<Delir.Entity.Clip>
     }>(),
     modifyEffectAction: action<{
-        parentClipId: Delir.Entity.Clip.Id,
-        targetEffectId:  Delir.Entity.Effect.Id,
+        parentClipId: string,
+        targetEffectId:  string,
         patch: Partial<Delir.Entity.Effect>
     }>(),
     modifyClipExpressionAction: action<{
-        targetClipId: Delir.Entity.Clip.Id,
+        targetClipId: string,
         targetParamName: string,
         expression: Delir.Values.Expression | null
     }>(),
     modifyEffectExpressionAction: action<{
-        targetClipId: Delir.Entity.Clip.Id,
-        targetEffectId:  Delir.Entity.Effect.Id,
+        targetClipId: string,
+        targetEffectId:  string,
         paramName: string,
         expression: Delir.Values.Expression | null
     }>(),
     modifyKeyframeAction: action<{
-        parentClipId: Delir.Entity.Clip.Id,
-        targetKeyframeId: Delir.Entity.Keyframe.Id,
+        parentClipId: string,
+        targetKeyframeId: string,
         patch: Partial<Delir.Entity.Keyframe>
     }>(),
     modifyEffectKeyframeAction: action<{
-        targetClipId: Delir.Entity.Clip.Id,
-        effectId: Delir.Entity.Effect.Id,
-        targetKeyframeId: Delir.Entity.Keyframe.Id,
+        targetClipId: string,
+        effectId: string,
+        targetKeyframeId: string,
         patch: Partial<Delir.Entity.Keyframe>
     }>(),
     moveLayerOrderAction: action<{
-        parentCompositionId: Delir.Entity.Composition.Id,
-        targetLayerId: Delir.Entity.Layer.Id,
+        parentCompositionId: string,
+        targetLayerId: string,
         newIndex: number
     }>(),
     removeCompositionAction: action<{
-        targetCompositionId: Delir.Entity.Composition.Id
+        targetCompositionId: string
     }>(),
     removeLayerAction: action<{
-        targetLayerId: Delir.Entity.Layer.Id
+        targetLayerId: string
     }>(),
     removeClipAction: action<{
-        targetClipId: Delir.Entity.Clip.Id
+        targetClipId: string
     }>(),
     removeAssetAction: action<{
-        targetAssetId: Delir.Entity.Asset.Id
+        targetAssetId: string
     }>(),
     removeKeyframeAction: action<{
-        parentClipId: Delir.Entity.Clip.Id,
+        parentClipId: string,
         paramName: string,
-        targetKeyframeId: Delir.Entity.Keyframe.Id
+        targetKeyframeId: string
     }>(),
     removeEffectKeyframeAction: action<{
-        clipId: Delir.Entity.Clip.Id,
-        effectId: Delir.Entity.Effect.Id,
+        clipId: string,
+        effectId: string,
         paramName: string,
-        targetKeyframeId: Delir.Entity.Keyframe.Id,
+        targetKeyframeId: string,
     }>(),
     removeEffectFromClipAction: action<{
-        holderClipId: Delir.Entity.Clip.Id,
-        targetEffectId:  Delir.Entity.Effect.Id,
+        holderClipId: string,
+        targetEffectId:  string,
     }>(),
 }
