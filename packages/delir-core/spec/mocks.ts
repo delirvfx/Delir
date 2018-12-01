@@ -9,7 +9,6 @@ export const mockAsset = (props: Partial<Asset>) =>
     safeAssign(new Asset({
         name: 'mock.png',
         path: '/mocked/mock.png',
-        mimeType: 'image/png',
         fileType:  'png',
     }))
 

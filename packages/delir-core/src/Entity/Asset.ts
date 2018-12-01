@@ -4,7 +4,6 @@ import { safeAssign } from '../helper/safeAssign'
 
 interface AssetProps {
     id?: string
-    mimeType: string
     fileType: string
     name: string
     path: string
@@ -14,7 +13,6 @@ type AssetId = Branded<string, 'Entity/Asset/Id'>
 
 class Asset implements AssetProps {
     public id: Asset.Id
-    public mimeType: string
 
     /** Asset file extension (without `.` prefix) */
     public fileType: string
