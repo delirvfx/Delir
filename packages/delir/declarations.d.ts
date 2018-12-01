@@ -78,6 +78,14 @@ declare interface Window {
     ) => void
 }
 
+declare interface Document {
+    exitPointerLock(): void
+}
+
+declare interface Element {
+    requestPointerLock(): void
+}
+
 declare interface HTMLInputElement {
     onpointerlockerror: (event: ErrorEvent) => void
 }
