@@ -1,41 +1,39 @@
 import * as Delir from '@ragg/delir-core'
-import { ProjectHelper, Values } from '@ragg/delir-core'
+import { Values } from '@ragg/delir-core'
 import { join } from 'path'
 
 const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest as any, ...sources)
 
 const fps = 30
 const durationFrames = fps * 10
-const project = new Delir.Entity.Project()
+const project = new Delir.Entity.Project({})
 
-const movieAsset = assign(new Delir.Entity.Asset(), {
+const movieAsset = new Delir.Entity.Asset({
     name: 'Movie',
     fileType: 'mp4',
     path: join(process.cwd(), 'video.mp4'),
 })
 
-const audioAsset = assign(new Delir.Entity.Asset(), {
+const audioAsset = new Delir.Entity.Asset({
     name: 'Audio',
     fileType: 'mp3',
     path: join(process.cwd(), 'audio.mp3'),
 })
 
-const audioAsset2 = assign(new Delir.Entity.Asset(), {
+const audioAsset2 = new Delir.Entity.Asset({
     name: 'Audio',
     fileType: 'mp3',
     path: join(process.cwd(), 'audio.mp3'),
 })
 
-const imageAsset = assign(new Delir.Entity.Asset(), {
+const imageAsset = new Delir.Entity.Asset({
     name: 'Image',
     fileType: 'jpg',
     path: join(process.cwd(), 'image.jpg'),
 })
 
-; [movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => ProjectHelper.addAsset(project, a))
-
 // Maser Composition
-const c1 = assign(new Delir.Entity.Composition(), {
+const c1 = new Delir.Entity.Composition({
     name: 'Master Composition',
     width: 640,
     height: 360,
@@ -46,29 +44,30 @@ const c1 = assign(new Delir.Entity.Composition(), {
     backgroundColor: new Values.ColorRGB(0, 188, 255),
 })
 
-const layer1 = assign(new Delir.Entity.Layer(), {
+const layer1 = new Delir.Entity.Layer({
     name: 'Audio',
 })
 
-const layer2 = assign(new Delir.Entity.Layer(), {
+const layer2 = new Delir.Entity.Layer({
     name: '🔥 FIRE 🔥',
 })
 
-const layer3 = assign(new Delir.Entity.Layer(), {
+const layer3 = new Delir.Entity.Layer({
     name: 'NYAN = ^ . ^ = CAT',
 })
 
-const layer4 = assign(new Delir.Entity.Layer(), {
+const layer4 = new Delir.Entity.Layer({
     name: 'video',
 })
 
-const movieClip = assign(new Delir.Entity.Clip(), {
+const movieClip = assign(new Delir.Entity.Clip({
     renderer: 'video',
     placedFrame: 0,
     durationFrames,
+}), {
     keyframes: {
         source: [
-            assign(new Delir.Entity.Keyframe(), {
+            new Delir.Entity.Keyframe({
                 value: {assetId: movieAsset.id},
                 frameOnClip: 0,
             })
@@ -76,23 +75,24 @@ const movieClip = assign(new Delir.Entity.Clip(), {
     }
 })
 
-const textClip = assign(new Delir.Entity.Clip(), {
+const textClip = assign(new Delir.Entity.Clip({
     renderer: 'text',
     placedFrame: 0,
     durationFrames,
+}), {
     keyframes: {
         text: [
-            assign(new Delir.Entity.Keyframe(), {value: 'test', frameOnClip: 0})
+            new Delir.Entity.Keyframe({value: 'test', frameOnClip: 0})
         ],
         source: [
-            assign(new Delir.Entity.Keyframe(), {value: {assetId: movieAsset.id}, frameOnClip: 0})
+            new Delir.Entity.Keyframe({value: {assetId: movieAsset.id}, frameOnClip: 0})
         ],
         loop: [
-            assign(new Delir.Entity.Keyframe(), {value: true, frameOnClip: 0}),
+            new Delir.Entity.Keyframe({value: true, frameOnClip: 0}),
         ],
         x: [
-            assign(new Delir.Entity.Keyframe(), {value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
-            assign(new Delir.Entity.Keyframe(), {value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
+            new Delir.Entity.Keyframe({value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
+            new Delir.Entity.Keyframe({value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
         ],
     },
     expressions: {
@@ -100,14 +100,15 @@ const textClip = assign(new Delir.Entity.Clip(), {
     },
 })
 
-const audioClip = assign(new Delir.Entity.Clip(), {
+const audioClip = assign(new Delir.Entity.Clip({
     // renderer: 'video'
-    renderer: 'audio',
-    placedFrame: 0,
+    renderer:  'audio',
+    placedFrame:  0,
     durationFrames,
+}), {
     keyframes: {
         source: [
-            assign(new Delir.Entity.Keyframe(), {
+            new Delir.Entity.Keyframe({
                 value: {assetId: audioAsset.id},
                 frameOnClip: 0
             }),
@@ -115,27 +116,28 @@ const audioClip = assign(new Delir.Entity.Clip(), {
     }
 })
 
-const imageClip = assign(new Delir.Entity.Clip(), {
-    renderer: 'image',
-    placedFrame: 20,
+const imageClip = assign(new Delir.Entity.Clip({
+    renderer:  'image',
+    placedFrame:  20,
     durationFrames,
+}), {
     keyframes: {
         source: [
-            assign(new Delir.Entity.Keyframe(), {
+            new Delir.Entity.Keyframe({
                 value: {assetId: imageAsset.id},
                 frameOnClip: 0,
             })
         ],
         x: [
-            assign(new Delir.Entity.Keyframe(), {
+            new Delir.Entity.Keyframe({
                 value: 0,
                 frameOnClip: -10,
             }),
-            assign(new Delir.Entity.Keyframe(), {
+            new Delir.Entity.Keyframe({
                 value: 10,
                 frameOnClip: 20,
             }),
-            assign(new Delir.Entity.Keyframe(), {
+            new Delir.Entity.Keyframe({
                 value: 40,
                 frameOnClip: 100,
             }),
@@ -143,13 +145,13 @@ const imageClip = assign(new Delir.Entity.Clip(), {
     }
 })
 
-ProjectHelper.addComposition(project, c1)
-; [layer1, layer2, layer3, layer4].forEach(lane => ProjectHelper.addLayer(project, c1, lane))
+; [movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => project.addAsset(a))
+project.addComposition(c1)
+; [layer1, layer2, layer3, layer4].forEach(layer => c1.addLayer(layer))
 
-ProjectHelper.addClip(project, layer1, imageClip)
-ProjectHelper.addClip(project, layer2, audioClip)
-ProjectHelper.addClip(project, layer3, movieClip)
-ProjectHelper.addClip(project, layer4, textClip)
+layer1.addClip(imageClip)
+layer2.addClip(audioClip)
+layer3.addClip(movieClip)
+layer4.addClip(textClip)
 
-export const IMAGE_LAYER_INDEX = 0
 export default project
