@@ -67,7 +67,7 @@ export class Animatable {
         this.keyframes[paramName] = newSequence
     }
 
-    public removeKeyframe(paramName: string, keyframeId: Keyframe.Id): boolean {
+    public removeKeyframe(paramName: string, keyframeId: string): boolean {
         const sequence = this.keyframes[paramName]
         if (!sequence) return false
 

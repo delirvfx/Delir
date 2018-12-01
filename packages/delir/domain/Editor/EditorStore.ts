@@ -52,7 +52,7 @@ export default class EditorStore extends Store<EditorState> {
         __DEV__ && console.log('✨ Project activated', payload.project)
 
         this.updateWith(draft => {
-            draft.project = payload.project
+            (draft.project as EditorState['project']) = payload.project
             draft.projectPath = payload.path!
 
             // No clear activeComposition etc, if project saved as new file
@@ -107,7 +107,7 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     private handlesetDragEntity = listen(EditorActions.setDragEntityAction, (payload) => {
-        this.updateWith(d => d.dragEntity = payload as DragEntity)
+        this.updateWith(d => (d.dragEntity as DragEntity) = payload)
     })
 
     private handleclearDragEntity = listen(EditorActions.clearDragEntityAction, () => {
@@ -122,7 +122,7 @@ export default class EditorStore extends Store<EditorState> {
         if (activeComp && comp.id === activeComp.id) return
 
         this.updateWith(d => {
-            d.activeComp = comp
+            (d.activeComp as EditorState['activeComp']) = comp
             d.activeClip = null
             d.activeParam = null
         })
@@ -134,7 +134,7 @@ export default class EditorStore extends Store<EditorState> {
 
         const clip = project.findClip(payload.clipId)
         this.updateWith(d => {
-            d.activeClip = clip
+            (d.activeClip as EditorState['activeClip']) = clip
             d.activeParam = null
         })
     })
@@ -149,7 +149,7 @@ export default class EditorStore extends Store<EditorState> {
                     ? project.findClip(target.entityId)
                     : project.findEffectOwnerClip(target.entityId)
 
-                draft.activeClip = clip
+                ; (draft.activeClip as EditorState['activeClip']) = clip
             }
 
             draft.activeParam = target

@@ -1,4 +1,4 @@
-import * as clamp from 'lodash/clamp'
+import clamp = require('lodash/clamp')
 import * as uuid from 'uuid'
 
 import { Branded } from '../helper/Branded'

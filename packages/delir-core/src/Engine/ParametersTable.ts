@@ -23,7 +23,7 @@ export class ParametersTable {
         context: RenderContextBase,
         clip: Clip,
         keyframes: {
-            [paramName: string]: Keyframe[]
+            [paramName: string]: ReadonlyArray<Keyframe>
         },
         expressions: {
             [paramName: string]: Expression,

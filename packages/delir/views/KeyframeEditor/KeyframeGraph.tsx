@@ -20,7 +20,7 @@ interface OwnProps {
     entity: Delir.Entity.Clip | Delir.Entity.Effect | null
     paramName: string,
     descriptor: Delir.AnyParameterTypeDescriptor
-    keyframes: Delir.Entity.Keyframe[]
+    keyframes: ReadonlyArray<Delir.Entity.Keyframe>
     pxPerSec: number
     zoomScale: number
     onKeyframeRemove: (parentClipId: string, keyframeId: string) => void
@@ -217,7 +217,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         })
     }
 
-    private _renderNumberKeyframes(keyframes: Delir.Entity.Keyframe[])
+    private _renderNumberKeyframes(keyframes: ReadonlyArray<Delir.Entity.Keyframe>)
     {
         const {keyframeMovement, easingHandleMovement} = this.state
         const points = this.buildKeyframePoints(keyframes)
@@ -313,7 +313,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         }).reverse()
     }
 
-    private _renderColorKeyframes(keyframes: Delir.Entity.Keyframe[])
+    private _renderColorKeyframes(keyframes: ReadonlyArray<Delir.Entity.Keyframe>)
     {
         const { parentClip, height: graphHeight } = this.props
         const {scrollLeft} = this.props
@@ -364,7 +364,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
         })
     }
 
-    private _renderStringKeyframes(keyframes: Delir.Entity.Keyframe[])
+    private _renderStringKeyframes(keyframes: ReadonlyArray<Delir.Entity.Keyframe>)
     {
         const {parentClip, scrollLeft, height} = this.props
         const halfHeight = height / 2
@@ -438,7 +438,7 @@ export default withComponentContext(class KeyframeGraph extends React.Component<
     /**
      * Calculate keyframe place points
      */
-    private buildKeyframePoints = (keyframes: Delir.Entity.Keyframe[]): {
+    private buildKeyframePoints = (keyframes: ReadonlyArray<Delir.Entity.Keyframe>): {
         keyframeId: string,
         frame: number,
         point: {x: number, y: number},

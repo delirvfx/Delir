@@ -57,13 +57,14 @@ export const createComposition = operation(async (context, options: {
     context.dispatch(ProjectActions.createCompositionAction, { composition })
 })
 
-export const addLayer = operation(async (context, { targetCompositionId, layer }: {
+export const addLayer = operation(async (context, { targetCompositionId, patch = {} }: {
     targetCompositionId: string,
-    layer: Delir.Entity.Layer
+    patch?: Partial<Delir.Entity.Layer>
 }) => {
+    const layer = new Delir.Entity.Layer({ name: '', ...patch })
     await context.executeOperation(HistoryOps.pushHistory, { command: new AddLayerCommand(targetCompositionId, layer) })
     context.dispatch(ProjectActions.addLayerAction, {
-        targetCompositionId: targetCompositionId as string,
+        targetCompositionId: targetCompositionId,
         layer
     })
 })

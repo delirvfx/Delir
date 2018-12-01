@@ -219,7 +219,7 @@ export const dependencies = [
     },
     {
         "name": "husky",
-        "url": "https://github.com/typicode/husky"
+        "url": "https://github.com/typicode/husky#readme"
     },
     {
         "name": "jest",

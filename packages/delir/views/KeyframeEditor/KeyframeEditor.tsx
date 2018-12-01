@@ -112,7 +112,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                 : null
         )
 
-        let keyframes: Delir.Entity.Keyframe[] | null = null
+        let keyframes: ReadonlyArray<Delir.Entity.Keyframe> | null = null
 
         if (activeClip && activeParam) {
             if (activeParam.type === 'effect') {

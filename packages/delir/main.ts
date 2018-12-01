@@ -54,7 +54,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     await context.executeOperation(RendererOps.loadPlugins, {})
     await context.executeOperation(PreferenceOps.restoreApplicationPreference, {})
-    await context.executeOperation(EditorOps.setActiveProject, { project: new Delir.Entity.Project() })
+    await context.executeOperation(EditorOps.setActiveProject, { project: new Delir.Entity.Project({}) })
 
     if (__DEV__) {
         const project = require('./utils/Dev/ExampleProject1').default
