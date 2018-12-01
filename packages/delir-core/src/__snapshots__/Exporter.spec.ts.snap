@@ -9,8 +9,7 @@ Object {
         "__type": "entity:Asset",
         "__value": Object {
           "fileType": "png",
-          "id": "ee3c3659-dfee-4e33-8a44-fad7d5b2374d",
-          "mimeType": "image/png",
+          "id": "0b2f445d-1a9f-4288-8fb9-062636672e49",
           "name": "mock.png",
           "path": "/mocked/mock.png",
         },
