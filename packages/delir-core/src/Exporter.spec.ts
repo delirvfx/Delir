@@ -1,3 +1,4 @@
+import { mockAsset, mockClip, mockComposition, mockEffect, mockKeyframe, mockLayer, mockProject } from '../spec/mocks'
 import { Asset, Clip, Composition, Effect, Keyframe, Layer, Project } from './Entity'
 import AssetPointer from './Values/AssetPointer'
 import ColorRGB from './Values/ColorRGB'
@@ -9,42 +10,51 @@ describe('Export', () => {
     let project: Project
 
     beforeEach(() => {
-        project = Object.assign(new Project(), {
-            assets: [ Object.assign(new Asset(), { id: 'uuid-asset' }) ],
+        project = mockProject({
+            assets: [ mockAsset({ id: 'uuid-asset' as Asset.Id }) ],
             compositions: [
-                Object.assign(new Composition(), {
-                    id: 'uuid-composition',
+                mockComposition({
+                    id: 'uuid-composition' as Composition.Id,
                     backgroundColor: new ColorRGB(0, 0, 0),
                     layers: [
-                        Object.assign(new Layer(), {
-                            id: 'uuid-layer',
+                        mockLayer({
+                            id: 'uuid-layer' as Layer.Id,
                             clips: [
-                                Object.assign(new Clip(), {
-                                    id: 'uuid-clip',
+                                mockClip({
+                                    id: 'uuid-clip' as Clip.Id,
+                                    renderer: 'video',
+                                    durationFrames: 100,
+                                    placedFrame: 0,
                                     keyframes: {
-                                        param: [ Object.assign(new Keyframe(), {
-                                            id: 'uuid-clip-kf-1',
-                                            value: new ColorRGB(0, 0, 0)
-                                        }) ],
+                                        param: [
+                                            mockKeyframe({
+                                                id: 'uuid-clip-kf-1' as Keyframe.Id,
+                                                value: new ColorRGB(0, 0, 0)
+                                            })
+                                        ],
                                     },
                                     expressions: {
                                         param: new Expression('javascript', '1'),
                                     },
                                     effects: [
-                                        Object.assign(new Effect(), {
-                                            id: 'uuid-effect',
+                                        mockEffect({
+                                            id: 'uuid-effect' as Effect.Id,
                                             expressions: {
                                                 param: new Expression('javascript', '1')
                                             },
                                             keyframes: {
-                                                param: [ Object.assign(new Keyframe(), {
-                                                    id: 'uuid-effect-kf-1',
-                                                    value: new ColorRGB(0, 0, 0),
-                                                }) ],
-                                                param2: [ Object.assign(new Keyframe(), {
-                                                    id: 'uuid-effect-kf-2',
+                                                param: [
+                                                    mockKeyframe({
+                                                        id: 'uuid-effect-kf-1' as Keyframe.Id,
+                                                        value: new ColorRGB(0, 0, 0),
+                                                    })
+                                                ],
+                                                param2: [
+                                                    mockKeyframe({
+                                                    id: 'uuid-effect-kf-2' as Keyframe.Id,
                                                     value: new AssetPointer(),
-                                                }) ],
+                                                    })
+                                                ],
                                             },
                                         }),
                                     ],

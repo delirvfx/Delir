@@ -1,4 +1,4 @@
-import Keyframe from '../Entity/Keyframe'
+import { Keyframe } from '../Entity'
 import Type from '../PluginSupport/type-descriptor'
 import * as KeyframeHelper from './KeyframeCalcurator'
 
@@ -14,9 +14,9 @@ describe('KeyframeHelper', () => {
                 mockDesc = Type.string('string', { label: 'String' })
                 sequence = {
                     string: [
-                        Object.assign(new Keyframe(), { frameOnClip: 10, value: 'ABC' }),
-                        Object.assign(new Keyframe(), { frameOnClip: 50, value: 'DEF' }),
-                        Object.assign(new Keyframe(), { frameOnClip: 100, value: 'XYZ' }),
+                        Object.assign(new Keyframe({ frameOnClip: 10, value: 'ABC' })),
+                        Object.assign(new Keyframe({ frameOnClip: 50, value: 'DEF' })),
+                        Object.assign(new Keyframe({ frameOnClip: 100, value: 'XYZ' })),
                     ]
                 }
             })

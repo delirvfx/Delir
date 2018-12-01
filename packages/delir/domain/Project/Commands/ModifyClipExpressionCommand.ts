@@ -19,7 +19,7 @@ export class ModifyClipExpressionCommand implements Command {
 
         context.dispatch(ProjectActions.modifyClipExpressionAction, {
             targetClipId: this.targetClipId,
-            targetProperty: this.paramName,
+            targetParamName: this.paramName,
             expression: this.previousValue,
          })
     }
@@ -29,7 +29,7 @@ export class ModifyClipExpressionCommand implements Command {
 
         context.dispatch(ProjectActions.modifyClipExpressionAction, {
             targetClipId: this.targetClipId,
-            targetProperty: this.paramName,
+            targetParamName: this.paramName,
             expression: this.nextValue,
         })
     }

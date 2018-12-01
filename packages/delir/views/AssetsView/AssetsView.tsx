@@ -1,3 +1,4 @@
+import * as Delir from '@ragg/delir-core'
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classNames from 'classnames'
 import { clipboard } from 'electron'
@@ -5,8 +6,6 @@ import * as _ from 'lodash'
 import * as parseColor from 'parse-color'
 import * as path from 'path'
 import * as React from 'react'
-
-import { ProjectHelper, Values } from '@ragg/delir-core'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
@@ -43,7 +42,7 @@ const castToCompositionProps = (req: CompositionProps) => {
         height: +req.height,
         framerate: +req.framerate,
         durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
-        backgroundColor: new Values.ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
+        backgroundColor: new Delir.Values.ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
         samplingRate: +req.samplingRate,
         audioChannels: +req.audioChannels,
     }
@@ -320,7 +319,7 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
         if (!this.props.editor.project) return
         const { compositionId } = dataset
 
-        const comp = ProjectHelper.findCompositionById(this.props.editor.project, compositionId)!
+        const comp = this.props.editor.project.findComposition(compositionId)!
         const req = await CompositionSettingModal.show({composition: comp})
 
         if (!req) return
@@ -343,7 +342,8 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
         this.props.context.executeOperation(EditorOps.setDragEntity, {
             entity: {
                 type: 'asset',
-                asset: ProjectHelper.findAssetById(project, currentTarget.dataset.assetId!)!,
+                // FIXME: Use assetId instead of Asset instance
+                asset: project.findAsset(currentTarget.dataset.assetId!)!,
             }
         })
     }

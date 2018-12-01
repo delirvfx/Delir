@@ -16,6 +16,8 @@ export class AddKeyframeCommand implements Command {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.removeKeyframeAction, {
+            parentClipId: this.targetClipId,
+            paramName: this.paramName,
             targetKeyframeId: this.addedKeyframe.id,
         })
     }

@@ -25,8 +25,9 @@ export class RemoveEffectCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentClip(context)
 
-        context.dispatch(ProjectActions.removeKeyframeAction, {
-            targetKeyframeId: this.removedEffect.id,
+        context.dispatch(ProjectActions.removeEffectFromClipAction, {
+            holderClipId: this.holderClipId,
+            targetEffectId: this.removedEffect.id,
         })
     }
 
