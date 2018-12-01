@@ -1,20 +1,74 @@
 import * as uuid from 'uuid'
 import { AvailableRenderer } from '../Engine/Renderer'
-import { Expression } from '../Values'
-import Effect from './Effect'
-import Keyframe from './Keyframe'
+import { Branded } from '../helper/Branded'
+import { safeAssign } from '../helper/safeAssign'
+import { Animatable } from './Animatable'
+import { Effect } from './Effect'
 
-export default class Clip {
-    public id: string
+interface ClipProps {
+    id?: string
+    renderer: string
+    placedFrame: number
+    durationFrames: number
+}
+
+type ClipId = Branded<string, 'Entity/Clip/Id'>
+
+class Clip extends Animatable implements ClipProps {
+    public id: Clip.Id
     public renderer: AvailableRenderer
     public placedFrame: number
     public durationFrames: number
+    public effects: ReadonlyArray<Effect> = []
 
-    public keyframes: {[paramName: string]: Keyframe[]} = Object.create(null)
-    public expressions: {[paramName: string]: Expression} = Object.create(null)
-    public effects: Effect[] = []
+    constructor(props: ClipProps) {
+        super()
 
-    constructor() {
-        this.id = uuid.v4()
+        this.id = uuid.v4() as Clip.Id
+        safeAssign<Clip>(this, props as (ClipProps & { id: Clip.Id }))
+        this.normalize()
+    }
+
+    public patch(props: Partial<ClipProps>) {
+        safeAssign(this, props)
+    }
+
+    public findEffect(effectId: Effect.Id): Effect | null {
+        return this.effects.find(effect => effect.id === effectId) || null
+    }
+
+    public addEffect(effect: Effect, index: number | null = null): void {
+        if (index == null) {
+            this.effects = [...this.effects, effect]
+            return
+        }
+
+        this.effects = [...this.effects].splice(index, 0, effect)
+    }
+
+    public removeEffect(effectId: Effect.Id): boolean {
+        const beforeLength = this.effects.length
+        this.effects = this.effects.filter(effect => effect.id !== effectId)
+        return this.effects.length !== beforeLength
+    }
+
+    public moveEffectIndex(effectId: Effect.Id, newIndex: number): boolean {
+        const index = this.effects.findIndex(effect => effect.id === effectId)
+        if (index === -1) return false
+
+        const clone = [...this.effects]
+        this.effects = clone.splice(newIndex, 0, ...clone.splice(index, 1))
+        return true
+    }
+
+    private normalize() {
+        this.placedFrame = Math.round(this.placedFrame)
+        this.durationFrames = Math.round(this.durationFrames)
     }
 }
+
+namespace Clip {
+    export type Id = ClipId
+}
+
+export { Clip }

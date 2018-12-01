@@ -7,7 +7,7 @@ import { ProjectActions } from '../actions'
 
 export class RemoveClipCommand implements Command {
     constructor(
-        private parentLayerId: string,
+        private parentLayerId: Delir.Entity.Layer.Id,
         private removedClip: Delir.Entity.Clip,
         private parentCompositionId: string,
     ) {}

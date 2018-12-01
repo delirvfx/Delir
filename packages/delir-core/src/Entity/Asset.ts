@@ -1,7 +1,19 @@
 import * as uuid from 'uuid'
+import { Branded } from '../helper/Branded'
+import { safeAssign } from '../helper/safeAssign'
 
-export default class Asset {
-    public id: string
+interface AssetProps {
+    id?: string
+    mimeType: string
+    fileType: string
+    name: string
+    path: string
+}
+
+type AssetId = Branded<string, 'Entity/Asset/Id'>
+
+class Asset implements AssetProps {
+    public id: Asset.Id
     public mimeType: string
 
     /** Asset file extension (without `.` prefix) */
@@ -9,7 +21,18 @@ export default class Asset {
     public name: string
     public path: string
 
-    constructor() {
-        this.id = uuid.v4()
+    constructor(props: AssetProps) {
+        this.id = uuid.v4() as Asset.Id
+        safeAssign<Asset>(this, props as (AssetProps & { id: Asset.Id }))
+    }
+
+    public patch(props: Partial<AssetProps>) {
+        safeAssign(this, props)
     }
 }
+
+namespace Asset {
+    export type Id = AssetId
+}
+
+export {Asset}

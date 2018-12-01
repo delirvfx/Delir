@@ -7,8 +7,8 @@ import { ProjectActions } from '../actions'
 
 export class AddEffectKeyframeCommand implements Command {
     constructor(
-        private targetClipId: string,
-        private targetEffectId: string,
+        private targetClipId: Delir.Entity.Clip.Id,
+        private targetEffectId: Delir.Entity.Effect.Id,
         private paramName: string,
         private addedKeyframe: Delir.Entity.Keyframe
     ) {}
@@ -19,6 +19,7 @@ export class AddEffectKeyframeCommand implements Command {
         context.dispatch(ProjectActions.removeEffectKeyframeAction, {
             clipId: this.targetClipId,
             effectId: this.targetEffectId,
+            paramName: this.paramName,
             targetKeyframeId: this.addedKeyframe.id,
         })
     }

@@ -7,7 +7,7 @@ import { ProjectActions } from '../actions'
 
 export class RemoveEffectCommand implements Command {
     constructor(
-        private holderClipId: string,
+        private holderClipId: Delir.Entity.Clip.Id,
         private removedEffect: Delir.Entity.Effect,
         private beforeRemoveIndex: number,
     ) {}
@@ -25,8 +25,9 @@ export class RemoveEffectCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentClip(context)
 
-        context.dispatch(ProjectActions.removeKeyframeAction, {
-            targetKeyframeId: this.removedEffect.id,
+        context.dispatch(ProjectActions.removeEffectFromClipAction, {
+            holderClipId: this.holderClipId,
+            targetEffectId: this.removedEffect.id,
         })
     }
 

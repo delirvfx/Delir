@@ -7,7 +7,7 @@ import { ProjectActions } from '../actions'
 
 export class AddKeyframeCommand implements Command {
     constructor(
-        private targetClipId: string,
+        private targetClipId: Delir.Entity.Clip.Id,
         private paramName: string,
         private addedKeyframe: Delir.Entity.Keyframe
     ) {}
@@ -16,6 +16,8 @@ export class AddKeyframeCommand implements Command {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.removeKeyframeAction, {
+            parentClipId: this.targetClipId,
+            paramName: this.paramName,
             targetKeyframeId: this.addedKeyframe.id,
         })
     }

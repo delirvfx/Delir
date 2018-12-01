@@ -1,5 +1,4 @@
 import * as Delir from '@ragg/delir-core'
-import { ProjectHelper } from '@ragg/delir-core'
 import { listen, Store } from '@ragg/fleur'
 
 import { EditorActions } from '../Editor/actions'
@@ -19,8 +18,8 @@ export default class ProjectStore extends Store<ProjectStoreState>
         lastChangeTime: 0,
     }
 
-    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
-        this.updateWith(d => d.project = payload.project)
+    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, ({project}) => {
+        this.updateWith(d => d.project = project as any)
     })
 
     private handleClearActiveProject = listen(EditorActions.clearActiveProjectAction, (payload) => {
@@ -29,185 +28,164 @@ export default class ProjectStore extends Store<ProjectStoreState>
 
     private handleCreateComposition = listen(ProjectActions.createCompositionAction, (payload) => {
         const { project } = this.state
-        ProjectHelper.addComposition(project!, payload.composition)
+        project!.addComposition(payload.composition)
         this.updateLastModified()
     })
 
-    private handleAddClip = listen(ProjectActions.addClipAction, (payload) => {
+    private handleAddLayer = listen(ProjectActions.addLayerAction, ({targetCompositionId, layer}) => {
         const { project } = this.state
-        const { targetLayerId, newClip } = payload
-        ProjectHelper.addClip(project!, targetLayerId, newClip)
+        project!.findComposition(targetCompositionId)!.addLayer(layer)
         this.updateLastModified()
     })
 
-    private handleAddLayer = listen(ProjectActions.addLayerAction, (payload) => {
+    private handleAddClip = listen(ProjectActions.addClipAction, ({ targetLayerId, newClip }) => {
         const { project } = this.state
-        ProjectHelper.addLayer(project!, payload.targetCompositionId, payload.layer)
+        project!.findLayer(targetLayerId)!.addClip(newClip)
         this.updateLastModified()
     })
 
-    private handleAddLayerWithAsset = listen(ProjectActions.addLayerWithAssetAction, (payload) => {
+    private handleAddLayerWithAsset = listen(ProjectActions.addLayerWithAssetAction, ({ targetComposition, clip, asset, layer }) => {
         const { project } = this.state
-        const { targetComposition, clip, asset, layer } = payload
-        const propName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[asset.fileType]
+        const paramName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[asset.fileType]
 
-        if (propName == null) return
+        if (paramName == null) return
 
-        ProjectHelper.addKeyframe(project!, clip, propName, Object.assign(new Delir.Entity.Keyframe(), {
+        const keyframe = new Delir.Entity.Keyframe({
             frameOnClip: 0,
-            value: { assetId: asset.id },
-        }))
+            value: { assetId: asset.id }
+        })
 
-        ProjectHelper.addLayer(project!, targetComposition, layer)
-        ProjectHelper.addClip(project!, layer, clip)
+        clip.addKeyframe(paramName, keyframe)
+        layer.addClip(clip)
+        project!.findComposition(targetComposition.id)!.addLayer(layer)
         this.updateLastModified()
     })
 
-    private handleAddAsset = listen(ProjectActions.addAssetAction, (payload) => {
+    private handleAddAsset = listen(ProjectActions.addAssetAction, ({asset}) => {
         const { project } = this.state
-        ProjectHelper.addAsset(project!, payload.asset)
+        project!.addAsset(asset)
         this.updateLastModified()
     })
 
-    private handleAddKeyframe = listen(ProjectActions.addKeyframeAction, (payload) => {
+    private handleAddKeyframe = listen(ProjectActions.addKeyframeAction, ({ targetClipId, paramName, keyframe }) => {
         const { project } = this.state
-        const { targetClipId, paramName, keyframe } = payload
-        ProjectHelper.addKeyframe(project!, targetClipId, paramName, keyframe)
+        project!.findClip(targetClipId)!.addKeyframe(paramName, keyframe)
         this.updateLastModified()
     })
 
-    private handleAddEffectIntoClipPayload = listen(ProjectActions.addEffectIntoClipAction, (payload) => {
+    private handleAddEffectIntoClipPayload = listen(ProjectActions.addEffectIntoClipAction, ({ clipId, effect, index }) => {
         const { project } = this.state
-        const { clipId, effect, index } = payload
-
-        ProjectHelper.addEffect(project!, clipId, effect)
-
-        if (index != null) {
-            ProjectHelper.moveEffectOrder(project!, clipId, effect.id, index)
-        }
-
+        project!.findClip(clipId)!.addEffect(effect, index)
         this.updateLastModified()
     })
 
-    private handleAddEffectKeyframe = listen(ProjectActions.addEffectKeyframeAction, (payload) => {
+    private handleAddEffectKeyframe = listen(ProjectActions.addEffectKeyframeAction, ({ targetClipId, targetEffectId, paramName, keyframe }) => {
         const { project } = this.state
-        const { targetClipId, targetEffectId, paramName, keyframe } = payload
-        ProjectHelper.addEffectKeyframe(project!, targetClipId, targetEffectId, paramName, keyframe)
+        project!.findClip(targetClipId)!.findEffect(targetEffectId)!.addKeyframe(paramName, keyframe)
         this.updateLastModified()
     })
 
-    private handleMoveClipToLayer = listen(ProjectActions.moveClipToLayerAction, (payload) => {
+    private handleMoveClipToLayer = listen(ProjectActions.moveClipToLayerAction, ({clipId, destLayerId}) => {
         const { project } = this.state
-        const targetClip = ProjectHelper.findClipById(project!, payload.clipId)
-        const sourceLayer = ProjectHelper.findParentLayerByClipId(project!, payload.clipId)
-        const destLayer = ProjectHelper.findLayerById(project!, payload.destLayerId)
-
-        if (targetClip && sourceLayer && destLayer) {
-            ProjectHelper.deleteClip(project!, targetClip)
-            ProjectHelper.addClip(project!, destLayer, targetClip)
-            this.updateLastModified()
-        }
-    })
-
-    private handleModifyComposition = listen(ProjectActions.modifyCompositionAction, (payload) => {
-        const { project } = this.state
-        ProjectHelper.modifyComposition(project!, payload.targetCompositionId, payload.patch)
+        const sourceLayer = project!.findClipOwnerLayer(clipId)
+        const destLayer = project!.findLayer(destLayerId)
+        sourceLayer!.moveClipIntoLayer(clipId, destLayer!)
         this.updateLastModified()
     })
 
-    private handleModifyLayer = listen(ProjectActions.modifyLayerAction, (payload) => {
+    private handleModifyComposition = listen(ProjectActions.modifyCompositionAction, ({targetCompositionId, patch}) => {
         const { project } = this.state
-        ProjectHelper.modifyLayer(project!, payload.targetLayerId, payload.patch)
+        project!.findComposition(targetCompositionId)!.patch(patch)
         this.updateLastModified()
     })
 
-    private handleModifyClip = listen(ProjectActions.modifyClipAction, (payload) => {
+    private handleModifyLayer = listen(ProjectActions.modifyLayerAction, ({targetLayerId, patch}) => {
         const { project } = this.state
-        ProjectHelper.modifyClip(project!, payload.targetClipId, payload.patch)
+        project!.findLayer(targetLayerId)!.patch(patch)
         this.updateLastModified()
     })
 
-    private handleModifyEffect = listen(ProjectActions.modifyEffectAction, (payload) => {
+    private handleModifyClip = listen(ProjectActions.modifyClipAction, ({targetClipId, patch}) => {
         const { project } = this.state
-        ProjectHelper.modifyEffect(project!, payload.parentClipId, payload.targetEffectId, payload.patch)
+        project!.findClip(targetClipId)!.patch(patch)
         this.updateLastModified()
     })
 
-    private handleModifyClipExpression = listen(ProjectActions.modifyClipExpressionAction, (payload) => {
+    private handleModifyEffect = listen(ProjectActions.modifyEffectAction, ({parentClipId, targetEffectId, patch}) => {
         const { project } = this.state
-        const { targetClipId, targetProperty, expression } = payload
-        ProjectHelper.modifyClipExpression(project!, targetClipId, targetProperty, expression)
+        project!.findClip(parentClipId)!.findEffect(targetEffectId)!.patch(patch)
         this.updateLastModified()
     })
 
-    private handleModifyEffectExpression = listen(ProjectActions.modifyEffectExpressionAction, (payload) => {
+    private handleModifyClipExpression = listen(ProjectActions.modifyClipExpressionAction, ({ targetClipId, targetParamName, expression }) => {
         const { project } = this.state
-        const { targetClipId, targetEffectId, paramName, expression } = payload
-        ProjectHelper.modifyEffectExpression(project!, targetClipId, targetEffectId, paramName, expression)
+        project!.findClip(targetClipId)!.setExpression(targetParamName, expression)
         this.updateLastModified()
     })
 
-    private handleModifyKeyframe = listen(ProjectActions.modifyKeyframeAction, (payload) => {
+    private handleModifyEffectExpression = listen(ProjectActions.modifyEffectExpressionAction, ({ targetClipId, targetEffectId, paramName, expression }) => {
         const { project } = this.state
-        ProjectHelper.modifyKeyframe(project!, payload.targetKeyframeId, payload.patch)
+        project!.findClip(targetClipId)!.findEffect(targetEffectId)!.setExpression(paramName, expression)
         this.updateLastModified()
     })
 
-    private handleModifyEffectKeyframe = listen(ProjectActions.modifyEffectKeyframeAction, (payload) => {
+    private handleModifyKeyframe = listen(ProjectActions.modifyKeyframeAction, ({parentClipId, targetKeyframeId, patch}) => {
         const { project } = this.state
-        const { targetClipId, effectId, targetKeyframeId, patch } = payload
-        ProjectHelper.modifyEffectKeyframe(project!, targetClipId, effectId, targetKeyframeId, patch)
+        project!.findClip(parentClipId)!.findKeyframe(targetKeyframeId)!.patch(patch)
         this.updateLastModified()
     })
 
-    private handleMoveLayerOrder = listen(ProjectActions.moveLayerOrderAction, (payload) => {
+    private handleModifyEffectKeyframe = listen(ProjectActions.modifyEffectKeyframeAction, ({ targetClipId, effectId, targetKeyframeId, patch }) => {
         const { project } = this.state
-        const { parentCompositionId, targetLayerId, newIndex } = payload
-        ProjectHelper.moveLayerOrder(project!, parentCompositionId, targetLayerId, newIndex)
+        project!.findClip(targetClipId)!.findEffect(effectId)!.findKeyframe(targetKeyframeId)!.patch(patch)
         this.updateLastModified()
     })
 
-    private handleRemoveComposition = listen(ProjectActions.removeCompositionAction, (payload) => {
+    private handleMoveLayerOrder = listen(ProjectActions.moveLayerOrderAction, ({ parentCompositionId, targetLayerId, newIndex }) => {
         const { project } = this.state
-        ProjectHelper.deleteComposition(project!, payload.targetCompositionId)
+        project!.findComposition(parentCompositionId)!.moveLayerIndex(targetLayerId, newIndex)
         this.updateLastModified()
     })
 
-    private handleRemoveLayer = listen(ProjectActions.removeLayerAction, (payload) => {
+    private handleRemoveComposition = listen(ProjectActions.removeCompositionAction, ({targetCompositionId}) => {
         const { project } = this.state
-        ProjectHelper.deleteLayer(project!, payload.targetLayerId)
+        project!.removeComposition(targetCompositionId)
         this.updateLastModified()
     })
 
-    private handleRemoveClip = listen(ProjectActions.removeClipAction, (payload) => {
+    private handleRemoveLayer = listen(ProjectActions.removeLayerAction, ({targetLayerId}) => {
         const { project } = this.state
-        ProjectHelper.deleteClip(project!, payload.targetClipId)
+        project!.findLayerOwnerComposition(targetLayerId)!.removeLayer(targetLayerId)
         this.updateLastModified()
     })
 
-    private handleRemoveAsset = listen(ProjectActions.removeAssetAction, (payload) => {
+    private handleRemoveClip = listen(ProjectActions.removeClipAction, ({targetClipId}) => {
         const { project } = this.state
-        ProjectHelper.deleteAsset(project!, payload.targetAssetId)
+        project!.findClipOwnerLayer(targetClipId)!.removeClip(targetClipId)
         this.updateLastModified()
     })
 
-    private handleRemoveKeyframe = listen(ProjectActions.removeKeyframeAction, (payload) => {
+    private handleRemoveAsset = listen(ProjectActions.removeAssetAction, ({targetAssetId}) => {
         const { project } = this.state
-        ProjectHelper.deleteKeyframe(project!, payload.targetKeyframeId)
+        project!.removeAsset(targetAssetId)
         this.updateLastModified()
     })
 
-    private handleRemoveEffectKeyframe = listen(ProjectActions.removeEffectKeyframeAction, (payload) => {
+    private handleRemoveKeyframe = listen(ProjectActions.removeKeyframeAction, ({parentClipId, paramName, targetKeyframeId}) => {
         const { project } = this.state
-        const { clipId, effectId, targetKeyframeId } = payload
-        ProjectHelper.deleteEffectKeyframe(project!, clipId, effectId, targetKeyframeId)
+        project!.findClip(parentClipId)!.removeKeyframe(paramName, targetKeyframeId)
         this.updateLastModified()
     })
 
-    private handleRemoveEffectFromClip = listen(ProjectActions.removeEffectFromClipAction, (payload) => {
+    private handleRemoveEffectKeyframe = listen(ProjectActions.removeEffectKeyframeAction, ({ clipId, effectId, paramName, targetKeyframeId }) => {
         const { project } = this.state
-        const { holderClipId, targetEffectId } = payload
-        ProjectHelper.deleteEffectFromClip(project!, holderClipId, targetEffectId)
+        project!.findClip(clipId)!.findEffect(effectId)!.removeKeyframe(paramName, targetKeyframeId)
+        this.updateLastModified()
+    })
+
+    private handleRemoveEffectFromClip = listen(ProjectActions.removeEffectFromClipAction, ({ holderClipId, targetEffectId }) => {
+        const { project } = this.state
+        project!.findClip(holderClipId)!.removeEffect(targetEffectId)
         this.updateLastModified()
     })
 

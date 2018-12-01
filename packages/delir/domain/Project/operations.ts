@@ -50,8 +50,8 @@ export const createComposition = operation(async (context, options: {
     samplingRate: number,
     audioChannels: number,
 }) => {
-    const composition = new Delir.Entity.Composition()
-    safeAssign(composition, options, { layers: [ new Delir.Entity.Layer() ] })
+    const composition = new Delir.Entity.Composition(options)
+    composition.addLayer(new Delir.Entity.Layer({ name: '' }))
 
     await context.executeOperation(HistoryOps.pushHistory, { command: new CreateCompositionCommand(composition) })
     context.dispatch(ProjectActions.createCompositionAction, { composition })
@@ -203,18 +203,19 @@ export const createOrModifyClipKeyframe = operation(async (context, { clipId, pa
         })
 
         context.dispatch(ProjectActions.modifyKeyframeAction, {
+            parentClipId: clip.id,
             targetKeyframeId: keyframe.id,
             patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
         })
     } else {
-        const newKeyframe = safeAssign(new Delir.Entity.Keyframe(), { frameOnClip }, patch)
+        const newKeyframe = new Delir.Entity.Keyframe({ frameOnClip, ...patch } as Delir.Entity.Keyframe)
 
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new AddKeyframeCommand(clipId, paramName, newKeyframe)
         })
 
         context.dispatch(ProjectActions.addKeyframeAction, {
-            targetClipId: clipId,
+            targetClipId: clip.id,
             paramName,
             keyframe: newKeyframe
         })
@@ -420,7 +421,7 @@ export const modifyClipExpression = operation(async (context, { clipId, paramNam
 
     context.dispatch(ProjectActions.modifyClipExpressionAction, {
         targetClipId: clipId,
-        targetProperty: paramName,
+        targetParamName: paramName,
         expression: newExpression,
     })
 })
@@ -500,7 +501,7 @@ export const removeClip = operation(async (context, { clipId }: { clipId: string
     await context.executeOperation(HistoryOps.pushHistory, {
         command: new RemoveClipCommand( parentLayer.id, clip, composition.id)
     })
-    context.dispatch(ProjectActions.removeClipAction, { targetClipId: clipId })
+    context.dispatch(ProjectActions.removeClipAction, { targetClipId: clip.id })
 })
 
 export const removeKeyframe = operation(async (context, { keyframeId }: { keyframeId: string }) => {
@@ -511,7 +512,11 @@ export const removeKeyframe = operation(async (context, { keyframeId }: { keyfra
     await context.executeOperation(HistoryOps.pushHistory, {
         command: new RemoveKeyframeCommand(clip.id, paramName, keyframe),
     })
-    context.dispatch(ProjectActions.removeKeyframeAction, { targetKeyframeId: keyframeId })
+    context.dispatch(ProjectActions.removeKeyframeAction, {
+        parentClipId: clip.id,
+        paramName,
+        targetKeyframeId: keyframe.id
+    })
 })
 
 export const removeEffectKeyframe = operation(async (context, { clipId, effectId, keyframeId }: {
@@ -524,9 +529,20 @@ export const removeEffectKeyframe = operation(async (context, { clipId, effectId
     const keyframe = ProjectHelper.findEffectKeyframeFromEffectById(effect, keyframeId)!
 
     await context.executeOperation(HistoryOps.pushHistory, {
-        command: new RemoveEffectKeyframeCommand(clipId, effectId, paramName, keyframe)
+        command: new RemoveEffectKeyframeCommand(
+            clipId as Delir.Entity.Clip.Id,
+            effectId as Delir.Entity.Effect.Id,
+            paramName,
+            keyframe
+        )
     })
-    context.dispatch(ProjectActions.removeEffectKeyframeAction, { clipId, effectId, targetKeyframeId: keyframeId })
+
+    context.dispatch(ProjectActions.removeEffectKeyframeAction, {
+        clipId: clipId as Delir.Entity.Clip.Id,
+        effectId: effectId as Delir.Entity.Effect.Id,
+        paramName,
+        targetKeyframeId: keyframeId as Delir.Entity.Keyframe.Id,
+    })
 })
 
 export const removeEffect = operation(async (context, { holderClipId, effectId }: {

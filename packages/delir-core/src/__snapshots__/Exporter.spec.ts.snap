@@ -8,7 +8,11 @@ Object {
       Object {
         "__type": "entity:Asset",
         "__value": Object {
-          "id": "uuid-asset",
+          "fileType": "png",
+          "id": "ee3c3659-dfee-4e33-8a44-fad7d5b2374d",
+          "mimeType": "image/png",
+          "name": "mock.png",
+          "path": "/mocked/mock.png",
         },
       },
     ],
@@ -16,6 +20,7 @@ Object {
       Object {
         "__type": "entity:Composition",
         "__value": Object {
+          "audioChannels": 2,
           "backgroundColor": Object {
             "__type": "value:ColorRGB",
             "__value": Object {
@@ -24,6 +29,9 @@ Object {
               "_red": 0,
             },
           },
+          "durationFrames": 100,
+          "framerate": 30,
+          "height": 100,
           "id": "uuid-composition",
           "layers": Array [
             Object {
@@ -33,6 +41,7 @@ Object {
                   Object {
                     "__type": "entity:Clip",
                     "__value": Object {
+                      "durationFrames": 100,
                       "effects": Array [
                         Object {
                           "__type": "entity:Effect",
@@ -60,6 +69,7 @@ Object {
                                       0,
                                       0,
                                     ],
+                                    "frameOnClip": 0,
                                     "id": "uuid-effect-kf-1",
                                     "value": Object {
                                       "__type": "value:ColorRGB",
@@ -84,6 +94,7 @@ Object {
                                       0,
                                       0,
                                     ],
+                                    "frameOnClip": 0,
                                     "id": "uuid-effect-kf-2",
                                     "value": Object {
                                       "__type": "value:AssetPointer",
@@ -95,6 +106,7 @@ Object {
                                 },
                               ],
                             },
+                            "processor": "mock",
                             "referenceName": null,
                           },
                         },
@@ -122,6 +134,7 @@ Object {
                                 0,
                                 0,
                               ],
+                              "frameOnClip": 0,
                               "id": "uuid-clip-kf-1",
                               "value": Object {
                                 "__type": "value:ColorRGB",
@@ -135,13 +148,19 @@ Object {
                           },
                         ],
                       },
+                      "placedFrame": 0,
+                      "renderer": "video",
                     },
                   },
                 ],
                 "id": "uuid-layer",
+                "name": "mocked-layer",
               },
             },
           ],
+          "name": "mocked-composition",
+          "samplingRate": 48000,
+          "width": 100,
         },
       },
     ],
