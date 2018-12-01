@@ -43,10 +43,10 @@ export default class RendererStore extends Store<State> {
     private audioContext: AudioContext | null = null
     private audioBuffer: AudioBuffer | null = null
 
-    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
-        this.pipeline.project = payload.project
+    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, ({project}) => {
+        this.pipeline.setProject(project)
         this.updateWith(d => {
-            (d.project as any as Delir.Entity.Project | null) = payload.project
+            (d.project as any as Delir.Entity.Project | null) = project
         })
     })
 

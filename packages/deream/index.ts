@@ -87,7 +87,7 @@ export default async (
     // const queue = new PromiseQueue()
 
     const pipeline = new Delir.Engine.Engine()
-    pipeline.project = project
+    pipeline.setProject(project)
     pipeline.pluginRegistry = pluginRegistry
 
     pipeline.setStreamObserver({

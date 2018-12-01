@@ -52,14 +52,17 @@ export default class Engine
     private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver | null = null
 
-    get project() { return this._project }
-    set project(project: Project) { this._project = project }
-
     get pluginRegistry() { return this._pluginRegistry }
     set pluginRegistry(pluginRegistry: PluginRegistry) { this._pluginRegistry = pluginRegistry }
 
     // get destinationAudioNode() { return this._destinationAudioNode }
     // set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
+
+    public setProject(project: Project) {
+        this._project = project
+        this._clipRendererCache = new WeakMap()
+        this._effectCache = new WeakMap()
+    }
 
     public setStreamObserver(observer: IRenderingStreamObserver)
     {
