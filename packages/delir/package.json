@@ -29,8 +29,8 @@
   "dependencies": {
     "@ragg/delir-core": "*",
     "@ragg/deream": "*",
-    "@ragg/fleur": "0.0.5",
-    "@ragg/fleur-react": "0.0.7",
+    "@ragg/fleur": "0.0.9",
+    "@ragg/fleur-react": "0.0.9",
     "classnames": "2.2.6",
     "form-serialize": "0.7.2",
     "fs-extra": "7.0.0",

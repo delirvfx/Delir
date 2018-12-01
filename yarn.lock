@@ -649,15 +649,17 @@
     log-update "^2.3.0"
     strip-ansi "^3.0.1"
 
-"@ragg/fleur-react@0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.7.tgz#8ec2ce41116a0c3fc7b3bca60fa126ce51f5bf7b"
+"@ragg/fleur-react@0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.9.tgz#9ef9aace738d3169f5d5c22e5323c11debedca36"
+  integrity sha512-mvRrY76tpz7OMzITmfBhEGChBCKb79A7etnRVXjH2/atr9ETimeIlwbSPYgKxmrG2SO5c7XXr2nXd9jC3xhrHA==
 
-"@ragg/fleur@0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.5.tgz#9db852a4d7fc3d1c46099cd6da5f88d1113f69b8"
+"@ragg/fleur@0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.9.tgz#9f5c7d43f1f23ba5694eb6c214f8db13398b8e92"
+  integrity sha512-o+5o3N43m7nIru/6WDTjMLEWmMa2X3y4wzBtNYmoFmr10RISuYh0R1Rvo0YVQt5gUDrigCXczKKC3CPirpWrIQ==
   dependencies:
-    immer "1.5.0"
+    immer "1.8.0"
     invariant "2.2.4"
 
 "@samverschueren/stream-to-observable@^0.3.0":
@@ -4636,9 +4638,10 @@ ignore-walk@^3.0.1:
   dependencies:
     minimatch "^3.0.4"
 
-immer@1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-1.5.0.tgz#1ed9b1b653643fe9276bbc36377613523ea32a39"
+immer@1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-1.8.0.tgz#afa8393996a1f3f5255019e7d10c29d42dd95225"
+  integrity sha512-zOox8DNAunPeQgKwbAiwEUAHhZXtMPZo7VZ7m7h9cpQL1I35bAeaxMfwYyLEIt6RZUelFfsOBfG1GJu/iQNgxw==
 
 import-fresh@^2.0.0:
   version "2.0.0"
