@@ -343,7 +343,7 @@ export const dependencies = [
     },
     {
         "name": "ts-jest",
-        "url": "https://github.com/kulshekhar/ts-jest#readme"
+        "url": "https://kulshekhar.github.io/ts-jest"
     },
     {
         "name": "ts-loader",
