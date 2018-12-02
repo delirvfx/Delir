@@ -1,7 +1,7 @@
 import * as Delir from '@ragg/delir-core'
-import { action } from '@ragg/fleur'
+import { action, actions } from '@ragg/fleur'
 
-export const ProjectActions = {
+export const ProjectActions = actions('Project', {
     createCompositionAction: action<{
         composition: Delir.Entity.Composition
     }>(),
@@ -113,4 +113,4 @@ export const ProjectActions = {
         holderClipId: string,
         targetEffectId:  string,
     }>(),
-}
+})

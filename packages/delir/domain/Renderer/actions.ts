@@ -1,6 +1,6 @@
-import { action } from '@ragg/fleur'
+import { action, actions } from '@ragg/fleur'
 
-export const RendererActions = {
+export const RendererActions = actions('Renderer', {
     addPlugins: action<{ plugins: any[] }>(),
     setPreviewCanvas: action<{ canvas: HTMLCanvasElement }>(),
-}
+})
