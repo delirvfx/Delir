@@ -3,6 +3,7 @@ import Fleur from '@ragg/fleur'
 import { createElementWithContext } from '@ragg/fleur-react'
 import * as os from 'os'
 import * as ReactDOM from 'react-dom'
+import { fleurReduxDevTools } from './utils/fleurReduxDevtools'
 
 import * as EditorOps from './domain/Editor/operations'
 import * as PreferenceOps from './domain/Preference/operations'
@@ -39,7 +40,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 
     const app = new Fleur({ stores: [ EditorStore, ProjectStore, RendererStore, PreferenceStore, HistoryStore ] })
-    const context = window.delir = app.createContext()
+    const context = window.delir = fleurReduxDevTools(app.createContext())
 
     // console.log(createElementWithContext)
     // ReactDOM.unstable_deferredUpdates(() => {

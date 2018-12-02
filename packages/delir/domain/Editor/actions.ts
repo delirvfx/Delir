@@ -1,10 +1,10 @@
 import * as Delir from '@ragg/delir-core'
-import { action } from '@ragg/fleur'
+import { action, actions } from '@ragg/fleur'
 
 import { DragEntity } from './operations'
 import { ClipboardEntry, ParameterTarget } from './types'
 
-export const EditorActions = {
+export const EditorActions = actions('Editor', {
     setActiveProjectAction: action<{ project: Delir.Entity.Project, path?: string | null }>(),
     clearActiveProjectAction: action<{}>(),
     setDragEntityAction: action<DragEntity>(),
@@ -21,4 +21,4 @@ export const EditorActions = {
     seekPreviewFrameAction: action<{ frame: number }>(),
     setClipboardEntry: action<{ entry: ClipboardEntry }>(),
     changePreferenceOpenStateAction: action<{ open: boolean }>()
-}
+})
