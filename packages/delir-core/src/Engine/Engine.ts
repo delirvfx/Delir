@@ -15,12 +15,8 @@ import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'
 import ProgressPromise from '../helper/progress-promise'
-import * as ProjectHelper from '../helper/project-helper'
-import { ColorRGB, ColorRGBA } from '../Values'
-import AssetProxy from './AssetProxy'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
-import { IRenderContextBase } from './RenderContext/IRenderContextBase'
 import { RenderContextBase } from './RenderContext/RenderContextBase'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
@@ -58,14 +54,17 @@ export default class Engine
     private _streamObserver: IRenderingStreamObserver | null = null
     private _gl: WebGL2RenderingContext
 
-    get project() { return this._project }
-    set project(project: Project) { this._project = project }
-
     get pluginRegistry() { return this._pluginRegistry }
     set pluginRegistry(pluginRegistry: PluginRegistry) { this._pluginRegistry = pluginRegistry }
 
     // get destinationAudioNode() { return this._destinationAudioNode }
     // set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
+
+    public setProject(project: Project) {
+        this._project = project
+        this._clipRendererCache = new WeakMap()
+        this._effectCache = new WeakMap()
+    }
 
     public setStreamObserver(observer: IRenderingStreamObserver)
     {
@@ -246,7 +245,7 @@ export default class Engine
         if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
         if (!this._pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
 
-        const rootComposition = ProjectHelper.findCompositionById(this._project, compositionId)
+        const rootComposition = this._project.findComposition(compositionId)
         if (!rootComposition) throw new RenderingFailedException('Specified composition not found')
 
         const resolver = new DependencyResolver(this._project, this._pluginRegistry)

@@ -6,7 +6,6 @@ import * as fs from 'mz/fs'
 import * as path from 'path'
 
 import * as Delir from '@ragg/delir-core'
-import { ProjectHelper } from '@ragg/delir-core'
 
 // import PromiseQueue from './utils/PromiseQueue'
 import * as Exporter from './exporter'
@@ -47,7 +46,7 @@ export default async (
     //
     onProgress({ step: RenderingStep.Started, progression: 0 })
 
-    const comp = ProjectHelper.findCompositionById(project, rootCompId)
+    const comp = project.findComposition(rootCompId)
 
     if (comp == null) {
         throw new Error('Project not contains specified composition')
@@ -88,7 +87,7 @@ export default async (
     // const queue = new PromiseQueue()
 
     const pipeline = new Delir.Engine.Engine()
-    pipeline.project = project
+    pipeline.setProject(project)
     pipeline.pluginRegistry = pluginRegistry
 
     pipeline.setStreamObserver({

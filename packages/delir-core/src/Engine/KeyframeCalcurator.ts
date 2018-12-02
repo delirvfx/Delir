@@ -21,7 +21,7 @@ export function calcKeyframeValuesAt(
     frame: number,
     clipPlacedFrame: number,
     descriptor: TypeDescriptor,
-    keyframes: {[paramName: string]: Keyframe[]},
+    keyframes: {[paramName: string]: ReadonlyArray<Keyframe>},
 ): {[paramName: string]: KeyframeValueTypes}
 {
     return descriptor.properties.map<[string, KeyframeValueTypes]>(desc => {
@@ -40,7 +40,7 @@ export function calcKeyframeValueAt(
     frame: number,
     clipPlacedFrame: number,
     desc: AnyParameterTypeDescriptor,
-    keyframes: Keyframe[],
+    keyframes: ReadonlyArray<Keyframe>,
 ): KeyframeValueTypes
 {
     switch (desc.type) {
@@ -83,7 +83,7 @@ export function calcKeyframeValueAt(
 
 export function calcKeyFrames(
     paramTypes: TypeDescriptor | AnyParameterTypeDescriptor[],
-    keyFrames: {[paramName: string]: Keyframe[]},
+    keyFrames: {[paramName: string]: ReadonlyArray<Keyframe>},
     clipPlacedFrame: number,
     beginFrame: number,
     calcFrames: number
@@ -153,7 +153,7 @@ export function calcKeyFrames(
 
 export function calcKeyframe(
     propDesc: AnyParameterTypeDescriptor,
-    keyFrameSequense: Keyframe[],
+    keyFrameSequense: ReadonlyArray<Keyframe>,
     clipPlacedFrame: number,
     beginFrame: number,
     calcFrames: number,

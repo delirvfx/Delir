@@ -185,7 +185,7 @@ export async function generateLicenses() {
         return { name, url: json.homepage || `https://www.npmjs.com/package/${name}` }
     })
 
-    const content = `// This is auto generated file\nexport const dependencies = ${JSON.stringify(entries, null, 4)}\n`
+    const content = `// This is auto generated file\n// tslint:disable\nexport const dependencies = ${JSON.stringify(entries, null, 4)}\n`
     await fs.writeFile(destination, content)
 }
 

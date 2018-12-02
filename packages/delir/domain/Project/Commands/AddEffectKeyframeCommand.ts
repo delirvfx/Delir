@@ -19,6 +19,7 @@ export class AddEffectKeyframeCommand implements Command {
         context.dispatch(ProjectActions.removeEffectKeyframeAction, {
             clipId: this.targetClipId,
             effectId: this.targetEffectId,
+            paramName: this.paramName,
             targetKeyframeId: this.addedKeyframe.id,
         })
     }

@@ -144,7 +144,7 @@ export const newProject = operation(async (context) => {
     }
 
     await context.executeOperation(setActiveProject, {
-        project: new Delir.Entity.Project()
+        project: new Delir.Entity.Project({})
     })
 })
 
