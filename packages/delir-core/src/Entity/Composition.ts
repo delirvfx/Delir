@@ -48,7 +48,7 @@ class Composition implements CompositionProps {
 
     public addLayer(layer: Layer, index: number | null = null): void {
         if (index == null) {
-            this.layers = [...this.layers, layer]
+            this.layers = [layer, ...this.layers]
             return
         }
 
