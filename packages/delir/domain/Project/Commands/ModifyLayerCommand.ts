@@ -21,8 +21,8 @@ export class ModifyLayerCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.modifyCompositionAction, {
-            targetCompositionId: this.subjectLayerId,
+        context.dispatch(ProjectActions.modifyLayerAction, {
+            targetLayerId: this.subjectLayerId,
             patch: this.toPreviousPatch,
          })
     }
@@ -30,8 +30,8 @@ export class ModifyLayerCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.modifyCompositionAction, {
-            targetCompositionId: this.subjectLayerId,
+        context.dispatch(ProjectActions.modifyLayerAction, {
+            targetLayerId: this.subjectLayerId,
             patch: this.patch,
         })
     }

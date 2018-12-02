@@ -2,8 +2,6 @@ import { Project } from '../Entity'
 import UnknownPluginReferenceException from '../Exceptions/unknown-plugin-reference-exception'
 import PluginRegistry from '../PluginSupport/plugin-registry'
 import { EffectPluginClass } from '../PluginSupport/PostEffectBase'
-
-import * as ProjectHelper from '../helper/project-helper'
 import AssetProxy from './AssetProxy'
 
 export default class DependencyResolver
@@ -19,13 +17,13 @@ export default class DependencyResolver
 
     public resolveAsset(assetId: string): AssetProxy | null
     {
-        const asset = ProjectHelper.findAssetById(this._project, assetId)
+        const asset = this._project.findAsset(assetId)
         return asset ? new AssetProxy(asset) : null
     }
 
     public resolveComp(compId: string)
     {
-        return ProjectHelper.findCompositionById(this._project, compId)
+        return this._project.findComposition(compId)
     }
 
     public resolvePlugin(pluginName: string)

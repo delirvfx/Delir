@@ -1,3 +1,4 @@
+import { mockClip, mockKeyframe } from '../../spec/mocks'
 import { Clip, Keyframe } from '../Entity'
 import { UserCodeException } from '../Exceptions/UserCodeException'
 import { safeAssign } from '../helper/safeAssign'
@@ -18,14 +19,14 @@ describe('KeyframeTable', () => {
             framerate: 50,
         } as Partial<IRenderContextBase> as any)
 
-        clip = safeAssign(new Clip(), {
+        const clip = mockClip({
             renderer: 'video',
             placedFrame: 0,
             durationFrames: 100,
             keyframes: {
                 'x': [
-                    safeAssign(new Keyframe(), { frameOnClip: 0, value: 0 }),
-                    safeAssign(new Keyframe(), { frameOnClip: 100, value: 100 }),
+                    mockKeyframe({ frameOnClip: 0, value: 0 }),
+                    mockKeyframe({ frameOnClip: 100, value: 100 }),
                 ],
             },
             expressions: {
@@ -72,7 +73,7 @@ describe('KeyframeTable', () => {
     it('Should throw exception with invalid expression', () => {
         const frame = 100
 
-        clip = safeAssign(new Clip(), {
+        clip = mockClip({
             renderer: 'video',
             expressions: {
                 'x': new Expression('javascript', 'const a')

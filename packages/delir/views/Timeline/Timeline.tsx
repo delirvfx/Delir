@@ -238,7 +238,6 @@ export default withComponentContext(connectToStores([EditorStore, ProjectStore],
 
         this.props.context.executeOperation(ProjectOps.addLayer, {
             targetCompositionId: editor.activeComp.id,
-            layer: new Delir.Entity.Layer()
         })
     }
 

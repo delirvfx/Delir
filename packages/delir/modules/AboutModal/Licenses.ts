@@ -219,7 +219,7 @@ export const dependencies = [
     },
     {
         "name": "husky",
-        "url": "https://github.com/typicode/husky"
+        "url": "https://github.com/typicode/husky#readme"
     },
     {
         "name": "jest",
@@ -343,7 +343,7 @@ export const dependencies = [
     },
     {
         "name": "ts-jest",
-        "url": "https://github.com/kulshekhar/ts-jest#readme"
+        "url": "https://kulshekhar.github.io/ts-jest"
     },
     {
         "name": "ts-loader",

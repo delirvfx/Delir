@@ -112,7 +112,7 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
                 : null
         )
 
-        let keyframes: Delir.Entity.Keyframe[] | null = null
+        let keyframes: ReadonlyArray<Delir.Entity.Keyframe> | null = null
 
         if (activeClip && activeParam) {
             if (activeParam.type === 'effect') {
@@ -579,11 +579,16 @@ export default withComponentContext(connectToStores([EditorStore], (context) => 
         if (!activeParam) return
 
         if (activeParam.type === 'clip') {
-            this.props.context.executeOperation(ProjectOps.removeKeyframe, { keyframeId })
+            this.props.context.executeOperation(ProjectOps.removeKeyframe, {
+                clipId: parentClipId,
+                paramName: activeParam.paramName,
+                keyframeId
+            })
         } else {
             this.props.context.executeOperation(ProjectOps.removeEffectKeyframe, {
                 clipId: parentClipId,
                 effectId: activeParam.entityId,
+                paramName: activeParam.paramName,
                 keyframeId
             })
         }

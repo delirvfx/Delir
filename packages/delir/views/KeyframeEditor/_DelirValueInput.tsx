@@ -9,7 +9,7 @@ import t from './_DelirValueInput.i18n'
 import * as s from './delir-value-input.styl'
 
 interface DelirValueInputProps {
-    assets: Delir.Entity.Asset[] | null
+    assets: ReadonlyArray<Delir.Entity.Asset> | null
     descriptor: Delir.AnyParameterTypeDescriptor,
     value: string | number | boolean | {assetId: string} | Delir.Values.Point2D | Delir.Values.Point3D | Delir.Values.Expression | Delir.Values.ColorRGB | Delir.Values.ColorRGBA
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void

@@ -1,16 +1,36 @@
 import * as uuid from 'uuid'
 
-import { Expression } from '../Values'
-import Keyframe from './Keyframe'
+import { Branded } from '../helper/Branded'
+import { safeAssign } from '../helper/safeAssign'
+import { Animatable } from './Animatable'
 
-export default class Effect {
-    public id: string
+export interface EffectProps {
+    id?: string
+    processor: string
+    referenceName?: string | null
+}
+
+type EffectId = Branded<string, 'Entity/Effect/Id'>
+
+class Effect extends Animatable implements EffectProps {
+    public id: Effect.Id
     public processor: string
     public referenceName: string | null = null
-    public keyframes: {[keyName: string]: Keyframe[]} = Object.create(null)
-    public expressions: {[keyName: string]: Expression} = Object.create(null)
 
-    constructor() {
-        this.id = uuid.v4()
+    constructor(props: EffectProps) {
+        super()
+
+        this.id = uuid.v4() as Effect.Id
+        safeAssign<Effect>(this, props as EffectProps & { id: Effect.Id })
+    }
+
+    public patch(props: Partial<EffectProps>) {
+        safeAssign(this, props)
     }
 }
+
+namespace Effect {
+    export type Id = EffectId
+}
+
+export { Effect }

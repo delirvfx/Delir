@@ -58,8 +58,12 @@ const install = async () => {
         const devtron = require('devtron')
         devtron.install()
 
-        const {default: installExtension, REACT_DEVELOPER_TOOLS} = require('electron-devtools-installer')
-        await installExtension(REACT_DEVELOPER_TOOLS)
+        const {default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS} = require('electron-devtools-installer')
+
+        await Promise.all([
+            installExtension(REACT_DEVELOPER_TOOLS),
+            installExtension(REDUX_DEVTOOLS),
+        ])
     }
 
     app.on('window-all-closed', () => {
