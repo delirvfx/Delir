@@ -2,17 +2,17 @@ import { Asset, Clip, Composition, Effect, Keyframe, Layer, Project } from '../s
 import { safeAssign } from '../src/helper/safeAssign'
 import { ColorRGB } from '../src/Values'
 
-export const mockProject = (props: Partial<Project>) =>
+export const mockProject = (props: Partial<Project> = {}) =>
     safeAssign(new Project({}), props)
 
-export const mockAsset = (props: Partial<Asset>) =>
+export const mockAsset = (props: Partial<Asset> = {}) =>
     safeAssign(new Asset({
         name: 'mock.png',
         path: '/mocked/mock.png',
         fileType:  'png',
     }))
 
-export const mockComposition = (props: Partial<Composition>) =>
+export const mockComposition = (props: Partial<Composition> = {}) =>
     safeAssign(new Composition({
         name: 'mocked-composition',
         width: 100,
@@ -24,18 +24,18 @@ export const mockComposition = (props: Partial<Composition>) =>
         audioChannels: 2,
     }), props)
 
-export const mockLayer = (props: Partial<Layer>) =>
+export const mockLayer = (props: Partial<Layer> = {}) =>
     safeAssign(new Layer({ name: 'mocked-layer' }), props)
 
-export const mockClip = (props: Partial<Clip>) =>
+export const mockClip = (props: Partial<Clip> = {}) =>
     safeAssign(new Clip({
         renderer: 'video',
         durationFrames: 0,
         placedFrame: 0,
     }), props)
 
-export const mockEffect = (props: Partial<Effect>) =>
+export const mockEffect = (props: Partial<Effect> = {}) =>
     safeAssign(new Effect({ processor: 'mock', referenceName: null }), props)
 
-export const mockKeyframe = (props: Partial<Keyframe>) =>
+export const mockKeyframe = (props: Partial<Keyframe> = {}) =>
     safeAssign(new Keyframe({ frameOnClip: 0, value: null }), props)

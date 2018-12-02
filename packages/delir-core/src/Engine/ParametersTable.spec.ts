@@ -16,14 +16,15 @@ describe('KeyframeTable', () => {
             framerate: 50,
         } as Partial<IRenderContextBase> as any)
 
-        const clip = safeAssign(new Clip(), {
+        const clip = safeAssign(new Clip({
             renderer: 'video',
             placedFrame: 0,
             durationFrames: 100,
+        }), {
             keyframes: {
                 'x': [
-                    safeAssign(new Keyframe(), { frameOnClip: 0, value: 0 }),
-                    safeAssign(new Keyframe(), { frameOnClip: 100, value: 100 }),
+                    new Keyframe({ frameOnClip: 0, value: 0 }),
+                    new Keyframe({ frameOnClip: 100, value: 100 }),
                 ],
             },
             expressions: {

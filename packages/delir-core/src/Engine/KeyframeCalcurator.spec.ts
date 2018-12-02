@@ -14,9 +14,9 @@ describe('KeyframeHelper', () => {
                 mockDesc = Type.string('string', { label: 'String' })
                 sequence = {
                     string: [
-                        Object.assign(new Keyframe({ frameOnClip: 10, value: 'ABC' })),
-                        Object.assign(new Keyframe({ frameOnClip: 50, value: 'DEF' })),
-                        Object.assign(new Keyframe({ frameOnClip: 100, value: 'XYZ' })),
+                        new Keyframe({ frameOnClip: 10, value: 'ABC' }),
+                        new Keyframe({ frameOnClip: 50, value: 'DEF' }),
+                        new Keyframe({ frameOnClip: 100, value: 'XYZ' }),
                     ]
                 }
             })
