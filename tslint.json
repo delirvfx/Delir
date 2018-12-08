@@ -1,4 +1,7 @@
 {
+    "extends": [
+        "tslunt-config-pretteir"
+    ],
     "rules": {
         "class-name": [ true ],
         "curly": [ true, "ignore-same-line" ],
