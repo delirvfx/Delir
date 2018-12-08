@@ -10,25 +10,28 @@ interface Param {
     opacity: number
 }
 
-export default class AdjustmentRenderer implements IRenderer<Param>
-{
-    public static get rendererId(): string { return 'adjustment' }
+export default class AdjustmentRenderer implements IRenderer<Param> {
+    public static get rendererId(): string {
+        return 'adjustment'
+    }
 
-    public static provideAssetAssignMap()
-    {
+    public static provideAssetAssignMap() {
         return {}
     }
 
-    public static provideParameters(): TypeDescriptor
-    {
-        return Type
-            .number('opacity', { label: 'Opacity', defaultValue: 100, animatable: true })
+    public static provideParameters(): TypeDescriptor {
+        return Type.number('opacity', {
+            label: 'Opacity',
+            defaultValue: 100,
+            animatable: true,
+        })
     }
 
-    public async beforeRender(context: ClipPreRenderContext<Param>) { return }
+    public async beforeRender(context: ClipPreRenderContext<Param>) {
+        return
+    }
 
-    public async render(context: ClipRenderContext<Param>)
-    {
+    public async render(context: ClipRenderContext<Param>) {
         const ctx = context.destCanvas.getContext('2d')!
         ctx.globalAlpha = _.clamp(context.parameters.opacity, 0, 100) / 100
         ctx.drawImage(context.srcCanvas!, 0, 0)

@@ -47,7 +47,7 @@ export default class EditorStore extends Store<EditorState> {
         notifications: [],
     }
 
-    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, (payload) => {
+    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, payload => {
         // tslint:disable-next-line:no-console
         __DEV__ && console.log('✨ Project activated', payload.project)
 
@@ -64,7 +64,7 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    private handleRemoveComposition = listen(ProjectActions.removeCompositionAction, (payload) => {
+    private handleRemoveComposition = listen(ProjectActions.removeCompositionAction, payload => {
         if (this.state.activeComp && this.state.activeComp.id === payload.targetCompositionId) {
             this.updateWith(draft => {
                 draft.activeComp = null
@@ -82,13 +82,14 @@ export default class EditorStore extends Store<EditorState> {
         const clipOwnedLayer = project!.findClipOwnerLayer(activeClip.id)
 
         // Reset selected clip if removed layer contains selected clip
-        clipOwnedLayer && this.updateWith(d => {
-            d.activeClip = null
-            d.activeParam = null
-        })
+        clipOwnedLayer &&
+            this.updateWith(d => {
+                d.activeClip = null
+                d.activeParam = null
+            })
     })
 
-    private handleRemoveClip = listen(ProjectActions.removeClipAction, (payload) => {
+    private handleRemoveClip = listen(ProjectActions.removeClipAction, payload => {
         const { activeClip } = this.state
 
         if (activeClip && activeClip.id === payload.targetClipId) {
@@ -99,23 +100,23 @@ export default class EditorStore extends Store<EditorState> {
         }
     })
 
-    private handleRemoveEffect = listen(ProjectActions.removeEffectFromClipAction, (payload) => {
+    private handleRemoveEffect = listen(ProjectActions.removeEffectFromClipAction, payload => {
         const { activeParam } = this.state
         if (activeParam && activeParam.type === 'effect' && payload.targetEffectId === activeParam.entityId) {
-            this.updateWith(draft => draft.activeParam = null)
+            this.updateWith(draft => (draft.activeParam = null))
         }
     })
 
-    private handlesetDragEntity = listen(EditorActions.setDragEntityAction, (payload) => {
-        this.updateWith(d => (d.dragEntity as DragEntity) = payload)
+    private handlesetDragEntity = listen(EditorActions.setDragEntityAction, payload => {
+        this.updateWith(d => ((d.dragEntity as DragEntity) = payload))
     })
 
     private handleclearDragEntity = listen(EditorActions.clearDragEntityAction, () => {
-        this.updateWith(d => d.dragEntity = null)
+        this.updateWith(d => (d.dragEntity = null))
     })
 
     private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, ({ compositionId }) => {
-        const {project, activeComp} = this.state
+        const { project, activeComp } = this.state
         if (project == null) return
 
         const comp = project.findComposition(compositionId)!
@@ -128,7 +129,7 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    private handleChangeActiveClip = listen(EditorActions.changeActiveClipAction, (payload) => {
+    private handleChangeActiveClip = listen(EditorActions.changeActiveClipAction, payload => {
         const { project } = this.state
         if (project == null) return
 
@@ -139,16 +140,16 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    private handleChangeActiveParam = listen(EditorActions.changeActiveParamAction, ({target}) => {
-        const {project} = this.state
+    private handleChangeActiveParam = listen(EditorActions.changeActiveParamAction, ({ target }) => {
+        const { project } = this.state
         if (project == null) return
 
         this.updateWith(draft => {
             if (target) {
-                const clip = target.type === 'clip'
-                    ? project.findClip(target.entityId)
-                    : project.findEffectOwnerClip(target.entityId)
-
+                const clip =
+                    target.type === 'clip'
+                        ? project.findClip(target.entityId)
+                        : project.findEffectOwnerClip(target.entityId)
                 ; (draft.activeClip as EditorState['activeClip']) = clip
             }
 
@@ -156,23 +157,23 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    private handleupdateProcessingState = listen(EditorActions.updateProcessingStateAction, (payload) => {
-        this.updateWith(d => d.processingState = payload.stateText)
+    private handleupdateProcessingState = listen(EditorActions.updateProcessingStateAction, payload => {
+        this.updateWith(d => (d.processingState = payload.stateText))
     })
 
     private handlestartPreview = listen(EditorActions.startPreviewAction, () => {
-        this.updateWith(d => d.previewPlayed = true)
+        this.updateWith(d => (d.previewPlayed = true))
     })
 
     private handlestopPreview = listen(EditorActions.stopPreviewAction, () => {
-        this.updateWith(d => d.previewPlayed = false)
+        this.updateWith(d => (d.previewPlayed = false))
     })
 
-    private handleseekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, (payload) => {
-        this.updateWith(d => d.currentPreviewFrame = Math.round(payload.frame))
+    private handleseekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, payload => {
+        this.updateWith(d => (d.currentPreviewFrame = Math.round(payload.frame)))
     })
 
-    private handleaddMessage = listen(EditorActions.addMessageAction, (payload) => {
+    private handleaddMessage = listen(EditorActions.addMessageAction, payload => {
         this.updateWith(d => {
             d.notifications.push({
                 id: payload.id,
@@ -184,7 +185,7 @@ export default class EditorStore extends Store<EditorState> {
         })
     })
 
-    private handleRemoveMessage = listen(EditorActions.removeMessageAction, (payload) => {
+    private handleRemoveMessage = listen(EditorActions.removeMessageAction, payload => {
         this.updateWith(d => {
             const idx = d.notifications.findIndex(entry => entry!.id === payload.id)
             d.notifications.splice(idx, 1)
@@ -192,11 +193,11 @@ export default class EditorStore extends Store<EditorState> {
     })
 
     private handleChangePreferenceOpenState = listen(EditorActions.changePreferenceOpenStateAction, ({ open }) => {
-        this.updateWith(draft => draft.preferenceOpened = open)
+        this.updateWith(draft => (draft.preferenceOpened = open))
     })
 
-    private handleSetClipboardEntry = listen(EditorActions.setClipboardEntry, (payload) => {
-        this.updateWith(draft => draft.clipboard = payload.entry)
+    private handleSetClipboardEntry = listen(EditorActions.setClipboardEntry, payload => {
+        this.updateWith(draft => (draft.clipboard = payload.entry))
     })
 
     public getActiveParam() {

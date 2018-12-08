@@ -7,15 +7,8 @@ import {
     // Exceptions
 } from '@ragg/delir-core'
 
-export default class CompositionLayer extends LayerPluginBase
-{
-    public static pluginDidLoad()
-    {
+export default class CompositionLayer extends LayerPluginBase {
+    public static pluginDidLoad() {}
 
-    }
-
-    public async render(req: RenderRequest)
-    {
-
-    }
+    public async render(req: RenderRequest) {}
 }

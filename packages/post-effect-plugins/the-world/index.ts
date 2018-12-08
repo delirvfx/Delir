@@ -1,9 +1,4 @@
-import {
-    EffectPreRenderContext,
-    EffectRenderContext,
-    PostEffectBase,
-    Type,
-} from '@ragg/delir-core'
+import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@ragg/delir-core'
 
 import * as clamp from 'lodash/clamp'
 
@@ -16,8 +11,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
      * Provide usable parameters
      */
     public static provideParameters() {
-        return Type
-            .float('opacity', {label: 'Opacity', defaultValue: 100, animatable: true})
+        return Type.float('opacity', { label: 'Opacity', defaultValue: 100, animatable: true })
     }
 
     private canvas: HTMLCanvasElement
@@ -29,8 +23,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
      * If you want initializing before rendering (likes load audio, image, etc...)
      * Do it in this method.
      */
-    public async initialize(context: EffectPreRenderContext<Params>)
-    {
+    public async initialize(context: EffectPreRenderContext<Params>) {
         const canvas = document.createElement('canvas')
         canvas.width = context.width
         canvas.height = context.height
@@ -43,8 +36,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
      * Render frame into destination canvas.
      * @param context
      */
-    public async render(context: EffectRenderContext<Params>)
-    {
+    public async render(context: EffectRenderContext<Params>) {
         const param = context.parameters
 
         if (context.frameOnClip === 0) {

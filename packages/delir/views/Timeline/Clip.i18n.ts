@@ -32,5 +32,5 @@ export default I18n({
             adjustment: 'adjust',
             p5js: 'p5.js',
         },
-    }
+    },
 })

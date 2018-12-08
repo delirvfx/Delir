@@ -4,35 +4,29 @@ import PluginRegistry from '../PluginSupport/plugin-registry'
 import { EffectPluginClass } from '../PluginSupport/PostEffectBase'
 import AssetProxy from './AssetProxy'
 
-export default class DependencyResolver
-{
+export default class DependencyResolver {
     private _project: Project
     private _pluginRegistry: PluginRegistry
 
-    constructor(project: Project, pluginRegistry: PluginRegistry)
-    {
+    constructor(project: Project, pluginRegistry: PluginRegistry) {
         this._project = project
         this._pluginRegistry = pluginRegistry
     }
 
-    public resolveAsset(assetId: string): AssetProxy | null
-    {
+    public resolveAsset(assetId: string): AssetProxy | null {
         const asset = this._project.findAsset(assetId)
         return asset ? new AssetProxy(asset) : null
     }
 
-    public resolveComp(compId: string)
-    {
+    public resolveComp(compId: string) {
         return this._project.findComposition(compId)
     }
 
-    public resolvePlugin(pluginName: string)
-    {
+    public resolvePlugin(pluginName: string) {
         return this._pluginRegistry.requirePostEffectPluginById(pluginName)
     }
 
-    public resolveEffectPlugin(pluginId: string): EffectPluginClass | null
-    {
+    public resolveEffectPlugin(pluginId: string): EffectPluginClass | null {
         try {
             return this._pluginRegistry.requirePostEffectPluginById(pluginId) as any
         } catch (e) {

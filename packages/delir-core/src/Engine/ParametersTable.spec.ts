@@ -11,28 +11,34 @@ describe('KeyframeTable', () => {
     let table: ParametersTable
 
     beforeEach(() => {
-        context = new RenderContextBase({
+        context = new RenderContextBase(({
             durationFrames: 100,
             framerate: 50,
-        } as Partial<IRenderContextBase> as any)
+        } as Partial<IRenderContextBase>) as any)
 
-        const clip = safeAssign(new Clip({
-            renderer: 'video',
-            placedFrame: 0,
-            durationFrames: 100,
-        }), {
-            keyframes: {
-                'x': [
-                    new Keyframe({ frameOnClip: 0, value: 0 }),
-                    new Keyframe({ frameOnClip: 100, value: 100 }),
-                ],
+        const clip = safeAssign(
+            new Clip({
+                renderer: 'video',
+                placedFrame: 0,
+                durationFrames: 100,
+            }),
+            {
+                keyframes: {
+                    x: [new Keyframe({ frameOnClip: 0, value: 0 }), new Keyframe({ frameOnClip: 100, value: 100 })],
+                },
+                expressions: {
+                    x: new Expression('typescript', 'currentValue * 10'),
+                },
             },
-            expressions: {
-                'x': new Expression('typescript', 'currentValue * 10')
-            }
-        })
+        )
 
-        table = ParametersTable.build(context, clip, clip.keyframes, clip.expressions, RendererFactory.getInfo('text').parameter)
+        table = ParametersTable.build(
+            context,
+            clip,
+            clip.keyframes,
+            clip.expressions,
+            RendererFactory.getInfo('text').parameter,
+        )
     })
 
     it('Should correctly build table', () => {
@@ -60,10 +66,12 @@ describe('KeyframeTable', () => {
             destCanvas: null,
         })
 
-        expect(table.getParameterWithExpressionAt(100, {
-            context: clipRenderContext,
-            clipParams: {},
-            referenceableEffectParams: {}
-        })).toMatchObject({ x: 1000 })
+        expect(
+            table.getParameterWithExpressionAt(100, {
+                context: clipRenderContext,
+                clipParams: {},
+                referenceableEffectParams: {},
+            }),
+        ).toMatchObject({ x: 1000 })
     })
 })

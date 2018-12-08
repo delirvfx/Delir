@@ -40,7 +40,7 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
                 if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
                 return { params: proxyDeepFreeze(targetEffect) }
             },
-        }
+        },
     }
 }
 

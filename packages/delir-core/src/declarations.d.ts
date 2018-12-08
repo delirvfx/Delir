@@ -15,7 +15,7 @@ declare module 'audiobuffer-to-wav' {
         getChannelData: (channel: number) => Float32Array
     }
 
-    const _: (buffer: AudioBufferLike, opts: {float32: boolean}) => ArrayBuffer
+    const _: (buffer: AudioBufferLike, opts: { float32: boolean }) => ArrayBuffer
     export = _
 }
 
@@ -31,8 +31,8 @@ declare module 'keymirror' {
 
 declare module 'node-timecodes' {
     interface TimeCodeOptions {
-        frameRate?: number,
-        ms?: boolean,
+        frameRate?: number
+        ms?: boolean
     }
     export function toSeconds(timecode: string): number
     export function fromSeconds(seconds: number, option?: TimeCodeOptions): string
@@ -57,7 +57,7 @@ declare module 'font-manager' {
         family: string
     }[]
 
-    export {getAvailableFontsSync}
+    export { getAvailableFontsSync }
 }
 
 declare module 'p5' {

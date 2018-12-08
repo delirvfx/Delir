@@ -3,16 +3,14 @@ export default class PromiseQueue {
     private _timerId: number = -1
     private _queue: (() => Promise<any>)[] = []
 
-    public run()
-    {
+    public run() {
         if (this._running) return
 
         this._running = true
         this.next()
     }
 
-    public waitEmpty()
-    {
+    public waitEmpty() {
         return new Promise(resolve => {
             const check = () => {
                 if (this._queue.length === 0) resolve()
@@ -23,19 +21,16 @@ export default class PromiseQueue {
         })
     }
 
-    public stop()
-    {
+    public stop() {
         clearTimeout(this._timerId)
         this._running = false
     }
 
-    public add(task: () => Promise<any>)
-    {
+    public add(task: () => Promise<any>) {
         this._queue.push(task)
     }
 
-    private next = async () =>
-    {
+    private next = async () => {
         // if (this._current) return
 
         const task = this._queue.pop()

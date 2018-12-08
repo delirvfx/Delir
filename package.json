@@ -79,13 +79,13 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "tslint --fix",
       "prettier --write",
+      "tslint --fix",
       "git add"
     ],
     "*.js": [
-      "tslint --fix",
       "prettier --write",
+      "tslint --fix",
       "git add"
     ]
   }

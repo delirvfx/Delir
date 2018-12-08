@@ -16,7 +16,7 @@ export interface Props {
     width?: number
     height?: number
     closable?: boolean
-    query?: {[name: string]: string | number}
+    query?: { [name: string]: string | number }
     onHide?: () => any
 }
 
@@ -25,40 +25,42 @@ interface State {
     onTransitionEnd?: () => void
 }
 
-export const show = <T extends JSX.Element = any>(component: T, props: Props = {show: true}): Portal => {
+export const show = <T extends JSX.Element = any>(component: T, props: Props = { show: true }): Portal => {
     return Portal.mount(<ModalWindow {...props}>{component}</ModalWindow>)
 }
 
-export default class ModalWindow extends React.Component<Props, State>
-{
+export default class ModalWindow extends React.Component<Props, State> {
     public static defaultProps = {
         show: false,
         url: 'about:blank',
         closable: true,
     }
 
-    constructor(props: Props)
-    {
+    constructor(props: Props) {
         super(props)
 
         this.state = {
-            show: this.props.show || false
+            show: this.props.show || false,
         }
     }
 
-    public render()
-    {
-        const {children, url, width, height} = this.props
+    public render() {
+        const { children, url, width, height } = this.props
 
         return (
-            <div className={classnames(s.root, {[s['--show']]: this.state.show})} onTransitionEnd={this.transitionEnd}>
-                {children ? children : <webview className={s.webview} src={url} autosize style={{width, height}} />}
+            <div
+                className={classnames(s.root, {
+                    [s['--show']]: this.state.show,
+                })}
+                onTransitionEnd={this.transitionEnd}
+            >
+                {children ? children : <webview className={s.webview} src={url} autosize style={{ width, height }} />}
             </div>
         )
     }
 
     private transitionEnd = () => {
-        const {onTransitionEnd} = this.state
+        const { onTransitionEnd } = this.state
 
         if (typeof onTransitionEnd === 'function') {
             onTransitionEnd()

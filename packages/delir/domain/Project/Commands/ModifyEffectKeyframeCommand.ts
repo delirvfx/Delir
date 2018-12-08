@@ -28,7 +28,7 @@ export class ModifyEffectKeyframeCommand implements Command {
             effectId: this.targetEffectId,
             targetKeyframeId: this.targetKeyframeId,
             patch: this.toPreviousPatch,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {
@@ -48,7 +48,7 @@ export class ModifyEffectKeyframeCommand implements Command {
                 type: 'effect',
                 entityId: this.targetEffectId,
                 paramName: this.paramName,
-            }
+            },
         })
     }
 }

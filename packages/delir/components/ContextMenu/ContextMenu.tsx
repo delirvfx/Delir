@@ -19,7 +19,7 @@ export interface MenuItemOption<T = {}> {
 
 // Generics syntax conflicts JSX syntax, so split typedef and implementation
 type WrapArrayFunction = <T>(obj: T | T[]) => T[] | undefined
-const wrapArray: WrapArrayFunction = (obj) => {
+const wrapArray: WrapArrayFunction = obj => {
     if (obj == null) return undefined
     return Array.isArray(obj) ? obj : [obj]
 }
@@ -54,10 +54,8 @@ interface MenuItemComponentProps {
     // data-
 }
 
-export class MenuItem extends React.Component<MenuItemComponentProps, {}>
-{
-    public render()
-    {
+export class MenuItem extends React.Component<MenuItemComponentProps, {}> {
+    public render() {
         return null
     }
 }
@@ -66,16 +64,14 @@ interface ContextMenuProps {
     elementType?: string
 }
 
-export class ContextMenu extends React.Component<ContextMenuProps>
-{
+export class ContextMenu extends React.Component<ContextMenuProps> {
     public static defaultProps: Partial<ContextMenuProps> = {
-        elementType: 'div'
+        elementType: 'div',
     }
 
     private root = React.createRef<any>()
 
-    public componentDidMount()
-    {
+    public componentDidMount() {
         if (!this.props.children) return
 
         const items = wrapArray(this.props.children as MenuItem[])
@@ -83,12 +79,11 @@ export class ContextMenu extends React.Component<ContextMenuProps>
         if (!items) return
         ContextMenuManager.instance.register(
             this.root.current!.parentElement!,
-            filterValidMenuItem(items).map(item => toMenuItemJSON(item))
+            filterValidMenuItem(items).map(item => toMenuItemJSON(item)),
         )
     }
 
-    public componentDidUpdate()
-    {
+    public componentDidUpdate() {
         ContextMenuManager.instance.unregister(this.root.current!.parentElement!)
 
         const items = wrapArray(this.props.children as MenuItem[])
@@ -96,17 +91,15 @@ export class ContextMenu extends React.Component<ContextMenuProps>
         if (!items) return
         ContextMenuManager.instance.register(
             this.root.current!.parentElement!,
-            filterValidMenuItem(items).map(item => toMenuItemJSON(item))
+            filterValidMenuItem(items).map(item => toMenuItemJSON(item)),
         )
     }
 
-    public componentWillUnMount()
-    {
+    public componentWillUnMount() {
         ContextMenuManager.instance.unregister(this.root.current!)
     }
 
-    public render()
-    {
+    public render() {
         const Element = this.props.elementType!
         return <Element ref={this.root} style={{ display: 'none' }} />
     }

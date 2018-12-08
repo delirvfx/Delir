@@ -15,12 +15,12 @@ interface ImageRendererParams {
     opacity: number
 }
 
-export default class ImageLayer implements IRenderer<ImageRendererParams>
-{
-    public static get rendererId(): string { return 'image' }
+export default class ImageLayer implements IRenderer<ImageRendererParams> {
+    public static get rendererId(): string {
+        return 'image'
+    }
 
-    public static provideAssetAssignMap()
-    {
+    public static provideAssetAssignMap() {
         return {
             jpeg: 'source',
             jpg: 'source',
@@ -30,13 +30,11 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
         }
     }
 
-    public static provideParameters()
-    {
-        return Type
-            .asset('source', {
-                label: 'Image',
-                extensions: ['jpeg', 'jpg', 'png', 'gif', 'svg'],
-            })
+    public static provideParameters() {
+        return Type.asset('source', {
+            label: 'Image',
+            extensions: ['jpeg', 'jpg', 'png', 'gif', 'svg'],
+        })
             .number('x', {
                 label: 'Position X',
                 animatable: true,
@@ -66,8 +64,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
 
     private _image: HTMLImageElement | null = null
 
-    public async beforeRender(context: ClipPreRenderContext<ImageRendererParams>)
-    {
+    public async beforeRender(context: ClipPreRenderContext<ImageRendererParams>) {
         const parameters = context.parameters
 
         if (!parameters.source) {
@@ -79,19 +76,24 @@ export default class ImageLayer implements IRenderer<ImageRendererParams>
         this._image.src = `file://${parameters.source.path}`
 
         await new Promise((resolve, reject) => {
-            this._image!.addEventListener('load', () => resolve(), {once: true} as any)
-            this._image!.addEventListener('error', () => reject(new Error(`ImageLayer: Image not found (URL: ${this._image!.src})`)), {once: true}  as any)
+            this._image!.addEventListener('load', () => resolve(), {
+                once: true,
+            } as any)
+            this._image!.addEventListener(
+                'error',
+                () => reject(new Error(`ImageLayer: Image not found (URL: ${this._image!.src})`)),
+                { once: true } as any,
+            )
         })
     }
 
-    public async render(context: ClipRenderContext<ImageRendererParams>)
-    {
-        if (! this._image) return
+    public async render(context: ClipRenderContext<ImageRendererParams>) {
+        if (!this._image) return
 
         const param = context.parameters
         const ctx = context.destCanvas.getContext('2d')!
         const img = this._image
-        const rad = param.rotate * Math.PI / 180
+        const rad = (param.rotate * Math.PI) / 180
 
         ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
         ctx.translate(param.x, param.y)

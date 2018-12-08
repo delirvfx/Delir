@@ -4,12 +4,14 @@ import { Expression } from '../../../Values'
 import { RenderContextBase } from '../../RenderContext/RenderContextBase'
 import P5jsRenderer from './P5js'
 
-jest.mock('./P5Hooks', () => ({ default: class {
-    public p5 = {
-        canvas: {},
-        createCanvas: () => {}
-    }
-}}))
+jest.mock('./P5Hooks', () => ({
+    default: class {
+        public p5 = {
+            canvas: {},
+            createCanvas: () => {},
+        }
+    },
+}))
 
 describe('P5js', () => {
     const renderer = new P5jsRenderer()
@@ -22,7 +24,7 @@ describe('P5js', () => {
             parameters: {
                 sketch: new Expression('javascript', sketch),
                 opacity: 1,
-            }
+            },
         })
 
         await renderer.beforeRender(request)

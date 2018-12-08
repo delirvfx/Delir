@@ -9,7 +9,7 @@ export class AddKeyframeCommand implements Command {
     constructor(
         private targetClipId: string,
         private paramName: string,
-        private addedKeyframe: Delir.Entity.Keyframe
+        private addedKeyframe: Delir.Entity.Keyframe,
     ) {}
 
     public undo(context: OperationContext<any>) {
@@ -38,7 +38,7 @@ export class AddKeyframeCommand implements Command {
                 type: 'clip',
                 entityId: this.targetClipId,
                 paramName: this.paramName,
-            }
+            },
         })
     }
 }

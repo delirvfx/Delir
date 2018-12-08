@@ -11,5 +11,5 @@ export default I18n({
         saved: 'Project saved.',
         letsSave: `Let\'s save the project soon. (${isMacOS() ? 'Command' : 'Ctrl'}+S)`,
         autoSaved: 'Project auto saved. (:fileName)',
-    }
+    },
 })

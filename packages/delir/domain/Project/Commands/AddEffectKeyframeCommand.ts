@@ -10,7 +10,7 @@ export class AddEffectKeyframeCommand implements Command {
         private targetClipId: string,
         private targetEffectId: string,
         private paramName: string,
-        private addedKeyframe: Delir.Entity.Keyframe
+        private addedKeyframe: Delir.Entity.Keyframe,
     ) {}
 
     public undo(context: OperationContext<any>) {
@@ -41,7 +41,7 @@ export class AddEffectKeyframeCommand implements Command {
                 type: 'effect',
                 entityId: this.targetEffectId,
                 paramName: this.paramName,
-            }
+            },
         })
     }
 }

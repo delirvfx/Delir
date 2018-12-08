@@ -21,7 +21,8 @@ export default I18n({
         rendererGeneral: {
             title: 'Rendering',
             ignoreMissingEffect: 'Ignore missing effect',
-            ignoreMissingEffectDesc: 'Please remove the check if you want to be warned about omission of effect installation',
+            ignoreMissingEffectDesc:
+                'Please remove the check if you want to be warned about omission of effect installation',
         },
         close: 'Close (Esc)',
     },

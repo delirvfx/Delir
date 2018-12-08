@@ -13,6 +13,10 @@ interface Props {
 }
 
 export default (props: Props) => {
-    const {href, className, children} = props
-    return <a href={href} className={className} onClick={openExternal}>{children}</a>
+    const { href, className, children } = props
+    return (
+        <a href={href} className={className} onClick={openExternal}>
+            {children}
+        </a>
+    )
 }

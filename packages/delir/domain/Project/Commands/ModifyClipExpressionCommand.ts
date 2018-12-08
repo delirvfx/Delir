@@ -21,7 +21,7 @@ export class ModifyClipExpressionCommand implements Command {
             targetClipId: this.targetClipId,
             targetParamName: this.paramName,
             expression: this.previousValue,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {
@@ -40,7 +40,7 @@ export class ModifyClipExpressionCommand implements Command {
                 type: 'clip',
                 entityId: this.targetClipId,
                 paramName: this.paramName,
-            }
+            },
         })
     }
 }

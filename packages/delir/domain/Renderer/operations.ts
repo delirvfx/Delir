@@ -6,18 +6,22 @@ import * as EditorOps from '../Editor/operations'
 import { RendererActions } from './actions'
 import FSPluginLoader from './FSPluginLoader'
 
-export const loadPlugins = operation(async (context) => {
+export const loadPlugins = operation(async context => {
     const userDir = remote.app.getPath('appData')
     const loader = new FSPluginLoader()
 
     const loaded = [
-        await (__DEV__ ? loader.loadPackageDir(join((global as any).__dirname, '../plugins')) : { loaded: [], failed: [] }),
-        await (!__DEV__ ? loader.loadPackageDir(join(remote.app.getAppPath(), '/plugins')) : { loaded: [], failed: [] }),
+        await (__DEV__
+            ? loader.loadPackageDir(join((global as any).__dirname, '../plugins'))
+            : { loaded: [], failed: [] }),
+        await (!__DEV__
+            ? loader.loadPackageDir(join(remote.app.getAppPath(), '/plugins'))
+            : { loaded: [], failed: [] }),
         await loader.loadPackageDir(join(userDir, '/delir/plugins')),
     ]
 
-    const successes = [].concat(...loaded.map<any>(({loaded}) => loaded))
-    const fails = [].concat(...loaded.map<any>(({failed}) => failed))
+    const successes = [].concat(...loaded.map<any>(({ loaded }) => loaded))
+    const fails = [].concat(...loaded.map<any>(({ failed }) => failed))
 
     if (fails.length > 0) {
         const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
@@ -32,6 +36,7 @@ export const loadPlugins = operation(async (context) => {
         })
     }
 
+    // tslint:disable-next-line:no-console
     __DEV__ && console.log('Plugin loaded', successes, 'Failed:', fails)
     context.dispatch(RendererActions.addPlugins, { plugins: successes })
 })

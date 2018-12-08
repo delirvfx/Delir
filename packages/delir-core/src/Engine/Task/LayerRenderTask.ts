@@ -18,12 +18,16 @@ export class LayerRenderTask {
 
         return this.clipRenderTasks.filter(clip => {
             if (context.isAudioBufferingNeeded && clip.rendererType === 'audio') {
-                return clip.clipPlacedFrame <= (context.frameOnComposition + audioRenderStartRangeFrame)
-                    && clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
+                return (
+                    clip.clipPlacedFrame <= context.frameOnComposition + audioRenderStartRangeFrame &&
+                    clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
+                )
             }
 
-            return clip.clipPlacedFrame <= context.frameOnComposition
-                && clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
+            return (
+                clip.clipPlacedFrame <= context.frameOnComposition &&
+                clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
+            )
         })
     }
 }

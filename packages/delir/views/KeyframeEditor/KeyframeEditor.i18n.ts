@@ -19,6 +19,6 @@ export default I18n({
             removeEffect: 'Remove effect',
         },
         pluginMissing: 'Missing plugin: :processorId',
-        editScriptParam: 'Edit'
-    }
+        editScriptParam: 'Edit',
+    },
 })

@@ -22,7 +22,10 @@ export default class PluginScriptLoader {
     private executeScript(script: string, filename: string, dirname: string) {
         const require = this.makeRequire(filename)
         const mod = this.makeModule(filename)
-        const scriptRunner = vm.runInNewContext(Module.wrap(script), { document, console })
+        const scriptRunner = vm.runInNewContext(Module.wrap(script), {
+            document,
+            console,
+        })
         scriptRunner(mod.exports, require, mod, filename, dirname)
         return mod.exports
     }

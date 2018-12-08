@@ -35,10 +35,8 @@ interface ExportOptions {
     ffmpegBin?: string
 }
 
-export default async (
-    options: ExportOptions
-): Promise<void> => {
-    const {project, rootCompId, temporaryDir, exportPath, pluginRegistry, ffmpegBin} = options
+export default async (options: ExportOptions): Promise<void> => {
+    const { project, rootCompId, temporaryDir, exportPath, pluginRegistry, ffmpegBin } = options
     const onProgress = options.onProgress || (() => {})
 
     //
@@ -58,7 +56,12 @@ export default async (
     const tmpAudioFilePath = path.join(temporaryDir, 'delir-working.wav')
 
     let audioDataOffset = 0
-    const pcmAudioData = Array.from(Array(comp.audioChannels)).map(() => new Float32Array(new ArrayBuffer(4 /* bytes */ * comp.samplingRate * Math.ceil(durationFrames / comp.framerate))))
+    const pcmAudioData = Array.from(Array(comp.audioChannels)).map(
+        () =>
+            new Float32Array(
+                new ArrayBuffer(4 /* bytes */ * comp.samplingRate * Math.ceil(durationFrames / comp.framerate)),
+            ),
+    )
 
     const exporter = Exporter.video({
         args: {
@@ -119,7 +122,7 @@ export default async (
         onStateChanged: state => {
             const progression = state.frame / state.durationFrame
             onProgress({ step: RenderingStep.Rendering, progression })
-        }
+        },
     })
 
     // queue.run()
@@ -137,11 +140,14 @@ export default async (
 
     await Promise.all<any>([
         (async () => {
-            const wav = audioBufferToWave({
-                sampleRate: comp.samplingRate,
-                numberOfChannels: pcmAudioData.length,
-                getChannelData: ch => pcmAudioData[ch]
-            }, {float32: true})
+            const wav = audioBufferToWave(
+                {
+                    sampleRate: comp.samplingRate,
+                    numberOfChannels: pcmAudioData.length,
+                    getChannelData: ch => pcmAudioData[ch],
+                },
+                { float32: true },
+            )
 
             return fs.writeFile(tmpAudioFilePath, arrayBufferToBuffer(wav))
         })(),
@@ -188,11 +194,17 @@ export default async (
             // tslint:disable-next-line
             console.log(buffer.toString())
         })
-        ffmpeg.on('exit', (code: number) => code === 0 ? resolve() : reject(new Error(`Failed to mixing (Reason: ${lastMessage})`)))
+        ffmpeg.on('exit', (code: number) =>
+            code === 0 ? resolve() : reject(new Error(`Failed to mixing (Reason: ${lastMessage})`)),
+        )
     })
 
     onProgress({ step: RenderingStep.Completed, progression: 100 })
 
-    try { fs.unlinkSync(tmpMovieFilePath) } catch (e) {}
-    try { fs.unlinkSync(tmpAudioFilePath) } catch (e) {}
+    try {
+        fs.unlinkSync(tmpMovieFilePath)
+    } catch (e) {}
+    try {
+        fs.unlinkSync(tmpAudioFilePath)
+    } catch (e) {}
 }

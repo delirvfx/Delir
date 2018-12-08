@@ -20,7 +20,7 @@ export class ModifyEffectExpressionCommand implements Command {
             targetEffectId: this.effectId,
             paramName: this.paramName,
             expression: this.previousValue,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {

@@ -46,5 +46,5 @@ export default I18n({
                 copyAssetURI: 'Copy asset URI',
             },
         },
-    }
+    },
 })

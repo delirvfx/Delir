@@ -12,7 +12,7 @@ import { validateSchema } from './validation'
 const userDir = remote.app.getPath('userData')
 const preferencePath = path.join(userDir, 'preferences.json')
 
-export const restoreApplicationPreference = operation((context) => {
+export const restoreApplicationPreference = operation(context => {
     if (!existsSync(preferencePath)) {
         return
     }
@@ -49,14 +49,18 @@ export const restoreApplicationPreference = operation((context) => {
     context.dispatch(PreferenceActions.restorePreference, { preference })
 })
 
-export const savePreferences = operation(async (context) => {
+export const savePreferences = operation(async context => {
     const preference = context.getStore(PreferenceStore).dehydrate()
-    await new Promise((resolve, reject) => writeFile(preferencePath, JSON.stringify(preference), (err) => {
-        err ? reject(err) : resolve()
-    }))
+    await new Promise((resolve, reject) =>
+        writeFile(preferencePath, JSON.stringify(preference), err => {
+            err ? reject(err) : resolve()
+        }),
+    )
 })
 
 export const setRendererIgnoreMissingEffectPreference = operation(async (context, { ignore }: { ignore: boolean }) => {
-    context.dispatch(PreferenceActions.changePreference, { patch: { renderer: { ignoreMissingEffect: ignore } } })
+    context.dispatch(PreferenceActions.changePreference, {
+        patch: { renderer: { ignoreMissingEffect: ignore } },
+    })
     await context.executeOperation(savePreferences, {})
 })
