@@ -1,5 +1,6 @@
 Ticket:
-Has breaking changes?: 
+
+Has breaking changes to public API?: 
 
 ### Summary
 
