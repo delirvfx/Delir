@@ -46,7 +46,7 @@ export default class RendererStore extends Store<State> {
     private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, ({ project }) => {
         this.pipeline.setProject(project)
         this.updateWith(d => {
-            ((d.project as any) as Delir.Entity.Project | null) = project
+            ;((d.project as any) as Delir.Entity.Project | null) = project
         })
     })
 
@@ -55,7 +55,7 @@ export default class RendererStore extends Store<State> {
         if (!project) return
 
         this.updateWith(d => {
-            ((d.composition as any) as Delir.Entity.Composition | null) = project.findComposition(compositionId)
+            ;((d.composition as any) as Delir.Entity.Composition | null) = project.findComposition(compositionId)
         })
 
         // renderer.stop()

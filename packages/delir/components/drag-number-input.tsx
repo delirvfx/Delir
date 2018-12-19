@@ -56,7 +56,7 @@ export default class DragNumberInput extends React.Component<Props, State> {
         return (
             <input
                 ref={this.input}
-                type='text'
+                type="text"
                 className={classnames(s.DragNumberInput, this.props.className)}
                 value={this.state.value}
                 onFocus={this.handleFocus}

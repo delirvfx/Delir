@@ -75,29 +75,29 @@ export default withComponentContext(
                             </div>
                             <div className={s.Preview_Footer}>
                                 <label className={s.FooterItem} onClick={this.toggleScaleList}>
-                                    <i className='fa fa-search' />
+                                    <i className="fa fa-search" />
                                     <span className={s.currentScale}>{currentScale}%</span>
                                     <DropDown
                                         ref={this.scaleListRef}
                                         className={s.dropdown}
                                         shownInitial={scaleListShown}
                                     >
-                                        <li data-value='50' onClick={this.selectScale}>
+                                        <li data-value="50" onClick={this.selectScale}>
                                             50%
                                         </li>
-                                        <li data-value='100' onClick={this.selectScale}>
+                                        <li data-value="100" onClick={this.selectScale}>
                                             100%
                                         </li>
-                                        <li data-value='150' onClick={this.selectScale}>
+                                        <li data-value="150" onClick={this.selectScale}>
                                             150%
                                         </li>
-                                        <li data-value='200' onClick={this.selectScale}>
+                                        <li data-value="200" onClick={this.selectScale}>
                                             200%
                                         </li>
-                                        <li data-value='250' onClick={this.selectScale}>
+                                        <li data-value="250" onClick={this.selectScale}>
                                             250%
                                         </li>
-                                        <li data-value='300' onClick={this.selectScale}>
+                                        <li data-value="300" onClick={this.selectScale}>
                                             300%
                                         </li>
                                     </DropDown>

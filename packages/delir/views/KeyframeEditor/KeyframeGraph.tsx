@@ -251,9 +251,9 @@ export default withComponentContext(
                         <g key={point.keyframeId} data-index={idx}>
                             {point.transitionPath && (
                                 <path
-                                    stroke='#fff'
-                                    fill='none'
-                                    strokeWidth='1'
+                                    stroke="#fff"
+                                    fill="none"
+                                    strokeWidth="1"
                                     d={`
                                 M ${point.transitionPath.begin.x} ${point.transitionPath.begin.y}
                                 C ${point.transitionPath.begin.handleX + easeOutHandleDragMovement.x} ${point
@@ -272,7 +272,7 @@ export default withComponentContext(
                             {point.easeOutLine && (
                                 <path
                                     className={s.keyframeLineToHandle}
-                                    strokeWidth='1'
+                                    strokeWidth="1"
                                     d={`
                                 M ${point.easeOutLine.x} ${point.easeOutLine.y}
                                 L ${point.easeOutLine.endX + easeOutHandleDragMovement.x} ${point.easeOutLine.endY +
@@ -284,7 +284,7 @@ export default withComponentContext(
                             {point.nextEaseInLine && (
                                 <path
                                     className={s.keyframeLineToHandle}
-                                    strokeWidth='1'
+                                    strokeWidth="1"
                                     d={`
                                 M ${point.nextEaseInLine.x} ${point.nextEaseInLine.y}
                                 L ${point.nextEaseInLine.endX + easeIntHandleDragMovement.x} ${point.nextEaseInLine
@@ -307,16 +307,16 @@ export default withComponentContext(
                                         [s['keyframeInner--selected']]:
                                             point.keyframeId === this.state.activeKeyframeId,
                                     })}
-                                    width='8'
-                                    height='8'
+                                    width="8"
+                                    height="8"
                                 />
                             </g>
                             {point.nextEaseInHandle && (
                                 <circle
                                     cx={point.nextEaseInHandle.x + easeIntHandleDragMovement.x}
                                     cy={point.nextEaseInHandle.y + easeIntHandleDragMovement.y}
-                                    fill='#7100bf'
-                                    r='4'
+                                    fill="#7100bf"
+                                    r="4"
                                     onMouseDown={this.mouseDownOnEasingHandle}
                                     onMouseUp={this.mouseUpOnSvg}
                                     data-keyframe-id={point.keyframeId}
@@ -327,8 +327,8 @@ export default withComponentContext(
                                 <circle
                                     cx={point.easeOutHandle.x + easeOutHandleDragMovement.x}
                                     cy={point.easeOutHandle.y + easeOutHandleDragMovement.y}
-                                    fill='#7100bf'
-                                    r='4'
+                                    fill="#7100bf"
+                                    r="4"
                                     onMouseDown={this.mouseDownOnEasingHandle}
                                     onMouseUp={this.mouseUpOnSvg}
                                     data-keyframe-id={point.keyframeId}
@@ -365,9 +365,9 @@ export default withComponentContext(
                     <g ref={kf.id}>
                         {nextX != null && (
                             <path
-                                stroke='#fff'
-                                fill='none'
-                                strokeWidth='1'
+                                stroke="#fff"
+                                fill="none"
+                                strokeWidth="1"
                                 d={`M ${x + 4} ${halfHeight + 4} L ${nextX - 4} ${halfHeight + 4}`}
                             />
                         )}
@@ -384,10 +384,10 @@ export default withComponentContext(
                                 className={classnames(s.keyframeInner, {
                                     [s['keyframeInner--selected']]: kf.id === this.state.activeKeyframeId,
                                 })}
-                                width='8'
-                                height='8'
-                                stroke='#fff'
-                                strokeWidth='1'
+                                width="8"
+                                height="8"
+                                stroke="#fff"
+                                strokeWidth="1"
                                 style={{
                                     fill: (kf.value as Delir.Values.ColorRGBA).toString(),
                                 }}
@@ -420,9 +420,9 @@ export default withComponentContext(
                     <g ref={kf.id}>
                         {nextX != null && (
                             <path
-                                stroke='#fff'
-                                fill='none'
-                                strokeWidth='1'
+                                stroke="#fff"
+                                fill="none"
+                                strokeWidth="1"
                                 d={`M ${x + 4} ${halfHeight + 4} L ${nextX - 4} ${halfHeight + 4}`}
                             />
                         )}
@@ -438,9 +438,9 @@ export default withComponentContext(
                                 className={classnames(s.keyframeInner, {
                                     [s['keyframeInner--selected']]: kf.id === this.state.activeKeyframeId,
                                 })}
-                                width='8'
-                                height='8'
-                                fill='#fff'
+                                width="8"
+                                height="8"
+                                fill="#fff"
                             />
                         </g>
                     </g>

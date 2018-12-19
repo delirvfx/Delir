@@ -103,31 +103,31 @@ export default withComponentContext(
 
                 return (
                     <Pane className={s.Timeline} allowFocus>
-                        <Workspace direction='vertical'>
+                        <Workspace direction="vertical">
                             <Pane className={s.timelineRegion}>
-                                <Workspace direction='horizontal' onDrop={this._dropAsset}>
+                                <Workspace direction="horizontal" onDrop={this._dropAsset}>
                                     {/* Layer Panel */}
                                     <Pane className={s.labelsContainer}>
                                         <div className={s.labelsHeader}>
                                             <div className={s.columnName}>Layers</div>
                                             <div className={s.scaleLabel} onClick={this._toggleScaleList}>
-                                                <DropDown ref='scaleList' className={s.scaleList} shownInitial={false}>
-                                                    <li data-value='50' onClick={this._selectScale}>
+                                                <DropDown ref="scaleList" className={s.scaleList} shownInitial={false}>
+                                                    <li data-value="50" onClick={this._selectScale}>
                                                         50%
                                                     </li>
-                                                    <li data-value='100' onClick={this._selectScale}>
+                                                    <li data-value="100" onClick={this._selectScale}>
                                                         100%
                                                     </li>
-                                                    <li data-value='150' onClick={this._selectScale}>
+                                                    <li data-value="150" onClick={this._selectScale}>
                                                         150%
                                                     </li>
-                                                    <li data-value='200' onClick={this._selectScale}>
+                                                    <li data-value="200" onClick={this._selectScale}>
                                                         200%
                                                     </li>
-                                                    <li data-value='250' onClick={this._selectScale}>
+                                                    <li data-value="250" onClick={this._selectScale}>
                                                         250%
                                                     </li>
-                                                    <li data-value='300' onClick={this._selectScale}>
+                                                    <li data-value="300" onClick={this._selectScale}>
                                                         300%
                                                     </li>
                                                 </DropDown>
@@ -135,15 +135,15 @@ export default withComponentContext(
                                             </div>
                                         </div>
 
-                                        <div ref='timelineLabels' className={s.labels} onScroll={this._scrollSync}>
+                                        <div ref="timelineLabels" className={s.labels} onScroll={this._scrollSync}>
                                             <ContextMenu>
-                                                <MenuItem type='separator' />
+                                                <MenuItem type="separator" />
                                                 <MenuItem
                                                     label={t('contextMenu.addLayer')}
                                                     onClick={this.onLayerCreate}
                                                     enabled={!!activeComp}
                                                 />
-                                                <MenuItem type='separator' />
+                                                <MenuItem type="separator" />
                                             </ContextMenu>
                                             {activeComp && (
                                                 <LayerLabelList
@@ -171,18 +171,18 @@ export default withComponentContext(
                                         />
 
                                         <ul
-                                            ref='timelineLayers'
+                                            ref="timelineLayers"
                                             className={s.layerContainer}
                                             onScroll={this._scrollSync}
                                         >
                                             <ContextMenu>
-                                                <MenuItem type='separator' />
+                                                <MenuItem type="separator" />
                                                 <MenuItem
                                                     label={t('contextMenu.addLayer')}
                                                     onClick={this.onLayerCreate}
                                                     enabled={!!activeComp}
                                                 />
-                                                <MenuItem type='separator' />
+                                                <MenuItem type="separator" />
                                             </ContextMenu>
                                             {activeComp &&
                                                 layers.map(layer => (
@@ -201,7 +201,7 @@ export default withComponentContext(
                             </Pane>
                             <Pane className={s.keyframeGraphRegion}>
                                 <KeyframeEditor
-                                    ref='keyframeView'
+                                    ref="keyframeView"
                                     activeComposition={activeComp}
                                     activeClip={activeClip}
                                     pxPerSec={PX_PER_SEC}

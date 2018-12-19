@@ -75,12 +75,12 @@ export default connectToStores([RendererStore], context => ({
                         <MenuItem label={t('contextMenu.seekToHead')} onClick={this.seekToHead} />
                     </ContextMenu>
                     <div className={s.measureLayerTrimer}>
-                        <div ref='measureLayer' className={s.measureLayer}>
+                        <div ref="measureLayer" className={s.measureLayer}>
                             {this._renderMeasure()}
                         </div>
                     </div>
                     <div
-                        ref='cursor'
+                        ref="cursor"
                         className={s.playingCursor}
                         style={{
                             height: `calc(100% + ${this.props.cursorHeight}px - 5px)`,

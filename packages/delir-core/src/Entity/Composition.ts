@@ -29,6 +29,10 @@ class Composition implements CompositionProps {
     public samplingRate: number
     public audioChannels: number
     public backgroundColor: ColorRGB
+    /**
+     * Layers rendering from [0].
+     * The one that follows will overwrite the previous ones
+     */
     public layers: ReadonlyArray<Layer> = []
 
     public project: Project

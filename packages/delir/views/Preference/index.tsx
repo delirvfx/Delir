@@ -58,7 +58,7 @@ export default withComponentContext(
                             <div className={s.content}>
                                 {activePanel === 'renderer-general' && this.renderRendererGeneralPane()}
                                 <div className={s.contentFoot}>
-                                    <Button type='normal' onClick={this.props.onClose}>
+                                    <Button type="normal" onClick={this.props.onClose}>
                                         {t('close')}
                                     </Button>
                                 </div>
@@ -75,12 +75,12 @@ export default withComponentContext(
                     <>
                         <h2>{t('rendererGeneral.title')}</h2>
                         <div className={s.checkboxCard}>
-                            <label htmlFor='pref-rendererGeneral-ignoreMissingEffect'>
+                            <label htmlFor="pref-rendererGeneral-ignoreMissingEffect">
                                 {t('rendererGeneral.ignoreMissingEffect')}
                             </label>
                             <input
-                                id='pref-rendererGeneral-ignoreMissingEffect'
-                                type='checkbox'
+                                id="pref-rendererGeneral-ignoreMissingEffect"
+                                type="checkbox"
                                 checked={preference.renderer.ignoreMissingEffect}
                                 onChange={this.handleRendererIgnoreMissingEffect}
                             />

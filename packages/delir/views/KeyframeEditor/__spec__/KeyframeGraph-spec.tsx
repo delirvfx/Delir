@@ -8,10 +8,10 @@ import KeyframeGraph from '../KeyframeGraph.tsx'
 
 describe('KeyframeEditor.KeyframeGraph', () => {
     before(function() {
-        (this as any).jsdom = jsdom()
+        ;(this as any).jsdom = jsdom()
     })
     after(function() {
-        (this as any).jsdom()
+        ;(this as any).jsdom()
     })
 
     // it('test', () => {

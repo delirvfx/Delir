@@ -122,7 +122,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                 component = (
                     <input
                         ref={this.ref.checkbox}
-                        type='checkbox'
+                        type="checkbox"
                         className={s.checkbox}
                         checked={value as boolean}
                         onChange={this.valueChanged}
@@ -143,7 +143,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                         </Dropdown>
                         <input
                             ref={this.ref.textSummary}
-                            type='text'
+                            type="text"
                             className={s.textInput}
                             onFocus={this.onFocusTextInput}
                             value={value as string}

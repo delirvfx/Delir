@@ -52,21 +52,21 @@ const fileIconFromExtension = (ext: string) => {
     switch (ext) {
         case 'mp4':
         case 'webm':
-            return <i className='fa fa-file-movie-o' />
+            return <i className="fa fa-file-movie-o" />
 
         case 'webp':
         case 'png':
         case 'gif':
         case 'jpg':
         case 'jpeg':
-            return <i className='fa fa-file-image-o' />
+            return <i className="fa fa-file-image-o" />
 
         case 'mp3':
         case 'wav':
-            return <i className='fa fa-file-audio-o' />
+            return <i className="fa fa-file-audio-o" />
 
         default:
-            return <i className='fa fa-file-o' />
+            return <i className="fa fa-file-o" />
     }
 }
 
@@ -126,13 +126,13 @@ export default withComponentContext(
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <ContextMenu elementType='tr'>
-                                        <MenuItem type='separator' />
+                                    <ContextMenu elementType="tr">
+                                        <MenuItem type="separator" />
                                         <MenuItem
                                             label={t('compositions.contextMenu.create')}
                                             onClick={this.openNewCompositionWindow}
                                         />
-                                        <MenuItem type='separator' />
+                                        <MenuItem type="separator" />
                                     </ContextMenu>
                                     {compositions.map(comp => (
                                         <tr
@@ -142,8 +142,8 @@ export default withComponentContext(
                                             onDoubleClick={this.changeComposition}
                                             data-composition-id={comp.id}
                                         >
-                                            <ContextMenu elementType='td'>
-                                                <MenuItem type='separator' />
+                                            <ContextMenu elementType="td">
+                                                <MenuItem type="separator" />
                                                 <MenuItem
                                                     label={t('compositions.contextMenu.rename')}
                                                     onClick={this.handleClickRenameComposition}
@@ -159,11 +159,11 @@ export default withComponentContext(
                                                     onClick={this.openCompositionSetting}
                                                     data-composition-id={comp.id}
                                                 />
-                                                <MenuItem type='separator' />
+                                                <MenuItem type="separator" />
                                             </ContextMenu>
 
                                             <td className={s.IconField}>
-                                                <i className='fa fa-film' />
+                                                <i className="fa fa-film" />
                                             </td>
                                             <td>
                                                 <LabelInput
@@ -182,8 +182,8 @@ export default withComponentContext(
                             {t('assets.title')}
                             <label className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
                                 <input
-                                    ref='assetInput'
-                                    type='file'
+                                    ref="assetInput"
+                                    type="file"
                                     style={{ display: 'none' }}
                                     onChange={this.selectAsset}
                                     multiple
@@ -210,15 +210,15 @@ export default withComponentContext(
                                             onDragEnd={this.onAssetDragEnd}
                                             data-asset-id={asset.id}
                                         >
-                                            <ContextMenu elementType='td'>
-                                                <MenuItem type='separator' />
+                                            <ContextMenu elementType="td">
+                                                <MenuItem type="separator" />
                                                 {/*<MenuItem label='Reload' onClick={() => {}} />*/}
                                                 <MenuItem
                                                     label={t('assets.contextMenu.remove')}
                                                     data-asset-id={asset.id}
                                                     onClick={this.removeAsset}
                                                 />
-                                                <MenuItem type='separator' />
+                                                <MenuItem type="separator" />
                                                 <MenuItem
                                                     label={t('assets.contextMenu.copyAssetURI')}
                                                     data-asset-id={asset.id}
@@ -238,7 +238,7 @@ export default withComponentContext(
                                                 <LabelInput
                                                     ref={this.setAssetNameInputRef(asset.id)}
                                                     defaultValue={asset.name}
-                                                    placeholder='Unnamed Asset'
+                                                    placeholder="Unnamed Asset"
                                                     doubleClickToEdit
                                                 />
                                             </td>

@@ -144,7 +144,7 @@ export default withComponentContext(
                 }
 
                 return (
-                    <Workspace direction='horizontal' className={s.keyframeView}>
+                    <Workspace direction="horizontal" className={s.keyframeView}>
                         <Pane className={s.paramList}>
                             {activeClip &&
                                 descriptors.map(desc => {
@@ -169,7 +169,7 @@ export default withComponentContext(
                                                     activeParam.type === 'clip' &&
                                                     activeParam.paramName === desc.paramName,
                                             })}
-                                            data-entity-type='clip'
+                                            data-entity-type="clip"
                                             data-entity-id={activeClip.id}
                                             data-param-name={desc.paramName}
                                             onClick={this.selectProperty}
@@ -177,13 +177,13 @@ export default withComponentContext(
                                             <ContextMenu>
                                                 <MenuItem
                                                     label={t('contextMenu.expression')}
-                                                    data-entity-type='clip'
+                                                    data-entity-type="clip"
                                                     data-entity-id={activeClip.id}
                                                     data-param-name={desc.paramName}
                                                     enabled={desc.animatable}
                                                     onClick={this.openExpressionEditor}
                                                 />
-                                                <MenuItem type='separator' />
+                                                <MenuItem type="separator" />
                                                 <MenuItem
                                                     label={t('contextMenu.copyParamName')}
                                                     data-param-name={desc.paramName}
@@ -196,12 +196,12 @@ export default withComponentContext(
                                                     [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
                                                 })}
                                             >
-                                                {desc.animatable && <i className='twa twa-clock12' />}
+                                                {desc.animatable && <i className="twa twa-clock12" />}
                                             </span>
                                             <span className={s.paramItemName}>{desc.label}</span>
                                             <div className={s.paramItemInput}>
                                                 {desc.type === 'CODE' ? (
-                                                    <Button type='normal' onClick={this.handleOpenScriptParamEditor}>
+                                                    <Button type="normal" onClick={this.handleOpenScriptParamEditor}>
                                                         {t('editScriptParam')}
                                                     </Button>
                                                 ) : (
@@ -220,7 +220,7 @@ export default withComponentContext(
                         </Pane>
                         <Pane>
                             <div
-                                ref='svgParent'
+                                ref="svgParent"
                                 className={s.keyframeContainer}
                                 tabIndex={-1}
                                 onWheel={this._scaleTimeline}
@@ -258,7 +258,7 @@ export default withComponentContext(
                                     })()}
                                 <div className={s.measureContainer}>
                                     <div
-                                        ref='mesures'
+                                        ref="mesures"
                                         className={s.measureLayer}
                                         style={{
                                             transform: `translateX(-${scrollLeft}px)`,
@@ -351,7 +351,7 @@ export default withComponentContext(
                                             onClick={this.removeEffect}
                                         />
                                     </ContextMenu>
-                                    <i className='fa fa-exclamation' />
+                                    <i className="fa fa-exclamation" />
                                     {effect.processor}
                                 </div>
                             </div>
@@ -368,7 +368,7 @@ export default withComponentContext(
                                         data-effect-id={effect.id}
                                         onClick={this.removeEffect}
                                     />
-                                    <MenuItem type='separator' />
+                                    <MenuItem type="separator" />
                                     {effect.referenceName != null && (
                                         <MenuItem
                                             label={t('contextMenu.copyReferenceName')}
@@ -377,7 +377,7 @@ export default withComponentContext(
                                         />
                                     )}
                                 </ContextMenu>
-                                <i className='fa fa-magic' />
+                                <i className="fa fa-magic" />
                                 <LabelInput
                                     className={s.referenceNameInput}
                                     doubleClickToEdit
@@ -414,7 +414,7 @@ export default withComponentContext(
                                                 activeParam.entityId === effect.id &&
                                                 activeParam.paramName === desc.paramName,
                                         })}
-                                        data-entity-type='effect'
+                                        data-entity-type="effect"
                                         data-entity-id={effect.id}
                                         data-param-name={desc.paramName}
                                         onClick={this.selectProperty}
@@ -422,12 +422,12 @@ export default withComponentContext(
                                         <ContextMenu>
                                             <MenuItem
                                                 label={t('contextMenu.expression')}
-                                                data-entity-type='effect'
+                                                data-entity-type="effect"
                                                 data-entity-id={effect.id}
                                                 data-param-name={desc.paramName}
                                                 onClick={this.openExpressionEditor}
                                             />
-                                            <MenuItem type='separator' />
+                                            <MenuItem type="separator" />
                                             <MenuItem
                                                 label={t('contextMenu.copyParamName')}
                                                 data-param-name={desc.paramName}
@@ -440,7 +440,7 @@ export default withComponentContext(
                                                 [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
                                             })}
                                         >
-                                            {desc.animatable && <i className='twa twa-clock12' />}
+                                            {desc.animatable && <i className="twa twa-clock12" />}
                                         </span>
                                         <span className={s.paramItemName}>{desc.label}</span>
                                         <div className={s.paramItemInput}>

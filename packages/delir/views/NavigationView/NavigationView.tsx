@@ -37,15 +37,15 @@ export default withComponentContext(
                         <ul className={s.navigationList}>
                             {previewPlayed ? (
                                 <li onClick={this.onClickPause}>
-                                    <i className='fa fa-pause' />
+                                    <i className="fa fa-pause" />
                                 </li>
                             ) : (
                                 <li onClick={this.onClickPlay}>
-                                    <i className='fa fa-play' />
+                                    <i className="fa fa-play" />
                                 </li>
                             )}
                             <li onClick={this.onClickDest}>
-                                <i className='fa fa-film' />
+                                <i className="fa fa-film" />
                             </li>
                         </ul>
                     </Pane>

@@ -70,7 +70,7 @@ export default withComponentContext(
                         tabIndex={-1}
                     >
                         <ContextMenu>
-                            <MenuItem type='separator' />
+                            <MenuItem type="separator" />
                             <MenuItem label={t('contextMenu.createClip')}>
                                 {_.map(Delir.Engine.Renderers.RENDERERS, (renderer, idx) => (
                                     <MenuItem
@@ -81,7 +81,7 @@ export default withComponentContext(
                                     />
                                 ))}
                             </MenuItem>
-                            <MenuItem type='separator' />
+                            <MenuItem type="separator" />
                         </ContextMenu>
 
                         <div className={s.clipsContainer}>

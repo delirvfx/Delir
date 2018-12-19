@@ -14,7 +14,7 @@ export default connectToStores([EditorStore], context => ({
     class StatusBar extends React.Component<ConnectedProps> {
         public render() {
             return (
-                <Pane className='view-status' resizable={false} allowFocus={false}>
+                <Pane className="view-status" resizable={false} allowFocus={false}>
                     <div>{this.props.stateText}</div>
                 </Pane>
             )

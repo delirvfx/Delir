@@ -26,7 +26,7 @@ interface OwnProps {
 
 type Props = OwnProps & ContextProp
 
-const SortHandle = SortableHandle(() => <i className='fa fa-bars' />)
+const SortHandle = SortableHandle(() => <i className="fa fa-bars" />)
 
 const LaneLabel = withComponentContext(
     class LaneLabel extends React.Component<Props> {
@@ -38,7 +38,7 @@ const LaneLabel = withComponentContext(
             return (
                 <ul key={layer.id} className={s.LaneLabel}>
                     <ContextMenu>
-                        <MenuItem type='separator' />
+                        <MenuItem type="separator" />
                         {/*<MenuItem label='複製' onClick={() => {}} />*/}
                         <MenuItem label={t('contextMenu.renameLayer')} onClick={this.focusToLayerNameInput} />
                         <MenuItem
@@ -46,7 +46,7 @@ const LaneLabel = withComponentContext(
                             data-layer-id={layer.id}
                             onClick={this.onRemove}
                         />
-                        <MenuItem type='separator' />
+                        <MenuItem type="separator" />
                     </ContextMenu>
 
                     <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--Handle'])}>
@@ -61,15 +61,15 @@ const LaneLabel = withComponentContext(
                         <LabelInput
                             ref={this.bindLayerNameInput}
                             defaultValue={layer.name}
-                            placeholder='Layer name'
+                            placeholder="Layer name"
                             onChange={this.layerNameChanged}
                         />
                     </li>
                     <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-visibility'])}>
-                        <i className='twa twa-eye' />
+                        <i className="twa twa-eye" />
                     </li>
                     <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-lock'])}>
-                        <i className='twa twa-lock' />
+                        <i className="twa twa-lock" />
                     </li>
                 </ul>
             )

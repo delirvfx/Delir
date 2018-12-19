@@ -7,6 +7,7 @@ import { IRenderer } from './Renderer/RendererBase'
 
 import PluginRegistry from '../PluginSupport/plugin-registry'
 
+import WebGLContext from '@ragg/delir-core/src/Engine/WebGL/WebGLContext'
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
 import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../exceptions/'
@@ -50,6 +51,7 @@ export default class Engine {
     private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver | null = null
+    private _gl: WebGL2RenderingContext
 
     get pluginRegistry() {
         return this._pluginRegistry
@@ -298,6 +300,7 @@ export default class Engine {
 
             rootComposition,
             resolver,
+            gl: new WebGLContext(rootComposition.width, rootComposition.height),
         })
     }
 
@@ -384,8 +387,7 @@ export default class Engine {
 
             const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
 
-            // SPEC: The rendering order of the same layer at the same time is not defined.
-            //       In the future, want to ensure that there are no more than two clips in a single layer at a given time.
+            // SPEC: The rendering order of the clip in one layer in same time is not defined.
             const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
 
             // Render clips

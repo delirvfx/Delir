@@ -48,7 +48,7 @@ export default class LabelInput extends React.Component<Props, State> {
         return (
             <input
                 ref={this.inputRef}
-                type='text'
+                type="text"
                 tabIndex={-1}
                 className={classnames('_label-input', className)}
                 name={name}

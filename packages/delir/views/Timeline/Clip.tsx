@@ -47,7 +47,7 @@ export default withComponentContext(
                         [s['Clip--adjustment']]: clip.renderer === 'adjustment',
                         [s['Clip--p5js']]: clip.renderer === 'p5js',
                     })}
-                    dragAxis='x'
+                    dragAxis="x"
                     position={{ x: left, y: 2 }}
                     size={{ width: width, height: 'auto' }}
                     enableResizing={{
@@ -81,13 +81,13 @@ export default withComponentContext(
                                 )}
                             </MenuItem>
                             {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
-                            <MenuItem type='separator' />
+                            <MenuItem type="separator" />
                             <MenuItem
                                 label={t('contextMenu.remove')}
                                 data-clip-id={clip.id}
                                 onClick={this.handleRemoveClip}
                             />
-                            <MenuItem type='separator' />
+                            <MenuItem type="separator" />
                         </ContextMenu>
                         <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>
                         <span className={s.Clip__IdLabel}>#{clip.id.substring(0, 4)}</span>

@@ -42,7 +42,7 @@ export default connectToStores([RendererStore], context => ({
 
             return (
                 <CSSTransitionGroup
-                    component='div'
+                    component="div"
                     transitionName={{
                         enter: s.transitionEnter,
                         enterActive: s.transitionEnterActive,
@@ -60,7 +60,7 @@ export default connectToStores([RendererStore], context => ({
                                         <img className={s.completedParrot} src={require('./parrot.gif')} />
                                         <div className={s.statusText}>{this.statusToText(status)}</div>
                                     </div>
-                                    <Button type='primary' className={s.doneButton} onClick={this.handleClickDone}>
+                                    <Button type="primary" className={s.doneButton} onClick={this.handleClickDone}>
                                         {t('close')}
                                     </Button>
                                 </>

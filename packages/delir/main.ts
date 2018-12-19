@@ -54,7 +54,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     // console.log(createElementWithContext)
     // ReactDOM.unstable_deferredUpdates(() => {
     ReactDOM.render(createElementWithContext(context, AppView, {}), document.querySelector('#root'), () => {
-        (document.querySelector('#loading') as HTMLElement).style.display = 'none'
+        ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
     })
     // })
 

@@ -75,7 +75,7 @@ export default class Dropdown extends PureComponent<Props, State> {
     }
 
     public render() {
-        return <div ref='inspector' className={s.dropdownInspector} />
+        return <div ref="inspector" className={s.dropdownInspector} />
     }
 
     private hideOnOutsideClicked = (e: MouseEvent) => {

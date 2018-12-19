@@ -27,7 +27,7 @@ export default class Pane extends React.Component<PaneProps, any> {
                     ...rest as any /* TODO: @types/react is broken... 😭 check fixing */
                 }
             >
-                {resizable ? <div className='_workspace-pane-handle' /> : null}
+                {resizable ? <div className="_workspace-pane-handle" /> : null}
                 {React.Children.map(children, child => child)}
             </div>
         )

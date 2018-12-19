@@ -48,10 +48,10 @@ export default class ScriptParamEditor extends React.Component<Props> {
             <div className={s.ScriptParamEditor}>
                 <div className={s.toolbar}>
                     <span className={s.title}>Code: {title}</span>
-                    <Button type='normal' onClick={this.handleClickCloseWithoutSave}>
+                    <Button type="normal" onClick={this.handleClickCloseWithoutSave}>
                         変更を破棄
                     </Button>
-                    <Button type='primary' onClick={this.handleClickWithSave}>
+                    <Button type="primary" onClick={this.handleClickWithSave}>
                         保存
                     </Button>
                 </div>

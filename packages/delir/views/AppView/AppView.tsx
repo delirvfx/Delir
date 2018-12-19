@@ -53,12 +53,12 @@ export default withComponentContext(
                 const { preferenceOpened } = this.props.editor
 
                 return (
-                    <div ref={this.root} className='_container' onDrop={this.prevent}>
+                    <div ref={this.root} className="_container" onDrop={this.prevent}>
                         <AppMenu />
                         <NavigationView />
-                        <Workspace className='app-body' direction='vertical'>
-                            <Pane className='body-pane'>
-                                <Workspace direction='horizontal'>
+                        <Workspace className="app-body" direction="vertical">
+                            <Pane className="body-pane">
+                                <Workspace direction="horizontal">
                                     <AssetsView />
                                     <PreviewView />
                                 </Workspace>
@@ -69,7 +69,7 @@ export default withComponentContext(
                         <Notifications />
                         <RenderingWaiter />
                         <CSSTransitionGroup
-                            component='div'
+                            component="div"
                             transitionName={{
                                 enter: s.preferenceEnter,
                                 enterActive: s.preferenceEnterActive,

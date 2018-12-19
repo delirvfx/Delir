@@ -163,9 +163,9 @@ const imageClip = assign(
         },
     },
 )
-; [movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => project.addAsset(a))
+;[movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => project.addAsset(a))
 project.addComposition(c1)
-; [layer1, layer2, layer3, layer4].forEach(layer => c1.addLayer(layer))
+;[layer1, layer2, layer3, layer4].forEach(layer => c1.addLayer(layer))
 
 layer1.addClip(imageClip)
 layer2.addClip(audioClip)

@@ -56,33 +56,33 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
         return (
             <div className={s.newCompModalRoot}>
                 <form ref={this.formRef} className={FormStyle.formHorizontal} onSubmit={this.handleSubmit}>
-                    <div className='formGroup'>
-                        <label className='label'>{t('fields.compositionName')}:</label>
-                        <div className='input'>
-                            <div className='formControl'>
-                                <input name='name' type='text' defaultValue={values.name} required autoFocus />
+                    <div className="formGroup">
+                        <label className="label">{t('fields.compositionName')}:</label>
+                        <div className="input">
+                            <div className="formControl">
+                                <input name="name" type="text" defaultValue={values.name} required autoFocus />
                             </div>
                         </div>
                     </div>
-                    <div className='formGroup'>
-                        <label className='label'>{t('fields.dimensions')}:</label>
-                        <div className='inputs'>
-                            <div className='formControl'>
+                    <div className="formGroup">
+                        <label className="label">{t('fields.dimensions')}:</label>
+                        <div className="inputs">
+                            <div className="formControl">
                                 <input
-                                    name='width'
-                                    type='number'
-                                    min='1'
+                                    name="width"
+                                    type="number"
+                                    min="1"
                                     defaultValue={values.width}
                                     required
                                     style={{ width: '6em' }}
                                 />
                             </div>
-                            <span className='unit'> x </span>
-                            <div className='formControl'>
+                            <span className="unit"> x </span>
+                            <div className="formControl">
                                 <input
-                                    name='height'
-                                    type='number'
-                                    min='1'
+                                    name="height"
+                                    type="number"
+                                    min="1"
                                     defaultValue={values.height}
                                     required
                                     style={{ width: '6em' }}
@@ -90,13 +90,13 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
                             </div>
                         </div>
                     </div>
-                    <div className='formGroup'>
-                        <label className='label'>{t('fields.backgroundColor')}:</label>
-                        <div className='inputs'>
-                            <div className='formControl'>
+                    <div className="formGroup">
+                        <label className="label">{t('fields.backgroundColor')}:</label>
+                        <div className="inputs">
+                            <div className="formControl">
                                 <input
-                                    name='backgroundColor'
-                                    type='color'
+                                    name="backgroundColor"
+                                    type="color"
                                     defaultValue={values.backgroundColor}
                                     style={{
                                         borderBottom: 'none',
@@ -110,67 +110,67 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
                             </div>
                         </div>
                     </div>
-                    <div className='formGroup'>
-                        <label className='label'>{t('fields.framerate')}:</label>
-                        <div className='inputs'>
-                            <div className='formControl'>
+                    <div className="formGroup">
+                        <label className="label">{t('fields.framerate')}:</label>
+                        <div className="inputs">
+                            <div className="formControl">
                                 <input
-                                    name='framerate'
-                                    type='number'
-                                    min='1'
+                                    name="framerate"
+                                    type="number"
+                                    min="1"
                                     defaultValue={values.framerate}
                                     required
                                     style={{ width: '6em' }}
                                 />
                             </div>
-                            <span className='unit'>fps</span>
+                            <span className="unit">fps</span>
                         </div>
                     </div>
-                    <div className='formGroup'>
-                        <label className='label'>{t('fields.durationSec')}:</label>
-                        <div className='inputs'>
-                            <div className='formControl'>
+                    <div className="formGroup">
+                        <label className="label">{t('fields.durationSec')}:</label>
+                        <div className="inputs">
+                            <div className="formControl">
                                 <input
-                                    name='durationSeconds'
-                                    type='number'
-                                    min='1'
+                                    name="durationSeconds"
+                                    type="number"
+                                    min="1"
                                     defaultValue={values.durationSeconds}
                                     required
                                     style={{ width: '6em' }}
                                 />
                             </div>
-                            <span className='unit'>s</span>
+                            <span className="unit">s</span>
                         </div>
                     </div>
-                    <div className='formGroup'>
-                        <label className='label'>{t('fields.samplingRate')}:</label>
-                        <div className='inputs'>
-                            <div className='formControl'>
-                                <select name='samplingRate' defaultValue={values.samplingRate} required>
-                                    <option value='48000'>48000</option>
-                                    <option value='41000'>41000</option>
+                    <div className="formGroup">
+                        <label className="label">{t('fields.samplingRate')}:</label>
+                        <div className="inputs">
+                            <div className="formControl">
+                                <select name="samplingRate" defaultValue={values.samplingRate} required>
+                                    <option value="48000">48000</option>
+                                    <option value="41000">41000</option>
                                 </select>
                             </div>
-                            <span className='unit'>Hz</span>
+                            <span className="unit">Hz</span>
                         </div>
                     </div>
-                    <div className='formGroup'>
-                        <label className='label'>{t('fields.audioChannels')}:</label>
-                        <div className='inputs'>
-                            <div className='formControl'>
-                                <select name='audioChannels' defaultValue={values.audioChannels} required>
-                                    <option value='2'>{t('values.audioChannels.stereo')}</option>
-                                    <option value='1'>{t('values.audioChannels.mono')}</option>
+                    <div className="formGroup">
+                        <label className="label">{t('fields.audioChannels')}:</label>
+                        <div className="inputs">
+                            <div className="formControl">
+                                <select name="audioChannels" defaultValue={values.audioChannels} required>
+                                    <option value="2">{t('values.audioChannels.stereo')}</option>
+                                    <option value="1">{t('values.audioChannels.mono')}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <div className={s.modalFooter}>
-                        <Button type='normal' onClick={this.onCancel}>
+                        <Button type="normal" onClick={this.onCancel}>
                             {t('cancel')}
                         </Button>
-                        <Button type='primary' htmlType='submit' onClick={this.onConfirm}>
+                        <Button type="primary" htmlType="submit" onClick={this.onConfirm}>
                             {comp ? t('apply') : t('create')}
                         </Button>
                     </div>

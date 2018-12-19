@@ -54,10 +54,10 @@ export default class ExpressionEditor extends React.Component<Props> {
             <div className={s.ExpressionEditor}>
                 <div className={s.ExpressionEditor__Toolbar}>
                     <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
-                    <Button type='normal' onClick={this.closeWithoutSave}>
+                    <Button type="normal" onClick={this.closeWithoutSave}>
                         変更を破棄
                     </Button>
-                    <Button type='primary' onClick={this.closeWithSave}>
+                    <Button type="primary" onClick={this.closeWithSave}>
                         保存
                     </Button>
                 </div>
