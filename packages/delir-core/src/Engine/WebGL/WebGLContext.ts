@@ -2,12 +2,30 @@ import { neverCheck } from '../../helper/neverCheck'
 
 interface Uniform {
     type:
-        | '1i' | '2i' | '3i' | '4i'
-        | '1ui' | '2ui' | '3ui' | '4ui'
-        | '1f' | '2f' | '3f' | '4f'
-        | '1iv' | '2iv' | '3iv' | '4iv'
-        | '1fv' | '2fv' | '3fv' | '4fv'
-        | '1uiv' | '2uiv' | '3uiv' | '4uiv'
+        | '1i'
+        | '2i'
+        | '3i'
+        | '4i'
+        | '1ui'
+        | '2ui'
+        | '3ui'
+        | '4ui'
+        | '1f'
+        | '2f'
+        | '3f'
+        | '4f'
+        | '1iv'
+        | '2iv'
+        | '3iv'
+        | '4iv'
+        | '1fv'
+        | '2fv'
+        | '3fv'
+        | '4fv'
+        | '1uiv'
+        | '2uiv'
+        | '3uiv'
+        | '4uiv'
         | 'matrix2fv'
         | 'matrix3x2fv'
         | 'matrix4x2fv'
@@ -36,17 +54,14 @@ export default class WebGLContext {
     private gl: WebGL2RenderingContext
     private texBufferCanvas: HTMLCanvasElement
 
-    public constructor(
-        private width: number,
-        private height: number
-    ) {
+    public constructor(private width: number, private height: number) {
         // OffscreenCanvas not updated frame (bug?) so using HTMLCanvasElement
-        this.glCanvas = Object.assign(document.createElement('canvas'), {width, height})
+        this.glCanvas = Object.assign(document.createElement('canvas'), { width, height })
         this.gl = this.glCanvas.getContext('webgl2')!
         this.gl.viewport(0, 0, width, height)
 
         // texImage2D not support for OffscreenCanvas so using HTMLCanvasElement
-        this.texBufferCanvas = Object.assign(document.createElement('canvas'), {width, height})
+        this.texBufferCanvas = Object.assign(document.createElement('canvas'), { width, height })
     }
 
     public getProgram(fragmentShaderSource: string, vertexShaderSource: string = DEFAULT_VERTEX_SHADER): WebGLProgram {
@@ -72,7 +87,12 @@ export default class WebGLContext {
         return program
     }
 
-    public applyProgram(program: WebGLProgram, uniforms: { [uniformName: string]: Uniform }, source: HTMLCanvasElement, dest: HTMLCanvasElement) {
+    public applyProgram(
+        program: WebGLProgram,
+        uniforms: { [uniformName: string]: Uniform },
+        source: HTMLCanvasElement,
+        dest: HTMLCanvasElement,
+    ) {
         const { gl, texBufferCanvas } = this
 
         gl.useProgram(program)
@@ -87,14 +107,14 @@ export default class WebGLContext {
 
         const vertexBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ -1, -1, 1, -1, 1, 1, -1, 1　]), gl.STATIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW)
         const positionAttrib = gl.getAttribLocation(program, 'position')
         gl.enableVertexAttribArray(positionAttrib)
         gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0)
 
         const tex2DBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, tex2DBuffer)
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ 0, 1, 1, 1, 1, 0, 0, 0 ]), gl.STATIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 1, 1, 1, 1, 0, 0, 0]), gl.STATIC_DRAW)
         const coordAttrib = gl.getAttribLocation(program, 'coord')
         gl.enableVertexAttribArray(coordAttrib)
         gl.vertexAttribPointer(coordAttrib, 2, gl.FLOAT, false, 0, 0)
@@ -252,7 +272,11 @@ export default class WebGLContext {
         return { type: 'matrix4fv', value }
     }
 
-    private attachUniforms(gl: WebGL2RenderingContext, program: WebGLProgram, uniforms: {[uniform: string]: Uniform}) {
+    private attachUniforms(
+        gl: WebGL2RenderingContext,
+        program: WebGLProgram,
+        uniforms: { [uniform: string]: Uniform },
+    ) {
         for (const uni of Object.keys(uniforms)) {
             const loc = gl.getUniformLocation(program, uni)
             const { type, value } = uniforms[uni]
@@ -271,91 +295,120 @@ export default class WebGLContext {
                     gl.uniform4i(loc, value[0], value[1], value[2], value[3])
                 }
                 case '1ui': {
-                    gl.uniform1ui(loc, value[0]); break
+                    gl.uniform1ui(loc, value[0])
+                    break
                 }
                 case '2ui': {
-                    gl.uniform2ui(loc, value[0], value[1]); break
+                    gl.uniform2ui(loc, value[0], value[1])
+                    break
                 }
                 case '3ui': {
-                    gl.uniform3ui(loc, value[0], value[1], value[2]); break
+                    gl.uniform3ui(loc, value[0], value[1], value[2])
+                    break
                 }
                 case '4ui': {
-                    gl.uniform4ui(loc, value[0], value[1], value[2], value[3]); break
+                    gl.uniform4ui(loc, value[0], value[1], value[2], value[3])
+                    break
                 }
                 case '1f': {
-                    gl.uniform1f(loc, value[0]); break
+                    gl.uniform1f(loc, value[0])
+                    break
                 }
                 case '2f': {
-                    gl.uniform2f(loc, value[0], value[1]); break
+                    gl.uniform2f(loc, value[0], value[1])
+                    break
                 }
                 case '3f': {
-                    gl.uniform3f(loc, value[0], value[1], value[2]); break
+                    gl.uniform3f(loc, value[0], value[1], value[2])
+                    break
                 }
                 case '4f': {
-                    gl.uniform4f(loc, value[0], value[1], value[2], value[3]); break
+                    gl.uniform4f(loc, value[0], value[1], value[2], value[3])
+                    break
                 }
                 case '1iv': {
-                    gl.uniform1iv(loc, value); break
+                    gl.uniform1iv(loc, value)
+                    break
                 }
                 case '2iv': {
-                    gl.uniform2iv(loc, value); break
+                    gl.uniform2iv(loc, value)
+                    break
                 }
                 case '3iv': {
-                    gl.uniform3iv(loc, value); break
+                    gl.uniform3iv(loc, value)
+                    break
                 }
                 case '4iv': {
-                    gl.uniform4iv(loc, value); break
+                    gl.uniform4iv(loc, value)
+                    break
                 }
                 case '1fv': {
-                    gl.uniform1fv(loc, value); break
+                    gl.uniform1fv(loc, value)
+                    break
                 }
                 case '2fv': {
-                    gl.uniform2fv(loc, value); break
+                    gl.uniform2fv(loc, value)
+                    break
                 }
                 case '3fv': {
-                    gl.uniform3fv(loc, value); break
+                    gl.uniform3fv(loc, value)
+                    break
                 }
                 case '4fv': {
-                    gl.uniform4fv(loc, value); break
+                    gl.uniform4fv(loc, value)
+                    break
                 }
                 case '1uiv': {
-                    gl.uniform1uiv(loc, value); break
+                    gl.uniform1uiv(loc, value)
+                    break
                 }
                 case '2uiv': {
-                    gl.uniform2uiv(loc, value); break
+                    gl.uniform2uiv(loc, value)
+                    break
                 }
                 case '3uiv': {
-                    gl.uniform3uiv(loc, value); break
+                    gl.uniform3uiv(loc, value)
+                    break
                 }
                 case '4uiv': {
-                    gl.uniform4uiv(loc, value); break
+                    gl.uniform4uiv(loc, value)
+                    break
                 }
                 case 'matrix2fv': {
-                    gl.uniformMatrix2fv(loc, false, value); break
+                    gl.uniformMatrix2fv(loc, false, value)
+                    break
                 }
                 case 'matrix3x2fv': {
-                    gl.uniformMatrix3x2fv(loc, false, value); break
+                    gl.uniformMatrix3x2fv(loc, false, value)
+                    break
                 }
                 case 'matrix4x2fv': {
-                    gl.uniformMatrix4x2fv(loc, false, value); break
+                    gl.uniformMatrix4x2fv(loc, false, value)
+                    break
                 }
                 case 'matrix2x3fv': {
-                    gl.uniformMatrix2x3fv(loc, false, value); break
+                    gl.uniformMatrix2x3fv(loc, false, value)
+                    break
                 }
                 case 'matrix3fv': {
-                    gl.uniformMatrix3fv(loc, false, value); break
+                    gl.uniformMatrix3fv(loc, false, value)
+                    break
                 }
                 case 'matrix4x3fv': {
-                    gl.uniformMatrix4x3fv(loc, false, value); break
+                    gl.uniformMatrix4x3fv(loc, false, value)
+                    break
                 }
                 case 'matrix2x4fv': {
-                    gl.uniformMatrix2x4fv(loc, false, value); break
+                    gl.uniformMatrix2x4fv(loc, false, value)
+                    break
                 }
                 case 'matrix3x4fv': {
-                    gl.uniformMatrix3x4fv(loc, false, value); break
+                    gl.uniformMatrix3x4fv(loc, false, value)
+                    break
                 }
                 case 'matrix4fv': {
-                    gl.uniformMatrix4fv(loc, false, value); break
+                    gl.uniformMatrix4fv(loc, false, value)
+                    break
                 }
                 default: {
                     neverCheck(type)
@@ -363,5 +416,4 @@ export default class WebGLContext {
             }
         }
     }
-
 }
