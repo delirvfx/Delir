@@ -1,11 +1,4 @@
-import {
-    Exceptions,
-    PostEffectBase,
-    PreRenderRequest,
-    RenderRequest,
-    Type,
-    TypeDescriptor
-} from '@ragg/delir-core'
+import { Exceptions, PostEffectBase, PreRenderRequest, RenderRequest, Type, TypeDescriptor } from '@ragg/delir-core'
 
 import * as Th from 'three'
 import { MMDHelper, MMDLoader } from 'three-mmd-loader'
@@ -21,12 +14,9 @@ interface Param {
     motion: any | null
 }
 
-export default class MMDPostEffect extends PostEffectBase
-{
-    public static provideParameters(): TypeDescriptor
-    {
-        return Type
-            .float('camX', { label: 'Cam pos X', defaultValue: 0 })
+export default class MMDPostEffect extends PostEffectBase {
+    public static provideParameters(): TypeDescriptor {
+        return Type.float('camX', { label: 'Cam pos X', defaultValue: 0 })
             .float('camY', { label: 'Cam pos Y', defaultValue: 15 })
             .float('camZ', { label: 'Cam pos Z', defaultValue: 30 })
             .float('camTargetX', { label: 'Cam target X', defaultValue: 0 })
@@ -45,8 +35,7 @@ export default class MMDPostEffect extends PostEffectBase
     private mmdLoader: MMDLoader
     private ctxBindToken: any
 
-    public async initialize(req: PreRenderRequest<Param>)
-    {
+    public async initialize(req: PreRenderRequest<Param>) {
         const param = req.parameters
 
         // Get and bind WebGL Context
@@ -63,11 +52,11 @@ export default class MMDPostEffect extends PostEffectBase
         this.scene = new Th.Scene()
 
         if (param.model != null) {
-            const mesh = this.mesh = await new Promise (async resolve => {
+            const mesh = (this.mesh = await new Promise(async resolve => {
                 const _mesh = await this.mmdLoader.loadModel(param.model.path)
                 // テクスチャのロードを待機する
                 setTimeout(() => resolve(_mesh), 200)
-            })
+            }))
             this.scene.add(mesh)
             this.mmdHelper.add(mesh)
             this.mmdHelper.setAnimation(mesh)
@@ -90,15 +79,14 @@ export default class MMDPostEffect extends PostEffectBase
         req.glContextPool.releaseContext(gl)
     }
 
-    public async render(req: RenderRequest<Param>)
-    {
+    public async render(req: RenderRequest<Param>) {
         // get binded WebGL context
         const gl = await req.glContextPool.getContextByToken(this.ctxBindToken)
         const destCtx = req.destCanvas.getContext('2d')
         const param = req.parameters
         const renderer = this.renderer
 
-        this.camera.position.set(param.camX , param.camY, param.camZ)
+        this.camera.position.set(param.camX, param.camY, param.camZ)
         this.camera.lookAt(new Th.Vector3(param.camTargetX, param.camTargetY, param.camTargetZ))
         this.camera.aspect = req.width / req.height
         this.camera.updateProjectionMatrix()

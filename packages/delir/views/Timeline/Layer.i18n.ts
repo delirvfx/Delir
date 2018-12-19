@@ -11,8 +11,8 @@ export default I18n({
             image: '🖼️ 画像',
             text: '📝 テキスト',
             adjustment: '✨ 調整クリップ',
-            p5js: '🔡 p5.js スクリプト'
-        }
+            p5js: '🔡 p5.js スクリプト',
+        },
     },
     en: {
         contextMenu: {
@@ -24,7 +24,7 @@ export default I18n({
             image: '🖼️ Image',
             text: '📝 Text',
             adjustment: '✨ Adjustment clip',
-            p5js: '🔡 p5.js script'
-        }
-    }
+            p5js: '🔡 p5.js script',
+        },
+    },
 })

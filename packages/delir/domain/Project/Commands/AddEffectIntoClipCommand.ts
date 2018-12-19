@@ -6,10 +6,7 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class AddEffectIntoClipCommand implements Command {
-    constructor(
-        private clipId: string,
-        private addedEffect: Delir.Entity.Effect
-    ) {}
+    constructor(private clipId: string, private addedEffect: Delir.Entity.Effect) {}
 
     public undo(context: OperationContext<any>) {
         this.focusToParentClip(context)

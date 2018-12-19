@@ -1,4 +1,3 @@
-
 import { EffectPreRenderContext, EffectRenderContext } from '..'
 import PluginBase from './plugin-base'
 import { TypeDescriptor } from './type-descriptor'
@@ -8,10 +7,8 @@ export interface EffectPluginClass {
     provideParameters(): TypeDescriptor
 }
 
-export default abstract class EffectPluginBase extends PluginBase
-{
-    public static provideParameters(): TypeDescriptor
-    {
+export default abstract class EffectPluginBase extends PluginBase {
+    public static provideParameters(): TypeDescriptor {
         // None
         return new TypeDescriptor()
     }

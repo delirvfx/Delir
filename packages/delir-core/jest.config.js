@@ -7,5 +7,5 @@ module.exports = {
             tsConfig: join(__dirname, 'tsconfig.test.json'),
             typeCheck: false,
         },
-    }
+    },
 }

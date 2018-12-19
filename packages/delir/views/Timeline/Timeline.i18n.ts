@@ -7,7 +7,7 @@ export default I18n({
             removeLayer: 'レイヤーを削除',
         },
         placeHolder: {
-            layerName: 'レイヤー'
+            layerName: 'レイヤー',
         },
     },
     en: {
@@ -18,5 +18,5 @@ export default I18n({
         placeHolder: {
             layerName: 'Unnamed Layer',
         },
-    }
+    },
 })

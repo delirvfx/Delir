@@ -4,7 +4,7 @@ export const compileTypeScript = (code: string, compilerOption: TypeScript.Compi
     const option: TypeScript.CompilerOptions = {
         target: TypeScript.ScriptTarget.ES2015,
         lib: ['es2015', 'es2016'],
-        ...compilerOption
+        ...compilerOption,
     }
 
     return TypeScript.transpile(code, option)

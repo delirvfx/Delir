@@ -12,7 +12,7 @@ interface Props {
 }
 
 const Button = (props: Props) => {
-    const {children, className, type, htmlType, onClick} = props
+    const { children, className, type, htmlType, onClick } = props
 
     return (
         <button

@@ -1,10 +1,10 @@
 declare module '*.styl' {
-    const _ : {[className: string]: string}
+    const _: { [className: string]: string }
     export = _
 }
 
 declare module '*.json' {
-    const _ : {[key: string]: any}
+    const _: { [key: string]: any }
     export = _
 }
 
@@ -13,11 +13,7 @@ declare module 'devtron' {
 }
 
 declare module 'mouse-wheel' {
-    const _: (
-        element: Element,
-        callback: (dx: number, dy: number) => void,
-        noScroll?: boolean
-    ) => void
+    const _: (element: Element, callback: (dx: number, dy: number) => void, noScroll?: boolean) => void
 
     export = _
 }
@@ -29,15 +25,17 @@ declare module 'electron-devtools-installer' {
 }
 
 declare module 'parse-color' {
-    function parseColor(colorCode: string): {
+    function parseColor(
+        colorCode: string,
+    ): {
         /** RGB values */
-        rgb: [number, number, number],
+        rgb: [number, number, number]
         /** RGBA values */
-        rgba: [number, number, number, number],
+        rgba: [number, number, number, number]
         /** CSS color keyword */
-        keyword: string,
+        keyword: string
         /** HEX color code */
-        hex: string,
+        hex: string
     }
 
     namespace parseColor {}
@@ -56,8 +54,11 @@ declare module 'form-serialize' {
         empty?: boolean
     }
 
-    function serialize(form: HTMLFormElement, options?: SerializeOption): {[name: string]: string | string[]} | string
-    function serialize(form: HTMLFormElement, options?: SerializeOption & {hash: true}): {[name: string]: string | string[]}
+    function serialize(form: HTMLFormElement, options?: SerializeOption): { [name: string]: string | string[] } | string
+    function serialize(
+        form: HTMLFormElement,
+        options?: SerializeOption & { hash: true },
+    ): { [name: string]: string | string[] }
 
     namespace serialize {}
     export = serialize
@@ -73,8 +74,8 @@ declare interface PointerEvent {
 
 declare interface Window {
     requestIdleCallback: (
-        callback: (e: {timeRemaining: number, didTimeout: boolean}) => void,
-        options?: {timeout: number}
+        callback: (e: { timeRemaining: number; didTimeout: boolean }) => void,
+        options?: { timeout: number },
     ) => void
 }
 

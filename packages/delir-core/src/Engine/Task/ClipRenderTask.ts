@@ -9,10 +9,14 @@ import { IRenderer } from '../Renderer/RendererBase'
 import EffectRenderTask from './EffectRenderTask'
 
 export default class ClipRenderTask {
-    public static build({clip, clipRendererCache, context}: {
+    public static build({
+        clip,
+        clipRendererCache,
+        context,
+    }: {
         clip: Clip
         clipRendererCache: WeakMap<Clip, IRenderer<any>>
-        context: RenderContextBase,
+        context: RenderContextBase
     }): ClipRenderTask {
         const rendererParams = RendererFactory.getInfo(clip.renderer).parameter
         const keyframeTable = ParametersTable.build(context, clip, clip.keyframes, clip.expressions, rendererParams)
@@ -44,7 +48,7 @@ export default class ClipRenderTask {
 
     public async initialize(context: RenderContextBase) {
         const preRenderReq = context.toClipPreRenderContext({
-            parameters: this.keyframeTable.initialParams
+            parameters: this.keyframeTable.initialParams,
         })
 
         await this.clipRenderer.beforeRender(preRenderReq)

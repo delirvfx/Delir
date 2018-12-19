@@ -11,7 +11,7 @@ describe('Export', () => {
 
     beforeEach(() => {
         project = mockProject({
-            assets: [ mockAsset({ id: 'uuid-asset' as Asset.Id }) ],
+            assets: [mockAsset({ id: 'uuid-asset' as Asset.Id })],
             compositions: [
                 mockComposition({
                     id: 'uuid-composition' as Composition.Id,
@@ -29,8 +29,8 @@ describe('Export', () => {
                                         param: [
                                             mockKeyframe({
                                                 id: 'uuid-clip-kf-1' as Keyframe.Id,
-                                                value: new ColorRGB(0, 0, 0)
-                                            })
+                                                value: new ColorRGB(0, 0, 0),
+                                            }),
                                         ],
                                     },
                                     expressions: {
@@ -40,25 +40,25 @@ describe('Export', () => {
                                         mockEffect({
                                             id: 'uuid-effect' as Effect.Id,
                                             expressions: {
-                                                param: new Expression('javascript', '1')
+                                                param: new Expression('javascript', '1'),
                                             },
                                             keyframes: {
                                                 param: [
                                                     mockKeyframe({
                                                         id: 'uuid-effect-kf-1' as Keyframe.Id,
                                                         value: new ColorRGB(0, 0, 0),
-                                                    })
+                                                    }),
                                                 ],
                                                 param2: [
                                                     mockKeyframe({
-                                                    id: 'uuid-effect-kf-2' as Keyframe.Id,
-                                                    value: new AssetPointer(),
-                                                    })
+                                                        id: 'uuid-effect-kf-2' as Keyframe.Id,
+                                                        value: new AssetPointer(),
+                                                    }),
                                                 ],
                                             },
                                         }),
                                     ],
-                                })
+                                }),
                             ],
                         }),
                     ],

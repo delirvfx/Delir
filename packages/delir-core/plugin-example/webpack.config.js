@@ -1,37 +1,35 @@
-const webpack = require("webpack");
-const path = require("path");
+const webpack = require('webpack')
+const path = require('path')
 
-const sourceDir = path.join(__dirname, "src");
-const distDir = path.join(__dirname, "dist");
+const sourceDir = path.join(__dirname, 'src')
+const distDir = path.join(__dirname, 'dist')
 
 module.exports = {
-    target: "electron",
+    target: 'electron',
     context: sourceDir,
     entry: {
-        index: "./index.ts",
+        index: './index.ts',
     },
     output: {
-        filename: "[name].js",
+        filename: '[name].js',
         path: distDir,
-        libraryTarget: "commonjs-module"
+        libraryTarget: 'commonjs-module',
     },
     resolve: {
-        extensions: [".js", ".ts"],
-        modules: ["node_modules"],
+        extensions: ['.js', '.ts'],
+        modules: ['node_modules'],
     },
     module: {
         rules: [
             {
                 test: /\.ts$/,
-                loader: "awesome-typescript-loader",
+                loader: 'awesome-typescript-loader',
                 options: {
                     // If you want to type checking, please set 'false' to this option.
-                    transpileOnly: true
-                }
-            }
-        ]
+                    transpileOnly: true,
+                },
+            },
+        ],
     },
-    plugins: [
-        new webpack.ExternalsPlugin('commonjs', ['delir-core']),
-    ]
-};
+    plugins: [new webpack.ExternalsPlugin('commonjs', ['delir-core'])],
+}

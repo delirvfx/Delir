@@ -24,7 +24,7 @@ export class ModifyClipCommand implements Command {
         context.dispatch(ProjectActions.modifyClipAction, {
             targetClipId: this.targetClipId,
             patch: this.toPreviousPatch,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {

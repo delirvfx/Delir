@@ -15,9 +15,9 @@ import t from './operations.i18n'
 import { ClipboardEntry, ParameterTarget } from './types'
 
 export type DragEntity =
-    | { type: 'asset', asset: Delir.Entity.Asset }
-    | { type: 'clip', clip: Delir.Entity.Clip }
-    | { type: 'clip-resizing', clip: Delir.Entity.Clip }
+    | { type: 'asset'; asset: Delir.Entity.Asset }
+    | { type: 'clip'; clip: Delir.Entity.Clip }
+    | { type: 'clip-resizing'; clip: Delir.Entity.Clip }
 
 //
 // App services
@@ -29,18 +29,20 @@ export const openPluginDirectory = operation((context, arg: {}) => {
     remote.shell.openItem(pluginsDir)
 })
 
-export const setActiveProject = operation((context, payload: { project: Delir.Entity.Project, path?: string | null }) => {
-    const { project: activeProject } = context.getStore(EditorStore).getState()
+export const setActiveProject = operation(
+    (context, payload: { project: Delir.Entity.Project; path?: string | null }) => {
+        const { project: activeProject } = context.getStore(EditorStore).getState()
 
-    if (!activeProject || payload.project !== activeProject) {
-        context.dispatch(EditorActions.clearActiveProjectAction, {})
-    }
+        if (!activeProject || payload.project !== activeProject) {
+            context.dispatch(EditorActions.clearActiveProjectAction, {})
+        }
 
-    context.dispatch(EditorActions.setActiveProjectAction, {
-        project: payload.project,
-        path: payload.path,
-    })
-})
+        context.dispatch(EditorActions.setActiveProjectAction, {
+            project: payload.project,
+            path: payload.path,
+        })
+    },
+)
 
 export const setDragEntity = operation((context, arg: { entity: DragEntity }) => {
     context.dispatch(EditorActions.setDragEntityAction, arg.entity)
@@ -50,33 +52,42 @@ export const clearDragEntity = operation((context, arg: {}) => {
     context.dispatch(EditorActions.clearDragEntityAction, {})
 })
 
-export const notify = operation((context, arg: {
-    message: string,
-    title: string,
-    level: 'info' | 'error',
-    timeout?: number,
-    detail?: string,
-}) => {
-    const id = _.uniqueId('notify')
+export const notify = operation(
+    (
+        context,
+        arg: {
+            message: string
+            title: string
+            level: 'info' | 'error'
+            timeout?: number
+            detail?: string
+        },
+    ) => {
+        const id = _.uniqueId('notify')
 
-    context.dispatch(EditorActions.addMessageAction, {
-        id,
-        title: arg.title,
-        message: arg.message,
-        detail: arg.detail,
-        level: arg.level || 'info',
-    })
+        context.dispatch(EditorActions.addMessageAction, {
+            id,
+            title: arg.title,
+            message: arg.message,
+            detail: arg.detail,
+            level: arg.level || 'info',
+        })
 
-    if (arg.timeout != null) {
-        setTimeout(() => { context.dispatch(EditorActions.removeMessageAction, { id }) }, arg.timeout)
-    }
-})
+        if (arg.timeout != null) {
+            setTimeout(() => {
+                context.dispatch(EditorActions.removeMessageAction, { id })
+            }, arg.timeout)
+        }
+    },
+)
 
 //
 // Change active element
 //
 export const changeActiveComposition = operation((context, { compositionId }: { compositionId: string }) => {
-    context.dispatch(EditorActions.changeActiveCompositionAction, { compositionId })
+    context.dispatch(EditorActions.changeActiveCompositionAction, {
+        compositionId,
+    })
 })
 
 export const changeActiveClip = operation((context, { clipId }: { clipId: string }) => {
@@ -90,17 +101,19 @@ export const changeActiveParam = operation((context, { target }: { target: Param
 //
 // Preview
 //
-export const startPreview = operation((context, { compositionId, beginFrame = 0 }: { compositionId: string, beginFrame?: number }) => {
-    const preference = context.getStore(PreferenceStore).getPreferences()
+export const startPreview = operation(
+    (context, { compositionId, beginFrame = 0 }: { compositionId: string; beginFrame?: number }) => {
+        const preference = context.getStore(PreferenceStore).getPreferences()
 
-    context.dispatch(EditorActions.startPreviewAction, {
-        compositionId,
-        beginFrame,
-        ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
-    })
-})
+        context.dispatch(EditorActions.startPreviewAction, {
+            compositionId,
+            beginFrame,
+            ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
+        })
+    },
+)
 
-export const stopPreview = operation((context) => {
+export const stopPreview = operation(context => {
     context.dispatch(EditorActions.stopPreviewAction, {})
 })
 
@@ -115,25 +128,27 @@ export const renderDestinate = operation((context, arg: { compositionId: string 
 
 export const updateProcessingState = operation((context, arg: { stateText: string }) => {
     context.dispatch(EditorActions.updateProcessingStateAction, {
-        stateText: arg.stateText
+        stateText: arg.stateText,
     })
 })
 
 export const seekPreviewFrame = operation((context, { frame = undefined }: { frame?: number }) => {
     const state = context.getStore(EditorStore).getState()
 
-    const {activeComp} = state
+    const { activeComp } = state
     if (!activeComp) return
 
     frame = _.isNumber(frame) ? frame : state.currentPreviewFrame
     const overloadGuardedFrame = _.clamp(frame, 0, activeComp.durationFrames)
-    context.dispatch(EditorActions.seekPreviewFrameAction, { frame: overloadGuardedFrame })
+    context.dispatch(EditorActions.seekPreviewFrameAction, {
+        frame: overloadGuardedFrame,
+    })
 })
 
 //
 // Import & Export
 //
-export const newProject = operation(async (context) => {
+export const newProject = operation(async context => {
     const project = context.getStore(EditorStore).getState().project
 
     if (project) {
@@ -144,11 +159,11 @@ export const newProject = operation(async (context) => {
     }
 
     await context.executeOperation(setActiveProject, {
-        project: new Delir.Entity.Project({})
+        project: new Delir.Entity.Project({}),
     })
 })
 
-export const openProject = operation(async (context) => {
+export const openProject = operation(async context => {
     const project = context.getStore(EditorStore).getState().project
 
     if (project) {
@@ -171,38 +186,41 @@ export const openProject = operation(async (context) => {
 
     await context.executeOperation(setActiveProject, {
         project: Delir.Exporter.deserializeProject(projectJson),
-        path: path[0]
+        path: path[0],
     })
 })
 
-export const saveProject = operation(async (
-    context,
-    { path, silent = false, keepPath = false }: { path: string, silent?: boolean, keepPath?: boolean }
-) => {
-    const project = context.getStore(EditorStore).getState().project
-    if (!project) return
+export const saveProject = operation(
+    async (
+        context,
+        { path, silent = false, keepPath = false }: { path: string; silent?: boolean; keepPath?: boolean },
+    ) => {
+        const project = context.getStore(EditorStore).getState().project
+        if (!project) return
 
-    await fs.writeFile(path, MsgPack().encode({　
-        project: Delir.Exporter.serializeProject(project)
-    }) as any as Buffer)
+        await fs.writeFile(path, (MsgPack().encode({
+            project: Delir.Exporter.serializeProject(project),
+        }) as any) as Buffer)
 
-    let newPath: string | null = path
-    if (keepPath) {
-        newPath = context.getStore(EditorStore).getState().projectPath
-    }
+        let newPath: string | null = path
+        if (keepPath) {
+            newPath = context.getStore(EditorStore).getState().projectPath
+        }
 
-    context.executeOperation(setActiveProject, { project, path: newPath }) // update path
+        context.executeOperation(setActiveProject, { project, path: newPath }) // update path
 
-    !silent && await context.executeOperation(notify, {
-        message: t('saved'),
-        title: '',
-        level: 'info',
-        timeout: 1000
-    })
-})
+        !silent &&
+            (await context.executeOperation(notify, {
+                message: t('saved'),
+                title: '',
+                level: 'info',
+                timeout: 1000,
+            }))
+    },
+)
 
-export const autoSaveProject = operation(async (context) => {
-    const {project, projectPath} = context.getStore(EditorStore).getState()
+export const autoSaveProject = operation(async context => {
+    const { project, projectPath } = context.getStore(EditorStore).getState()
     const isInRendering = context.getStore(RendererStore).isInRendering()
 
     if (isInRendering) return
@@ -212,7 +230,7 @@ export const autoSaveProject = operation(async (context) => {
             message: t('letsSave'),
             title: '',
             level: 'info',
-            timeout: 5000
+            timeout: 5000,
         })
 
         return
@@ -222,31 +240,45 @@ export const autoSaveProject = operation(async (context) => {
     const autoSaveFileName = `${frag.name}.auto-saved${frag.ext}`
     const autoSavePath = path.join(frag.dir, autoSaveFileName)
 
-    await context.executeOperation(saveProject, { path: autoSavePath, silent: true, keepPath: true })
+    await context.executeOperation(saveProject, {
+        path: autoSavePath,
+        silent: true,
+        keepPath: true,
+    })
 
     context.executeOperation(notify, {
         message: t('autoSaved', { fileName: autoSaveFileName }),
         title: '',
         level: 'info',
-        timeout: 2000
+        timeout: 2000,
     })
 })
 
 export const changePreferenceOpenState = operation((context, { open }: { open: boolean }) => {
-    context.dispatch(EditorActions.changePreferenceOpenStateAction, { open })
+    context.dispatch(EditorActions.changePreferenceOpenStateAction, {
+        open,
+    })
 })
 
 //
 // Internal clipboard
 //
-export const copyEntity = operation((context, { type, entity }: {
-    type: ClipboardEntry['type']
-    entity: Delir.Entity.Clip
-}) => {
-    context.dispatch(EditorActions.setClipboardEntry, {
-        entry: {
+export const copyEntity = operation(
+    (
+        context,
+        {
             type,
-            entityClone: Delir.Exporter.serializeEntity(entity)
-        }
-    })
-})
+            entity,
+        }: {
+            type: ClipboardEntry['type']
+            entity: Delir.Entity.Clip
+        },
+    ) => {
+        context.dispatch(EditorActions.setClipboardEntry, {
+            entry: {
+                type,
+                entityClone: Delir.Exporter.serializeEntity(entity),
+            },
+        })
+    },
+)

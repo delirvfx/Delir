@@ -26,7 +26,7 @@ export class ModifyClipKeyframeCommand implements Command {
             parentClipId: this.targetKeyframeId,
             targetKeyframeId: this.targetKeyframeId,
             patch: this.toPreviousPatch,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {
@@ -45,7 +45,7 @@ export class ModifyClipKeyframeCommand implements Command {
                 type: 'clip',
                 entityId: this.parentClipId,
                 paramName: this.paramName,
-            }
+            },
         })
     }
 }

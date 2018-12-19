@@ -2,7 +2,9 @@ import { ReferenceableEffectsParams } from '../ExpressionSupport/ExpressionConte
 import { RealParameterValues } from '../ParametersTable'
 import { IRenderContextBase } from './IRenderContextBase'
 
-export interface ClipRenderContext<T extends {[paramName: string]: any}> extends IRenderContextBase, ClipRenderContextAttributes<T> {}
+export interface ClipRenderContext<T extends { [paramName: string]: any }>
+    extends IRenderContextBase,
+        ClipRenderContextAttributes<T> {}
 
 export interface ClipRenderContextAttributes<T extends RealParameterValues> {
     parameters: T

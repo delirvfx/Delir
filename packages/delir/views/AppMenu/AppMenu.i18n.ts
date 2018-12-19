@@ -42,7 +42,7 @@ export default I18n({
             saveAs: {
                 title: '新しいファイルに保存',
                 save: '保存',
-            }
+            },
         },
     },
     en: {
@@ -86,7 +86,7 @@ export default I18n({
             saveAs: {
                 title: 'Save as ...',
                 save: 'Save',
-            }
+            },
         },
     },
 })

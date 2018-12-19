@@ -5,8 +5,8 @@ import { ClipRenderContext } from '../RenderContext/ClipRenderContext'
 export interface IRendererStatic {
     rendererId: string
 
-    new(): IRenderer<any>
-    provideAssetAssignMap(): {[extName: string]: string}
+    new (): IRenderer<any>
+    provideAssetAssignMap(): { [extName: string]: string }
     provideParameters(): TypeDescriptor
 }
 

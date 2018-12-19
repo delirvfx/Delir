@@ -1,9 +1,4 @@
-import {
-    EffectPreRenderContext,
-    EffectRenderContext,
-    PostEffectBase,
-    Type,
-} from '@ragg/delir-core'
+import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@ragg/delir-core'
 
 interface Params {
     value: number
@@ -14,8 +9,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
      * Provide usable parameters
      */
     public static provideParameters() {
-        return Type
-            .float('value', {label: 'Value', defaultValue: 0, animatable: true})
+        return Type.float('value', { label: 'Value', defaultValue: 0, animatable: true })
     }
 
     /**

@@ -5,15 +5,17 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class AddAssetCommand implements Command {
-    constructor(
-        private addedAsset: Delir.Entity.Asset
-    ) {}
+    constructor(private addedAsset: Delir.Entity.Asset) {}
 
     public undo(context: OperationContext<any>) {
-        context.dispatch(ProjectActions.removeAssetAction, { targetAssetId: this.addedAsset.id })
+        context.dispatch(ProjectActions.removeAssetAction, {
+            targetAssetId: this.addedAsset.id,
+        })
     }
 
     public redo(context: OperationContext<any>) {
-        context.dispatch(ProjectActions.addAssetAction, { asset: this.addedAsset })
+        context.dispatch(ProjectActions.addAssetAction, {
+            asset: this.addedAsset,
+        })
     }
 }

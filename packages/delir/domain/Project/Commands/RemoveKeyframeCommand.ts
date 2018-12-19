@@ -38,7 +38,7 @@ export class RemoveKeyframeCommand implements Command {
                 type: 'clip',
                 entityId: this.parentClipId,
                 paramName: this.paramName,
-            }
+            },
         })
     }
 }

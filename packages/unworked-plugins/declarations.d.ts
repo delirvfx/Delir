@@ -1,4 +1,4 @@
 declare module 'tooloud' {
-    const _ : any
+    const _: any
     export default _
 }

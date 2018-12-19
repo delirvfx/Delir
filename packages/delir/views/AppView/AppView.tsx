@@ -29,96 +29,98 @@ interface ConnectedProps {
 
 type Props = ConnectedProps & ContextProp
 
-export default withComponentContext(connectToStores([EditorStore], (context) => ({
-    editor: context.getStore(EditorStore).getState()
-}))(class AppView extends React.PureComponent<Props> {
-    public root = React.createRef<HTMLDivElement>()
-    public trap: InstanceType<typeof Mousetrap>
+export default withComponentContext(
+    connectToStores([EditorStore], context => ({
+        editor: context.getStore(EditorStore).getState(),
+    }))(
+        class AppView extends React.PureComponent<Props> {
+            public root = React.createRef<HTMLDivElement>()
+            public trap: InstanceType<typeof Mousetrap>
 
-    public componentDidMount()
-    {
-        window.addEventListener('dragenter', this.prevent, false)
-        window.addEventListener('dragover', this.prevent, false)
+            public componentDidMount() {
+                window.addEventListener('dragenter', this.prevent, false)
+                window.addEventListener('dragover', this.prevent, false)
 
-        this.trap = new Mousetrap(document.body)
-        this.trap.bind('space', this.handleShortCutPreviewToggle)
-        this.trap.bind(['command+z', 'ctrl+z'], this.handleShortCutUndo)
-        this.trap.bind(['command+shift+z', 'ctrl+shift+z'], this.handleShortCutRedo)
+                this.trap = new Mousetrap(document.body)
+                this.trap.bind('space', this.handleShortCutPreviewToggle)
+                this.trap.bind(['command+z', 'ctrl+z'], this.handleShortCutUndo)
+                this.trap.bind(['command+shift+z', 'ctrl+shift+z'], this.handleShortCutRedo)
 
-        window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
-    }
+                window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
+            }
 
-    public render()
-    {
-        const { preferenceOpened } = this.props.editor
+            public render() {
+                const { preferenceOpened } = this.props.editor
 
-        return (
-            <div ref={this.root} className='_container' onDrop={this.prevent}>
-                <AppMenu />
-                <NavigationView />
-                <Workspace className='app-body' direction='vertical'>
-                    <Pane className='body-pane'>
-                        <Workspace direction='horizontal'>
-                            <AssetsView />
-                            <PreviewView />
+                return (
+                    <div ref={this.root} className='_container' onDrop={this.prevent}>
+                        <AppMenu />
+                        <NavigationView />
+                        <Workspace className='app-body' direction='vertical'>
+                            <Pane className='body-pane'>
+                                <Workspace direction='horizontal'>
+                                    <AssetsView />
+                                    <PreviewView />
+                                </Workspace>
+                            </Pane>
+                            <Timeline />
                         </Workspace>
-                    </Pane>
-                    <Timeline />
-                </Workspace>
-                <StatusBar />
-                <Notifications />
-                <RenderingWaiter />
-                <CSSTransitionGroup
-                    component='div'
-                    transitionName={{
-                        enter: s.preferenceEnter,
-                        enterActive: s.preferenceEnterActive,
-                        leave: s.preferenceLeave,
-                        leaveActive: s.preferenceLeaveActive,
-                    }}
-                >
-                    {preferenceOpened && <Preference onClose={this.handlePreferenceClose} />}
-                </CSSTransitionGroup>
-            </div>
-        )
-    }
+                        <StatusBar />
+                        <Notifications />
+                        <RenderingWaiter />
+                        <CSSTransitionGroup
+                            component='div'
+                            transitionName={{
+                                enter: s.preferenceEnter,
+                                enterActive: s.preferenceEnterActive,
+                                leave: s.preferenceLeave,
+                                leaveActive: s.preferenceLeaveActive,
+                            }}
+                        >
+                            {preferenceOpened && <Preference onClose={this.handlePreferenceClose} />}
+                        </CSSTransitionGroup>
+                    </div>
+                )
+            }
 
-    private prevent = (e: any) => {
-        e.preventDefault()
-    }
+            private prevent = (e: any) => {
+                e.preventDefault()
+            }
 
-    private projectAutoSaveTimer = () => {
-        this.props.context.executeOperation(EditorOps.autoSaveProject, {})
-    }
+            private projectAutoSaveTimer = () => {
+                this.props.context.executeOperation(EditorOps.autoSaveProject, {})
+            }
 
-    private handlePreferenceClose = () => {
-        this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
-    }
+            private handlePreferenceClose = () => {
+                this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
+            }
 
-    private handleShortCutPreviewToggle = () => {
-        const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
+            private handleShortCutPreviewToggle = () => {
+                const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
 
-        if (!activeComp) return
+                if (!activeComp) return
 
-        if (previewPlayed) {
-            this.props.context.executeOperation(EditorOps.stopPreview, {})
-        } else {
-            this.props.context.executeOperation(EditorOps.startPreview, {
-                compositionId: activeComp.id,
-                beginFrame: currentPreviewFrame
+                if (previewPlayed) {
+                    this.props.context.executeOperation(EditorOps.stopPreview, {})
+                } else {
+                    this.props.context.executeOperation(EditorOps.startPreview, {
+                        compositionId: activeComp.id,
+                        beginFrame: currentPreviewFrame,
+                    })
+                }
+            }
+
+            // tslint:disable-next-line: member-ordering
+            private handleShortCutUndo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
+                e.preventDefault()
+                this.props.context.executeOperation(HistoryOps.doUndo, {})
             })
-        }
-    }
 
-    // tslint:disable-next-line: member-ordering
-    private handleShortCutUndo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
-        e.preventDefault()
-        this.props.context.executeOperation(HistoryOps.doUndo, {})
-    })
-
-    // tslint:disable-next-line: member-ordering
-    private handleShortCutRedo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
-        e.preventDefault()
-        this.props.context.executeOperation(HistoryOps.doRedo, {})
-    })
-}))
+            // tslint:disable-next-line: member-ordering
+            private handleShortCutRedo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
+                e.preventDefault()
+                this.props.context.executeOperation(HistoryOps.doRedo, {})
+            })
+        },
+    ),
+)

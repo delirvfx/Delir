@@ -22,29 +22,26 @@ interface LibraryEntry {
 
 // Load EcmaScript TypeDefinitions
 const typeDefinitionLibs = {
-    'lib.es5.d.ts'                      : require('!raw-loader!typescript/lib/lib.es5.d.ts'),
-    'lib.es2015.collection.d.ts'        : require('!raw-loader!typescript/lib/lib.es2015.collection.d.ts'),
-    'lib.es2015.core.d.ts'              : require('!raw-loader!typescript/lib/lib.es2015.core.d.ts'),
-    'lib.es2015.generator.d.ts'         : require('!raw-loader!typescript/lib/lib.es2015.generator.d.ts'),
-    'lib.es2015.iterable.d.ts'          : require('!raw-loader!typescript/lib/lib.es2015.iterable.d.ts'),
-    'lib.es2015.promise.d.ts'           : require('!raw-loader!typescript/lib/lib.es2015.promise.d.ts'),
-    'lib.es2015.proxy.d.ts'             : require('!raw-loader!typescript/lib/lib.es2015.proxy.d.ts'),
-    'lib.es2015.reflect.d.ts'           : require('!raw-loader!typescript/lib/lib.es2015.reflect.d.ts'),
-    'lib.es2015.symbol.d.ts'            : require('!raw-loader!typescript/lib/lib.es2015.symbol.d.ts'),
-    'lib.es2015.symbol.wellknown.d.ts'  : require('!raw-loader!typescript/lib/lib.es2015.symbol.wellknown.d.ts'),
-    'lib.es2016.array.include.d.ts'     : require('!raw-loader!typescript/lib/lib.es2016.array.include.d.ts'),
-    'console.d.ts'                      : require('!raw-loader!./console.d.ts.txt'),
+    'lib.es5.d.ts': require('!raw-loader!typescript/lib/lib.es5.d.ts'),
+    'lib.es2015.collection.d.ts': require('!raw-loader!typescript/lib/lib.es2015.collection.d.ts'),
+    'lib.es2015.core.d.ts': require('!raw-loader!typescript/lib/lib.es2015.core.d.ts'),
+    'lib.es2015.generator.d.ts': require('!raw-loader!typescript/lib/lib.es2015.generator.d.ts'),
+    'lib.es2015.iterable.d.ts': require('!raw-loader!typescript/lib/lib.es2015.iterable.d.ts'),
+    'lib.es2015.promise.d.ts': require('!raw-loader!typescript/lib/lib.es2015.promise.d.ts'),
+    'lib.es2015.proxy.d.ts': require('!raw-loader!typescript/lib/lib.es2015.proxy.d.ts'),
+    'lib.es2015.reflect.d.ts': require('!raw-loader!typescript/lib/lib.es2015.reflect.d.ts'),
+    'lib.es2015.symbol.d.ts': require('!raw-loader!typescript/lib/lib.es2015.symbol.d.ts'),
+    'lib.es2015.symbol.wellknown.d.ts': require('!raw-loader!typescript/lib/lib.es2015.symbol.wellknown.d.ts'),
+    'lib.es2016.array.include.d.ts': require('!raw-loader!typescript/lib/lib.es2016.array.include.d.ts'),
+    'console.d.ts': require('!raw-loader!./console.d.ts.txt'),
 }
 
 export default class Monaco {
-
-    public static registerLibrarySet(name: string, libs: (AvailableLibrary | LibraryEntry)[])
-    {
+    public static registerLibrarySet(name: string, libs: (AvailableLibrary | LibraryEntry)[]) {
         this.librarySet[name] = libs
     }
 
-    public static activateLibrarySet(name: string)
-    {
+    public static activateLibrarySet(name: string) {
         if (Monaco.currentLibrarySet !== name && this.activeLibrarySetDisposer) {
             this.activeLibrarySetDisposer()
         }
@@ -63,7 +60,9 @@ export default class Monaco {
 
     private static currentLibrarySet: string
 
-    private static librarySet: {[setName: string]: (AvailableLibrary | LibraryEntry)[]} = {
+    private static librarySet: {
+        [setName: string]: (AvailableLibrary | LibraryEntry)[]
+    } = {
         expressionEditor: [
             'lib.es5.d.ts',
             'lib.es2015.collection.d.ts',

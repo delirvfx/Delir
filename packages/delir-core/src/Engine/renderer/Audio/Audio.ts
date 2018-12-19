@@ -14,7 +14,7 @@ interface AVFormat {
     bitrate: number
     channelsPerFrame: number
     floatingPoint: boolean
-    formatID: string,
+    formatID: string
     sampleRate: number
 }
 
@@ -24,28 +24,26 @@ interface AudioRendererParam {
     startTime: number
 }
 
-export default class AudioRenderer implements IRenderer<AudioRendererParam>
-{
-    public static get rendererId(): string { return 'audio' }
+export default class AudioRenderer implements IRenderer<AudioRendererParam> {
+    public static get rendererId(): string {
+        return 'audio'
+    }
 
-    public static provideAssetAssignMap()
-    {
+    public static provideAssetAssignMap() {
         return {
             wav: 'source',
             webm: 'source',
             mpeg: 'source',
             mp3: 'source',
-            ogg: 'source'
+            ogg: 'source',
         }
     }
 
-    public static provideParameters(): TypeDescriptor
-    {
-        return Type
-            .asset('source', {
-                label: 'Audio file',
-                extensions: ['wav', 'webm', 'mpeg', 'mp3', 'ogg'],
-            })
+    public static provideParameters(): TypeDescriptor {
+        return Type.asset('source', {
+            label: 'Audio file',
+            extensions: ['wav', 'webm', 'mpeg', 'mp3', 'ogg'],
+        })
             .float('volume', {
                 label: 'Volume',
                 defaultValue: 100,
@@ -64,8 +62,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         buffers: Float32Array[]
     }
 
-    public async beforeRender(context: ClipPreRenderContext<AudioRendererParam>)
-    {
+    public async beforeRender(context: ClipPreRenderContext<AudioRendererParam>) {
         const params = context.parameters
 
         if (this._audio && this._audio.sourcePath === params.source.path) {
@@ -87,13 +84,11 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         }
     }
 
-    public async render(context: ClipRenderContext<AudioRendererParam>)
-    {
+    public async render(context: ClipRenderContext<AudioRendererParam>) {
         return this.renderAudio(context)
     }
 
-    public async renderAudio(context: ClipRenderContext<AudioRendererParam>)
-    {
+    public async renderAudio(context: ClipRenderContext<AudioRendererParam>) {
         if (!context.isAudioBufferingNeeded) return
 
         const volume = _.clamp(context.parameters.volume / 100, 0, 1)
@@ -102,7 +97,8 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam>
         const destBuffers = context.destAudioBuffer
 
         // Slice from source
-        const begin = ((context.parameters.startTime * context.samplingRate) + (context.timeOnClip * context.samplingRate)) | 0
+        const begin =
+            (context.parameters.startTime * context.samplingRate + context.timeOnClip * context.samplingRate) | 0
         const end = begin + context.neededSamples
 
         const slices: Float32Array[] = new Array(context.audioChannels)

@@ -21,7 +21,7 @@ class Asset implements AssetProps {
 
     constructor(props: AssetProps) {
         this.id = uuid.v4() as Asset.Id
-        safeAssign<Asset>(this, props as (AssetProps & { id: Asset.Id }))
+        safeAssign<Asset>(this, props as AssetProps & { id: Asset.Id })
     }
 
     public patch(props: Partial<AssetProps>) {
@@ -33,4 +33,4 @@ namespace Asset {
     export type Id = AssetId
 }
 
-export {Asset}
+export { Asset }

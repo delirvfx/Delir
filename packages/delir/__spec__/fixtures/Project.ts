@@ -60,91 +60,109 @@ const layer4 = new Delir.Entity.Layer({
     name: 'video',
 })
 
-const movieClip = assign(new Delir.Entity.Clip({
-    renderer: 'video',
-    placedFrame: 0,
-    durationFrames,
-}), {
-    keyframes: {
-        source: [
-            new Delir.Entity.Keyframe({
-                value: {assetId: movieAsset.id},
-                frameOnClip: 0,
-            })
-        ]
-    }
-})
-
-const textClip = assign(new Delir.Entity.Clip({
-    renderer: 'text',
-    placedFrame: 0,
-    durationFrames,
-}), {
-    keyframes: {
-        text: [
-            new Delir.Entity.Keyframe({value: 'test', frameOnClip: 0})
-        ],
-        source: [
-            new Delir.Entity.Keyframe({value: {assetId: movieAsset.id}, frameOnClip: 0})
-        ],
-        loop: [
-            new Delir.Entity.Keyframe({value: true, frameOnClip: 0}),
-        ],
-        x: [
-            new Delir.Entity.Keyframe({value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
-            new Delir.Entity.Keyframe({value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
-        ],
+const movieClip = assign(
+    new Delir.Entity.Clip({
+        renderer: 'video',
+        placedFrame: 0,
+        durationFrames,
+    }),
+    {
+        keyframes: {
+            source: [
+                new Delir.Entity.Keyframe({
+                    value: { assetId: movieAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+        },
     },
-    expressions: {
-        text: new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`')
+)
+
+const textClip = assign(
+    new Delir.Entity.Clip({
+        renderer: 'text',
+        placedFrame: 0,
+        durationFrames,
+    }),
+    {
+        keyframes: {
+            text: [new Delir.Entity.Keyframe({ value: 'test', frameOnClip: 0 })],
+            source: [
+                new Delir.Entity.Keyframe({
+                    value: { assetId: movieAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+            loop: [new Delir.Entity.Keyframe({ value: true, frameOnClip: 0 })],
+            x: [
+                new Delir.Entity.Keyframe({
+                    value: 0,
+                    frameOnClip: 0,
+                    easeOutParam: [0.4, 0.5],
+                }),
+                new Delir.Entity.Keyframe({
+                    value: 300,
+                    frameOnClip: 600,
+                    easeInParam: [0.6, 0.5],
+                }),
+            ],
+        },
+        expressions: {
+            text: new Values.Expression('typescript', 'console.log(duration);\n`time:${time}\\nframe:${frame}`'),
+        },
     },
-})
+)
 
-const audioClip = assign(new Delir.Entity.Clip({
-    // renderer: 'video'
-    renderer:  'audio',
-    placedFrame:  0,
-    durationFrames,
-}), {
-    keyframes: {
-        source: [
-            new Delir.Entity.Keyframe({
-                value: {assetId: audioAsset.id},
-                frameOnClip: 0
-            }),
-        ]
-    }
-})
+const audioClip = assign(
+    new Delir.Entity.Clip({
+        // renderer: 'video'
+        renderer: 'audio',
+        placedFrame: 0,
+        durationFrames,
+    }),
+    {
+        keyframes: {
+            source: [
+                new Delir.Entity.Keyframe({
+                    value: { assetId: audioAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+        },
+    },
+)
 
-const imageClip = assign(new Delir.Entity.Clip({
-    renderer:  'image',
-    placedFrame:  20,
-    durationFrames,
-}), {
-    keyframes: {
-        source: [
-            new Delir.Entity.Keyframe({
-                value: {assetId: imageAsset.id},
-                frameOnClip: 0,
-            })
-        ],
-        x: [
-            new Delir.Entity.Keyframe({
-                value: 0,
-                frameOnClip: -10,
-            }),
-            new Delir.Entity.Keyframe({
-                value: 10,
-                frameOnClip: 20,
-            }),
-            new Delir.Entity.Keyframe({
-                value: 40,
-                frameOnClip: 100,
-            }),
-        ]
-    }
-})
-
+const imageClip = assign(
+    new Delir.Entity.Clip({
+        renderer: 'image',
+        placedFrame: 20,
+        durationFrames,
+    }),
+    {
+        keyframes: {
+            source: [
+                new Delir.Entity.Keyframe({
+                    value: { assetId: imageAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+            x: [
+                new Delir.Entity.Keyframe({
+                    value: 0,
+                    frameOnClip: -10,
+                }),
+                new Delir.Entity.Keyframe({
+                    value: 10,
+                    frameOnClip: 20,
+                }),
+                new Delir.Entity.Keyframe({
+                    value: 40,
+                    frameOnClip: 100,
+                }),
+            ],
+        },
+    },
+)
 ; [movieAsset, audioAsset, audioAsset2, imageAsset].forEach(a => project.addAsset(a))
 project.addComposition(c1)
 ; [layer1, layer2, layer3, layer4].forEach(layer => c1.addLayer(layer))

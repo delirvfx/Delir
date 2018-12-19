@@ -7,37 +7,34 @@ export default class Modal {
     private modal: ModalWindow | null
     private modalOption: Props
 
-    constructor(modalOption: Props = {})
-    {
+    constructor(modalOption: Props = {}) {
         this.portal = new Portal()
         this.modalOption = modalOption
     }
 
-    public mount(element: JSX.Element)
-    {
+    public mount(element: JSX.Element) {
         this.modal = this.portal!.mount(
-            <ModalWindow show={false} {...this.modalOption}>{element}</ModalWindow>
+            <ModalWindow show={false} {...this.modalOption}>
+                {element}
+            </ModalWindow>,
         ) as ModalWindow
     }
 
-    public dispose()
-    {
+    public dispose() {
         this.portal!.unmount()
         this.portal = null
         this.modal = null
     }
 
-    public show()
-    {
+    public show() {
         return new Promise(resolve => {
-            this.modal!.setState({show: true, onTransitionEnd: resolve})
+            this.modal!.setState({ show: true, onTransitionEnd: resolve })
         })
     }
 
-    public hide(): Promise<void>
-    {
+    public hide(): Promise<void> {
         return new Promise(resolve => {
-            this.modal!.setState({show: false, onTransitionEnd: resolve})
+            this.modal!.setState({ show: false, onTransitionEnd: resolve })
         })
     }
 }
