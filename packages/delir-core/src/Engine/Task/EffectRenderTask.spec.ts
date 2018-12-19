@@ -1,4 +1,5 @@
-import { Clip, Composition, Effect, Layer, Project } from '../../Entity'
+import { mockClip, mockComposition, mockEffect, mockLayer, mockProject } from '../../../spec/mocks'
+import { Clip, Effect, Project } from '../../Entity'
 import { EffectPluginMissingException } from '../../exceptions'
 import PluginRegistry from '../../PluginSupport/plugin-registry'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
@@ -13,42 +14,43 @@ describe('EffectRenderTask', () => {
 
     beforeEach(() => {
         registry = new PluginRegistry()
-        project = new Project()
+        project = mockProject()
 
-        const comp = new Composition()
-        project.compositions.push(comp)
+        const comp = mockComposition()
+        project.addComposition(comp)
 
-        const layer = new Layer()
-        comp.layers.push(layer)
+        const layer = mockLayer()
+        comp.addLayer(layer)
 
-        clip = new Clip()
-        project.compositions[0].layers[0].clips.push(clip)
+        clip = mockClip()
+        layer.addClip(clip)
     })
 
     describe('ignoreMissingEffect', () => {
         it('Should not throw EffectPluginMissingException with missing effect', () => {
             const resolver = new DependencyResolver(project, registry)
-            registry.registerPlugin([{
-                id: 'existing-effect',
-                class: EffectPluginBase as any,
-                packageJson: {
-                    name: 'existing-effect',
-                    author: '',
-                    version: '0.0.0',
-                    delir: {
-                        name: 'exit-effect',
-                        type: 'post-effect',
+            registry.registerPlugin([
+                {
+                    id: 'existing-effect',
+                    class: EffectPluginBase as any,
+                    packageJson: {
+                        name: 'existing-effect',
+                        author: '',
+                        version: '0.0.0',
+                        delir: {
+                            name: 'exit-effect',
+                            type: 'post-effect',
+                        },
+                        engines: {
+                            'delir-core': '*',
+                        },
                     },
-                    engines: {
-                        'delir-core': '0.5.x',
-                    },
+                    type: 'post-effect',
                 },
-                type: 'post-effect',
-            }])
+            ])
 
-            const effect = new Effect()
-            effect.processor = 'existing-effect'
-            clip.effects.push(effect)
+            const effect = mockEffect({ processor: 'existing-effect' })
+            clip.addEffect(effect)
 
             const context = new RenderContextBase({
                 rootComposition: project.compositions[0],
@@ -67,12 +69,10 @@ describe('EffectRenderTask', () => {
         })
 
         it('Should throw EffectPluginMissingException with missing effect', () => {
-
             const resolver = new DependencyResolver(project, registry)
 
-            const effect = new Effect()
-            effect.processor = 'missing-processor'
-            clip.effects.push(effect)
+            const effect = mockEffect({ processor: 'missing-processor' })
+            clip.addEffect(effect)
 
             const context = new RenderContextBase({
                 rootComposition: project.compositions[0],

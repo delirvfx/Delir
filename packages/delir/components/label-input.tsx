@@ -17,8 +17,7 @@ interface State {
     value: string | undefined
 }
 
-export default class LabelInput extends React.Component<Props, State>
-{
+export default class LabelInput extends React.Component<Props, State> {
     public static defaultProps = {
         doubleClickToEdit: false,
     }
@@ -36,22 +35,20 @@ export default class LabelInput extends React.Component<Props, State>
         }
     }
 
-    public enableAndFocus()
-    {
-        this.setState({readOnly: false})
+    public enableAndFocus() {
+        this.setState({ readOnly: false })
         this.inputRef.current!.focus()
         this.inputRef.current!.select()
     }
 
-    public render()
-    {
-        const {className, name, placeholder} = this.props
-        const {value, readOnly} = this.state
+    public render() {
+        const { className, name, placeholder } = this.props
+        const { value, readOnly } = this.state
 
         return (
             <input
                 ref={this.inputRef}
-                type='text'
+                type="text"
                 tabIndex={-1}
                 className={classnames('_label-input', className)}
                 name={name}
@@ -66,9 +63,8 @@ export default class LabelInput extends React.Component<Props, State>
         )
     }
 
-    private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>
-    {
-        const {onChange, defaultValue} = this.props
+    private onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const { onChange, defaultValue } = this.props
         const input = this.inputRef.current!
         const dataset = propsToDataset(this.props)
 
@@ -77,37 +73,34 @@ export default class LabelInput extends React.Component<Props, State>
                 this.enableAndFocus()
             } else {
                 onChange && onChange(input.value, dataset)
-                this.setState({readOnly: true, value: input.value})
+                this.setState({ readOnly: true, value: input.value })
             }
         } else if (e.key === 'Escape') {
             onChange && onChange(input.value, dataset)
-            this.setState({readOnly: true, value: defaultValue || ''})
+            this.setState({ readOnly: true, value: defaultValue || '' })
         }
     }
 
-    private onBlur = (e: React.FocusEvent<HTMLInputElement>) =>
-    {
+    private onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         if (this.state.readOnly) return
 
         const dataset = propsToDataset(this.props)
         this.props.onChange && this.props.onChange(this.inputRef.current!.value, dataset)
-        this.setState({readOnly: true})
+        this.setState({ readOnly: true })
     }
 
-    private onDoubleClick = (e: React.MouseEvent<HTMLInputElement>) =>
-    {
+    private onDoubleClick = (e: React.MouseEvent<HTMLInputElement>) => {
         if (!this.props.doubleClickToEdit) return
 
         e.preventDefault()
         e.stopPropagation()
 
-        this.setState({readOnly: false})
+        this.setState({ readOnly: false })
         this.inputRef.current!.focus()
         this.inputRef.current!.select()
     }
 
-    private valueChanged = () =>
-    {
-        this.setState({value: this.inputRef.current!.value})
+    private valueChanged = () => {
+        this.setState({ value: this.inputRef.current!.value })
     }
 }

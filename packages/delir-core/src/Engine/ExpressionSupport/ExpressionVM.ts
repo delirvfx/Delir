@@ -35,11 +35,11 @@ export default class ExpressionVM {
     public static execute<Result = any>(
         code: string,
         context: ExpressionContext,
-        options: ExpressionVMOption = {}
+        options: ExpressionVMOption = {},
     ): Result {
         const vmGlobal = Object.freeze({
             console: global.console,
-            ...context
+            ...context,
         })
 
         const vmContext = createContext(vmGlobal)

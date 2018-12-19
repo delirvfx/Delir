@@ -19,24 +19,22 @@ interface VideoRendererParam {
     opacity: number
 }
 
-export default class VideoLayer implements IRenderer<VideoRendererParam>
-{
-    public static get rendererId(): string { return 'video' }
+export default class VideoLayer implements IRenderer<VideoRendererParam> {
+    public static get rendererId(): string {
+        return 'video'
+    }
 
-    public static provideAssetAssignMap()
-    {
+    public static provideAssetAssignMap() {
         return {
             mp4: 'source',
         }
     }
 
-    public static provideParameters(): TypeDescriptor
-    {
-        return Type
-            .asset('source', {
-                label: 'Movie file',
-                extensions: ['mp4'],
-            })
+    public static provideParameters(): TypeDescriptor {
+        return Type.asset('source', {
+            label: 'Movie file',
+            extensions: ['mp4'],
+        })
             .number('offsetTime', {
                 label: 'Start time',
                 animatable: false,
@@ -73,8 +71,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 
     private _video: HTMLVideoElement
 
-    public async beforeRender(context: ClipPreRenderContext<VideoRendererParam>)
-    {
+    public async beforeRender(context: ClipPreRenderContext<VideoRendererParam>) {
         const parameters = context.parameters as any
 
         if (context.parameters.source == null) {
@@ -98,13 +95,18 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
                 this._video.removeEventListener('loadeddata', onLoaded, false)
             }
 
-            this._video.addEventListener('loadeddata', onLoaded, {once: true, capture: false} as any)
-            this._video.addEventListener('error', onError, {once: true, capture: false}  as any)
+            this._video.addEventListener('loadeddata', onLoaded, {
+                once: true,
+                capture: false,
+            } as any)
+            this._video.addEventListener('error', onError, {
+                once: true,
+                capture: false,
+            } as any)
         })
     }
 
-    public async render(context: ClipRenderContext<VideoRendererParam>)
-    {
+    public async render(context: ClipRenderContext<VideoRendererParam>) {
         if (!context.parameters.source) {
             return
         }
@@ -115,14 +117,14 @@ export default class VideoLayer implements IRenderer<VideoRendererParam>
 
         await new Promise((resolve, reject) => {
             const waiter = (e: Event) => resolve()
-            video.addEventListener('seeked', waiter, {once: true} as any)
+            video.addEventListener('seeked', waiter, { once: true } as any)
             setTimeout(waiter, 1000)
 
             const time = param.offsetTime + context.timeOnClip
             video.currentTime = param.loop ? time % video.duration : time
         })
 
-        const rad = param.rotate * Math.PI / 180
+        const rad = (param.rotate * Math.PI) / 180
 
         ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
         ctx.translate(param.x, param.y)

@@ -2,9 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 export default class Portal {
-
-    public static mount(component: JSX.Element)
-    {
+    public static mount(component: JSX.Element) {
         const portal = new Portal()
         portal.mount(component)
         return portal
@@ -13,13 +11,11 @@ export default class Portal {
     private mounted: boolean = false
     private mountedComponent: React.Component<any, any> | null
 
-    constructor()
-    {
+    constructor() {
         this.root = document.createElement('div')
     }
 
-    public mount<T extends JSX.Element>(component: T): React.Component<any, any>
-    {
+    public mount<T extends JSX.Element>(component: T): React.Component<any, any> {
         if (!this.mounted) {
             document.body.appendChild(this.root)
             this.mounted = true
@@ -29,8 +25,7 @@ export default class Portal {
         return this.mountedComponent
     }
 
-    public unmount()
-    {
+    public unmount() {
         ReactDOM.unmountComponentAtNode(this.root)
 
         if (this.root.parentElement) {

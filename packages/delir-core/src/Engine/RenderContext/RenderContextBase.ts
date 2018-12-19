@@ -34,19 +34,31 @@ export class RenderContextBase implements IRenderContextBase {
         Object.assign(this, context)
     }
 
-    public toClipPreRenderContext(this: IRenderContextBase, context: ClipPreRenderContextAttributes<any>): ClipPreRenderContext<any> {
+    public toClipPreRenderContext(
+        this: IRenderContextBase,
+        context: ClipPreRenderContextAttributes<any>,
+    ): ClipPreRenderContext<any> {
         return { ...this, ...context }
     }
 
-    public toClipRenderContext(this: IRenderContextBase, context: ClipRenderContextAttributes<any>): ClipRenderContext<any> {
+    public toClipRenderContext(
+        this: IRenderContextBase,
+        context: ClipRenderContextAttributes<any>,
+    ): ClipRenderContext<any> {
         return { ...this, ...context }
     }
 
-    public toEffectPreRenderContext(this: IRenderContextBase, context: EffectPreRenderContextAttributes<any>): EffectPreRenderContext<any> {
+    public toEffectPreRenderContext(
+        this: IRenderContextBase,
+        context: EffectPreRenderContextAttributes<any>,
+    ): EffectPreRenderContext<any> {
         return { ...this, ...context }
     }
 
-    public toEffectRenderContext(this: IRenderContextBase, context: EffectRenderContextAttributes<any>): EffectRenderContext<any> {
+    public toEffectRenderContext(
+        this: IRenderContextBase,
+        context: EffectRenderContextAttributes<any>,
+    ): EffectRenderContext<any> {
         return { ...this, ...context }
     }
 

@@ -25,8 +25,7 @@ const imageAsset = new Delir.Entity.Asset({
     fileType: 'png',
     path: join(dirname, 'image.png'),
 })
-
-; [videoAsset, audioAsset, imageAsset].forEach(asset => project.addAsset(asset))
+;[videoAsset, audioAsset, imageAsset].forEach(asset => project.addAsset(asset))
 
 // Maser Composition
 const composition = new Delir.Entity.Composition({
@@ -60,8 +59,7 @@ const layer4 = new Delir.Entity.Layer({
 const layer5 = new Delir.Entity.Layer({
     name: 'VERY CUTE 🐰-CHAN',
 })
-
-; [layer5, layer4, layer3, layer2, layer1].forEach(layer => {
+;[layer5, layer4, layer3, layer2, layer1].forEach(layer => {
     composition.addLayer(layer)
 })
 
@@ -69,66 +67,77 @@ const layer5 = new Delir.Entity.Layer({
 // Clips
 //
 
-const textClip = assign(new Delir.Entity.Clip({
-    renderer: 'text',
-    placedFrame: 0,
-    durationFrames,
-}), {
-    keyframes: {
-        text: [
-            new Delir.Entity.Keyframe({value: 'test', frameOnClip: 0})
-        ],
-        source: [
-            new Delir.Entity.Keyframe({value: {assetId: videoAsset.id}, frameOnClip: 0})
-        ],
-        loop: [
-            new Delir.Entity.Keyframe({value: true, frameOnClip: 0}),
-        ],
-        color: [
-            new Delir.Entity.Keyframe({ value: new Delir.Values.ColorRGBA(0, 0, 0, 1), frameOnClip: 0 })
-        ],
-        // x: [
-        //     new Delir.Entity.Keyframe({value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
-        //     new Delir.Entity.Keyframe({value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
-        // ],
-        // y: [
-        //     new Delir.Entity.Keyframe({value: 130, frameOnClip: 0, easeOutParam: [.4, .5]}),
-        // ],
+const textClip = assign(
+    new Delir.Entity.Clip({
+        renderer: 'text',
+        placedFrame: 0,
+        durationFrames,
+    }),
+    {
+        keyframes: {
+            text: [new Delir.Entity.Keyframe({ value: 'test', frameOnClip: 0 })],
+            source: [
+                new Delir.Entity.Keyframe({
+                    value: { assetId: videoAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+            loop: [new Delir.Entity.Keyframe({ value: true, frameOnClip: 0 })],
+            color: [
+                new Delir.Entity.Keyframe({
+                    value: new Delir.Values.ColorRGBA(0, 0, 0, 1),
+                    frameOnClip: 0,
+                }),
+            ],
+            // x: [
+            //     new Delir.Entity.Keyframe({value: 0, frameOnClip: 0, easeOutParam: [.4, .5]}),
+            //     new Delir.Entity.Keyframe({value: 300, frameOnClip: 600, easeInParam: [.6, .5]}),
+            // ],
+            // y: [
+            //     new Delir.Entity.Keyframe({value: 130, frameOnClip: 0, easeOutParam: [.4, .5]}),
+            // ],
+        },
+        expressions: {
+            text: new Delir.Values.Expression('typescript', '`time:${thisComp.time}\\nframe:${thisComp.frame}`'),
+        },
     },
-    expressions: {
-        text: new Delir.Values.Expression('typescript', '`time:${thisComp.time}\\nframe:${thisComp.frame}`')
+)
+
+const audioClip = assign(
+    new Delir.Entity.Clip({
+        renderer: 'audio',
+        placedFrame: 0,
+        durationFrames,
+    }),
+    {
+        keyframes: {
+            source: [
+                new Delir.Entity.Keyframe({
+                    value: { assetId: audioAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+        },
     },
-})
+)
 
-const audioClip = assign(new Delir.Entity.Clip({
-    renderer: 'audio',
-    placedFrame: 0,
-    durationFrames,
-}), {
-    keyframes: {
-        source: [
-            new Delir.Entity.Keyframe({
-                value: {assetId: audioAsset.id},
-                frameOnClip: 0
-            }),
-        ]
-    }
-})
-
-const imageClip = assign(new Delir.Entity.Clip({
-    renderer: 'image',
-    placedFrame: 20,
-    durationFrames,
-}), {
-    keyframes: {
-        source: [
-            new Delir.Entity.Keyframe({
-                value: {assetId: imageAsset.id},
-                frameOnClip: 0,
-            })
-        ]
-    }
-})
+const imageClip = assign(
+    new Delir.Entity.Clip({
+        renderer: 'image',
+        placedFrame: 20,
+        durationFrames,
+    }),
+    {
+        keyframes: {
+            source: [
+                new Delir.Entity.Keyframe({
+                    value: { assetId: imageAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+        },
+    },
+)
 
 const adjustmentClip = new Delir.Entity.Clip({
     renderer: 'adjustment',
@@ -136,16 +145,20 @@ const adjustmentClip = new Delir.Entity.Clip({
     durationFrames: 30,
 })
 
-const p5jsClip = assign(new Delir.Entity.Clip({
-    renderer: 'p5js',
-    placedFrame: 0,
-    durationFrames: 30 * 10,
-}), {
-    keyframes: {
-        sketch: [
-            new Delir.Entity.Keyframe({
-                frameOnClip: 0,
-                value: new Delir.Values.Expression('javascript', `
+const p5jsClip = assign(
+    new Delir.Entity.Clip({
+        renderer: 'p5js',
+        placedFrame: 0,
+        durationFrames: 30 * 10,
+    }),
+    {
+        keyframes: {
+            sketch: [
+                new Delir.Entity.Keyframe({
+                    frameOnClip: 0,
+                    value: new Delir.Values.Expression(
+                        'javascript',
+                        `
 // Link: https://p5js.org/examples/simulate-snowflakes.html
 let snowflakes = []; // array to hold snowflake objects
 let img
@@ -210,38 +223,43 @@ function snowflake() {
         ellipse(this.posX, this.posY, this.size);
     };
 }
-`)
-            })
-        ]
-    }
-})
+`,
+                    ),
+                }),
+            ],
+        },
+    },
+)
 
-const videoClip = assign(new Delir.Entity.Clip({
-    renderer: 'video',
-    placedFrame: 0,
-    durationFrames: 30 * 10,
-}), {
-    keyframes: {
-        source: [
-            new Delir.Entity.Keyframe({
-                value: { assetId: videoAsset.id },
-                frameOnClip: 0,
-            })
-        ],
-        x: [
-            new Delir.Entity.Keyframe({
-                value: 0,
-                frameOnClip: 0,
-                easeOutParam: [1, 0]
-            }),
-            new Delir.Entity.Keyframe({
-                value: 300,
-                frameOnClip: 300,
-                easeInParam: [1, 1],
-            }),
-        ]
-    }
-})
+const videoClip = assign(
+    new Delir.Entity.Clip({
+        renderer: 'video',
+        placedFrame: 0,
+        durationFrames: 30 * 10,
+    }),
+    {
+        keyframes: {
+            source: [
+                new Delir.Entity.Keyframe({
+                    value: { assetId: videoAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+            x: [
+                new Delir.Entity.Keyframe({
+                    value: 0,
+                    frameOnClip: 0,
+                    easeOutParam: [1, 0],
+                }),
+                new Delir.Entity.Keyframe({
+                    value: 300,
+                    frameOnClip: 300,
+                    easeInParam: [1, 1],
+                }),
+            ],
+        },
+    },
+)
 
 layer1.addClip(adjustmentClip)
 layer2.addClip(textClip)
@@ -251,39 +269,49 @@ layer5.addClip(videoClip)
 //
 // Effects
 //
-adjustmentClip.addEffect(assign(new Delir.Entity.Effect({
-    processor: '@ragg/delir-posteffect-gaussian-blur',
-}), {
-    // keyframes: {
-    //     color: [
-    //         assign(new Delir.Entity.Keyframe(), {
-    //             frameOnClip: 40,
-    //             value: new Delir.Values.ColorRGBA(30, 170, 200, 1),
-    //         }),
-    //         assign(new Delir.Entity.Keyframe(), {
-    //             frameOnClip: 200,
-    //             value: new Delir.Values.ColorRGBA(200, 170, 30, 1),
-    //         }),
-    //     ]
-    // }
-}))
+adjustmentClip.addEffect(
+    assign(
+        new Delir.Entity.Effect({
+            processor: '@ragg/delir-posteffect-gaussian-blur',
+        }),
+        {
+            // keyframes: {
+            //     color: [
+            //         assign(new Delir.Entity.Keyframe(), {
+            //             frameOnClip: 40,
+            //             value: new Delir.Values.ColorRGBA(30, 170, 200, 1),
+            //         }),
+            //         assign(new Delir.Entity.Keyframe(), {
+            //             frameOnClip: 200,
+            //             value: new Delir.Values.ColorRGBA(200, 170, 30, 1),
+            //         }),
+            //     ]
+            // }
+        },
+    ),
+)
 
-p5jsClip.addEffect(assign(new Delir.Entity.Effect({
-    processor: '@ragg/delir-posteffect-color-slider',
-    referenceName: 'Color',
-}), {
-    keyframes: {
-        value: [
-            new Delir.Entity.Keyframe({
-                frameOnClip: 0,
-                value: new Delir.Values.ColorRGBA(0, 0, 0, 255)
-            }),
-            new Delir.Entity.Keyframe({
-                frameOnClip: 150,
-                value: new Delir.Values.ColorRGBA(255, 255, 255, 255)
-            }),
-        ]
-    }
-}))
+p5jsClip.addEffect(
+    assign(
+        new Delir.Entity.Effect({
+            processor: '@ragg/delir-posteffect-color-slider',
+            referenceName: 'Color',
+        }),
+        {
+            keyframes: {
+                value: [
+                    new Delir.Entity.Keyframe({
+                        frameOnClip: 0,
+                        value: new Delir.Values.ColorRGBA(0, 0, 0, 255),
+                    }),
+                    new Delir.Entity.Keyframe({
+                        frameOnClip: 150,
+                        value: new Delir.Values.ColorRGBA(255, 255, 255, 255),
+                    }),
+                ],
+            },
+        },
+    ),
+)
 
 export default project

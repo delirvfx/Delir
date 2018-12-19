@@ -9,7 +9,7 @@ export class AddClipCommand implements Command {
     constructor(
         private parentCompositionId: string,
         private targetLayerId: string,
-        private addedClip: Delir.Entity.Clip
+        private addedClip: Delir.Entity.Clip,
     ) {}
 
     public undo(context: OperationContext<any>) {

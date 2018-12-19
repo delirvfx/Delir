@@ -6,84 +6,84 @@ export const ProjectActions = actions('Project', {
         composition: Delir.Entity.Composition
     }>(),
     addClipAction: action<{
-        targetLayerId: string,
+        targetLayerId: string
         newClip: Delir.Entity.Clip
     }>(),
     addLayerAction: action<{
-        targetCompositionId: string,
+        targetCompositionId: string
         layer: Delir.Entity.Layer
     }>(),
     addLayerWithAssetAction: action<{
-        targetComposition: Delir.Entity.Composition,
-        layer: Delir.Entity.Layer,
-        clip: Delir.Entity.Clip,
-        asset: Delir.Entity.Asset,
+        targetComposition: Delir.Entity.Composition
+        layer: Delir.Entity.Layer
+        clip: Delir.Entity.Clip
+        asset: Delir.Entity.Asset
     }>(),
     addAssetAction: action<{
         asset: Delir.Entity.Asset
     }>(),
     addKeyframeAction: action<{
-        targetClipId: string,
-        paramName: string,
+        targetClipId: string
+        paramName: string
         keyframe: Delir.Entity.Keyframe
     }>(),
     addEffectIntoClipAction: action<{
-        clipId: string,
-        effect: Delir.Entity.Effect,
+        clipId: string
+        effect: Delir.Entity.Effect
         index?: number | null
     }>(),
     addEffectKeyframeAction: action<{
-        targetClipId: string,
-        targetEffectId: string,
-        paramName: string,
+        targetClipId: string
+        targetEffectId: string
+        paramName: string
         keyframe: Delir.Entity.Keyframe
     }>(),
     moveClipToLayerAction: action<{
-        destLayerId: string,
+        destLayerId: string
         clipId: string
     }>(),
     modifyCompositionAction: action<{
-        targetCompositionId: string,
+        targetCompositionId: string
         patch: Partial<Delir.Entity.Composition>
     }>(),
     modifyLayerAction: action<{
-        targetLayerId: string,
+        targetLayerId: string
         patch: Partial<Delir.Entity.Layer>
     }>(),
     modifyClipAction: action<{
-        targetClipId: string,
+        targetClipId: string
         patch: Partial<Delir.Entity.Clip>
     }>(),
     modifyEffectAction: action<{
-        parentClipId: string,
-        targetEffectId:  string,
+        parentClipId: string
+        targetEffectId: string
         patch: Partial<Delir.Entity.Effect>
     }>(),
     modifyClipExpressionAction: action<{
-        targetClipId: string,
-        targetParamName: string,
+        targetClipId: string
+        targetParamName: string
         expression: Delir.Values.Expression | null
     }>(),
     modifyEffectExpressionAction: action<{
-        targetClipId: string,
-        targetEffectId:  string,
-        paramName: string,
+        targetClipId: string
+        targetEffectId: string
+        paramName: string
         expression: Delir.Values.Expression | null
     }>(),
     modifyKeyframeAction: action<{
-        parentClipId: string,
-        targetKeyframeId: string,
+        parentClipId: string
+        targetKeyframeId: string
         patch: Partial<Delir.Entity.Keyframe>
     }>(),
     modifyEffectKeyframeAction: action<{
-        targetClipId: string,
-        effectId: string,
-        targetKeyframeId: string,
+        targetClipId: string
+        effectId: string
+        targetKeyframeId: string
         patch: Partial<Delir.Entity.Keyframe>
     }>(),
     moveLayerOrderAction: action<{
-        parentCompositionId: string,
-        targetLayerId: string,
+        parentCompositionId: string
+        targetLayerId: string
         newIndex: number
     }>(),
     removeCompositionAction: action<{
@@ -99,18 +99,18 @@ export const ProjectActions = actions('Project', {
         targetAssetId: string
     }>(),
     removeKeyframeAction: action<{
-        parentClipId: string,
-        paramName: string,
+        parentClipId: string
+        paramName: string
         targetKeyframeId: string
     }>(),
     removeEffectKeyframeAction: action<{
-        clipId: string,
-        effectId: string,
-        paramName: string,
-        targetKeyframeId: string,
+        clipId: string
+        effectId: string
+        paramName: string
+        targetKeyframeId: string
     }>(),
     removeEffectFromClipAction: action<{
-        holderClipId: string,
-        targetEffectId:  string,
+        holderClipId: string
+        targetEffectId: string
     }>(),
 })

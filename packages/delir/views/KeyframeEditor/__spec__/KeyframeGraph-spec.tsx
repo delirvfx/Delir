@@ -3,12 +3,16 @@ import * as jsdom from 'jsdom-global'
 import * as React from 'react'
 import * as ReactTestRenderer from 'react-test-renderer'
 
-import {default as project, IMAGE_LAYER_INDEX } from '../../../__spec__/fixtures/Project'
+import { default as project, IMAGE_LAYER_INDEX } from '../../../__spec__/fixtures/Project'
 import KeyframeGraph from '../KeyframeGraph.tsx'
 
 describe('KeyframeEditor.KeyframeGraph', () => {
-    before(function() { (this as any).jsdom = jsdom() })
-    after(function() { (this as any).jsdom() })
+    before(function() {
+        ;(this as any).jsdom = jsdom()
+    })
+    after(function() {
+        ;(this as any).jsdom()
+    })
 
     // it('test', () => {
     //     ReactTestRenderer.create(

@@ -9,7 +9,7 @@ Object {
         "__type": "entity:Asset",
         "__value": Object {
           "fileType": "png",
-          "id": "0b2f445d-1a9f-4288-8fb9-062636672e49",
+          "id": "uuid-asset",
           "name": "mock.png",
           "path": "/mocked/mock.png",
         },

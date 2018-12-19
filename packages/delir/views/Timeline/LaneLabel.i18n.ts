@@ -14,5 +14,5 @@ export default I18n({
             removeLayer: '🚯 Remove layer',
             renameLayer: '✏️ Rename layer (Enter)',
         },
-    }
+    },
 })

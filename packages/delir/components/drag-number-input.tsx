@@ -21,9 +21,10 @@ interface State {
     value: number | string
 }
 
-export default class DragNumberInput extends React.Component<Props, State>
-{
-    public get value(): number { return +this.state.value }
+export default class DragNumberInput extends React.Component<Props, State> {
+    public get value(): number {
+        return +this.state.value
+    }
 
     public static defaultProps = {
         allowFloat: false,
@@ -40,8 +41,8 @@ export default class DragNumberInput extends React.Component<Props, State>
     private pointerLocked: boolean = false
     private noEmitChangeOnBlur: boolean = false
 
-    public componentDidMount()
-    {
+    public componentDidMount() {
+        // tslint:disable-next-line:no-console
         this.input.current!.onpointerlockerror = e => console.error(e)
     }
 
@@ -51,12 +52,11 @@ export default class DragNumberInput extends React.Component<Props, State>
         }
     }
 
-    public render()
-    {
+    public render() {
         return (
             <input
                 ref={this.input}
-                type='text'
+                type="text"
                 className={classnames(s.DragNumberInput, this.props.className)}
                 value={this.state.value}
                 onFocus={this.handleFocus}
@@ -70,8 +70,7 @@ export default class DragNumberInput extends React.Component<Props, State>
         )
     }
 
-    private handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>
-    {
+    private handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const input = this.input.current!
 
         if (e.key === 'Enter') {
@@ -92,12 +91,12 @@ export default class DragNumberInput extends React.Component<Props, State>
         } else if (e.key === 'ArrowUp') {
             e.preventDefault()
 
-            const value = this.parseValue(e.currentTarget.value) + (e.altKey ? .1 : 1)
+            const value = this.parseValue(e.currentTarget.value) + (e.altKey ? 0.1 : 1)
             this.setState({ value })
         } else if (e.key === 'ArrowDown') {
             e.preventDefault()
 
-            const value = this.parseValue(e.currentTarget.value) - (e.altKey ? .1 : 1)
+            const value = this.parseValue(e.currentTarget.value) - (e.altKey ? 0.1 : 1)
             this.setState({ value })
         }
     }
@@ -116,8 +115,7 @@ export default class DragNumberInput extends React.Component<Props, State>
         }, 200)
     }
 
-    private handleBlur = (e: React.FocusEvent<HTMLInputElement>) =>
-    {
+    private handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
         let value = this.parseValue(this.input.current!.value)
 
         if (this.input.current!.value.trim() === '') {
@@ -131,14 +129,12 @@ export default class DragNumberInput extends React.Component<Props, State>
         })
     }
 
-    private handleMouseDown = (e: React.MouseEvent<HTMLSpanElement>) =>
-    {
+    private handleMouseDown = (e: React.MouseEvent<HTMLSpanElement>) => {
         // MouseEvent#movement is buggy on Windows. Disable modification by drag.
         if (Platform.isWindows()) return
     }
 
-    private handleMouseMove = (e: React.MouseEvent<HTMLSpanElement>) =>
-    {
+    private handleMouseMove = (e: React.MouseEvent<HTMLSpanElement>) => {
         // MouseEvent#movement is buggy on Windows. Disable modification by drag.
         if (Platform.isWindows()) return
 
@@ -160,11 +156,10 @@ export default class DragNumberInput extends React.Component<Props, State>
         }
 
         const value = this.parseValue(this.input.current!.value) + e.nativeEvent.movementX * weight
-        this.setState({value: this.parseValue(value)})
+        this.setState({ value: this.parseValue(value) })
     }
 
-    private handleMouseUp = (e: React.MouseEvent<HTMLInputElement>) =>
-    {
+    private handleMouseUp = (e: React.MouseEvent<HTMLInputElement>) => {
         // MouseEvent#movement is buggy on Windows. Disable modification by drag.
         if (Platform.isWindows()) return
 
@@ -180,13 +175,11 @@ export default class DragNumberInput extends React.Component<Props, State>
     }
 
     // TODO: parse and calculate expression
-    private handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) =>
-    {
+    private handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ value: e.currentTarget.value })
     }
 
-    private parseValue(rawValue: number | string): number
-    {
+    private parseValue(rawValue: number | string): number {
         const parsedValue = parseFloat(rawValue as string)
         let value = _.isNaN(parsedValue) ? 0 : parsedValue
 

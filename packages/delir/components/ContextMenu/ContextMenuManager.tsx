@@ -1,41 +1,40 @@
 import * as Electron from 'electron'
 import { MenuItemOption } from './ContextMenu'
 
-export default class ContextMenuManager
-{
+export default class ContextMenuManager {
     public static get instance(): ContextMenuManager {
-        return ContextMenuManager._instance = ContextMenuManager._instance || new ContextMenuManager()
+        return (ContextMenuManager._instance = ContextMenuManager._instance || new ContextMenuManager())
     }
 
     private static _instance: ContextMenuManager
 
     private menus: WeakMap<HTMLElement, MenuItemOption[]> = new WeakMap()
 
-    private constructor()
-    {
+    private constructor() {
         window.addEventListener('contextmenu', e => {
             e.preventDefault()
             e.stopPropagation()
 
-            const menu = Electron.remote.Menu.buildFromTemplate(this.buildMenu((e as any).path, this.menus) as Electron.MenuItemConstructorOptions[])
+            const menu = Electron.remote.Menu.buildFromTemplate(this.buildMenu(
+                (e as any).path,
+                this.menus,
+            ) as Electron.MenuItemConstructorOptions[])
             menu.popup({ window: Electron.remote.getCurrentWindow() })
         })
     }
 
-    public register(el: HTMLElement, menu: MenuItemOption[])
-    {
+    public register(el: HTMLElement, menu: MenuItemOption[]) {
         this.menus.set(el, menu)
     }
 
-    public unregister(el: HTMLElement)
-    {
+    public unregister(el: HTMLElement) {
         this.menus.delete(el)
     }
 
     private buildMenu(path: EventTarget[], registeredMenus: WeakMap<Element, MenuItemOption[]>): MenuItemOption[] {
         const menus: MenuItemOption[] = []
 
-        for (const el of (path as Element[])) {
+        for (const el of path as Element[]) {
             const items = registeredMenus.get(el)
 
             if (items) {

@@ -6,7 +6,7 @@ export const pushHistory = operation((context, { command }: { command: Command }
     context.dispatch(HistoryActions.pushHistory, { command })
 })
 
-export const doUndo = operation((context) => {
+export const doUndo = operation(context => {
     const command = context.getStore(HistoryStore).getUndoCommand()
 
     if (command) {
@@ -15,7 +15,7 @@ export const doUndo = operation((context) => {
     }
 })
 
-export const doRedo = operation((context) => {
+export const doRedo = operation(context => {
     const command = context.getStore(HistoryStore).getRedoCommand()
 
     if (command) {

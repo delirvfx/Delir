@@ -2,7 +2,9 @@ import { Expression } from '../Values'
 import { Keyframe } from './Keyframe'
 
 export class Animatable {
-    public keyframes: { [paramName: string]: ReadonlyArray<Keyframe> } = Object.create(null)
+    public keyframes: {
+        [paramName: string]: ReadonlyArray<Keyframe>
+    } = Object.create(null)
     public expressions: { [paramName: string]: Expression } = Object.create(null)
 
     public findKeyframe(keyframeId: string): Keyframe | null {
@@ -59,10 +61,9 @@ export class Animatable {
     }
 
     public addKeyframe(paramName: string, keyframe: Keyframe): void {
-        const newSequence = [
-            ...(this.keyframes[paramName] || []),
-            keyframe
-        ].sort((a, b) => a.frameOnClip - b.frameOnClip)
+        const newSequence = [...(this.keyframes[paramName] || []), keyframe].sort(
+            (a, b) => a.frameOnClip - b.frameOnClip,
+        )
 
         this.keyframes[paramName] = newSequence
     }

@@ -8,7 +8,7 @@ interface I18nTexts {
 
 const PLACEHOLDER_PATTERN = /:[a-zA-Z0-9_-]+/g
 
-const replacePlaceHolder = (text: string, params: {[name: string]: any}): string => {
+const replacePlaceHolder = (text: string, params: { [name: string]: any }): string => {
     return text.replace(PLACEHOLDER_PATTERN, matched => {
         const key = matched.slice(1)
 
@@ -23,7 +23,7 @@ const replacePlaceHolder = (text: string, params: {[name: string]: any}): string
 export default (json: I18nTexts) => {
     const lang = __DEV__ ? 'en' : navigator.language
 
-    return (key: string | string[], params?: {[name: string]: any}): string => {
+    return (key: string | string[], params?: { [name: string]: any }): string => {
         const text = (_.get(json[lang], key) || _.get(json.en, key)) as string | null
 
         if (text == null) {

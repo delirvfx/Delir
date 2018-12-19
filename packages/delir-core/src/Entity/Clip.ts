@@ -25,7 +25,7 @@ class Clip extends Animatable implements ClipProps {
         super()
 
         this.id = uuid.v4() as Clip.Id
-        safeAssign<Clip>(this, props as (ClipProps & { id: Clip.Id }))
+        safeAssign<Clip>(this, props as ClipProps & { id: Clip.Id })
         this.normalize()
     }
 

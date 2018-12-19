@@ -1,5 +1,3 @@
 export default class AssetPointer {
-    constructor(
-        public assetId: string = ''
-    ) {}
+    constructor(public assetId: string = '') {}
 }

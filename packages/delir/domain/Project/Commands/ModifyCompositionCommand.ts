@@ -20,7 +20,7 @@ export class ModifyCompositionCommand implements Command {
         context.dispatch(ProjectActions.modifyCompositionAction, {
             targetCompositionId: this.subjectCompositionId,
             patch: this.toPreviousPatch,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {

@@ -7,7 +7,7 @@ export default I18n({
             rendering: 'レンダリング中… :progression%',
             encoding: 'エンコード中…',
             concat: '結合中…',
-            completed: '完了しました'
+            completed: '完了しました',
         },
         close: '閉じる',
     },
@@ -17,7 +17,7 @@ export default I18n({
             rendering: 'Rendering... :progression%',
             encoding: 'Encoding...',
             concat: 'Concating...',
-            completed: 'Rendering completed'
+            completed: 'Rendering completed',
         },
         close: 'Close',
     },
