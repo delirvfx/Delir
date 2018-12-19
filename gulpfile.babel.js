@@ -330,6 +330,7 @@ export function compilePlugins(done) {
                 'gaussian-blur/index': './gaussian-blur/index',
                 ...(__DEV__
                     ? {
+                          'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
                           // 'chromakey/index': '../experimental-plugins/chromakey/index',
                           // 'filler/index': '../experimental-plugins/filler/index',
                           // 'mmd/index': '../experimental-plugins/mmd/index',
