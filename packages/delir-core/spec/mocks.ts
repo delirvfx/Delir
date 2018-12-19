@@ -11,6 +11,7 @@ export const mockAsset = (props: Partial<Asset> = {}) =>
             path: '/mocked/mock.png',
             fileType: 'png',
         }),
+        props,
     )
 
 export const mockComposition = (props: Partial<Composition> = {}) =>
