@@ -2,6 +2,6 @@ Ticket:
 
 Has breaking changes to public API?: 
 
-### Annotation
+### Annotation to release
 
 ### Breaking changes
