@@ -6,7 +6,7 @@ describe('PreferenceStore', () => {
             const actual = validateSchema({
                 renderer: {
                     ignoreMissingEffect: true,
-                }
+                },
             })
 
             expect(actual).toBe(null)
@@ -16,7 +16,7 @@ describe('PreferenceStore', () => {
             const actual = validateSchema({
                 renderer: {
                     ignoreMissingEffect: '💩',
-                }
+                },
             })
 
             expect(actual).toBeInstanceOf(Error)

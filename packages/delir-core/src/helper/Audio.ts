@@ -1,12 +1,18 @@
 import * as _ from 'lodash'
 
-export const resampling = async (sourceSamplingRate: number, destSamplingRate: number, inputs: Float32Array[]): Promise<Float32Array[]> => {
+export const resampling = async (
+    sourceSamplingRate: number,
+    destSamplingRate: number,
+    inputs: Float32Array[],
+): Promise<Float32Array[]> => {
     const chs = inputs.length
-    const {length} = inputs[0]
+    const { length } = inputs[0]
 
     const context = new OfflineAudioContext(chs, length, destSamplingRate)
     const inputBuffer = context.createBuffer(chs, length, sourceSamplingRate)
-    _.times(chs, ch => { inputBuffer.copyToChannel(inputs[ch], ch) })
+    _.times(chs, ch => {
+        inputBuffer.copyToChannel(inputs[ch], ch)
+    })
 
     const bufferSource = context.createBufferSource()
     bufferSource.buffer = inputBuffer
@@ -24,7 +30,7 @@ export const mergeInto = async (
     dest: Float32Array[],
     incoming: Float32Array[],
     numberOfChannels: number,
-    sampleRate: number
+    sampleRate: number,
 ): Promise<void> => {
     if (incoming.length !== dest.length) {
         throw new Error(`Unmatched number of channels (destination ${dest.length}, incoming ${incoming.length}`)

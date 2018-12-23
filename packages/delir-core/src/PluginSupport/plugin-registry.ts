@@ -15,35 +15,44 @@ import * as DelirCorePackageJson from '../../package.json'
 // SEE: https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39
 const SEMVER_REGEXP = /^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
 
-const effectPluginPackageJSONSchema = Joi.object().keys({
-    name: Joi.string().required(),
-    version: Joi.string().regex(SEMVER_REGEXP).required(),
-    author: [Joi.string(), Joi.array().items(Joi.string())],
-    main: Joi.string().optional(),
-    engines: Joi.object().keys({
-        'delir-core': Joi.string().regex(SEMVER_REGEXP).required(),
-    }),
-    delir: Joi.object().keys({
+const effectPluginPackageJSONSchema = Joi.object()
+    .keys({
         name: Joi.string().required(),
-        type: Joi.valid('post-effect'),
-    }).strict(),
-}).options({ allowUnknown: true })
+        version: Joi.string()
+            .regex(SEMVER_REGEXP)
+            .required(),
+        author: [Joi.string(), Joi.array().items(Joi.string())],
+        main: Joi.string().optional(),
+        engines: Joi.object().keys({
+            'delir-core': Joi.string()
+                .regex(SEMVER_REGEXP)
+                .required(),
+        }),
+        delir: Joi.object()
+            .keys({
+                name: Joi.string().required(),
+                type: Joi.valid('post-effect'),
+            })
+            .strict(),
+    })
+    .options({ allowUnknown: true })
 
 export default class PluginRegistry {
     public static validateEffectPluginPackageJSON(packageJSON: any): packageJSON is DelirPluginPackageJson {
-        return Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null
-            && semver.valid(packageJSON.engines['delir-core']) != null
-            && semver.valid(packageJSON.version) != null
+        return (
+            Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null &&
+            semver.valid(packageJSON.engines['delir-core']) != null &&
+            semver.valid(packageJSON.version) != null
+        )
     }
 
     private _plugins: {
-        'post-effect': {[packageName: string]: Readonly<PluginEntry>}
+        'post-effect': { [packageName: string]: Readonly<PluginEntry> }
     } = {
-        'post-effect': {}
+        'post-effect': {},
     }
 
-    public registerPlugin(entries: PluginEntry[])
-    {
+    public registerPlugin(entries: PluginEntry[]) {
         for (const entry of entries) {
             // if (this._plugins[entry.id] != null) {
             //     throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
@@ -69,9 +78,8 @@ export default class PluginRegistry {
      * @param   {string}    target plugin ID
      * @throws UnknownPluginReferenceException
      */
-    public requirePostEffectPluginById(id: string): typeof EffectPluginBase
-    {
-        if (! this._plugins['post-effect'][id]) {
+    public requirePostEffectPluginById(id: string): typeof EffectPluginBase {
+        if (!this._plugins['post-effect'][id]) {
             throw new UnknownPluginReferenceException(`Plugin '${id}' doesn't loaded`)
         }
 
@@ -84,8 +92,7 @@ export default class PluginRegistry {
      * @throws UnknownPluginReferenceException
      * @throws PluginAssertionFailedException
      */
-    public getPostEffectParametersById(id: string): AnyParameterTypeDescriptor[] | null
-    {
+    public getPostEffectParametersById(id: string): AnyParameterTypeDescriptor[] | null {
         const entry = this._plugins['post-effect'][id]
 
         if (!entry) {
@@ -93,7 +100,7 @@ export default class PluginRegistry {
         }
 
         if (entry.class.prototype instanceof EffectPluginBase) {
-            return (entry.class as any as typeof EffectPluginBase).provideParameters().properties
+            return ((entry.class as any) as typeof EffectPluginBase).provideParameters().properties
         }
 
         throw new PluginAssertionFailedException(`plugin ${id} can't provide parameters`)
@@ -104,8 +111,7 @@ export default class PluginRegistry {
      * @param   {string}    id      target plugin ID
      * @throws UnknownPluginReferenceException
      */
-    public getPlugin(id: string): Readonly<PluginEntry>
-    {
+    public getPlugin(id: string): Readonly<PluginEntry> {
         if (this._plugins['post-effect'][id] == null) {
             throw new UnknownPluginReferenceException(`plugin ${id} doesn't loaded`)
         }
@@ -116,8 +122,7 @@ export default class PluginRegistry {
     /**
      * get registered plugins as array
      */
-    public getPostEffectPlugins(): PluginSummary[]
-    {
+    public getPostEffectPlugins(): PluginSummary[] {
         return _.map(this._plugins['post-effect'], (entry, id) => {
             return {
                 id: entry.id,

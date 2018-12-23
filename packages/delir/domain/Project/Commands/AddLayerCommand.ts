@@ -3,13 +3,10 @@ import { OperationContext } from '@ragg/fleur'
 
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
-import { ProjectActions }  from '../actions'
+import { ProjectActions } from '../actions'
 
 export class AddLayerCommand implements Command {
-    constructor(
-        private targetCompositionId: string,
-        private addedLayer: Delir.Entity.Layer,
-    ) {}
+    constructor(private targetCompositionId: string, private addedLayer: Delir.Entity.Layer) {}
 
     public undo(context: OperationContext<any>) {
         this.focusToParentComposition(context)

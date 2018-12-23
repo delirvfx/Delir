@@ -7,6 +7,7 @@ import { IRenderer } from './Renderer/RendererBase'
 
 import PluginRegistry from '../PluginSupport/plugin-registry'
 
+import WebGLContext from '@ragg/delir-core/src/Engine/WebGL/WebGLContext'
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
 import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
@@ -41,8 +42,7 @@ interface RenderProgression {
     rangeEndFrame: number
 }
 
-export default class Engine
-{
+export default class Engine {
     private _fpsCounter: FPSCounter = new FPSCounter()
     private _seqRenderPromise: ProgressPromise<void> | null = null
     private _project: Project
@@ -51,9 +51,14 @@ export default class Engine
     private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver | null = null
+    private _gl: WebGL2RenderingContext
 
-    get pluginRegistry() { return this._pluginRegistry }
-    set pluginRegistry(pluginRegistry: PluginRegistry) { this._pluginRegistry = pluginRegistry }
+    get pluginRegistry() {
+        return this._pluginRegistry
+    }
+    set pluginRegistry(pluginRegistry: PluginRegistry) {
+        this._pluginRegistry = pluginRegistry
+    }
 
     // get destinationAudioNode() { return this._destinationAudioNode }
     // set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
@@ -64,35 +69,31 @@ export default class Engine
         this._effectCache = new WeakMap()
     }
 
-    public setStreamObserver(observer: IRenderingStreamObserver)
-    {
+    public setStreamObserver(observer: IRenderingStreamObserver) {
         this._streamObserver = observer
     }
 
-    public removeStreamObserver(observer: IRenderingStreamObserver)
-    {
+    public removeStreamObserver(observer: IRenderingStreamObserver) {
         this._streamObserver = null
     }
 
-    public stopCurrentRendering()
-    {
+    public stopCurrentRendering() {
         if (this._seqRenderPromise) {
             this._seqRenderPromise.abort()
         }
     }
 
-    public renderFrame(compositionId: string, beginFrame: number): ProgressPromise<void>
-    {
+    public renderFrame(compositionId: string, beginFrame: number): ProgressPromise<void> {
         return new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
             let aborted = false
-            onAbort(() => aborted = true)
+            onAbort(() => (aborted = true))
 
             const renderingOption: RenderingOption = {
                 beginFrame,
                 endFrame: beginFrame,
                 ignoreMissingEffect: false,
                 loop: false,
-                realtime: false
+                realtime: false,
             }
 
             const request = this._initStage(compositionId, renderingOption)
@@ -115,8 +116,10 @@ export default class Engine
         })
     }
 
-    public renderSequencial(compositionId: string, options: Partial<RenderingOption> = {}): ProgressPromise<void, RenderProgression>
-    {
+    public renderSequencial(
+        compositionId: string,
+        options: Partial<RenderingOption> = {},
+    ): ProgressPromise<void, RenderProgression> {
         const renderingOption: RenderingOption = defaults(options, {
             beginFrame: 0,
             loop: false,
@@ -127,119 +130,125 @@ export default class Engine
 
         this.stopCurrentRendering()
 
-        return this._seqRenderPromise = new ProgressPromise<void, RenderProgression>(async (resolve, reject, onAbort, notifier) => {
-            let aborted = false
+        return (this._seqRenderPromise = new ProgressPromise<void, RenderProgression>(
+            async (resolve, reject, onAbort, notifier) => {
+                let aborted = false
 
-            onAbort(() => {
-                aborted = true
-                this._seqRenderPromise = null
-            })
-
-            let context = this._initStage(compositionId, renderingOption)
-            const renderTasks = await this._taskingStage(context, renderingOption)
-            this._fpsCounter.reset()
-
-            const reqDestCanvasCtx = context.destCanvas.getContext('2d')!
-            const framerate = context.rootComposition.framerate
-            const lastFrame = context.rootComposition.durationFrames
-            let animationFrameId: number
-            let renderedFrames = 0
-            let lastAudioBufferTime = -1
-
-            const throttle = options.realtime
-                ? (fn: () => void) => _.throttle(fn , 1000 / context.framerate)
-                : (fn: () => void) => fn
-
-            const animationFrame = options.realtime
-                ? requestAnimationFrame
-                : (fn: () => void)  => fn() as unknown as number
-
-            const cancelFrame = options.realtime
-                ? cancelAnimationFrame
-                : clearTimeout
-
-            const render = throttle(async () => {
-                const currentFrame = renderingOption.beginFrame + renderedFrames
-                const currentTime = currentFrame / framerate
-
-                // 最後のバッファリングから１秒経過 & 次のフレームがレンダリングの終わりでなければバッファリング
-                const isAudioBufferingNeeded = lastAudioBufferTime !== (currentTime | 0) && (renderedFrames + 1) <= context.durationFrames
-
-                if (isAudioBufferingNeeded) {
-                    lastAudioBufferTime = currentTime | 0
-
-                    for (const buffer of context.destAudioBuffer) {
-                        buffer.fill(0)
-                    }
-                }
-
-                context = context.clone({
-                    frame: currentFrame,
-                    time: currentTime,
-                    frameOnComposition: currentFrame,
-                    timeOnComposition: currentTime,
-                    isAudioBufferingNeeded,
+                onAbort(() => {
+                    aborted = true
+                    this._seqRenderPromise = null
                 })
 
-                reqDestCanvasCtx.clearRect(0, 0, context.width, context.height)
-                await this._renderStage(context, renderTasks)
+                let context = this._initStage(compositionId, renderingOption)
+                const renderTasks = await this._taskingStage(context, renderingOption)
+                this._fpsCounter.reset()
 
-                if (!aborted) {
-                    const status: RenderingStatus = {
-                        frame: context.frame,
-                        time: context.time,
-                        durationFrame: context.durationFrames,
-                        samplingRate: context.samplingRate,
-                    }
+                const reqDestCanvasCtx = context.destCanvas.getContext('2d')!
+                const framerate = context.rootComposition.framerate
+                const lastFrame = context.rootComposition.durationFrames
+                let animationFrameId: number
+                let renderedFrames = 0
+                let lastAudioBufferTime = -1
 
-                    if (this._streamObserver) {
-                        if (this._streamObserver.onStateChanged) this._streamObserver.onStateChanged(status)
-                        if (this._streamObserver.onFrame) this._streamObserver.onFrame(context.destCanvas, status)
+                const throttle = options.realtime
+                    ? (fn: () => void) => _.throttle(fn, 1000 / context.framerate)
+                    : (fn: () => void) => fn
 
-                        if (isAudioBufferingNeeded) {
-                            if (this._streamObserver.onAudioBuffered) this._streamObserver.onAudioBuffered(context.destAudioBuffer, status)
+                const animationFrame = options.realtime
+                    ? requestAnimationFrame
+                    : (fn: () => void) => (fn() as unknown) as number
+
+                const cancelFrame = options.realtime ? cancelAnimationFrame : clearTimeout
+
+                const render = throttle(async () => {
+                    const currentFrame = renderingOption.beginFrame + renderedFrames
+                    const currentTime = currentFrame / framerate
+
+                    // 最後のバッファリングから１秒経過 & 次のフレームがレンダリングの終わりでなければバッファリング
+                    const isAudioBufferingNeeded =
+                        lastAudioBufferTime !== (currentTime | 0) && renderedFrames + 1 <= context.durationFrames
+
+                    if (isAudioBufferingNeeded) {
+                        lastAudioBufferTime = currentTime | 0
+
+                        for (const buffer of context.destAudioBuffer) {
+                            buffer.fill(0)
                         }
                     }
-                }
 
-                if (renderingOption.beginFrame + renderedFrames >= lastFrame) {
-                    if (renderingOption.loop) {
-                        renderedFrames = 0
-                        lastAudioBufferTime = -1
+                    context = context.clone({
+                        frame: currentFrame,
+                        time: currentTime,
+                        frameOnComposition: currentFrame,
+                        timeOnComposition: currentTime,
+                        isAudioBufferingNeeded,
+                    })
+
+                    reqDestCanvasCtx.clearRect(0, 0, context.width, context.height)
+                    await this._renderStage(context, renderTasks)
+
+                    if (!aborted) {
+                        const status: RenderingStatus = {
+                            frame: context.frame,
+                            time: context.time,
+                            durationFrame: context.durationFrames,
+                            samplingRate: context.samplingRate,
+                        }
+
+                        if (this._streamObserver) {
+                            if (this._streamObserver.onStateChanged) this._streamObserver.onStateChanged(status)
+                            if (this._streamObserver.onFrame) this._streamObserver.onFrame(context.destCanvas, status)
+
+                            if (isAudioBufferingNeeded) {
+                                if (this._streamObserver.onAudioBuffered) {
+                                    this._streamObserver.onAudioBuffered(context.destAudioBuffer, status)
+                                }
+                            }
+                        }
+                    }
+
+                    if (renderingOption.beginFrame + renderedFrames >= lastFrame) {
+                        if (renderingOption.loop) {
+                            renderedFrames = 0
+                            lastAudioBufferTime = -1
+                        } else {
+                            cancelFrame(animationFrameId)
+                            resolve()
+                            return
+                        }
                     } else {
+                        renderedFrames++
+                    }
+
+                    if (aborted) {
                         cancelFrame(animationFrameId)
-                        resolve()
+                        reject(new RenderingAbortedException('Rendering aborted.'))
                         return
                     }
-                } else {
-                    renderedFrames++
-                }
 
-                if (aborted) {
-                    cancelFrame(animationFrameId)
-                    reject(new RenderingAbortedException('Rendering aborted.'))
-                    return
-                }
+                    const timecode = timecodes.fromSeconds(context.time, {
+                        frameRate: context.framerate,
+                    })
+                    notifier({
+                        state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${
+                            context.framerate
+                        } fps)`,
+                        currentFrame: context.frame,
+                        rangeEndFrame: renderingOption.endFrame,
+                        isAudioBuffered: isAudioBufferingNeeded,
+                        audioBuffers: context.destAudioBuffer,
+                    })
 
-                const timecode = timecodes.fromSeconds(context.time, {frameRate: context.framerate})
-                notifier({
-                    state: `time: ${timecode.slice(0, -3)} (${this._fpsCounter.latestFPS()} / ${context.framerate} fps)`,
-                    currentFrame: context.frame,
-                    rangeEndFrame: renderingOption.endFrame,
-                    isAudioBuffered: isAudioBufferingNeeded,
-                    audioBuffers: context.destAudioBuffer,
+                    this._fpsCounter.increase()
+                    animationFrameId = animationFrame(render)
                 })
 
-                this._fpsCounter.increase()
                 animationFrameId = animationFrame(render)
-            })
-
-            animationFrameId = animationFrame(render)
-        })
+            },
+        ))
     }
 
-    private _initStage(compositionId: string, option: RenderingOption): RenderContextBase
-    {
+    private _initStage(compositionId: string, option: RenderingOption): RenderContextBase {
         if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
         if (!this._pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
 
@@ -253,15 +262,18 @@ export default class Engine
         canvas.height = rootComposition.height
 
         const compositionDurationTime = rootComposition.durationFrames / rootComposition.framerate
-        const bufferSizeBytePerSec = rootComposition.samplingRate *  4 /* bytes */
+        const bufferSizeBytePerSec = rootComposition.samplingRate * 4 /* bytes */
 
         const audioContext = new OfflineAudioContext(
             rootComposition.audioChannels,
             Math.ceil(bufferSizeBytePerSec * compositionDurationTime),
-            rootComposition.samplingRate
+            rootComposition.samplingRate,
         )
 
-        const audioBuffers = _.times(rootComposition.audioChannels, () => new Float32Array(new ArrayBuffer(bufferSizeBytePerSec)))
+        const audioBuffers = _.times(
+            rootComposition.audioChannels,
+            () => new Float32Array(new ArrayBuffer(bufferSizeBytePerSec)),
+        )
 
         const currentFrame = option.beginFrame
         const currentTime = currentFrame / rootComposition.framerate
@@ -288,11 +300,11 @@ export default class Engine
 
             rootComposition,
             resolver,
+            gl: new WebGLContext(rootComposition.width, rootComposition.height),
         })
     }
 
-    private async _taskingStage(baseContext: RenderContextBase, option: RenderingOption): Promise<LayerRenderTask[]>
-    {
+    private async _taskingStage(baseContext: RenderContextBase, option: RenderingOption): Promise<LayerRenderTask[]> {
         const layerTasks: LayerRenderTask[] = []
 
         const renderOrderLayers = baseContext.rootComposition.layers.slice(0).reverse()
@@ -319,7 +331,7 @@ export default class Engine
                             clip,
                             context: baseContext,
                             effectCache: this._effectCache,
-                            resolver: baseContext.resolver
+                            resolver: baseContext.resolver,
                         })
 
                         effects.push(effectRenderTask)
@@ -337,7 +349,9 @@ export default class Engine
 
                 _.each(clipRenderTask.effectRenderTasks, task => {
                     if (task.effectEntity.referenceName == null) return
-                    referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(baseContext.frame)
+                    referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(
+                        baseContext.frame,
+                    )
                 })
 
                 for (const effectRenderTask of effects) {
@@ -355,8 +369,7 @@ export default class Engine
         return layerTasks
     }
 
-    private async _renderStage(context: RenderContextBase, layerRenderTasks: LayerRenderTask[]): Promise<void>
-    {
+    private async _renderStage(context: RenderContextBase, layerRenderTasks: LayerRenderTask[]): Promise<void> {
         const destBufferCanvas = context.destCanvas
         const destBufferCtx = destBufferCanvas.getContext('2d')!
 
@@ -374,8 +387,7 @@ export default class Engine
 
             const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
 
-            // SPEC: The rendering order of the same layer at the same time is not defined.
-            //       In the future, want to ensure that there are no more than two clips in a single layer at a given time.
+            // SPEC: The rendering order of the clip in one layer in same time is not defined.
             const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
 
             // Render clips
@@ -386,7 +398,7 @@ export default class Engine
 
                 const clipBufferCtx = clipBufferCanvas.getContext('2d')!
 
-                const timeOnClip = context.time - (clipTask.clipPlacedFrame / context.framerate)
+                const timeOnClip = context.time - clipTask.clipPlacedFrame / context.framerate
                 const frameOnClip = context.frame - clipTask.clipPlacedFrame
 
                 const clipRenderContext = context.toClipRenderContext({
@@ -407,7 +419,9 @@ export default class Engine
 
                 _.each(clipTask.effectRenderTasks, task => {
                     if (task.effectEntity.referenceName == null) return
-                    referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(context.frame)
+                    referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(
+                        context.frame,
+                    )
                 })
 
                 const beforeClipExpressionParams = clipTask.keyframeTable.getParametersAt(context.frame)
@@ -435,11 +449,14 @@ export default class Engine
                         parameters: {},
                     })
 
-                    effectRenderContext.parameters = effectTask.keyframeTable.getParameterWithExpressionAt(context.frame, {
-                        context: effectRenderContext,
-                        clipParams: beforeClipExpressionParams,
-                        referenceableEffectParams,
-                    })
+                    effectRenderContext.parameters = effectTask.keyframeTable.getParameterWithExpressionAt(
+                        context.frame,
+                        {
+                            context: effectRenderContext,
+                            clipParams: beforeClipExpressionParams,
+                            referenceableEffectParams,
+                        },
+                    )
 
                     await effectTask.effectRenderer.render(effectRenderContext)
 
@@ -469,7 +486,7 @@ export default class Engine
                         context.destAudioBuffer,
                         channelAudioBuffers,
                         context.audioChannels,
-                        context.samplingRate
+                        context.samplingRate,
                     )
 
                     for (const chBuffer of channelAudioBuffers) {

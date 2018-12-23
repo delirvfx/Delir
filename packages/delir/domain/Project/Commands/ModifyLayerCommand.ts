@@ -13,7 +13,7 @@ export class ModifyLayerCommand implements Command {
         private subjectLayerId: string,
         unpatched: Partial<Delir.Entity.Layer>,
         private patch: Partial<Delir.Entity.Layer>,
-        private parentCompositionId: string
+        private parentCompositionId: string,
     ) {
         this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Layer>
     }
@@ -24,7 +24,7 @@ export class ModifyLayerCommand implements Command {
         context.dispatch(ProjectActions.modifyLayerAction, {
             targetLayerId: this.subjectLayerId,
             patch: this.toPreviousPatch,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {

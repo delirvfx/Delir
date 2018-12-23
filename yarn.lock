@@ -743,10 +743,10 @@
   resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.9.tgz#9ef9aace738d3169f5d5c22e5323c11debedca36"
   integrity sha512-mvRrY76tpz7OMzITmfBhEGChBCKb79A7etnRVXjH2/atr9ETimeIlwbSPYgKxmrG2SO5c7XXr2nXd9jC3xhrHA==
 
-"@ragg/fleur@0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.9.tgz#9f5c7d43f1f23ba5694eb6c214f8db13398b8e92"
-  integrity sha512-o+5o3N43m7nIru/6WDTjMLEWmMa2X3y4wzBtNYmoFmr10RISuYh0R1Rvo0YVQt5gUDrigCXczKKC3CPirpWrIQ==
+"@ragg/fleur@0.0.11":
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.11.tgz#4ef13c9d2e958fa62950a2ff016e83647383c9e1"
+  integrity sha512-Ar1/isZ0YCHd2TZiAmyLgwsvAy7nRavguy+nc6u46s1zn11vuvkv9MYEIRJPpyMa3/1rm31aJeADce/E+lEJzg==
   dependencies:
     immer "1.8.0"
     invariant "2.2.4"
@@ -2367,20 +2367,6 @@ cacheable-request@^2.1.1:
     lowercase-keys "1.0.0"
     normalize-url "2.0.1"
     responselike "1.0.2"
-
-caller-callsite@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/caller-callsite/-/caller-callsite-2.0.0.tgz#847e0fce0a223750a9a027c54b33731ad3154134"
-  integrity sha1-hH4PzgoiN1CpoCfFSzNzGtMVQTQ=
-  dependencies:
-    callsites "^2.0.0"
-
-caller-path@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/caller-path/-/caller-path-2.0.0.tgz#468f83044e369ab2010fac5f06ceee15bb2cb1f4"
-  integrity sha1-Ro+DBE42mrIBD6xfBs7uFbsssfQ=
-  dependencies:
-    caller-callsite "^2.0.0"
 
 callsites@^2.0.0:
   version "2.0.0"
@@ -5409,14 +5395,6 @@ immer@1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/immer/-/immer-1.8.0.tgz#afa8393996a1f3f5255019e7d10c29d42dd95225"
   integrity sha512-zOox8DNAunPeQgKwbAiwEUAHhZXtMPZo7VZ7m7h9cpQL1I35bAeaxMfwYyLEIt6RZUelFfsOBfG1GJu/iQNgxw==
-
-import-fresh@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-2.0.0.tgz#d81355c15612d386c61f9ddd3922d4304822a546"
-  integrity sha1-2BNVwVYS04bGH53dOSLUMEgipUY=
-  dependencies:
-    caller-path "^2.0.0"
-    resolve-from "^3.0.0"
 
 import-lazy@^2.1.0:
   version "2.1.0"
@@ -8690,6 +8668,11 @@ preserve@^0.2.0:
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
   integrity sha1-gV7R9uvGWSb4ZbMQwHE7yzMVzks=
 
+prettier@1.15.3:
+  version "1.15.3"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.15.3.tgz#1feaac5bdd181237b54dbe65d874e02a1472786a"
+  integrity sha512-gAU9AGAPMaKb3NNSUUuhhFAS7SCO4ALTN4nRIn6PJ075Qd28Yn2Ig2ahEJWdJwJmlEBTUfC7mMUSFy8MwsOCfg==
+
 pretty-bytes@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-1.0.4.tgz#0a22e8210609ad35542f8c8d5d2159aff0751c84"
@@ -10875,6 +10858,11 @@ tslib@1.9.3, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
   integrity sha512-4krF8scpejhaOgqzBEcGM7yDIEfi0/8+8zDRZhNZZ2kjmHJ4hv3zCbQWxoJGz1iw5U0Jl0nma13xzHXcncMavQ==
+
+tslint-config-prettier@1.17.0:
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/tslint-config-prettier/-/tslint-config-prettier-1.17.0.tgz#946ed6117f98f3659a65848279156d87628c33dc"
+  integrity sha512-NKWNkThwqE4Snn4Cm6SZB7lV5RMDDFsBwz6fWUkTxOKGjMx8ycOHnjIbhn7dZd5XmssW3CwqUjlANR6EhP9YQw==
 
 tslint-loader@3.6.0:
   version "3.6.0"

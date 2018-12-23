@@ -1,16 +1,14 @@
-export default class DelirException extends Error
-{
+export default class DelirException extends Error {
     public before: Error
     public message: string
     public info?: Object
     public stack?: string
     public stackLines: string[]
 
-    constructor(message: string, info: any = {})
-    {
+    constructor(message: string, info: any = {}) {
         super(message)
 
-        const {stack} = (new Error())
+        const { stack } = new Error()
 
         this.message = message
         this.stack = stack

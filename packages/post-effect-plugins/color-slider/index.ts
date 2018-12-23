@@ -1,10 +1,4 @@
-import {
-    EffectPreRenderContext,
-    EffectRenderContext,
-    PostEffectBase,
-    Type,
-    Values,
-} from '@ragg/delir-core'
+import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type, Values } from '@ragg/delir-core'
 
 interface Params {
     value: number
@@ -15,8 +9,11 @@ export default class TheWorldPostEffect extends PostEffectBase {
      * Provide usable parameters
      */
     public static provideParameters() {
-        return Type
-            .colorRgba('value', {label: 'Value', defaultValue: new Values.ColorRGBA(0, 0, 0, 255), animatable: true})
+        return Type.colorRgba('value', {
+            label: 'Value',
+            defaultValue: new Values.ColorRGBA(0, 0, 0, 255),
+            animatable: true,
+        })
     }
 
     /**

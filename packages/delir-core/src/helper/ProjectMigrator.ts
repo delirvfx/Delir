@@ -7,5 +7,5 @@ export default {
 
     migrate: (project: any) => {
         return project
-    }
+    },
 }

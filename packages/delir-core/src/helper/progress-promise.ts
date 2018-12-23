@@ -5,7 +5,7 @@ const _defer = <T>(): DeferredPromise<T> => {
         promise.reject = reject
     })
 
-    return (promise as DeferredPromise<T>)
+    return promise as DeferredPromise<T>
 }
 
 export interface DeferredPromise<T> {
@@ -18,13 +18,11 @@ type PromiseProcessor<T, PT> = (
     resolve: (value?: T) => void,
     reject: (error?: Error) => void,
     onAbort: (aborter: () => void) => void,
-    notifier: (message: PT) => void
+    notifier: (message: PT) => void,
 ) => Promise<T> | void
 
-export default class ProgressPromise<T, PT = any>
-{
-    public static defer<T>()
-    {
+export default class ProgressPromise<T, PT = any> {
+    public static defer<T>() {
         const pp: any = {}
         pp.promise = new ProgressPromise((resolve, reject, onAbort, notifier) => {
             pp.resolve = resolve
@@ -33,7 +31,7 @@ export default class ProgressPromise<T, PT = any>
             pp.notifier = notifier
         })
 
-        return (pp as DeferredPromise<T>)
+        return pp as DeferredPromise<T>
     }
 
     private _promise: DeferredPromise<any> = _defer<T>()
@@ -42,8 +40,7 @@ export default class ProgressPromise<T, PT = any>
     private _abortCallbacks: Function[] | null = []
     private _progressListeners: Function[] = []
 
-    constructor(resolver: PromiseProcessor<T, PT>)
-    {
+    constructor(resolver: PromiseProcessor<T, PT>) {
         const onAbort = (callback: () => void) => {
             this._abortCallbacks!.push(callback)
         }
@@ -53,7 +50,7 @@ export default class ProgressPromise<T, PT = any>
             this._progressListeners.forEach(listener => listener(message))
         }
 
-        this._promise.promise.then(() => this._isCompleted = true)
+        this._promise.promise.then(() => (this._isCompleted = true))
 
         try {
             resolver(this._promise.resolve, this._promise.reject, onAbort, notifier)
@@ -62,20 +59,17 @@ export default class ProgressPromise<T, PT = any>
         }
     }
 
-    public then(onFulfilled: (value: any) => void, onFailed?: (value: Error) => void): this
-    {
+    public then(onFulfilled: (value: any) => void, onFailed?: (value: Error) => void): this {
         this._promise.promise.then(onFulfilled, onFailed)
         return this
     }
 
-    public catch(onFailed: (e: Error) => void): this
-    {
+    public catch(onFailed: (e: Error) => void): this {
         this._promise.promise.catch(onFailed)
         return this
     }
 
-    public abort(): this
-    {
+    public abort(): this {
         if (this._abortCallbacks) {
             this._abortCallbacks.forEach(abort => abort())
             this._abortCallbacks = null
@@ -83,8 +77,7 @@ export default class ProgressPromise<T, PT = any>
         return this
     }
 
-    public progress(listener: (progress: PT) => void): this
-    {
+    public progress(listener: (progress: PT) => void): this {
         this._progressListeners.push(listener)
         return this
     }

@@ -18,12 +18,7 @@ const typeMap = {
 }
 
 export const serializeEntity = (node: any): any => {
-    if (
-        typeof node === 'boolean'
-        || typeof node === 'number'
-        || typeof node === 'string'
-        || node === null
-    ) {
+    if (typeof node === 'boolean' || typeof node === 'number' || typeof node === 'string' || node === null) {
         return node
     }
 
@@ -46,12 +41,7 @@ export const serializeEntity = (node: any): any => {
 }
 
 export const deserializeEntity = (node: any): any => {
-    if (
-        typeof node === 'boolean'
-        || typeof node === 'number'
-        || typeof node === 'string'
-        || node === null
-    ) {
+    if (typeof node === 'boolean' || typeof node === 'number' || typeof node === 'string' || node === null) {
         return node
     }
 

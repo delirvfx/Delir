@@ -23,7 +23,6 @@ export {
     PluginSupport,
     Exceptions,
     Values,
-
     // Plugins
     Type,
     TypeDescriptor,
@@ -32,12 +31,10 @@ export {
     EffectPreRenderContext,
     EffectRenderContext,
     PluginRegistry,
-
     // import shorthand
     KeyframeCalcurator,
     ProjectMigrator,
     Exporter,
-
     // Types
     AnyParameterTypeDescriptor,
 }

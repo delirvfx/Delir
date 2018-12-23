@@ -18,7 +18,7 @@ class Layer implements LayerProps {
 
     constructor(props: LayerProps) {
         this.id = uuid.v4() as Layer.Id
-        safeAssign<Layer>(this, props as LayerProps & {id: Layer.Id})
+        safeAssign<Layer>(this, props as LayerProps & { id: Layer.Id })
     }
 
     public patch(props: Partial<LayerProps>) {

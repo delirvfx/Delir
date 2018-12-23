@@ -1,4 +1,4 @@
-export const propsToDataset = <T = any>(props: {[prop: string]: any}): { [K in keyof T]: string } => {
+export const propsToDataset = <T = any>(props: { [prop: string]: any }): { [K in keyof T]: string } => {
     const MATCHER = /^data-(.+?)$/
     const REPLACER = /(-[a-z])/g
 
@@ -6,7 +6,9 @@ export const propsToDataset = <T = any>(props: {[prop: string]: any}): { [K in k
 
     const dataset: any = Object.create(null)
     keys.forEach(key => {
-        const propName = key.match(MATCHER)![1].replace(REPLACER, (_, repValue: string) => repValue.toUpperCase().slice(-1))
+        const propName = key
+            .match(MATCHER)![1]
+            .replace(REPLACER, (_, repValue: string) => repValue.toUpperCase().slice(-1))
         dataset[propName] = props[key]
     })
 

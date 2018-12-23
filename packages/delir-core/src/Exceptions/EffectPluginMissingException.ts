@@ -3,10 +3,7 @@ interface EffectPluginMissingExceptionDetail {
 }
 
 export default class EffectPluginMissingException extends Error {
-    constructor(
-        message: string,
-        public detail: EffectPluginMissingExceptionDetail
-    ) {
+    constructor(message: string, public detail: EffectPluginMissingExceptionDetail) {
         super(message)
     }
 }

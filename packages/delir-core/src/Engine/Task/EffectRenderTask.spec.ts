@@ -29,23 +29,25 @@ describe('EffectRenderTask', () => {
     describe('ignoreMissingEffect', () => {
         it('Should not throw EffectPluginMissingException with missing effect', () => {
             const resolver = new DependencyResolver(project, registry)
-            registry.registerPlugin([{
-                id: 'existing-effect',
-                class: EffectPluginBase as any,
-                packageJson: {
-                    name: 'existing-effect',
-                    author: '',
-                    version: '0.0.0',
-                    delir: {
-                        name: 'exit-effect',
-                        type: 'post-effect',
+            registry.registerPlugin([
+                {
+                    id: 'existing-effect',
+                    class: EffectPluginBase as any,
+                    packageJson: {
+                        name: 'existing-effect',
+                        author: '',
+                        version: '0.0.0',
+                        delir: {
+                            name: 'exit-effect',
+                            type: 'post-effect',
+                        },
+                        engines: {
+                            'delir-core': '*',
+                        },
                     },
-                    engines: {
-                        'delir-core': '0.5.x',
-                    },
+                    type: 'post-effect',
                 },
-                type: 'post-effect',
-            }])
+            ])
 
             const effect = mockEffect({ processor: 'existing-effect' })
             clip.addEffect(effect)
@@ -67,7 +69,6 @@ describe('EffectRenderTask', () => {
         })
 
         it('Should throw EffectPluginMissingException with missing effect', () => {
-
             const resolver = new DependencyResolver(project, registry)
 
             const effect = mockEffect({ processor: 'missing-processor' })

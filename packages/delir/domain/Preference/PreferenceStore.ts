@@ -22,7 +22,9 @@ export default class PreferenceStore extends Store<Preference> {
     })
 
     private handlePreferenceChange = listen(PreferenceActions.changePreference, ({ patch }) => {
-        this.updateWith(draft => { Object.assign(draft, patch) })
+        this.updateWith(draft => {
+            Object.assign(draft, patch)
+        })
     })
 
     public getPreferences() {

@@ -25,7 +25,7 @@ export class ModifyEffectCommand implements Command {
             parentClipId: this.targetEffectId,
             targetEffectId: this.targetEffectId,
             patch: this.toPreviousPatch,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {

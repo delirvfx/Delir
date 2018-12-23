@@ -29,13 +29,19 @@ class Composition implements CompositionProps {
     public samplingRate: number
     public audioChannels: number
     public backgroundColor: ColorRGB
+    /**
+     * Layers rendering from [0].
+     * The one that follows will overwrite the previous ones
+     */
     public layers: ReadonlyArray<Layer> = []
 
     public project: Project
 
     constructor(props: CompositionProps) {
         this.id = uuid.v4() as Composition.Id
-        safeAssign<Composition>(this, props as CompositionProps & { id: Composition.Id })
+        safeAssign<Composition>(this, props as CompositionProps & {
+            id: Composition.Id
+        })
     }
 
     public patch(props: Partial<CompositionProps>) {

@@ -1,10 +1,10 @@
 import {
+    EffectPreRenderContext,
+    EffectRenderContext,
     PluginSupport,
     PostEffectBase,
-    PreRenderRequest,
-    RenderRequest,
     Type,
-    Values
+    Values,
 } from '@ragg/delir-core'
 
 import * as clamp from 'lodash/clamp'
@@ -19,15 +19,17 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      * Provide usable parameters
      */
     public static provideParameters() {
-        return Type
-            .float('threshold', {label: 'Threshold', defaultValue: 1, animatable: true})
-            .colorRgba('keyColor', {label: 'Key color', defaultValue: new Values.ColorRGBA(0, 0, 0, 1), animatable: true})
+        return Type.float('threshold', { label: 'Threshold', defaultValue: 1, animatable: true }).colorRgba(
+            'keyColor',
+            { label: 'Key color', defaultValue: new Values.ColorRGBA(0, 0, 0, 1), animatable: true },
+        )
     }
 
     private static VERTEX_SHADER: string = require('./vertex.vert')
     private static FRAGMENT_SHADER: string = require('./fragment.frag')
 
     private ctxBindToken: PluginSupport.WebGLContextBindToken
+    private gl: WebGL2RenderingContext
     private texCanvas: HTMLCanvasElement
     private texCanvasCtx: CanvasRenderingContext2D
     private fragShader: WebGLShader
@@ -52,22 +54,24 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      * If you want initializing before rendering (likes load audio, image, etc...)
      * Do it in this method.
      */
-    public async initialize(req: PreRenderRequest) {
+    public async initialize(req: EffectPreRenderContext<Params>) {
         this.ctxBindToken = req.glContextPool.generateContextBindToken()
         const gl = await req.glContextPool.getContext('webgl')
         const canvas = gl.canvas
 
+        this.gl.cl
+
         this.texCanvas = document.createElement('canvas')
         this.texCanvasCtx = this.texCanvas.getContext('2d')
 
-        const program = this.program = gl.createProgram()
+        const program = (this.program = gl.createProgram())
         gl.enable(gl.DEPTH_TEST)
 
-        const vertexShader = this.vertShader = gl.createShader(gl.VERTEX_SHADER)
+        const vertexShader = (this.vertShader = gl.createShader(gl.VERTEX_SHADER))
         gl.shaderSource(vertexShader, ChromakeyPostEffect.VERTEX_SHADER)
         gl.compileShader(vertexShader)
 
-        const fragShader = this.fragShader = gl.createShader(gl.FRAGMENT_SHADER)
+        const fragShader = (this.fragShader = gl.createShader(gl.FRAGMENT_SHADER))
         gl.shaderSource(fragShader, ChromakeyPostEffect.FRAGMENT_SHADER)
         gl.compileShader(fragShader)
 
@@ -94,22 +98,12 @@ export default class ChromakeyPostEffect extends PostEffectBase {
         // vertex buffer
         this.vertexBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer)
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            -1, -1,
-            1, -1,
-            1, 1,
-            -1, 1
-        ]), gl.STATIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW)
 
         // Tex 2D
         this.tex2DBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, this.tex2DBuffer)
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-            0, 1,
-            1, 1,
-            1, 0,
-            0, 0,
-        ]), gl.STATIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 1, 1, 1, 1, 0, 0, 0]), gl.STATIC_DRAW)
 
         req.glContextPool.registerContextForToken(this.ctxBindToken, gl)
         req.glContextPool.releaseContext(gl)
@@ -119,9 +113,12 @@ export default class ChromakeyPostEffect extends PostEffectBase {
      * Render frame into destination canvas.
      * @param req
      */
-    public async render(req: RenderRequest<Params>)
-    {
-        const { srcCanvas, destCanvas, parameters: {threshold, keyColor} } = req
+    public async render(req: EffectRenderContext<Params>) {
+        const {
+            srcCanvas,
+            destCanvas,
+            parameters: { threshold, keyColor },
+        } = req
         const destCtx = destCanvas.getContext('2d')
 
         const gl = await req.glContextPool.getContextByToken(this.ctxBindToken)

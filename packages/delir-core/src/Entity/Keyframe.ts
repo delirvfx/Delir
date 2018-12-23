@@ -11,7 +11,7 @@ import Expression from '../Values/Expression'
 export type KeyframeValueTypes = number | boolean | string | ColorRGB | ColorRGBA | Expression | AssetPointer | null
 
 interface KeyframeProps {
-    id?: string,
+    id?: string
     value: KeyframeValueTypes
     frameOnClip: number
     easeInParam?: [number, number]
@@ -53,17 +53,10 @@ class Keyframe<T extends KeyframeValueTypes = KeyframeValueTypes> implements Key
     private normalize() {
         this.frameOnClip = Math.round(this.frameOnClip)
 
-        this.easeInParam = [
-            clamp(this.easeInParam[0], 0, 1),
-            this.easeInParam[1]
-        ]
+        this.easeInParam = [clamp(this.easeInParam[0], 0, 1), this.easeInParam[1]]
 
-        this.easeOutParam = [
-            clamp(this.easeOutParam[0], 0, 1),
-            this.easeOutParam[1],
-        ]
+        this.easeOutParam = [clamp(this.easeOutParam[0], 0, 1), this.easeOutParam[1]]
     }
-
 }
 
 namespace Keyframe {

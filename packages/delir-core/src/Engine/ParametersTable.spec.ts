@@ -14,27 +14,30 @@ describe('KeyframeTable', () => {
     let table: ParametersTable
 
     beforeEach(() => {
-        context = new RenderContextBase({
+        context = new RenderContextBase(({
             durationFrames: 100,
             framerate: 50,
-        } as Partial<IRenderContextBase> as any)
+        } as Partial<IRenderContextBase>) as any)
 
         const clip = mockClip({
             renderer: 'video',
             placedFrame: 0,
             durationFrames: 100,
             keyframes: {
-                'x': [
-                    mockKeyframe({ frameOnClip: 0, value: 0 }),
-                    mockKeyframe({ frameOnClip: 100, value: 100 }),
-                ],
+                x: [mockKeyframe({ frameOnClip: 0, value: 0 }), mockKeyframe({ frameOnClip: 100, value: 100 })],
             },
             expressions: {
-                'x': new Expression('typescript', 'currentValue * 10')
-            }
+                x: new Expression('typescript', 'currentValue * 10'),
+            },
         })
 
-        table = ParametersTable.build(context, clip, clip.keyframes, clip.expressions, RendererFactory.getInfo('text').parameter)
+        table = ParametersTable.build(
+            context,
+            clip,
+            clip.keyframes,
+            clip.expressions,
+            RendererFactory.getInfo('text').parameter,
+        )
     })
 
     it('Should correctly build table', () => {
@@ -63,11 +66,13 @@ describe('KeyframeTable', () => {
             destCanvas: null,
         })
 
-        expect(table.getParameterWithExpressionAt(100, {
-            context: clipRenderContext,
-            clipParams: {},
-            referenceableEffectParams: {}
-        })).toMatchObject({ x: 1000 })
+        expect(
+            table.getParameterWithExpressionAt(100, {
+                context: clipRenderContext,
+                clipParams: {},
+                referenceableEffectParams: {},
+            }),
+        ).toMatchObject({ x: 1000 })
     })
 
     it('Should throw exception with invalid expression', () => {
@@ -76,11 +81,17 @@ describe('KeyframeTable', () => {
         clip = mockClip({
             renderer: 'video',
             expressions: {
-                'x': new Expression('javascript', 'const a')
-            }
+                x: new Expression('javascript', 'const a'),
+            },
         })
 
-        const table = ParametersTable.build(context, clip, clip.keyframes, clip.expressions, RendererFactory.getInfo('text').parameter)
+        const table = ParametersTable.build(
+            context,
+            clip,
+            clip.keyframes,
+            clip.expressions,
+            RendererFactory.getInfo('text').parameter,
+        )
 
         const clipRenderContext = context.toClipRenderContext({
             clip,
@@ -100,7 +111,7 @@ describe('KeyframeTable', () => {
                 table.getParameterWithExpressionAt(0, {
                     context: clipRenderContext,
                     clipParams: {},
-                    referenceableEffectParams: {}
+                    referenceableEffectParams: {},
                 })
             } catch (e) {
                 return e
@@ -112,7 +123,7 @@ describe('KeyframeTable', () => {
                 type: 'clip',
                 entityId: clip.id,
                 paramName: 'x',
-            }
+            },
         } as Partial<UserCodeException>)
     })
 })

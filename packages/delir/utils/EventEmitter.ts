@@ -3,7 +3,7 @@ export class EventEmitter<T extends { [event: string]: any }> {
     private listeners: { [K in keyof T]: ((arg: T[K]) => void)[] } = Object.create({})
 
     public on<K extends keyof T>(event: K, listener: (arg: T[K]) => void) {
-        const listeners = this.listeners[event] = (this.listeners[event] || [])
+        const listeners = (this.listeners[event] = this.listeners[event] || [])
 
         if (this.exclusiveEvents.includes(event as string)) {
             this.listeners[event] = [listener]

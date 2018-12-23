@@ -21,14 +21,13 @@ export default class ScriptParamEditor extends React.Component<Props> {
     private editor: monaco.editor.IStandaloneCodeEditor
     private editorElement = React.createRef<HTMLDivElement>()
 
-    public componentDidMount()
-    {
+    public componentDidMount() {
         this.editor = monaco.editor.create(this.editorElement.current!, {
             language: 'javascript',
             codeLens: true,
             automaticLayout: true,
             theme: 'vs-dark',
-            minimap: {enabled: false},
+            minimap: { enabled: false },
             value: this.props.code ? this.props.code : '',
         })
 
@@ -43,14 +42,18 @@ export default class ScriptParamEditor extends React.Component<Props> {
     }
 
     public render() {
-        const {title} = this.props
+        const { title } = this.props
 
         return (
             <div className={s.ScriptParamEditor}>
                 <div className={s.toolbar}>
                     <span className={s.title}>Code: {title}</span>
-                    <Button type='normal' onClick={this.handleClickCloseWithoutSave}>変更を破棄</Button>
-                    <Button type='primary' onClick={this.handleClickWithSave}>保存</Button>
+                    <Button type="normal" onClick={this.handleClickCloseWithoutSave}>
+                        変更を破棄
+                    </Button>
+                    <Button type="primary" onClick={this.handleClickWithSave}>
+                        保存
+                    </Button>
                 </div>
                 <div ref={this.editorElement} className={s.editor} />
             </div>
@@ -61,22 +64,19 @@ export default class ScriptParamEditor extends React.Component<Props> {
         MonacoUtil.activateLibrarySet('scriptEditor')
     }
 
-    private handleClickWithSave = () =>
-    {
+    private handleClickWithSave = () => {
         this.props.onClose({
             saved: true,
             code: this.editor.getValue(),
-            target: this.props.target
+            target: this.props.target,
         })
     }
 
-    private handleClickCloseWithoutSave = () =>
-    {
-        console.log('close')
+    private handleClickCloseWithoutSave = () => {
         this.props.onClose({
             saved: false,
             code: null,
-            target: this.props.target
+            target: this.props.target,
         })
     }
 }

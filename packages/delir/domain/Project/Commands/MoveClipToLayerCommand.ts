@@ -3,7 +3,7 @@ import { OperationContext } from '@ragg/fleur'
 
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
-import { ProjectActions }  from '../actions'
+import { ProjectActions } from '../actions'
 
 export class MoveClipToLayerCommand implements Command {
     constructor(

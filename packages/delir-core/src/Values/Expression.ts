@@ -8,13 +8,9 @@ export default class Expression {
         return new Expression(json.language, json.code)
     }
 
-    constructor(
-        public language: string,
-        public code: string,
-    ) {}
+    constructor(public language: string, public code: string) {}
 
-    public toJSON()
-    {
+    public toJSON() {
         return {
             language: this.language,
             code: this.code,

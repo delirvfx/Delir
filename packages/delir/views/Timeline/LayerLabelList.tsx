@@ -13,7 +13,13 @@ interface Props {
 export default SortableContainer((props: Props) => (
     <ul>
         {props.layers.map((layer, idx) => (
-            <LaneLabel index={idx} key={layer.id} layer={layer} onSelect={props.onLayerSelect} onRemove={props.onLayerRemove} />
+            <LaneLabel
+                index={idx}
+                key={layer.id}
+                layer={layer}
+                onSelect={props.onLayerSelect}
+                onRemove={props.onLayerRemove}
+            />
         ))}
     </ul>
 ))

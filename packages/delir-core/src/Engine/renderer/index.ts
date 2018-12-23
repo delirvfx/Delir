@@ -13,7 +13,7 @@ import VideoRenderer from './Video/Video'
 
 export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment' | 'p5js'
 
-export const RENDERERS: {[name: string]: IRendererStatic} = {
+export const RENDERERS: { [name: string]: IRendererStatic } = {
     audio: AudioRenderer,
     video: VideoRenderer,
     image: ImageRenderer,
@@ -25,21 +25,21 @@ export const RENDERERS: {[name: string]: IRendererStatic} = {
 interface PluginInfo {
     id: string
     handlableFileTypes: string[]
-    assetAssignMap: {[extName: string]: string}
+    assetAssignMap: { [extName: string]: string }
     parameter: TypeDescriptor
 }
 
 const RENDERER_SUMMARY = _.mapValues(RENDERERS, renderer => {
-    const assetAssignMap  = renderer.provideAssetAssignMap()
+    const assetAssignMap = renderer.provideAssetAssignMap()
     const handlableFileTypes = Object.keys(assetAssignMap)
 
     return {
         id: renderer.rendererId,
         handlableFileTypes,
         assetAssignMap,
-        parameter: renderer.provideParameters()
+        parameter: renderer.provideParameters(),
     }
-}) as {[name: string]: PluginInfo}
+}) as { [name: string]: PluginInfo }
 
 export function getAvailableRenderers() {
     return _.values(_.clone(RENDERER_SUMMARY))

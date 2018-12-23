@@ -21,7 +21,7 @@ export class MoveLayerOrderCommand implements Command {
             parentCompositionId: this.parentCompositionId,
             targetLayerId: this.targetLayerId,
             newIndex: this.previousIndex,
-         })
+        })
     }
 
     public redo(context: OperationContext<any>) {

@@ -5,20 +5,36 @@ import { DragEntity } from './operations'
 import { ClipboardEntry, ParameterTarget } from './types'
 
 export const EditorActions = actions('Editor', {
-    setActiveProjectAction: action<{ project: Delir.Entity.Project, path?: string | null }>(),
+    setActiveProjectAction: action<{
+        project: Delir.Entity.Project
+        path?: string | null
+    }>(),
     clearActiveProjectAction: action<{}>(),
     setDragEntityAction: action<DragEntity>(),
     clearDragEntityAction: action<{}>(),
     changeActiveCompositionAction: action<{ compositionId: string }>(),
     changeActiveClipAction: action<{ clipId: string }>(),
     changeActiveParamAction: action<{ target: ParameterTarget | null }>(),
-    startPreviewAction: action<{ compositionId: string, beginFrame: number, ignoreMissingEffect: boolean }>(),
+    startPreviewAction: action<{
+        compositionId: string
+        beginFrame: number
+        ignoreMissingEffect: boolean
+    }>(),
     stopPreviewAction: action<{}>(),
-    renderDestinateAction: action<{ compositionId: string, ignoreMissingEffect: boolean }>(),
+    renderDestinateAction: action<{
+        compositionId: string
+        ignoreMissingEffect: boolean
+    }>(),
     updateProcessingStateAction: action<{ stateText: string }>(),
-    addMessageAction: action<{ id: string, title?: string, level: 'info' | 'error', message: string, detail?: string }>(),
+    addMessageAction: action<{
+        id: string
+        title?: string
+        level: 'info' | 'error'
+        message: string
+        detail?: string
+    }>(),
     removeMessageAction: action<{ id: string }>(),
     seekPreviewFrameAction: action<{ frame: number }>(),
     setClipboardEntry: action<{ entry: ClipboardEntry }>(),
-    changePreferenceOpenStateAction: action<{ open: boolean }>()
+    changePreferenceOpenStateAction: action<{ open: boolean }>(),
 })

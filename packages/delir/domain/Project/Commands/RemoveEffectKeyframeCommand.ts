@@ -41,7 +41,7 @@ export class RemoveEffectKeyframeCommand implements Command {
                 type: 'effect',
                 entityId: this.effectId,
                 paramName: this.paramName,
-            }
+            },
         })
     }
 }

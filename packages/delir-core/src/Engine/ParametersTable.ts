@@ -27,7 +27,7 @@ export class ParametersTable {
             [paramName: string]: ReadonlyArray<Keyframe>
         },
         expressions: {
-            [paramName: string]: Expression,
+            [paramName: string]: Expression
         },
         paramTypes: TypeDescriptor,
     ): ParametersTable {
@@ -36,7 +36,9 @@ export class ParametersTable {
 
         // Calculate initial parameters
         const rawRendererInitParam = KeyframeCalcurator.calcKeyframeValuesAt(0, clip.placedFrame, paramTypes, keyframes)
-        const initialParams: RealParameterValues = { ...(rawRendererInitParam as any) }
+        const initialParams: RealParameterValues = {
+            ...(rawRendererInitParam as any),
+        }
         assetPramNames.forEach(propName => {
             // resolve asset
             initialParams[propName] = rawRendererInitParam[propName]
@@ -45,8 +47,16 @@ export class ParametersTable {
         })
 
         // Calculate look up table
-        const rawKeyframeLUT = KeyframeCalcurator.calcKeyFrames(paramTypes, keyframes, clip.placedFrame, 0, context.durationFrames)
-        const lookupTable: { [paramName: string]: { [frame: number]: RealParameterValueTypes } } = { ...(rawKeyframeLUT as any)　}
+        const rawKeyframeLUT = KeyframeCalcurator.calcKeyFrames(
+            paramTypes,
+            keyframes,
+            clip.placedFrame,
+            0,
+            context.durationFrames,
+        )
+        const lookupTable: {
+            [paramName: string]: { [frame: number]: RealParameterValueTypes }
+        } = { ...(rawKeyframeLUT as any) }
         assetPramNames.forEach(paramName => {
             // resolve asset
             lookupTable[paramName] = _.map(rawKeyframeLUT[paramName], value => {
@@ -55,12 +65,17 @@ export class ParametersTable {
         })
 
         // Compile Expression code
-        const rendererExpressions = _(expressions).mapValues((expr: Expression) => {
-            const code = compileTypeScript(expr.code)
-            return (exposes: ExpressionContext.ContextSource) => {
-                return ExpressionVM.execute(code, ExpressionContext.buildContext(exposes), {filename: `${clip.id}.expression.ts`})
-            }
-        }).pickBy(value => value !== null).value()
+        const rendererExpressions = _(expressions)
+            .mapValues((expr: Expression) => {
+                const code = compileTypeScript(expr.code)
+                return (exposes: ExpressionContext.ContextSource) => {
+                    return ExpressionVM.execute(code, ExpressionContext.buildContext(exposes), {
+                        filename: `${clip.id}.expression.ts`,
+                    })
+                }
+            })
+            .pickBy(value => value !== null)
+            .value()
 
         table.paramTypes = paramTypes
         table.initialParams = initialParams
@@ -87,16 +102,21 @@ export class ParametersTable {
     private paramTypes: TypeDescriptor
 
     public getParametersAt(frame: number) {
-        return _.fromPairs(this.paramTypes.properties.map(desc => {
-            return [desc.paramName, this.lookUpTable[desc.paramName][frame]]
-        }))
+        return _.fromPairs(
+            this.paramTypes.properties.map(desc => {
+                return [desc.paramName, this.lookUpTable[desc.paramName][frame]]
+            }),
+        )
     }
 
-    public getParameterWithExpressionAt(frame: number, exposes: {
-        context: ClipRenderContext<any> | EffectRenderContext<any>,
-        clipParams: {[paramName: string]: ParameterValueTypes},
-        referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams,
-    }) {
+    public getParameterWithExpressionAt(
+        frame: number,
+        exposes: {
+            context: ClipRenderContext<any> | EffectRenderContext<any>
+            clipParams: { [paramName: string]: ParameterValueTypes }
+            referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams
+        },
+    ) {
         const params = this.getParametersAt(frame)
 
         return _.mapValues(params, (value, paramName) => {
@@ -116,7 +136,7 @@ export class ParametersTable {
                         type: 'clip' in exposes.context ? 'clip' : 'effect',
                         entityId: 'clip' in exposes.context ? exposes.context.clip.id : exposes.context.effect.id,
                         paramName,
-                    }
+                    },
                 })
             }
         })

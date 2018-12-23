@@ -17,26 +17,25 @@ interface Params {
 
 const VM_GLOBAL_WHITELIST = ['Array', 'Math', 'Date']
 
-export default class P5jsRenderer implements IRenderer<Params>
-{
-    public static get rendererId(): string { return 'p5js' }
+export default class P5jsRenderer implements IRenderer<Params> {
+    public static get rendererId(): string {
+        return 'p5js'
+    }
 
     public static provideAssetAssignMap() {
         return {}
     }
 
     public static provideParameters() {
-        return Type
-            .code('sketch', {
-                label: 'Sketch',
-                langType: 'javascript',
-                defaultValue: new Expression('javascript', 'function setup() {\n    \n}\n\nfunction draw() {\n    \n}\n')
-            })
-            .number('opacity', {
-                label: 'Opacity',
-                animatable: true,
-                defaultValue: 100,
-            })
+        return Type.code('sketch', {
+            label: 'Sketch',
+            langType: 'javascript',
+            defaultValue: new Expression('javascript', 'function setup() {\n    \n}\n\nfunction draw() {\n    \n}\n'),
+        }).number('opacity', {
+            label: 'Opacity',
+            animatable: true,
+            defaultValue: 100,
+        })
     }
 
     private vmGlobal: any
@@ -50,24 +49,31 @@ export default class P5jsRenderer implements IRenderer<Params>
         // Make VM environment
         this.vmExposedVariables = this.makeVmExposeVariables(context)
 
-        this.vmGlobal = VM.createContext(new Proxy({
-            console: global.console,
-            p5: this.p5ex.p5,
-        }, {
-                get: (target: any, propKey: string) => {
-                    if (target[propKey]) {
-                        return target[propKey]
-                    } else if (this.p5ex.p5[propKey]) {
-                        // Expose p5 drawing methods
-                        return typeof this.p5ex.p5[propKey] === 'function' ? this.p5ex.p5[propKey].bind(this.p5ex.p5) : this.p5ex.p5[propKey]
-                    } else if (VM_GLOBAL_WHITELIST.includes(propKey)) {
-                        return (global as any)[propKey]
-                    } else {
-                        // Dynamic exposing
-                        return this.vmExposedVariables[propKey]
-                    }
-                }
-            }))
+        this.vmGlobal = VM.createContext(
+            new Proxy(
+                {
+                    console: global.console,
+                    p5: this.p5ex.p5,
+                },
+                {
+                    get: (target: any, propKey: string) => {
+                        if (target[propKey]) {
+                            return target[propKey]
+                        } else if (this.p5ex.p5[propKey]) {
+                            // Expose p5 drawing methods
+                            return typeof this.p5ex.p5[propKey] === 'function'
+                                ? this.p5ex.p5[propKey].bind(this.p5ex.p5)
+                                : this.p5ex.p5[propKey]
+                        } else if (VM_GLOBAL_WHITELIST.includes(propKey)) {
+                            return (global as any)[propKey]
+                        } else {
+                            // Dynamic exposing
+                            return this.vmExposedVariables[propKey]
+                        }
+                    },
+                },
+            ),
+        )
 
         const vm = new VM.Script(context.parameters.sketch.code, {})
 
@@ -87,7 +93,7 @@ export default class P5jsRenderer implements IRenderer<Params>
                         type: 'clip',
                         entityId: context.clip.id,
                         paramName: 'sketch',
-                    }
+                    },
                 })
             }
         }
@@ -114,7 +120,7 @@ export default class P5jsRenderer implements IRenderer<Params>
                     type: 'clip',
                     entityId: context.clip.id,
                     paramName: 'sketch',
-                }
+                },
             })
         }
 
@@ -143,7 +149,7 @@ export default class P5jsRenderer implements IRenderer<Params>
                     if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
                     return { params: proxyDeepFreeze(targetEffect) }
                 },
-            }
+            },
         }
     }
 }
