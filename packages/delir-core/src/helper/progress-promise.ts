@@ -53,7 +53,9 @@ export default class ProgressPromise<T, PT = any> {
         this._promise.promise.then(() => (this._isCompleted = true))
 
         try {
-            resolver(this._promise.resolve, this._promise.reject, onAbort, notifier)
+            setTimeout(() => {
+                resolver(this._promise.resolve, this._promise.reject, onAbort, notifier)
+            })
         } catch (e) {
             this._promise.reject(e)
         }

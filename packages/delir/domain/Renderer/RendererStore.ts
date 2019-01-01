@@ -16,6 +16,7 @@ interface State {
     previewRenderState: RenderState | null
     isInRendering: boolean
     exportRenderState: RenderingProgress | null
+    exception: Delir.Exceptions.UserCodeException | null
 }
 
 export interface RenderState {
@@ -32,6 +33,7 @@ export default class RendererStore extends Store<State> {
         previewRenderState: null,
         isInRendering: false,
         exportRenderState: null,
+        exception: null,
     }
 
     private pipeline = new Delir.Engine.Engine()
@@ -83,6 +85,8 @@ export default class RendererStore extends Store<State> {
                 this.audioContext.close()
             }
 
+            this.updateWith(s => (s.exception = null))
+
             this.audioContext = new AudioContext()
 
             this.audioBuffer = this.audioContext.createBuffer(
@@ -131,8 +135,12 @@ export default class RendererStore extends Store<State> {
 
             promise.catch(e => {
                 if (e instanceof Delir.Exceptions.RenderingAbortedException) {
-                    // EditorOps.updateProcessingState('Stop.')
                     return
+                } else if (e instanceof Delir.Exceptions.UserCodeException) {
+                    this.updateWith(s => (s.exception = e))
+                } else {
+                    // tslint:disable-next-line:no-console
+                    console.log(e)
                 }
             })
         },
@@ -225,6 +233,10 @@ export default class RendererStore extends Store<State> {
 
     public getExportingState() {
         return this.state.exportRenderState
+    }
+
+    public getUserCodeException() {
+        return this.state.exception
     }
 
     public isInRendering() {

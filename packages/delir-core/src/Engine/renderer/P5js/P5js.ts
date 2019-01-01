@@ -87,7 +87,7 @@ export default class P5jsRenderer implements IRenderer<Params> {
             try {
                 this.vmGlobal.setup()
             } catch (e) {
-                throw new UserCodeException('msg', {
+                throw new UserCodeException(`P5.js script error (${e.message})`, {
                     sourceError: e,
                     location: {
                         type: 'clip',
@@ -114,7 +114,7 @@ export default class P5jsRenderer implements IRenderer<Params> {
         try {
             this.vmGlobal.draw && this.vmGlobal.draw()
         } catch (e) {
-            throw new UserCodeException('msg', {
+            throw new UserCodeException(`P5.js script error (${e.message})`, {
                 sourceError: e,
                 location: {
                     type: 'clip',

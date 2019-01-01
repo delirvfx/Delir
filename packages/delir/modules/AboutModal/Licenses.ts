@@ -290,6 +290,10 @@ export const dependencies = [
         url: 'https://github.com/substack/parse-color',
     },
     {
+        name: 'prettier',
+        url: 'https://prettier.io',
+    },
+    {
         name: 'raw-loader',
         url: 'https://www.npmjs.com/package/raw-loader',
     },
@@ -356,6 +360,10 @@ export const dependencies = [
     {
         name: 'tslint',
         url: 'https://www.npmjs.com/package/tslint',
+    },
+    {
+        name: 'tslint-config-prettier',
+        url: 'https://www.npmjs.com/package/tslint-config-prettier',
     },
     {
         name: 'tslint-loader',

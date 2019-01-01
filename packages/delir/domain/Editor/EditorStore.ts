@@ -9,7 +9,7 @@ import { ClipboardEntry, ParameterTarget } from './types'
 export interface NotificationEntry {
     id: string
     title?: string
-    message: string
+    message?: string
     level: 'info' | 'error'
     detail?: string
 }

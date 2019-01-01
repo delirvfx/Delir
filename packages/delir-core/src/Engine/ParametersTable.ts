@@ -130,7 +130,7 @@ export class ParametersTable {
                     currentValue: params[paramName],
                 })
             } catch (e) {
-                throw new UserCodeException('Expression failed', {
+                throw new UserCodeException(`Expression failed (${e.message})`, {
                     sourceError: e,
                     location: {
                         type: 'clip' in exposes.context ? 'clip' : 'effect',

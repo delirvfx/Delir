@@ -272,7 +272,7 @@ layer5.addClip(videoClip)
 adjustmentClip.addEffect(
     assign(
         new Delir.Entity.Effect({
-            processor: '@ragg/delir-posteffect-gaussian-blur',
+            processor: '@ragg/delir-posteffect-the-world',
         }),
         {
             // keyframes: {

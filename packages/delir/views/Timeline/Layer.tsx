@@ -9,6 +9,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import { hasErrorInClip } from '../../domain/Renderer/models'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
@@ -29,6 +30,7 @@ interface OwnProps {
 interface ConnectedProps {
     editor: EditorState
     postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
+    userCodeException: Delir.Exceptions.UserCodeException | null
 }
 
 type Props = OwnProps & ConnectedProps & ContextProp
@@ -44,6 +46,7 @@ export default withComponentContext(
     connectToStores([EditorStore, RendererStore], context => ({
         editor: context.getStore(EditorStore).getState(),
         postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins(),
+        userCodeException: context.getStore(RendererStore).getUserCodeException(),
     }))(
         class Layer extends React.Component<Props, State> {
             public state: State = {
@@ -53,7 +56,15 @@ export default withComponentContext(
             private root = React.createRef<HTMLLIElement>()
 
             public render() {
-                const { layer, activeClip, framerate, pxPerSec, scale, postEffectPlugins } = this.props
+                const {
+                    layer,
+                    activeClip,
+                    framerate,
+                    pxPerSec,
+                    scale,
+                    postEffectPlugins,
+                    userCodeException,
+                } = this.props
                 const clips = Array.from(layer.clips)
                 const convertOption = { pxPerSec, framerate, scale }
 
@@ -90,10 +101,13 @@ export default withComponentContext(
                                     durationFrames: clip.durationFrames | 0,
                                     ...convertOption,
                                 })
+
                                 const left = TimePixelConversion.framesToPixel({
                                     durationFrames: clip.placedFrame | 0,
                                     ...convertOption,
                                 })
+
+                                const hasError = hasErrorInClip(clip, userCodeException)
 
                                 return (
                                     <Clip
@@ -103,6 +117,7 @@ export default withComponentContext(
                                         left={left}
                                         active={clip === activeClip}
                                         postEffectPlugins={postEffectPlugins}
+                                        hasError={hasError}
                                         onChangePlace={this.handleChangeClipPlace}
                                         onChangeDuration={this.changeClipDuration}
                                     />
