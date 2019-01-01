@@ -2,6 +2,7 @@ import * as _ from 'lodash'
 
 import { EffectRenderContext } from '..'
 import { Clip, Keyframe } from '../Entity'
+import { UserCodeException } from '../Exceptions/UserCodeException'
 import { ParameterValueTypes, TypeDescriptor } from '../PluginSupport/type-descriptor'
 import { AssetPointer, ColorRGB, ColorRGBA, Expression } from '../Values'
 import AssetProxy from './AssetProxy'
@@ -121,12 +122,23 @@ export class ParametersTable {
         return _.mapValues(params, (value, paramName) => {
             if (!this.expressions[paramName]) return value
 
-            return this.expressions[paramName]({
-                context: exposes.context,
-                clipParams: exposes.clipParams,
-                clipEffectParams: exposes.referenceableEffectParams,
-                currentValue: params[paramName],
-            })
+            try {
+                return this.expressions[paramName]({
+                    context: exposes.context,
+                    clipParams: exposes.clipParams,
+                    clipEffectParams: exposes.referenceableEffectParams,
+                    currentValue: params[paramName],
+                })
+            } catch (e) {
+                throw new UserCodeException(`Expression failed (${e.message})`, {
+                    sourceError: e,
+                    location: {
+                        type: 'clip' in exposes.context ? 'clip' : 'effect',
+                        entityId: 'clip' in exposes.context ? exposes.context.clip.id : exposes.context.effect.id,
+                        paramName,
+                    },
+                })
+            }
         })
     }
 }

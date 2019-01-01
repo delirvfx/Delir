@@ -31,7 +31,6 @@ export const loadPlugins = operation(async context => {
             message: `${failedPlugins}`,
             title: `Failed to load ${fails.length} plugins`,
             level: 'error',
-            timeout: 5000,
             detail: message,
         })
     }

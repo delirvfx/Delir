@@ -6,9 +6,9 @@ import EffectPluginBase from './PostEffectBase'
 import { AnyParameterTypeDescriptor } from './type-descriptor'
 import { DelirPluginPackageJson, PluginEntry, PluginSummary } from './types'
 
-import PluginAssertionFailedException from '../exceptions/plugin-assertion-failed-exception'
-import PluginLoadFailException from '../exceptions/plugin-load-fail-exception'
-import UnknownPluginReferenceException from '../exceptions/unknown-plugin-reference-exception'
+import PluginAssertionFailedException from '../Exceptions/plugin-assertion-failed-exception'
+import PluginLoadFailException from '../Exceptions/plugin-load-fail-exception'
+import UnknownPluginReferenceException from '../Exceptions/unknown-plugin-reference-exception'
 
 import * as DelirCorePackageJson from '../../package.json'
 

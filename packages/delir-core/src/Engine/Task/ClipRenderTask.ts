@@ -28,6 +28,7 @@ export default class ClipRenderTask {
         }
 
         const task = new ClipRenderTask()
+        task.clipEntity = clip
         task.clipRenderer = clipRenderer
         task.rendererType = clip.renderer
         task.clipPlacedFrame = clip.placedFrame
@@ -38,6 +39,7 @@ export default class ClipRenderTask {
         return task
     }
 
+    public clipEntity: Clip
     public clipRenderer: IRenderer<any>
     public rendererType: RendererFactory.AvailableRenderer
     public clipPlacedFrame: number
@@ -48,6 +50,7 @@ export default class ClipRenderTask {
 
     public async initialize(context: RenderContextBase) {
         const preRenderReq = context.toClipPreRenderContext({
+            clip: this.clipEntity,
             parameters: this.keyframeTable.initialParams,
         })
 

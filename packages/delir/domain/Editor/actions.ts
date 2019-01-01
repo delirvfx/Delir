@@ -30,7 +30,7 @@ export const EditorActions = actions('Editor', {
         id: string
         title?: string
         level: 'info' | 'error'
-        message: string
+        message?: string
         detail?: string
     }>(),
     removeMessageAction: action<{ id: string }>(),

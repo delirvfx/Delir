@@ -10,7 +10,7 @@ import PluginRegistry from '../PluginSupport/plugin-registry'
 import WebGLContext from '@ragg/delir-core/src/Engine/WebGL/WebGLContext'
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
-import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../exceptions/'
+import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'
@@ -98,8 +98,13 @@ export default class Engine {
 
             const request = this._initStage(compositionId, renderingOption)
 
-            const renderTasks = await this._taskingStage(request, renderingOption)
-            await this._renderStage(request, renderTasks)
+            try {
+                const renderTasks = await this._taskingStage(request, renderingOption)
+                await this._renderStage(request, renderTasks)
+            } catch (e) {
+                reject(e)
+                return
+            }
 
             if (this._streamObserver) {
                 if (this._streamObserver.onFrame) {
@@ -130,7 +135,7 @@ export default class Engine {
 
         this.stopCurrentRendering()
 
-        return (this._seqRenderPromise = new ProgressPromise<void, RenderProgression>(
+        this._seqRenderPromise = new ProgressPromise<void, RenderProgression>(
             async (resolve, reject, onAbort, notifier) => {
                 let aborted = false
 
@@ -140,7 +145,15 @@ export default class Engine {
                 })
 
                 let context = this._initStage(compositionId, renderingOption)
-                const renderTasks = await this._taskingStage(context, renderingOption)
+                let renderTasks: LayerRenderTask[]
+
+                try {
+                    renderTasks = await this._taskingStage(context, renderingOption)
+                } catch (e) {
+                    reject(e)
+                    return
+                }
+
                 this._fpsCounter.reset()
 
                 const reqDestCanvasCtx = context.destCanvas.getContext('2d')!
@@ -185,7 +198,13 @@ export default class Engine {
                     })
 
                     reqDestCanvasCtx.clearRect(0, 0, context.width, context.height)
-                    await this._renderStage(context, renderTasks)
+
+                    try {
+                        await this._renderStage(context, renderTasks)
+                    } catch (e) {
+                        reject(e)
+                        return
+                    }
 
                     if (!aborted) {
                         const status: RenderingStatus = {
@@ -245,7 +264,9 @@ export default class Engine {
 
                 animationFrameId = animationFrame(render)
             },
-        ))
+        )
+
+        return this._seqRenderPromise
     }
 
     private _initStage(compositionId: string, option: RenderingOption): RenderContextBase {
@@ -402,6 +423,7 @@ export default class Engine {
                 const frameOnClip = context.frame - clipTask.clipPlacedFrame
 
                 const clipRenderContext = context.toClipRenderContext({
+                    clip: clipTask.clipEntity,
                     timeOnClip,
                     frameOnClip,
 
@@ -439,6 +461,7 @@ export default class Engine {
                 // Post process effects
                 for (const effectTask of clipTask.effectRenderTasks) {
                     const effectRenderContext = context.toEffectRenderContext({
+                        effect: effectTask.effectEntity,
                         timeOnClip,
                         frameOnClip,
 

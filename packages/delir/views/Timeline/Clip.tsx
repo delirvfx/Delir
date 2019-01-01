@@ -19,6 +19,7 @@ interface OwnProps {
     width: number
     active: boolean
     postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
+    hasError: boolean
     onChangePlace: (clipId: string, newPlacedPx: number) => any
     onChangeDuration: (clipId: string, newDurationPx: number) => any
 }
@@ -31,21 +32,20 @@ type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(
     class Clip extends React.Component<Props> {
-        private clipRoot = React.createRef<HTMLDivElement>()
-
         public render() {
-            const { clip, active, postEffectPlugins, width, left } = this.props
+            const { clip, active, postEffectPlugins, width, left, hasError } = this.props
 
             return (
                 <Rnd
-                    className={classnames(s.Clip, {
-                        [s['Clip--active']]: active,
-                        [s['Clip--video']]: clip.renderer === 'video',
-                        [s['Clip--audio']]: clip.renderer === 'audio',
-                        [s['Clip--text']]: clip.renderer === 'text',
-                        [s['Clip--image']]: clip.renderer === 'image',
-                        [s['Clip--adjustment']]: clip.renderer === 'adjustment',
-                        [s['Clip--p5js']]: clip.renderer === 'p5js',
+                    className={classnames(s.clip, {
+                        [s.active]: active,
+                        [s.video]: clip.renderer === 'video',
+                        [s.audio]: clip.renderer === 'audio',
+                        [s.text]: clip.renderer === 'text',
+                        [s.image]: clip.renderer === 'image',
+                        [s.adjustment]: clip.renderer === 'adjustment',
+                        [s.p5js]: clip.renderer === 'p5js',
+                        [s.hasError]: hasError,
                     })}
                     dragAxis="x"
                     position={{ x: left, y: 2 }}
@@ -62,7 +62,7 @@ export default withComponentContext(
                     onMouseDown={this.handleClick}
                     tabIndex={-1}
                 >
-                    <div ref={this.clipRoot}>
+                    <div>
                         <ContextMenu>
                             <MenuItem label={t('contextMenu.seekToHeadOfClip')} onClick={this.handleSeekToHeadOfClip} />
                             <MenuItem label={t('contextMenu.effect')}>
@@ -89,8 +89,8 @@ export default withComponentContext(
                             />
                             <MenuItem type="separator" />
                         </ContextMenu>
-                        <span className={s.Clip__NameLabel}>{t(['renderers', clip.renderer])}</span>
-                        <span className={s.Clip__IdLabel}>#{clip.id.substring(0, 4)}</span>
+                        <span className={s.nameLabel}>{t(['renderers', clip.renderer])}</span>
+                        <span className={s.idLabel}>#{clip.id.substring(0, 4)}</span>
                     </div>
                 </Rnd>
             )

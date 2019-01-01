@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 
 import { Clip, Effect } from '../../Entity'
-import { EffectPluginMissingException } from '../../exceptions'
+import { EffectPluginMissingException } from '../../Exceptions'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
 import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
 import DependencyResolver from '../DependencyResolver'
@@ -61,6 +61,7 @@ export default class EffectRenderTask {
 
     public async initialize(context: RenderContextBase, referenceableEffectParams: ReferenceableEffectsParams) {
         const preRenderReq = context.toEffectPreRenderContext({
+            effect: this.effectEntity,
             parameters: this.keyframeTable.initialParams,
             clipEffectParams: referenceableEffectParams,
         })

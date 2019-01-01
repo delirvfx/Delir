@@ -2,7 +2,7 @@ import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
 import { IRenderer, IRendererStatic } from './RendererBase'
 
 import * as _ from 'lodash'
-import UnknownPluginReferenceException from '../../exceptions/unknown-plugin-reference-exception'
+import UnknownPluginReferenceException from '../../Exceptions/unknown-plugin-reference-exception'
 
 import AdjustmentRenderer from './Adjustment/Adjustment'
 import AudioRenderer from './Audio/Audio'

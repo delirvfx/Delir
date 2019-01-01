@@ -49,6 +49,7 @@ interface ConnectedProps {
     editor: EditorState
     activeParam: ParameterTarget | null
     project: ProjectStoreState
+    userCodeException: Delir.Exceptions.UserCodeException | null
 }
 
 interface State {
@@ -62,10 +63,11 @@ interface State {
 type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(
-    connectToStores([EditorStore], context => ({
+    connectToStores([EditorStore, ProjectStore, RendererStore], context => ({
         editor: context.getStore(EditorStore).getState(),
         activeParam: context.getStore(EditorStore).getActiveParam(),
         project: context.getStore(ProjectStore).getState(),
+        userCodeException: context.getStore(RendererStore).getUserCodeException(),
     }))(
         class KeyframeEditor extends React.Component<Props, State> {
             public static defaultProps: Partial<Props> = {
@@ -121,9 +123,6 @@ export default withComponentContext(
                 const activeEntityObject = this.activeEntityObject
 
                 const activeParamDescriptor = activeParam ? this._getDescriptorByParamName(activeParam.paramName) : null
-                const descriptors = activeClip
-                    ? Delir.Engine.Renderers.getInfo(activeClip.renderer).parameter.properties || []
-                    : []
 
                 const expressionCode =
                     !activeEntityObject || !activeParam
@@ -146,76 +145,7 @@ export default withComponentContext(
                 return (
                     <Workspace direction="horizontal" className={s.keyframeView}>
                         <Pane className={s.paramList}>
-                            {activeClip &&
-                                descriptors.map(desc => {
-                                    const value = activeClip
-                                        ? Delir.KeyframeCalcurator.calcKeyframeValueAt(
-                                              editor.currentPreviewFrame,
-                                              activeClip.placedFrame,
-                                              desc,
-                                              activeClip.keyframes[desc.paramName] || [],
-                                          )
-                                        : undefined
-
-                                    const hasKeyframe =
-                                        desc.animatable && (activeClip.keyframes[desc.paramName] || []).length !== 0
-
-                                    return (
-                                        <div
-                                            key={activeClip.id + desc.paramName}
-                                            className={classnames(s.paramItem, {
-                                                [s.paramItemActive]:
-                                                    activeParam &&
-                                                    activeParam.type === 'clip' &&
-                                                    activeParam.paramName === desc.paramName,
-                                            })}
-                                            data-entity-type="clip"
-                                            data-entity-id={activeClip.id}
-                                            data-param-name={desc.paramName}
-                                            onClick={this.selectProperty}
-                                        >
-                                            <ContextMenu>
-                                                <MenuItem
-                                                    label={t('contextMenu.expression')}
-                                                    data-entity-type="clip"
-                                                    data-entity-id={activeClip.id}
-                                                    data-param-name={desc.paramName}
-                                                    enabled={desc.animatable}
-                                                    onClick={this.openExpressionEditor}
-                                                />
-                                                <MenuItem type="separator" />
-                                                <MenuItem
-                                                    label={t('contextMenu.copyParamName')}
-                                                    data-param-name={desc.paramName}
-                                                    onClick={this.handleCopyParamName}
-                                                />
-                                            </ContextMenu>
-                                            <span
-                                                className={classnames(s.paramKeyframeIndicator, {
-                                                    [s['paramKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                                    [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
-                                                })}
-                                            >
-                                                {desc.animatable && <i className="twa twa-clock12" />}
-                                            </span>
-                                            <span className={s.paramItemName}>{desc.label}</span>
-                                            <div className={s.paramItemInput}>
-                                                {desc.type === 'CODE' ? (
-                                                    <Button type="normal" onClick={this.handleOpenScriptParamEditor}>
-                                                        {t('editScriptParam')}
-                                                    </Button>
-                                                ) : (
-                                                    <DelirValueInput
-                                                        assets={project ? project.assets : null}
-                                                        descriptor={desc}
-                                                        value={value!}
-                                                        onChange={this.valueChanged}
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
+                            {this.renderProperties()}
                             {this.renderEffectProperties()}
                         </Pane>
                         <Pane>
@@ -291,27 +221,101 @@ export default withComponentContext(
                 )
             }
 
-            private get activeEntityObject(): Delir.Entity.Clip | Delir.Entity.Effect | null {
-                const { activeClip, activeParam } = this.props
+            private renderProperties = () => {
+                const {
+                    activeClip,
+                    activeParam,
+                    project: { project },
+                    editor,
+                    userCodeException,
+                } = this.props
 
-                if (activeClip) {
-                    if (activeParam && activeParam.type === 'effect') {
-                        return activeClip.effects.find(e => e.id === activeParam.entityId)!
-                    } else {
-                        return activeClip
-                    }
-                }
+                if (!activeClip) return null
 
-                return null
+                return this.clipParamDescriptors.map(desc => {
+                    const value = activeClip
+                        ? Delir.KeyframeCalcurator.calcKeyframeValueAt(
+                              editor.currentPreviewFrame,
+                              activeClip.placedFrame,
+                              desc,
+                              activeClip.keyframes[desc.paramName] || [],
+                          )
+                        : undefined
+
+                    const isSelected =
+                        activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName
+                    const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.paramName] || []).length !== 0
+                    const hasError =
+                        userCodeException &&
+                        userCodeException.location.type === 'clip' &&
+                        userCodeException.location.entityId === activeClip.id &&
+                        userCodeException.location.paramName === desc.paramName
+
+                    return (
+                        <div
+                            key={activeClip.id + desc.paramName}
+                            className={classnames(s.paramItem, {
+                                [s.paramItemActive]: isSelected,
+                                [s.paramItemError]: hasError,
+                            })}
+                            data-entity-type="clip"
+                            data-entity-id={activeClip.id}
+                            data-param-name={desc.paramName}
+                            onClick={this.selectProperty}
+                        >
+                            <ContextMenu>
+                                <MenuItem
+                                    label={t('contextMenu.expression')}
+                                    data-entity-type="clip"
+                                    data-entity-id={activeClip.id}
+                                    data-param-name={desc.paramName}
+                                    enabled={desc.animatable}
+                                    onClick={this.openExpressionEditor}
+                                />
+                                <MenuItem type="separator" />
+                                <MenuItem
+                                    label={t('contextMenu.copyParamName')}
+                                    data-param-name={desc.paramName}
+                                    onClick={this.handleCopyParamName}
+                                />
+                            </ContextMenu>
+                            <span
+                                className={classnames(s.paramKeyframeIndicator, {
+                                    [s['paramKeyframeIndicator--hasKeyframe']]: hasKeyframe,
+                                    [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                })}
+                            >
+                                {desc.animatable && <i className="twa twa-clock12" />}
+                            </span>
+                            <span className={s.paramItemName}>{desc.label}</span>
+                            <div className={s.paramItemInput}>
+                                {desc.type === 'CODE' ? (
+                                    <Button type="normal" onClick={this.handleOpenScriptParamEditor}>
+                                        {t('editScriptParam')}
+                                    </Button>
+                                ) : (
+                                    <DelirValueInput
+                                        assets={project ? project.assets : null}
+                                        descriptor={desc}
+                                        value={value!}
+                                        onChange={this.valueChanged}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    )
+                })
             }
 
             private renderEffectProperties = () => {
                 const rendererStore = this.props.context.getStore(RendererStore)
+
                 const {
                     activeClip,
                     activeParam,
                     editor,
                     project: { project },
+                    userCodeException,
                 } = this.props
 
                 if (!activeClip) return null
@@ -320,15 +324,6 @@ export default withComponentContext(
                     const processorInfo = rendererStore
                         .getPostEffectPlugins()
                         .find(entry => entry.id === effect.processor)!
-                    let descriptors: Delir.AnyParameterTypeDescriptor[] | null = []
-
-                    try {
-                        descriptors = rendererStore.getPostEffectParametersById(effect.processor)!
-                    } catch (e) {
-                        if (!(e instanceof Delir.Exceptions.UnknownPluginReferenceException)) {
-                            throw e
-                        }
-                    }
 
                     if (!processorInfo) {
                         return (
@@ -357,6 +352,10 @@ export default withComponentContext(
                             </div>
                         )
                     }
+
+                    const descriptors:
+                        | Delir.AnyParameterTypeDescriptor[]
+                        | null = rendererStore.getPostEffectParametersById(effect.processor)!
 
                     return (
                         <div key={effect.id} className={classnames(s.paramItem, s.paramItemEffectContainer)}>
@@ -392,8 +391,20 @@ export default withComponentContext(
                             </div>
 
                             {descriptors.map(desc => {
+                                const isSelected =
+                                    activeParam &&
+                                    activeParam.type === 'effect' &&
+                                    activeParam.entityId === effect.id &&
+                                    activeParam.paramName === desc.paramName
+
                                 const hasKeyframe =
                                     desc.animatable && (effect.keyframes[desc.paramName] || []).length !== 0
+
+                                const hasError =
+                                    userCodeException &&
+                                    userCodeException.location.type === 'effect' &&
+                                    userCodeException.location.entityId === effect.id &&
+                                    userCodeException.location.paramName === desc.paramName
 
                                 const value = activeClip
                                     ? Delir.KeyframeCalcurator.calcKeyframeValueAt(
@@ -408,11 +419,8 @@ export default withComponentContext(
                                     <div
                                         key={`${activeClip.id}-${effect.id}-${desc.paramName}`}
                                         className={classnames(s.paramItem, {
-                                            [s.paramItemActive]:
-                                                activeParam &&
-                                                activeParam.type === 'effect' &&
-                                                activeParam.entityId === effect.id &&
-                                                activeParam.paramName === desc.paramName,
+                                            [s.paramItemActive]: isSelected,
+                                            [s.paramItemError]: hasError,
                                         })}
                                         data-entity-type="effect"
                                         data-entity-id={effect.id}
@@ -483,6 +491,25 @@ export default withComponentContext(
                 }
 
                 return components
+            }
+
+            private get clipParamDescriptors() {
+                const { activeClip } = this.props
+                return activeClip ? Delir.Engine.Renderers.getInfo(activeClip.renderer).parameter.properties || [] : []
+            }
+
+            private get activeEntityObject(): Delir.Entity.Clip | Delir.Entity.Effect | null {
+                const { activeClip, activeParam } = this.props
+
+                if (activeClip) {
+                    if (activeParam && activeParam.type === 'effect') {
+                        return activeClip.effects.find(e => e.id === activeParam.entityId)!
+                    } else {
+                        return activeClip
+                    }
+                }
+
+                return null
             }
 
             private handleCopyReferenceName = ({

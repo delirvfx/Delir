@@ -1,6 +1,6 @@
 import { mockClip, mockComposition, mockEffect, mockLayer, mockProject } from '../../../spec/mocks'
-import { Clip, Effect, Project } from '../../Entity'
-import { EffectPluginMissingException } from '../../exceptions'
+import { Clip, Project } from '../../Entity'
+import { EffectPluginMissingException } from '../../Exceptions'
 import PluginRegistry from '../../PluginSupport/plugin-registry'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
 import DependencyResolver from '../DependencyResolver'

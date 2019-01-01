@@ -56,8 +56,8 @@ export const notify = operation(
     (
         context,
         arg: {
-            message: string
-            title: string
+            message?: string
+            title?: string
             level: 'info' | 'error'
             timeout?: number
             detail?: string
@@ -80,6 +80,10 @@ export const notify = operation(
         }
     },
 )
+
+export const removeNotification = operation((context, arg: { id: string }) => {
+    context.dispatch(EditorActions.removeMessageAction, { id: arg.id })
+})
 
 //
 // Change active element
