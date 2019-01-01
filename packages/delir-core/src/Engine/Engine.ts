@@ -98,8 +98,13 @@ export default class Engine {
 
             const request = this._initStage(compositionId, renderingOption)
 
-            const renderTasks = await this._taskingStage(request, renderingOption)
-            await this._renderStage(request, renderTasks)
+            try {
+                const renderTasks = await this._taskingStage(request, renderingOption)
+                await this._renderStage(request, renderTasks)
+            } catch (e) {
+                reject(e)
+                return
+            }
 
             if (this._streamObserver) {
                 if (this._streamObserver.onFrame) {
