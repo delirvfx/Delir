@@ -25,6 +25,7 @@ interface OwnProps {
     framerate: number
     pxPerSec: number
     scale: number
+    scrollLeft: number
 }
 
 interface ConnectedProps {
@@ -53,7 +54,7 @@ export default withComponentContext(
                 dragovered: false,
             }
 
-            private root = React.createRef<HTMLLIElement>()
+            private root = React.createRef<HTMLDivElement>()
 
             public render() {
                 const {
@@ -62,6 +63,7 @@ export default withComponentContext(
                     framerate,
                     pxPerSec,
                     scale,
+                    scrollLeft,
                     postEffectPlugins,
                     userCodeException,
                 } = this.props
@@ -69,7 +71,7 @@ export default withComponentContext(
                 const convertOption = { pxPerSec, framerate, scale }
 
                 return (
-                    <li
+                    <div
                         ref={this.root}
                         className={classnames(s.Layer, {
                             [s.dragover]: this.state.dragovered,
@@ -114,7 +116,7 @@ export default withComponentContext(
                                         key={clip.id!}
                                         clip={clip}
                                         width={width}
-                                        left={left}
+                                        left={left - scrollLeft}
                                         active={clip === activeClip}
                                         postEffectPlugins={postEffectPlugins}
                                         hasError={hasError}
@@ -124,7 +126,7 @@ export default withComponentContext(
                                 )
                             })}
                         </div>
-                    </li>
+                    </div>
                 )
             }
 
@@ -136,7 +138,7 @@ export default withComponentContext(
                 GlobalEvents.off(GlobalEvent.pasteViaApplicationMenu, this.handleGlobalPaste)
             }
 
-            private handleOnDrop = (e: React.DragEvent<HTMLLIElement>) => {
+            private handleOnDrop = (e: React.DragEvent<HTMLDivElement>) => {
                 const { dragEntity, activeComp } = this.props.editor
 
                 if (!activeComp || !dragEntity) return
@@ -167,7 +169,7 @@ export default withComponentContext(
                 e.stopPropagation()
             }
 
-            private handleMouseUp = (e: React.MouseEvent<HTMLLIElement>) => {
+            private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
                 const {
                     editor: { dragEntity },
                     layer,
