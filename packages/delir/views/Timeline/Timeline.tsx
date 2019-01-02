@@ -20,7 +20,7 @@ import DropDown from '../../components/dropdown'
 
 import KeyframeEditor from '../KeyframeEditor'
 import Gradations from './Gradations'
-import Layers from './Layer'
+import Layer from './Layer'
 import LayerLabelList from './LayerLabelList'
 
 import * as s from './style.styl'
@@ -135,7 +135,11 @@ export default withComponentContext(
                                             </div>
                                         </div>
 
-                                        <div ref="timelineLabels" className={s.labels} onScroll={this._scrollSync}>
+                                        <div
+                                            ref="timelineLabels"
+                                            className={s.labels}
+                                            onScroll={this.handleScrollLayerLabel}
+                                        >
                                             <ContextMenu>
                                                 <MenuItem type="separator" />
                                                 <MenuItem
@@ -170,10 +174,10 @@ export default withComponentContext(
                                             onSeeked={this._onSeeked}
                                         />
 
-                                        <ul
+                                        <div
                                             ref="timelineLayers"
                                             className={s.layerContainer}
-                                            onScroll={this._scrollSync}
+                                            onScroll={this.handleScrollLayerLabel}
                                         >
                                             <ContextMenu>
                                                 <MenuItem type="separator" />
@@ -186,16 +190,17 @@ export default withComponentContext(
                                             </ContextMenu>
                                             {activeComp &&
                                                 layers.map(layer => (
-                                                    <Layers
+                                                    <Layer
                                                         key={layer.id!}
                                                         layer={layer}
                                                         framerate={framerate}
                                                         pxPerSec={PX_PER_SEC}
                                                         scale={scale}
                                                         activeClip={activeClip}
+                                                        scrollLeft={timelineScrollLeft}
                                                     />
                                                 ))}
-                                        </ul>
+                                        </div>
                                     </Pane>
                                 </Workspace>
                             </Pane>
@@ -208,8 +213,8 @@ export default withComponentContext(
                                     scale={scale}
                                     scrollLeft={timelineScrollLeft}
                                     measures={measures}
-                                    onScroll={this.handleKeyframeEditorScroll}
-                                    onScaled={this.handleKeyframeEditorScaling}
+                                    onScroll={this.handleScrollKeyframeEditor}
+                                    onScaled={this.handleScaleKeyframeEditor}
                                 />
                             </Pane>
                         </Workspace>
@@ -229,7 +234,7 @@ export default withComponentContext(
                 })
             }
 
-            private _scrollSync = (e: React.UIEvent<HTMLElement>) => {
+            private handleScrollLayerLabel = (e: React.UIEvent<HTMLElement>) => {
                 this.setState({
                     timelineScrollLeft: e.currentTarget.scrollLeft,
                     timelineScrollTop: e.currentTarget.scrollTop,
@@ -279,11 +284,11 @@ export default withComponentContext(
                 }
             }
 
-            private handleKeyframeEditorScaling = (scale: number) => {
+            private handleScaleKeyframeEditor = (scale: number) => {
                 this.setState({ scale })
             }
 
-            private handleKeyframeEditorScroll = (dx: number, dy: number) => {
+            private handleScrollKeyframeEditor = (dx: number, dy: number) => {
                 const { timelineLayers } = this.refs
                 timelineLayers.scrollLeft += dx
                 this.setState({ timelineScrollLeft: timelineLayers.scrollLeft })
