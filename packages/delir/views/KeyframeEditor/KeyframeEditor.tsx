@@ -154,11 +154,11 @@ export default withComponentContext(
                                 tabIndex={-1}
                                 onWheel={this._scaleTimeline}
                             >
-                                {activeParam && editorOpened && (
+                                {activeParam && editorOpened && activeParamDescriptor && (
                                     <ExpressionEditor
-                                        title={activeParamDescriptor!.label}
-                                        code={expressionCode}
+                                        title={activeParamDescriptor.label}
                                         target={activeParam}
+                                        code={expressionCode}
                                         onChange={this.handleChangeExpression}
                                         onClose={this.onCloseExpressionEditor}
                                     />
@@ -571,8 +571,6 @@ export default withComponentContext(
             private handleChangeScriptParam = (result: EditorResult) => {
                 const { activeClip } = this.props
                 if (!activeClip) return
-
-                this.setState({ scriptParamEditorOpened: false })
 
                 this.props.context.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
                     clipId: activeClip.id,

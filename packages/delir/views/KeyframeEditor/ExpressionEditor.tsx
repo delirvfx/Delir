@@ -37,10 +37,10 @@ export default class ExpressionEditor extends React.Component<Props> {
         this.editor.createContextKey('cond2', true)
         this.disposables.push(this.editor.onDidFocusEditorText(this.onFocusEditor))
         this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClickClose, 'cond1')
-        this.disposables.push(this.editor.getModel().onDidChangeContent(this.handleChangeContent))
+        this.disposables.push(this.editor.onDidChangeModelContent(this.handleChangeContent))
     }
 
-    public shouldComponentUpdate(nextProps: Props, nextState: {}) {
+    public shouldComponentUpdate(nextProps: Props) {
         // Only update contents on target entity changed
         // (Guard from parent component controll to reset content)
         return (
@@ -51,11 +51,6 @@ export default class ExpressionEditor extends React.Component<Props> {
 
     public componentDidUpdate() {
         this.editor.setValue(this.props.code ? this.props.code : '')
-    }
-
-    public componentWillUnmount() {
-        this.disposables.forEach(d => d.dispose())
-        this.editor.dispose()
     }
 
     public render() {

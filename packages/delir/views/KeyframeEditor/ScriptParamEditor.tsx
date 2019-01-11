@@ -37,11 +37,20 @@ export default class ScriptParamEditor extends React.Component<Props> {
         this.editor.createContextKey('cond2', true)
         this.disposables.push(this.editor.onDidFocusEditorText(this.handleFocusEditor))
         this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClose, 'cond1')
-        this.disposables.push(this.editor.getModel().onDidChangeContent(this.handleChangeContent))
+        this.disposables.push(this.editor.onDidChangeModelContent(this.handleChangeContent))
+    }
+
+    public shouldComponentUpdate(nextProps: Props) {
+        // Only update contents on target entity changed
+        // (Guard from parent component controll to reset content)
+        return (
+            nextProps.target.entityId !== this.props.target.entityId ||
+            nextProps.target.paramName !== this.props.target.paramName
+        )
     }
 
     public componentWillUnmount() {
-        this.disposables.forEach(d => d.dispose)
+        this.disposables.forEach(d => d.dispose())
         this.editor.dispose()
     }
 

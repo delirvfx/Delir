@@ -58,6 +58,7 @@ export default class Monaco {
         this.activeLibrarySetDisposer = () => disposables.forEach(d => d.dispose())
     }
 
+    private static activeLibrarySetDisposer: () => void | null
     private static currentLibrarySet: string
 
     private static librarySet: {
@@ -83,6 +84,4 @@ export default class Monaco {
         ],
         scriptEditor: [],
     }
-
-    private static activeLibrarySetDisposer: () => void | null
 }
