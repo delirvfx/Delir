@@ -95,7 +95,15 @@ export default withComponentContext(
                 this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
             }
 
-            private handleShortCutPreviewToggle = () => {
+            private handleShortCutPreviewToggle = (e: KeyboardEvent) => {
+                if (
+                    e.target instanceof HTMLTextAreaElement ||
+                    e.target instanceof HTMLInputElement ||
+                    e.target instanceof HTMLSelectElement
+                ) {
+                    return
+                }
+
                 const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
 
                 if (!activeComp) return

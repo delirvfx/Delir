@@ -231,7 +231,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
         }
 
         // destruct component list to make function `ref` property
-        return <div>{component}</div>
+        return <>{component}</>
     }
 
     private valueChanged = () => {
