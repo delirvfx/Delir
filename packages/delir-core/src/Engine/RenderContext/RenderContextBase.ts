@@ -1,5 +1,6 @@
 import { Composition } from '../../Entity'
 import DependencyResolver from '../DependencyResolver'
+import WebGLContext from '../WebGL/WebGLContext'
 import { ClipPreRenderContext, ClipPreRenderContextAttributes } from './ClipPreRenderContext'
 import { ClipRenderContext, ClipRenderContextAttributes } from './ClipRenderContext'
 import { EffectPreRenderContext, EffectPreRenderContextAttributes } from './EffectPreRenderContext'
@@ -29,6 +30,7 @@ export class RenderContextBase implements IRenderContextBase {
     public destCanvas: HTMLCanvasElement
     public destAudioBuffer: Float32Array[]
     public audioContext: OfflineAudioContext
+    public gl: WebGLContext
 
     constructor(context: IRenderContextBase) {
         Object.assign(this, context)

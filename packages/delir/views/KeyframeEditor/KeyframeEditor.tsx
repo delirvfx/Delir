@@ -29,7 +29,6 @@ import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
 export interface EditorResult {
-    saved: boolean
     code: string | null
     target: ParameterTarget
 }
@@ -155,12 +154,13 @@ export default withComponentContext(
                                 tabIndex={-1}
                                 onWheel={this._scaleTimeline}
                             >
-                                {activeParam && editorOpened && (
+                                {activeParam && editorOpened && activeParamDescriptor && (
                                     <ExpressionEditor
-                                        title={activeParamDescriptor!.label}
-                                        code={expressionCode}
+                                        title={activeParamDescriptor.label}
                                         target={activeParam}
-                                        onClose={this.onCloseEditor}
+                                        code={expressionCode}
+                                        onChange={this.handleChangeExpression}
+                                        onClose={this.onCloseExpressionEditor}
                                     />
                                 )}
                                 {scriptParamEditorOpened &&
@@ -182,6 +182,7 @@ export default withComponentContext(
                                                 title={activeParamDescriptor.label}
                                                 target={activeParam}
                                                 code={(value as Delir.Values.Expression).code}
+                                                onChange={this.handleChangeScriptParam}
                                                 onClose={this.handleCloseScriptParamEditor}
                                             />
                                         )
@@ -244,7 +245,11 @@ export default withComponentContext(
 
                     const isSelected =
                         activeParam && activeParam.type === 'clip' && activeParam.paramName === desc.paramName
+
                     const hasKeyframe = desc.animatable && (activeClip.keyframes[desc.paramName] || []).length !== 0
+
+                    const hasExpression =
+                        activeClip.expressions[desc.paramName] && activeClip.expressions[desc.paramName].code !== ''
                     const hasError =
                         userCodeException &&
                         userCodeException.location.type === 'clip' &&
@@ -280,9 +285,19 @@ export default withComponentContext(
                                 />
                             </ContextMenu>
                             <span
-                                className={classnames(s.paramKeyframeIndicator, {
-                                    [s['paramKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                    [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                className={classnames(s.paramIndicator, {
+                                    [s['paramIndicator--active']]: hasExpression,
+                                })}
+                                data-entity-type="clip"
+                                data-entity-id={activeClip.id}
+                                data-param-name={desc.paramName}
+                                onDoubleClick={this.handleClickExpressionIndicator}
+                            >
+                                {desc.animatable && <i className="twa twa-abcd" />}
+                            </span>
+                            <span
+                                className={classnames(s.paramIndicator, {
+                                    [s['paramIndicator--active']]: hasKeyframe,
                                 })}
                             >
                                 {desc.animatable && <i className="twa twa-clock12" />}
@@ -406,6 +421,9 @@ export default withComponentContext(
                                     userCodeException.location.entityId === effect.id &&
                                     userCodeException.location.paramName === desc.paramName
 
+                                const hasExpression =
+                                    effect.expressions[desc.paramName] && effect.expressions[desc.paramName].code !== ''
+
                                 const value = activeClip
                                     ? Delir.KeyframeCalcurator.calcKeyframeValueAt(
                                           editor.currentPreviewFrame,
@@ -443,9 +461,19 @@ export default withComponentContext(
                                             />
                                         </ContextMenu>
                                         <span
-                                            className={classnames(s.paramKeyframeIndicator, {
-                                                [s['paramKeyframeIndicator--hasKeyframe']]: hasKeyframe,
-                                                [s['paramKeyframeIndicator--nonAnimatable']]: !desc.animatable,
+                                            className={classnames(s.paramIndicator, {
+                                                [s['paramIndicator--active']]: hasExpression,
+                                            })}
+                                            data-entity-type="effect"
+                                            data-entity-id={effect.id}
+                                            data-param-name={desc.paramName}
+                                            onDoubleClick={this.handleClickExpressionIndicator}
+                                        >
+                                            {desc.animatable && <i className="twa twa-abcd" />}
+                                        </span>
+                                        <span
+                                            className={classnames(s.paramIndicator, {
+                                                [s['paramIndicator--active']]: hasKeyframe,
                                             })}
                                         >
                                             {desc.animatable && <i className="twa twa-clock12" />}
@@ -512,6 +540,20 @@ export default withComponentContext(
                 return null
             }
 
+            private handleClickExpressionIndicator = ({ currentTarget }: React.MouseEvent<HTMLSpanElement>) => {
+                const { entityType, entityId, paramName } = currentTarget.dataset
+
+                this.props.context.executeOperation(EditorOps.changeActiveParam, {
+                    target: {
+                        type: entityType as 'clip' | 'effect',
+                        entityId: entityId!,
+                        paramName: paramName!,
+                    },
+                })
+
+                this.setState({ editorOpened: true })
+            }
+
             private handleCopyReferenceName = ({
                 dataset: { referenceName },
             }: MenuItemOption<{ referenceName: string }>) => {
@@ -526,16 +568,9 @@ export default withComponentContext(
                 this.setState({ scriptParamEditorOpened: true })
             }
 
-            private handleCloseScriptParamEditor = (result: EditorResult) => {
-                if (!result.saved) {
-                    this.setState({ scriptParamEditorOpened: false })
-                    return
-                }
-
+            private handleChangeScriptParam = (result: EditorResult) => {
                 const { activeClip } = this.props
                 if (!activeClip) return
-
-                this.setState({ scriptParamEditorOpened: false })
 
                 this.props.context.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
                     clipId: activeClip.id,
@@ -547,12 +582,11 @@ export default withComponentContext(
                 })
             }
 
-            private onCloseEditor = (result: EditorResult) => {
-                if (!result.saved) {
-                    this.setState({ editorOpened: false })
-                    return
-                }
+            private handleCloseScriptParamEditor = () => {
+                this.setState({ scriptParamEditorOpened: false })
+            }
 
+            private handleChangeExpression = (result: EditorResult) => {
                 const { activeClip } = this.props
                 if (!activeClip) return
 
@@ -576,7 +610,9 @@ export default withComponentContext(
                         },
                     })
                 }
+            }
 
+            private onCloseExpressionEditor = () => {
                 this.setState({ editorOpened: false })
             }
 
@@ -729,7 +765,6 @@ export default withComponentContext(
                 })
 
                 this.setState({ editorOpened: true })
-                this.forceUpdate()
             }
 
             private removeEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {

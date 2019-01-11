@@ -10,7 +10,7 @@
 
     display block
     flex none
-    width 220px
+    width 280px
     height 100%
     padding 4px 0
     overflow auto
@@ -57,6 +57,8 @@
     flex 1
 
 .paramItemInput
+    display flex
+    align-items center
     width 5em
 
     :global(._drag-number-input), select
@@ -71,26 +73,22 @@
     color var(--text-subbed)
     font-size 10px
 
-.paramKeyframeIndicator
-    flex 0
+.paramIndicator
     display inline-block
     width 16px
     height 16px
-    margin-right 8px
+    margin-right 4px
 
     font-size 14px
     line-height 2
 
     opacity .3
 
-    &.paramKeyframeIndicator--hasKeyframe
-        opacity 1
+    .twa
+        vertical-align top
 
-    &.paramKeyframeIndicator--nonAnimatable::before
-        content ''
-        display inline-block
-        width calc(1em + 2px)
-        height 1em
+    &.paramIndicator--active
+        opacity 1
 
 .keyframeContainer
     position relative

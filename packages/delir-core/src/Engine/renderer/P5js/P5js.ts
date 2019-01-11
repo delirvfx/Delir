@@ -75,27 +75,26 @@ export default class P5jsRenderer implements IRenderer<Params> {
             ),
         )
 
-        const vm = new VM.Script(context.parameters.sketch.code, {})
+        try {
+            // Make VM scope binded sketch object
+            const vm = new VM.Script(context.parameters.sketch.code, {})
+            vm.runInContext(this.vmGlobal)
 
-        // Make VM scope binded sketch object
-        vm.runInContext(this.vmGlobal)
+            this.canvas = this.p5ex.p5.canvas
+            this.p5ex.p5.createCanvas(context.width, context.height)
 
-        this.canvas = this.p5ex.p5.canvas
-        this.p5ex.p5.createCanvas(context.width, context.height)
-
-        if (typeof this.vmGlobal.setup === 'function') {
-            try {
+            if (typeof this.vmGlobal.setup === 'function') {
                 this.vmGlobal.setup()
-            } catch (e) {
-                throw new UserCodeException(`P5.js script error (${e.message})`, {
-                    sourceError: e,
-                    location: {
-                        type: 'clip',
-                        entityId: context.clip.id,
-                        paramName: 'sketch',
-                    },
-                })
             }
+        } catch (e) {
+            throw new UserCodeException(`P5.js script error (${e.message})`, {
+                sourceError: e,
+                location: {
+                    type: 'clip',
+                    entityId: context.clip.id,
+                    paramName: 'sketch',
+                },
+            })
         }
     }
 

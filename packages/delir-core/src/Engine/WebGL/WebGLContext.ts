@@ -67,11 +67,11 @@ export default class WebGLContext {
     public getProgram(fragmentShaderSource: string, vertexShaderSource: string = DEFAULT_VERTEX_SHADER): WebGLProgram {
         const program = this.gl.createProgram()!
 
-        const vertShader = this.gl.createShader(this.gl.VERTEX_SHADER)
+        const vertShader = this.gl.createShader(this.gl.VERTEX_SHADER)!
         this.gl.shaderSource(vertShader, vertexShaderSource)
         this.gl.compileShader(vertShader)
 
-        const fragShader = this.gl.createShader(this.gl.FRAGMENT_SHADER)
+        const fragShader = this.gl.createShader(this.gl.FRAGMENT_SHADER)!
         this.gl.shaderSource(fragShader, fragmentShaderSource)
         this.gl.compileShader(fragShader)
 

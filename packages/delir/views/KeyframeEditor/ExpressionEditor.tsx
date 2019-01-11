@@ -14,15 +14,17 @@ interface Props {
     title: string | null
     code: string | null
     target: ParameterTarget
-    onClose: (result: EditorResult) => void
+    onChange: (result: EditorResult) => void
+    onClose: () => void
 }
 
 export default class ExpressionEditor extends React.Component<Props> {
-    private _editor: monaco.editor.IStandaloneCodeEditor
+    private editor: monaco.editor.IStandaloneCodeEditor
     private editorElement: HTMLDivElement
+    private disposables: monaco.IDisposable[] = []
 
     public componentDidMount() {
-        this._editor = monaco.editor.create(this.editorElement, {
+        this.editor = monaco.editor.create(this.editorElement, {
             language: 'javascript',
             codeLens: true,
             automaticLayout: true,
@@ -31,20 +33,24 @@ export default class ExpressionEditor extends React.Component<Props> {
             value: this.props.code ? this.props.code : '',
         })
 
-        this._editor.createContextKey('cond1', true)
-        this._editor.createContextKey('cond2', true)
-        this._editor.onDidFocusEditorText(this.onFocusEditor)
-        this._editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.closeWithSave, 'cond1')
+        this.editor.createContextKey('cond1', true)
+        this.editor.createContextKey('cond2', true)
+        this.disposables.push(this.editor.onDidFocusEditorText(this.onFocusEditor))
+        this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClickClose, 'cond1')
+        this.disposables.push(this.editor.onDidChangeModelContent(this.handleChangeContent))
     }
 
-    public shouldComponentUpdate(nextProps: Props, nextState: {}) {
+    public shouldComponentUpdate(nextProps: Props) {
         // Only update contents on target entity changed
         // (Guard from parent component controll to reset content)
-        return nextProps.target.entityId !== this.props.target.entityId
+        return (
+            nextProps.target.entityId !== this.props.target.entityId ||
+            nextProps.target.paramName !== this.props.target.paramName
+        )
     }
 
     public componentDidUpdate() {
-        this._editor.setValue(this.props.code ? this.props.code : '')
+        this.editor.setValue(this.props.code ? this.props.code : '')
     }
 
     public render() {
@@ -54,11 +60,8 @@ export default class ExpressionEditor extends React.Component<Props> {
             <div className={s.ExpressionEditor}>
                 <div className={s.ExpressionEditor__Toolbar}>
                     <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
-                    <Button type="normal" onClick={this.closeWithoutSave}>
-                        変更を破棄
-                    </Button>
-                    <Button type="primary" onClick={this.closeWithSave}>
-                        保存
+                    <Button type="normal" onClick={this.handleClickClose}>
+                        閉じる
                     </Button>
                 </div>
                 <div ref={this.bindEditorElement} className={s.ExpressionEditor__Editor} />
@@ -74,19 +77,14 @@ export default class ExpressionEditor extends React.Component<Props> {
         MonacoUtil.activateLibrarySet('expressionEditor')
     }
 
-    private closeWithSave = () => {
-        this.props.onClose({
-            saved: true,
-            code: this._editor.getValue(),
+    private handleChangeContent = () => {
+        this.props.onChange({
+            code: this.editor.getValue(),
             target: this.props.target,
         })
     }
 
-    private closeWithoutSave = () => {
-        this.props.onClose({
-            saved: false,
-            code: null,
-            target: this.props.target,
-        })
+    private handleClickClose = () => {
+        this.props.onClose()
     }
 }
