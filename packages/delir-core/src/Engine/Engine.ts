@@ -32,6 +32,7 @@ interface RenderingOption {
     loop: boolean
     ignoreMissingEffect: boolean
     realtime: boolean
+    audioBufferSizeSecond: number
 }
 
 interface RenderProgression {
@@ -94,6 +95,7 @@ export default class Engine {
                 ignoreMissingEffect: false,
                 loop: false,
                 realtime: false,
+                audioBufferSizeSecond: 1,
             }
 
             const request = this._initStage(compositionId, renderingOption)
@@ -131,6 +133,7 @@ export default class Engine {
             endFrame: -1,
             ignoreMissingEffect: false,
             realtime: false,
+            audioBufferSizeSecond: 1,
         })
 
         this.stopCurrentRendering()
@@ -161,7 +164,7 @@ export default class Engine {
                 const lastFrame = context.rootComposition.durationFrames
                 let animationFrameId: number
                 let renderedFrames = 0
-                let lastAudioBufferTime = -1
+                let lastAudioBufferTime = -1 * renderingOption.audioBufferSizeSecond
 
                 const throttle = options.realtime
                     ? (fn: () => void) => _.throttle(fn, 1000 / context.framerate)
@@ -177,9 +180,11 @@ export default class Engine {
                     const currentFrame = renderingOption.beginFrame + renderedFrames
                     const currentTime = currentFrame / framerate
 
-                    // 最後のバッファリングから１秒経過 & 次のフレームがレンダリングの終わりでなければバッファリング
+                    // 最後のバッファリングからバッファサイズ分経過 & 次のフレームがレンダリングの終わりでなければバッファリング
                     const isAudioBufferingNeeded =
-                        lastAudioBufferTime !== (currentTime | 0) && renderedFrames + 1 <= context.durationFrames
+                        lastAudioBufferTime === -1 ||
+                        (currentTime - lastAudioBufferTime >= renderingOption.audioBufferSizeSecond &&
+                            renderedFrames + 1 <= context.durationFrames)
 
                     if (isAudioBufferingNeeded) {
                         lastAudioBufferTime = currentTime | 0
@@ -283,17 +288,17 @@ export default class Engine {
         canvas.height = rootComposition.height
 
         const compositionDurationTime = rootComposition.durationFrames / rootComposition.framerate
-        const bufferSizeBytePerSec = rootComposition.samplingRate * 4 /* bytes */
+        const audioBufferSizeByte = rootComposition.samplingRate * option.audioBufferSizeSecond * 4
 
         const audioContext = new OfflineAudioContext(
             rootComposition.audioChannels,
-            Math.ceil(bufferSizeBytePerSec * compositionDurationTime),
+            Math.ceil(audioBufferSizeByte * compositionDurationTime),
             rootComposition.samplingRate,
         )
 
         const audioBuffers = _.times(
             rootComposition.audioChannels,
-            () => new Float32Array(new ArrayBuffer(bufferSizeBytePerSec)),
+            () => new Float32Array(new ArrayBuffer(audioBufferSizeByte)),
         )
 
         const currentFrame = option.beginFrame
@@ -315,7 +320,7 @@ export default class Engine {
             destAudioBuffer: audioBuffers,
             audioContext,
             samplingRate: rootComposition.samplingRate,
-            neededSamples: rootComposition.samplingRate,
+            neededSamples: rootComposition.samplingRate * option.audioBufferSizeSecond,
             audioChannels: rootComposition.audioChannels,
             isAudioBufferingNeeded: false,
 
@@ -397,8 +402,8 @@ export default class Engine {
         destBufferCtx.fillStyle = context.rootComposition.backgroundColor.toString()
         destBufferCtx.fillRect(0, 0, context.width, context.height)
 
-        const channelAudioBuffers = _.times(context.rootComposition.audioChannels, () => {
-            return new Float32Array(new ArrayBuffer(4 /* bytes */ * context.rootComposition.samplingRate))
+        const clipAudioBuffers = _.times(context.rootComposition.audioChannels, () => {
+            return new Float32Array(new ArrayBuffer(context.neededSamples * 4))
         })
 
         for (const layerTask of layerRenderTasks) {
@@ -432,7 +437,7 @@ export default class Engine {
 
                     srcCanvas: clipTask.rendererType === 'adjustment' ? destBufferCanvas : null,
                     destCanvas: clipBufferCanvas,
-                    destAudioBuffer: channelAudioBuffers,
+                    destAudioBuffer: clipAudioBuffers,
                 })
 
                 // Lookup before apply expression referenceable effect params expression
@@ -505,12 +510,12 @@ export default class Engine {
                 if (context.isAudioBufferingNeeded) {
                     await mergeAudioBufferInto(
                         context.destAudioBuffer,
-                        channelAudioBuffers,
+                        clipAudioBuffers,
                         context.audioChannels,
                         context.samplingRate,
                     )
 
-                    for (const chBuffer of channelAudioBuffers) {
+                    for (const chBuffer of clipAudioBuffers) {
                         chBuffer.fill(0)
                     }
                 }

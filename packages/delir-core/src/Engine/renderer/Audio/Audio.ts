@@ -96,16 +96,36 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
         const source = this._audio
         const destBuffers = context.destAudioBuffer
 
+        // Placement offset
+        const isClipHead = context.timeOnClip <= 0
+        const bufferSizeTime = context.neededSamples / context.samplingRate
+        const offsetTimeInBuffer = (context.clip.placedFrame / context.framerate) % bufferSizeTime
+        const startInBufferOffsetSamples = Math.floor(offsetTimeInBuffer * context.samplingRate)
+
+        // Slice position
+        const startTimeSamples = Math.max(0, context.parameters.startTime) * context.samplingRate
+        const elapsedSamples = Math.round(context.timeOnClip * context.samplingRate)
+
         // Slice from source
-        const begin =
-            (context.parameters.startTime * context.samplingRate + context.timeOnClip * context.samplingRate) | 0
+        // (Rewind by amount of bufferOffsetSamples)
+        const begin = Math.floor(startTimeSamples + elapsedSamples - startInBufferOffsetSamples)
         const end = begin + context.neededSamples
 
-        const slices: Float32Array[] = new Array(context.audioChannels)
+        const slices: Float32Array[] = []
 
         for (let ch = 0, l = source.numberOfChannels; ch < l; ch++) {
             const buffer = source.buffers[ch]
-            slices[ch] = buffer.slice(begin, end)
+
+            if (begin < 0) {
+                slices[ch] = new Float32Array(context.neededSamples)
+                slices[ch].set(buffer.slice(Math.max(0, begin), end), startInBufferOffsetSamples)
+            } else {
+                slices[ch] = buffer.slice(begin, end)
+            }
+
+            if (isClipHead) {
+                slices[ch] = slices[ch].fill(0, 0, startInBufferOffsetSamples) // Fill rewinded samples
+            }
         }
 
         // Resampling & gaining
