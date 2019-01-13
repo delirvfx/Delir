@@ -102,6 +102,12 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
         const offsetTimeInBuffer = (context.clip.placedFrame / context.framerate) % bufferSizeTime
         const startInBufferOffsetSamples = Math.floor(offsetTimeInBuffer * context.samplingRate)
 
+        // Cutting position
+        const clipEndTime = (context.clip.placedFrame + context.clip.durationFrames) / context.framerate
+        const isClipEnd = clipEndTime < context.timeOnComposition + bufferSizeTime
+        const clipEndTimeInBuffer = clipEndTime % bufferSizeTime
+        const clipEndPosSamples = Math.floor(clipEndTimeInBuffer * context.samplingRate)
+
         // Slice position
         const startTimeSamples = Math.max(0, context.parameters.startTime) * context.samplingRate
         const elapsedSamples = Math.round(context.timeOnClip * context.samplingRate)
@@ -125,6 +131,10 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
 
             if (isClipHead) {
                 slices[ch] = slices[ch].fill(0, 0, startInBufferOffsetSamples) // Fill rewinded samples
+            }
+
+            if (isClipEnd) {
+                slices[ch].fill(0, clipEndPosSamples)
             }
         }
 
