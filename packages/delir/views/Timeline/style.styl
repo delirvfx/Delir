@@ -13,6 +13,15 @@
 .keyframeGraphRegion
     height 50%
 
+.addLayerIcon
+    margin-left 4px
+    margin-bottom -1px
+    filter invert(100%)
+    cursor pointer
+
+    &:hover
+        background-color rgba(invert(#fff), .2) // inverted, it appear as white
+
 .labelsContainer
     display flex
     flex-direction column
@@ -60,6 +69,10 @@
     flex 1
     padding-bottom 20px
     overflow auto
+
+.currentScale
+    display inline-block
+    margin-left 4px
 
 .scaleLabel
     display inline-flex

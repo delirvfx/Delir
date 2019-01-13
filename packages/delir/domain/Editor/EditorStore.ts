@@ -204,6 +204,10 @@ export default class EditorStore extends Store<EditorState> {
         return this.state.activeParam
     }
 
+    public getActiveComposition() {
+        return this.state.activeComp
+    }
+
     public getClipboardEntry() {
         return this.state.clipboard
     }

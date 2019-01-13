@@ -4,6 +4,7 @@ export default I18n({
     ja: {
         contextMenu: {
             createClip: 'クリップを作成',
+            addLayerHere: '➕ ここにレイヤーを追加',
         },
         renderers: {
             audio: '🔊 オーディオ',
@@ -17,6 +18,7 @@ export default I18n({
     en: {
         contextMenu: {
             createClip: 'Create clip',
+            addLayerHere: '➕ Add layer here',
         },
         renderers: {
             audio: '🔊 Audio',

@@ -1,5 +1,6 @@
 import * as Delir from '@ragg/delir-core'
 import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import * as classNames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
@@ -109,7 +110,13 @@ export default withComponentContext(
                                     {/* Layer Panel */}
                                     <Pane className={s.labelsContainer}>
                                         <div className={s.labelsHeader}>
-                                            <div className={s.columnName}>Layers</div>
+                                            <div className={s.columnName}>
+                                                {t('layers')}
+                                                <i
+                                                    className={classNames('twa twa-heavy-plus-sign', s.addLayerIcon)}
+                                                    onClick={this.handleAddLayer}
+                                                />
+                                            </div>
                                             <div className={s.scaleLabel} onClick={this._toggleScaleList}>
                                                 <DropDown ref="scaleList" className={s.scaleList} shownInitial={false}>
                                                     <li data-value="50" onClick={this._selectScale}>
@@ -131,7 +138,8 @@ export default withComponentContext(
                                                         300%
                                                     </li>
                                                 </DropDown>
-                                                Scale: {(scale * 100) | 0}%
+                                                <i className="fa fa-search-plus" />
+                                                <span className={s.currentScale}>{(scale * 100) | 0}%</span>
                                             </div>
                                         </div>
 
@@ -140,15 +148,6 @@ export default withComponentContext(
                                             className={s.labels}
                                             onScroll={this.handleScrollLayerLabel}
                                         >
-                                            <ContextMenu>
-                                                <MenuItem type="separator" />
-                                                <MenuItem
-                                                    label={t('contextMenu.addLayer')}
-                                                    onClick={this.onLayerCreate}
-                                                    enabled={!!activeComp}
-                                                />
-                                                <MenuItem type="separator" />
-                                            </ContextMenu>
                                             {activeComp && (
                                                 <LayerLabelList
                                                     layers={layers}
@@ -179,20 +178,12 @@ export default withComponentContext(
                                             className={s.layerContainer}
                                             onScroll={this.handleScrollLayerLabel}
                                         >
-                                            <ContextMenu>
-                                                <MenuItem type="separator" />
-                                                <MenuItem
-                                                    label={t('contextMenu.addLayer')}
-                                                    onClick={this.onLayerCreate}
-                                                    enabled={!!activeComp}
-                                                />
-                                                <MenuItem type="separator" />
-                                            </ContextMenu>
                                             {activeComp &&
-                                                layers.map(layer => (
+                                                layers.map((layer, idx) => (
                                                     <Layer
                                                         key={layer.id!}
                                                         layer={layer}
+                                                        layerIndex={idx}
                                                         framerate={framerate}
                                                         pxPerSec={PX_PER_SEC}
                                                         scale={scale}
@@ -259,7 +250,7 @@ export default withComponentContext(
                 this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
             }
 
-            private onLayerCreate = () => {
+            private handleAddLayer = () => {
                 const { editor } = this.props
 
                 if (!editor.activeComp) return
