@@ -98,9 +98,11 @@ export const addLayerWithAsset = operation(
         context,
         {
             targetComposition,
+            index = 0,
             asset,
         }: {
             targetComposition: Delir.Entity.Composition
+            index?: 0
             asset: Delir.Entity.Asset
         },
     ) => {
@@ -146,7 +148,7 @@ export const addLayerWithAsset = operation(
         )
 
         await context.executeOperation(HistoryOps.pushHistory, {
-            command: new AddLayerCommand(targetComposition.id, layer),
+            command: new AddLayerCommand(targetComposition.id, layer, index),
         })
 
         context.dispatch(ProjectActions.addLayerWithAssetAction, {

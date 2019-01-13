@@ -18,12 +18,7 @@ export class RemoveLayerCommand implements Command {
         context.dispatch(ProjectActions.addLayerAction, {
             targetCompositionId: this.parentCompositionId,
             layer: this.removedLayer,
-        })
-
-        context.dispatch(ProjectActions.moveLayerOrderAction, {
-            parentCompositionId: this.parentCompositionId,
-            targetLayerId: this.removedLayer.id,
-            newIndex: this.beforeRemoveIndex,
+            index: this.beforeRemoveIndex,
         })
     }
 
