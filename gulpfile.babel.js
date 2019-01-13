@@ -14,7 +14,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const path = require('path')
 const { join } = require('path')
-const { spawn, spawnSync } = require('child_process')
+const { spawn } = require('child_process')
 
 const NATIVE_MODULES = ['font-manager']
 
@@ -35,6 +35,8 @@ const paths = {
 }
 
 const isWindows = os.type() === 'Windows_NT'
+const isMacOS = os.type() === 'Darwin'
+const isLinux = os.type() === 'Linux'
 const __DEV__ = process.env.DELIR_ENV === 'dev'
 
 export function buildBrowserJs(done) {
@@ -442,9 +444,9 @@ export async function pack(done) {
     })
 
     const targets = [
-        ...(!isWindows ? [builder.Platform.MAC.createTarget()] : []),
-        builder.Platform.WINDOWS.createTarget(),
-        // ...builder.Platform.LINUX.createTarget(),
+        ...(isMacOS ? [builder.Platform.MAC.createTarget()] : []),
+        ...(isWindows ? [builder.Platform.WINDOWS.createTarget()] : []),
+        ...(isLinux ? [builder.Platform.LINUX.createTarget()] : []),
     ]
 
     for (const target of targets) {
@@ -473,6 +475,10 @@ export async function pack(done) {
                 win: {
                     target: 'dir',
                     icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
+                },
+                linux: {
+                    target: 'AppImage',
+                    icon: join(__dirname, 'build-assets/icons/png/512x512.png'),
                 },
             },
         })
