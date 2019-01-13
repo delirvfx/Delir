@@ -2,7 +2,6 @@ const g = require('gulp')
 const $ = require('gulp-load-plugins')()
 const webpack = require('webpack')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const builder = require('electron-builder')
@@ -69,7 +68,7 @@ export function buildBrowserJs(done) {
             plugins: [
                 ...(__DEV__
                     ? [new webpack.ExternalsPlugin('commonjs', ['devtron', 'electron-devtools-installer'])]
-                    : [new webpack.optimize.AggressiveMergingPlugin(), new UglifyJSPlugin()]),
+                    : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
         },
         function(err, stats) {
@@ -298,7 +297,7 @@ export function compileRendererJs(done) {
                     tsconfig: join(paths.src.frontend, 'tsconfig.json'),
                     workers: 3,
                 }),
-                ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin(), new UglifyJSPlugin()]),
+                ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
         },
         function(err, stats) {
@@ -374,7 +373,7 @@ export function compilePlugins(done) {
                 new CleanWebpackPlugin([''], { verbose: true, root: join(paths.compiled.root, 'plugins') }),
                 new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
                 new webpack.ExternalsPlugin('commonjs', ['delir-core', '@ragg/delir-core']),
-                ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin(), new UglifyJSPlugin()]),
+                ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
         },
         function(err, stats) {
