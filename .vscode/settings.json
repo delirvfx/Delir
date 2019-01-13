@@ -1,4 +1,5 @@
 {
     "typescript.tsdk": "./node_modules/typescript/lib",
-    "tslint.autoFixOnSave": true
+    "tslint.autoFixOnSave": true,
+    "prettier.disableLanguages": ["vue", "json", "markdown"]
 }
