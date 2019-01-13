@@ -75,7 +75,7 @@ export default withComponentContext(
                             </div>
                             <div className={s.Preview_Footer}>
                                 <label className={s.FooterItem} onClick={this.toggleScaleList}>
-                                    <i className="fa fa-search" />
+                                    <i className="fa fa-search-plus" />
                                     <span className={s.currentScale}>{currentScale}%</span>
                                     <DropDown
                                         ref={this.scaleListRef}

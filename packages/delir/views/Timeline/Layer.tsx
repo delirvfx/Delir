@@ -21,6 +21,7 @@ import * as s from './Layer.styl'
 
 interface OwnProps {
     layer: Delir.Entity.Layer
+    layerIndex: number
     activeClip: Delir.Entity.Clip | null
     framerate: number
     pxPerSec: number
@@ -90,11 +91,12 @@ export default withComponentContext(
                                         key={idx}
                                         label={t(['renderers', renderer.rendererId])}
                                         data-renderer-id={renderer.rendererId}
-                                        onClick={this.addNewClip}
+                                        onClick={this.handleAddNewClip}
                                     />
                                 ))}
                             </MenuItem>
                             <MenuItem type="separator" />
+                            <MenuItem label={t('contextMenu.addLayerHere')} onClick={this.handleAddLayer} />
                         </ContextMenu>
 
                         <div className={s.clipsContainer}>
@@ -121,7 +123,7 @@ export default withComponentContext(
                                         postEffectPlugins={postEffectPlugins}
                                         hasError={hasError}
                                         onChangePlace={this.handleChangeClipPlace}
-                                        onChangeDuration={this.changeClipDuration}
+                                        onChangeDuration={this.handleChangeClipDuration}
                                     />
                                 )
                             })}
@@ -204,7 +206,7 @@ export default withComponentContext(
                 })
             }
 
-            private changeClipDuration = (clipId: string, newWidth: number) => {
+            private handleChangeClipDuration = (clipId: string, newWidth: number) => {
                 const newDurationFrames = TimePixelConversion.pixelToFrames({
                     pxPerSec: this.props.pxPerSec,
                     framerate: this.props.framerate,
@@ -218,12 +220,25 @@ export default withComponentContext(
                 })
             }
 
-            private addNewClip = ({ dataset }: MenuItemOption<{ rendererId: string }>) => {
+            private handleAddNewClip = ({ dataset }: MenuItemOption<{ rendererId: string }>) => {
                 this.props.context.executeOperation(ProjectOps.addClip, {
                     layerId: this.props.layer.id!,
                     clipRendererId: dataset.rendererId,
                     placedFrame: 0,
                     durationFrames: 100,
+                })
+            }
+
+            private handleAddLayer = () => {
+                const {
+                    editor: { activeComp },
+                    layerIndex,
+                } = this.props
+                if (!activeComp) return
+
+                this.props.context.executeOperation(ProjectOps.addLayer, {
+                    targetCompositionId: activeComp.id,
+                    index: layerIndex,
                 })
             }
 

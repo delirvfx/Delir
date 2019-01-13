@@ -31,9 +31,9 @@ export default class ProjectStore extends Store<ProjectStoreState> {
         this.updateLastModified()
     })
 
-    private handleAddLayer = listen(ProjectActions.addLayerAction, ({ targetCompositionId, layer }) => {
+    private handleAddLayer = listen(ProjectActions.addLayerAction, ({ targetCompositionId, layer, index }) => {
         const { project } = this.state
-        project!.findComposition(targetCompositionId)!.addLayer(layer)
+        project!.findComposition(targetCompositionId)!.addLayer(layer, index)
         this.updateLastModified()
     })
 

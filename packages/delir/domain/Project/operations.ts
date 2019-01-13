@@ -71,19 +71,24 @@ export const addLayer = operation(
         context,
         {
             targetCompositionId,
+            index = 0,
             patch = {},
         }: {
             targetCompositionId: string
+            index?: number
             patch?: Partial<Delir.Entity.Layer>
         },
     ) => {
         const layer = new Delir.Entity.Layer({ name: patch.name || '' })
+
         await context.executeOperation(HistoryOps.pushHistory, {
-            command: new AddLayerCommand(targetCompositionId, layer),
+            command: new AddLayerCommand(targetCompositionId, layer, index),
         })
+
         context.dispatch(ProjectActions.addLayerAction, {
             targetCompositionId: targetCompositionId,
             layer,
+            index,
         })
     },
 )
