@@ -21,7 +21,7 @@ import { RenderContextBase } from './RenderContext/RenderContextBase'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
 import { LayerRenderTask } from './Task/LayerRenderTask'
-import WebGLContext from './WebGL/WebGLContext'
+// import WebGLContext from './WebGL/WebGLContext'
 
 export interface ExpressionExecuters {
     [paramName: string]: (exposes: ExpressionContext.ContextSource) => ParameterValueTypes
@@ -53,7 +53,7 @@ export default class Engine {
     private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
     private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
     private _streamObserver: IRenderingStreamObserver | null = null
-    private _gl: WebGL2RenderingContext
+    // private _gl: WebGL2RenderingContext
 
     get pluginRegistry() {
         return this._pluginRegistry
@@ -327,7 +327,7 @@ export default class Engine {
 
             rootComposition,
             resolver,
-            gl: new WebGLContext(rootComposition.width, rootComposition.height),
+            // gl: new WebGLContext(rootComposition.width, rootComposition.height),
         })
     }
 
