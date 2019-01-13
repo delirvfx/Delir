@@ -1,3 +1,6 @@
+import * as _ from 'lodash'
+import * as timecodes from 'node-timecodes'
+
 import { Clip, Effect, Project } from '../Entity'
 import EffectPluginBase from '../PluginSupport/PostEffectBase'
 import { ParameterValueTypes } from '../PluginSupport/type-descriptor'
@@ -7,9 +10,6 @@ import { IRenderer } from './Renderer/RendererBase'
 
 import PluginRegistry from '../PluginSupport/plugin-registry'
 
-import WebGLContext from '@ragg/delir-core/src/Engine/WebGL/WebGLContext'
-import * as _ from 'lodash'
-import * as timecodes from 'node-timecodes'
 import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
@@ -21,6 +21,7 @@ import { RenderContextBase } from './RenderContext/RenderContextBase'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
 import { LayerRenderTask } from './Task/LayerRenderTask'
+import WebGLContext from './WebGL/WebGLContext'
 
 export interface ExpressionExecuters {
     [paramName: string]: (exposes: ExpressionContext.ContextSource) => ParameterValueTypes
