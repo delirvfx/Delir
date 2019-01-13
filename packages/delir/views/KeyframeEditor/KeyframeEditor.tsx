@@ -49,6 +49,7 @@ interface ConnectedProps {
     activeParam: ParameterTarget | null
     project: ProjectStoreState
     userCodeException: Delir.Exceptions.UserCodeException | null
+    postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
 }
 
 interface State {
@@ -62,12 +63,16 @@ interface State {
 type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(
-    connectToStores([EditorStore, ProjectStore, RendererStore], context => ({
-        editor: context.getStore(EditorStore).getState(),
-        activeParam: context.getStore(EditorStore).getActiveParam(),
-        project: context.getStore(ProjectStore).getState(),
-        userCodeException: context.getStore(RendererStore).getUserCodeException(),
-    }))(
+    connectToStores(
+        [EditorStore, ProjectStore, RendererStore],
+        (context): ConnectedProps => ({
+            editor: context.getStore(EditorStore).getState(),
+            activeParam: context.getStore(EditorStore).getActiveParam(),
+            project: context.getStore(ProjectStore).getState(),
+            userCodeException: context.getStore(RendererStore).getUserCodeException(),
+            postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins(),
+        }),
+    )(
         class KeyframeEditor extends React.Component<Props, State> {
             public static defaultProps: Partial<Props> = {
                 scrollLeft: 0,
@@ -105,13 +110,7 @@ export default withComponentContext(
             }
 
             public render() {
-                const {
-                    activeClip,
-                    project: { project },
-                    editor,
-                    activeParam,
-                    scrollLeft,
-                } = this.props
+                const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins } = this.props
                 const {
                     keyframeViewViewBox,
                     graphWidth,
@@ -144,6 +143,25 @@ export default withComponentContext(
                 return (
                     <Workspace direction="horizontal" className={s.keyframeView}>
                         <Pane className={s.paramList}>
+                            {activeClip && (
+                                <ContextMenu>
+                                    <MenuItem label={t('contextMenu.effect')}>
+                                        {postEffectPlugins.length ? (
+                                            postEffectPlugins.map(entry => (
+                                                <MenuItem
+                                                    key={entry.id}
+                                                    label={entry.name}
+                                                    data-clip-id={activeClip.id}
+                                                    data-effect-id={entry.id}
+                                                    onClick={this.handleAddEffect}
+                                                />
+                                            ))
+                                        ) : (
+                                            <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
+                                        )}
+                                    </MenuItem>
+                                </ContextMenu>
+                            )}
                             {this.renderProperties()}
                             {this.renderEffectProperties()}
                         </Pane>
@@ -614,6 +632,14 @@ export default withComponentContext(
 
             private onCloseExpressionEditor = () => {
                 this.setState({ editorOpened: false })
+            }
+
+            private handleAddEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
+                this.props.context.executeOperation(ProjectOps.addEffectIntoClip, {
+                    clipId: dataset.clipId,
+                    processorId: dataset.effectId,
+                })
+                this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
             }
 
             private _syncGraphHeight = () => {
