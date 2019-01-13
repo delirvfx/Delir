@@ -58,7 +58,9 @@ class Composition implements CompositionProps {
             return
         }
 
-        this.layers = [...this.layers].splice(index, 0, layer)
+        const layers = [...this.layers]
+        layers.splice(index, 0, layer)
+        this.layers = layers
     }
 
     public removeLayer(layerId: string): boolean {
