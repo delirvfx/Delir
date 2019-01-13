@@ -538,18 +538,15 @@ export function watch() {
 
 const buildRendererWithoutJs = g.parallel(compilePugTempates, copyImage)
 const buildRenderer = g.parallel(
-    g.series(
-        generateLicenses,
-        compileRendererJs,
-        g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson),
-    ),
+    g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)),
     compilePugTempates,
     copyImage,
 )
+
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules))
 const build = g.parallel(buildRenderer, buildBrowser)
 const buildAndWatch = g.series(clean, build, run, watch)
-const publish = g.series(clean, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage)
+const publish = g.series(clean, generateLicenses, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage)
 
 export { publish, build }
 export default buildAndWatch
