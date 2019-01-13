@@ -374,10 +374,6 @@ export const dependencies = [
         url: 'http://typescriptlang.org/',
     },
     {
-        name: 'uglifyjs-webpack-plugin',
-        url: 'https://github.com/webpack-contrib/uglifyjs-webpack-plugin',
-    },
-    {
         name: 'uuid',
         url: 'https://www.npmjs.com/package/uuid',
     },
