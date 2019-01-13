@@ -28,12 +28,27 @@ interface ConnectedProps {
     postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
 }
 
+interface State {
+    left: number
+}
+
 type Props = OwnProps & ConnectedProps & ContextProp
 
 export default withComponentContext(
-    class Clip extends React.Component<Props> {
+    class Clip extends React.Component<Props, State> {
+        public state: State = {
+            left: this.props.left,
+        }
+
+        public componentDidUpdate(prevProps: Props) {
+            if (prevProps.left !== this.props.left) {
+                this.setState({ left: this.props.left })
+            }
+        }
+
         public render() {
-            const { clip, active, postEffectPlugins, width, left, hasError } = this.props
+            const { clip, active, postEffectPlugins, width, hasError } = this.props
+            const { left } = this.state
 
             return (
                 <Rnd
@@ -58,6 +73,7 @@ export default withComponentContext(
                     }}
                     onDragStart={this.handleDragStart}
                     onDragStop={this.handleDragEnd}
+                    onResize={this.handleResize}
                     onResizeStop={this.handleResizeEnd}
                     onMouseDown={this.handleClick}
                     tabIndex={-1}
@@ -112,6 +128,10 @@ export default withComponentContext(
 
         private handleDragEnd: DraggableEventHandler = (e, drag) => {
             this.props.onChangePlace(this.props.clip.id, drag.x)
+        }
+
+        private handleResize: RndResizeCallback = (e, dir, ref, delta, pos) => {
+            this.setState({ left: pos.x })
         }
 
         private handleResizeEnd: RndResizeCallback = (e, direction, ref, delta, pos) => {
