@@ -8,7 +8,7 @@ export interface ClipRenderContext<T extends { [paramName: string]: any }>
         ClipRenderContextAttributes<T> {}
 
 export interface ClipRenderContextAttributes<T extends RealParameterValues> {
-    clip: Clip
+    clip: Readonly<Clip>
     parameters: T
     clipEffectParams: ReferenceableEffectsParams
 

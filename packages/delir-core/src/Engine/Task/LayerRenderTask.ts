@@ -13,20 +13,20 @@ export class LayerRenderTask {
     public clipRenderTasks: ClipRenderTask[]
 
     public findRenderTargetClipTasks(context: RenderContextBase) {
-        const audioBufferingSizeTime = context.neededSamples / context.samplingRate
-        const audioRenderStartRangeFrame = audioBufferingSizeTime * context.framerate
+        const audioBufferSizeTime = context.neededSamples / context.samplingRate
+        const audioBufferRangeFrame = audioBufferSizeTime * context.framerate
 
         return this.clipRenderTasks.filter(clip => {
             if (context.isAudioBufferingNeeded && clip.rendererType === 'audio') {
                 return (
-                    clip.clipPlacedFrame <= context.frameOnComposition + audioRenderStartRangeFrame &&
-                    clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
+                    clip.clipPlacedFrame <= context.frameOnComposition + audioBufferRangeFrame - 1 &&
+                    clip.clipPlacedFrame + clip.clipDurationFrames > context.frameOnComposition
                 )
             }
 
             return (
                 clip.clipPlacedFrame <= context.frameOnComposition &&
-                clip.clipPlacedFrame + clip.clipDurationFrames >= context.frameOnComposition
+                clip.clipPlacedFrame + clip.clipDurationFrames > context.frameOnComposition
             )
         })
     }

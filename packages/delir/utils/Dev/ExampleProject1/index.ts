@@ -17,7 +17,7 @@ const videoAsset = new Delir.Entity.Asset({
 const audioAsset = new Delir.Entity.Asset({
     name: 'Audio',
     fileType: 'mp3',
-    path: join(dirname, 'audio.mp3'),
+    path: join(dirname, 'Infosphere_Guardians.mp3'),
 })
 
 const imageAsset = new Delir.Entity.Asset({
@@ -106,7 +106,7 @@ const textClip = assign(
 const audioClip = assign(
     new Delir.Entity.Clip({
         renderer: 'audio',
-        placedFrame: 0,
+        placedFrame: 15,
         durationFrames,
     }),
     {
@@ -114,6 +114,12 @@ const audioClip = assign(
             source: [
                 new Delir.Entity.Keyframe({
                     value: { assetId: audioAsset.id },
+                    frameOnClip: 0,
+                }),
+            ],
+            startTime: [
+                new Delir.Entity.Keyframe({
+                    value: 33,
                     frameOnClip: 0,
                 }),
             ],
@@ -263,6 +269,7 @@ const videoClip = assign(
 
 layer1.addClip(adjustmentClip)
 layer2.addClip(textClip)
+layer3.addClip(audioClip)
 layer4.addClip(p5jsClip)
 layer5.addClip(videoClip)
 

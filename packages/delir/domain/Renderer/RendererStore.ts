@@ -23,6 +23,8 @@ export interface RenderState {
     currentFrame: number
 }
 
+const AUDIO_BUFFER_SIZE_SECONDS = 1
+
 export default class RendererStore extends Store<State> {
     public static storeName = 'RendererStore'
 
@@ -44,6 +46,7 @@ export default class RendererStore extends Store<State> {
 
     private audioContext: AudioContext | null = null
     private audioBuffer: AudioBuffer | null = null
+    private audioBufferSource: AudioBufferSourceNode | null = null
 
     private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, ({ project }) => {
         this.pipeline.setProject(project)
@@ -74,16 +77,15 @@ export default class RendererStore extends Store<State> {
 
     private handleStartPreveiew = listen(
         EditorActions.startPreviewAction,
-        ({ compositionId, beginFrame, ignoreMissingEffect }) => {
+        async ({ compositionId, beginFrame, ignoreMissingEffect }) => {
             if (!this.state.project || !this.state.composition || !this.destCanvas || !this.destCanvasCtx) return
 
             const { project } = this.state
             const targetComposition = project.findComposition(compositionId)
             if (!targetComposition) return
 
-            if (this.audioContext) {
-                this.audioContext.close()
-            }
+            this.audioBufferSource && this.audioBufferSource.stop()
+            this.audioContext && (await this.audioContext.close())
 
             this.updateWith(s => (s.exception = null))
 
@@ -91,7 +93,7 @@ export default class RendererStore extends Store<State> {
 
             this.audioBuffer = this.audioContext.createBuffer(
                 targetComposition.audioChannels,
-                /* length */ targetComposition.samplingRate,
+                /* length */ targetComposition.samplingRate * AUDIO_BUFFER_SIZE_SECONDS,
                 /* sampleRate */ targetComposition.samplingRate,
             )
 
@@ -114,8 +116,9 @@ export default class RendererStore extends Store<State> {
                     audioBufferSource.buffer = this.audioBuffer
                     audioBufferSource.connect(this.audioContext!.destination)
 
-                    audioBufferSource.start(0, 0, 1)
-                    audioBufferSource.stop(this.audioContext!.currentTime + 1)
+                    this.audioBufferSource && this.audioBufferSource.stop()
+                    this.audioBufferSource = audioBufferSource
+                    audioBufferSource.start()
                     audioBufferSource.onended = () => {
                         audioBufferSource.disconnect(this.audioContext!.destination)
                     }
@@ -127,6 +130,7 @@ export default class RendererStore extends Store<State> {
                 loop: true,
                 ignoreMissingEffect: ignoreMissingEffect,
                 realtime: true,
+                audioBufferSizeSecond: AUDIO_BUFFER_SIZE_SECONDS,
             })
 
             promise.progress(progress => {
@@ -148,6 +152,7 @@ export default class RendererStore extends Store<State> {
 
     private handleStopPreview = listen(EditorActions.stopPreviewAction, () => {
         this.pipeline.stopCurrentRendering()
+        this.audioBufferSource && this.audioBufferSource.stop()
     })
 
     private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, payload => {
