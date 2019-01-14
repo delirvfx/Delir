@@ -253,7 +253,6 @@ export default withComponentContext(
                     layerId: layer.id,
                     newIndex,
                 })
-                this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
             }
 
             private handleAddLayer = () => {
