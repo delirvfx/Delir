@@ -583,6 +583,7 @@ export default withComponentContext(
             private handleOpenScriptParamEditor = () => {
                 this.setState({ scriptParamEditorOpened: true })
             }
+
             private handleCloseScriptParamEditor = (result: EditorResult) => {
                 const { activeClip } = this.props
                 if (!activeClip) return
@@ -632,7 +633,6 @@ export default withComponentContext(
                     clipId: dataset.clipId,
                     processorId: dataset.effectId,
                 })
-                this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
             }
 
             private _syncGraphHeight = () => {
@@ -686,10 +686,6 @@ export default withComponentContext(
                     frameOnClip,
                     patch: { value },
                 })
-
-                this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
-                    frame: this.props.editor.currentPreviewFrame,
-                })
             }
 
             private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) => {
@@ -706,10 +702,6 @@ export default withComponentContext(
                     paramName: desc.paramName,
                     frameOnClip,
                     patch: { value },
-                })
-
-                this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
-                    frame: currentPreviewFrame,
                 })
             }
 
@@ -791,10 +783,6 @@ export default withComponentContext(
                     this.props.context.executeOperation(ProjectOps.removeEffect, {
                         holderClipId: dataset.clipId,
                         effectId: dataset.effectId,
-                    })
-
-                    this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
-                        frame: this.props.editor.currentPreviewFrame,
                     })
                 })
             }
