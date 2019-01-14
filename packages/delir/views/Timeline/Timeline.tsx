@@ -300,10 +300,10 @@ export default withComponentContext(
 
                 if (!activeComp) {
                     this.props.context.executeOperation(EditorOps.notify, {
-                        message: 'Must be select any composition before add assets to timeline',
+                        message: t('errors.compositionNotSelected'),
                         title: 'Woops',
-                        level: 'error',
-                        timeout: 1000,
+                        level: 'info',
+                        timeout: 4000,
                     })
 
                     return

@@ -6,11 +6,17 @@ export default I18n({
             layerName: 'レイヤー',
         },
         layers: 'レイヤー',
+        errors: {
+            compositionNotSelected: '落ち着いて。まだどのコンポジションを編集するか決めてない。',
+        },
     },
     en: {
         placeHolder: {
             layerName: 'Unnamed Layer',
         },
         layers: 'Layers',
+        errors: {
+            compositionNotSelected: 'Must be select any composition before add assets to timeline',
+        },
     },
 })
