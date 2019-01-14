@@ -810,7 +810,7 @@ export default withComponentContext(
                 this.props.context.executeOperation(ProjectOps.modifyEffect, {
                     clipId: this.props.activeClip!.id,
                     effectId,
-                    patch: { referenceName },
+                    patch: { referenceName: referenceName !== '' ? referenceName : null },
                 })
             }
 
