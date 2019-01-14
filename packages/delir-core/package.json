@@ -1,6 +1,6 @@
 {
   "name": "@ragg/delir-core",
-  "version": "0.6.3-alpha",
+  "version": "0.6.3",
   "description": "JavaScript VFX Engine",
   "types": "typings/index.d.ts",
   "author": "Ragg <ragg.devpr@gmail.com>",
