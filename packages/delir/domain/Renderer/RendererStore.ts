@@ -173,7 +173,10 @@ export default class RendererStore extends Store<State> {
         const appPath = dirname(remote.app.getPath('exe'))
         const ffmpegBin = __DEV__
             ? 'ffmpeg'
-            : require('path').resolve(appPath, Platform.isMacOS() ? '../Resources/ffmpeg' : './ffmpeg.exe')
+            : require('path').resolve(
+                  appPath,
+                  Platform.isMacOS() ? '../Resources/ffmpeg' : Platform.isLinux() ? 'ffmpeg' : './ffmpeg.exe',
+              )
 
         // TODO: View側で聞いてくれ
         const file = remote.dialog.showSaveDialog({
