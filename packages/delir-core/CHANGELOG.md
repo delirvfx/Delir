@@ -1,3 +1,7 @@
+### 0.6.4
+- Fix all layers vanished in `Composition#moveLayerIndex`
+- Fix all effects vanished in `Clip#{addEffect,moveEffectIndex}`
+
 ### 0.6.3
 Publishing test. no changes.
 
