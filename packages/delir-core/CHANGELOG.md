@@ -1,3 +1,6 @@
+### 0.6.3
+Publishing test. no changes.
+
 ### 0.6.2
 - Unhandled syntax error in p5.js or expression code now be handled
 - Fix dropping head of audio for Audio clip
