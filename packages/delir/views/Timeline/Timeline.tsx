@@ -176,7 +176,7 @@ export default withComponentContext(
                                         <div
                                             ref="timelineLayers"
                                             className={s.layerContainer}
-                                            onScroll={this.handleScrollLayerLabel}
+                                            onScroll={this.handleScrollTimeline}
                                         >
                                             {activeComp &&
                                                 layers.map((layer, idx) => (
@@ -225,10 +225,16 @@ export default withComponentContext(
                 })
             }
 
-            private handleScrollLayerLabel = (e: React.UIEvent<HTMLElement>) => {
+            private handleScrollLayerLabel = (e: React.UIEvent<HTMLDivElement>) => {
                 this.setState({
-                    timelineScrollLeft: e.currentTarget.scrollLeft,
                     timelineScrollTop: e.currentTarget.scrollTop,
+                })
+            }
+
+            private handleScrollTimeline = (e: React.UIEvent<HTMLDivElement>) => {
+                this.setState({
+                    timelineScrollTop: e.currentTarget.scrollTop,
+                    timelineScrollLeft: e.currentTarget.scrollLeft,
                 })
             }
 
