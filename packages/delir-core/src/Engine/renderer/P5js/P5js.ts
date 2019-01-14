@@ -80,8 +80,10 @@ export default class P5jsRenderer implements IRenderer<Params> {
             const vm = new VM.Script(context.parameters.sketch.code, {})
             vm.runInContext(this.vmGlobal)
 
-            this.canvas = this.p5ex.p5.canvas
             this.p5ex.p5.createCanvas(context.width, context.height)
+            this.canvas = this.p5ex.p5.canvas
+            this.canvas.width = context.width
+            this.canvas.height = context.height
 
             if (typeof this.vmGlobal.setup === 'function') {
                 this.vmGlobal.setup()
