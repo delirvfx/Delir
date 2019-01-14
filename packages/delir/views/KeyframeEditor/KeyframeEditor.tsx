@@ -177,8 +177,7 @@ export default withComponentContext(
                                         title={activeParamDescriptor.label}
                                         target={activeParam}
                                         code={expressionCode}
-                                        onChange={this.handleChangeExpression}
-                                        onClose={this.onCloseExpressionEditor}
+                                        onClose={this.handleCloseExpressionEditor}
                                     />
                                 )}
                                 {scriptParamEditorOpened &&
@@ -200,7 +199,6 @@ export default withComponentContext(
                                                 title={activeParamDescriptor.label}
                                                 target={activeParam}
                                                 code={(value as Delir.Values.Expression).code}
-                                                onChange={this.handleChangeScriptParam}
                                                 onClose={this.handleCloseScriptParamEditor}
                                             />
                                         )
@@ -585,8 +583,7 @@ export default withComponentContext(
             private handleOpenScriptParamEditor = () => {
                 this.setState({ scriptParamEditorOpened: true })
             }
-
-            private handleChangeScriptParam = (result: EditorResult) => {
+            private handleCloseScriptParamEditor = (result: EditorResult) => {
                 const { activeClip } = this.props
                 if (!activeClip) return
 
@@ -598,13 +595,11 @@ export default withComponentContext(
                         value: new Delir.Values.Expression('javascript', result.code!),
                     },
                 })
-            }
 
-            private handleCloseScriptParamEditor = () => {
                 this.setState({ scriptParamEditorOpened: false })
             }
 
-            private handleChangeExpression = (result: EditorResult) => {
+            private handleCloseExpressionEditor = (result: EditorResult) => {
                 const { activeClip } = this.props
                 if (!activeClip) return
 
@@ -628,9 +623,7 @@ export default withComponentContext(
                         },
                     })
                 }
-            }
 
-            private onCloseExpressionEditor = () => {
                 this.setState({ editorOpened: false })
             }
 

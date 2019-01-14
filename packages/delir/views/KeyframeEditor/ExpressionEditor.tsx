@@ -9,13 +9,13 @@ import { ParameterTarget } from '../../domain/Editor/types'
 import { EditorResult } from './KeyframeEditor'
 
 import * as s from './ExpressionEditor.styl'
+import t from './KeyframeEditor.i18n'
 
 interface Props {
     title: string | null
     code: string | null
     target: ParameterTarget
-    onChange: (result: EditorResult) => void
-    onClose: () => void
+    onClose: (result: EditorResult) => void
 }
 
 export default class ExpressionEditor extends React.Component<Props> {
@@ -61,7 +61,7 @@ export default class ExpressionEditor extends React.Component<Props> {
                 <div className={s.ExpressionEditor__Toolbar}>
                     <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
                     <Button type="normal" onClick={this.handleClickClose}>
-                        閉じる
+                        {t('save')}
                     </Button>
                 </div>
                 <div ref={this.bindEditorElement} className={s.ExpressionEditor__Editor} />
