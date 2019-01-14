@@ -130,7 +130,7 @@ export default async (options: ExportOptions): Promise<void> => {
         loop: false,
         ignoreMissingEffect: options.ignoreMissingEffect,
         realtime: false,
-        audioBufferSizeSecond: 1,
+        audioBufferSizeSecond: 0.5,
     })
     // await queue.waitEmpty()
 
