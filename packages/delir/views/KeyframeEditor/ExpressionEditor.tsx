@@ -37,7 +37,6 @@ export default class ExpressionEditor extends React.Component<Props> {
         this.editor.createContextKey('cond2', true)
         this.disposables.push(this.editor.onDidFocusEditorText(this.onFocusEditor))
         this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClickClose, 'cond1')
-        this.disposables.push(this.editor.onDidChangeModelContent(this.handleChangeContent))
     }
 
     public shouldComponentUpdate(nextProps: Props) {
@@ -77,14 +76,10 @@ export default class ExpressionEditor extends React.Component<Props> {
         MonacoUtil.activateLibrarySet('expressionEditor')
     }
 
-    private handleChangeContent = () => {
-        this.props.onChange({
+    private handleClickClose = () => {
+        this.props.onClose({
             code: this.editor.getValue(),
             target: this.props.target,
         })
-    }
-
-    private handleClickClose = () => {
-        this.props.onClose()
     }
 }
