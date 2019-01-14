@@ -193,10 +193,12 @@ export default withComponentContext(
             }
 
             private handleChangeClipPlace = (clipId: string, newPlacedPx: number) => {
+                const { scrollLeft } = this.props
+
                 const newPlacedFrame = TimePixelConversion.pixelToFrames({
                     pxPerSec: this.props.pxPerSec,
                     framerate: this.props.framerate,
-                    pixel: newPlacedPx,
+                    pixel: newPlacedPx + scrollLeft,
                     scale: this.props.scale,
                 })
 
