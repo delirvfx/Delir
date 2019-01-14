@@ -123,6 +123,16 @@ const audioClip = assign(
                     frameOnClip: 0,
                 }),
             ],
+            volume: [
+                new Delir.Entity.Keyframe({
+                    value: 60,
+                    frameOnClip: 0,
+                }),
+                new Delir.Entity.Keyframe({
+                    value: 60,
+                    frameOnClip: 120,
+                }),
+            ],
         },
     },
 )

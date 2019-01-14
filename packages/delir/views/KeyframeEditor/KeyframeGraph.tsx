@@ -35,6 +35,35 @@ interface State {
     easingHandleMovement: { x: number; y: number } | null
 }
 
+interface KeyframePoint {
+    keyframeId: string
+    frame: number
+    point: { x: number; y: number }
+    transitionPath: {
+        begin: {
+            x: number
+            y: number
+            handleX: number
+            handleY: number
+        }
+        end: { x: number; y: number; handleX: number; handleY: number }
+    } | null
+    easeOutLine: {
+        x: number
+        y: number
+        endX: number
+        endY: number
+    } | null
+    nextEaseInLine: {
+        x: number
+        y: number
+        endX: number
+        endY: number
+    } | null
+    easeOutHandle: { x: number; y: number } | null
+    nextEaseInHandle: { x: number; y: number } | null
+}
+
 export interface KeyframePatch {
     easeInParam?: [number, number]
     easeOutParam?: [number, number]
@@ -154,21 +183,30 @@ export default withComponentContext(
                     if (keyframeIdx === -1) break process
 
                     const { beginX, beginY, endX, endY } = _.mapValues(transitionPath.dataset, val => parseFloat(val!))
-                    const rect = { width: endX - beginX, height: endY - beginY }
-                    const position = {
+                    const rect = {
+                        width: endX - beginX,
+                        height: endY - beginY,
+                    }
+                    const handlePosition = {
                         x: data.element.cx.baseVal.value,
                         y: data.element.cy.baseVal.value,
                     }
 
+                    const easeParam: [number, number] = [
+                        (handlePosition.x - beginX) / rect.width,
+                        // guard from division by 0
+                        rect.height === 0 ? 0 : (handlePosition.y - beginY) / rect.height,
+                    ]
+
                     if (data.type === 'ease-in') {
                         const keyframe = keyframes[keyframeIdx + 1]
                         onModified(parentClip.id, paramName, keyframe.frameOnClip, {
-                            easeInParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height],
+                            easeInParam: easeParam,
                         })
                     } else if (data.type === 'ease-out') {
                         const keyframe = keyframes[keyframeIdx]
                         onModified(parentClip.id, paramName, keyframe.frameOnClip, {
-                            easeOutParam: [(position.x - beginX) / rect.width, (position.y - beginY) / rect.height],
+                            easeOutParam: easeParam,
                         })
                     }
                 }
@@ -474,36 +512,7 @@ export default withComponentContext(
         /**
          * Calculate keyframe place points
          */
-        private buildKeyframePoints = (
-            keyframes: ReadonlyArray<Delir.Entity.Keyframe>,
-        ): {
-            keyframeId: string
-            frame: number
-            point: { x: number; y: number }
-            transitionPath: {
-                begin: {
-                    x: number
-                    y: number
-                    handleX: number
-                    handleY: number
-                }
-                end: { x: number; y: number; handleX: number; handleY: number }
-            } | null
-            easeOutLine: {
-                x: number
-                y: number
-                endX: number
-                endY: number
-            } | null
-            nextEaseInLine: {
-                x: number
-                y: number
-                endX: number
-                endY: number
-            } | null
-            easeOutHandle: { x: number; y: number } | null
-            nextEaseInHandle: { x: number; y: number } | null
-        }[] => {
+        private buildKeyframePoints = (keyframes: ReadonlyArray<Delir.Entity.Keyframe>): KeyframePoint[] => {
             const { parentClip, descriptor, height, scrollLeft } = this.props
 
             if (!descriptor || descriptor.animatable === false) return []
