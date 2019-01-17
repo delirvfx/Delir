@@ -123,12 +123,14 @@ export class ParametersTable {
             if (!this.expressions[paramName]) return value
 
             try {
-                return this.expressions[paramName]({
+                const result = this.expressions[paramName]({
                     context: exposes.context,
                     clipParams: exposes.clipParams,
                     clipEffectParams: exposes.referenceableEffectParams,
-                    currentValue: params[paramName],
+                    currentValue: value,
                 })
+
+                return result === undefined ? value : result
             } catch (e) {
                 throw new UserCodeException(`Expression failed (${e.message})`, {
                     sourceError: e,
