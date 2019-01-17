@@ -42,6 +42,7 @@ interface RenderProgression {
     audioBuffers: Float32Array[]
     currentFrame: number
     rangeEndFrame: number
+    playbackRate: number
 }
 
 export default class Engine {
@@ -262,6 +263,7 @@ export default class Engine {
                         rangeEndFrame: renderingOption.endFrame,
                         isAudioBuffered: isAudioBufferingNeeded,
                         audioBuffers: context.destAudioBuffer,
+                        playbackRate: this._fpsCounter.latestFPS() / context.framerate,
                     })
 
                     this._fpsCounter.increase()

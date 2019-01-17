@@ -97,6 +97,7 @@ export default class RendererStore extends Store<State> {
                 /* sampleRate */ targetComposition.samplingRate,
             )
 
+            let playbackRate: number = 1
             this.pipeline.setStreamObserver({
                 onFrame: (canvas, status) => {
                     this.updateWith(
@@ -118,6 +119,7 @@ export default class RendererStore extends Store<State> {
 
                     this.audioBufferSource && this.audioBufferSource.stop()
                     this.audioBufferSource = audioBufferSource
+                    audioBufferSource.playbackRate.value = playbackRate
                     audioBufferSource.start()
                     audioBufferSource.onended = () => {
                         audioBufferSource.disconnect(this.audioContext!.destination)
@@ -134,6 +136,7 @@ export default class RendererStore extends Store<State> {
             })
 
             promise.progress(progress => {
+                playbackRate = Math.min(progress.playbackRate, 1)
                 this.updateWith(d => (d.progress = `Preview: ${progress.state}`))
             })
 
