@@ -212,7 +212,7 @@ export function compileRendererJs(done) {
                 sourceMapFilename: 'map/[file].map',
                 path: paths.compiled.frontend,
             },
-            devtool: __DEV__ ? '#source-map' : 'none',
+            devtool: 'none',
             resolve: {
                 extensions: ['.js', '.jsx', '.ts', '.tsx'],
                 modules: ['node_modules'],
