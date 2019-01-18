@@ -70,6 +70,8 @@ export interface KeyframePatch {
     frameOnClip?: number
 }
 
+const EASING_HANDLER_SIZE = 3
+
 export default withComponentContext(
     class KeyframeGraph extends React.Component<Props, State> {
         public state: State = {
@@ -354,7 +356,7 @@ export default withComponentContext(
                                     cx={point.nextEaseInHandle.x + easeIntHandleDragMovement.x}
                                     cy={point.nextEaseInHandle.y + easeIntHandleDragMovement.y}
                                     fill="#7100bf"
-                                    r="4"
+                                    r={EASING_HANDLER_SIZE}
                                     onMouseDown={this.mouseDownOnEasingHandle}
                                     onMouseUp={this.mouseUpOnSvg}
                                     data-keyframe-id={point.keyframeId}
@@ -366,7 +368,7 @@ export default withComponentContext(
                                     cx={point.easeOutHandle.x + easeOutHandleDragMovement.x}
                                     cy={point.easeOutHandle.y + easeOutHandleDragMovement.y}
                                     fill="#7100bf"
-                                    r="4"
+                                    r={EASING_HANDLER_SIZE}
                                     onMouseDown={this.mouseDownOnEasingHandle}
                                     onMouseUp={this.mouseUpOnSvg}
                                     data-keyframe-id={point.keyframeId}
