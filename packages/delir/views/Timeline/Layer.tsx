@@ -226,7 +226,6 @@ export default withComponentContext(
                 this.props.context.executeOperation(ProjectOps.addClip, {
                     layerId: this.props.layer.id!,
                     clipRendererId: dataset.rendererId,
-                    placedFrame: 0,
                     durationFrames: 100,
                 })
             }

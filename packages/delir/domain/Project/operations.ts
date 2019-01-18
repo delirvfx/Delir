@@ -170,21 +170,22 @@ export const addClip = operation(
         {
             layerId,
             clipRendererId,
-            placedFrame = 0,
+            placedFrame,
             durationFrames = 100,
         }: {
             layerId: string
             clipRendererId: string
-            placedFrame: number
+            placedFrame?: number
             durationFrames: number
         },
     ) => {
         const project = context.getStore(ProjectStore).getProject()!
         const composition = project.findLayerOwnerComposition(layerId)!
+        const { currentPreviewFrame } = context.getStore(EditorStore).getState()
 
         const newClip = new Delir.Entity.Clip({
             renderer: clipRendererId as any,
-            placedFrame: placedFrame,
+            placedFrame: placedFrame ? placedFrame : currentPreviewFrame,
             durationFrames: durationFrames,
         })
 
