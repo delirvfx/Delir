@@ -307,7 +307,7 @@ export default withComponentContext(
                                 data-entity-type="clip"
                                 data-entity-id={activeClip.id}
                                 data-param-name={desc.paramName}
-                                onDoubleClick={this.handleClickExpressionIndicator}
+                                onClick={this.handleClickExpressionIndicator}
                             >
                                 {desc.animatable && <i className="twa twa-abcd" />}
                             </span>
