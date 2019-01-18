@@ -37,6 +37,7 @@ export default class ScriptParamEditor extends React.Component<Props> {
         this.editor.createContextKey('cond2', true)
         this.disposables.push(this.editor.onDidFocusEditorText(this.handleFocusEditor))
         this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClose, 'cond1')
+        this.editor.focus()
     }
 
     public shouldComponentUpdate(nextProps: Props) {

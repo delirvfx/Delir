@@ -37,6 +37,7 @@ export default class ExpressionEditor extends React.Component<Props> {
         this.editor.createContextKey('cond2', true)
         this.disposables.push(this.editor.onDidFocusEditorText(this.onFocusEditor))
         this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClickClose, 'cond1')
+        this.editor.focus()
     }
 
     public shouldComponentUpdate(nextProps: Props) {
