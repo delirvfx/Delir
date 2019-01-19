@@ -10,14 +10,6 @@ import { Asset } from '../../../Entity'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
-interface AVFormat {
-    bitrate: number
-    channelsPerFrame: number
-    floatingPoint: boolean
-    formatID: string
-    sampleRate: number
-}
-
 interface AudioRendererParam {
     source: Asset
     volume: number
@@ -60,10 +52,15 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
         sourcePath: string
         numberOfChannels: number
         buffers: Float32Array[]
-    }
+    } | null
 
     public async beforeRender(context: ClipPreRenderContext<AudioRendererParam>) {
         const params = context.parameters
+
+        if (!params.source) {
+            this._audio = null
+            return
+        }
 
         if (this._audio && this._audio.sourcePath === params.source.path) {
             return
@@ -90,6 +87,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
 
     public async renderAudio(context: ClipRenderContext<AudioRendererParam>) {
         if (!context.isAudioBufferingNeeded) return
+        if (!this._audio) return
 
         const volume = _.clamp(context.parameters.volume / 100, 0, 1)
 

@@ -69,16 +69,17 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
             })
     }
 
-    private _video: HTMLVideoElement
+    private _video: HTMLVideoElement | null
 
     public async beforeRender(context: ClipPreRenderContext<VideoRendererParam>) {
         const parameters = context.parameters as any
 
         if (context.parameters.source == null) {
+            this._video = null
             return
         }
 
-        this._video = document.createElement('video')
+        const video = (this._video = document.createElement('video'))
         this._video.src = `file://${parameters.source.path}`
         this._video.loop = parameters.loop
         this._video.load()
@@ -87,19 +88,19 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
         await new Promise((resolve, reject) => {
             const onLoaded = () => {
                 resolve()
-                this._video.removeEventListener('error', onError, false)
+                video.removeEventListener('error', onError, false)
             }
 
             const onError = () => {
                 reject(new Error('video not found'))
-                this._video.removeEventListener('loadeddata', onLoaded, false)
+                video.removeEventListener('loadeddata', onLoaded, false)
             }
 
-            this._video.addEventListener('loadeddata', onLoaded, {
+            video.addEventListener('loadeddata', onLoaded, {
                 once: true,
                 capture: false,
             } as any)
-            this._video.addEventListener('error', onError, {
+            video.addEventListener('error', onError, {
                 once: true,
                 capture: false,
             } as any)
@@ -115,7 +116,9 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
         const ctx = context.destCanvas.getContext('2d')!
         const video = this._video
 
-        await new Promise((resolve, reject) => {
+        if (!video) return
+
+        await new Promise(resolve => {
             const waiter = (e: Event) => resolve()
             video.addEventListener('seeked', waiter, { once: true } as any)
             setTimeout(waiter, 1000)
@@ -133,6 +136,6 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
         ctx.rotate(rad)
         ctx.translate(-video.videoWidth / 2, -video.videoHeight / 2)
 
-        ctx.drawImage(this._video, 0, 0)
+        ctx.drawImage(video, 0, 0)
     }
 }
