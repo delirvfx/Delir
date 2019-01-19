@@ -52,7 +52,7 @@ describe('Export', () => {
                                                 param2: [
                                                     mockKeyframe({
                                                         id: 'uuid-effect-kf-2' as Keyframe.Id,
-                                                        value: new AssetPointer(),
+                                                        value: new AssetPointer('uuid-asset'),
                                                     }),
                                                 ],
                                             },
