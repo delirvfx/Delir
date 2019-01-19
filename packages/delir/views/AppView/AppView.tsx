@@ -3,6 +3,7 @@ import * as Mousetrap from 'mousetrap'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { makeMousetrapIgnoreInputHandler } from '../../utils/makeMousetrapHandler'
+import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -43,8 +44,11 @@ export default withComponentContext(
 
                 this.trap = new Mousetrap(document.body)
                 this.trap.bind('space', this.handleShortCutPreviewToggle)
-                this.trap.bind(['command+z', 'ctrl+z'], this.handleShortCutUndo)
-                this.trap.bind(['command+shift+z', 'ctrl+shift+z'], this.handleShortCutRedo)
+                this.trap.bind(['mod+c'], this.handleShortCutCopy)
+                this.trap.bind(['mod+x'], this.handleShortcutCut)
+                this.trap.bind(['mod+p'], this.handleShortcutPaste)
+                this.trap.bind(['mod+z'], this.handleShortCutUndo)
+                this.trap.bind(['mod+shift+z'], this.handleShortCutRedo)
 
                 window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
             }
@@ -118,16 +122,31 @@ export default withComponentContext(
                 }
             }
 
+            private handleShortCutCopy = (e: KeyboardEvent) => {
+                e.preventDefault()
+                uiActionCopy()
+            }
+
+            private handleShortcutCut = (e: KeyboardEvent) => {
+                e.preventDefault()
+                uiActionCut()
+            }
+
+            private handleShortcutPaste = (e: KeyboardEvent) => {
+                e.preventDefault()
+                uiActionPaste()
+            }
+
             // tslint:disable-next-line: member-ordering
             private handleShortCutUndo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
                 e.preventDefault()
-                this.props.context.executeOperation(HistoryOps.doUndo, {})
+                uiActionUndo(this.props.context)
             })
 
             // tslint:disable-next-line: member-ordering
             private handleShortCutRedo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
                 e.preventDefault()
-                this.props.context.executeOperation(HistoryOps.doRedo, {})
+                uiActionRedo(this.props.context)
             })
         },
     ),

@@ -3,6 +3,7 @@ import * as Electron from 'electron'
 import { remote } from 'electron'
 import * as React from 'react'
 import * as Platform from '../../utils/platform'
+import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -20,12 +21,6 @@ interface State {
 }
 
 type Props = ConnectedProps & ContextProp
-
-const isSelectionInputElement = (el: Element) => {
-    return (
-        (el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement) && el.selectionStart !== el.selectionEnd
-    )
-}
 
 export default withComponentContext(
     connectToStores([EditorStore], context => ({
@@ -191,11 +186,15 @@ export default withComponentContext(
                         submenu: [
                             {
                                 label: t('edit.undo'),
-                                role: 'undo',
+                                accelerator: 'CmdOrCtrl+Z',
+                                click: this.handleUndo,
+                                ...(devToolsFocused ? { role: 'undo' } : {}),
                             },
                             {
                                 label: t('edit.redo'),
-                                role: 'redo',
+                                accelerator: Platform.isMacOS() ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
+                                click: this.handleRedo,
+                                ...(devToolsFocused ? { role: 'redo' } : {}),
                             },
                             {
                                 type: 'separator',
@@ -277,33 +276,23 @@ export default withComponentContext(
             }
 
             private handleCopy = () => {
-                const { activeElement } = document
-
-                if (isSelectionInputElement(activeElement!)) {
-                    document.execCommand('copy')
-                } else {
-                    GlobalEvents.emit(GlobalEvent.copyViaApplicationMenu, {})
-                }
+                uiActionCopy()
             }
 
             private handleCut = () => {
-                const { activeElement } = document
-
-                if (isSelectionInputElement(activeElement!)) {
-                    document.execCommand('cut')
-                } else {
-                    GlobalEvents.emit(GlobalEvent.cutViaApplicationMenu, {})
-                }
+                uiActionCut()
             }
 
             private handlePaste = () => {
-                const { activeElement } = document
+                uiActionPaste()
+            }
 
-                if (activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement) {
-                    document.execCommand('paste')
-                } else {
-                    GlobalEvents.emit(GlobalEvent.pasteViaApplicationMenu, {})
-                }
+            private handleUndo = () => {
+                uiActionUndo(this.props.context)
+            }
+
+            private handleRedo = () => {
+                uiActionRedo(this.props.context)
             }
         },
     ),
