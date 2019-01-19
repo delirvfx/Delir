@@ -11,16 +11,7 @@ import * as s from './delir-value-input.styl'
 interface DelirValueInputProps {
     assets: ReadonlyArray<Delir.Entity.Asset> | null
     descriptor: Delir.AnyParameterTypeDescriptor
-    value:
-        | string
-        | number
-        | boolean
-        | { assetId: string }
-        | Delir.Values.Point2D
-        | Delir.Values.Point3D
-        | Delir.Values.Expression
-        | Delir.Values.ColorRGB
-        | Delir.Values.ColorRGBA
+    value: Delir.Entity.KeyframeValueTypes
     onChange: (desc: Delir.AnyParameterTypeDescriptor, value: Delir.Entity.KeyframeValueTypes) => void
 }
 
@@ -109,7 +100,11 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                             </button>
                             <ChromePicker
                                 ref={this.ref.colorPicker}
-                                color={value.toString()}
+                                color={
+                                    value
+                                        ? '#000'
+                                        : ((value as unknown) as Delir.Values.ColorRGB | Delir.Values.ColorRGBA)
+                                }
                                 disableAlpha={descriptor.type === 'COLOR_RGB'}
                             />
                         </Dropdown>
