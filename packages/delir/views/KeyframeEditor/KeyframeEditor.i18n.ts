@@ -12,6 +12,7 @@ export default I18n({
         },
         pluginMissing: '不明なプラグイン: :processorId',
         editScriptParam: '編集',
+        save: '保存',
     },
     en: {
         contextMenu: {
@@ -24,5 +25,6 @@ export default I18n({
         },
         pluginMissing: 'Missing plugin: :processorId',
         editScriptParam: 'Edit',
+        save: 'Save',
     },
 })

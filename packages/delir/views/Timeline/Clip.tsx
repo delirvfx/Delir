@@ -4,6 +4,7 @@ import * as classnames from 'classnames'
 import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
+import { isWindows } from '../../utils/platform'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
 import * as EditorOps from '../../domain/Editor/operations'

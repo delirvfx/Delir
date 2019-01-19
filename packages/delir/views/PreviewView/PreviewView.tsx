@@ -8,13 +8,16 @@ import Pane from '../../components/pane'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as RendererOps from '../../domain/Renderer/operations'
+import RendererStore, { RenderState } from '../../domain/Renderer/RendererStore'
 
 import t from './PreviewView.i18n'
 import * as s from './style.styl'
 
 interface ConnectedProps {
     activeComp?: Delir.Entity.Composition
-    currentPreviewFrame?: number
+    currentPreviewFrame: number
+    previewPlayed: boolean
+    lastRenderState: RenderState | null
 }
 
 type Props = ConnectedProps & ContextProp
@@ -25,12 +28,14 @@ interface State {
 }
 
 export default withComponentContext(
-    connectToStores([EditorStore], context => {
+    connectToStores([EditorStore, RendererStore], context => {
         const editorStore = context.getStore(EditorStore)
 
         return {
             activeComp: editorStore.getState().activeComp,
             currentPreviewFrame: editorStore.getState().currentPreviewFrame,
+            previewPlayed: context.getStore(EditorStore).getState().previewPlayed,
+            lastRenderState: context.getStore(RendererStore).getLastRenderState(),
         }
     })(
         class PreviewView extends React.Component<Props, State> {
@@ -49,14 +54,14 @@ export default withComponentContext(
             }
 
             public render() {
-                const { activeComp, currentPreviewFrame } = this.props
+                const { activeComp, currentPreviewFrame, previewPlayed, lastRenderState } = this.props
                 const { scale, scaleListShown } = this.state
                 const currentScale = Math.round(scale * 100)
                 const width = activeComp ? activeComp.width : 640
                 const height = activeComp ? activeComp.height : 360
-                const timecode = activeComp
-                    ? frameToTimeCode(currentPreviewFrame!, activeComp!.framerate)
-                    : '--:--:--:--'
+                const currentFrame =
+                    previewPlayed && lastRenderState ? lastRenderState.currentFrame : currentPreviewFrame
+                const timecode = activeComp ? frameToTimeCode(currentFrame, activeComp.framerate) : '--:--:--:--'
 
                 return (
                     <Pane className={s.Preview} allowFocus>

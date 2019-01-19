@@ -43,7 +43,9 @@ class Clip extends Animatable implements ClipProps {
             return
         }
 
-        this.effects = [...this.effects].splice(index, 0, effect)
+        const clone = [...this.effects]
+        clone.splice(index, 0, effect)
+        this.effects = clone
     }
 
     public removeEffect(effectId: string): boolean {
@@ -57,7 +59,8 @@ class Clip extends Animatable implements ClipProps {
         if (index === -1) return false
 
         const clone = [...this.effects]
-        this.effects = clone.splice(newIndex, 0, ...clone.splice(index, 1))
+        clone.splice(newIndex, 0, ...clone.splice(index, 1))
+        this.effects = clone
         return true
     }
 

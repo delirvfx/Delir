@@ -90,6 +90,8 @@ export const addLayer = operation(
             layer,
             index,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -157,6 +159,8 @@ export const addLayerWithAsset = operation(
             asset,
             layer,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -166,21 +170,22 @@ export const addClip = operation(
         {
             layerId,
             clipRendererId,
-            placedFrame = 0,
+            placedFrame,
             durationFrames = 100,
         }: {
             layerId: string
             clipRendererId: string
-            placedFrame: number
+            placedFrame?: number
             durationFrames: number
         },
     ) => {
         const project = context.getStore(ProjectStore).getProject()!
         const composition = project.findLayerOwnerComposition(layerId)!
+        const { currentPreviewFrame } = context.getStore(EditorStore).getState()
 
         const newClip = new Delir.Entity.Clip({
             renderer: clipRendererId as any,
-            placedFrame: placedFrame,
+            placedFrame: placedFrame ? placedFrame : currentPreviewFrame,
             durationFrames: durationFrames,
         })
 
@@ -192,6 +197,8 @@ export const addClip = operation(
             newClip,
             targetLayerId: layerId,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -253,10 +260,13 @@ export const addClipWithAsset = operation(
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new AddClipCommand(parentComposition.id, targetLayerId, newClip),
         })
+
         context.dispatch(ProjectActions.addClipAction, {
             targetLayerId: targetLayerId,
             newClip,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -316,6 +326,8 @@ export const createOrModifyClipKeyframe = operation(
                 keyframe: newKeyframe,
             })
         }
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -388,6 +400,8 @@ export const createOrModifyKeyframeForEffect = operation(
                 keyframe: newKeyframe,
             })
         }
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -428,10 +442,13 @@ export const addEffectIntoClip = operation(
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new AddEffectIntoClipCommand(clipId, effect),
         })
+
         context.dispatch(ProjectActions.addEffectIntoClipAction, {
             clipId: clipId,
             effect,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -442,6 +459,7 @@ export const removeAsset = operation(async (context, { assetId }: { assetId: str
     await context.executeOperation(HistoryOps.pushHistory, {
         command: new RemoveAssetCommand(asset),
     })
+
     context.dispatch(ProjectActions.removeAssetAction, {
         targetAssetId: assetId,
     })
@@ -465,10 +483,13 @@ export const moveClipToLayer = operation(
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new MoveClipToLayerCommand(sourceLayer.id, destLayerId, clipId, parentComposition.id),
         })
+
         context.dispatch(ProjectActions.moveClipToLayerAction, {
             destLayerId: destLayerId,
             clipId: clipId,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -496,6 +517,8 @@ export const modifyComposition = operation(
             targetCompositionId: compositionId,
             patch,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -524,6 +547,8 @@ export const modifyLayer = operation(
             targetLayerId: layerId,
             patch: patch,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -553,6 +578,8 @@ export const modifyClip = operation(
             targetClipId: clipId,
             patch: patch,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -583,6 +610,8 @@ export const modifyEffect = operation(
             targetEffectId: effectId,
             patch,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -615,6 +644,8 @@ export const modifyClipExpression = operation(
             targetParamName: paramName,
             expression: newExpression,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -657,6 +688,8 @@ export const modifyEffectExpression = operation(
             paramName: paramName,
             expression: newExpression,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -676,6 +709,8 @@ export const moveLayerOrder = operation(
             targetLayerId: layerId,
             newIndex,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -701,9 +736,12 @@ export const removeLayer = operation(async (context, { layerId }: { layerId: str
     await context.executeOperation(HistoryOps.pushHistory, {
         command: new RemoveLayerCommand(parentComposition.id, removingLayer, index),
     })
+
     context.dispatch(ProjectActions.removeLayerAction, {
         targetLayerId: layerId,
     })
+
+    await context.executeOperation(EditorOps.seekPreviewFrame, {})
 })
 
 export const removeClip = operation(async (context, { clipId }: { clipId: string }) => {
@@ -715,9 +753,12 @@ export const removeClip = operation(async (context, { clipId }: { clipId: string
     await context.executeOperation(HistoryOps.pushHistory, {
         command: new RemoveClipCommand(parentLayer.id, clip, composition.id),
     })
+
     context.dispatch(ProjectActions.removeClipAction, {
         targetClipId: clip.id,
     })
+
+    await context.executeOperation(EditorOps.seekPreviewFrame, {})
 })
 
 export const removeKeyframe = operation(
@@ -734,6 +775,7 @@ export const removeKeyframe = operation(
             paramName,
             targetKeyframeId: keyframe.id,
         })
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -768,6 +810,8 @@ export const removeEffectKeyframe = operation(
             paramName,
             targetKeyframeId: keyframeId,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -790,10 +834,13 @@ export const removeEffect = operation(
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new RemoveEffectCommand(holderClipId, effect, index),
         })
+
         context.dispatch(ProjectActions.removeEffectFromClipAction, {
             holderClipId,
             targetEffectId: effectId,
         })
+
+        await context.executeOperation(EditorOps.seekPreviewFrame, {})
     },
 )
 
@@ -832,4 +879,6 @@ export const pasteClipEntityIntoLayer = operation(async (context, { layerId }: {
         targetLayerId: layerId,
         newClip: clip,
     })
+
+    await context.executeOperation(EditorOps.seekPreviewFrame, {})
 })

@@ -13,7 +13,9 @@ export default class DependencyResolver {
         this._pluginRegistry = pluginRegistry
     }
 
-    public resolveAsset(assetId: string): AssetProxy | null {
+    public resolveAsset(assetId: string | null): AssetProxy | null {
+        if (!assetId) return null
+
         const asset = this._project.findAsset(assetId)
         return asset ? new AssetProxy(asset) : null
     }

@@ -98,7 +98,7 @@ Object {
                                     "value": Object {
                                       "__type": "value:AssetPointer",
                                       "__value": Object {
-                                        "assetId": "",
+                                        "assetId": "uuid-asset",
                                       },
                                     },
                                   },

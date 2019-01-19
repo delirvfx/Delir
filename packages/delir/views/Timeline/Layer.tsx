@@ -3,6 +3,7 @@ import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
+import { isWindows } from '../../utils/platform'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
@@ -193,10 +194,12 @@ export default withComponentContext(
             }
 
             private handleChangeClipPlace = (clipId: string, newPlacedPx: number) => {
+                const { scrollLeft } = this.props
+
                 const newPlacedFrame = TimePixelConversion.pixelToFrames({
                     pxPerSec: this.props.pxPerSec,
                     framerate: this.props.framerate,
-                    pixel: newPlacedPx,
+                    pixel: newPlacedPx + scrollLeft,
                     scale: this.props.scale,
                 })
 
@@ -224,7 +227,6 @@ export default withComponentContext(
                 this.props.context.executeOperation(ProjectOps.addClip, {
                     layerId: this.props.layer.id!,
                     clipRendererId: dataset.rendererId,
-                    placedFrame: 0,
                     durationFrames: 100,
                 })
             }

@@ -58,9 +58,9 @@ class Composition implements CompositionProps {
             return
         }
 
-        const layers = [...this.layers]
-        layers.splice(index, 0, layer)
-        this.layers = layers
+        const clone = [...this.layers]
+        clone.splice(index, 0, layer)
+        this.layers = clone
     }
 
     public removeLayer(layerId: string): boolean {
@@ -74,7 +74,8 @@ class Composition implements CompositionProps {
         if (index === -1) return false
 
         const clone = [...this.layers]
-        this.layers = clone.splice(newIndex, 0, ...clone.splice(index, 1))
+        clone.splice(newIndex, 0, ...clone.splice(index, 1))
+        this.layers = clone
         return true
     }
 }

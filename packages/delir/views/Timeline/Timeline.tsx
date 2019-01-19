@@ -176,7 +176,7 @@ export default withComponentContext(
                                         <div
                                             ref="timelineLayers"
                                             className={s.layerContainer}
-                                            onScroll={this.handleScrollLayerLabel}
+                                            onScroll={this.handleScrollTimeline}
                                         >
                                             {activeComp &&
                                                 layers.map((layer, idx) => (
@@ -225,10 +225,16 @@ export default withComponentContext(
                 })
             }
 
-            private handleScrollLayerLabel = (e: React.UIEvent<HTMLElement>) => {
+            private handleScrollLayerLabel = (e: React.UIEvent<HTMLDivElement>) => {
                 this.setState({
-                    timelineScrollLeft: e.currentTarget.scrollLeft,
                     timelineScrollTop: e.currentTarget.scrollTop,
+                })
+            }
+
+            private handleScrollTimeline = (e: React.UIEvent<HTMLDivElement>) => {
+                this.setState({
+                    timelineScrollTop: e.currentTarget.scrollTop,
+                    timelineScrollLeft: e.currentTarget.scrollLeft,
                 })
             }
 
@@ -247,7 +253,6 @@ export default withComponentContext(
                     layerId: layer.id,
                     newIndex,
                 })
-                this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
             }
 
             private handleAddLayer = () => {
@@ -300,10 +305,10 @@ export default withComponentContext(
 
                 if (!activeComp) {
                     this.props.context.executeOperation(EditorOps.notify, {
-                        message: 'Must be select any composition before add assets to timeline',
+                        message: t('errors.compositionNotSelected'),
                         title: 'Woops',
-                        level: 'error',
-                        timeout: 1000,
+                        level: 'info',
+                        timeout: 4000,
                     })
 
                     return

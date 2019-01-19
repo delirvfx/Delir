@@ -1,3 +1,8 @@
-/tests
 /plugin-example
-/example
+/spec
+/src
+/CHANGELOG.md
+/SCHEMA_CHANGELOG.md
+/tsconfig.json
+/tsconfig.test.json
+/jext.config.js

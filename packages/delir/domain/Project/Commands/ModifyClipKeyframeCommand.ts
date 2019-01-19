@@ -23,7 +23,7 @@ export class ModifyClipKeyframeCommand implements Command {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.modifyKeyframeAction, {
-            parentClipId: this.targetKeyframeId,
+            parentClipId: this.parentClipId,
             targetKeyframeId: this.targetKeyframeId,
             patch: this.toPreviousPatch,
         })
@@ -33,7 +33,7 @@ export class ModifyClipKeyframeCommand implements Command {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.modifyKeyframeAction, {
-            parentClipId: this.targetKeyframeId,
+            parentClipId: this.parentClipId,
             targetKeyframeId: this.targetKeyframeId,
             patch: this.patch,
         })

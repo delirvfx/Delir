@@ -11,17 +11,8 @@ import * as s from './delir-value-input.styl'
 interface DelirValueInputProps {
     assets: ReadonlyArray<Delir.Entity.Asset> | null
     descriptor: Delir.AnyParameterTypeDescriptor
-    value:
-        | string
-        | number
-        | boolean
-        | { assetId: string }
-        | Delir.Values.Point2D
-        | Delir.Values.Point3D
-        | Delir.Values.Expression
-        | Delir.Values.ColorRGB
-        | Delir.Values.ColorRGBA
-    onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
+    value: Delir.Entity.KeyframeValueTypes
+    onChange: (desc: Delir.AnyParameterTypeDescriptor, value: Delir.Entity.KeyframeValueTypes) => void
 }
 
 export default class DelirValueInput extends React.PureComponent<DelirValueInputProps, any> {
@@ -109,8 +100,11 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                             </button>
                             <ChromePicker
                                 ref={this.ref.colorPicker}
-                                color={value.toString()}
-                                onChange={this.valueChanged}
+                                color={
+                                    value
+                                        ? '#000'
+                                        : ((value as unknown) as Delir.Values.ColorRGB | Delir.Values.ColorRGBA)
+                                }
                                 disableAlpha={descriptor.type === 'COLOR_RGB'}
                             />
                         </Dropdown>
@@ -192,14 +186,11 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
 
             case 'ASSET': {
                 const acceptedAssets = assets!.filter(asset => descriptor.extensions.includes(asset.fileType))
+                const valueAssetId = value ? (value as Delir.Values.AssetPointer).assetId : ''
 
                 component = (
                     <>
-                        <select
-                            ref={this.ref.assetSelect}
-                            value={value ? (value as { assetId: string }).assetId! : undefined}
-                            onChange={this.valueChanged}
-                        >
+                        <select ref={this.ref.assetSelect} onChange={this.valueChanged}>
                             {acceptedAssets.length === 0 && (
                                 <option selected disabled>
                                     {t('asset.empty')}
@@ -209,7 +200,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                                 <>
                                     <option />
                                     {...acceptedAssets.map(asset => (
-                                        <option key={asset.id} value={asset.id as string}>
+                                        <option key={asset.id} value={asset.id} selected={asset.id === valueAssetId}>
                                             {asset.name}
                                         </option>
                                     ))}
@@ -286,9 +277,8 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
 
             case 'ASSET': {
                 const { assetSelect } = this.ref
-                const newAsset =
-                    Array.from(this.props.assets!).find(asset => asset.id! === assetSelect.current!.value) || null
-                this.props.onChange(descriptor, newAsset)
+                const assetPointer = assetSelect.current!.value !== '' ? { assetId: assetSelect.current!.value } : null
+                this.props.onChange(descriptor, assetPointer)
                 break
             }
 

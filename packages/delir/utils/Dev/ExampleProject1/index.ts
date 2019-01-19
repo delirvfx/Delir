@@ -17,7 +17,7 @@ const videoAsset = new Delir.Entity.Asset({
 const audioAsset = new Delir.Entity.Asset({
     name: 'Audio',
     fileType: 'mp3',
-    path: join(dirname, 'Infosphere_Guardians.mp3'),
+    path: join(dirname, 'Dawn.mp3'),
 })
 
 const imageAsset = new Delir.Entity.Asset({
@@ -121,6 +121,16 @@ const audioClip = assign(
                 new Delir.Entity.Keyframe({
                     value: 33,
                     frameOnClip: 0,
+                }),
+            ],
+            volume: [
+                new Delir.Entity.Keyframe({
+                    value: 60,
+                    frameOnClip: 0,
+                }),
+                new Delir.Entity.Keyframe({
+                    value: 60,
+                    frameOnClip: 120,
                 }),
             ],
         },

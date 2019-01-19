@@ -6,7 +6,7 @@ import { Expression } from '../Values'
 import { ParametersTable } from './ParametersTable'
 import { IRenderContextBase } from './RenderContext/IRenderContextBase'
 import { RenderContextBase } from './RenderContext/RenderContextBase'
-import * as RendererFactory from './renderer'
+import * as RendererFactory from './Renderer'
 
 describe('KeyframeTable', () => {
     let context: RenderContextBase
