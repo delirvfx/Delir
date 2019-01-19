@@ -46,7 +46,7 @@ export default withComponentContext(
                 this.trap.bind('space', this.handleShortCutPreviewToggle)
                 this.trap.bind(['mod+c'], this.handleShortCutCopy)
                 this.trap.bind(['mod+x'], this.handleShortcutCut)
-                this.trap.bind(['mod+p'], this.handleShortcutPaste)
+                this.trap.bind(['mod+v'], this.handleShortcutPaste)
                 this.trap.bind(['mod+z'], this.handleShortCutUndo)
                 this.trap.bind(['mod+shift+z'], this.handleShortCutRedo)
 
