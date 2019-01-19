@@ -2,7 +2,7 @@
 Delirのサンプルプラグイン。
 プラグイン開発のテンプレートとしてご利用ください。
 
-[プラグインテンプレートをダウンロード](https://github.com/ra-gg/Delir/releases/download/v0.6.0/plugin-template.zip)
+[プラグインテンプレートをダウンロード](https://github.com/ra-gg/Delir/releases/download/v0.6.0/plugin-example.zip)
 
 ## 開発のはじめ方
 - **事前に`Node.js`と`yarn`のインストールが必要です。**
