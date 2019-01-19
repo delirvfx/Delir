@@ -7,6 +7,8 @@ export default I18n({
             effect: '✨エフェクト',
             remove: '🚯 削除',
             pluginUnavailable: '利用可能なポストエフェクトがありません',
+            copy: 'コピー',
+            cut: '切り取り',
         },
         renderers: {
             audio: 'audio',
@@ -23,6 +25,8 @@ export default I18n({
             effect: '✨Effect',
             remove: '🚯 Remove',
             pluginUnavailable: 'No available post-effect',
+            copy: 'Copy',
+            cut: 'Cut',
         },
         renderers: {
             audio: 'audio',

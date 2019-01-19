@@ -5,6 +5,7 @@ export default I18n({
         contextMenu: {
             createClip: 'クリップを作成',
             addLayerHere: '➕ ここにレイヤーを追加',
+            paste: '貼り付け',
         },
         renderers: {
             audio: '🔊 オーディオ',
@@ -19,6 +20,7 @@ export default I18n({
         contextMenu: {
             createClip: 'Create clip',
             addLayerHere: '➕ Add layer here',
+            paste: 'Paste',
         },
         renderers: {
             audio: '🔊 Audio',

@@ -3,6 +3,7 @@ import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
+import { isWindows } from '../../utils/platform'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
@@ -95,6 +96,9 @@ export default withComponentContext(
                                     />
                                 ))}
                             </MenuItem>
+                            {isWindows() && (
+                                <MenuItem label={t('contextMenu.paste')} onClick={this.handleGlobalPaste} />
+                            )}
                             <MenuItem type="separator" />
                             <MenuItem label={t('contextMenu.addLayerHere')} onClick={this.handleAddLayer} />
                         </ContextMenu>
