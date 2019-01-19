@@ -96,9 +96,6 @@ export default withComponentContext(
                                     />
                                 ))}
                             </MenuItem>
-                            {isWindows() && (
-                                <MenuItem label={t('contextMenu.paste')} onClick={this.handleGlobalPaste} />
-                            )}
                             <MenuItem type="separator" />
                             <MenuItem label={t('contextMenu.addLayerHere')} onClick={this.handleAddLayer} />
                         </ContextMenu>
