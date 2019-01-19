@@ -3,7 +3,7 @@
   "version": "0.6.4",
   "description": "JavaScript VFX Engine",
   "main": "src/index.ts",
-  "types": "src/index.d.ts",
+  "types": "src/index.ts",
   "author": "Ragg <ragg.devpr@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
