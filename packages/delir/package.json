@@ -1,6 +1,6 @@
 {
   "name": "delir",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "main": "delir/browser.js",
   "license": "MIT",
   "private": true,
