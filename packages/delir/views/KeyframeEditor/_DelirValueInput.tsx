@@ -110,7 +110,6 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                             <ChromePicker
                                 ref={this.ref.colorPicker}
                                 color={value.toString()}
-                                onChange={this.valueChanged}
                                 disableAlpha={descriptor.type === 'COLOR_RGB'}
                             />
                         </Dropdown>
