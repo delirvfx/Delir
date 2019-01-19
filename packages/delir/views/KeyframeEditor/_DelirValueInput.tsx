@@ -21,7 +21,7 @@ interface DelirValueInputProps {
         | Delir.Values.Expression
         | Delir.Values.ColorRGB
         | Delir.Values.ColorRGBA
-    onChange: (desc: Delir.AnyParameterTypeDescriptor, value: any) => void
+    onChange: (desc: Delir.AnyParameterTypeDescriptor, value: Delir.Entity.KeyframeValueTypes) => void
 }
 
 export default class DelirValueInput extends React.PureComponent<DelirValueInputProps, any> {
@@ -209,7 +209,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                                 <>
                                     <option />
                                     {...acceptedAssets.map(asset => (
-                                        <option key={asset.id} value={asset.id as string}>
+                                        <option key={asset.id} value={asset.id}>
                                             {asset.name}
                                         </option>
                                     ))}
@@ -286,9 +286,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
 
             case 'ASSET': {
                 const { assetSelect } = this.ref
-                const newAsset =
-                    Array.from(this.props.assets!).find(asset => asset.id! === assetSelect.current!.value) || null
-                this.props.onChange(descriptor, newAsset)
+                this.props.onChange(descriptor, { assetId: assetSelect.current!.value })
                 break
             }
 
