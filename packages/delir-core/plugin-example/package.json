@@ -17,6 +17,7 @@
   "devDependencies": {
     "awesome-typescript-loader": "^3.1.2",
     "typescript": "^2.2.2",
-    "webpack": "^2.3.2"
+    "webpack": "^2.3.2",
+    "@ragg/delir-core": "0.6.3"
   }
 }
