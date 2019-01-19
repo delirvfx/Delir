@@ -17,7 +17,7 @@ const videoAsset = new Delir.Entity.Asset({
 const audioAsset = new Delir.Entity.Asset({
     name: 'Audio',
     fileType: 'mp3',
-    path: join(dirname, 'Infosphere_Guardians.mp3'),
+    path: join(dirname, 'Dawn.mp3'),
 })
 
 const imageAsset = new Delir.Entity.Asset({
