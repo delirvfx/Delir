@@ -1,4 +1,4 @@
-import { PostEffectBase, PreRenderContext, RenderContext, Type, Values } from '@ragg/delir-core'
+import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type, Values } from '@ragg/delir-core'
 
 interface Params {
     x: number
@@ -46,13 +46,13 @@ export default class ExamplePlugin extends PostEffectBase {
      * If you want initializing before rendering (likes load audio, image, etc...)
      * Do it in this method.
      */
-    public async initialize(context: PreRenderContext<Params>) {}
+    public async initialize(context: EffectPreRenderContext<Params>) {}
 
     /**
      * Render frame into destination canvas.
      * @param req
      */
-    public async render(context: RenderContext<Params>) {
+    public async render(context: EffectRenderContext<Params>) {
         const dest = req.destCanvas
         const context = dest.getContext('2d')
         const params = req.parameters as Params
