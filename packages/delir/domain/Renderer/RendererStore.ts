@@ -174,12 +174,10 @@ export default class RendererStore extends Store<State> {
 
     private handleRenderDestinate = listen(EditorActions.renderDestinateAction, async payload => {
         const appPath = dirname(remote.app.getPath('exe'))
-        const ffmpegBin = __DEV__
-            ? 'ffmpeg'
-            : require('path').resolve(
-                  appPath,
-                  Platform.isMacOS() ? '../Resources/ffmpeg' : Platform.isLinux() ? 'ffmpeg' : './ffmpeg.exe',
-              )
+        const ffmpegBin =
+            __DEV__ || Platform.isLinux()
+                ? 'ffmpeg'
+                : require('path').resolve(appPath, Platform.isMacOS() ? '../Resources/ffmpeg' : './ffmpeg.exe')
 
         // TODO: View側で聞いてくれ
         const file = remote.dialog.showSaveDialog({
