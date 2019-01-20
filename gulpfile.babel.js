@@ -463,6 +463,7 @@ export async function pack(done) {
                 npmRebuild: true,
                 // nodeGypRebuild: true,
                 directories: {
+                    buildResources: join(__dirname, 'build-assets/build'),
                     app: paths.build,
                     output: paths.release,
                 },
@@ -477,8 +478,19 @@ export async function pack(done) {
                     icon: join(__dirname, 'build-assets/icons/win/icon.ico'),
                 },
                 linux: {
-                    target: 'AppImage',
-                    icon: join(__dirname, 'build-assets/icons/png/512x512.png'),
+                    target: [{ target: 'AppImage' }, { target: 'deb' }],
+                    category: 'Video',
+                },
+                deb: {
+                    depends: [
+                        'gconf2',
+                        'gconf-service',
+                        'libnotify4',
+                        'libappindicator1',
+                        'libxtst6',
+                        'libnss3',
+                        'libdbus-1-3',
+                    ],
                 },
             },
         })
