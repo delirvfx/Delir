@@ -74,6 +74,8 @@ export default withComponentContext(
                         <RenderingWaiter />
                         <CSSTransitionGroup
                             component="div"
+                            transitionEnterTimeout={400}
+                            transitionLeaveTimeout={400}
                             transitionName={{
                                 enter: s.preferenceEnter,
                                 enterActive: s.preferenceEnterActive,
