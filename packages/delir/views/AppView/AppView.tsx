@@ -33,7 +33,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 })
 
 export default withComponentContext(
-    connectToStores([RendererStore], mapStoresToProps)(
+    connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class AppView extends React.PureComponent<Props> {
             public root = React.createRef<HTMLDivElement>()
             public trap: InstanceType<typeof Mousetrap>

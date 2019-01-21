@@ -9,6 +9,7 @@ import * as s from './dropdown.styl'
 interface Props {
     shownInitial?: boolean
     className?: string
+    children?: React.ReactNode
 }
 
 interface State {
@@ -53,6 +54,11 @@ export default class Dropdown extends PureComponent<Props, State> {
             capture: true,
         })
         this._portal.unmount()
+    }
+
+    public shouldComponentUpdate(nextProps: Props, nextState: State) {
+        const { props, state } = this
+        return props.className !== nextProps.className || state.show !== nextState.show
     }
 
     public componentDidUpdate() {

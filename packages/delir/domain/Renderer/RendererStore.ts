@@ -7,6 +7,7 @@ import { dirname } from 'path'
 import { EditorActions } from '../Editor/actions'
 import { RendererActions } from './actions'
 
+import { updateWith } from 'typescript'
 import * as Platform from '../../utils/platform'
 
 interface State {
@@ -91,6 +92,7 @@ export default class RendererStore extends Store<State> {
 
             this.updateWith(s => {
                 s.exception = null
+                s.previewRenderState = null
                 s.previewPlaying = true
             })
 
@@ -141,27 +143,30 @@ export default class RendererStore extends Store<State> {
 
             promise.progress(progress => {
                 playbackRate = Math.min(progress.playbackRate, 1)
-                this.updateWith(d => (d.progress = `Preview: ${progress.state}`))
+                // this.updateWith(d => (d.progress = `Preview: ${progress.state}`))
             })
 
-            promise.catch(e => {
-                if (e instanceof Delir.Exceptions.RenderingAbortedException) {
-                    return
-                } else if (e instanceof Delir.Exceptions.UserCodeException) {
-                    this.updateWith(s => (s.exception = e))
-                } else {
-                    // tslint:disable-next-line:no-console
-                    console.log(e)
-                }
-
-                this.updateWith(s => (s.previewPlaying = false))
-            })
+            promise.then(
+                () => {
+                    this.updateWith(s => (s.previewPlaying = false))
+                },
+                e => {
+                    if (e instanceof Delir.Exceptions.RenderingAbortedException) {
+                    } else if (e instanceof Delir.Exceptions.UserCodeException) {
+                    } else {
+                        // tslint:disable-next-line:no-console
+                        console.log(e)
+                    }
+                    this.updateWith(s => (s.previewPlaying = false))
+                },
+            )
         },
     )
 
     private handleStopPreview = listen(RendererActions.stopPreview, () => {
         this.pipeline.stopCurrentRendering()
         this.audioBufferSource && this.audioBufferSource.stop()
+        this.updateWith(s => (s.previewPlaying = false))
     })
 
     private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, payload => {

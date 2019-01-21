@@ -1,10 +1,10 @@
 import * as Delir from '@ragg/delir-core'
 import { ContextProp, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
+import * as _ from 'lodash'
 import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
-import { isWindows } from '../../utils/platform'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -39,6 +39,11 @@ export default withComponentContext(
     class Clip extends React.Component<Props, State> {
         public state: State = {
             left: this.props.left,
+        }
+
+        public shouldComponentUpdate(nextProps: Props, nextState: State) {
+            const { props, state } = this
+            return !_.isEqual(props, nextProps) || !_.isEqual(state, nextState)
         }
 
         public componentDidUpdate(prevProps: Props) {

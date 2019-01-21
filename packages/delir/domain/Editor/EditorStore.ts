@@ -190,7 +190,7 @@ export default class EditorStore extends Store<EditorState> {
         this.updateWith(draft => (draft.clipboard = payload.entry))
     })
 
-    public get currentPreviewFrame() {
+    public get currentPointFrame() {
         return this.state.currentPreviewFrame
     }
 
@@ -198,8 +198,21 @@ export default class EditorStore extends Store<EditorState> {
         return this.state.activeParam
     }
 
+    public get activeComp() {
+        return this.state.activeComp ? { ...this.state.activeComp } : null
+    }
+
+    public get activeClip() {
+        return this.state.activeClip ? { ...this.state.activeClip } : null
+    }
+
+    public get dragEntity() {
+        return this.state.dragEntity
+    }
+
+    /** @deprecated */
     public getActiveComposition() {
-        return this.state.activeComp
+        return this.state.activeComp ? { ...this.state.activeComp } : null
     }
 
     public getClipboardEntry() {

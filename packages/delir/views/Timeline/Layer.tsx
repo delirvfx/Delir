@@ -1,5 +1,5 @@
 import * as Delir from '@ragg/delir-core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
@@ -21,42 +21,39 @@ import t from './Layer.i18n'
 import * as s from './Layer.styl'
 
 interface OwnProps {
-    layer: Delir.Entity.Layer
+    layer: Readonly<Delir.Entity.Layer>
     layerIndex: number
-    activeClip: Delir.Entity.Clip | null
     framerate: number
     pxPerSec: number
     scale: number
     scrollLeft: number
 }
 
-interface ConnectedProps {
-    editor: EditorState
-    postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
-    userCodeException: Delir.Exceptions.UserCodeException | null
-}
-
-type Props = OwnProps & ConnectedProps & ContextProp
+type Props = OwnProps & ReturnType<typeof mapStoresToProps> & ContextProp
 
 interface State {
     dragovered: boolean
 }
 
-/**
- * ClipSpace
- */
+const mapStoresToProps = (getStore: StoreGetter) => ({
+    activeClip: getStore(EditorStore).activeClip,
+    postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
+    userCodeException: getStore(RendererStore).getUserCodeException(),
+})
+
 export default withComponentContext(
-    connectToStores([EditorStore, RendererStore], getStore => ({
-        editor: getStore(EditorStore).getState(),
-        postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
-        userCodeException: getStore(RendererStore).getUserCodeException(),
-    }))(
+    connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class Layer extends React.Component<Props, State> {
             public state: State = {
                 dragovered: false,
             }
 
             private root = React.createRef<HTMLDivElement>()
+
+            public shouldComponentUpdate(nextProps: Props, nextState: State) {
+                const { props, state } = this
+                return !_.isEqual(props, nextProps) || !_.isEqual(state, nextState)
+            }
 
             public render() {
                 const {
@@ -120,7 +117,7 @@ export default withComponentContext(
                                         clip={clip}
                                         width={width}
                                         left={left - scrollLeft}
-                                        active={clip === activeClip}
+                                        active={!!activeClip && clip.id === activeClip.id}
                                         postEffectPlugins={postEffectPlugins}
                                         hasError={hasError}
                                         onChangePlace={this.handleChangeClipPlace}
@@ -142,7 +139,7 @@ export default withComponentContext(
             }
 
             private handleOnDrop = (e: React.DragEvent<HTMLDivElement>) => {
-                const { dragEntity, activeComp } = this.props.editor
+                const { dragEntity, activeComp } = this.props.context.getStore(EditorStore)
 
                 if (!activeComp || !dragEntity) return
 
@@ -173,10 +170,8 @@ export default withComponentContext(
             }
 
             private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-                const {
-                    editor: { dragEntity },
-                    layer,
-                } = this.props
+                const { layer } = this.props
+                const { dragEntity } = this.props.context.getStore(EditorStore)
 
                 if (!dragEntity || dragEntity.type !== 'clip') return
 
@@ -232,10 +227,8 @@ export default withComponentContext(
             }
 
             private handleAddLayer = () => {
-                const {
-                    editor: { activeComp },
-                    layerIndex,
-                } = this.props
+                const { layerIndex } = this.props
+                const { activeComp } = this.props.context.getStore(EditorStore)
                 if (!activeComp) return
 
                 this.props.context.executeOperation(ProjectOps.addLayer, {

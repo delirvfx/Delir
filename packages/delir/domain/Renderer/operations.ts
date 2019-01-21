@@ -48,7 +48,7 @@ export const setPreviewCanvas = operation((context, arg: { canvas: HTMLCanvasEle
 
 export const startPreview = operation(
     (context, { compositionId, beginFrame }: { compositionId: string; beginFrame?: number }) => {
-        beginFrame = beginFrame != null ? beginFrame : context.getStore(EditorStore).currentPreviewFrame
+        beginFrame = beginFrame != null ? beginFrame : context.getStore(EditorStore).currentPointFrame
         const preference = context.getStore(PreferenceStore).getPreferences()
 
         context.dispatch(RendererActions.startPreview, {

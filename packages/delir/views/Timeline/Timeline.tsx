@@ -26,6 +26,8 @@ import LayerLabelList from './LayerLabelList'
 import * as s from './style.styl'
 import t from './Timeline.i18n'
 
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp
+
 interface State {
     timelineScrollTop: number
     timelineScrollLeft: number
@@ -34,12 +36,12 @@ interface State {
     selectedLayerId: string | null
 }
 
-type Props = ReturnType<typeof mapStoresToProps> & ContextProp
-
 const PX_PER_SEC = 30
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
-    editor: getStore(EditorStore).getState(),
+    activeComp: getStore(EditorStore).getActiveComposition(),
+    activeClip: getStore(EditorStore).activeClip,
+    currentPointFrame: getStore(EditorStore).currentPointFrame,
     previewPlayed: getStore(RendererStore).previewPlaying,
 })
 
@@ -55,10 +57,6 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 export default withComponentContext(
     connectToStores([EditorStore, ProjectStore], mapStoresToProps)(
         class Timeline extends React.Component<Props, State> {
-            public props: Props & {
-                editor: EditorState
-            }
-
             public refs: {
                 scaleList: DropDown
                 keyframeView: InstanceType<typeof KeyframeEditor>
@@ -79,16 +77,17 @@ export default withComponentContext(
                 window.addEventListener('resize', _.debounce(this._syncCursorHeight, 1000 / 30))
             }
 
+            public shouldComponentUpdate(nextProps: Props, nextState: State) {
+                return !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState)
+            }
+
             public componentDidUpdate() {
                 this.refs.timelineLabels.scrollTop = this.refs.timelineLayers.scrollTop = this.state.timelineScrollTop
             }
 
             public render() {
                 const { scale, timelineScrollLeft } = this.state
-                const {
-                    previewPlayed,
-                    editor: { activeComp, activeClip, currentPreviewFrame },
-                } = this.props
+                const { previewPlayed, activeComp, activeClip, currentPointFrame } = this.props
                 const { framerate } = activeComp ? activeComp : { framerate: 30 }
                 const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
@@ -166,7 +165,7 @@ export default withComponentContext(
                                             activeComposition={activeComp}
                                             measures={measures}
                                             previewPlaying={previewPlayed}
-                                            currentFrame={currentPreviewFrame}
+                                            currentFrame={currentPointFrame}
                                             cursorHeight={this.state.cursorHeight}
                                             scale={this.state.scale}
                                             pxPerSec={PX_PER_SEC}
@@ -183,7 +182,7 @@ export default withComponentContext(
                                                 layers.map((layer, idx) => (
                                                     <Layer
                                                         key={layer.id!}
-                                                        layer={layer}
+                                                        layer={{ ...layer }}
                                                         layerIndex={idx}
                                                         framerate={framerate}
                                                         pxPerSec={PX_PER_SEC}
@@ -244,9 +243,7 @@ export default withComponentContext(
             }
 
             private onLayerSort: SortEndHandler = ({ oldIndex, newIndex }) => {
-                const {
-                    editor: { activeComp },
-                } = this.props
+                const { activeComp } = this.props
                 if (!activeComp) return
 
                 const layer = activeComp.layers[oldIndex]
@@ -257,17 +254,16 @@ export default withComponentContext(
             }
 
             private handleAddLayer = () => {
-                const { editor } = this.props
+                const { activeComp } = this.props
 
-                if (!editor.activeComp) return
-
+                if (!activeComp) return
                 this.props.context.executeOperation(ProjectOps.addLayer, {
-                    targetCompositionId: editor.activeComp.id,
+                    targetCompositionId: activeComp.id,
                 })
             }
 
             private onLayerRemove = (layerId: string) => {
-                if (!this.props.editor.activeComp) return
+                if (!this.props.activeComp) return
                 this.props.context.executeOperation(ProjectOps.removeLayer, {
                     layerId,
                 })
@@ -302,7 +298,8 @@ export default withComponentContext(
             }
 
             private _dropAsset = (e: React.DragEvent<HTMLElement>) => {
-                const { dragEntity, activeComp } = this.props.editor
+                const { activeComp } = this.props
+                const { dragEntity } = this.props.context.getStore(EditorStore).getState()
 
                 if (!activeComp) {
                     this.props.context.executeOperation(EditorOps.notify, {

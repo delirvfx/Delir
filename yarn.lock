@@ -809,10 +809,10 @@
   resolved "https://registry.yarnpkg.com/@icons/material/-/material-0.2.4.tgz#e90c9f71768b3736e76d7dd6783fc6c2afa88bc8"
   integrity sha512-QPcGmICAPbGLGb6F/yNf/KzKqvFx8z5qx3D1yFqVAjoFmXK35EgyW+cJ57Te3CNsmzblwtzakLGFqHPqrfb4Tw==
 
-"@ragg/fleur-react@0.0.11":
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.11.tgz#8bdfe25ab28822b20d7870a612568a29c6d3718a"
-  integrity sha512-m76hqybDf20qfcQwT3On10v75uxXQ/m78NTtt/DWPObi03MdYYuBA/9GoVyVY/hnmww6GTDFMl9cMtOWqXUxxQ==
+"@ragg/fleur-react@0.0.12":
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.12.tgz#e2cc124f9e61f45af59ebcf5879cbf956d3f6ce9"
+  integrity sha512-pW0S21llIgg0QOxsbvBVso4b5eTc+lyaCRbEcjHkTg5m/u0WQpGsfid+eLhFdNQAxPblGhPTQeI8rQFmrwUxKw==
 
 "@ragg/fleur@0.0.12":
   version "0.0.12"
