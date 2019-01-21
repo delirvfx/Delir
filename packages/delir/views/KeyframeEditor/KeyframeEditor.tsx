@@ -797,17 +797,21 @@ export default withComponentContext(
 
             private _getDescriptorByParamName(paramName: string | null) {
                 const rendererStore = this.props.context.getStore(RendererStore)
+                const { activeParam } = this.props
                 const activeEntityObject = this.activeEntityObject
 
-                if (!activeEntityObject) return null
+                if (!activeEntityObject || !activeParam) return null
 
                 let parameters: Delir.AnyParameterTypeDescriptor[]
 
-                if (activeEntityObject instanceof Delir.Entity.Clip) {
-                    const info = Delir.Engine.Renderers.getInfo(activeEntityObject.renderer)
+                if (activeParam.type === 'clip') {
+                    const info = Delir.Engine.Renderers.getInfo((activeEntityObject as Delir.Entity.Clip).renderer)
                     parameters = info ? info.parameter.properties : []
-                } else if (activeEntityObject instanceof Delir.Entity.Effect) {
-                    parameters = rendererStore.getPostEffectParametersById(activeEntityObject.processor) || []
+                } else if (activeParam.type === 'effect') {
+                    parameters =
+                        rendererStore.getPostEffectParametersById(
+                            (activeEntityObject as Delir.Entity.Effect).processor,
+                        ) || []
                 } else {
                     throw new Error('Unexpected entity type')
                 }
