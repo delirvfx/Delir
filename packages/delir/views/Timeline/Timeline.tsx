@@ -57,13 +57,6 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 export default withComponentContext(
     connectToStores([EditorStore, ProjectStore], mapStoresToProps)(
         class Timeline extends React.Component<Props, State> {
-            public refs: {
-                scaleList: DropDown
-                keyframeView: InstanceType<typeof KeyframeEditor>
-                timelineLayers: HTMLUListElement
-                timelineLabels: HTMLDivElement
-            }
-
             public state: State = {
                 timelineScrollTop: 0,
                 timelineScrollLeft: 0,
@@ -72,9 +65,14 @@ export default withComponentContext(
                 selectedLayerId: null,
             }
 
+            private scaleList = React.createRef<DropDown>()
+            private timelineContainer = React.createRef<HTMLDivElement>()
+            private labelContainer = React.createRef<HTMLDivElement>()
+            private keyframeView = React.createRef<InstanceType<typeof KeyframeEditor>>()
+
             public componentDidMount() {
-                this._syncCursorHeight()
-                window.addEventListener('resize', _.debounce(this._syncCursorHeight, 1000 / 30))
+                this.syncCursorHeight()
+                window.addEventListener('resize', _.debounce(this.syncCursorHeight, 1000 / 30))
             }
 
             public shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -82,7 +80,7 @@ export default withComponentContext(
             }
 
             public componentDidUpdate() {
-                this.refs.timelineLabels.scrollTop = this.refs.timelineLayers.scrollTop = this.state.timelineScrollTop
+                this.labelContainer.current!.scrollTop = this.timelineContainer.current!.scrollTop = this.state.timelineScrollTop
             }
 
             public render() {
@@ -118,7 +116,11 @@ export default withComponentContext(
                                                 />
                                             </div>
                                             <div className={s.scaleLabel} onClick={this._toggleScaleList}>
-                                                <DropDown ref="scaleList" className={s.scaleList} shownInitial={false}>
+                                                <DropDown
+                                                    ref={this.scaleList}
+                                                    className={s.scaleList}
+                                                    shownInitial={false}
+                                                >
                                                     <li data-value="50" onClick={this._selectScale}>
                                                         50%
                                                     </li>
@@ -144,7 +146,7 @@ export default withComponentContext(
                                         </div>
 
                                         <div
-                                            ref="timelineLabels"
+                                            ref={this.labelContainer}
                                             className={s.labels}
                                             onScroll={this.handleScrollLayerLabel}
                                         >
@@ -174,7 +176,7 @@ export default withComponentContext(
                                         />
 
                                         <div
-                                            ref="timelineLayers"
+                                            ref={this.timelineContainer}
                                             className={s.layerContainer}
                                             onScroll={this.handleScrollTimeline}
                                         >
@@ -197,7 +199,7 @@ export default withComponentContext(
                             </Pane>
                             <Pane className={s.keyframeGraphRegion}>
                                 <KeyframeEditor
-                                    ref="keyframeView"
+                                    ref={this.keyframeView}
                                     activeComposition={activeComp}
                                     activeClip={activeClip}
                                     pxPerSec={PX_PER_SEC}
@@ -213,12 +215,11 @@ export default withComponentContext(
                 )
             }
 
-            private _syncCursorHeight = () => {
-                const { timelineLayers, keyframeView } = this.refs
-
-                const timelineHeight = timelineLayers.getBoundingClientRect().height
-                const keyFrameViewHeight = (ReactDOM.findDOMNode(keyframeView!) as Element).getBoundingClientRect()
-                    .height
+            private syncCursorHeight = () => {
+                const timelineHeight = this.timelineContainer.current!.getBoundingClientRect().height
+                const keyFrameViewHeight = (ReactDOM.findDOMNode(
+                    this.keyframeView.current!,
+                ) as Element).getBoundingClientRect().height
 
                 this.setState({
                     cursorHeight: timelineHeight + keyFrameViewHeight + 1,
@@ -282,18 +283,18 @@ export default withComponentContext(
             }
 
             private handleScrollKeyframeEditor = (dx: number, dy: number) => {
-                const { timelineLayers } = this.refs
-                timelineLayers.scrollLeft += dx
-                this.setState({ timelineScrollLeft: timelineLayers.scrollLeft })
+                this.timelineContainer.current!.scrollLeft += dx
+                // Set scrollLeft normalized by DOM
+                this.setState({ timelineScrollLeft: this.timelineContainer.current!.scrollLeft })
             }
 
             private _toggleScaleList = () => {
-                this.refs.scaleList.toggle()
+                this.scaleList.current!.toggle()
             }
 
             private _selectScale = ({ nativeEvent: e }: React.MouseEvent<HTMLLIElement>) => {
                 const scale = +(e.target as HTMLLIElement).dataset.value! / 100
-                this.refs.scaleList.hide()
+                this.scaleList.current!.hide()
                 this.setState({ scale: scale })
             }
 
