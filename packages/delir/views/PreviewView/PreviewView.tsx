@@ -1,5 +1,4 @@
-import * as Delir from '@ragg/delir-core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import * as React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 
@@ -13,31 +12,26 @@ import RendererStore, { RenderState } from '../../domain/Renderer/RendererStore'
 import t from './PreviewView.i18n'
 import * as s from './style.styl'
 
-interface ConnectedProps {
-    activeComp?: Delir.Entity.Composition
-    currentPreviewFrame: number
-    previewPlayed: boolean
-    lastRenderState: RenderState | null
-}
-
-type Props = ConnectedProps & ContextProp
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
 interface State {
     scale: number
     scaleListShown: boolean
 }
 
-export default withComponentContext(
-    connectToStores([EditorStore, RendererStore], getStore => {
-        const editorStore = getStore(EditorStore)
+const mapStoresToProps = (getStore: StoreGetter) => {
+    const editorStore = getStore(EditorStore)
 
-        return {
-            activeComp: editorStore.getState().activeComp,
-            currentPreviewFrame: editorStore.getState().currentPreviewFrame,
-            previewPlayed: getStore(EditorStore).getState().previewPlayed,
-            lastRenderState: getStore(RendererStore).getLastRenderState(),
-        }
-    })(
+    return {
+        activeComp: editorStore.getState().activeComp,
+        currentPreviewFrame: editorStore.getState().currentPreviewFrame,
+        previewPlaying: getStore(RendererStore).previewPlaying,
+        lastRenderState: getStore(RendererStore).getLastRenderState(),
+    }
+}
+
+export default withComponentContext(
+    connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class PreviewView extends React.Component<Props, State> {
             public state = {
                 scale: 1,
@@ -54,13 +48,13 @@ export default withComponentContext(
             }
 
             public render() {
-                const { activeComp, currentPreviewFrame, previewPlayed, lastRenderState } = this.props
+                const { activeComp, currentPreviewFrame, previewPlaying, lastRenderState } = this.props
                 const { scale, scaleListShown } = this.state
                 const currentScale = Math.round(scale * 100)
                 const width = activeComp ? activeComp.width : 640
                 const height = activeComp ? activeComp.height : 360
                 const currentFrame =
-                    previewPlayed && lastRenderState ? lastRenderState.currentFrame : currentPreviewFrame
+                    previewPlaying && lastRenderState ? lastRenderState.currentFrame : currentPreviewFrame
                 const timecode = activeComp ? frameToTimeCode(currentFrame, activeComp.framerate) : '--:--:--:--'
 
                 return (

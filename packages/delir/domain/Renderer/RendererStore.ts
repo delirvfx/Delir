@@ -13,6 +13,7 @@ interface State {
     project: Delir.Entity.Project | null
     composition: Delir.Entity.Composition | null
     progress: string | null
+    previewPlaying: boolean
     previewRenderState: RenderState | null
     isInRendering: boolean
     exportRenderState: RenderingProgress | null
@@ -32,6 +33,7 @@ export default class RendererStore extends Store<State> {
         project: null,
         composition: null,
         progress: null,
+        previewPlaying: false,
         previewRenderState: null,
         isInRendering: false,
         exportRenderState: null,
@@ -76,7 +78,7 @@ export default class RendererStore extends Store<State> {
     })
 
     private handleStartPreveiew = listen(
-        EditorActions.startPreviewAction,
+        RendererActions.startPreview,
         async ({ compositionId, beginFrame, ignoreMissingEffect }) => {
             if (!this.state.project || !this.state.composition || !this.destCanvas || !this.destCanvasCtx) return
 
@@ -87,7 +89,10 @@ export default class RendererStore extends Store<State> {
             this.audioBufferSource && this.audioBufferSource.stop()
             this.audioContext && (await this.audioContext.close())
 
-            this.updateWith(s => (s.exception = null))
+            this.updateWith(s => {
+                s.exception = null
+                s.previewPlaying = true
+            })
 
             this.audioContext = new AudioContext()
 
@@ -100,12 +105,11 @@ export default class RendererStore extends Store<State> {
             let playbackRate: number = 1
             this.pipeline.setStreamObserver({
                 onFrame: (canvas, status) => {
-                    this.updateWith(
-                        d =>
-                            (d.previewRenderState = {
-                                currentFrame: status.frame,
-                            }),
-                    )
+                    this.updateWith(d => {
+                        d.previewRenderState = {
+                            currentFrame: status.frame,
+                        }
+                    })
                     this.destCanvasCtx!.drawImage(canvas, 0, 0)
                 },
                 onAudioBuffered: buffers => {
@@ -149,11 +153,13 @@ export default class RendererStore extends Store<State> {
                     // tslint:disable-next-line:no-console
                     console.log(e)
                 }
+
+                this.updateWith(s => (s.previewPlaying = false))
             })
         },
     )
 
-    private handleStopPreview = listen(EditorActions.stopPreviewAction, () => {
+    private handleStopPreview = listen(RendererActions.stopPreview, () => {
         this.pipeline.stopCurrentRendering()
         this.audioBufferSource && this.audioBufferSource.stop()
     })
@@ -246,6 +252,10 @@ export default class RendererStore extends Store<State> {
 
     public getUserCodeException() {
         return this.state.exception
+    }
+
+    public get previewPlaying() {
+        return this.state.previewPlaying
     }
 
     public isInRendering() {

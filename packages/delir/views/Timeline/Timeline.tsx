@@ -1,5 +1,5 @@
 import * as Delir from '@ragg/delir-core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import * as classNames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
@@ -12,12 +12,11 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../domain/Project/ProjectStore'
+import RendererStore from '../../domain/Renderer/RendererStore'
 
+import DropDown from '../../components/dropdown'
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
-
-import { ContextMenu, MenuItem } from '../../components/ContextMenu'
-import DropDown from '../../components/dropdown'
 
 import KeyframeEditor from '../KeyframeEditor'
 import Gradations from './Gradations'
@@ -27,10 +26,6 @@ import LayerLabelList from './LayerLabelList'
 import * as s from './style.styl'
 import t from './Timeline.i18n'
 
-interface ConnectedProps {
-    editor: EditorState
-}
-
 interface State {
     timelineScrollTop: number
     timelineScrollLeft: number
@@ -39,9 +34,14 @@ interface State {
     selectedLayerId: string | null
 }
 
-type Props = ConnectedProps & ContextProp
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
 const PX_PER_SEC = 30
+
+const mapStoresToProps = (getStore: StoreGetter) => ({
+    editor: getStore(EditorStore).getState(),
+    previewPlayed: getStore(RendererStore).previewPlaying,
+})
 
 /**
  * Timeline structure:
@@ -53,9 +53,7 @@ const PX_PER_SEC = 30
  *       └ Clip
  */
 export default withComponentContext(
-    connectToStores([EditorStore, ProjectStore], getStore => ({
-        editor: getStore(EditorStore).getState(),
-    }))(
+    connectToStores([EditorStore, ProjectStore], mapStoresToProps)(
         class Timeline extends React.Component<Props, State> {
             public props: Props & {
                 editor: EditorState
@@ -87,7 +85,10 @@ export default withComponentContext(
 
             public render() {
                 const { scale, timelineScrollLeft } = this.state
-                const { activeComp, activeClip, currentPreviewFrame, previewPlayed } = this.props.editor
+                const {
+                    previewPlayed,
+                    editor: { activeComp, activeClip, currentPreviewFrame },
+                } = this.props
                 const { framerate } = activeComp ? activeComp : { framerate: 30 }
                 const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
@@ -164,7 +165,7 @@ export default withComponentContext(
                                         <Gradations
                                             activeComposition={activeComp}
                                             measures={measures}
-                                            previewPlayed={previewPlayed}
+                                            previewPlaying={previewPlayed}
                                             currentFrame={currentPreviewFrame}
                                             cursorHeight={this.state.cursorHeight}
                                             scale={this.state.scale}

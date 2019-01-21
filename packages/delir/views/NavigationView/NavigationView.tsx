@@ -1,28 +1,32 @@
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import { remote } from 'electron'
 import * as path from 'path'
 import * as React from 'react'
 
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as RendererOps from '../../domain/Renderer/operations'
+import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Pane from '../../components/pane'
 
 import * as s from './style.styl'
 
-interface ConnectedProps {
-    editor: EditorState
-}
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
-type Props = ConnectedProps & ContextProp
+const mapStoresToProps = (getStore: StoreGetter) => ({
+    editor: getStore(EditorStore).getState(),
+    previewPlaying: getStore(RendererStore).previewPlaying,
+})
 
 export default withComponentContext(
-    connectToStores([EditorStore], getStore => ({
-        editor: getStore(EditorStore).getState(),
-    }))(
+    connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class NavigationView extends React.Component<Props> {
             public render() {
-                const { project, projectPath, previewPlayed } = this.props.editor
+                const {
+                    previewPlaying,
+                    editor: { project, projectPath },
+                } = this.props
                 const projectName = project
                     ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project')
                     : 'Delir'
@@ -35,7 +39,7 @@ export default withComponentContext(
                             {projectName}
                         </ul>
                         <ul className={s.navigationList}>
-                            {previewPlayed ? (
+                            {previewPlaying ? (
                                 <li onClick={this.onClickPause}>
                                     <i className="fa fa-pause" />
                                 </li>
@@ -55,13 +59,13 @@ export default withComponentContext(
                 const { activeComp } = this.props.editor
                 if (!activeComp) return
 
-                this.props.context.executeOperation(EditorOps.startPreview, {
+                this.props.context.executeOperation(RendererOps.startPreview, {
                     compositionId: activeComp.id!,
                 })
             }
 
             private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
-                this.props.context.executeOperation(EditorOps.stopPreview, {})
+                this.props.context.executeOperation(RendererOps.stopPreview, {})
             }
 
             private onClickDest = () => {

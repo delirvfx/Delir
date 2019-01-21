@@ -1,13 +1,14 @@
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import * as Mousetrap from 'mousetrap'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { makeMousetrapIgnoreInputHandler } from '../../utils/makeMousetrapHandler'
 import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
-import * as HistoryOps from '../../domain/History/operations'
+import * as RendererOps from '../../domain/Renderer/operations'
+import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
@@ -24,16 +25,15 @@ import Timeline from '../Timeline'
 
 import * as s from './style.styl'
 
-interface ConnectedProps {
-    editor: EditorState
-}
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
-type Props = ConnectedProps & ContextProp
+const mapStoresToProps = (getStore: StoreGetter) => ({
+    preferenceOpened: getStore(EditorStore).getState().preferenceOpened,
+    previewPlaying: getStore(RendererStore).previewPlaying,
+})
 
 export default withComponentContext(
-    connectToStores([EditorStore], getStore => ({
-        editor: getStore(EditorStore).getState(),
-    }))(
+    connectToStores([RendererStore], mapStoresToProps)(
         class AppView extends React.PureComponent<Props> {
             public root = React.createRef<HTMLDivElement>()
             public trap: InstanceType<typeof Mousetrap>
@@ -54,7 +54,7 @@ export default withComponentContext(
             }
 
             public render() {
-                const { preferenceOpened } = this.props.editor
+                const { preferenceOpened } = this.props
 
                 return (
                     <div ref={this.root} className="_container" onDrop={this.prevent}>
@@ -110,16 +110,16 @@ export default withComponentContext(
                     return
                 }
 
-                const { previewPlayed, activeComp, currentPreviewFrame } = this.props.editor
+                const { previewPlaying } = this.props
+                const activeComp = this.props.context.getStore(EditorStore).getActiveComposition()
 
                 if (!activeComp) return
 
-                if (previewPlayed) {
-                    this.props.context.executeOperation(EditorOps.stopPreview, {})
+                if (previewPlaying) {
+                    this.props.context.executeOperation(RendererOps.stopPreview, {})
                 } else {
-                    this.props.context.executeOperation(EditorOps.startPreview, {
+                    this.props.context.executeOperation(RendererOps.startPreview, {
                         compositionId: activeComp.id,
-                        beginFrame: currentPreviewFrame,
                     })
                 }
             }

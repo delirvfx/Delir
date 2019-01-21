@@ -2,7 +2,9 @@ import { operation } from '@ragg/fleur'
 import { remote } from 'electron'
 import { join } from 'path'
 
+import EditorStore from '../Editor/EditorStore'
 import * as EditorOps from '../Editor/operations'
+import PreferenceStore from '../Preference/PreferenceStore'
 import { RendererActions } from './actions'
 import FSPluginLoader from './FSPluginLoader'
 
@@ -42,4 +44,21 @@ export const loadPlugins = operation(async context => {
 
 export const setPreviewCanvas = operation((context, arg: { canvas: HTMLCanvasElement }) => {
     context.dispatch(RendererActions.setPreviewCanvas, arg)
+})
+
+export const startPreview = operation(
+    (context, { compositionId, beginFrame }: { compositionId: string; beginFrame?: number }) => {
+        beginFrame = beginFrame != null ? beginFrame : context.getStore(EditorStore).currentPreviewFrame
+        const preference = context.getStore(PreferenceStore).getPreferences()
+
+        context.dispatch(RendererActions.startPreview, {
+            compositionId,
+            beginFrame,
+            ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
+        })
+    },
+)
+
+export const stopPreview = operation(context => {
+    context.dispatch(RendererActions.stopPreview, {})
 })

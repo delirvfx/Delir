@@ -102,25 +102,6 @@ export const changeActiveParam = operation((context, { target }: { target: Param
     context.dispatch(EditorActions.changeActiveParamAction, { target })
 })
 
-//
-// Preview
-//
-export const startPreview = operation(
-    (context, { compositionId, beginFrame = 0 }: { compositionId: string; beginFrame?: number }) => {
-        const preference = context.getStore(PreferenceStore).getPreferences()
-
-        context.dispatch(EditorActions.startPreviewAction, {
-            compositionId,
-            beginFrame,
-            ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
-        })
-    },
-)
-
-export const stopPreview = operation(context => {
-    context.dispatch(EditorActions.stopPreviewAction, {})
-})
-
 export const renderDestinate = operation((context, arg: { compositionId: string }) => {
     const preference = context.getStore(PreferenceStore).getPreferences()
 
