@@ -56,8 +56,8 @@ class Notifications extends React.Component<Props> {
 }
 
 export default withComponentContext(
-    connectToStores([EditorStore, RendererStore], context => ({
-        entries: context.getStore(EditorStore).getState().notifications,
-        userCodeException: context.getStore(RendererStore).getUserCodeException(),
+    connectToStores([EditorStore, RendererStore], getStore => ({
+        entries: getStore(EditorStore).getState().notifications,
+        userCodeException: getStore(RendererStore).getUserCodeException(),
     }))(Notifications),
 )

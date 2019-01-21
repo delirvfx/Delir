@@ -34,8 +34,8 @@ interface GradationsState {
     dragSeekEnabled: boolean
 }
 
-export default connectToStores([RendererStore], context => ({
-    lastRenderState: context.getStore(RendererStore).getLastRenderState(),
+export default connectToStores([RendererStore], getStore => ({
+    lastRenderState: getStore(RendererStore).getLastRenderState(),
 }))(
     class Gradations extends React.Component<Props, GradationsState> {
         public static defaultProps = {

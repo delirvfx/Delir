@@ -21,9 +21,9 @@ interface State {
     show: boolean
 }
 
-export default connectToStores([RendererStore], context => ({
-    inRendering: context.getStore(RendererStore).isInRendering(),
-    status: context.getStore(RendererStore).getExportingState(),
+export default connectToStores([RendererStore], getStore => ({
+    inRendering: getStore(RendererStore).isInRendering(),
+    status: getStore(RendererStore).getExportingState(),
 }))(
     class RenderingWaiter extends React.Component<Props, State> {
         public state: State = {

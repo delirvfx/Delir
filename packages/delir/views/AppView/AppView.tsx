@@ -31,8 +31,8 @@ interface ConnectedProps {
 type Props = ConnectedProps & ContextProp
 
 export default withComponentContext(
-    connectToStores([EditorStore], context => ({
-        editor: context.getStore(EditorStore).getState(),
+    connectToStores([EditorStore], getStore => ({
+        editor: getStore(EditorStore).getState(),
     }))(
         class AppView extends React.PureComponent<Props> {
             public root = React.createRef<HTMLDivElement>()
@@ -74,6 +74,8 @@ export default withComponentContext(
                         <RenderingWaiter />
                         <CSSTransitionGroup
                             component="div"
+                            transitionEnterTimeout={400}
+                            transitionLeaveTimeout={400}
                             transitionName={{
                                 enter: s.preferenceEnter,
                                 enterActive: s.preferenceEnterActive,

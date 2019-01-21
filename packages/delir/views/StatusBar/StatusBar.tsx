@@ -8,8 +8,8 @@ interface ConnectedProps {
     stateText: string
 }
 
-export default connectToStores([EditorStore], context => ({
-    stateText: context.getStore(EditorStore).getState().processingState,
+export default connectToStores([EditorStore], getStore => ({
+    stateText: getStore(EditorStore).getState().processingState,
 }))(
     class StatusBar extends React.Component<ConnectedProps> {
         public render() {

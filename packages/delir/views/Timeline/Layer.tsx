@@ -46,10 +46,10 @@ interface State {
  * ClipSpace
  */
 export default withComponentContext(
-    connectToStores([EditorStore, RendererStore], context => ({
-        editor: context.getStore(EditorStore).getState(),
-        postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins(),
-        userCodeException: context.getStore(RendererStore).getUserCodeException(),
+    connectToStores([EditorStore, RendererStore], getStore => ({
+        editor: getStore(EditorStore).getState(),
+        postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
+        userCodeException: getStore(RendererStore).getUserCodeException(),
     }))(
         class Layer extends React.Component<Props, State> {
             public state: State = {

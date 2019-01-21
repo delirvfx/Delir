@@ -108,8 +108,8 @@ class LayerLabelComponent extends React.Component<Props> {
 }
 
 const LayerLabel = withComponentContext(
-    connectToStores([EditorStore], context => ({
-        activeComp: context.getStore(EditorStore).getActiveComposition(),
+    connectToStores([EditorStore], getStore => ({
+        activeComp: getStore(EditorStore).getActiveComposition(),
     }))(LayerLabelComponent),
 )
 

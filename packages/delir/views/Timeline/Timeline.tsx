@@ -53,8 +53,8 @@ const PX_PER_SEC = 30
  *       └ Clip
  */
 export default withComponentContext(
-    connectToStores([EditorStore, ProjectStore], context => ({
-        editor: context.getStore(EditorStore).getState(),
+    connectToStores([EditorStore, ProjectStore], getStore => ({
+        editor: getStore(EditorStore).getState(),
     }))(
         class Timeline extends React.Component<Props, State> {
             public props: Props & {

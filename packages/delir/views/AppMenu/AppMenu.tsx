@@ -23,8 +23,8 @@ interface State {
 type Props = ConnectedProps & ContextProp
 
 export default withComponentContext(
-    connectToStores([EditorStore], context => ({
-        editor: context.getStore(EditorStore).getState(),
+    connectToStores([EditorStore], getStore => ({
+        editor: getStore(EditorStore).getState(),
     }))(
         class AppMenu extends React.Component<Props, State> {
             public state: State = {
