@@ -65,12 +65,12 @@ type Props = OwnProps & ConnectedProps & ContextProp
 export default withComponentContext(
     connectToStores(
         [EditorStore, ProjectStore, RendererStore],
-        (context): ConnectedProps => ({
-            editor: context.getStore(EditorStore).getState(),
-            activeParam: context.getStore(EditorStore).getActiveParam(),
-            project: context.getStore(ProjectStore).getState(),
-            userCodeException: context.getStore(RendererStore).getUserCodeException(),
-            postEffectPlugins: context.getStore(RendererStore).getPostEffectPlugins(),
+        (getStore): ConnectedProps => ({
+            editor: getStore(EditorStore).getState(),
+            activeParam: getStore(EditorStore).getActiveParam(),
+            project: getStore(ProjectStore).getState(),
+            userCodeException: getStore(RendererStore).getUserCodeException(),
+            postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
         }),
     )(
         class KeyframeEditor extends React.Component<Props, State> {

@@ -85,8 +85,8 @@ interface State {
 type Props = ConnectedProps & ContextProp
 
 export default withComponentContext(
-    connectToStores([EditorStore, ProjectStore], context => ({
-        editor: context.getStore(EditorStore).getState(),
+    connectToStores([EditorStore, ProjectStore], getStore => ({
+        editor: getStore(EditorStore).getState(),
     }))(
         class AssetsView extends React.Component<Props, State> {
             public state = {

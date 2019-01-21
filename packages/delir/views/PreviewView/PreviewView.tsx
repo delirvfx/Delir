@@ -28,14 +28,14 @@ interface State {
 }
 
 export default withComponentContext(
-    connectToStores([EditorStore, RendererStore], context => {
-        const editorStore = context.getStore(EditorStore)
+    connectToStores([EditorStore, RendererStore], getStore => {
+        const editorStore = getStore(EditorStore)
 
         return {
             activeComp: editorStore.getState().activeComp,
             currentPreviewFrame: editorStore.getState().currentPreviewFrame,
-            previewPlayed: context.getStore(EditorStore).getState().previewPlayed,
-            lastRenderState: context.getStore(RendererStore).getLastRenderState(),
+            previewPlayed: getStore(EditorStore).getState().previewPlayed,
+            lastRenderState: getStore(RendererStore).getLastRenderState(),
         }
     })(
         class PreviewView extends React.Component<Props, State> {

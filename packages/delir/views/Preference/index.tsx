@@ -25,8 +25,8 @@ interface State {
 }
 
 export default withComponentContext(
-    connectToStores([PreferenceStore], context => ({
-        preference: context.getStore(PreferenceStore).getPreferences(),
+    connectToStores([PreferenceStore], getStore => ({
+        preference: getStore(PreferenceStore).getPreferences(),
     }))(
         class Preference extends React.Component<Props, State> {
             public state: State = {
