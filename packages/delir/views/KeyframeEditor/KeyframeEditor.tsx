@@ -5,6 +5,7 @@ import { clipboard } from 'electron'
 import * as _ from 'lodash'
 import * as mouseWheel from 'mouse-wheel'
 import * as React from 'react'
+import { SpreadType } from '../../utils/Spread'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
 import * as EditorOps from '../../domain/Editor/operations'
@@ -34,8 +35,8 @@ export interface EditorResult {
 }
 
 interface OwnProps {
-    activeComposition: Delir.Entity.Composition | null
-    activeClip: Delir.Entity.Clip | null
+    activeComposition: SpreadType<Delir.Entity.Composition> | null
+    activeClip: SpreadType<Delir.Entity.Clip> | null
     scrollLeft: number
     scale: number
     pxPerSec: number
@@ -542,7 +543,7 @@ export default withComponentContext(
                 return activeClip ? Delir.Engine.Renderers.getInfo(activeClip.renderer).parameter.properties || [] : []
             }
 
-            private get activeEntityObject(): Delir.Entity.Clip | Delir.Entity.Effect | null {
+            private get activeEntityObject(): SpreadType<Delir.Entity.Clip> | SpreadType<Delir.Entity.Effect> | null {
                 const { activeClip, activeParam } = this.props
 
                 if (activeClip) {

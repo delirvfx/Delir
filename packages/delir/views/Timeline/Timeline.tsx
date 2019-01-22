@@ -91,7 +91,7 @@ export default withComponentContext(
                     this.setState({
                         timelineScrollWidth: TimePixelConversion.framesToPixel({
                             pxPerSec: PX_PER_SEC,
-                            durationFrames: durationFrames + framerate * 1,
+                            durationFrames: durationFrames + framerate,
                             framerate: framerate,
                             scale,
                         }),
@@ -205,7 +205,6 @@ export default withComponentContext(
                                                         framerate={framerate}
                                                         pxPerSec={PX_PER_SEC}
                                                         scale={scale}
-                                                        activeClip={activeClip}
                                                         scrollLeft={timelineScrollLeft}
                                                         scrollWidth={timelineScrollWidth}
                                                     />

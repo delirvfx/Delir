@@ -5,6 +5,7 @@ import * as _ from 'lodash'
 import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
+import { SpreadType } from '../../utils/Spread'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -15,7 +16,7 @@ import t from './Clip.i18n'
 import * as s from './Clip.styl'
 
 interface OwnProps {
-    clip: Delir.Entity.Clip
+    clip: SpreadType<Delir.Entity.Clip>
     left: number
     width: number
     active: boolean

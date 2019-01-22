@@ -3,6 +3,7 @@ import { connectToStores, StoreGetter } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 
+import { SpreadType } from '../../utils/Spread'
 import TimePixelConversion, { MeasurePoint } from '../../utils/TimePixelConversion'
 
 import RendererStore from '../../domain/Renderer/RendererStore'
@@ -16,7 +17,7 @@ interface OwnProps {
     currentFrame: number
     measures: MeasurePoint[]
     previewPlaying: boolean
-    activeComposition: Delir.Entity.Composition | null
+    activeComposition: SpreadType<Delir.Entity.Composition> | null
     cursorHeight: number
     scrollLeft: number
     scale: number

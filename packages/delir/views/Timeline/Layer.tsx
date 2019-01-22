@@ -3,7 +3,7 @@ import { connectToStores, ContextProp, StoreGetter, withComponentContext } from 
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
-import { isWindows } from '../../utils/platform'
+import { SpreadType } from '../../utils/Spread'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
@@ -21,7 +21,7 @@ import t from './Layer.i18n'
 import * as s from './Layer.styl'
 
 interface OwnProps {
-    layer: Readonly<Delir.Entity.Layer>
+    layer: SpreadType<Delir.Entity.Layer>
     layerIndex: number
     framerate: number
     pxPerSec: number
@@ -117,7 +117,7 @@ export default withComponentContext(
                                 return (
                                     <Clip
                                         key={clip.id!}
-                                        clip={clip}
+                                        clip={{ ...clip }}
                                         width={width}
                                         left={left}
                                         active={!!activeClip && clip.id === activeClip.id}

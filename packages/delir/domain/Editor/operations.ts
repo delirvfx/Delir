@@ -5,6 +5,7 @@ import * as fs from 'fs-extra'
 import * as _ from 'lodash'
 import * as MsgPack from 'msgpack5'
 import * as path from 'path'
+import { SpreadType } from '../../utils/Spread'
 
 import PreferenceStore from '../Preference/PreferenceStore'
 import RendererStore from '../Renderer/RendererStore'
@@ -256,7 +257,7 @@ export const copyEntity = operation(
             entity,
         }: {
             type: ClipboardEntry['type']
-            entity: Delir.Entity.Clip
+            entity: SpreadType<Delir.Entity.Clip>
         },
     ) => {
         context.dispatch(EditorActions.setClipboardEntry, {
