@@ -3,6 +3,7 @@ import { operation } from '@ragg/fleur'
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 import { safeAssign } from '../../utils/safeAssign'
+import { SpreadType } from '../../utils/Spread'
 
 import EditorStore from '../Editor/EditorStore'
 import * as EditorOps from '../Editor/operations'
@@ -103,7 +104,7 @@ export const addLayerWithAsset = operation(
             index = 0,
             asset,
         }: {
-            targetComposition: Delir.Entity.Composition
+            targetComposition: SpreadType<Delir.Entity.Composition>
             index?: 0
             asset: Delir.Entity.Asset
         },
@@ -154,7 +155,7 @@ export const addLayerWithAsset = operation(
         })
 
         context.dispatch(ProjectActions.addLayerWithAssetAction, {
-            targetComposition,
+            targetCompositionId: targetComposition.id,
             clip,
             asset,
             layer,

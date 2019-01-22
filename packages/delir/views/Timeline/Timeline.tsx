@@ -1,5 +1,5 @@
 import * as Delir from '@ragg/delir-core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import * as classNames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
@@ -12,12 +12,11 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../domain/Project/ProjectStore'
+import RendererStore from '../../domain/Renderer/RendererStore'
 
+import DropDown from '../../components/dropdown'
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
-
-import { ContextMenu, MenuItem } from '../../components/ContextMenu'
-import DropDown from '../../components/dropdown'
 
 import KeyframeEditor from '../KeyframeEditor'
 import Gradations from './Gradations'
@@ -27,21 +26,25 @@ import LayerLabelList from './LayerLabelList'
 import * as s from './style.styl'
 import t from './Timeline.i18n'
 
-interface ConnectedProps {
-    editor: EditorState
-}
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
 interface State {
     timelineScrollTop: number
     timelineScrollLeft: number
+    timelineScrollWidth: number
     cursorHeight: number
     scale: number
     selectedLayerId: string | null
 }
 
-type Props = ConnectedProps & ContextProp
-
 const PX_PER_SEC = 30
+
+const mapStoresToProps = (getStore: StoreGetter) => ({
+    activeComp: getStore(EditorStore).getActiveComposition(),
+    activeClip: getStore(EditorStore).activeClip,
+    currentPointFrame: getStore(EditorStore).currentPointFrame,
+    previewPlayed: getStore(RendererStore).previewPlaying,
+})
 
 /**
  * Timeline structure:
@@ -53,41 +56,52 @@ const PX_PER_SEC = 30
  *       └ Clip
  */
 export default withComponentContext(
-    connectToStores([EditorStore, ProjectStore], getStore => ({
-        editor: getStore(EditorStore).getState(),
-    }))(
+    connectToStores([EditorStore, ProjectStore], mapStoresToProps)(
         class Timeline extends React.Component<Props, State> {
-            public props: Props & {
-                editor: EditorState
-            }
-
-            public refs: {
-                scaleList: DropDown
-                keyframeView: InstanceType<typeof KeyframeEditor>
-                timelineLayers: HTMLUListElement
-                timelineLabels: HTMLDivElement
-            }
-
             public state: State = {
                 timelineScrollTop: 0,
                 timelineScrollLeft: 0,
+                timelineScrollWidth: 0,
                 cursorHeight: 0,
                 scale: 1,
                 selectedLayerId: null,
             }
 
+            private scaleList = React.createRef<DropDown>()
+            private timelineContainer = React.createRef<HTMLDivElement>()
+            private labelContainer = React.createRef<HTMLDivElement>()
+            private keyframeView = React.createRef<InstanceType<typeof KeyframeEditor>>()
+
             public componentDidMount() {
-                this._syncCursorHeight()
-                window.addEventListener('resize', _.debounce(this._syncCursorHeight, 1000 / 30))
+                this.syncCursorHeight()
+                window.addEventListener('resize', _.debounce(this.syncCursorHeight, 1000 / 30))
+            }
+
+            public shouldComponentUpdate(nextProps: Props, nextState: State) {
+                return !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState)
             }
 
             public componentDidUpdate() {
-                this.refs.timelineLabels.scrollTop = this.refs.timelineLayers.scrollTop = this.state.timelineScrollTop
+                const { activeComp } = this.props
+                const { scale } = this.state
+                this.labelContainer.current!.scrollTop = this.timelineContainer.current!.scrollTop = this.state.timelineScrollTop
+
+                if (activeComp) {
+                    const { durationFrames, framerate } = activeComp
+                    this.setState({
+                        timelineScrollWidth: TimePixelConversion.framesToPixel({
+                            pxPerSec: PX_PER_SEC,
+                            durationFrames: durationFrames + framerate,
+                            framerate: framerate,
+                            scale,
+                        }),
+                    })
+                }
             }
 
             public render() {
-                const { scale, timelineScrollLeft } = this.state
-                const { activeComp, activeClip, currentPreviewFrame, previewPlayed } = this.props.editor
+                const { scale, timelineScrollLeft, timelineScrollWidth } = this.state
+                const { previewPlayed, activeComp, activeClip, currentPointFrame } = this.props
                 const { framerate } = activeComp ? activeComp : { framerate: 30 }
                 const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
@@ -118,7 +132,11 @@ export default withComponentContext(
                                                 />
                                             </div>
                                             <div className={s.scaleLabel} onClick={this._toggleScaleList}>
-                                                <DropDown ref="scaleList" className={s.scaleList} shownInitial={false}>
+                                                <DropDown
+                                                    ref={this.scaleList}
+                                                    className={s.scaleList}
+                                                    shownInitial={false}
+                                                >
                                                     <li data-value="50" onClick={this._selectScale}>
                                                         50%
                                                     </li>
@@ -144,7 +162,7 @@ export default withComponentContext(
                                         </div>
 
                                         <div
-                                            ref="timelineLabels"
+                                            ref={this.labelContainer}
                                             className={s.labels}
                                             onScroll={this.handleScrollLayerLabel}
                                         >
@@ -160,12 +178,12 @@ export default withComponentContext(
                                         </div>
                                     </Pane>
                                     {/* Layer Panel */}
-                                    <Pane className={s.timelineContainer} onWheel={this._scaleTimeline}>
+                                    <Pane className={s.timelineContainer} onWheel={this.handleScaleTimeline}>
                                         <Gradations
                                             activeComposition={activeComp}
                                             measures={measures}
-                                            previewPlayed={previewPlayed}
-                                            currentFrame={currentPreviewFrame}
+                                            previewPlaying={previewPlayed}
+                                            currentFrame={currentPointFrame}
                                             cursorHeight={this.state.cursorHeight}
                                             scale={this.state.scale}
                                             pxPerSec={PX_PER_SEC}
@@ -174,21 +192,22 @@ export default withComponentContext(
                                         />
 
                                         <div
-                                            ref="timelineLayers"
+                                            ref={this.timelineContainer}
                                             className={s.layerContainer}
+                                            onKeyDown={this.handleKeydownTimeline}
                                             onScroll={this.handleScrollTimeline}
                                         >
                                             {activeComp &&
                                                 layers.map((layer, idx) => (
                                                     <Layer
                                                         key={layer.id!}
-                                                        layer={layer}
+                                                        layer={{ ...layer }}
                                                         layerIndex={idx}
                                                         framerate={framerate}
                                                         pxPerSec={PX_PER_SEC}
                                                         scale={scale}
-                                                        activeClip={activeClip}
                                                         scrollLeft={timelineScrollLeft}
+                                                        scrollWidth={timelineScrollWidth}
                                                     />
                                                 ))}
                                         </div>
@@ -197,7 +216,7 @@ export default withComponentContext(
                             </Pane>
                             <Pane className={s.keyframeGraphRegion}>
                                 <KeyframeEditor
-                                    ref="keyframeView"
+                                    ref={this.keyframeView}
                                     activeComposition={activeComp}
                                     activeClip={activeClip}
                                     pxPerSec={PX_PER_SEC}
@@ -213,12 +232,11 @@ export default withComponentContext(
                 )
             }
 
-            private _syncCursorHeight = () => {
-                const { timelineLayers, keyframeView } = this.refs
-
-                const timelineHeight = timelineLayers.getBoundingClientRect().height
-                const keyFrameViewHeight = (ReactDOM.findDOMNode(keyframeView!) as Element).getBoundingClientRect()
-                    .height
+            private syncCursorHeight = () => {
+                const timelineHeight = this.timelineContainer.current!.getBoundingClientRect().height
+                const keyFrameViewHeight = (ReactDOM.findDOMNode(
+                    this.keyframeView.current!,
+                ) as Element).getBoundingClientRect().height
 
                 this.setState({
                     cursorHeight: timelineHeight + keyFrameViewHeight + 1,
@@ -243,9 +261,7 @@ export default withComponentContext(
             }
 
             private onLayerSort: SortEndHandler = ({ oldIndex, newIndex }) => {
-                const {
-                    editor: { activeComp },
-                } = this.props
+                const { activeComp } = this.props
                 if (!activeComp) return
 
                 const layer = activeComp.layers[oldIndex]
@@ -256,23 +272,27 @@ export default withComponentContext(
             }
 
             private handleAddLayer = () => {
-                const { editor } = this.props
+                const { activeComp } = this.props
 
-                if (!editor.activeComp) return
-
+                if (!activeComp) return
                 this.props.context.executeOperation(ProjectOps.addLayer, {
-                    targetCompositionId: editor.activeComp.id,
+                    targetCompositionId: activeComp.id,
                 })
             }
 
             private onLayerRemove = (layerId: string) => {
-                if (!this.props.editor.activeComp) return
+                if (!this.props.activeComp) return
                 this.props.context.executeOperation(ProjectOps.removeLayer, {
                     layerId,
                 })
             }
 
-            private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
+            private handleKeydownTimeline = (e: React.KeyboardEvent<HTMLDivElement>) => {
+                // Prevent scrolling by space key
+                if (e.keyCode === 32) e.preventDefault()
+            }
+
+            private handleScaleTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
                 if (e.altKey) {
                     const newScale = this.state.scale + e.deltaY * 0.05
                     this.setState({ scale: Math.max(newScale, 0.1) })
@@ -285,23 +305,24 @@ export default withComponentContext(
             }
 
             private handleScrollKeyframeEditor = (dx: number, dy: number) => {
-                const { timelineLayers } = this.refs
-                timelineLayers.scrollLeft += dx
-                this.setState({ timelineScrollLeft: timelineLayers.scrollLeft })
+                this.timelineContainer.current!.scrollLeft += dx
+                // Set scrollLeft normalized by DOM
+                this.setState({ timelineScrollLeft: this.timelineContainer.current!.scrollLeft })
             }
 
             private _toggleScaleList = () => {
-                this.refs.scaleList.toggle()
+                this.scaleList.current!.toggle()
             }
 
             private _selectScale = ({ nativeEvent: e }: React.MouseEvent<HTMLLIElement>) => {
                 const scale = +(e.target as HTMLLIElement).dataset.value! / 100
-                this.refs.scaleList.hide()
+                this.scaleList.current!.hide()
                 this.setState({ scale: scale })
             }
 
             private _dropAsset = (e: React.DragEvent<HTMLElement>) => {
-                const { dragEntity, activeComp } = this.props.editor
+                const { activeComp } = this.props
+                const { dragEntity } = this.props.context.getStore(EditorStore).getState()
 
                 if (!activeComp) {
                     this.props.context.executeOperation(EditorOps.notify, {

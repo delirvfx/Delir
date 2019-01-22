@@ -2,7 +2,7 @@ import * as Delir from '@ragg/delir-core'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
-
+import { SpreadType } from '../../utils/Spread'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import * as EditorOps from '../../domain/Editor/operations'
@@ -15,9 +15,9 @@ interface OwnProps {
     height: number
     viewBox: string
     scrollLeft: number
-    composition: Delir.Entity.Composition
-    parentClip: Delir.Entity.Clip
-    entity: Delir.Entity.Clip | Delir.Entity.Effect | null
+    composition: SpreadType<Delir.Entity.Composition>
+    parentClip: SpreadType<Delir.Entity.Clip>
+    entity: SpreadType<Delir.Entity.Clip> | SpreadType<Delir.Entity.Effect> | null
     paramName: string
     descriptor: Delir.AnyParameterTypeDescriptor
     keyframes: ReadonlyArray<Delir.Entity.Keyframe>

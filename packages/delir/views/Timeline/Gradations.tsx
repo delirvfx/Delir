@@ -1,21 +1,23 @@
 import * as Delir from '@ragg/delir-core'
-import { connectToStores } from '@ragg/fleur-react'
+import { connectToStores, StoreGetter } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 
+import { SpreadType } from '../../utils/Spread'
 import TimePixelConversion, { MeasurePoint } from '../../utils/TimePixelConversion'
+
+import RendererStore from '../../domain/Renderer/RendererStore'
 
 import { ContextMenu, MenuItem } from '../../components/ContextMenu/ContextMenu'
 
-import RendererStore, { RenderState } from '../../domain/Renderer/RendererStore'
 import t from './Gradations.i18n'
 import * as s from './Gradations.styl'
 
 interface OwnProps {
     currentFrame: number
     measures: MeasurePoint[]
-    previewPlayed: boolean
-    activeComposition: Delir.Entity.Composition | null
+    previewPlaying: boolean
+    activeComposition: SpreadType<Delir.Entity.Composition> | null
     cursorHeight: number
     scrollLeft: number
     scale: number
@@ -23,20 +25,18 @@ interface OwnProps {
     onSeeked: (frame: number) => any
 }
 
-interface ConnectedProps {
-    lastRenderState: RenderState | null
-}
-
-type Props = OwnProps & ConnectedProps
+type Props = OwnProps & ReturnType<typeof mapStoresToProps>
 
 interface GradationsState {
     left: number
     dragSeekEnabled: boolean
 }
 
-export default connectToStores([RendererStore], getStore => ({
+const mapStoresToProps = (getStore: StoreGetter) => ({
     lastRenderState: getStore(RendererStore).getLastRenderState(),
-}))(
+})
+
+export default connectToStores([RendererStore], mapStoresToProps)(
     class Gradations extends React.Component<Props, GradationsState> {
         public static defaultProps = {
             scrollLeft: 0,
@@ -101,10 +101,10 @@ export default connectToStores([RendererStore], getStore => ({
         }
 
         private _updateCursor = () => {
-            const { activeComposition, scrollLeft, scale, previewPlayed, currentFrame, lastRenderState } = this.props
+            const { activeComposition, scrollLeft, scale, previewPlaying, currentFrame, lastRenderState } = this.props
             const { cursor, measureLayer } = this.refs
 
-            const usingCurrentFrame = previewPlayed && lastRenderState ? lastRenderState.currentFrame : currentFrame
+            const usingCurrentFrame = previewPlaying && lastRenderState ? lastRenderState.currentFrame : currentFrame
 
             if (activeComposition) {
                 // Reactの仕組みを使うとrenderMeasureが走りまくってCPUがヤバいので

@@ -1,9 +1,9 @@
 import * as Delir from '@ragg/delir-core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
-import { isWindows } from '../../utils/platform'
+import { SpreadType } from '../../utils/Spread'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
@@ -21,36 +21,29 @@ import t from './Layer.i18n'
 import * as s from './Layer.styl'
 
 interface OwnProps {
-    layer: Delir.Entity.Layer
+    layer: SpreadType<Delir.Entity.Layer>
     layerIndex: number
-    activeClip: Delir.Entity.Clip | null
     framerate: number
     pxPerSec: number
     scale: number
     scrollLeft: number
+    scrollWidth: number
 }
 
-interface ConnectedProps {
-    editor: EditorState
-    postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
-    userCodeException: Delir.Exceptions.UserCodeException | null
-}
-
-type Props = OwnProps & ConnectedProps & ContextProp
+type Props = OwnProps & ReturnType<typeof mapStoresToProps> & ContextProp
 
 interface State {
     dragovered: boolean
 }
 
-/**
- * ClipSpace
- */
+const mapStoresToProps = (getStore: StoreGetter) => ({
+    activeClip: getStore(EditorStore).activeClip,
+    postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
+    userCodeException: getStore(RendererStore).getUserCodeException(),
+})
+
 export default withComponentContext(
-    connectToStores([EditorStore, RendererStore], getStore => ({
-        editor: getStore(EditorStore).getState(),
-        postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
-        userCodeException: getStore(RendererStore).getUserCodeException(),
-    }))(
+    connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class Layer extends React.Component<Props, State> {
             public state: State = {
                 dragovered: false,
@@ -66,6 +59,7 @@ export default withComponentContext(
                     pxPerSec,
                     scale,
                     scrollLeft,
+                    scrollWidth,
                     postEffectPlugins,
                     userCodeException,
                 } = this.props
@@ -82,6 +76,7 @@ export default withComponentContext(
                         onMouseUp={this.handleMouseUp}
                         onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
+                        style={{ width: scrollWidth }}
                         tabIndex={-1}
                     >
                         <ContextMenu>
@@ -117,10 +112,10 @@ export default withComponentContext(
                                 return (
                                     <Clip
                                         key={clip.id!}
-                                        clip={clip}
+                                        clip={{ ...clip }}
                                         width={width}
-                                        left={left - scrollLeft}
-                                        active={clip === activeClip}
+                                        left={left}
+                                        active={!!activeClip && clip.id === activeClip.id}
                                         postEffectPlugins={postEffectPlugins}
                                         hasError={hasError}
                                         onChangePlace={this.handleChangeClipPlace}
@@ -142,7 +137,7 @@ export default withComponentContext(
             }
 
             private handleOnDrop = (e: React.DragEvent<HTMLDivElement>) => {
-                const { dragEntity, activeComp } = this.props.editor
+                const { dragEntity, activeComp } = this.props.context.getStore(EditorStore)
 
                 if (!activeComp || !dragEntity) return
 
@@ -173,10 +168,8 @@ export default withComponentContext(
             }
 
             private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-                const {
-                    editor: { dragEntity },
-                    layer,
-                } = this.props
+                const { layer } = this.props
+                const { dragEntity } = this.props.context.getStore(EditorStore)
 
                 if (!dragEntity || dragEntity.type !== 'clip') return
 
@@ -194,12 +187,10 @@ export default withComponentContext(
             }
 
             private handleChangeClipPlace = (clipId: string, newPlacedPx: number) => {
-                const { scrollLeft } = this.props
-
                 const newPlacedFrame = TimePixelConversion.pixelToFrames({
                     pxPerSec: this.props.pxPerSec,
                     framerate: this.props.framerate,
-                    pixel: newPlacedPx + scrollLeft,
+                    pixel: newPlacedPx,
                     scale: this.props.scale,
                 })
 
@@ -232,10 +223,8 @@ export default withComponentContext(
             }
 
             private handleAddLayer = () => {
-                const {
-                    editor: { activeComp },
-                    layerIndex,
-                } = this.props
+                const { layerIndex } = this.props
+                const { activeComp } = this.props.context.getStore(EditorStore)
                 if (!activeComp) return
 
                 this.props.context.executeOperation(ProjectOps.addLayer, {
