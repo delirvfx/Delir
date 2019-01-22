@@ -51,11 +51,6 @@ export default withComponentContext(
 
             private root = React.createRef<HTMLDivElement>()
 
-            public shouldComponentUpdate(nextProps: Props, nextState: State) {
-                const { props, state } = this
-                return !_.isEqual(props, nextProps) || !_.isEqual(state, nextState)
-            }
-
             public render() {
                 const {
                     layer,
