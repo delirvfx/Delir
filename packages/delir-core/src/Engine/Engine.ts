@@ -17,6 +17,7 @@ import FPSCounter from '../helper/FPSCounter'
 import ProgressPromise from '../helper/progress-promise'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
+import { ClipRenderContext } from './RenderContext/ClipRenderContext'
 import { RenderContextBase } from './RenderContext/RenderContextBase'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
@@ -43,6 +44,13 @@ interface RenderProgression {
     currentFrame: number
     rangeEndFrame: number
     playbackRate: number
+}
+
+interface TaskGroup {
+    tasks: {
+        context: ClipRenderContext<any>
+        task: ClipRenderTask
+    }[]
 }
 
 export default class Engine {
@@ -405,27 +413,25 @@ export default class Engine {
         destBufferCtx.fillStyle = context.rootComposition.backgroundColor.toString()
         destBufferCtx.fillRect(0, 0, context.width, context.height)
 
-        const clipAudioBuffers = _.times(context.rootComposition.audioChannels, () => {
-            return new Float32Array(new ArrayBuffer(context.neededSamples * 4))
-        })
+        // const clipAudioBuffers =
+
+        const taskGroups: TaskGroup[] = []
+        let latestGroup: TaskGroup = { tasks: [] }
 
         for (const layerTask of layerRenderTasks) {
-            const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
-            layerBufferCanvas.width = context.width
-            layerBufferCanvas.height = context.height
-
-            const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
-
-            // SPEC: The rendering order of the clip in one layer in same time is not defined.
             const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
 
-            // Render clips
             for (const clipTask of renderTargetClips) {
+                if (clipTask.rendererType === 'adjustment') {
+                    taskGroups.push(latestGroup)
+                    latestGroup = { tasks: [] }
+                }
+
                 const clipBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
                 clipBufferCanvas.width = context.width
                 clipBufferCanvas.height = context.height
 
-                const clipBufferCtx = clipBufferCanvas.getContext('2d')!
+                // const clipBufferCtx = clipBufferCanvas.getContext('2d')!
 
                 const timeOnClip = context.time - clipTask.clipPlacedFrame / context.framerate
                 const frameOnClip = context.frame - clipTask.clipPlacedFrame
@@ -435,12 +441,13 @@ export default class Engine {
                     timeOnClip,
                     frameOnClip,
 
+                    beforeExpressionParameters: {},
                     parameters: {},
                     clipEffectParams: {},
 
-                    srcCanvas: clipTask.rendererType === 'adjustment' ? destBufferCanvas : null,
+                    srcCanvas: null,
                     destCanvas: clipBufferCanvas,
-                    destAudioBuffer: clipAudioBuffers,
+                    destAudioBuffer: clipTask.audioBuffer,
                 })
 
                 // Lookup before apply expression referenceable effect params expression
@@ -460,71 +467,103 @@ export default class Engine {
                     referenceableEffectParams,
                 })
 
+                clipRenderContext.beforeExpressionParameters = beforeClipExpressionParams
                 clipRenderContext.parameters = afterExpressionParams
                 clipRenderContext.clipEffectParams = referenceableEffectParams
 
-                await clipTask.clipRenderer.render(clipRenderContext)
-                clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
+                // await clipTask.clipRenderer.render(clipRenderContext)
+                // clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
 
-                // Post process effects
-                for (const effectTask of clipTask.effectRenderTasks) {
-                    const effectRenderContext = context.toEffectRenderContext({
-                        effect: effectTask.effectEntity,
-                        timeOnClip,
-                        frameOnClip,
+                latestGroup.tasks.push({ context: clipRenderContext, task: clipTask })
+            }
+        }
+        taskGroups.push(latestGroup)
 
-                        srcCanvas: clipBufferCanvas,
-                        destCanvas: clipBufferCanvas,
-                        parameters: {},
-                    })
+        for (const group of taskGroups) {
+            await Promise.all(
+                group.tasks.map(async ({ context: clipContext, task }) => {
+                    if (task.rendererType === 'adjustment') {
+                        clipContext.srcCanvas = destBufferCanvas
+                    }
 
-                    effectRenderContext.parameters = effectTask.keyframeTable.getParameterWithExpressionAt(
-                        context.frame,
-                        {
-                            context: effectRenderContext,
-                            clipParams: beforeClipExpressionParams,
-                            referenceableEffectParams,
-                        },
-                    )
+                    const clipDestCtx = clipContext.destCanvas.getContext('2d')!
+                    await task.clipRenderer.render(clipContext)
 
-                    await effectTask.effectRenderer.render(effectRenderContext)
+                    // Post process effects
+                    for (const effectTask of task.effectRenderTasks) {
+                        const effectRenderContext = context.toEffectRenderContext({
+                            effect: effectTask.effectEntity,
+                            timeOnClip: clipContext.timeOnClip,
+                            frameOnClip: clipContext.frameOnClip,
 
-                    clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
-                    clipBufferCtx.globalAlpha = 1
-                }
+                            srcCanvas: clipContext.destCanvas,
+                            destCanvas: clipContext.destCanvas,
+                            parameters: {},
+                        })
 
+                        effectRenderContext.parameters = effectTask.keyframeTable.getParameterWithExpressionAt(
+                            context.frame,
+                            {
+                                context: effectRenderContext,
+                                clipParams: clipContext.beforeExpressionParameters,
+                                referenceableEffectParams: clipContext.clipEffectParams,
+                            },
+                        )
+
+                        await effectTask.effectRenderer.render(effectRenderContext)
+                    }
+                }),
+            )
+
+            for (const clipTask of group.tasks) {
                 // Render clip rendering result to merger canvas
-                if (clipTask.rendererType === 'adjustment') {
+                if (clipTask.task.rendererType === 'adjustment') {
                     // Merge adjustment clip result to last destination canvas
 
                     // SPEC: Through prevent painting if adjustment clip renders transparent(opacity: 0).
                     // SPEC: Behavior when two or more clips exist on same layer at the same time is not defined.
-                    destBufferCtx.globalAlpha = _.clamp(afterExpressionParams.opacity as number, 0, 100) / 100
-                    destBufferCtx.drawImage(clipBufferCanvas, 0, 0)
+                    destBufferCtx.globalAlpha = _.clamp(clipTask.context.parameters.opacity as number, 0, 100) / 100
+                    destBufferCtx.drawImage(clipTask.context.destCanvas, 0, 0)
                     destBufferCtx.globalAlpha = 1
 
                     // SPEC: When there are two or more adjustment clips on the same layer at the same time, the layer buffer is cleared for each that clip rendering
                     //       This is not a problem if there is only one clip at a certain time. (Maybe...)
-                    layerBufferCanvasCtx.clearRect(0, 0, context.width, context.height)
+                    // destBufferCtx.clearRect(0, 0, context.width, context.height)
                 } else {
-                    layerBufferCanvasCtx.drawImage(clipBufferCanvas, 0, 0)
+                    destBufferCtx.drawImage(clipTask.context.destCanvas, 0, 0)
                 }
 
                 if (context.isAudioBufferingNeeded) {
                     await mergeAudioBufferInto(
                         context.destAudioBuffer,
-                        clipAudioBuffers,
+                        clipTask.context.destAudioBuffer,
                         context.audioChannels,
                         context.samplingRate,
                     )
 
-                    for (const chBuffer of clipAudioBuffers) {
+                    for (const chBuffer of clipTask.context.destAudioBuffer) {
                         chBuffer.fill(0)
                     }
                 }
             }
-
-            destBufferCtx.drawImage(layerBufferCanvas, 0, 0)
         }
+
+        // for (const layerTask of layerRenderTasks) {
+        //     const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
+        //     layerBufferCanvas.width = context.width
+        //     layerBufferCanvas.height = context.height
+
+        //     const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
+
+        //     // SPEC: The rendering order of the clip in one layer in same time is not defined.
+        //     const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
+
+        //     // Render clips
+        //     for (const clipTask of renderTargetClips) {
+
+        //     }
+
+        // destBufferCtx.drawImage(layerBufferCanvas, 0, 0)
+        // }
     }
 }

@@ -35,6 +35,9 @@ export default class ClipRenderTask {
         task.clipDurationFrames = clip.durationFrames
         task.paramTypes = rendererParams
         task.keyframeTable = keyframeTable
+        task.audioBuffer = _.times(context.rootComposition.audioChannels, () => {
+            return new Float32Array(new ArrayBuffer(context.neededSamples * 4))
+        })
 
         return task
     }
@@ -47,6 +50,7 @@ export default class ClipRenderTask {
     public paramTypes: TypeDescriptor
     public effectRenderTasks: EffectRenderTask[]
     public keyframeTable: ParametersTable
+    public audioBuffer: Float32Array[]
 
     public async initialize(context: RenderContextBase) {
         const preRenderReq = context.toClipPreRenderContext({
