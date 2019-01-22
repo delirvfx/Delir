@@ -16,9 +16,9 @@ import t from './operations.i18n'
 import { ClipboardEntry, ParameterTarget } from './types'
 
 export type DragEntity =
-    | { type: 'asset'; asset: Delir.Entity.Asset }
-    | { type: 'clip'; clip: Delir.Entity.Clip }
-    | { type: 'clip-resizing'; clip: Delir.Entity.Clip }
+    | { type: 'asset'; asset: SpreadType<Delir.Entity.Asset> }
+    | { type: 'clip'; clip: SpreadType<Delir.Entity.Clip> }
+    | { type: 'clip-resizing'; clip: SpreadType<Delir.Entity.Clip> }
 
 //
 // App services
