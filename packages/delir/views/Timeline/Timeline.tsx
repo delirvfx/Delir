@@ -178,7 +178,7 @@ export default withComponentContext(
                                         </div>
                                     </Pane>
                                     {/* Layer Panel */}
-                                    <Pane className={s.timelineContainer} onWheel={this._scaleTimeline}>
+                                    <Pane className={s.timelineContainer} onWheel={this.handleScaleTimeline}>
                                         <Gradations
                                             activeComposition={activeComp}
                                             measures={measures}
@@ -194,6 +194,7 @@ export default withComponentContext(
                                         <div
                                             ref={this.timelineContainer}
                                             className={s.layerContainer}
+                                            onKeyDown={this.handleKeydownTimeline}
                                             onScroll={this.handleScrollTimeline}
                                         >
                                             {activeComp &&
@@ -286,7 +287,12 @@ export default withComponentContext(
                 })
             }
 
-            private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
+            private handleKeydownTimeline = (e: React.KeyboardEvent<HTMLDivElement>) => {
+                // Prevent scrolling by space key
+                if (e.keyCode === 32) e.preventDefault()
+            }
+
+            private handleScaleTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
                 if (e.altKey) {
                     const newScale = this.state.scale + e.deltaY * 0.05
                     this.setState({ scale: Math.max(newScale, 0.1) })
