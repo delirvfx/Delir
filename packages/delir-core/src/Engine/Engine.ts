@@ -486,8 +486,10 @@ export default class Engine {
                         clipContext.srcCanvas = destBufferCanvas
                     }
 
-                    const clipDestCtx = clipContext.destCanvas.getContext('2d')!
+                    const clipBufferCtx = clipContext.destCanvas.getContext('2d')!
                     await task.clipRenderer.render(clipContext)
+                    destBufferCtx.globalAlpha = 1
+                    destBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
 
                     // Post process effects
                     for (const effectTask of task.effectRenderTasks) {
@@ -511,6 +513,7 @@ export default class Engine {
                         )
 
                         await effectTask.effectRenderer.render(effectRenderContext)
+                        clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
                     }
                 }),
             )
@@ -525,10 +528,6 @@ export default class Engine {
                     destBufferCtx.globalAlpha = _.clamp(clipTask.context.parameters.opacity as number, 0, 100) / 100
                     destBufferCtx.drawImage(clipTask.context.destCanvas, 0, 0)
                     destBufferCtx.globalAlpha = 1
-
-                    // SPEC: When there are two or more adjustment clips on the same layer at the same time, the layer buffer is cleared for each that clip rendering
-                    //       This is not a problem if there is only one clip at a certain time. (Maybe...)
-                    // destBufferCtx.clearRect(0, 0, context.width, context.height)
                 } else {
                     destBufferCtx.drawImage(clipTask.context.destCanvas, 0, 0)
                 }

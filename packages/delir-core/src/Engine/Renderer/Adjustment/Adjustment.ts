@@ -33,7 +33,6 @@ export default class AdjustmentRenderer implements IRenderer<Param> {
 
     public async render(context: ClipRenderContext<Param>) {
         const ctx = context.destCanvas.getContext('2d')!
-        ctx.globalAlpha = _.clamp(context.parameters.opacity, 0, 100) / 100
         ctx.drawImage(context.srcCanvas!, 0, 0)
     }
 }
