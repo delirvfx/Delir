@@ -413,8 +413,6 @@ export default class Engine {
         destBufferCtx.fillStyle = context.rootComposition.backgroundColor.toString()
         destBufferCtx.fillRect(0, 0, context.width, context.height)
 
-        // const clipAudioBuffers =
-
         const taskGroups: TaskGroup[] = []
         let latestGroup: TaskGroup = { tasks: [] }
 
@@ -471,9 +469,6 @@ export default class Engine {
                 clipRenderContext.parameters = afterExpressionParams
                 clipRenderContext.clipEffectParams = referenceableEffectParams
 
-                // await clipTask.clipRenderer.render(clipRenderContext)
-                // clipBufferCtx!.setTransform(1, 0, 0, 1, 0, 0)
-
                 latestGroup.tasks.push({ context: clipRenderContext, task: clipTask })
             }
         }
@@ -522,7 +517,6 @@ export default class Engine {
                 // Render clip rendering result to merger canvas
                 if (clipTask.task.rendererType === 'adjustment') {
                     // Merge adjustment clip result to last destination canvas
-
                     // SPEC: Through prevent painting if adjustment clip renders transparent(opacity: 0).
                     // SPEC: Behavior when two or more clips exist on same layer at the same time is not defined.
                     destBufferCtx.globalAlpha = _.clamp(clipTask.context.parameters.opacity as number, 0, 100) / 100
@@ -546,23 +540,5 @@ export default class Engine {
                 }
             }
         }
-
-        // for (const layerTask of layerRenderTasks) {
-        //     const layerBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
-        //     layerBufferCanvas.width = context.width
-        //     layerBufferCanvas.height = context.height
-
-        //     const layerBufferCanvasCtx = layerBufferCanvas.getContext('2d')!
-
-        //     // SPEC: The rendering order of the clip in one layer in same time is not defined.
-        //     const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
-
-        //     // Render clips
-        //     for (const clipTask of renderTargetClips) {
-
-        //     }
-
-        // destBufferCtx.drawImage(layerBufferCanvas, 0, 0)
-        // }
     }
 }
