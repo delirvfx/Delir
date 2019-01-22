@@ -40,7 +40,7 @@ interface State {
 const PX_PER_SEC = 30
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
-    activeComp: getStore(EditorStore).getActiveComposition(),
+    activeComp: getStore(EditorStore).activeComp,
     activeClip: getStore(EditorStore).activeClip,
     currentPointFrame: getStore(EditorStore).currentPointFrame,
     previewPlayed: getStore(RendererStore).previewPlaying,
@@ -77,10 +77,6 @@ export default withComponentContext(
                 window.addEventListener('resize', _.debounce(this.syncCursorHeight, 1000 / 30))
             }
 
-            public shouldComponentUpdate(nextProps: Props, nextState: State) {
-                return !_.isEqual(this.props, nextProps) || !_.isEqual(this.state, nextState)
-            }
-
             public componentDidUpdate() {
                 const { activeComp } = this.props
                 const { scale } = this.state
@@ -88,14 +84,18 @@ export default withComponentContext(
 
                 if (activeComp) {
                     const { durationFrames, framerate } = activeComp
-                    this.setState({
-                        timelineScrollWidth: TimePixelConversion.framesToPixel({
-                            pxPerSec: PX_PER_SEC,
-                            durationFrames: durationFrames + framerate,
-                            framerate: framerate,
-                            scale,
-                        }),
+                    const scrollWidth = TimePixelConversion.framesToPixel({
+                        pxPerSec: PX_PER_SEC,
+                        durationFrames: durationFrames + framerate * 2,
+                        framerate: framerate,
+                        scale,
                     })
+
+                    if (this.state.timelineScrollWidth !== scrollWidth) {
+                        this.setState({
+                            timelineScrollWidth: scrollWidth,
+                        })
+                    }
                 }
             }
 
