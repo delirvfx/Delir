@@ -10,6 +10,7 @@ export interface ClipRenderContext<T extends { [paramName: string]: any }>
 export interface ClipRenderContextAttributes<T extends RealParameterValues> {
     clip: Readonly<Clip>
     parameters: T
+    beforeExpressionParameters: T
     clipEffectParams: ReferenceableEffectsParams
 
     timeOnClip: number
