@@ -27,6 +27,7 @@ interface OwnProps {
     pxPerSec: number
     scale: number
     scrollLeft: number
+    scrollWidth: number
 }
 
 type Props = OwnProps & ReturnType<typeof mapStoresToProps> & ContextProp
@@ -63,6 +64,7 @@ export default withComponentContext(
                     pxPerSec,
                     scale,
                     scrollLeft,
+                    scrollWidth,
                     postEffectPlugins,
                     userCodeException,
                 } = this.props
@@ -79,6 +81,7 @@ export default withComponentContext(
                         onMouseUp={this.handleMouseUp}
                         onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
+                        style={{ width: scrollWidth }}
                         tabIndex={-1}
                     >
                         <ContextMenu>
@@ -116,7 +119,7 @@ export default withComponentContext(
                                         key={clip.id!}
                                         clip={clip}
                                         width={width}
-                                        left={left - scrollLeft}
+                                        left={left}
                                         active={!!activeClip && clip.id === activeClip.id}
                                         postEffectPlugins={postEffectPlugins}
                                         hasError={hasError}
@@ -189,12 +192,10 @@ export default withComponentContext(
             }
 
             private handleChangeClipPlace = (clipId: string, newPlacedPx: number) => {
-                const { scrollLeft } = this.props
-
                 const newPlacedFrame = TimePixelConversion.pixelToFrames({
                     pxPerSec: this.props.pxPerSec,
                     framerate: this.props.framerate,
-                    pixel: newPlacedPx + scrollLeft,
+                    pixel: newPlacedPx,
                     scale: this.props.scale,
                 })
 

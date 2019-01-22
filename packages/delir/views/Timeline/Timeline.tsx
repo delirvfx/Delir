@@ -31,6 +31,7 @@ type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 interface State {
     timelineScrollTop: number
     timelineScrollLeft: number
+    timelineScrollWidth: number
     cursorHeight: number
     scale: number
     selectedLayerId: string | null
@@ -60,6 +61,7 @@ export default withComponentContext(
             public state: State = {
                 timelineScrollTop: 0,
                 timelineScrollLeft: 0,
+                timelineScrollWidth: 0,
                 cursorHeight: 0,
                 scale: 1,
                 selectedLayerId: null,
@@ -80,11 +82,25 @@ export default withComponentContext(
             }
 
             public componentDidUpdate() {
+                const { activeComp } = this.props
+                const { scale } = this.state
                 this.labelContainer.current!.scrollTop = this.timelineContainer.current!.scrollTop = this.state.timelineScrollTop
+
+                if (activeComp) {
+                    const { durationFrames, framerate } = activeComp
+                    this.setState({
+                        timelineScrollWidth: TimePixelConversion.framesToPixel({
+                            pxPerSec: PX_PER_SEC,
+                            durationFrames: durationFrames + framerate * 1,
+                            framerate: framerate,
+                            scale,
+                        }),
+                    })
+                }
             }
 
             public render() {
-                const { scale, timelineScrollLeft } = this.state
+                const { scale, timelineScrollLeft, timelineScrollWidth } = this.state
                 const { previewPlayed, activeComp, activeClip, currentPointFrame } = this.props
                 const { framerate } = activeComp ? activeComp : { framerate: 30 }
                 const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
@@ -191,6 +207,7 @@ export default withComponentContext(
                                                         scale={scale}
                                                         activeClip={activeClip}
                                                         scrollLeft={timelineScrollLeft}
+                                                        scrollWidth={timelineScrollWidth}
                                                     />
                                                 ))}
                                         </div>
