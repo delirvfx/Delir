@@ -1,6 +1,6 @@
 {
   "name": "delir",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": "Ragg <ragg.devpr@gmail.com>",
   "main": "delir/browser.js",
   "license": "MIT",
