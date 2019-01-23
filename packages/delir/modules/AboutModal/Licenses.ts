@@ -296,7 +296,7 @@ export const dependencies = [
     },
     {
         "name": "raw-loader",
-        "url": "https://www.npmjs.com/package/raw-loader"
+        "url": "https://github.com/webpack-contrib/raw-loader"
     },
     {
         "name": "react",
@@ -360,7 +360,7 @@ export const dependencies = [
     },
     {
         "name": "tslint",
-        "url": "https://www.npmjs.com/package/tslint"
+        "url": "https://palantir.github.io/tslint"
     },
     {
         "name": "tslint-config-prettier",
@@ -372,7 +372,7 @@ export const dependencies = [
     },
     {
         "name": "typescript",
-        "url": "http://typescriptlang.org/"
+        "url": "https://www.typescriptlang.org/"
     },
     {
         "name": "uuid",

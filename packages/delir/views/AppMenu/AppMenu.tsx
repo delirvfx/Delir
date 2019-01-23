@@ -1,31 +1,31 @@
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import * as Electron from 'electron'
 import { remote } from 'electron'
 import * as React from 'react'
 import * as Platform from '../../utils/platform'
 import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as RendererOps from '../../domain/Renderer/operations'
+import RendererStore from '../../domain/Renderer/RendererStore'
 import * as AboutModal from '../../modules/AboutModal'
-import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 
 import t from './AppMenu.i18n'
-
-interface ConnectedProps {
-    editor: EditorState
-}
 
 interface State {
     devToolsFocused: boolean
 }
 
-type Props = ConnectedProps & ContextProp
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp
+
+const mapStoresToProps = (getStore: StoreGetter) => ({
+    editor: getStore(EditorStore).getState(),
+    previewPlaying: getStore(RendererStore).previewPlaying,
+})
 
 export default withComponentContext(
-    connectToStores([EditorStore], getStore => ({
-        editor: getStore(EditorStore).getState(),
-    }))(
+    connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class AppMenu extends React.Component<Props, State> {
             public state: State = {
                 devToolsFocused: false,
@@ -51,7 +51,7 @@ export default withComponentContext(
 
             public shouldComponentUpdate(nextProps: Props, nextState: State) {
                 return (
-                    nextProps.editor.previewPlayed !== this.props.editor.previewPlayed ||
+                    nextProps.previewPlaying !== this.props.previewPlaying ||
                     nextProps.editor.activeComp !== this.props.editor.activeComp ||
                     nextState.devToolsFocused !== this.state.devToolsFocused
                 )
@@ -62,9 +62,9 @@ export default withComponentContext(
             }
 
             private setApplicationMenu() {
-                const { context } = this.props
+                const { context, previewPlaying } = this.props
                 const { devToolsFocused } = this.state
-                const { previewPlayed, activeComp } = this.props.editor
+                const { activeComp } = this.props.editor
                 const menu: Electron.MenuItemConstructorOptions[] = []
 
                 menu.push({
@@ -229,12 +229,12 @@ export default withComponentContext(
                     label: t('preview.label'),
                     submenu: [
                         {
-                            label: previewPlayed ? t('preview.pause') : t('preview.play'),
+                            label: previewPlaying ? t('preview.pause') : t('preview.play'),
                             enabled: !!activeComp,
                             click: () => {
-                                previewPlayed
-                                    ? context.executeOperation(EditorOps.stopPreview, {})
-                                    : context.executeOperation(EditorOps.startPreview, {
+                                previewPlaying
+                                    ? context.executeOperation(RendererOps.stopPreview, {})
+                                    : context.executeOperation(RendererOps.startPreview, {
                                           compositionId: activeComp!.id,
                                           // Delayed get for rendering performance
                                           beginFrame: context.getStore(EditorStore).getState().currentPreviewFrame,

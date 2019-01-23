@@ -1,6 +1,6 @@
 {
   "name": "delir",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "author": "Ragg <ragg.devpr@gmail.com>",
   "main": "delir/browser.js",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "@ragg/delir-core": "*",
     "@ragg/deream": "*",
     "@ragg/fleur": "0.0.12",
-    "@ragg/fleur-react": "0.0.11",
+    "@ragg/fleur-react": "0.0.12",
     "classnames": "2.2.6",
     "form-serialize": "0.7.2",
     "fs-extra": "7.0.1",

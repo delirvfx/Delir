@@ -22,7 +22,6 @@ export interface EditorState {
     activeParam: ParameterTarget | null
     dragEntity: DragEntity | null
     processingState: string | null
-    previewPlayed: boolean
     currentPreviewFrame: number
     preferenceOpened: boolean
     clipboard: ClipboardEntry | null
@@ -40,7 +39,6 @@ export default class EditorStore extends Store<EditorState> {
         activeParam: null,
         dragEntity: null,
         processingState: null,
-        previewPlayed: false,
         currentPreviewFrame: 0,
         preferenceOpened: false,
         clipboard: null,
@@ -161,14 +159,6 @@ export default class EditorStore extends Store<EditorState> {
         this.updateWith(d => (d.processingState = payload.stateText))
     })
 
-    private handlestartPreview = listen(EditorActions.startPreviewAction, () => {
-        this.updateWith(d => (d.previewPlayed = true))
-    })
-
-    private handlestopPreview = listen(EditorActions.stopPreviewAction, () => {
-        this.updateWith(d => (d.previewPlayed = false))
-    })
-
     private handleseekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, payload => {
         this.updateWith(d => (d.currentPreviewFrame = Math.round(payload.frame)))
     })
@@ -200,12 +190,29 @@ export default class EditorStore extends Store<EditorState> {
         this.updateWith(draft => (draft.clipboard = payload.entry))
     })
 
+    public get currentPointFrame() {
+        return this.state.currentPreviewFrame
+    }
+
     public getActiveParam() {
         return this.state.activeParam
     }
 
+    public get activeComp() {
+        return this.state.activeComp ? { ...this.state.activeComp } : null
+    }
+
+    public get activeClip() {
+        return this.state.activeClip ? { ...this.state.activeClip } : null
+    }
+
+    public get dragEntity() {
+        return this.state.dragEntity
+    }
+
+    /** @deprecated */
     public getActiveComposition() {
-        return this.state.activeComp
+        return this.state.activeComp ? { ...this.state.activeComp } : null
     }
 
     public getClipboardEntry() {

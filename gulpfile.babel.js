@@ -216,6 +216,11 @@ export function compileRendererJs(done) {
             resolve: {
                 extensions: ['.js', '.jsx', '.ts', '.tsx'],
                 modules: ['node_modules'],
+                alias: {
+                    // Disable React development build for performance measurement
+                    react: 'react/cjs/react.production.min.js',
+                    'react-dom': 'react-dom/cjs/react-dom.production.min.js',
+                },
             },
             module: {
                 rules: [

@@ -5,6 +5,7 @@ import * as fs from 'fs-extra'
 import * as _ from 'lodash'
 import * as MsgPack from 'msgpack5'
 import * as path from 'path'
+import { SpreadType } from '../../utils/Spread'
 
 import PreferenceStore from '../Preference/PreferenceStore'
 import RendererStore from '../Renderer/RendererStore'
@@ -16,8 +17,8 @@ import { ClipboardEntry, ParameterTarget } from './types'
 
 export type DragEntity =
     | { type: 'asset'; asset: Delir.Entity.Asset }
-    | { type: 'clip'; clip: Delir.Entity.Clip }
-    | { type: 'clip-resizing'; clip: Delir.Entity.Clip }
+    | { type: 'clip'; clip: SpreadType<Delir.Entity.Clip> }
+    | { type: 'clip-resizing'; clip: SpreadType<Delir.Entity.Clip> }
 
 //
 // App services
@@ -100,25 +101,6 @@ export const changeActiveClip = operation((context, { clipId }: { clipId: string
 
 export const changeActiveParam = operation((context, { target }: { target: ParameterTarget | null }) => {
     context.dispatch(EditorActions.changeActiveParamAction, { target })
-})
-
-//
-// Preview
-//
-export const startPreview = operation(
-    (context, { compositionId, beginFrame = 0 }: { compositionId: string; beginFrame?: number }) => {
-        const preference = context.getStore(PreferenceStore).getPreferences()
-
-        context.dispatch(EditorActions.startPreviewAction, {
-            compositionId,
-            beginFrame,
-            ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
-        })
-    },
-)
-
-export const stopPreview = operation(context => {
-    context.dispatch(EditorActions.stopPreviewAction, {})
 })
 
 export const renderDestinate = operation((context, arg: { compositionId: string }) => {
@@ -275,7 +257,7 @@ export const copyEntity = operation(
             entity,
         }: {
             type: ClipboardEntry['type']
-            entity: Delir.Entity.Clip
+            entity: SpreadType<Delir.Entity.Clip>
         },
     ) => {
         context.dispatch(EditorActions.setClipboardEntry, {

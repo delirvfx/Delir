@@ -15,12 +15,6 @@ export const EditorActions = actions('Editor', {
     changeActiveCompositionAction: action<{ compositionId: string }>(),
     changeActiveClipAction: action<{ clipId: string }>(),
     changeActiveParamAction: action<{ target: ParameterTarget | null }>(),
-    startPreviewAction: action<{
-        compositionId: string
-        beginFrame: number
-        ignoreMissingEffect: boolean
-    }>(),
-    stopPreviewAction: action<{}>(),
     renderDestinateAction: action<{
         compositionId: string
         ignoreMissingEffect: boolean

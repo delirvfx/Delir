@@ -45,7 +45,7 @@ export default class ProjectStore extends Store<ProjectStoreState> {
 
     private handleAddLayerWithAsset = listen(
         ProjectActions.addLayerWithAssetAction,
-        ({ targetComposition, clip, asset, layer }) => {
+        ({ targetCompositionId, clip, asset, layer }) => {
             const { project } = this.state
             const paramName = Delir.Engine.Renderers.getInfo(clip.renderer).assetAssignMap[asset.fileType]
 
@@ -58,7 +58,7 @@ export default class ProjectStore extends Store<ProjectStoreState> {
 
             clip.addKeyframe(paramName, keyframe)
             layer.addClip(clip)
-            project!.findComposition(targetComposition.id)!.addLayer(layer)
+            project!.findComposition(targetCompositionId)!.addLayer(layer)
             this.updateLastModified()
         },
     )
