@@ -1,3 +1,6 @@
+### 0.6.5
+- Improve rendering performance by parallel clip rendering
+
 ### 0.6.4
 - Fix all layers vanished in `Composition#moveLayerIndex`
 - Fix all effects vanished in `Clip#{addEffect,moveEffectIndex}`
