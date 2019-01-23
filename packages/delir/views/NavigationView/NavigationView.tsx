@@ -1,28 +1,32 @@
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
 import { remote } from 'electron'
 import * as path from 'path'
 import * as React from 'react'
 
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as PreferenceOps from '../../domain/Preference/operations'
+import PreferenceStore from '../../domain/Preference/PreferenceStore'
 
 import Pane from '../../components/pane'
 
 import * as s from './style.styl'
 
-interface ConnectedProps {
-    editor: EditorState
-}
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
-type Props = ConnectedProps & ContextProp
+const mapStoresToProps = (getStore: StoreGetter) => ({
+    editor: getStore(EditorStore).getState(),
+    audioVolume: getStore(PreferenceStore).audioVolume,
+})
 
 export default withComponentContext(
-    connectToStores([EditorStore], getStore => ({
-        editor: getStore(EditorStore).getState(),
-    }))(
+    connectToStores([EditorStore, PreferenceStore], mapStoresToProps)(
         class NavigationView extends React.Component<Props> {
             public render() {
-                const { project, projectPath, previewPlayed } = this.props.editor
+                const {
+                    audioVolume,
+                    editor: { project, projectPath, previewPlayed },
+                } = this.props
                 const projectName = project
                     ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project')
                     : 'Delir'
@@ -35,22 +39,27 @@ export default withComponentContext(
                             {projectName}
                         </ul>
                         <ul className={s.navigationList}>
-                            {previewPlayed ? (
-                                <li onClick={this.onClickPause}>
-                                    <i className="fa fa-pause" />
-                                </li>
-                            ) : (
-                                <li onClick={this.onClickPlay}>
-                                    <i className="fa fa-play" />
-                                </li>
-                            )}
-                            <li onClick={this.onClickDest}>
+                            <li className={s.icon} onClick={this.onClickPause}>
+                                {previewPlayed ? <i className="fa fa-pause" /> : <i className="fa fa-play" />}
+                            </li>
+                            <li className={s.icon} onClick={this.onClickDest}>
                                 <i className="fa fa-film" />
+                            </li>
+                            <li className={s.volume}>
+                                <i className="fa fa-volume-up" />
+                                <input
+                                    type="range"
+                                    onChange={this.handleChangeVolume}
+                                    value={audioVolume}
+                                    min={0}
+                                    max={100}
+                                />
                             </li>
                         </ul>
                     </Pane>
                 )
             }
+
             private onClickPlay = () => {
                 const { activeComp } = this.props.editor
                 if (!activeComp) return
@@ -70,6 +79,10 @@ export default withComponentContext(
                     this.props.context.executeOperation(EditorOps.renderDestinate, {
                         compositionId: activeComp.id!,
                     })
+            }
+
+            private handleChangeVolume = ({ currentTarget }: React.ChangeEvent<HTMLInputElement>) => {
+                this.props.context.executeOperation(PreferenceOps.setAudioVolume, currentTarget.valueAsNumber)
             }
 
             private titleBarDoubleClicked = () => {

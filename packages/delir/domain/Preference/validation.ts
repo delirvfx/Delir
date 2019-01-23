@@ -3,6 +3,14 @@ import { Preference } from './PreferenceStore'
 
 const preferenceSchema = Joi.object()
     .keys({
+        editor: Joi.object()
+            .keys({
+                audioVolume: Joi.number()
+                    .min(0)
+                    .max(100)
+                    .required(),
+            })
+            .strict(),
         renderer: Joi.object()
             .keys({
                 ignoreMissingEffect: Joi.boolean().required(),

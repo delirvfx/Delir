@@ -1,12 +1,14 @@
-import { operation } from '@ragg/fleur'
+import { operation, OperationContext } from '@ragg/fleur'
 import { remote } from 'electron'
 import { existsSync, readFileSync, writeFile } from 'fs'
+import * as _ from 'lodash'
 import * as path from 'path'
 
 import * as EditorOps from '../Editor/operations'
+import { RendererActions } from '../Renderer/actions'
 import { PreferenceActions } from './actions'
 
-import PreferenceStore from './PreferenceStore'
+import PreferenceStore, { defaultPreferance, Preference } from './PreferenceStore'
 import { validateSchema } from './validation'
 
 const userDir = remote.app.getPath('userData')
@@ -19,9 +21,9 @@ export const restoreApplicationPreference = operation(context => {
 
     const json = readFileSync(preferencePath, { encoding: 'UTF-8' })
 
-    let preference: any
+    let preference: Preference
     try {
-        preference = JSON.parse(json)
+        preference = _.defaultsDeep(JSON.parse(json), defaultPreferance)
     } catch {
         context.executeOperation(EditorOps.notify, {
             title: 'App preference loading failed',
@@ -46,16 +48,36 @@ export const restoreApplicationPreference = operation(context => {
         return
     }
 
+    context.dispatch(RendererActions.setAudioVolume, { volume: preference.editor.audioVolume })
     context.dispatch(PreferenceActions.restorePreference, { preference })
 })
 
-export const savePreferences = operation(async context => {
-    const preference = context.getStore(PreferenceStore).dehydrate()
-    await new Promise((resolve, reject) =>
+export const savePreferences = (() => {
+    let timeout: number = -1
+
+    const executeSave = async (context: OperationContext<any>) => {
+        const preference = context.getStore(PreferenceStore).dehydrate()
         writeFile(preferencePath, JSON.stringify(preference), err => {
-            err ? reject(err) : resolve()
-        }),
-    )
+            // tslint:disable-next-line:no-console
+            err && console.error(err)
+        })
+    }
+
+    return operation(async context => {
+        clearTimeout(timeout)
+        timeout = (setTimeout(executeSave, 1000, context) as unknown) as number
+    })
+})()
+
+export const setAudioVolume = operation(async (context, volume: number) => {
+    context.dispatch(PreferenceActions.changePreference, {
+        patch: {
+            editor: { audioVolume: volume },
+        },
+    })
+
+    context.dispatch(RendererActions.setAudioVolume, { volume })
+    await context.executeOperation(savePreferences, {})
 })
 
 export const setRendererIgnoreMissingEffectPreference = operation(async (context, { ignore }: { ignore: boolean }) => {

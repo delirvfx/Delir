@@ -28,20 +28,47 @@
     display flex
     align-items center
     flex 1
-    padding 4px 16px
+    padding 4px 8px
     vertical-align middle
 
-    li
-        display inline-flex
-        align-items center
-        justify-content center
-        width 24px
-        height 24px
-        margin-right 8px
-        font-size 18px
-        line-height 24px
-        cursor default
-        transition all .2s
+.icon
+    display inline-flex
+    align-items center
+    justify-content center
+    width 24px
+    height 24px
+    margin-right 8px
+    font-size 18px
+    line-height 24px
+    cursor default
+    transition all .2s
 
-        &:hover
-            background-color rgba(#000, .5)
+    &:hover
+        background-color rgba(#000, .5)
+
+.volume
+    display inline-flex
+    align-items center
+    width auto
+    margin-left auto
+    margin-right 8px
+
+    input
+        -webkit-appearance none
+        display inline-block
+        width 96px
+        margin-left 8px
+        background-color rgba(#fff, .5)
+        border-radius 6px
+        outline none
+
+        &::-webkit-slider-runnable-track
+            height 6px
+
+        &::-webkit-slider-thumb
+            -webkit-appearance none
+            width 8px
+            height 8px
+            margin-top -1px
+            border-radius 8px
+            background-color #fff
