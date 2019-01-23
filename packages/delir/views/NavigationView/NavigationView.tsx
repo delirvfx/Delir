@@ -44,11 +44,11 @@ export default withComponentContext(
                         </ul>
                         <ul className={s.navigationList}>
                             {previewPlaying ? (
-                                <li onClick={this.onClickPause}>
+                                <li className={s.icon} onClick={this.onClickPause}>
                                     <i className="fa fa-pause" />
                                 </li>
                             ) : (
-                                <li onClick={this.onClickPlay}>
+                                <li className={s.icon} onClick={this.onClickPlay}>
                                     <i className="fa fa-play" />
                                 </li>
                             )}
