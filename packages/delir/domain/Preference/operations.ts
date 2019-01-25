@@ -57,7 +57,7 @@ export const savePreferences = (() => {
 
     const executeSave = async (context: OperationContext<any>) => {
         const preference = context.getStore(PreferenceStore).dehydrate()
-        writeFile(preferencePath, JSON.stringify(preference), err => {
+        writeFile(preferencePath, JSON.stringify(preference, null, 2), err => {
             // tslint:disable-next-line:no-console
             err && console.error(err)
         })
