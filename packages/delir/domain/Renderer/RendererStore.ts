@@ -21,6 +21,10 @@ interface State {
     exception: Delir.Exceptions.UserCodeException | null
 }
 
+interface InternalState {
+    audioVolume: number
+}
+
 export interface RenderState {
     currentFrame: number
 }
@@ -48,8 +52,13 @@ export default class RendererStore extends Store<State> {
     private destCanvasCtx: CanvasRenderingContext2D | null = null
 
     private audioContext: AudioContext | null = null
+    private gainNode: GainNode | null = null
     private audioBuffer: AudioBuffer | null = null
     private audioBufferSource: AudioBufferSourceNode | null = null
+
+    private internalState: InternalState = {
+        audioVolume: 100,
+    }
 
     private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, ({ project }) => {
         this.pipeline.setProject(project)
@@ -78,6 +87,11 @@ export default class RendererStore extends Store<State> {
         this.destCanvasCtx = this.destCanvas.getContext('2d')!
     })
 
+    private handleSetAudioVolume = listen(RendererActions.setAudioVolume, ({ volume }) => {
+        this.internalState = { ...this.internalState, audioVolume: volume }
+        this.gainNode && (this.gainNode.gain.value = volume / 100)
+    })
+
     private handleStartPreveiew = listen(
         RendererActions.startPreview,
         async ({ compositionId, beginFrame, ignoreMissingEffect }) => {
@@ -97,6 +111,9 @@ export default class RendererStore extends Store<State> {
             })
 
             this.audioContext = new AudioContext()
+            this.gainNode = this.audioContext.createGain()
+            this.gainNode.gain.value = this.internalState.audioVolume / 100
+            this.gainNode.connect(this.audioContext.destination)
 
             this.audioBuffer = this.audioContext.createBuffer(
                 targetComposition.audioChannels,
@@ -121,14 +138,14 @@ export default class RendererStore extends Store<State> {
 
                     const audioBufferSource = this.audioContext!.createBufferSource()
                     audioBufferSource.buffer = this.audioBuffer
-                    audioBufferSource.connect(this.audioContext!.destination)
+                    audioBufferSource.connect(this.gainNode!)
 
                     this.audioBufferSource && this.audioBufferSource.stop()
                     this.audioBufferSource = audioBufferSource
                     audioBufferSource.playbackRate.value = playbackRate
                     audioBufferSource.start()
                     audioBufferSource.onended = () => {
-                        audioBufferSource.disconnect(this.audioContext!.destination)
+                        audioBufferSource.disconnect(this.gainNode!)
                     }
                 },
             })

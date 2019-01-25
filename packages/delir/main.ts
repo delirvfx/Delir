@@ -51,17 +51,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         enableTimeTravel: false,
     }))
 
-    // console.log(createElementWithContext)
-    // ReactDOM.unstable_deferredUpdates(() => {
-    ReactDOM.render(createElementWithContext(context, AppView, {}), document.querySelector('#root'), () => {
-        ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
-    })
-    // })
-
     await context.executeOperation(RendererOps.loadPlugins, {})
     await context.executeOperation(PreferenceOps.restoreApplicationPreference, {})
     await context.executeOperation(EditorOps.setActiveProject, {
         project: new Delir.Entity.Project({}),
+    })
+
+    ReactDOM.render(createElementWithContext(context, AppView, {}), document.querySelector('#root'), () => {
+        ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
     })
 
     if (__DEV__) {

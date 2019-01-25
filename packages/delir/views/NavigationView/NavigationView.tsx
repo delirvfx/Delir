@@ -5,6 +5,8 @@ import * as React from 'react'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
+import * as PreferenceOps from '../../domain/Preference/operations'
+import PreferenceStore from '../../domain/Preference/PreferenceStore'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
@@ -17,13 +19,15 @@ type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 const mapStoresToProps = (getStore: StoreGetter) => ({
     editor: getStore(EditorStore).getState(),
     previewPlaying: getStore(RendererStore).previewPlaying,
+    audioVolume: getStore(PreferenceStore).audioVolume,
 })
 
 export default withComponentContext(
-    connectToStores([EditorStore, RendererStore], mapStoresToProps)(
+    connectToStores([EditorStore, RendererStore, PreferenceStore], mapStoresToProps)(
         class NavigationView extends React.Component<Props> {
             public render() {
                 const {
+                    audioVolume,
                     previewPlaying,
                     editor: { project, projectPath },
                 } = this.props
@@ -40,21 +44,32 @@ export default withComponentContext(
                         </ul>
                         <ul className={s.navigationList}>
                             {previewPlaying ? (
-                                <li onClick={this.onClickPause}>
+                                <li className={s.icon} onClick={this.onClickPause}>
                                     <i className="fa fa-pause" />
                                 </li>
                             ) : (
-                                <li onClick={this.onClickPlay}>
+                                <li className={s.icon} onClick={this.onClickPlay}>
                                     <i className="fa fa-play" />
                                 </li>
                             )}
                             <li onClick={this.onClickDest}>
                                 <i className="fa fa-film" />
                             </li>
+                            <li className={s.volume}>
+                                <i className="fa fa-volume-up" />
+                                <input
+                                    type="range"
+                                    onChange={this.handleChangeVolume}
+                                    value={audioVolume}
+                                    min={0}
+                                    max={100}
+                                />
+                            </li>
                         </ul>
                     </Pane>
                 )
             }
+
             private onClickPlay = () => {
                 const { activeComp } = this.props.editor
                 if (!activeComp) return
@@ -74,6 +89,10 @@ export default withComponentContext(
                     this.props.context.executeOperation(EditorOps.renderDestinate, {
                         compositionId: activeComp.id!,
                     })
+            }
+
+            private handleChangeVolume = ({ currentTarget }: React.ChangeEvent<HTMLInputElement>) => {
+                this.props.context.executeOperation(PreferenceOps.setAudioVolume, currentTarget.valueAsNumber)
             }
 
             private titleBarDoubleClicked = () => {
