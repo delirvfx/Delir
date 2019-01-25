@@ -46,12 +46,10 @@ interface RenderProgression {
     playbackRate: number
 }
 
-interface TaskGroup {
-    tasks: {
-        context: ClipRenderContext<any>
-        task: ClipRenderTask
-    }[]
-}
+type TaskGroup = {
+    context: ClipRenderContext<any>
+    task: ClipRenderTask
+}[]
 
 export default class Engine {
     private _fpsCounter: FPSCounter = new FPSCounter()
@@ -413,23 +411,24 @@ export default class Engine {
         destBufferCtx.fillStyle = context.rootComposition.backgroundColor.toString()
         destBufferCtx.fillRect(0, 0, context.width, context.height)
 
-        const taskGroups: TaskGroup[] = []
-        let latestGroup: TaskGroup = { tasks: [] }
+        const taskGroupChunks: TaskGroup[] = []
+        const audioTaskGroup: TaskGroup = []
+        let latestGroup: TaskGroup = []
 
         for (const layerTask of layerRenderTasks) {
             const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
 
             for (const clipTask of renderTargetClips) {
                 if (clipTask.rendererType === 'adjustment') {
-                    taskGroups.push(latestGroup)
-                    latestGroup = { tasks: [] }
+                    taskGroupChunks.push(latestGroup)
+                    latestGroup = []
                 }
 
                 const clipBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
                 clipBufferCanvas.width = context.width
                 clipBufferCanvas.height = context.height
-
-                // const clipBufferCtx = clipBufferCanvas.getContext('2d')!
+                // Fix context type
+                clipBufferCanvas.getContext('2d')!
 
                 const timeOnClip = context.time - clipTask.clipPlacedFrame / context.framerate
                 const frameOnClip = context.frame - clipTask.clipPlacedFrame
@@ -469,14 +468,19 @@ export default class Engine {
                 clipRenderContext.parameters = afterExpressionParams
                 clipRenderContext.clipEffectParams = referenceableEffectParams
 
-                latestGroup.tasks.push({ context: clipRenderContext, task: clipTask })
+                if (clipTask.rendererType === 'audio') {
+                    audioTaskGroup.push({ context: clipRenderContext, task: clipTask })
+                } else {
+                    latestGroup.push({ context: clipRenderContext, task: clipTask })
+                }
             }
         }
-        taskGroups.push(latestGroup)
+        taskGroupChunks.push(latestGroup)
 
-        for (const group of taskGroups) {
+        const sortedTaskGroup = [audioTaskGroup, ...taskGroupChunks]
+        for (const group of sortedTaskGroup) {
             await Promise.all(
-                group.tasks.map(async ({ context: clipContext, task }) => {
+                group.map(async ({ context: clipContext, task }) => {
                     if (task.rendererType === 'adjustment') {
                         clipContext.srcCanvas = destBufferCanvas
                     }
@@ -513,7 +517,7 @@ export default class Engine {
                 }),
             )
 
-            for (const clipTask of group.tasks) {
+            for (const clipTask of group) {
                 // Render clip rendering result to merger canvas
                 if (clipTask.task.rendererType === 'adjustment') {
                     // Merge adjustment clip result to last destination canvas

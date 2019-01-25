@@ -30,9 +30,6 @@ export default class ClipRenderTask {
         const task = new ClipRenderTask()
         task.clipEntity = clip
         task.clipRenderer = clipRenderer
-        task.rendererType = clip.renderer
-        task.clipPlacedFrame = clip.placedFrame
-        task.clipDurationFrames = clip.durationFrames
         task.paramTypes = rendererParams
         task.keyframeTable = keyframeTable
         task.audioBuffer = _.times(context.rootComposition.audioChannels, () => {
@@ -44,13 +41,22 @@ export default class ClipRenderTask {
 
     public clipEntity: Clip
     public clipRenderer: IRenderer<any>
-    public rendererType: RendererFactory.AvailableRenderer
-    public clipPlacedFrame: number
-    public clipDurationFrames: number
     public paramTypes: TypeDescriptor
     public effectRenderTasks: EffectRenderTask[]
     public keyframeTable: ParametersTable
     public audioBuffer: Float32Array[]
+
+    public get rendererType() {
+        return this.clipEntity.renderer
+    }
+
+    public get clipPlacedFrame() {
+        return this.clipEntity.placedFrame
+    }
+
+    public get clipDurationFrames() {
+        return this.clipEntity.durationFrames
+    }
 
     public async initialize(context: RenderContextBase) {
         const preRenderReq = context.toClipPreRenderContext({
