@@ -135,15 +135,6 @@ export const seekPreviewFrame = operation((context, { frame = undefined }: { fra
 // Import & Export
 //
 export const newProject = operation(async context => {
-    const project = context.getStore(EditorStore).getState().project
-
-    if (project) {
-        const acceptDiscard = window.confirm('現在のプロジェクトの変更を破棄して新しいプロジェクトを開きますか？')
-        if (!acceptDiscard) {
-            return
-        }
-    }
-
     await context.executeOperation(setActiveProject, {
         project: new Delir.Entity.Project({}),
     })
