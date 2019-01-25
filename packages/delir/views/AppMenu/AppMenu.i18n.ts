@@ -43,6 +43,17 @@ export default I18n({
                 title: '新しいファイルに保存',
                 save: '保存',
             },
+            openProject: {
+                title: 'プロジェクトを開く',
+                confirm: '現在のプロジェクトを破棄してプロジェクトを開きますか？',
+                continue: '続ける',
+                cancel: 'キャンセル',
+            },
+            newProject: {
+                confirm: '現在のプロジェクトを破棄してプロジェクトを開きますか？',
+                continue: '続ける',
+                cancel: 'キャンセル',
+            },
         },
     },
     en: {
@@ -86,6 +97,17 @@ export default I18n({
             saveAs: {
                 title: 'Save as ...',
                 save: 'Save',
+            },
+            openProject: {
+                title: 'Open Project',
+                confirm: 'Do you want to destroy the current project and open the project?',
+                continue: 'Continue',
+                cancel: 'Cancel',
+            },
+            newProject: {
+                confirm: 'Do you want to destroy the current project and open the project?',
+                continue: 'Continue',
+                cancel: 'Cancel',
             },
         },
     },

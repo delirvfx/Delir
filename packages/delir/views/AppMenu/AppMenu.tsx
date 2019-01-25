@@ -101,13 +101,13 @@ export default withComponentContext(
                             {
                                 label: t('file.newProject'),
                                 accelerator: 'CmdOrCtrl+N',
-                                click: () => context.executeOperation(EditorOps.newProject, {}),
+                                click: this.handleNewProject,
                             },
                             { type: 'separator' },
                             {
                                 label: t('file.openProject'),
                                 accelerator: 'CmdOrCtrl+O',
-                                click: () => context.executeOperation(EditorOps.openProject, {}),
+                                click: this.handleOpenProject,
                             },
                             { type: 'separator' },
                             {
@@ -269,6 +269,51 @@ export default withComponentContext(
 
             private openAbout = () => {
                 AboutModal.show()
+            }
+
+            private handleNewProject = () => {
+                const project = this.props.context.getStore(EditorStore).getState().project
+
+                if (project) {
+                    const acceptDiscard = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                        type: 'question',
+                        message: t(t.k.modals.newProject.confirm),
+                        buttons: [t(t.k.modals.newProject.continue), t(t.k.modals.newProject.cancel)],
+                    })
+
+                    if (acceptDiscard === 1) {
+                        return
+                    }
+                }
+
+                this.props.context.executeOperation(EditorOps.newProject, {})
+            }
+
+            private handleOpenProject = () => {
+                const { project } = this.props.context.getStore(EditorStore)
+
+                if (project) {
+                    const acceptDiscard = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+                        type: 'question',
+                        message: t(t.k.modals.openProject.confirm),
+                        buttons: [t(t.k.modals.openProject.continue), t(t.k.modals.openProject.cancel)],
+                        defaultId: 0,
+                    })
+
+                    if (acceptDiscard === 1) {
+                        return
+                    }
+                }
+
+                const path = remote.dialog.showOpenDialog({
+                    title: t(t.k.modals.openProject.title),
+                    filters: [{ name: 'Delir project', extensions: ['delir'] }],
+                    properties: ['openFile'],
+                })
+
+                if (!path || !path.length) return
+
+                this.props.context.executeOperation(EditorOps.openProject, { path: path[0] })
             }
 
             private handleOpenPreference = () => {

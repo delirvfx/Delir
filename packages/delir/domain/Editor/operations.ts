@@ -149,24 +149,7 @@ export const newProject = operation(async context => {
     })
 })
 
-export const openProject = operation(async context => {
-    const project = context.getStore(EditorStore).getState().project
-
-    if (project) {
-        const acceptDiscard = window.confirm('現在のプロジェクトの変更を破棄してプロジェクトを開きますか？')
-        if (!acceptDiscard) {
-            return
-        }
-    }
-
-    const path = remote.dialog.showOpenDialog({
-        title: 'プロジェクトを開く',
-        filters: [{ name: 'Delir project', extensions: ['delir'] }],
-        properties: ['openFile'],
-    })
-
-    if (!path.length) return
-
+export const openProject = operation(async (context, { path }: { path: string }) => {
     const projectMpk = await fs.readFile(path[0])
     const projectJson = MsgPack().decode(projectMpk).project
 
