@@ -198,6 +198,10 @@ export default class EditorStore extends Store<EditorState> {
         return this.state.activeParam
     }
 
+    public get project() {
+        return this.state.project
+    }
+
     public get activeComp() {
         return this.state.activeComp ? { ...this.state.activeComp } : null
     }
