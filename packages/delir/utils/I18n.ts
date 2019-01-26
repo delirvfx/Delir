@@ -13,7 +13,7 @@ interface PathEnum {
 }
 
 interface Translater<T extends PathEnum> {
-    (key: string): string
+    (key: string | string[], params?: { [name: string]: any }): string
     k: T
 }
 
