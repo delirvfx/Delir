@@ -15,6 +15,7 @@ import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'
 import ProgressPromise from '../helper/progress-promise'
+import { proxyDeepFreeze } from '../helper/proxyFreeze'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
 import { ClipRenderContext } from './RenderContext/ClipRenderContext'
@@ -404,19 +405,19 @@ export default class Engine {
         return layerTasks
     }
 
-    private async _renderStage(context: RenderContextBase, layerRenderTasks: LayerRenderTask[]): Promise<void> {
-        const destBufferCanvas = context.destCanvas
+    private async _renderStage(baseContext: RenderContextBase, layerRenderTasks: LayerRenderTask[]): Promise<void> {
+        const destBufferCanvas = baseContext.destCanvas
         const destBufferCtx = destBufferCanvas.getContext('2d')!
 
-        destBufferCtx.fillStyle = context.rootComposition.backgroundColor.toString()
-        destBufferCtx.fillRect(0, 0, context.width, context.height)
+        destBufferCtx.fillStyle = baseContext.rootComposition.backgroundColor.toString()
+        destBufferCtx.fillRect(0, 0, baseContext.width, baseContext.height)
 
         const taskGroupChunks: TaskGroup[] = []
         const audioTaskGroup: TaskGroup = []
         let latestGroup: TaskGroup = []
 
         for (const layerTask of layerRenderTasks) {
-            const renderTargetClips = layerTask.findRenderTargetClipTasks(context)
+            const renderTargetClips = layerTask.findRenderTargetClipTasks(baseContext)
 
             for (const clipTask of renderTargetClips) {
                 if (clipTask.rendererType === 'adjustment') {
@@ -425,15 +426,15 @@ export default class Engine {
                 }
 
                 const clipBufferCanvas = document.createElement('canvas') as HTMLCanvasElement
-                clipBufferCanvas.width = context.width
-                clipBufferCanvas.height = context.height
+                clipBufferCanvas.width = baseContext.width
+                clipBufferCanvas.height = baseContext.height
                 // Fix context type
                 clipBufferCanvas.getContext('2d')!
 
-                const timeOnClip = context.time - clipTask.clipPlacedFrame / context.framerate
-                const frameOnClip = context.frame - clipTask.clipPlacedFrame
+                const timeOnClip = baseContext.time - clipTask.clipPlacedFrame / baseContext.framerate
+                const frameOnClip = baseContext.frame - clipTask.clipPlacedFrame
 
-                const clipRenderContext = context.toClipRenderContext({
+                const clipRenderContext = baseContext.toClipRenderContext({
                     clip: clipTask.clipEntity,
                     timeOnClip,
                     frameOnClip,
@@ -444,6 +445,7 @@ export default class Engine {
 
                     srcCanvas: null,
                     destCanvas: clipBufferCanvas,
+                    srcAudioBuffer: null,
                     destAudioBuffer: clipTask.audioBuffer,
                 })
 
@@ -453,12 +455,12 @@ export default class Engine {
                 _.each(clipTask.effectRenderTasks, task => {
                     if (task.effectEntity.referenceName == null) return
                     referenceableEffectParams[task.effectEntity.referenceName] = task.keyframeTable.getParametersAt(
-                        context.frame,
+                        baseContext.frame,
                     )
                 })
 
-                const beforeClipExpressionParams = clipTask.keyframeTable.getParametersAt(context.frame)
-                const afterExpressionParams = clipTask.keyframeTable.getParameterWithExpressionAt(context.frame, {
+                const beforeClipExpressionParams = clipTask.keyframeTable.getParametersAt(baseContext.frame)
+                const afterExpressionParams = clipTask.keyframeTable.getParameterWithExpressionAt(baseContext.frame, {
                     context: clipRenderContext,
                     clipParams: beforeClipExpressionParams,
                     referenceableEffectParams,
@@ -477,13 +479,14 @@ export default class Engine {
         }
         taskGroupChunks.push(latestGroup)
 
-        const sortedTaskGroup = [audioTaskGroup, ...taskGroupChunks]
-        for (const group of sortedTaskGroup) {
-            await Promise.all(
+        const processTaskGroup = (group: TaskGroup, srcAudioBuffer: Float32Array[] | null) => {
+            return Promise.all(
                 group.map(async ({ context: clipContext, task }) => {
                     if (task.rendererType === 'adjustment') {
                         clipContext.srcCanvas = destBufferCanvas
                     }
+
+                    clipContext.srcAudioBuffer = srcAudioBuffer
 
                     const clipBufferCtx = clipContext.destCanvas.getContext('2d')!
                     await task.clipRenderer.render(clipContext)
@@ -492,7 +495,7 @@ export default class Engine {
 
                     // Post process effects
                     for (const effectTask of task.effectRenderTasks) {
-                        const effectRenderContext = context.toEffectRenderContext({
+                        const effectRenderContext = baseContext.toEffectRenderContext({
                             effect: effectTask.effectEntity,
                             timeOnClip: clipContext.timeOnClip,
                             frameOnClip: clipContext.frameOnClip,
@@ -503,7 +506,7 @@ export default class Engine {
                         })
 
                         effectRenderContext.parameters = effectTask.keyframeTable.getParameterWithExpressionAt(
-                            context.frame,
+                            baseContext.frame,
                             {
                                 context: effectRenderContext,
                                 clipParams: clipContext.beforeExpressionParameters,
@@ -516,6 +519,28 @@ export default class Engine {
                     }
                 }),
             )
+        }
+
+        await processTaskGroup(audioTaskGroup, null)
+        if (baseContext.isAudioBufferingNeeded) {
+            for (const task of audioTaskGroup) {
+                await mergeAudioBufferInto(
+                    baseContext.destAudioBuffer,
+                    task.context.destAudioBuffer,
+                    baseContext.audioChannels,
+                    baseContext.samplingRate,
+                )
+
+                for (const chBuffer of task.context.destAudioBuffer) {
+                    chBuffer.fill(0)
+                }
+            }
+        }
+
+        const freezedAudioBuffer = proxyDeepFreeze(baseContext.destAudioBuffer)
+
+        for (const group of taskGroupChunks) {
+            await processTaskGroup(group, freezedAudioBuffer)
 
             for (const clipTask of group) {
                 // Render clip rendering result to merger canvas
@@ -528,19 +553,6 @@ export default class Engine {
                     destBufferCtx.globalAlpha = 1
                 } else {
                     destBufferCtx.drawImage(clipTask.context.destCanvas, 0, 0)
-                }
-
-                if (context.isAudioBufferingNeeded) {
-                    await mergeAudioBufferInto(
-                        context.destAudioBuffer,
-                        clipTask.context.destAudioBuffer,
-                        context.audioChannels,
-                        context.samplingRate,
-                    )
-
-                    for (const chBuffer of clipTask.context.destAudioBuffer) {
-                        chBuffer.fill(0)
-                    }
                 }
             }
         }

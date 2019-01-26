@@ -139,7 +139,7 @@ export default class P5jsRenderer implements IRenderer<Params> {
                 frame: context.frameOnComposition,
                 duration: context.durationFrames / context.framerate,
                 durationFrames: context.durationFrames,
-                audioBuffer: null,
+                audioBuffer: (context as ClipRenderContext<Params>).srcAudioBuffer,
             },
             thisClip: {
                 time: (context as ClipRenderContext<Params>).timeOnClip,

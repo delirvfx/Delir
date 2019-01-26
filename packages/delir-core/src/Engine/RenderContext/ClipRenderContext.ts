@@ -19,5 +19,6 @@ export interface ClipRenderContextAttributes<T extends RealParameterValues> {
     // Destinations
     srcCanvas: HTMLCanvasElement | null
     destCanvas: HTMLCanvasElement
+    srcAudioBuffer: Float32Array[] | null
     destAudioBuffer: Float32Array[]
 }
