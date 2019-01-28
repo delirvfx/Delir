@@ -1,6 +1,8 @@
 # Delir
 Web Technology driven VFX Application
 
+![screenshot](https://user-images.githubusercontent.com/8597982/51431908-d5c7c780-1c72-11e9-9f2a-4bee09200ffc.png)
+
 ## How to develop Delir plugin
 See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/delir-core/plugin-example)
 
