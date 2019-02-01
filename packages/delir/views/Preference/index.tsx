@@ -1,4 +1,4 @@
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, useComponentContext, useStore, withComponentContext } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 
@@ -10,7 +10,7 @@ import Button from '../../components/Button'
 import t from './Preference.i18n'
 import * as s from './style.styl'
 
-interface OwnProps {
+interface Props {
     onClose(): void
 }
 
@@ -18,89 +18,80 @@ interface ConnectedProps {
     preference: PreferenceJson
 }
 
-type Props = OwnProps & ConnectedProps & ContextProp
-
 interface State {
     activePanel: 'renderer-general'
 }
 
-export default withComponentContext(
-    connectToStores([PreferenceStore], getStore => ({
+const RendererGeneralPane = () => {
+    const context = useComponentContext()
+
+    const { preference } = useStore([PreferenceStore], getStore => ({
         preference: getStore(PreferenceStore).getPreferences(),
-    }))(
-        class Preference extends React.Component<Props, State> {
-            public state: State = {
-                activePanel: 'renderer-general',
-            }
+    }))
 
-            public componentDidMount() {
-                window.addEventListener('keyup', this.handleWindowKeyup)
-            }
+    const handleRendererIgnoreMissingEffect = React.useCallback(({
+        currentTarget,
+    }: React.ChangeEvent<HTMLInputElement>) => {
+        context.executeOperation(PreferenceOps.setRendererIgnoreMissingEffectPreference, {
+            ignore: currentTarget.checked,
+        })
+    }, [])
 
-            public componentWillUnmount() {
-                window.removeEventListener('keyup', this.handleWindowKeyup)
-            }
+    return (
+        <>
+            <h2>{t('rendererGeneral.title')}</h2>
+            <div className={s.checkboxCard}>
+                <label htmlFor="pref-rendererGeneral-ignoreMissingEffect">
+                    {t('rendererGeneral.ignoreMissingEffect')}
+                </label>
+                <input
+                    id="pref-rendererGeneral-ignoreMissingEffect"
+                    type="checkbox"
+                    checked={preference.renderer.ignoreMissingEffect}
+                    onChange={handleRendererIgnoreMissingEffect}
+                />
+                <small>{t('rendererGeneral.ignoreMissingEffectDesc')}</small>
+            </div>
+        </>
+    )
+}
 
-            public render() {
-                const { activePanel } = this.state
+export const Preference = (props: Props) => {
+    const [{ activePanel }] = React.useState({
+        activePanel: 'renderer-general',
+    })
 
-                return (
-                    <div className={s.Preference}>
-                        <div className={s.sidebarRegion}>
-                            <div className={s.sidebar}>
-                                <div className={s.header}>{t('sidebar.renderer')}</div>
-                                <div className={classnames(s.item, activePanel === 'renderer-general' && s.itemActive)}>
-                                    {t('sidebar.rendererGeneral')}
-                                </div>
-                            </div>
-                        </div>
-                        <div className={s.contentRegion}>
-                            <div className={s.content}>
-                                {activePanel === 'renderer-general' && this.renderRendererGeneralPane()}
-                                <div className={s.contentFoot}>
-                                    <Button type="normal" onClick={this.props.onClose}>
-                                        {t('close')}
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
+    const handleWindowKeyup = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            props.onClose()
+        }
+    }
+
+    React.useEffect(() => {
+        window.addEventListener('keyup', handleWindowKeyup)
+        return () => window.removeEventListener('keyup', handleWindowKeyup)
+    })
+
+    return (
+        <div className={s.Preference}>
+            <div className={s.sidebarRegion}>
+                <div className={s.sidebar}>
+                    <div className={s.header}>{t('sidebar.renderer')}</div>
+                    <div className={classnames(s.item, activePanel === 'renderer-general' && s.itemActive)}>
+                        {t('sidebar.rendererGeneral')}
                     </div>
-                )
-            }
-
-            private renderRendererGeneralPane() {
-                const { preference } = this.props
-
-                return (
-                    <>
-                        <h2>{t('rendererGeneral.title')}</h2>
-                        <div className={s.checkboxCard}>
-                            <label htmlFor="pref-rendererGeneral-ignoreMissingEffect">
-                                {t('rendererGeneral.ignoreMissingEffect')}
-                            </label>
-                            <input
-                                id="pref-rendererGeneral-ignoreMissingEffect"
-                                type="checkbox"
-                                checked={preference.renderer.ignoreMissingEffect}
-                                onChange={this.handleRendererIgnoreMissingEffect}
-                            />
-                            <small>{t('rendererGeneral.ignoreMissingEffectDesc')}</small>
-                        </div>
-                    </>
-                )
-            }
-
-            private handleWindowKeyup = (e: KeyboardEvent) => {
-                if (e.key === 'Escape') {
-                    this.props.onClose()
-                }
-            }
-
-            private handleRendererIgnoreMissingEffect = ({ currentTarget }: React.ChangeEvent<HTMLInputElement>) => {
-                this.props.context.executeOperation(PreferenceOps.setRendererIgnoreMissingEffectPreference, {
-                    ignore: currentTarget.checked,
-                })
-            }
-        },
-    ),
-)
+                </div>
+            </div>
+            <div className={s.contentRegion}>
+                <div className={s.content}>
+                    {activePanel === 'renderer-general' && <RendererGeneralPane />}
+                    <div className={s.contentFoot}>
+                        <Button type="normal" onClick={props.onClose}>
+                            {t('close')}
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
