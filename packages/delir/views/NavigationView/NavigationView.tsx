@@ -1,4 +1,4 @@
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
+import { StoreGetter, useComponentContext, useStore } from '@ragg/fleur-react'
 import { remote } from 'electron'
 import * as path from 'path'
 import * as React from 'react'
@@ -14,91 +14,77 @@ import Pane from '../../components/pane'
 
 import * as s from './style.styl'
 
-type Props = ReturnType<typeof mapStoresToProps> & ContextProp
+export const NavigationView = () => {
+    const context = useComponentContext()
 
-const mapStoresToProps = (getStore: StoreGetter) => ({
-    editor: getStore(EditorStore).getState(),
-    previewPlaying: getStore(RendererStore).previewPlaying,
-    audioVolume: getStore(PreferenceStore).audioVolume,
-})
+    const {
+        audioVolume,
+        previewPlaying,
+        editor: { activeComp, project, projectPath },
+    } = useStore([EditorStore, RendererStore, PreferenceStore], (getStore: StoreGetter) => ({
+        editor: getStore(EditorStore).getState(),
+        previewPlaying: getStore(RendererStore).previewPlaying,
+        audioVolume: getStore(PreferenceStore).audioVolume,
+    }))
 
-export default withComponentContext(
-    connectToStores([EditorStore, RendererStore, PreferenceStore], mapStoresToProps)(
-        class NavigationView extends React.Component<Props> {
-            public render() {
-                const {
-                    audioVolume,
-                    previewPlaying,
-                    editor: { project, projectPath },
-                } = this.props
-                const projectName = project
-                    ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project')
-                    : 'Delir'
+    const projectName = project ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project') : 'Delir'
 
-                document.title = projectName
+    React.useEffect(() => {
+        document.title = projectName
+    }, [projectName])
 
-                return (
-                    <Pane className={s.navigationView} resizable={false}>
-                        <ul className={s.titleBar} onDoubleClick={this.titleBarDoubleClicked}>
-                            {projectName}
-                        </ul>
-                        <ul className={s.navigationList}>
-                            {previewPlaying ? (
-                                <li className={s.icon} onClick={this.onClickPause}>
-                                    <i className="fa fa-pause" />
-                                </li>
-                            ) : (
-                                <li className={s.icon} onClick={this.onClickPlay}>
-                                    <i className="fa fa-play" />
-                                </li>
-                            )}
-                            <li onClick={this.onClickDest}>
-                                <i className="fa fa-film" />
-                            </li>
-                            <li className={s.volume}>
-                                <i className="fa fa-volume-up" />
-                                <input
-                                    type="range"
-                                    onChange={this.handleChangeVolume}
-                                    value={audioVolume}
-                                    min={0}
-                                    max={100}
-                                />
-                            </li>
-                        </ul>
-                    </Pane>
-                )
-            }
+    const onClickPlay = React.useCallback(() => {
+        if (!activeComp) return
 
-            private onClickPlay = () => {
-                const { activeComp } = this.props.editor
-                if (!activeComp) return
+        context.executeOperation(RendererOps.startPreview, {
+            compositionId: activeComp.id!,
+        })
+    }, [])
 
-                this.props.context.executeOperation(RendererOps.startPreview, {
-                    compositionId: activeComp.id!,
-                })
-            }
+    const onClickPause = React.useCallback((e: React.MouseEvent<HTMLLIElement>) => {
+        context.executeOperation(RendererOps.stopPreview, {})
+    }, [])
 
-            private onClickPause = (e: React.MouseEvent<HTMLLIElement>) => {
-                this.props.context.executeOperation(RendererOps.stopPreview, {})
-            }
+    const onClickDest = React.useCallback(() => {
+        if (!activeComp) return
 
-            private onClickDest = () => {
-                const { activeComp } = this.props.editor
-                activeComp &&
-                    this.props.context.executeOperation(EditorOps.renderDestinate, {
-                        compositionId: activeComp.id!,
-                    })
-            }
+        context.executeOperation(EditorOps.renderDestinate, {
+            compositionId: activeComp.id!,
+        })
+    }, [])
 
-            private handleChangeVolume = ({ currentTarget }: React.ChangeEvent<HTMLInputElement>) => {
-                this.props.context.executeOperation(PreferenceOps.setAudioVolume, currentTarget.valueAsNumber)
-            }
+    const handleChangeVolume = React.useCallback(({ currentTarget }: React.ChangeEvent<HTMLInputElement>) => {
+        context.executeOperation(PreferenceOps.setAudioVolume, currentTarget.valueAsNumber)
+    }, [])
 
-            private titleBarDoubleClicked = () => {
-                const browserWindow = remote.getCurrentWindow()
-                browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
-            }
-        },
-    ),
-)
+    const titleBarDoubleClicked = React.useCallback(() => {
+        const browserWindow = remote.getCurrentWindow()
+        browserWindow.isMaximized() ? browserWindow.unmaximize() : browserWindow.maximize()
+    }, [])
+
+    return (
+        <Pane className={s.navigationView} resizable={false}>
+            <ul className={s.titleBar} onDoubleClick={titleBarDoubleClicked}>
+                {projectName}
+            </ul>
+            <ul className={s.navigationList}>
+                {previewPlaying ? (
+                    <li className={s.icon} onClick={onClickPause}>
+                        <i className="fa fa-pause" />
+                    </li>
+                ) : (
+                    <li className={s.icon} onClick={onClickPlay}>
+                        <i className="fa fa-play" />
+                    </li>
+                )}
+                <li onClick={onClickDest}>
+                    <i className="fa fa-film" />
+                </li>
+                <li className={s.volume}>
+                    <i className="fa fa-volume-up" />
+                    <input type="range" onChange={handleChangeVolume} value={audioVolume} min={0} max={100} />
+                </li>
+            </ul>
+        </Pane>
+    )
+}

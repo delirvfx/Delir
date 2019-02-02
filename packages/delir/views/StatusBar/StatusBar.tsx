@@ -1,23 +1,17 @@
-import { connectToStores } from '@ragg/fleur-react'
+import { useStore } from '@ragg/fleur-react'
 import * as React from 'react'
 
 import Pane from '../../components/pane'
 import EditorStore from '../../domain/Editor/EditorStore'
 
-interface ConnectedProps {
-    stateText: string
-}
+export const StatusBar = () => {
+    const { stateText } = useStore([EditorStore], getStore => ({
+        stateText: getStore(EditorStore).getState().processingState,
+    }))
 
-export default connectToStores([EditorStore], getStore => ({
-    stateText: getStore(EditorStore).getState().processingState,
-}))(
-    class StatusBar extends React.Component<ConnectedProps> {
-        public render() {
-            return (
-                <Pane className="view-status" resizable={false} allowFocus={false}>
-                    <div>{this.props.stateText}</div>
-                </Pane>
-            )
-        }
-    },
-)
+    return (
+        <Pane className="view-status" resizable={false} allowFocus={false}>
+            <div>{stateText}</div>
+        </Pane>
+    )
+}
