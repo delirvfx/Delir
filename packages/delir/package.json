@@ -46,7 +46,7 @@
     "parse-color": "1.0.0",
     "react": "16.8.0-alpha.1",
     "react-color": "2.17.0",
-    "react-dom": "16.7.0",
+    "react-dom": "16.8.0-alpha.1",
     "react-rnd": "9.0.4",
     "react-sortable-hoc": "1.4.0",
     "react-tabs": "3.0.0",
