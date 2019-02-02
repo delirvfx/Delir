@@ -72,7 +72,7 @@ export default connectToStores([RendererStore], mapStoresToProps)(
                     onClick={this._seeking}
                 >
                     <ContextMenu>
-                        <MenuItem label={t('contextMenu.seekToHead')} onClick={this.seekToHead} />
+                        <MenuItem label={t(t.k.contextMenu.seekToHead)} onClick={this.seekToHead} />
                     </ContextMenu>
                     <div className={s.measureLayerTrimer}>
                         <div ref="measureLayer" className={s.measureLayer}>

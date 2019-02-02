@@ -125,7 +125,7 @@ export default withComponentContext(
                                     <Pane className={s.labelsContainer}>
                                         <div className={s.labelsHeader}>
                                             <div className={s.columnName}>
-                                                {t('layers')}
+                                                {t(t.k.layers)}
                                                 <i
                                                     className={classNames('twa twa-heavy-plus-sign', s.addLayerIcon)}
                                                     onClick={this.handleAddLayer}
@@ -326,7 +326,7 @@ export default withComponentContext(
 
                 if (!activeComp) {
                     this.props.context.executeOperation(EditorOps.notify, {
-                        message: t('errors.compositionNotSelected'),
+                        message: t(t.k.errors.compositionNotSelected),
                         title: 'Woops',
                         level: 'info',
                         timeout: 4000,

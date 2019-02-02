@@ -9,7 +9,7 @@ import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import EditorStore from '../../domain/Editor/EditorStore'
 import { hasErrorInClip } from '../../domain/Renderer/models'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
@@ -81,7 +81,7 @@ export default withComponentContext(
                     >
                         <ContextMenu>
                             <MenuItem type="separator" />
-                            <MenuItem label={t('contextMenu.createClip')}>
+                            <MenuItem label={t(t.k.contextMenu.createClip)}>
                                 {_.map(Delir.Engine.Renderers.RENDERERS, (renderer, idx) => (
                                     <MenuItem
                                         key={idx}
@@ -92,7 +92,7 @@ export default withComponentContext(
                                 ))}
                             </MenuItem>
                             <MenuItem type="separator" />
-                            <MenuItem label={t('contextMenu.addLayerHere')} onClick={this.handleAddLayer} />
+                            <MenuItem label={t(t.k.contextMenu.addLayerHere)} onClick={this.handleAddLayer} />
                         </ContextMenu>
 
                         <div className={s.clipsContainer}>

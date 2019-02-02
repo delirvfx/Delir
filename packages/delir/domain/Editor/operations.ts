@@ -180,7 +180,7 @@ export const saveProject = operation(
 
         !silent &&
             (await context.executeOperation(notify, {
-                message: t('saved'),
+                message: t(t.k.saved),
                 title: '',
                 level: 'info',
                 timeout: 1000,
@@ -196,7 +196,7 @@ export const autoSaveProject = operation(async context => {
 
     if (!project || !projectPath) {
         context.executeOperation(notify, {
-            message: t('letsSave'),
+            message: t(t.k.letsSave),
             title: '',
             level: 'info',
             timeout: 5000,
@@ -216,7 +216,7 @@ export const autoSaveProject = operation(async context => {
     })
 
     context.executeOperation(notify, {
-        message: t('autoSaved', { fileName: autoSaveFileName }),
+        message: t(t.k.autoSaved, { fileName: autoSaveFileName }),
         title: '',
         level: 'info',
         timeout: 2000,
