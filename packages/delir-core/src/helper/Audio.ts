@@ -67,15 +67,3 @@ export const mergeInto = async (
         dest[ch].set(result.getChannelData(ch))
     })
 }
-
-export const arraysToAudioBuffer = (source: Float32Array[], sampleRate: number) => {
-    const audioBuffer = new (AudioBuffer as any)({
-        sampleRate,
-        numberOfChannels: source.length,
-        length: source[0].length,
-    }) as AudioBuffer
-
-    source.forEach((buffer, ch) => audioBuffer.copyToChannel(buffer, ch))
-
-    return audioBuffer
-}
