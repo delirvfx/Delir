@@ -13,17 +13,17 @@ import * as s from './style.styl'
 const statusToText = (progress: RenderingProgress) => {
     switch (progress.step) {
         case RenderingStep.Started:
-            return t('step.started')
+            return t(t.k.step.started)
         case RenderingStep.Rendering:
-            return t('step.rendering', {
+            return t(t.k.step.rendering, {
                 progression: Math.floor(progress.progression * 100),
             })
         case RenderingStep.Encoding:
-            return t('step.encoding')
+            return t(t.k.step.encoding)
         case RenderingStep.Concat:
-            return t('step.concat')
+            return t(t.k.step.concat)
         case RenderingStep.Completed:
-            return t('step.completed')
+            return t(t.k.step.completed)
     }
 }
 
@@ -64,7 +64,7 @@ export const RenderingWaiter = () => {
                                 <div className={s.statusText}>{statusToText(status)}</div>
                             </div>
                             <Button type="primary" className={s.doneButton} onClick={handleClickDone}>
-                                {t('close')}
+                                {t(t.k.close)}
                             </Button>
                         </>
                     ) : (

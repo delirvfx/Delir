@@ -57,7 +57,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
             <div className={s.newCompModalRoot}>
                 <form ref={this.formRef} className={FormStyle.formHorizontal} onSubmit={this.handleSubmit}>
                     <div className="formGroup">
-                        <label className="label">{t('fields.compositionName')}:</label>
+                        <label className="label">{t(t.k.fields.compositionName)}:</label>
                         <div className="input">
                             <div className="formControl">
                                 <input name="name" type="text" defaultValue={values.name} required autoFocus />
@@ -65,7 +65,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
                         </div>
                     </div>
                     <div className="formGroup">
-                        <label className="label">{t('fields.dimensions')}:</label>
+                        <label className="label">{t(t.k.fields.dimensions)}:</label>
                         <div className="inputs">
                             <div className="formControl">
                                 <input
@@ -91,7 +91,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
                         </div>
                     </div>
                     <div className="formGroup">
-                        <label className="label">{t('fields.backgroundColor')}:</label>
+                        <label className="label">{t(t.k.fields.backgroundColor)}:</label>
                         <div className="inputs">
                             <div className="formControl">
                                 <input
@@ -111,7 +111,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
                         </div>
                     </div>
                     <div className="formGroup">
-                        <label className="label">{t('fields.framerate')}:</label>
+                        <label className="label">{t(t.k.fields.framerate)}:</label>
                         <div className="inputs">
                             <div className="formControl">
                                 <input
@@ -127,7 +127,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
                         </div>
                     </div>
                     <div className="formGroup">
-                        <label className="label">{t('fields.durationSec')}:</label>
+                        <label className="label">{t(t.k.fields.durationSec)}:</label>
                         <div className="inputs">
                             <div className="formControl">
                                 <input
@@ -143,7 +143,7 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
                         </div>
                     </div>
                     <div className="formGroup">
-                        <label className="label">{t('fields.samplingRate')}:</label>
+                        <label className="label">{t(t.k.fields.samplingRate)}:</label>
                         <div className="inputs">
                             <div className="formControl">
                                 <select name="samplingRate" defaultValue={values.samplingRate} required>
@@ -155,12 +155,12 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
                         </div>
                     </div>
                     <div className="formGroup">
-                        <label className="label">{t('fields.audioChannels')}:</label>
+                        <label className="label">{t(t.k.fields.audioChannels)}:</label>
                         <div className="inputs">
                             <div className="formControl">
                                 <select name="audioChannels" defaultValue={values.audioChannels} required>
-                                    <option value="2">{t('values.audioChannels.stereo')}</option>
-                                    <option value="1">{t('values.audioChannels.mono')}</option>
+                                    <option value="2">{t(t.k.values.audioChannels.stereo)}</option>
+                                    <option value="1">{t(t.k.values.audioChannels.mono)}</option>
                                 </select>
                             </div>
                         </div>
@@ -168,10 +168,10 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
 
                     <div className={s.modalFooter}>
                         <Button type="normal" onClick={this.onCancel}>
-                            {t('cancel')}
+                            {t(t.k.cancel)}
                         </Button>
                         <Button type="primary" htmlType="submit" onClick={this.onConfirm}>
-                            {comp ? t('apply') : t('create')}
+                            {comp ? t(t.k.apply) : t(t.k.create)}
                         </Button>
                     </div>
                 </form>

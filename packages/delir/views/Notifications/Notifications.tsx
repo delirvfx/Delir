@@ -26,7 +26,7 @@ export const Notifications = () => {
         if (!userCodeException) return
 
         context.executeOperation(EditorOps.notify, {
-            title: t('userCodeError'),
+            title: t(t.k.userCodeError),
             detail: `In ${userCodeException.location.type}#${userCodeException.location.entityId.slice(0, 4)}\n${
                 userCodeException.message
             }`,

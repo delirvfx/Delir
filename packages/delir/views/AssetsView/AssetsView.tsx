@@ -111,7 +111,7 @@ export default withComponentContext(
                 return (
                     <Pane className={s.assetsView} allowFocus>
                         <h1 className={s.compositionsHeading}>
-                            {t('compositions.title')}
+                            {t(t.k.compositions.title)}
                             <i
                                 className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}
                                 onClick={this.openNewCompositionWindow}
@@ -122,14 +122,14 @@ export default withComponentContext(
                                 <thead>
                                     <tr>
                                         <td className={s.compositionListIconColumn} />
-                                        <td className={s.compositionListNameColumn}>{t('compositions.name')}</td>
+                                        <td className={s.compositionListNameColumn}>{t(t.k.compositions.name)}</td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <ContextMenu elementType="tr">
                                         <MenuItem type="separator" />
                                         <MenuItem
-                                            label={t('compositions.contextMenu.create')}
+                                            label={t(t.k.compositions.contextMenu.create)}
                                             onClick={this.openNewCompositionWindow}
                                         />
                                         <MenuItem type="separator" />
@@ -145,17 +145,17 @@ export default withComponentContext(
                                             <ContextMenu elementType="td">
                                                 <MenuItem type="separator" />
                                                 <MenuItem
-                                                    label={t('compositions.contextMenu.rename')}
+                                                    label={t(t.k.compositions.contextMenu.rename)}
                                                     onClick={this.handleClickRenameComposition}
                                                     data-composition-id={comp.id}
                                                 />
                                                 <MenuItem
-                                                    label={t('compositions.contextMenu.remove')}
+                                                    label={t(t.k.compositions.contextMenu.remove)}
                                                     data-comp-id={comp.id}
                                                     onClick={this.removeComposition}
                                                 />
                                                 <MenuItem
-                                                    label={t('compositions.contextMenu.preference')}
+                                                    label={t(t.k.compositions.contextMenu.preference)}
                                                     onClick={this.openCompositionSetting}
                                                     data-composition-id={comp.id}
                                                 />
@@ -169,7 +169,7 @@ export default withComponentContext(
                                                 <LabelInput
                                                     ref={this.setCompositionNameInputRef(comp.id)}
                                                     defaultValue={comp.name}
-                                                    placeholder={t('compositions.namePlaceHolder')}
+                                                    placeholder={t(t.k.compositions.namePlaceHolder)}
                                                     onChange={this.modifyCompName.bind(this, comp.id)}
                                                 />
                                             </td>
@@ -179,7 +179,7 @@ export default withComponentContext(
                             </table>
                         </div>
                         <h1 className={s.assetsHeading}>
-                            {t('assets.title')}
+                            {t(t.k.assets.title)}
                             <label className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
                                 <input
                                     ref="assetInput"
@@ -195,8 +195,8 @@ export default withComponentContext(
                                 <thead>
                                     <tr>
                                         <td className={classNames(s.assetListIconColumn)} />
-                                        <td className={classNames(s.assetListNameColumn)}>{t('assets.name')}</td>
-                                        <td className={classNames(s.assetListTypeColumn)}>{t('assets.fileType')}</td>
+                                        <td className={classNames(s.assetListNameColumn)}>{t(t.k.assets.name)}</td>
+                                        <td className={classNames(s.assetListTypeColumn)}>{t(t.k.assets.fileType)}</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -214,13 +214,13 @@ export default withComponentContext(
                                                 <MenuItem type="separator" />
                                                 {/*<MenuItem label='Reload' onClick={() => {}} />*/}
                                                 <MenuItem
-                                                    label={t('assets.contextMenu.remove')}
+                                                    label={t(t.k.assets.contextMenu.remove)}
                                                     data-asset-id={asset.id}
                                                     onClick={this.removeAsset}
                                                 />
                                                 <MenuItem type="separator" />
                                                 <MenuItem
-                                                    label={t('assets.contextMenu.copyAssetURI')}
+                                                    label={t(t.k.assets.contextMenu.copyAssetURI)}
                                                     data-asset-id={asset.id}
                                                     onClick={this.handleCopyAssetURI}
                                                 />
@@ -230,7 +230,7 @@ export default withComponentContext(
                                             <td>
                                                 <ContextMenu>
                                                     <MenuItem
-                                                        label={t('assets.contextMenu.rename')}
+                                                        label={t(t.k.assets.contextMenu.rename)}
                                                         onClick={this.handleClickRenameAsset}
                                                         data-asset-id={asset.id}
                                                     />

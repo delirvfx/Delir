@@ -87,8 +87,11 @@ export default withComponentContext(
                 >
                     <div>
                         <ContextMenu>
-                            <MenuItem label={t('contextMenu.seekToHeadOfClip')} onClick={this.handleSeekToHeadOfClip} />
-                            <MenuItem label={t('contextMenu.effect')}>
+                            <MenuItem
+                                label={t(t.k.contextMenu.seekToHeadOfClip)}
+                                onClick={this.handleSeekToHeadOfClip}
+                            />
+                            <MenuItem label={t(t.k.contextMenu.effect)}>
                                 {postEffectPlugins.length ? (
                                     postEffectPlugins.map(entry => (
                                         <MenuItem
@@ -100,13 +103,13 @@ export default withComponentContext(
                                         />
                                     ))
                                 ) : (
-                                    <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
+                                    <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
                                 )}
                             </MenuItem>
                             {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
                             <MenuItem type="separator" />
                             <MenuItem
-                                label={t('contextMenu.remove')}
+                                label={t(t.k.contextMenu.remove)}
                                 data-clip-id={clip.id}
                                 onClick={this.handleRemoveClip}
                             />

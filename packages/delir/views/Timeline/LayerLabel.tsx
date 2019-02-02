@@ -44,10 +44,10 @@ class LayerLabelComponent extends React.Component<Props> {
             <ul key={layer.id} className={s.LaneLabel}>
                 <ContextMenu>
                     <MenuItem type="separator" />
-                    <MenuItem label={t('contextMenu.renameLayer')} onClick={this.focusToLayerNameInput} />
-                    <MenuItem label={t('contextMenu.removeLayer')} data-layer-id={layer.id} onClick={this.onRemove} />
+                    <MenuItem label={t(t.k.contextMenu.renameLayer)} onClick={this.focusToLayerNameInput} />
+                    <MenuItem label={t(t.k.contextMenu.removeLayer)} data-layer-id={layer.id} onClick={this.onRemove} />
                     <MenuItem type="separator" />
-                    <MenuItem label={t('contextMenu.addLayerHere')} onClick={this.handleAddLayer} />
+                    <MenuItem label={t(t.k.contextMenu.addLayerHere)} onClick={this.handleAddLayer} />
                 </ContextMenu>
 
                 <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--Handle'])}>

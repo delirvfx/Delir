@@ -62,7 +62,7 @@ export default class ScriptParamEditor extends React.Component<Props> {
                 <div className={s.toolbar}>
                     <span className={s.title}>Code: {title}</span>
                     <Button type="primary" onClick={this.handleClose}>
-                        {t('save')}
+                        {t(t.k.save)}
                     </Button>
                 </div>
                 <div ref={this.editorElement} className={s.editor} />

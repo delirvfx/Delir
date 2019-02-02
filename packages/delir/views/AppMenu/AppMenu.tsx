@@ -71,23 +71,23 @@ export default withComponentContext(
                     label: 'Delir',
                     submenu: [
                         {
-                            label: t('appMenu.about'),
+                            label: t(t.k.appMenu.about),
                             click: this.openAbout,
                         },
                         { type: 'separator' },
                         {
-                            label: t('appMenu.preference'),
+                            label: t(t.k.appMenu.preference),
                             accelerator: 'CmdOrCtrl+,',
                             click: this.handleOpenPreference,
                         },
                         { type: 'separator' },
                         {
-                            label: t('appMenu.openPluginDir'),
+                            label: t(t.k.appMenu.openPluginDir),
                             click: () => context.executeOperation(EditorOps.openPluginDirectory, {}),
                         },
                         { type: 'separator' },
                         {
-                            label: t('appMenu.quit'),
+                            label: t(t.k.appMenu.quit),
                             accelerator: 'CmdOrCtrl+Q',
                             role: 'quit',
                         },
@@ -96,22 +96,22 @@ export default withComponentContext(
 
                 menu.push(
                     {
-                        label: t('file.label'),
+                        label: t(t.k.file.label),
                         submenu: [
                             {
-                                label: t('file.newProject'),
+                                label: t(t.k.file.newProject),
                                 accelerator: 'CmdOrCtrl+N',
                                 click: this.handleNewProject,
                             },
                             { type: 'separator' },
                             {
-                                label: t('file.openProject'),
+                                label: t(t.k.file.openProject),
                                 accelerator: 'CmdOrCtrl+O',
                                 click: this.handleOpenProject,
                             },
                             { type: 'separator' },
                             {
-                                label: t('file.save'),
+                                label: t(t.k.file.save),
                                 accelerator: 'CmdOrCtrl+S',
                                 click: () => {
                                     const state = context.getStore(EditorStore).getState()
@@ -119,8 +119,8 @@ export default withComponentContext(
 
                                     if (!path) {
                                         path = remote.dialog.showSaveDialog({
-                                            title: t('modals.saveAs.title'),
-                                            buttonLabel: t('modals.saveAs.save'),
+                                            title: t(t.k.modals.saveAs.title),
+                                            buttonLabel: t(t.k.modals.saveAs.save),
                                             filters: [
                                                 {
                                                     name: 'Delir Project File',
@@ -137,12 +137,12 @@ export default withComponentContext(
                                 },
                             },
                             {
-                                label: t('file.saveAs'),
+                                label: t(t.k.file.saveAs),
                                 accelerator: 'CmdOrCtrl+Shift+S',
                                 click: () => {
                                     const path = remote.dialog.showSaveDialog({
-                                        title: t('modals.saveAs.title'),
-                                        buttonLabel: t('modals.saveAs.save'),
+                                        title: t(t.k.modals.saveAs.title),
+                                        buttonLabel: t(t.k.modals.saveAs.save),
                                         filters: [
                                             {
                                                 name: 'Delir Project File',
@@ -159,7 +159,7 @@ export default withComponentContext(
                             },
                             { type: 'separator' },
                             {
-                                label: t('file.rendering'),
+                                label: t(t.k.file.rendering),
                                 accelerator: 'CmdOrCtrl+Shift+R',
                                 click() {
                                     const comp = context.getStore(EditorStore).getState().activeComp
@@ -173,7 +173,7 @@ export default withComponentContext(
                                 ? [
                                       { type: 'separator' } as any,
                                       {
-                                          label: t('appMenu.quit'),
+                                          label: t(t.k.appMenu.quit),
                                           accelerator: 'CmdOrCtrl+Q',
                                           role: 'quit',
                                       },
@@ -182,16 +182,16 @@ export default withComponentContext(
                         ],
                     },
                     {
-                        label: t('edit.label'),
+                        label: t(t.k.edit.label),
                         submenu: [
                             {
-                                label: t('edit.undo'),
+                                label: t(t.k.edit.undo),
                                 accelerator: 'CmdOrCtrl+Z',
                                 click: this.handleUndo,
                                 ...(devToolsFocused ? { role: 'undo' } : {}),
                             },
                             {
-                                label: t('edit.redo'),
+                                label: t(t.k.edit.redo),
                                 accelerator: Platform.isMacOS() ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
                                 click: this.handleRedo,
                                 ...(devToolsFocused ? { role: 'redo' } : {}),
@@ -200,25 +200,25 @@ export default withComponentContext(
                                 type: 'separator',
                             },
                             {
-                                label: t('edit.cut'),
+                                label: t(t.k.edit.cut),
                                 accelerator: 'CmdOrCtrl+X',
                                 click: this.handleCut,
                                 ...(devToolsFocused ? { role: 'cut' } : {}),
                             },
                             {
-                                label: t('edit.copy'),
+                                label: t(t.k.edit.copy),
                                 accelerator: 'CmdOrCtrl+C',
                                 click: this.handleCopy,
                                 ...(devToolsFocused ? { role: 'copy' } : {}),
                             },
                             {
-                                label: t('edit.paste'),
+                                label: t(t.k.edit.paste),
                                 accelerator: 'CmdOrCtrl+V',
                                 click: this.handlePaste,
                                 ...(devToolsFocused ? { role: 'paste' } : {}),
                             },
                             {
-                                label: t('edit.selectAll'),
+                                label: t(t.k.edit.selectAll),
                                 role: 'selectall',
                             },
                         ],
@@ -226,10 +226,10 @@ export default withComponentContext(
                 )
 
                 menu.push({
-                    label: t('preview.label'),
+                    label: t(t.k.preview.label),
                     submenu: [
                         {
-                            label: previewPlaying ? t('preview.pause') : t('preview.play'),
+                            label: previewPlaying ? t(t.k.preview.pause) : t(t.k.preview.play),
                             enabled: !!activeComp,
                             click: () => {
                                 previewPlaying
@@ -245,17 +245,17 @@ export default withComponentContext(
                 })
 
                 menu.push({
-                    label: t('develop.label'),
+                    label: t(t.k.develop.label),
                     submenu: [
                         {
-                            label: t('develop.reload'),
+                            label: t(t.k.develop.reload),
                             accelerator: 'CmdOrCtrl+R',
                             click(item, focusedWindow) {
                                 if (focusedWindow) focusedWindow.reload()
                             },
                         },
                         {
-                            label: t('develop.toggleDevTool'),
+                            label: t(t.k.develop.toggleDevTool),
                             accelerator: 'CmdOrCtrl+Alt+I',
                             click(item, focusedWindow) {
                                 if (focusedWindow) focusedWindow.webContents.toggleDevTools()

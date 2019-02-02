@@ -146,7 +146,7 @@ export default withComponentContext(
                         <Pane className={s.paramList}>
                             {activeClip && (
                                 <ContextMenu>
-                                    <MenuItem label={t('contextMenu.effect')}>
+                                    <MenuItem label={t(t.k.contextMenu.effect)}>
                                         {postEffectPlugins.length ? (
                                             postEffectPlugins.map(entry => (
                                                 <MenuItem
@@ -158,7 +158,7 @@ export default withComponentContext(
                                                 />
                                             ))
                                         ) : (
-                                            <MenuItem label={t('contextMenu.pluginUnavailable')} enabled={false} />
+                                            <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
                                         )}
                                     </MenuItem>
                                 </ContextMenu>
@@ -287,7 +287,7 @@ export default withComponentContext(
                         >
                             <ContextMenu>
                                 <MenuItem
-                                    label={t('contextMenu.expression')}
+                                    label={t(t.k.contextMenu.expression)}
                                     data-entity-type="clip"
                                     data-entity-id={activeClip.id}
                                     data-param-name={desc.paramName}
@@ -296,7 +296,7 @@ export default withComponentContext(
                                 />
                                 <MenuItem type="separator" />
                                 <MenuItem
-                                    label={t('contextMenu.copyParamName')}
+                                    label={t(t.k.contextMenu.copyParamName)}
                                     data-param-name={desc.paramName}
                                     onClick={this.handleCopyParamName}
                                 />
@@ -323,7 +323,7 @@ export default withComponentContext(
                             <div className={s.paramItemInput}>
                                 {desc.type === 'CODE' ? (
                                     <Button type="normal" onClick={this.handleOpenScriptParamEditor}>
-                                        {t('editScriptParam')}
+                                        {t(t.k.editScriptParam)}
                                     </Button>
                                 ) : (
                                     <DelirValueInput
@@ -362,7 +362,7 @@ export default withComponentContext(
                             <div
                                 key={effect.id}
                                 className={classnames(s.paramItem, s.paramItemEffectContainer)}
-                                title={t('pluginMissing', {
+                                title={t(t.k.pluginMissing, {
                                     processorId: effect.processor,
                                 })}
                             >
@@ -372,7 +372,7 @@ export default withComponentContext(
                                 >
                                     <ContextMenu>
                                         <MenuItem
-                                            label={t('contextMenu.removeEffect')}
+                                            label={t(t.k.contextMenu.removeEffect)}
                                             data-clip-id={activeClip.id}
                                             data-effect-id={effect.id}
                                             onClick={this.removeEffect}
@@ -394,7 +394,7 @@ export default withComponentContext(
                             <div key={effect.id} className={classnames(s.paramItem, s.paramItemHeader)}>
                                 <ContextMenu>
                                     <MenuItem
-                                        label={t('contextMenu.removeEffect')}
+                                        label={t(t.k.contextMenu.removeEffect)}
                                         data-clip-id={activeClip.id}
                                         data-effect-id={effect.id}
                                         onClick={this.removeEffect}
@@ -402,7 +402,7 @@ export default withComponentContext(
                                     <MenuItem type="separator" />
                                     {effect.referenceName != null && (
                                         <MenuItem
-                                            label={t('contextMenu.copyReferenceName')}
+                                            label={t(t.k.contextMenu.copyReferenceName)}
                                             data-reference-name={effect.referenceName}
                                             onClick={this.handleCopyReferenceName}
                                         />
@@ -464,7 +464,7 @@ export default withComponentContext(
                                     >
                                         <ContextMenu>
                                             <MenuItem
-                                                label={t('contextMenu.expression')}
+                                                label={t(t.k.contextMenu.expression)}
                                                 data-entity-type="effect"
                                                 data-entity-id={effect.id}
                                                 data-param-name={desc.paramName}
@@ -472,7 +472,7 @@ export default withComponentContext(
                                             />
                                             <MenuItem type="separator" />
                                             <MenuItem
-                                                label={t('contextMenu.copyParamName')}
+                                                label={t(t.k.contextMenu.copyParamName)}
                                                 data-param-name={desc.paramName}
                                                 onClick={this.handleCopyParamName}
                                             />

@@ -39,10 +39,10 @@ const RendererGeneralPane = () => {
 
     return (
         <>
-            <h2>{t('rendererGeneral.title')}</h2>
+            <h2>{t(t.k.rendererGeneral.title)}</h2>
             <div className={s.checkboxCard}>
                 <label htmlFor="pref-rendererGeneral-ignoreMissingEffect">
-                    {t('rendererGeneral.ignoreMissingEffect')}
+                    {t(t.k.rendererGeneral.ignoreMissingEffect)}
                 </label>
                 <input
                     id="pref-rendererGeneral-ignoreMissingEffect"
@@ -50,7 +50,7 @@ const RendererGeneralPane = () => {
                     checked={preference.renderer.ignoreMissingEffect}
                     onChange={handleRendererIgnoreMissingEffect}
                 />
-                <small>{t('rendererGeneral.ignoreMissingEffectDesc')}</small>
+                <small>{t(t.k.rendererGeneral.ignoreMissingEffectDesc)}</small>
             </div>
         </>
     )
@@ -76,9 +76,9 @@ export const Preference = (props: Props) => {
         <div className={s.Preference}>
             <div className={s.sidebarRegion}>
                 <div className={s.sidebar}>
-                    <div className={s.header}>{t('sidebar.renderer')}</div>
+                    <div className={s.header}>{t(t.k.sidebar.renderer)}</div>
                     <div className={classnames(s.item, activePanel === 'renderer-general' && s.itemActive)}>
-                        {t('sidebar.rendererGeneral')}
+                        {t(t.k.sidebar.rendererGeneral)}
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@ export const Preference = (props: Props) => {
                     {activePanel === 'renderer-general' && <RendererGeneralPane />}
                     <div className={s.contentFoot}>
                         <Button type="normal" onClick={props.onClose}>
-                            {t('close')}
+                            {t(t.k.close)}
                         </Button>
                     </div>
                 </div>
