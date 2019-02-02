@@ -12,7 +12,7 @@ See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/delir-c
 1. Delir depends to below softwares.
   You must install the above program before starting development.
 
-  - Node.js 6+
+  - Node.js 10+
     `brew install node`
   - yarn ([yarnpkg/yarn](https://github.com/yarnpkg/yarn))
     `npm i -g yarn`
@@ -23,8 +23,7 @@ See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/delir-c
 
 2. Clone this repository
   ```
-  git clone git@github.com:Ragg-/delir.git
-  git checkout release/0.0.0-alpha.4
+  git clone git@github.com:ra-gg/delir.git
   ```
 
 3. Install dependency and start development
