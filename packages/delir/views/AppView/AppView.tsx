@@ -19,7 +19,7 @@ import NavigationView from '../NavigationView'
 import { Notifications } from '../Notifications'
 import { Preference } from '../Preference'
 import PreviewView from '../PreviewView/'
-import RenderingWaiter from '../RenderingWaiter'
+import { RenderingWaiter } from '../RenderingWaiter'
 import StatusBar from '../StatusBar'
 import Timeline from '../Timeline'
 
