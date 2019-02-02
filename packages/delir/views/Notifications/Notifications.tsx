@@ -1,9 +1,8 @@
-import * as Delir from '@ragg/delir-core'
-import { connectToStores, ContextProp, useComponentContext, useStore, withComponentContext } from '@ragg/fleur-react'
+import { useComponentContext, useStore } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 
-import EditorStore, { NotificationEntry } from '../../domain/Editor/EditorStore'
+import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 

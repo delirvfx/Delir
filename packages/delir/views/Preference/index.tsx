@@ -1,4 +1,4 @@
-import { connectToStores, ContextProp, useComponentContext, useStore, withComponentContext } from '@ragg/fleur-react'
+import { useComponentContext, useStore } from '@ragg/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 

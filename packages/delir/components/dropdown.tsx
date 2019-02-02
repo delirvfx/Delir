@@ -1,6 +1,5 @@
 import * as classnames from 'classnames'
 import * as React from 'react'
-import { PureComponent } from 'react'
 
 import Portal from '../modules/Portal'
 
@@ -16,7 +15,7 @@ interface State {
     show: boolean
 }
 
-export default class Dropdown extends PureComponent<Props, State> {
+export default class Dropdown extends React.Component<Props, State> {
     public static defaultProps = {
         shownInitial: false,
     }
