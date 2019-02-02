@@ -193,7 +193,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
                         <select ref={this.ref.assetSelect} onChange={this.valueChanged}>
                             {acceptedAssets.length === 0 && (
                                 <option selected disabled>
-                                    {t('asset.empty')}
+                                    {t(t.k.asset.empty)}
                                 </option>
                             )}
                             {acceptedAssets.length > 0 && (
