@@ -22,10 +22,12 @@ import LabelInput from '../../components/label-input'
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
 import DelirValueInput from './_DelirValueInput'
+import { EffectList, EffectListItem, EffectSortHandle } from './EffectList'
 import ExpressionEditor from './ExpressionEditor'
 import KeyframeGraph, { KeyframePatch } from './KeyframeGraph'
 import ScriptParamEditor from './ScriptParamEditor'
 
+import { SortEndHandler } from 'react-sortable-hoc'
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
@@ -164,7 +166,7 @@ export default withComponentContext(
                                 </ContextMenu>
                             )}
                             {this.renderProperties()}
-                            {this.renderEffectProperties()}
+                            <EffectList onSortEnd={this.handleSortEffect}>{this.renderEffectProperties()}</EffectList>
                         </Pane>
                         <Pane>
                             <div
@@ -352,36 +354,38 @@ export default withComponentContext(
 
                 if (!activeClip) return null
 
-                return activeClip.effects.map(effect => {
+                return activeClip.effects.map((effect, idx) => {
                     const processorInfo = rendererStore
                         .getPostEffectPlugins()
                         .find(entry => entry.id === effect.processor)!
 
                     if (!processorInfo) {
                         return (
-                            <div
-                                key={effect.id}
-                                className={classnames(s.paramItem, s.paramItemEffectContainer)}
-                                title={t(t.k.pluginMissing, {
-                                    processorId: effect.processor,
-                                })}
-                            >
+                            <EffectListItem index={idx}>
                                 <div
                                     key={effect.id}
-                                    className={classnames(s.paramItem, s.paramItemHeader, s.paramItemPluginMissing)}
+                                    className={classnames(s.paramItem, s.paramItemEffectContainer)}
+                                    title={t(t.k.pluginMissing, {
+                                        processorId: effect.processor,
+                                    })}
                                 >
-                                    <ContextMenu>
-                                        <MenuItem
-                                            label={t(t.k.contextMenu.removeEffect)}
-                                            data-clip-id={activeClip.id}
-                                            data-effect-id={effect.id}
-                                            onClick={this.removeEffect}
-                                        />
-                                    </ContextMenu>
-                                    <i className="fa fa-exclamation" />
-                                    {effect.processor}
+                                    <div
+                                        key={effect.id}
+                                        className={classnames(s.paramItem, s.paramItemHeader, s.paramItemPluginMissing)}
+                                    >
+                                        <ContextMenu>
+                                            <MenuItem
+                                                label={t(t.k.contextMenu.removeEffect)}
+                                                data-clip-id={activeClip.id}
+                                                data-effect-id={effect.id}
+                                                onClick={this.removeEffect}
+                                            />
+                                        </ContextMenu>
+                                        <i className="fa fa-exclamation" />
+                                        {effect.processor}
+                                    </div>
                                 </div>
-                            </div>
+                            </EffectListItem>
                         )
                     }
 
@@ -390,8 +394,12 @@ export default withComponentContext(
                         | null = rendererStore.getPostEffectParametersById(effect.processor)!
 
                     return (
-                        <div key={effect.id} className={classnames(s.paramItem, s.paramItemEffectContainer)}>
-                            <div key={effect.id} className={classnames(s.paramItem, s.paramItemHeader)}>
+                        <EffectListItem
+                            key={effect.id}
+                            index={idx}
+                            className={classnames(s.paramItem, s.paramItemEffectContainer)}
+                        >
+                            <div className={classnames(s.paramItem, s.paramItemHeader)}>
                                 <ContextMenu>
                                     <MenuItem
                                         label={t(t.k.contextMenu.removeEffect)}
@@ -408,6 +416,7 @@ export default withComponentContext(
                                         />
                                     )}
                                 </ContextMenu>
+                                <EffectSortHandle />
                                 <i className="fa fa-magic" />
                                 <LabelInput
                                     className={s.referenceNameInput}
@@ -508,7 +517,7 @@ export default withComponentContext(
                                     </div>
                                 )
                             })}
-                        </div>
+                        </EffectListItem>
                     )
                 })
             }
@@ -569,6 +578,14 @@ export default withComponentContext(
                 })
 
                 this.setState({ editorOpened: true })
+            }
+
+            private handleSortEffect: SortEndHandler = ({ oldIndex, newIndex }) => {
+                const { activeClip } = this.props
+                if (!activeClip) return
+
+                const effectId = activeClip.effects[oldIndex].id
+                this.props.context.executeOperation(ProjectOps.moveEffectOrder, { effectId, newIndex })
             }
 
             private handleCopyReferenceName = ({

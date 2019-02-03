@@ -192,6 +192,15 @@ export default class ProjectStore extends Store<ProjectStoreState> {
         },
     )
 
+    private handleMoveEffectOrder = listen(
+        ProjectActions.moveEffectOrderAction,
+        ({ parentClipId, subjectEffectId, newIndex }) => {
+            const { project } = this.state
+            project!.findClip(parentClipId)!.moveEffectIndex(subjectEffectId, newIndex)
+            this.updateLastModified()
+        },
+    )
+
     private handleRemoveComposition = listen(ProjectActions.removeCompositionAction, ({ targetCompositionId }) => {
         const { project } = this.state
         project!.removeComposition(targetCompositionId)
