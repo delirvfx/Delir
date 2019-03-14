@@ -1,3 +1,5 @@
+import * as THREE from 'three'
+
 import { Composition } from '../../Entity'
 import DependencyResolver from '../DependencyResolver'
 // import WebGLContext from '../WebGL/WebGLContext'
@@ -5,7 +7,7 @@ import { ClipPreRenderContext, ClipPreRenderContextAttributes } from './ClipPreR
 import { ClipRenderContext, ClipRenderContextAttributes } from './ClipRenderContext'
 import { EffectPreRenderContext, EffectPreRenderContextAttributes } from './EffectPreRenderContext'
 import { EffectRenderContext, EffectRenderContextAttributes } from './EffectRenderContext'
-import { IRenderContextBase } from './IRenderContextBase'
+import { Camera, IRenderContextBase } from './IRenderContextBase'
 
 export class RenderContextBase implements IRenderContextBase {
     public time: number
@@ -13,6 +15,8 @@ export class RenderContextBase implements IRenderContextBase {
 
     public frame: number
     public frameOnComposition: number
+
+    public camera: Camera
 
     public width: number
     public height: number
@@ -30,6 +34,7 @@ export class RenderContextBase implements IRenderContextBase {
     public destCanvas: HTMLCanvasElement
     public destAudioBuffer: Float32Array[]
     public audioContext: OfflineAudioContext
+    public three: THREE.WebGLRenderer
     // public gl: WebGLContext
 
     constructor(context: IRenderContextBase) {

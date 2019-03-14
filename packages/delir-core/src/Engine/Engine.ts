@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 import * as timecodes from 'node-timecodes'
+import * as THREE from 'three'
 
 import { Clip, Effect, Project } from '../Entity'
 import EffectPluginBase from '../PluginSupport/PostEffectBase'
@@ -15,6 +16,7 @@ import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'
 import ProgressPromise from '../helper/progress-promise'
+import { Point3D } from '../Values'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
 import { ClipRenderContext } from './RenderContext/ClipRenderContext'
@@ -335,8 +337,15 @@ export default class Engine {
             audioChannels: rootComposition.audioChannels,
             isAudioBufferingNeeded: false,
 
+            camera: {
+                fov: 45,
+                position: new Point3D(0, 0, 0),
+                rotate: new Point3D(0, 0, 0),
+            },
+
             rootComposition,
             resolver,
+            three: new THREE.WebGLRenderer(),
             // gl: new WebGLContext(rootComposition.width, rootComposition.height),
         })
     }

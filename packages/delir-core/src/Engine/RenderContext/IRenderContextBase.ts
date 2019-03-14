@@ -1,6 +1,15 @@
+import * as THREE from 'three'
+
 import { Composition } from '../../Entity'
+import { Point3D } from '../../Values'
 import DependencyResolver from '../DependencyResolver'
 // import WebGLContext from '../WebGL/WebGLContext'
+
+export interface Camera {
+    fov: number
+    position: Point3D
+    rotate: Point3D
+}
 
 export interface IRenderContextBase {
     time: number
@@ -21,6 +30,9 @@ export interface IRenderContextBase {
 
     rootComposition: Readonly<Composition>
 
+    camera: Camera
+
+    // Resolver
     resolver: DependencyResolver
 
     // Destinations
@@ -28,4 +40,6 @@ export interface IRenderContextBase {
     destAudioBuffer: Float32Array[]
     audioContext: OfflineAudioContext
     // gl: WebGLContext
+
+    three: THREE.WebGLRenderer
 }
