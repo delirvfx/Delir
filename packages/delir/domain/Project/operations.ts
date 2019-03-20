@@ -715,6 +715,19 @@ export const moveLayerOrder = operation(
     },
 )
 
+export const moveEffectOrder = operation((context, { effectId, newIndex }: { effectId: string; newIndex: number }) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const clip = project.findEffectOwnerClip(effectId)
+
+    if (!clip) return
+
+    context.dispatch(ProjectActions.moveEffectOrderAction, {
+        parentClipId: clip.id,
+        subjectEffectId: effectId,
+        newIndex,
+    })
+})
+
 export const removeComposition = operation(async (context, { compositionId }: { compositionId: string }) => {
     const project = context.getStore(ProjectStore).getProject()!
     const composition = project.findComposition(compositionId)!

@@ -87,6 +87,11 @@ export const ProjectActions = actions('Project', {
         targetLayerId: string
         newIndex: number
     }>(),
+    moveEffectOrderAction: action<{
+        parentClipId: string
+        subjectEffectId: string
+        newIndex: number
+    }>(),
     removeCompositionAction: action<{
         targetCompositionId: string
     }>(),
