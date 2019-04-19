@@ -287,7 +287,7 @@ export function compileRendererJs(done) {
                 ],
             },
             plugins: [
-                new CleanWebpackPlugin([''], { verbose: true, root: paths.compiled.frontend }),
+                new CleanWebpackPlugin({ verbose: true }),
                 new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
                 new webpack.LoaderOptionsPlugin({
                     test: /\.styl$/,
@@ -302,7 +302,6 @@ export function compileRendererJs(done) {
                 new MonacoEditorWebpackPlugin(),
                 new ForkTsCheckerWebpackPlugin({
                     tsconfig: join(paths.src.frontend, 'tsconfig.json'),
-                    workers: 3,
                 }),
                 ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
@@ -376,7 +375,7 @@ export function compilePlugins(done) {
                 ],
             },
             plugins: [
-                new CleanWebpackPlugin([''], { verbose: true, root: join(paths.compiled.root, 'plugins') }),
+                new CleanWebpackPlugin({ verbose: true }),
                 new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
                 new webpack.ExternalsPlugin('commonjs', ['delir-core', '@ragg/delir-core']),
                 ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
