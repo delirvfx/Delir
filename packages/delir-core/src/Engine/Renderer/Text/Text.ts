@@ -1,5 +1,6 @@
 import * as _ from 'lodash'
 
+import { split } from 'emoji-aware'
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
@@ -19,6 +20,10 @@ interface TextRendererParam {
     y: number
     rotate: number
     opacity: number
+}
+
+const createSVGElement = <T extends string>(type: T) => {
+    return document.createElementNS('http://www.w3.org/2000/svg', type)
 }
 
 export default class TextLayer implements IRenderer<TextRendererParam> {
@@ -99,9 +104,25 @@ export default class TextLayer implements IRenderer<TextRendererParam> {
     }
 
     private _bufferCanvas: HTMLCanvasElement
+    private measuringDiv: HTMLDivElement
 
     public async beforeRender(context: ClipPreRenderContext<TextRendererParam>) {
         this._bufferCanvas = document.createElement('canvas')
+
+        const div = this.measuringDiv || document.createElement('div')
+
+        Object.assign(div.style, {
+            position: 'absolute',
+            userSelect: 'none',
+            opacity: '0',
+            width: '0',
+            height: '0',
+            overflow: 'hidden',
+        })
+
+        document.body.appendChild(div)
+
+        this.measuringDiv = div
     }
 
     public async render(context: ClipRenderContext<TextRendererParam>) {
@@ -113,11 +134,37 @@ export default class TextLayer implements IRenderer<TextRendererParam> {
         const lineHeight = param.size * (param.lineHeight / 100)
         const rad = (param.rotate * Math.PI) / 180
 
-        ctx.font = `${param.weight} ${param.size}px/${lineHeight} ${family}`
+        // ctx.font = `${param.weight} ${param.size}px/${lineHeight} ${family}`
+
+        const svg = createSVGElement('svg') as SVGSVGElement
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+        this.measuringDiv.appendChild(svg)
+
+        const root = createSVGElement('g') as SVGGElement
+        root.style.color = param.color.toCSSColor()
+        svg.appendChild(root)
 
         const lines = param.text.split('\n')
         const height = lines.length * lineHeight
         const width = lines.reduce((mostLongWidth, line) => Math.max(mostLongWidth, ctx.measureText(line).width), 0)
+
+        let placePointY = 0
+
+        for (const line of lines) {
+            const lineEl = createSVGElement('text') as SVGTextElement
+            lineEl.setAttribute('y', '' + placePointY)
+            lineEl.setAttribute('dominant-baseline', 'text-before-edge')
+
+            for (const char of split(line) as string[]) {
+                const text = createSVGElement('tspan')
+                text.textContent = char
+                text.style.transform = `translateY(${Math.random() * 10}px)`
+                lineEl.appendChild(text)
+            }
+
+            root.appendChild(lineEl)
+            placePointY += lineHeight
+        }
 
         ctx.translate(param.x, param.y)
         ctx.translate(width / 2, height / 2)
@@ -125,14 +172,22 @@ export default class TextLayer implements IRenderer<TextRendererParam> {
         ctx.translate(-width / 2, -height / 2)
 
         ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
-        ctx.textBaseline = 'top'
-        ctx.fillStyle = param.color.toString()
 
-        let placePointY = 0
+        const bBox = root.getBBox()
+        svg.setAttribute('width', `${bBox.width}`)
+        svg.setAttribute('height', `${bBox.height}`)
+        svg.setAttribute('viewBox', `0 0 ${bBox.width} ${bBox.height}`)
 
-        for (const line of lines) {
-            ctx.fillText(line, 0, placePointY)
-            placePointY += lineHeight
-        }
+        const svgBlob = new Blob([svg.outerHTML], { type: 'image/svg+xml;charset=utf-8' })
+        const url = URL.createObjectURL(svgBlob)
+
+        const image = new Image()
+        image.src = url
+        await image.decode()
+
+        ctx.drawImage(image, 0, 0)
+
+        URL.revokeObjectURL(url)
+        svg.remove()
     }
 }
