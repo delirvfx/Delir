@@ -1,6 +1,6 @@
 import { Composition } from '../../Entity'
 import DependencyResolver from '../DependencyResolver'
-// import WebGLContext from '../WebGL/WebGLContext'
+import WebGLContext from '../WebGL/WebGLContext'
 
 export interface IRenderContextBase {
     time: number
@@ -27,5 +27,5 @@ export interface IRenderContextBase {
     destCanvas: HTMLCanvasElement
     destAudioBuffer: Float32Array[]
     audioContext: OfflineAudioContext
-    // gl: WebGLContext
+    gl: WebGLContext
 }

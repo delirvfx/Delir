@@ -108,6 +108,7 @@ export default class WebGLContext {
         const vertexBuffer = gl.createBuffer()
         gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW)
+
         const positionAttrib = gl.getAttribLocation(program, 'position')
         gl.enableVertexAttribArray(positionAttrib)
         gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0)

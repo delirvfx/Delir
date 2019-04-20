@@ -23,6 +23,7 @@ import { RenderContextBase } from './RenderContext/RenderContextBase'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
 import { LayerRenderTask } from './Task/LayerRenderTask'
+import WebGLContext from './WebGL/WebGLContext'
 // import WebGLContext from './WebGL/WebGLContext'
 
 export interface ExpressionExecuters {
@@ -336,7 +337,7 @@ export default class Engine {
 
             rootComposition,
             resolver,
-            // gl: new WebGLContext(rootComposition.width, rootComposition.height),
+            gl: new WebGLContext(rootComposition.width, rootComposition.height),
         })
     }
 
