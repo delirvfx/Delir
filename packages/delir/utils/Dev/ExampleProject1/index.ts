@@ -311,6 +311,24 @@ adjustmentClip.addEffect(
 p5jsClip.addEffect(
     assign(
         new Delir.Entity.Effect({
+            processor: '@delirvfx/delir-posteffect-chromakey',
+        }),
+        {
+            keyframes: {
+                keyColor: [
+                    new Delir.Entity.Keyframe({
+                        frameOnClip: 0,
+                        value: new Delir.Values.ColorRGBA(255, 255, 255, 1),
+                    }),
+                ],
+            },
+        },
+    ),
+)
+
+p5jsClip.addEffect(
+    assign(
+        new Delir.Entity.Effect({
             processor: '@ragg/delir-posteffect-color-slider',
             referenceName: 'Color',
         }),

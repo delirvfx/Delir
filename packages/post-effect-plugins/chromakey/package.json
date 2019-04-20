@@ -1,7 +1,7 @@
 {
-    "name": "@ragg/delir-posteffect-chromakey",
+    "name": "@delirvfx/delir-posteffect-chromakey",
     "version": "0.0.0",
-    "author": "Ragg (https://twitter.com/@_ragg_)",
+    "author": "DelirVFX (https://twitter.com/@delirvfx)",
     "license": "MIT",
     "main": "index.js",
     "engines": {
