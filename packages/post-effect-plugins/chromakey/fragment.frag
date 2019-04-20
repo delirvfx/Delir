@@ -10,13 +10,13 @@ precision mediump float;
 //     gl_FragColor = color;
 // }
 
+uniform sampler2D source;
+varying vec2 vTexCoord;
 uniform vec3 keyColor;
-uniform sampler2D texture0;
 uniform float threshold;
-varying vec2 texCoord;
 
 void main(void) {
-    vec4 color = texture2D(texture0, texCoord);
+    vec4 color = texture2D(source, vTexCoord);
     float diff = length(keyColor - color.rgb);
 
     if (diff < threshold) {
