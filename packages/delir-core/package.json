@@ -11,23 +11,23 @@
     "prepublishOnly": "tsc --emitDeclarationOnly --declaration --outDir ./typings"
   },
   "devDependencies": {
-    "@types/jest": "23.3.13",
-    "@types/joi": "14.0.1",
-    "@types/lodash": "4.14.120",
-    "@types/semver": "5.5.0",
+    "@types/jest": "24.0.11",
+    "@types/joi": "14.3.3",
+    "@types/lodash": "4.14.123",
+    "@types/semver": "6.0.0",
     "@types/uuid": "3.4.4",
     "@types/webgl2": "0.0.4",
-    "jest": "23.6.0",
-    "ts-jest": "23.10.5"
+    "jest": "24.7.1",
+    "ts-jest": "24.0.2"
   },
   "dependencies": {
     "bezier-easing": "2.1.0",
     "font-manager": "0.3.0",
     "joi": "14.3.1",
     "lodash": "4.17.11",
-    "p5": "0.7.3",
-    "semver": "5.6.0",
-    "uuid": "3.3.2",
-    "typescript": "3.2.4"
+    "p5": "0.8.0",
+    "semver": "6.0.0",
+    "typescript": "3.4.4",
+    "uuid": "3.3.2"
   }
 }
