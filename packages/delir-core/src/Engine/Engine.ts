@@ -23,6 +23,7 @@ import { RenderContextBase } from './RenderContext/RenderContextBase'
 import ClipRenderTask from './Task/ClipRenderTask'
 import EffectRenderTask from './Task/EffectRenderTask'
 import { LayerRenderTask } from './Task/LayerRenderTask'
+import WebGLContext from './WebGL/WebGLContext'
 // import WebGLContext from './WebGL/WebGLContext'
 
 export interface ExpressionExecuters {
@@ -336,7 +337,7 @@ export default class Engine {
 
             rootComposition,
             resolver,
-            // gl: new WebGLContext(rootComposition.width, rootComposition.height),
+            gl: new WebGLContext(rootComposition.width, rootComposition.height),
         })
     }
 
@@ -490,8 +491,8 @@ export default class Engine {
 
                     const clipBufferCtx = clipContext.destCanvas.getContext('2d')!
                     await task.clipRenderer.render(clipContext)
-                    destBufferCtx.globalAlpha = 1
-                    destBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
+                    clipBufferCtx.globalAlpha = 1
+                    clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
 
                     // Post process effects
                     for (const effectTask of task.effectRenderTasks) {
@@ -515,6 +516,7 @@ export default class Engine {
                         )
 
                         await effectTask.effectRenderer.render(effectRenderContext)
+                        clipBufferCtx.globalAlpha = 1
                         clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
                     }
                 }),

@@ -39,6 +39,8 @@ interface Uniform {
 }
 
 const DEFAULT_VERTEX_SHADER = `
+precision highp float;
+
 attribute vec2 position;
 attribute vec2 coord;
 varying vec2 vTexCoord;
@@ -53,6 +55,8 @@ export default class WebGLContext {
     private glCanvas: HTMLCanvasElement
     private gl: WebGL2RenderingContext
     private texBufferCanvas: HTMLCanvasElement
+    private vertexBuffer: WebGLBuffer
+    private tex2DBuffer: WebGLBuffer
 
     public constructor(private width: number, private height: number) {
         // OffscreenCanvas not updated frame (bug?) so using HTMLCanvasElement
@@ -62,6 +66,8 @@ export default class WebGLContext {
 
         // texImage2D not support for OffscreenCanvas so using HTMLCanvasElement
         this.texBufferCanvas = Object.assign(document.createElement('canvas'), { width, height })
+        this.vertexBuffer = this.gl.createBuffer()!
+        this.tex2DBuffer = this.gl.createBuffer()!
     }
 
     public getProgram(fragmentShaderSource: string, vertexShaderSource: string = DEFAULT_VERTEX_SHADER): WebGLProgram {
@@ -105,15 +111,14 @@ export default class WebGLContext {
         gl.clearColor(0, 0, 0, 0)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-        const vertexBuffer = gl.createBuffer()
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer)
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]), gl.STATIC_DRAW)
+
         const positionAttrib = gl.getAttribLocation(program, 'position')
         gl.enableVertexAttribArray(positionAttrib)
         gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0)
 
-        const tex2DBuffer = gl.createBuffer()
-        gl.bindBuffer(gl.ARRAY_BUFFER, tex2DBuffer)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.tex2DBuffer)
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 1, 1, 1, 1, 0, 0, 0]), gl.STATIC_DRAW)
         const coordAttrib = gl.getAttribLocation(program, 'coord')
         gl.enableVertexAttribArray(coordAttrib)
@@ -136,7 +141,9 @@ export default class WebGLContext {
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
         gl.flush()
 
-        dest.getContext('2d')!.drawImage(this.glCanvas, 0, 0, source.width, source.height)
+        const destCtx = dest.getContext('2d')!
+        destCtx.clearRect(0, 0, dest.width, dest.height)
+        destCtx.drawImage(this.glCanvas, 0, 0, source.width, source.height)
     }
 
     // Uniforms

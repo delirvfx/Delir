@@ -332,10 +332,10 @@ export function compilePlugins(done) {
                 'the-world/index': './the-world/index',
                 'numeric-slider/index': './numeric-slider/index',
                 'color-slider/index': './color-slider/index',
+                'chromakey/index': './chromakey/index',
                 ...(__DEV__
                     ? {
                           'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
-                          // 'chromakey/index': '../experimental-plugins/chromakey/index',
                           // 'filler/index': '../experimental-plugins/filler/index',
                           // 'mmd/index': '../experimental-plugins/mmd/index',
                           // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',

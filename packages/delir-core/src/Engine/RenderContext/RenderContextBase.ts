@@ -30,7 +30,7 @@ export class RenderContextBase implements IRenderContextBase {
     public destCanvas: HTMLCanvasElement
     public destAudioBuffer: Float32Array[]
     public audioContext: OfflineAudioContext
-    // public gl: WebGLContext
+    public gl: WebGLContext
 
     constructor(context: IRenderContextBase) {
         Object.assign(this, context)
