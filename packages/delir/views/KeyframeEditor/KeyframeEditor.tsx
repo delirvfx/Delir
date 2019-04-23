@@ -166,7 +166,9 @@ export default withComponentContext(
                                 </ContextMenu>
                             )}
                             {this.renderProperties()}
-                            <EffectList onSortEnd={this.handleSortEffect}>{this.renderEffectProperties()}</EffectList>
+                            <EffectList useDragHandle onSortEnd={this.handleSortEffect}>
+                                {this.renderEffectProperties()}
+                            </EffectList>
                         </Pane>
                         <Pane>
                             <div

@@ -1,4 +1,3 @@
-import * as Delir from '@ragg/delir-core'
 import * as React from 'react'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { SortableHandle } from 'react-sortable-hoc'
