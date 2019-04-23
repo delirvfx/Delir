@@ -491,8 +491,8 @@ export default class Engine {
 
                     const clipBufferCtx = clipContext.destCanvas.getContext('2d')!
                     await task.clipRenderer.render(clipContext)
-                    destBufferCtx.globalAlpha = 1
-                    destBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
+                    clipBufferCtx.globalAlpha = 1
+                    clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
 
                     // Post process effects
                     for (const effectTask of task.effectRenderTasks) {
@@ -516,6 +516,7 @@ export default class Engine {
                         )
 
                         await effectTask.effectRenderer.render(effectRenderContext)
+                        clipBufferCtx.globalAlpha = 1
                         clipBufferCtx.setTransform(1, 0, 0, 1, 0, 0)
                     }
                 }),
