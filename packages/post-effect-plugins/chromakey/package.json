@@ -8,7 +8,7 @@
         "delir-core": "0.6.x"
     },
     "delir": {
-        "name": "クロマキー",
+        "name": "Chroma key",
         "type": "post-effect"
     }
 }
