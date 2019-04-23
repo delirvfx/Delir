@@ -8,7 +8,7 @@ const clamp = (num: number, min: number, max: number) =>
 
 interface Params {
     threshold: number
-    keyColor: Values.ColorRGBA
+    keyColor: Values.ColorRGB
 }
 
 export default class Chromakey extends PostEffectBase {
@@ -19,7 +19,7 @@ export default class Chromakey extends PostEffectBase {
         // prettier-ignore
         return Type
             .float('threshold', { label: 'Threshold', defaultValue: 1, animatable: true })
-            .colorRgba('keyColor', { label: 'Key color', defaultValue: new Values.ColorRGBA(0, 0, 0, 1), animatable: true })
+            .colorRgb('keyColor', { label: 'Key color', defaultValue: new Values.ColorRGB(0, 0, 0), animatable: true })
     }
 
     private static FRAGMENT_SHADER: string = require('./fragment.frag').default
