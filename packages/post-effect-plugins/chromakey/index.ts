@@ -1,13 +1,10 @@
-import {
-    EffectPreRenderContext,
-    EffectRenderContext,
-    PluginSupport,
-    PostEffectBase,
-    Type,
-    Values,
-} from '@ragg/delir-core'
+import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type, Values } from '@ragg/delir-core'
 
-import * as clamp from 'lodash/clamp'
+// prettier-ignore
+const clamp = (num: number, min: number, max: number) =>
+    num > max ? max :
+    num < min ? min :
+    num
 
 interface Params {
     threshold: number
@@ -19,7 +16,7 @@ export default class Chromakey extends PostEffectBase {
      * Provide usable parameters
      */
     public static provideParameters() {
-        /* prettier-ignore */
+        // prettier-ignore
         return Type
             .float('threshold', { label: 'Threshold', defaultValue: 1, animatable: true })
             .colorRgba('keyColor', { label: 'Key color', defaultValue: new Values.ColorRGBA(0, 0, 0, 1), animatable: true })
