@@ -1,6 +1,6 @@
 import { Composition } from '../../Entity'
 import DependencyResolver from '../DependencyResolver'
-// import WebGLContext from '../WebGL/WebGLContext'
+import WebGLContext from '../WebGL/WebGLContext'
 import { ClipPreRenderContext, ClipPreRenderContextAttributes } from './ClipPreRenderContext'
 import { ClipRenderContext, ClipRenderContextAttributes } from './ClipRenderContext'
 import { EffectPreRenderContext, EffectPreRenderContextAttributes } from './EffectPreRenderContext'

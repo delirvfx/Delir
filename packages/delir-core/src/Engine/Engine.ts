@@ -542,7 +542,7 @@ export default class Engine {
         const freezedAudioBuffer = proxyDeepFreeze(baseContext.destAudioBuffer)
 
         for (const group of taskGroupChunks) {
-            await processTaskGroup(group, freezedAudioBuffer)
+            await processTaskGroup(group, freezedAudioBuffer as Float32Array[])
 
             for (const clipTask of group) {
                 // Render clip rendering result to merger canvas
