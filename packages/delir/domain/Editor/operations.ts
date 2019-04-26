@@ -8,6 +8,7 @@ import * as path from 'path'
 import { SpreadType } from '../../utils/Spread'
 
 import PreferenceStore from '../Preference/PreferenceStore'
+import { migrateProject } from '../Project/models'
 import RendererStore from '../Renderer/RendererStore'
 import EditorStore from './EditorStore'
 
@@ -143,9 +144,11 @@ export const newProject = operation(async context => {
 export const openProject = operation(async (context, { path }: { path: string }) => {
     const projectMpk = await fs.readFile(path[0])
     const projectJson = MsgPack().decode(projectMpk).project
+    const project = Delir.Exporter.deserializeProject(projectJson)
+    const migrated = migrateProject(Delir.ProjectMigrator.migrate(project))
 
     await context.executeOperation(setActiveProject, {
-        project: Delir.Exporter.deserializeProject(projectJson),
+        project: migrated,
         path: path[0],
     })
 })
