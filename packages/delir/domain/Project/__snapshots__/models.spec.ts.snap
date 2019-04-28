@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Project/models Should migrate from old effect id to next id 1`] = `
+Project {
+  "assets": Array [],
+  "compositions": Array [
+    Composition {
+      "audioChannels": 2,
+      "backgroundColor": Object {
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+      },
+      "durationFrames": 100,
+      "framerate": 30,
+      "height": 100,
+      "id": "comp1",
+      "layers": Array [
+        Layer {
+          "clips": Array [
+            Clip {
+              "durationFrames": 0,
+              "effects": Array [
+                Effect {
+                  "expressions": Object {},
+                  "id": "layer0",
+                  "keyframes": Object {},
+                  "processor": "@delirvfx/posteffect-color-slider",
+                  "referenceName": null,
+                },
+                Effect {
+                  "expressions": Object {},
+                  "id": "layer1",
+                  "keyframes": Object {},
+                  "processor": "@delirvfx/posteffect-numeric-slider",
+                  "referenceName": null,
+                },
+                Effect {
+                  "expressions": Object {},
+                  "id": "layer2",
+                  "keyframes": Object {},
+                  "processor": "@delirvfx/posteffect-the-world",
+                  "referenceName": null,
+                },
+              ],
+              "expressions": Object {},
+              "id": "clip-\${idx}",
+              "keyframes": Object {},
+              "placedFrame": 0,
+              "renderer": "video",
+            },
+            Clip {
+              "durationFrames": 0,
+              "effects": Array [
+                Effect {
+                  "expressions": Object {},
+                  "id": "layer0",
+                  "keyframes": Object {},
+                  "processor": "@delirvfx/posteffect-color-slider",
+                  "referenceName": null,
+                },
+                Effect {
+                  "expressions": Object {},
+                  "id": "layer1",
+                  "keyframes": Object {},
+                  "processor": "@delirvfx/posteffect-numeric-slider",
+                  "referenceName": null,
+                },
+                Effect {
+                  "expressions": Object {},
+                  "id": "layer2",
+                  "keyframes": Object {},
+                  "processor": "@delirvfx/posteffect-the-world",
+                  "referenceName": null,
+                },
+              ],
+              "expressions": Object {},
+              "id": "clip-\${idx}",
+              "keyframes": Object {},
+              "placedFrame": 0,
+              "renderer": "video",
+            },
+          ],
+          "id": " layerId",
+          "name": "mocked-layer",
+        },
+      ],
+      "name": "mocked-composition",
+      "samplingRate": 48000,
+      "width": 100,
+    },
+  ],
+  "formatVersion": "2017091401",
+}
+`;
