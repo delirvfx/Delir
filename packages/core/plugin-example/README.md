@@ -40,7 +40,7 @@ yarn dev # 更新監視モードで開発を始める（コードを書き換え
     "main": "dist/index.js",
     "engines": {
         // 対応しているdelir-coreのバージョン
-        "delir-core": "0.0.x"
+        "@delirvfx/core": "0.7.x"
     }
 }
 ```

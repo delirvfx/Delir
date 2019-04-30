@@ -53,11 +53,11 @@ export default class ExamplePlugin extends PostEffectBase {
      * @param req
      */
     public async render(context: EffectRenderContext<Params>) {
-        const dest = req.destCanvas
-        const context = dest.getContext('2d')
-        const params = req.parameters as Params
+        const dest = context.destCanvas
+        const ctx = dest.getContext('2d')
+        const params = context.parameters as Params
 
-        context.fillStyle = params.color.toString()
-        context.fillRect(params.x, params.y, params.width, params.height)
+        ctx.fillStyle = params.color.toString()
+        ctx.fillRect(params.x, params.y, params.width, params.height)
     }
 }

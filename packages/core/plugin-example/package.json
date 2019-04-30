@@ -16,8 +16,8 @@
   },
   "devDependencies": {
     "@delirvfx/core": "0.7.2",
-    "awesome-typescript-loader": "^3.1.2",
-    "typescript": "^2.2.2",
-    "webpack": "^2.3.2"
+    "awesome-typescript-loader": "5.2.1",
+    "typescript": "3.4.5",
+    "webpack": "4.30.0"
   }
 }
