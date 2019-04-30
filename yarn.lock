@@ -948,6 +948,20 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/yargs" "^12.0.9"
 
+"@ragg/delir-core@*":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@ragg/delir-core/-/delir-core-0.7.0.tgz#4fa4038de1c139b394fc0f20b3d348aac26a88a0"
+  integrity sha512-SbfloshvWJ7nlWI+vYT3VHE8TvdfSnotGxSVJZ9SijuV1A+J6wVq1G5g78wkAxsEMqARRkpe55wAz5LD+hFegQ==
+  dependencies:
+    bezier-easing "2.1.0"
+    font-manager "0.3.0"
+    joi "14.3.1"
+    lodash "4.17.11"
+    p5 "0.8.0"
+    semver "6.0.0"
+    typescript "3.4.4"
+    uuid "3.3.2"
+
 "@ragg/fleur-react@0.0.13":
   version "0.0.13"
   resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.13.tgz#5991455804df35d37b3b0b7de183f40317718e0e"
