@@ -37,7 +37,7 @@ export default class PluginScriptLoader {
 
     private makeRequire(fullpath: string) {
         const requireFunc: any = (request: string) => {
-            if (request === 'delir-core' || request === '@ragg/delir-core' || request === '@delirvfx/core') {
+            if (request === '@ragg/delir-core' || request === '@delirvfx/core') {
                 return Delir
             }
 

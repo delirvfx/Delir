@@ -5,7 +5,7 @@ import { nativeImage } from 'electron'
 import * as fs from 'mz/fs'
 import * as path from 'path'
 
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 
 // import PromiseQueue from './utils/PromiseQueue'
 import * as Exporter from './exporter'

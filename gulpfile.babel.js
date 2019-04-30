@@ -377,7 +377,7 @@ export function compilePlugins(done) {
             plugins: [
                 new CleanWebpackPlugin({ verbose: true }),
                 new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
-                new webpack.ExternalsPlugin('commonjs', ['delir-core', '@ragg/delir-core']),
+                new webpack.ExternalsPlugin('commonjs', ['@delirvfx/core']),
                 ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
         },

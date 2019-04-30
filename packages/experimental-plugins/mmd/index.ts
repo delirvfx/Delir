@@ -1,4 +1,4 @@
-import { Exceptions, PostEffectBase, PreRenderRequest, RenderRequest, Type, TypeDescriptor } from '@ragg/delir-core'
+import { Exceptions, PostEffectBase, PreRenderRequest, RenderRequest, Type, TypeDescriptor } from '@delirvfx/core'
 
 import * as Th from 'three'
 import { MMDHelper, MMDLoader } from 'three-mmd-loader'

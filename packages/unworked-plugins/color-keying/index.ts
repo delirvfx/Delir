@@ -5,7 +5,7 @@ import {
     // PluginPreRenderRequest,
     RenderRequest,
     // Exceptions
-} from '@ragg/delir-core'
+} from '@delirvfx/core'
 
 export default class CompositionLayer extends LayerPluginBase {
     public static pluginDidLoad() {}

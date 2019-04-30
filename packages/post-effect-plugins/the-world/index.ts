@@ -1,4 +1,4 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@ragg/delir-core'
+import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@delirvfx/core'
 
 import * as clamp from 'lodash/clamp'
 

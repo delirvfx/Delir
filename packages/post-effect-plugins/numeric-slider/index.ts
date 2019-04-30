@@ -1,4 +1,4 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@ragg/delir-core'
+import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@delirvfx/core'
 
 interface Params {
     value: number
