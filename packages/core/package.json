@@ -1,9 +1,9 @@
 {
   "name": "@delirvfx/core",
-  "version": "0.7.1",
+  "version": "0.7.2-pre.1",
   "description": "JavaScript VFX Engine",
   "main": "src/index.ts",
-  "types": "typings/index.ts",
+  "types": "typings/src/index.ts",
   "author": "Ragg <ragg.devpr@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
