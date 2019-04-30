@@ -1,4 +1,12 @@
-import { mockAsset, mockClip, mockComposition, mockEffect, mockKeyframe, mockLayer, mockProject } from '../spec/mocks'
+import {
+    mockAsset,
+    mockClip,
+    mockComposition,
+    mockEffect,
+    mockKeyframe,
+    mockLayer,
+    mockProject,
+} from '@delirvfx/core-test-helper'
 import { Asset, Clip, Composition, Effect, Keyframe, Layer, Project } from './Entity'
 import AssetPointer from './Values/AssetPointer'
 import ColorRGB from './Values/ColorRGB'

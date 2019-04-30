@@ -1,5 +1,4 @@
-import { mockClip, mockEffect, mockLayer, mockProject } from '@delirvfx/core-test-helper'
-import { mockComposition } from '@delirvfx/core-test-helper'
+import { mockClip, mockComposition, mockEffect, mockLayer, mockProject } from '@delirvfx/core-test-helper'
 import { times } from 'lodash'
 import { migrateProject } from './models'
 

@@ -1,4 +1,4 @@
-import { mockClip, mockKeyframe } from '../../spec/mocks'
+import { mockClip, mockKeyframe } from '@delirvfx/core-test-helper'
 import { Clip, Keyframe } from '../Entity'
 import { UserCodeException } from '../Exceptions/UserCodeException'
 import { safeAssign } from '../helper/safeAssign'
