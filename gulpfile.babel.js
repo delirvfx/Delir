@@ -23,7 +23,7 @@ const paths = {
         root: join(__dirname, './packages/'),
         plugins: join(__dirname, './packages/post-effect-plugins'),
         frontend: join(__dirname, './packages/delir/'),
-        core: join(__dirname, './packages/delir-core/'),
+        core: join(__dirname, './packages/core/'),
     },
     compiled: {
         root: join(__dirname, './prepublish/'),
