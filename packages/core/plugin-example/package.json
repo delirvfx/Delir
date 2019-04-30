@@ -15,9 +15,9 @@
     "type": "post-effect"
   },
   "devDependencies": {
+    "@delirvfx/core": "0.7.2",
     "awesome-typescript-loader": "^3.1.2",
     "typescript": "^2.2.2",
-    "webpack": "^2.3.2",
-    "@delirvfx/core": "0.7.0"
+    "webpack": "^2.3.2"
   }
 }
