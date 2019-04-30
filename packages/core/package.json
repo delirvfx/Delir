@@ -1,6 +1,6 @@
 {
   "name": "@delirvfx/core",
-  "version": "0.7.2-pre.1",
+  "version": "0.7.2",
   "description": "JavaScript VFX Engine",
   "main": "src/index.ts",
   "types": "typings/src/index.d.ts",
