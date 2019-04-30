@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import * as monaco from 'monaco-editor'
 
 type AvailableLibrary =

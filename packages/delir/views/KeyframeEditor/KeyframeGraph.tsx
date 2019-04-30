@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'

@@ -27,7 +27,7 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@babel/register"
     },
     {
-        "name": "@ragg/delir-core",
+        "name": "@delirvfx/core",
         "url": "https://github.com/Ragg-/Delir/tree/master/src/delir-core"
     },
     {

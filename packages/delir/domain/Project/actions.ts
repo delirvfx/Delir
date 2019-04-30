@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import { action, actions } from '@ragg/fleur'
 
 export const ProjectActions = actions('Project', {

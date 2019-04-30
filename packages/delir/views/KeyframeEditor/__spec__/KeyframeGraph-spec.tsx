@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import * as jsdom from 'jsdom-global'
 import * as React from 'react'
 import * as ReactTestRenderer from 'react-test-renderer'

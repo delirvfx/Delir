@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import { join } from 'path'
 
 const dirname = join(process.cwd(), 'packages/delir/utils/Dev/ExampleProject1')

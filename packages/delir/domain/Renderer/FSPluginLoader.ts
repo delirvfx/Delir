@@ -3,9 +3,9 @@ import * as _ from 'lodash'
 import * as path from 'path'
 import * as semver from 'semver'
 
-import { PluginBase } from '@ragg/delir-core'
-import * as DelirCorePackageJson from '@ragg/delir-core/package.json'
-import { DelirPluginPackageJson, PluginEntry } from '@ragg/delir-core/src/PluginSupport/types'
+import { PluginBase } from '@delirvfx/core'
+import * as DelirCorePackageJson from '@delirvfx/core/package.json'
+import { DelirPluginPackageJson, PluginEntry } from '@delirvfx/core/src/PluginSupport/types'
 
 import PluginScriptLoader from './PluginScriptLoader'
 

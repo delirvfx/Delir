@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import { OperationContext } from '@ragg/fleur'
 
 import { Command } from '../../History/HistoryStore'

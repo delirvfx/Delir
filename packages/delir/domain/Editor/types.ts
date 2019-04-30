@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 
 export interface ParameterTarget {
     type: 'clip' | 'effect'

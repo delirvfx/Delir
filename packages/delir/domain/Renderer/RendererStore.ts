@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import deream, { RenderingProgress } from '@ragg/deream'
 import { listen, Store } from '@ragg/fleur'
 import { remote } from 'electron'

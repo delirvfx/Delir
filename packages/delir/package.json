@@ -29,7 +29,7 @@
     "ts-jest": "24.0.2"
   },
   "dependencies": {
-    "@ragg/delir-core": "*",
+    "@delirvfx/core": "*",
     "@ragg/deream": "*",
     "@ragg/fleur": "0.0.12",
     "@ragg/fleur-react": "0.0.13",

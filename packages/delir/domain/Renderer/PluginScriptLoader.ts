@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import * as fs from 'fs'
 import Module = require('module')
 import * as path from 'path'

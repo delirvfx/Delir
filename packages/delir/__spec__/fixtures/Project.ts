@@ -1,5 +1,5 @@
-import * as Delir from '@ragg/delir-core'
-import { Values } from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
+import { Values } from '@delirvfx/core'
 import { join } from 'path'
 
 const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest as any, ...sources)

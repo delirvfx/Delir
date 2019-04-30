@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import * as serialize from 'form-serialize'
 import * as React from 'react'
 
