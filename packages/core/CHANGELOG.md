@@ -1,3 +1,9 @@
+### 0.7.1
+- Fix typing publishing
+
+### 0.7.0
+- Support WebGL post effect
+
 ### 0.6.5
 - Improve rendering performance by parallel clip rendering
 

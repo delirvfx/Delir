@@ -5,7 +5,8 @@ import { EffectRenderContext } from './Engine/RenderContext/EffectRenderContext'
 import * as Entity from './Entity'
 import * as Exceptions from './Exceptions'
 import * as Exporter from './Exporter'
-import ProjectMigrator from './helper/ProjectMigrator'
+import * as MigrationHelper from './Migration/MigrationHelper'
+import ProjectMigrator from './Migration/ProjectMigrator'
 import * as PluginSupport from './PluginSupport'
 import PluginBase from './PluginSupport/plugin-base'
 import PluginRegistry from './PluginSupport/plugin-registry'
@@ -27,6 +28,7 @@ export {
     PluginRegistry,
     KeyframeCalcurator,
     ProjectMigrator,
+    MigrationHelper,
     Exporter,
     AnyParameterTypeDescriptor,
 }
