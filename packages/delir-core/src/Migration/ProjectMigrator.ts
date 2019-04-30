@@ -5,6 +5,7 @@ export default {
         return false
     },
 
+    /** Migrate project to latest schema at migratable version */
     migrate: (project: any) => {
         return project
     },

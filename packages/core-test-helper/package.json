@@ -1,0 +1,11 @@
+{
+  "name": "@delirvfx/core-test-helper",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "author": "ragg <ragg.devpr@gmail.com>",
+  "license": "MIT",
+  "description": "Test helpers for @delivfx/core(@ragg/delir-core)",
+  "dependencies": {
+    "@ragg/delir-core": "*"
+  }
+}

@@ -1,7 +1,7 @@
 {
-    "name": "@ragg/delir-posteffect-numeric-slider",
+    "name": "@delirvfx/posteffect-numeric-slider",
     "version": "0.1.0",
-    "author": "Ragg (https://twitter.com/@_ragg_)",
+    "author": "ragg (https://twitter.com/@_ragg_)",
     "license": "MIT",
     "main": "index.js",
     "engines": {

@@ -12,7 +12,8 @@ import Type, { AnyParameterTypeDescriptor, TypeDescriptor } from './PluginSuppor
 
 import * as KeyframeCalcurator from './Engine/KeyframeCalcurator'
 import * as Exporter from './Exporter'
-import ProjectMigrator from './helper/ProjectMigrator'
+import * as MigrationHelper from './Migration/MigrationHelper'
+import ProjectMigrator from './Migration/ProjectMigrator'
 
 import * as Entity from './Entity'
 
@@ -34,6 +35,7 @@ export {
     // import shorthand
     KeyframeCalcurator,
     ProjectMigrator,
+    MigrationHelper,
     Exporter,
     // Types
     AnyParameterTypeDescriptor,

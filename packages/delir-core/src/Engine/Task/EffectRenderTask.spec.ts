@@ -1,4 +1,4 @@
-import { mockClip, mockComposition, mockEffect, mockLayer, mockProject } from '../../../spec/mocks'
+import { mockClip, mockComposition, mockEffect, mockLayer, mockProject } from '@delirvfx/core-test-helper'
 import { Clip, Project } from '../../Entity'
 import { EffectPluginMissingException } from '../../Exceptions'
 import PluginRegistry from '../../PluginSupport/plugin-registry'
