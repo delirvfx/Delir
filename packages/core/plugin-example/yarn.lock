@@ -2,17 +2,18 @@
 # yarn lockfile v1
 
 
-"@ragg/delir-core@0.6.3":
-  version "0.6.3"
-  resolved "https://registry.yarnpkg.com/@ragg/delir-core/-/delir-core-0.6.3.tgz#1c9247a0ef8fd6dc957917aacc457159a7513dbd"
-  integrity sha512-D9BfEOBlFvteyr2xNTA/dJAwCJAokzwaqq64wjwBh8y/ZoBgtyEyFkhYYLBbMLq310HA+lmjqfttCeBKiwUCfQ==
+"@delirvfx/core@0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@delirvfx/core/-/core-0.7.0.tgz#0194432c2927e0f9ba236bfd7d21708449b56b8d"
+  integrity sha512-y/9RvXYeRjcF9FLBS7cAYhozbf9WRrk8ow1ITTbmpRZCxvXCFBj4AIF3f/aryZpaxFuz/nqKa8r5vo/c/Zq++g==
   dependencies:
     bezier-easing "2.1.0"
     font-manager "0.3.0"
-    joi "14.0.1"
+    joi "14.3.1"
     lodash "4.17.11"
-    p5 "0.7.2"
-    semver "5.6.0"
+    p5 "0.8.0"
+    semver "6.0.0"
+    typescript "3.4.4"
     uuid "3.3.2"
 
 abbrev@1:
@@ -730,11 +731,6 @@ hoek@2.x.x:
   version "2.16.3"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
 
-hoek@5.x.x:
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/hoek/-/hoek-5.0.4.tgz#0f7fa270a1cafeb364a4b2ddfaa33f864e4157da"
-  integrity sha512-Alr4ZQgoMlnere5FZJsIyfIjORBqZll5POhDsF4q64dPuJR6rNxXdDxtHSQq8OXRurhmx+PWYEE8bXRROY8h0w==
-
 hoek@6.x.x:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-6.1.2.tgz#99e6d070561839de74ee427b61aa476bd6bddfd6"
@@ -890,12 +886,12 @@ jodid25519@^1.0.0:
   dependencies:
     jsbn "~0.1.0"
 
-joi@14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-14.0.1.tgz#5bc53e8fff6e6da19d6cd8c76e2afe5c0815a2d3"
-  integrity sha512-M8yD7j1G/9UfJ40h97ophm/flC0zDXUn1RrK3GEm2IsyxOOJAnjQiYLLFS5p75gDGtaKwAPMB4JNLLr5yvCadw==
+joi@14.3.1:
+  version "14.3.1"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-14.3.1.tgz#164a262ec0b855466e0c35eea2a885ae8b6c703c"
+  integrity sha512-LQDdM+pkOrpAn4Lp+neNIFV3axv1Vna3j38bisbQhETPMANYRbFJFUyOZcOClYvM/hppMhGWuKSFEK9vjrB+bQ==
   dependencies:
-    hoek "5.x.x"
+    hoek "6.x.x"
     isemail "3.x.x"
     topo "3.x.x"
 
@@ -1204,10 +1200,10 @@ osenv@^0.1.4:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
-p5@0.7.2:
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/p5/-/p5-0.7.2.tgz#16255ebf50632f25ffd27b41f4ef7c6c1ffdb94c"
-  integrity sha512-EQJSvnUiB9xuGnhX+m4SWrtL7Ks6nLetu5DE+r4B+jmYZey4k3C+MJ8N05ptNL+jqpNkkuo87xoEDi6hzCv0EA==
+p5@0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/p5/-/p5-0.8.0.tgz#af4cd2f25b2e77023dff24d845cbdbdaa47d4fd2"
+  integrity sha512-X415HATmOwcbWpgXTCHyDNdcGTNuzuZFaW9GoOsZd3PFrTmugdf+xLr9AO+rGHxBOFgdqfaj766vJeH1wPkCrQ==
 
 pako@~0.2.0:
   version "0.2.9"
@@ -1469,10 +1465,10 @@ safe-buffer@^5.0.1:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.3.0.tgz#9b2ce5d3de02d17c6012ad326aa6b4d0cf54f94f"
 
-semver@5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-5.6.0.tgz#7e74256fbaa49c75aa7c7a205cc22799cac80004"
-  integrity sha512-RS9R6R35NYgQn++fkDWaOmqGoj4Ek9gGs+DPxNUZKuwE183xjJroKvyo1IzVFeXvUrvmALy6FWD5xrdJT25gMg==
+semver@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-6.0.0.tgz#05e359ee571e5ad7ed641a6eec1e547ba52dea65"
+  integrity sha512-0UewU+9rFapKFnlbirLi3byoOuhrSsli/z/ihNnvM24vgF+8sNBiI1LZPBSH9wJKUwaUbw+s3hToDLCXkrghrQ==
 
 set-blocking@^2.0.0, set-blocking@~2.0.0:
   version "2.0.0"
@@ -1661,6 +1657,11 @@ tunnel-agent@^0.6.0:
 tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
+
+typescript@3.4.4:
+  version "3.4.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.4.4.tgz#aac4a08abecab8091a75f10842ffa0631818f785"
+  integrity sha512-xt5RsIRCEaf6+j9AyOBgvVuAec0i92rgCaS3S+UVf5Z/vF2Hvtsw08wtUTJqp4djwznoAgjSxeCcU4r+CcDBJA==
 
 typescript@^2.2.2:
   version "2.2.2"

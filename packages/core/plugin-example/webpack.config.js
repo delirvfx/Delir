@@ -31,5 +31,5 @@ module.exports = {
             },
         ],
     },
-    plugins: [new webpack.ExternalsPlugin('commonjs', ['delir-core'])],
+    plugins: [new webpack.ExternalsPlugin('commonjs', ['@delirvfx/core'])],
 }
