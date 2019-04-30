@@ -1,8 +1,6 @@
 module.exports = {
     rootDir: '.',
-    transform: {
-        '^.+\\.tsx?$': 'ts-jest/preprocessor',
-    },
+    preset: 'ts-jest',
     testRegex: 'src/.*\\.spec\\.tsx?$',
     moduleFileExtensions: ['ts', 'js'],
     globals: {
