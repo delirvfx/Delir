@@ -5,8 +5,8 @@ import Button from '../../components/Button'
 import Link from '../../components/Link'
 import ModalWindow from '../ModalWindow/Controller'
 
+import * as corePackageJson from '@delirvfx/core/package.json'
 import * as packageJson from '../../../../package.json'
-import * as corePackageJSON from '../../../delir-core/package.json'
 import { dependencies } from './Licenses'
 
 import t from './AboutModal.i18n'
@@ -60,7 +60,7 @@ const AboutModal = (props: { onClosed: () => void }) => {
                         <dd>
                             Electron: {process.versions.electron} / Node.js: {process.versions.node}
                             <br />
-                            delir-core: {corePackageJSON.version}
+                            @delirvfx/core: {corePackageJson.version}
                         </dd>
                     </dl>
                 </TabPanel>

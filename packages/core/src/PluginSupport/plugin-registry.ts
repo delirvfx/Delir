@@ -64,8 +64,11 @@ export default class PluginRegistry {
             //     throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
             // }
 
-            if (!semver.satisfies(DelirCorePackageJson.version, entry.packageJson.engines['delir-core'])) {
-                throw new PluginLoadFailException(`Plugin \`${entry.id}\` not compatible to current delir-core version`)
+            const engineVersion = entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
+            if (!semver.satisfies(DelirCorePackageJson.version, engineVersion)) {
+                throw new PluginLoadFailException(
+                    `Plugin \`${entry.id}\` not compatible to current @delirvfx/core version`,
+                )
             }
 
             // entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}

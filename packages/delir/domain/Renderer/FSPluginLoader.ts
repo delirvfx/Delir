@@ -54,8 +54,9 @@ export default class FSPluginLoader {
                         throw new Error(`Duplicate plugin ${json.name}`)
                     }
 
-                    if (!semver.satisfies(DelirCorePackageJson.version, json.engines['delir-core'])) {
-                        throw new Error(`Plugin \`${json.name}\` not compatible to current delir-core version`)
+                    const engineVersion = json.engines['@delirvfx/core'] || json.engines['delir-core']
+                    if (!semver.satisfies(DelirCorePackageJson.version, engineVersion)) {
+                        throw new Error(`Plugin \`${json.name}\` not compatible to current @delirvfx/core version`)
                     }
 
                     const exports = PluginScriptLoader.load(entryPath)

@@ -15,6 +15,7 @@ export interface DelirPluginPackageJson {
     main?: string
     engines: {
         'delir-core': string
+        '@delirvfx/core': string
     }
     delir: PackageJSONDelirSection
 }

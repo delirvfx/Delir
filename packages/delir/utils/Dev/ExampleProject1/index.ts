@@ -289,7 +289,7 @@ layer5.addClip(videoClip)
 adjustmentClip.addEffect(
     assign(
         new Delir.Entity.Effect({
-            processor: '@ragg/delir-posteffect-the-world',
+            processor: '@delirvfx/posteffect-the-world',
         }),
         {
             // keyframes: {
@@ -311,7 +311,7 @@ adjustmentClip.addEffect(
 p5jsClip.addEffect(
     assign(
         new Delir.Entity.Effect({
-            processor: '@delirvfx/delir-posteffect-chromakey',
+            processor: '@delirvfx/posteffect-chromakey',
         }),
         {
             keyframes: {
@@ -329,7 +329,7 @@ p5jsClip.addEffect(
 p5jsClip.addEffect(
     assign(
         new Delir.Entity.Effect({
-            processor: '@ragg/delir-posteffect-color-slider',
+            processor: '@delirvfx/posteffect-color-slider',
             referenceName: 'Color',
         }),
         {
