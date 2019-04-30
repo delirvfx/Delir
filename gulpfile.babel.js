@@ -23,7 +23,7 @@ const paths = {
         root: join(__dirname, './packages/'),
         plugins: join(__dirname, './packages/post-effect-plugins'),
         frontend: join(__dirname, './packages/delir/'),
-        core: join(__dirname, './packages/delir-core/'),
+        core: join(__dirname, './packages/core/'),
     },
     compiled: {
         root: join(__dirname, './prepublish/'),
@@ -377,7 +377,7 @@ export function compilePlugins(done) {
             plugins: [
                 new CleanWebpackPlugin({ verbose: true }),
                 new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
-                new webpack.ExternalsPlugin('commonjs', ['delir-core', '@ragg/delir-core']),
+                new webpack.ExternalsPlugin('commonjs', ['@delirvfx/core']),
                 ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
         },

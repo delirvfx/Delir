@@ -1,0 +1,23 @@
+{
+  "name": "delir-plugin-example",
+  "version": "0.0.0",
+  "description": "Example plugin for Delir",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "./node_modules/.bin/webpack --watch",
+    "build": "./node_modules/.bin/webpack"
+  },
+  "engines": {
+    "@delirvfx/core": "0.7.x"
+  },
+  "delir": {
+    "name": "サンプルプラグイン",
+    "type": "post-effect"
+  },
+  "devDependencies": {
+    "@delirvfx/core": "0.7.2",
+    "awesome-typescript-loader": "^3.1.2",
+    "typescript": "^2.2.2",
+    "webpack": "^2.3.2"
+  }
+}

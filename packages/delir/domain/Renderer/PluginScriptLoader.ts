@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import * as fs from 'fs'
 import Module = require('module')
 import * as path from 'path'
@@ -37,7 +37,7 @@ export default class PluginScriptLoader {
 
     private makeRequire(fullpath: string) {
         const requireFunc: any = (request: string) => {
-            if (request === 'delir-core' || request === '@ragg/delir-core') {
+            if (request === '@ragg/delir-core' || request === '@delirvfx/core') {
                 return Delir
             }
 

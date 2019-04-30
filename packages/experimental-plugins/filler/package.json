@@ -4,7 +4,7 @@
     "author": "Ragg <ragg.devpr@gmail.com>",
     "main": "index.js",
     "engines": {
-        "delir-core": "0.6.x"
+        "@delirvfx/core": "0.7.x"
     },
     "delir": {
         "name": "フィラー",

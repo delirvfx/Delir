@@ -4,8 +4,8 @@
   "main": "index.ts",
   "author": "ragg <ragg.devpr@gmail.com>",
   "license": "MIT",
-  "description": "Test helpers for @delivfx/core(@ragg/delir-core)",
+  "description": "Test helpers for @delivfx/core(@delirvfx/core)",
   "dependencies": {
-    "@ragg/delir-core": "*"
+    "@delirvfx/core": "*"
   }
 }

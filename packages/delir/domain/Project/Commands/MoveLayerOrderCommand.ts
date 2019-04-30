@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import { OperationContext } from '@ragg/fleur'
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'

@@ -1,4 +1,4 @@
-import { PostEffectBase, PreRenderRequest, RenderRequest, Type, TypeDescriptor } from '@ragg/delir-core'
+import { PostEffectBase, PreRenderRequest, RenderRequest, Type, TypeDescriptor } from '@delirvfx/core'
 
 export default class Filler extends PostEffectBase {
     public static provideParameters(): TypeDescriptor {

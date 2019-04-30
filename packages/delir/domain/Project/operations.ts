@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import { operation } from '@ragg/fleur'
 import * as _ from 'lodash'
 import * as uuid from 'uuid'

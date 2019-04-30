@@ -1,4 +1,4 @@
-import * as Delir from '@ragg/delir-core'
+import * as Delir from '@delirvfx/core'
 import Fleur, { withReduxDevTools } from '@ragg/fleur'
 import { createElementWithContext } from '@ragg/fleur-react'
 import * as os from 'os'

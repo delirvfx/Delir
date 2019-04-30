@@ -5,7 +5,7 @@ import {
     RenderRequest,
     Type,
     TypeDescriptor,
-} from '@ragg/delir-core'
+} from '@delirvfx/core'
 
 import * as Tooloud from 'tooloud'
 
