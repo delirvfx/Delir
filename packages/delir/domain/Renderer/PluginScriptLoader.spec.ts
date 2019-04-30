@@ -16,7 +16,7 @@ describe('PluginScriptLoader', () => {
         const loader = new PluginScriptLoader()
         const require = loader.makeRequire(fixturePluginPath)
         expect(require('@delirvfx/core')).toEqual({ __mocked__: true })
-        expect(require('delir-core')).toEqual({ __mocked__: true })
+        expect(require('@ragg/delir-core')).toEqual({ __mocked__: true })
     })
 
     it('Should pass to Module.require on requiring other module', () => {
