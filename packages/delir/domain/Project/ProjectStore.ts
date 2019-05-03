@@ -119,7 +119,7 @@ export default class ProjectStore extends Store<ProjectStoreState> {
         this.updateLastModified()
     })
 
-    private handleModifyClip = listen(ProjectActions.modifyClipsAction, ({ patches }) => {
+    private handleModifyClips = listen(ProjectActions.modifyClipsAction, ({ patches }) => {
         const { project } = this.state
 
         patches.forEach(({ clipId, patch }) => {
