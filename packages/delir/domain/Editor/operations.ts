@@ -96,12 +96,12 @@ export const changeActiveComposition = operation((context, { compositionId }: { 
     })
 })
 
-export const addOrRemoveSelectClip = operation((context, args: { clipId: string }) => {
-    context.dispatch(EditorActions.addOrRemoveSelectClip, { clipId: args.clipId })
+export const addOrRemoveSelectClip = operation((context, args: { clipIds: string[] }) => {
+    context.dispatch(EditorActions.addOrRemoveSelectClip, { clipIds: args.clipIds })
 })
 
-export const changeSelectClip = operation((context, { clipId }: { clipId: string | null }) => {
-    context.dispatch(EditorActions.changeSelectClip, { clipId })
+export const changeSelectClip = operation((context, { clipIds }: { clipIds: string[] }) => {
+    context.dispatch(EditorActions.changeSelectClip, { clipIds })
 })
 
 export const changeActiveParam = operation((context, { target }: { target: ParameterTarget | null }) => {

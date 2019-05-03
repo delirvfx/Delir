@@ -198,6 +198,7 @@ export default withComponentContext(
                                         <div
                                             ref={this.timelineContainer}
                                             className={s.layerContainer}
+                                            style={{ display: 'flex' }}
                                             onMouseUp={this.handleMouseUpOnTimeline}
                                             onKeyDown={this.handleKeydownTimeline}
                                             onScroll={this.handleScrollTimeline}
@@ -211,27 +212,6 @@ export default withComponentContext(
                                                 />
                                             )}
                                         </div>
-                                        {/* <ClipDragContext.Provider
-                                            value={{
-                                                emitClipDrag: this.handleClipDragging,
-                                                emitClipDragEnd: this.handleClipDragEnd,
-                                            }}
-                                        >
-                                                {activeComp &&
-                                                    layers.map((layer, idx) => (
-                                                        <Layer
-                                                            key={layer.id!}
-                                                            layer={{ ...layer }}
-                                                            layerIndex={idx}
-                                                            framerate={framerate}
-                                                            pxPerSec={PX_PER_SEC}
-                                                            scale={scale}
-                                                            clipOffset={this.state.clipDragOffset}
-                                                            scrollLeft={timelineScrollLeft}
-                                                            scrollWidth={timelineScrollWidth}
-                                                        />
-                                                    ))}
-                                        </ClipDragContext.Provider> */}
                                     </Pane>
                                 </Workspace>
                             </Pane>
@@ -265,8 +245,8 @@ export default withComponentContext(
             }
 
             private handleMouseUpOnTimeline = (e: React.MouseEvent<HTMLDivElement>) => {
-                if (!(e.target as HTMLElement).closest('[data-is-clip]')) {
-                    this.props.context.executeOperation(EditorOps.changeSelectClip, { clipId: null })
+                if (!(e.target as HTMLElement).closest('[data-clip-id]')) {
+                    this.props.context.executeOperation(EditorOps.changeSelectClip, { clipIds: [] })
                 }
             }
 

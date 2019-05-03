@@ -141,13 +141,15 @@ export default class EditorStore extends Store<EditorState> {
         if (project == null) return
 
         this.updateWith(d => {
-            const index = d.selectClipIds.indexOf(payload.clipId)
+            payload.clipIds.forEach(clipId => {
+                const index = d.selectClipIds.indexOf(clipId)
 
-            if (index === -1) {
-                d.selectClipIds.push(payload.clipId)
-            } else {
-                d.selectClipIds.splice(index, 1)
-            }
+                if (index === -1) {
+                    d.selectClipIds.push(clipId)
+                } else {
+                    d.selectClipIds.splice(index, 1)
+                }
+            })
         })
     })
 
@@ -156,7 +158,7 @@ export default class EditorStore extends Store<EditorState> {
         if (project == null) return
 
         this.updateWith(d => {
-            d.selectClipIds = payload.clipId == null ? [] : [payload.clipId]
+            d.selectClipIds = payload.clipIds
             d.activeParam = null
         })
     })

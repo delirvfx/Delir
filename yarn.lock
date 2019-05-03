@@ -968,6 +968,11 @@
   dependencies:
     any-observable "^0.3.0"
 
+"@simonwep/selection-js@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-0.2.2.tgz#cd4da4f6eb1a351269bfdd927072dd82a838f635"
+  integrity sha512-F5bjNsSohfl2PkCGxdlL/rYTPFm+zQkKQwmEb7KA8FDHYcKyiYIveA/xoYbJNJvga5QD9jJ4pVPV+Jlalml2NQ==
+
 "@sindresorhus/is@^0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"

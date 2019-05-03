@@ -28,7 +28,7 @@ export class AddEffectIntoClipCommand implements Command {
 
     private focusToParentClip(context: OperationContext<any>) {
         context.dispatch(EditorActions.changeSelectClip, {
-            clipId: this.clipId,
+            clipIds: [this.clipId],
         })
     }
 }

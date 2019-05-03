@@ -1,8 +1,10 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { ContextProp, withComponentContext } from '@ragg/fleur-react'
+import * as Selection from '@simonwep/selection-js'
 import * as React from 'react'
 import { decorate } from '../../utils/decorate'
 
+import * as EditorOps from '../../domain/Editor/operations'
 import { getSelectedClips } from '../../domain/Editor/selectors'
 import * as ProjectOps from '../../domain/Project/operations'
 
@@ -11,6 +13,8 @@ import TimePixelConversion from '../../utils/TimePixelConversion'
 import { ClipDragContext, EmitClipDragHandler, EmitClipResizeHandler } from './ClipDragContext'
 import Layer from './Layer'
 import { PX_PER_SEC } from './Timeline'
+
+import * as s from './ClipMediator.styl'
 
 interface OwnProps {
     comp: SpreadType<Delir.Entity.Composition>
@@ -32,6 +36,25 @@ export const ClipsMediator = decorate<OwnProps>(
             clipDragOffset: { x: 0, width: 0 },
         }
 
+        private selection: Selection
+        private root = React.createRef<HTMLDivElement>()
+
+        public componentDidMount() {
+            this.selection = Selection.create({
+                class: s.selectionArea,
+                selectionAreaContainer: this.root.current!,
+                startareas: [`.${s.root}`],
+                boundaries: [`.${s.root}`],
+                selectables: ['[data-clip-id]'],
+                validateStart: this.handleSelectionStartValidate,
+                onStop: this.handleSelectionStop,
+            })
+        }
+
+        public componentWillUnmount() {
+            this.selection.destroy()
+        }
+
         public render() {
             const { comp, scale, scrollLeft, scrollWidth } = this.props
             const { clipDragOffset } = this.state
@@ -46,19 +69,21 @@ export const ClipsMediator = decorate<OwnProps>(
                         emitClipResizeEnd: this.handleClipResizeEnd,
                     }}
                 >
-                    {comp.layers.map((layer, idx) => (
-                        <Layer
-                            key={layer.id!}
-                            layer={{ ...layer }}
-                            layerIndex={idx}
-                            framerate={framerate}
-                            pxPerSec={PX_PER_SEC}
-                            scale={scale}
-                            clipOffset={clipDragOffset}
-                            scrollLeft={scrollLeft}
-                            scrollWidth={scrollWidth}
-                        />
-                    ))}
+                    <div ref={this.root} className={s.root}>
+                        {comp.layers.map((layer, idx) => (
+                            <Layer
+                                key={layer.id!}
+                                layer={{ ...layer }}
+                                layerIndex={idx}
+                                framerate={framerate}
+                                pxPerSec={PX_PER_SEC}
+                                scale={scale}
+                                clipOffset={clipDragOffset}
+                                scrollLeft={scrollLeft}
+                                scrollWidth={scrollWidth}
+                            />
+                        ))}
+                    </div>
                 </ClipDragContext.Provider>
             )
         }
@@ -147,6 +172,26 @@ export const ClipsMediator = decorate<OwnProps>(
 
             this.props.context.executeOperation(ProjectOps.modifyClips, patches)
             this.setState({ clipDragOffset: { x: 0, width: 0 } })
+        }
+
+        private handleSelectionStartValidate = (e: MouseEvent) => {
+            return !(e.target as HTMLElement).closest('[data-clip-id]')
+        }
+
+        private handleSelectionStop = ({
+            selectedElements,
+            originalEvent,
+        }: {
+            selectedElements: HTMLElement[]
+            originalEvent: MouseEvent
+        }) => {
+            const clipIds = selectedElements.map(el => el.dataset.clipId!)
+
+            if (originalEvent.shiftKey || originalEvent.metaKey) {
+                this.props.context.executeOperation(EditorOps.addOrRemoveSelectClip, { clipIds })
+            } else {
+                this.props.context.executeOperation(EditorOps.changeSelectClip, { clipIds })
+            }
         }
     },
 )

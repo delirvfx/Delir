@@ -70,7 +70,7 @@ export default decorate<OwnProps>(
                     onResize={this.handleResize}
                     onResizeStop={this.handleResizeEnd}
                     tabIndex={-1}
-                    data-is-clip
+                    data-clip-id={clip.id}
                 >
                     <div className={s.inner} onMouseUp={this.handleMouseUp}>
                         <ContextMenu>
@@ -121,7 +121,7 @@ export default decorate<OwnProps>(
                 this.props.context.executeOperation(EditorOps.addOrRemoveSelectClip, { clipId: this.props.clip.id })
             } else {
                 this.props.context.executeOperation(EditorOps.changeSelectClip, {
-                    clipId: this.props.clip.id!,
+                    clipIds: [this.props.clip.id!],
                 })
             }
         }
