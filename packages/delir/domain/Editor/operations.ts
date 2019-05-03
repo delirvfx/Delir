@@ -36,10 +36,10 @@ export const setActiveProject = operation(
         const { project: activeProject } = context.getStore(EditorStore).getState()
 
         if (!activeProject || payload.project !== activeProject) {
-            context.dispatch(EditorActions.clearActiveProjectAction, {})
+            context.dispatch(EditorActions.clearActiveProject, {})
         }
 
-        context.dispatch(EditorActions.setActiveProjectAction, {
+        context.dispatch(EditorActions.setActiveProject, {
             project: payload.project,
             path: payload.path,
         })
@@ -47,11 +47,11 @@ export const setActiveProject = operation(
 )
 
 export const setDragEntity = operation((context, arg: { entity: DragEntity }) => {
-    context.dispatch(EditorActions.setDragEntityAction, arg.entity)
+    context.dispatch(EditorActions.setDragEntity, arg.entity)
 })
 
 export const clearDragEntity = operation((context, arg: {}) => {
-    context.dispatch(EditorActions.clearDragEntityAction, {})
+    context.dispatch(EditorActions.clearDragEntity, {})
 })
 
 export const notify = operation(
@@ -67,7 +67,7 @@ export const notify = operation(
     ) => {
         const id = _.uniqueId('notify')
 
-        context.dispatch(EditorActions.addMessageAction, {
+        context.dispatch(EditorActions.addMessage, {
             id,
             title: arg.title,
             message: arg.message,
@@ -77,21 +77,21 @@ export const notify = operation(
 
         if (arg.timeout != null) {
             setTimeout(() => {
-                context.dispatch(EditorActions.removeMessageAction, { id })
+                context.dispatch(EditorActions.removeMessage, { id })
             }, arg.timeout)
         }
     },
 )
 
 export const removeNotification = operation((context, arg: { id: string }) => {
-    context.dispatch(EditorActions.removeMessageAction, { id: arg.id })
+    context.dispatch(EditorActions.removeMessage, { id: arg.id })
 })
 
 //
 // Change active element
 //
 export const changeActiveComposition = operation((context, { compositionId }: { compositionId: string }) => {
-    context.dispatch(EditorActions.changeActiveCompositionAction, {
+    context.dispatch(EditorActions.changeActiveComposition, {
         compositionId,
     })
 })
@@ -105,20 +105,20 @@ export const changeSelectClip = operation((context, { clipIds }: { clipIds: stri
 })
 
 export const changeActiveParam = operation((context, { target }: { target: ParameterTarget | null }) => {
-    context.dispatch(EditorActions.changeActiveParamAction, { target })
+    context.dispatch(EditorActions.changeActiveParam, { target })
 })
 
 export const renderDestinate = operation((context, arg: { compositionId: string }) => {
     const preference = context.getStore(PreferenceStore).getPreferences()
 
-    context.dispatch(EditorActions.renderDestinateAction, {
+    context.dispatch(EditorActions.renderDestinate, {
         compositionId: arg.compositionId,
         ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
     })
 })
 
 export const updateProcessingState = operation((context, arg: { stateText: string }) => {
-    context.dispatch(EditorActions.updateProcessingStateAction, {
+    context.dispatch(EditorActions.updateProcessingState, {
         stateText: arg.stateText,
     })
 })
@@ -131,7 +131,7 @@ export const seekPreviewFrame = operation((context, { frame = undefined }: { fra
 
     frame = _.isNumber(frame) ? frame : state.currentPreviewFrame
     const overloadGuardedFrame = _.clamp(frame, 0, activeComp.durationFrames)
-    context.dispatch(EditorActions.seekPreviewFrameAction, {
+    context.dispatch(EditorActions.seekPreviewFrame, {
         frame: overloadGuardedFrame,
     })
 })
@@ -222,7 +222,7 @@ export const autoSaveProject = operation(async context => {
 })
 
 export const changePreferenceOpenState = operation((context, { open }: { open: boolean }) => {
-    context.dispatch(EditorActions.changePreferenceOpenStateAction, {
+    context.dispatch(EditorActions.changePreferenceOpenState, {
         open,
     })
 })

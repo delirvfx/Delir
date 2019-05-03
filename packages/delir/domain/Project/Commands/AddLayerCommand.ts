@@ -11,7 +11,7 @@ export class AddLayerCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.removeLayerAction, {
+        context.dispatch(ProjectActions.removeLayer, {
             targetLayerId: this.addedLayer.id,
         })
     }
@@ -19,7 +19,7 @@ export class AddLayerCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.addLayerAction, {
+        context.dispatch(ProjectActions.addLayer, {
             targetCompositionId: this.targetCompositionId,
             layer: this.addedLayer,
             index: this.index,
@@ -27,7 +27,7 @@ export class AddLayerCommand implements Command {
     }
 
     private focusToParentComposition(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveCompositionAction, {
+        context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.targetCompositionId,
         })
     }

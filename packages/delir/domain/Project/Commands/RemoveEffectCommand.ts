@@ -15,7 +15,7 @@ export class RemoveEffectCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToParentClip(context)
 
-        context.dispatch(ProjectActions.addEffectIntoClipAction, {
+        context.dispatch(ProjectActions.addEffectIntoClip, {
             clipId: this.holderClipId,
             effect: this.removedEffect,
             index: this.beforeRemoveIndex,
@@ -25,7 +25,7 @@ export class RemoveEffectCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentClip(context)
 
-        context.dispatch(ProjectActions.removeEffectFromClipAction, {
+        context.dispatch(ProjectActions.removeEffectFromClip, {
             holderClipId: this.holderClipId,
             targetEffectId: this.removedEffect.id,
         })

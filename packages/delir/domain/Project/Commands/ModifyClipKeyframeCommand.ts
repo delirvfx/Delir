@@ -22,7 +22,7 @@ export class ModifyClipKeyframeCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyKeyframeAction, {
+        context.dispatch(ProjectActions.modifyKeyframe, {
             parentClipId: this.parentClipId,
             targetKeyframeId: this.targetKeyframeId,
             patch: this.toPreviousPatch,
@@ -32,7 +32,7 @@ export class ModifyClipKeyframeCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyKeyframeAction, {
+        context.dispatch(ProjectActions.modifyKeyframe, {
             parentClipId: this.parentClipId,
             targetKeyframeId: this.targetKeyframeId,
             patch: this.patch,
@@ -40,7 +40,7 @@ export class ModifyClipKeyframeCommand implements Command {
     }
 
     private focusToChangedParam(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveParamAction, {
+        context.dispatch(EditorActions.changeActiveParam, {
             target: {
                 type: 'clip',
                 entityId: this.parentClipId,

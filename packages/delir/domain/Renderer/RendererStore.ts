@@ -60,14 +60,14 @@ export default class RendererStore extends Store<State> {
         audioVolume: 100,
     }
 
-    private handleSetActiveProject = listen(EditorActions.setActiveProjectAction, ({ project }) => {
+    private handleSetActiveProject = listen(EditorActions.setActiveProject, ({ project }) => {
         this.pipeline.setProject(project)
         this.updateWith(d => {
             ;((d.project as any) as Delir.Entity.Project | null) = project
         })
     })
 
-    private handleChangeActiveComposition = listen(EditorActions.changeActiveCompositionAction, ({ compositionId }) => {
+    private handleChangeActiveComposition = listen(EditorActions.changeActiveComposition, ({ compositionId }) => {
         const { project } = this.state
         if (!project) return
 
@@ -186,7 +186,7 @@ export default class RendererStore extends Store<State> {
         this.updateWith(s => (s.previewPlaying = false))
     })
 
-    private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrameAction, payload => {
+    private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrame, payload => {
         const { frame } = payload
         const targetComposition = this.state.composition!
 
@@ -200,7 +200,7 @@ export default class RendererStore extends Store<State> {
         })
     })
 
-    private handleRenderDestinate = listen(EditorActions.renderDestinateAction, async payload => {
+    private handleRenderDestinate = listen(EditorActions.renderDestinate, async payload => {
         const appPath = dirname(remote.app.getPath('exe'))
         const ffmpegBin =
             __DEV__ || Platform.isLinux()

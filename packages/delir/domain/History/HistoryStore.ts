@@ -21,7 +21,7 @@ export default class HistoryStore extends Store<State> {
         redoStack: [],
     }
 
-    private handleChangeProject = listen(EditorActions.clearActiveProjectAction, () => {
+    private handleChangeProject = listen(EditorActions.clearActiveProject, () => {
         this.updateWith(draft => {
             draft.undoStack = []
             draft.redoStack = []

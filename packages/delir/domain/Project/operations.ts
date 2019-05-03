@@ -61,7 +61,7 @@ export const createComposition = operation(
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new CreateCompositionCommand(composition),
         })
-        context.dispatch(ProjectActions.createCompositionAction, {
+        context.dispatch(ProjectActions.createComposition, {
             composition,
         })
     },
@@ -86,7 +86,7 @@ export const addLayer = operation(
             command: new AddLayerCommand(targetCompositionId, layer, index),
         })
 
-        context.dispatch(ProjectActions.addLayerAction, {
+        context.dispatch(ProjectActions.addLayer, {
             targetCompositionId: targetCompositionId,
             layer,
             index,
@@ -154,7 +154,7 @@ export const addLayerWithAsset = operation(
             command: new AddLayerCommand(targetComposition.id, layer, index),
         })
 
-        context.dispatch(ProjectActions.addLayerWithAssetAction, {
+        context.dispatch(ProjectActions.addLayerWithAsset, {
             targetCompositionId: targetComposition.id,
             clip,
             asset,
@@ -194,7 +194,7 @@ export const addClip = operation(
             command: new AddClipCommand(composition.id, layerId, newClip),
         })
 
-        context.dispatch(ProjectActions.addClipAction, {
+        context.dispatch(ProjectActions.addClip, {
             newClip,
             targetLayerId: layerId,
         })
@@ -262,7 +262,7 @@ export const addClipWithAsset = operation(
             command: new AddClipCommand(parentComposition.id, targetLayerId, newClip),
         })
 
-        context.dispatch(ProjectActions.addClipAction, {
+        context.dispatch(ProjectActions.addClip, {
             targetLayerId: targetLayerId,
             newClip,
         })
@@ -306,7 +306,7 @@ export const createOrModifyClipKeyframe = operation(
                 command: new ModifyClipKeyframeCommand(keyframe.id, { ...keyframe }, patch, clipId, paramName),
             })
 
-            context.dispatch(ProjectActions.modifyKeyframeAction, {
+            context.dispatch(ProjectActions.modifyKeyframe, {
                 parentClipId: clip.id,
                 targetKeyframeId: keyframe.id,
                 patch: propDesc.animatable === false ? Object.assign(patch, { frameOnClip: 0 }) : patch,
@@ -321,7 +321,7 @@ export const createOrModifyClipKeyframe = operation(
                 command: new AddKeyframeCommand(clipId, paramName, newKeyframe),
             })
 
-            context.dispatch(ProjectActions.addKeyframeAction, {
+            context.dispatch(ProjectActions.addKeyframe, {
                 targetClipId: clip.id,
                 paramName,
                 keyframe: newKeyframe,
@@ -376,7 +376,7 @@ export const createOrModifyKeyframeForEffect = operation(
                 ),
             })
 
-            context.dispatch(ProjectActions.modifyEffectKeyframeAction, {
+            context.dispatch(ProjectActions.modifyEffectKeyframe, {
                 targetClipId: clipId,
                 effectId: effectId,
                 targetKeyframeId: keyframe.id,
@@ -394,7 +394,7 @@ export const createOrModifyKeyframeForEffect = operation(
                 command: new AddEffectKeyframeCommand(clipId, effectId, paramName, newKeyframe),
             })
 
-            context.dispatch(ProjectActions.addEffectKeyframeAction, {
+            context.dispatch(ProjectActions.addEffectKeyframe, {
                 targetClipId: clipId,
                 targetEffectId: effectId,
                 paramName,
@@ -423,7 +423,7 @@ export const addAsset = operation(
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new AddAssetCommand(asset),
         })
-        context.dispatch(ProjectActions.addAssetAction, { asset })
+        context.dispatch(ProjectActions.addAsset, { asset })
     },
 )
 
@@ -444,7 +444,7 @@ export const addEffectIntoClip = operation(
             command: new AddEffectIntoClipCommand(clipId, effect),
         })
 
-        context.dispatch(ProjectActions.addEffectIntoClipAction, {
+        context.dispatch(ProjectActions.addEffectIntoClip, {
             clipId: clipId,
             effect,
         })
@@ -461,7 +461,7 @@ export const removeAsset = operation(async (context, { assetId }: { assetId: str
         command: new RemoveAssetCommand(asset),
     })
 
-    context.dispatch(ProjectActions.removeAssetAction, {
+    context.dispatch(ProjectActions.removeAsset, {
         targetAssetId: assetId,
     })
 })
@@ -485,7 +485,7 @@ export const moveClipToLayer = operation(
             command: new MoveClipToLayerCommand(sourceLayer.id, destLayerId, clipId, parentComposition.id),
         })
 
-        context.dispatch(ProjectActions.moveClipToLayerAction, {
+        context.dispatch(ProjectActions.moveClipToLayer, {
             destLayerId: destLayerId,
             clipId: clipId,
         })
@@ -514,7 +514,7 @@ export const modifyComposition = operation(
             command: new ModifyCompositionCommand(compositionId, { ...composition }, patch),
         })
 
-        context.dispatch(ProjectActions.modifyCompositionAction, {
+        context.dispatch(ProjectActions.modifyComposition, {
             targetCompositionId: compositionId,
             patch,
         })
@@ -544,7 +544,7 @@ export const modifyLayer = operation(
             command: new ModifyLayerCommand(layerId, { ...layer }, patch, parentComposition.id),
         })
 
-        context.dispatch(ProjectActions.modifyLayerAction, {
+        context.dispatch(ProjectActions.modifyLayer, {
             targetLayerId: layerId,
             patch: patch,
         })
@@ -591,7 +591,7 @@ export const modifyClips = operation(
             command: new ModifyClipsCommand(comp.id, effectivePatches),
         })
 
-        context.dispatch(ProjectActions.modifyClipsAction, {
+        context.dispatch(ProjectActions.modifyClips, {
             patches: effectivePatches,
         })
 
@@ -621,7 +621,7 @@ export const modifyEffect = operation(
             command: new ModifyEffectCommand(clipId, effectId, { ...effect }, patch),
         })
 
-        context.dispatch(ProjectActions.modifyEffectAction, {
+        context.dispatch(ProjectActions.modifyEffect, {
             parentClipId: clipId,
             targetEffectId: effectId,
             patch,
@@ -655,7 +655,7 @@ export const modifyClipExpression = operation(
             command: new ModifyClipExpressionCommand(clipId, paramName, clip.expressions[paramName], newExpression),
         })
 
-        context.dispatch(ProjectActions.modifyClipExpressionAction, {
+        context.dispatch(ProjectActions.modifyClipExpression, {
             targetClipId: clipId,
             targetParamName: paramName,
             expression: newExpression,
@@ -698,7 +698,7 @@ export const modifyEffectExpression = operation(
             ),
         })
 
-        context.dispatch(ProjectActions.modifyEffectExpressionAction, {
+        context.dispatch(ProjectActions.modifyEffectExpression, {
             targetClipId: clipId,
             targetEffectId: effectId,
             paramName: paramName,
@@ -720,7 +720,7 @@ export const moveLayerOrder = operation(
             command: new MoveLayerOrderCommand(comp.id, layerId, previousIndex, newIndex),
         })
 
-        context.dispatch(ProjectActions.moveLayerOrderAction, {
+        context.dispatch(ProjectActions.moveLayerOrder, {
             parentCompositionId: comp.id,
             targetLayerId: layerId,
             newIndex,
@@ -736,7 +736,7 @@ export const moveEffectOrder = operation((context, { effectId, newIndex }: { eff
 
     if (!clip) return
 
-    context.dispatch(ProjectActions.moveEffectOrderAction, {
+    context.dispatch(ProjectActions.moveEffectOrder, {
         parentClipId: clip.id,
         subjectEffectId: effectId,
         newIndex,
@@ -751,7 +751,7 @@ export const removeComposition = operation(async (context, { compositionId }: { 
         command: new RemoveCompositionCommand(composition),
     })
 
-    context.dispatch(ProjectActions.removeCompositionAction, {
+    context.dispatch(ProjectActions.removeComposition, {
         targetCompositionId: compositionId,
     })
 })
@@ -766,7 +766,7 @@ export const removeLayer = operation(async (context, { layerId }: { layerId: str
         command: new RemoveLayerCommand(parentComposition.id, removingLayer, index),
     })
 
-    context.dispatch(ProjectActions.removeLayerAction, {
+    context.dispatch(ProjectActions.removeLayer, {
         targetLayerId: layerId,
     })
 
@@ -783,7 +783,7 @@ export const removeClip = operation(async (context, { clipId }: { clipId: string
         command: new RemoveClipCommand(parentLayer.id, clip, composition.id),
     })
 
-    context.dispatch(ProjectActions.removeClipAction, {
+    context.dispatch(ProjectActions.removeClip, {
         targetClipId: clip.id,
     })
 
@@ -799,7 +799,7 @@ export const removeKeyframe = operation(
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new RemoveKeyframeCommand(clip.id, paramName, keyframe),
         })
-        context.dispatch(ProjectActions.removeKeyframeAction, {
+        context.dispatch(ProjectActions.removeKeyframe, {
             parentClipId: clip.id,
             paramName,
             targetKeyframeId: keyframe.id,
@@ -833,7 +833,7 @@ export const removeEffectKeyframe = operation(
             command: new RemoveEffectKeyframeCommand(clipId, effectId, paramName, keyframe),
         })
 
-        context.dispatch(ProjectActions.removeEffectKeyframeAction, {
+        context.dispatch(ProjectActions.removeEffectKeyframe, {
             clipId,
             effectId,
             paramName,
@@ -864,7 +864,7 @@ export const removeEffect = operation(
             command: new RemoveEffectCommand(holderClipId, effect, index),
         })
 
-        context.dispatch(ProjectActions.removeEffectFromClipAction, {
+        context.dispatch(ProjectActions.removeEffectFromClip, {
             holderClipId,
             targetEffectId: effectId,
         })
@@ -904,7 +904,7 @@ export const pasteClipEntityIntoLayer = operation(async (context, { layerId }: {
         command: new AddClipCommand(composition.id, layerId, clip),
     })
 
-    context.dispatch(ProjectActions.addClipAction, {
+    context.dispatch(ProjectActions.addClip, {
         targetLayerId: layerId,
         newClip: clip,
     })

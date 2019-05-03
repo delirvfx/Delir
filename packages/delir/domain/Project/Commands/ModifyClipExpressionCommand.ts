@@ -17,7 +17,7 @@ export class ModifyClipExpressionCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyClipExpressionAction, {
+        context.dispatch(ProjectActions.modifyClipExpression, {
             targetClipId: this.targetClipId,
             targetParamName: this.paramName,
             expression: this.previousValue,
@@ -27,7 +27,7 @@ export class ModifyClipExpressionCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyClipExpressionAction, {
+        context.dispatch(ProjectActions.modifyClipExpression, {
             targetClipId: this.targetClipId,
             targetParamName: this.paramName,
             expression: this.nextValue,
@@ -35,7 +35,7 @@ export class ModifyClipExpressionCommand implements Command {
     }
 
     private focusToChangedParam(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveParamAction, {
+        context.dispatch(EditorActions.changeActiveParam, {
             target: {
                 type: 'clip',
                 entityId: this.targetClipId,

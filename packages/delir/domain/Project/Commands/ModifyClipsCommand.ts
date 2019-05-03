@@ -32,7 +32,7 @@ export class ModifyClipsCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.modifyClipsAction, {
+        context.dispatch(ProjectActions.modifyClips, {
             patches: this.patches.map(({ clipId, undoPatch }) => ({ clipId, patch: undoPatch })),
         })
     }
@@ -40,13 +40,13 @@ export class ModifyClipsCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.modifyClipsAction, {
+        context.dispatch(ProjectActions.modifyClips, {
             patches: this.patches.map(({ clipId, redoPatch }) => ({ clipId, patch: redoPatch })),
         })
     }
 
     private focusToParentComposition(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveCompositionAction, {
+        context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })
     }

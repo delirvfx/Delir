@@ -15,7 +15,7 @@ export class RemoveLayerCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.addLayerAction, {
+        context.dispatch(ProjectActions.addLayer, {
             targetCompositionId: this.parentCompositionId,
             layer: this.removedLayer,
             index: this.beforeRemoveIndex,
@@ -25,13 +25,13 @@ export class RemoveLayerCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.removeLayerAction, {
+        context.dispatch(ProjectActions.removeLayer, {
             targetLayerId: this.removedLayer.id,
         })
     }
 
     private focusToParentComposition(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveCompositionAction, {
+        context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })
     }

@@ -23,7 +23,7 @@ export class ModifyEffectKeyframeCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyEffectKeyframeAction, {
+        context.dispatch(ProjectActions.modifyEffectKeyframe, {
             targetClipId: this.targetClipId,
             effectId: this.targetEffectId,
             targetKeyframeId: this.targetKeyframeId,
@@ -34,7 +34,7 @@ export class ModifyEffectKeyframeCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyEffectKeyframeAction, {
+        context.dispatch(ProjectActions.modifyEffectKeyframe, {
             targetClipId: this.targetClipId,
             effectId: this.targetEffectId,
             targetKeyframeId: this.targetKeyframeId,
@@ -43,7 +43,7 @@ export class ModifyEffectKeyframeCommand implements Command {
     }
 
     private focusToChangedParam(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveParamAction, {
+        context.dispatch(EditorActions.changeActiveParam, {
             target: {
                 type: 'effect',
                 entityId: this.targetEffectId,
