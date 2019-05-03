@@ -16,6 +16,6 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "jsx": "react",
-        "lib": ["dom", "dom.iterable", "es2015", "es2016", "es2017"]
+        "lib": ["dom", "dom.iterable", "es2015", "es2016", "es2017", "es2018"]
     }
 }
