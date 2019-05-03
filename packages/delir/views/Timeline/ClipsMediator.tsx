@@ -8,7 +8,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import { SpreadType } from '../../utils/Spread'
 import TimePixelConversion from '../../utils/TimePixelConversion'
-import { ClipDragContext } from './ClipDragContext'
+import { ClipDragContext, EmitClipDragHandler, EmitClipResizeHandler } from './ClipDragContext'
 import Layer from './Layer'
 import { PX_PER_SEC } from './Timeline'
 
@@ -20,16 +20,16 @@ interface OwnProps {
 }
 
 interface State {
-    clipDragOffset: { x: number }
+    clipDragOffset: { x: number; width: number }
 }
 
 type Props = ContextProp & OwnProps
 
-export const ClipsMediator = decorate(
+export const ClipsMediator = decorate<OwnProps>(
     [withComponentContext],
     class ClipsMediator extends React.PureComponent<Props, State> {
         public state: State = {
-            clipDragOffset: { x: 0 },
+            clipDragOffset: { x: 0, width: 0 },
         }
 
         public render() {
@@ -42,6 +42,8 @@ export const ClipsMediator = decorate(
                     value={{
                         emitClipDrag: this.handleClipDragging,
                         emitClipDragEnd: this.handleClipDragEnd,
+                        emitClipResize: this.handleClipResize,
+                        emitClipResizeEnd: this.handleClipResizeEnd,
                     }}
                 >
                     {comp.layers.map((layer, idx) => (
@@ -61,33 +63,34 @@ export const ClipsMediator = decorate(
             )
         }
 
-        private calcMovementFrame = (nextX: number, originalPlacedFrame: number) => {
+        private calcMovementFrame = (nextPx: number, originalFrameLength: number) => {
             const { comp, scale } = this.props
             return (
                 TimePixelConversion.pixelToFrames({
                     pxPerSec: PX_PER_SEC,
                     framerate: comp.framerate,
-                    pixel: nextX,
+                    pixel: nextPx,
                     scale: scale,
-                }) - originalPlacedFrame
+                }) - originalFrameLength
             )
         }
 
-        private handleClipDragging = (x: number, originalPlacedFrame: number) => {
+        private handleClipDragging: EmitClipDragHandler = ({ nextX, originalPlacedFrame }) => {
             const { comp, scale } = this.props
-            const movementFrame = this.calcMovementFrame(x, originalPlacedFrame)
+            const movementFrame = this.calcMovementFrame(nextX, originalPlacedFrame)
             const offsetX = TimePixelConversion.framesToPixel({
                 pxPerSec: PX_PER_SEC,
                 framerate: comp.framerate,
                 durationFrames: movementFrame,
                 scale: scale,
             })
-            this.setState({ clipDragOffset: { x: offsetX } })
+
+            this.setState({ clipDragOffset: { x: offsetX, width: 0 } })
         }
 
-        private handleClipDragEnd = (x: number, originalPlacedFrame: number) => {
+        private handleClipDragEnd: EmitClipDragHandler = ({ nextX, originalPlacedFrame }) => {
             const clips = getSelectedClips()(this.props.context.getStore)
-            const movementFrame = this.calcMovementFrame(x, originalPlacedFrame)
+            const movementFrame = this.calcMovementFrame(nextX, originalPlacedFrame)
             const patches = clips.map(clip => {
                 return {
                     clipId: clip.id,
@@ -98,7 +101,52 @@ export const ClipsMediator = decorate(
             })
 
             this.props.context.executeOperation(ProjectOps.modifyClips, patches)
-            this.setState({ clipDragOffset: { x: 0 } })
+            this.setState({ clipDragOffset: { x: 0, width: 0 } })
+        }
+
+        private handleClipResize: EmitClipResizeHandler = ({ nextX, originalPlacedFrame, deltaWidth: nextWidth }) => {
+            const { comp, scale } = this.props
+            const sizingFrame = this.calcMovementFrame(nextWidth, 0)
+            const movementFrame = this.calcMovementFrame(nextX, originalPlacedFrame)
+
+            const offsetX = TimePixelConversion.framesToPixel({
+                pxPerSec: PX_PER_SEC,
+                framerate: comp.framerate,
+                durationFrames: movementFrame,
+                scale: scale,
+            })
+
+            const offsetWidth = TimePixelConversion.framesToPixel({
+                pxPerSec: PX_PER_SEC,
+                framerate: comp.framerate,
+                durationFrames: sizingFrame,
+                scale: scale,
+            })
+
+            this.setState({ clipDragOffset: { x: offsetX, width: offsetWidth } })
+        }
+
+        private handleClipResizeEnd: EmitClipResizeHandler = ({
+            nextX,
+            originalPlacedFrame,
+            deltaWidth: nextWidth,
+        }) => {
+            const clips = getSelectedClips()(this.props.context.getStore)
+            const sizingFrame = this.calcMovementFrame(nextWidth, 0)
+            const movementFrame = this.calcMovementFrame(nextX, originalPlacedFrame)
+
+            const patches = clips.map(clip => {
+                return {
+                    clipId: clip.id,
+                    patch: {
+                        placedFrame: clip.placedFrame + movementFrame,
+                        durationFrames: clip.durationFrames + sizingFrame,
+                    } as Partial<Delir.Entity.Clip>,
+                }
+            })
+
+            this.props.context.executeOperation(ProjectOps.modifyClips, patches)
+            this.setState({ clipDragOffset: { x: 0, width: 0 } })
         }
     },
 )

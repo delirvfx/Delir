@@ -1,8 +1,14 @@
 import * as React from 'react'
 
+export type EmitClipDragHandler = (arg: { nextX: number; originalPlacedFrame: number }) => void
+
+export type EmitClipResizeHandler = (arg: { nextX: number; originalPlacedFrame: number; deltaWidth: number }) => void
+
 interface ClipDragContext {
-    emitClipDrag: (movementX: number, originalPlacedFrame: number) => void
-    emitClipDragEnd: (movementX: number, originalPlacedFrame: number) => void
+    emitClipDrag: EmitClipDragHandler
+    emitClipDragEnd: EmitClipDragHandler
+    emitClipResize: EmitClipResizeHandler
+    emitClipResizeEnd: EmitClipResizeHandler
 }
 
 export type ClipDragProps = ClipDragContext

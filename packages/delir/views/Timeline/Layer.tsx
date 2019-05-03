@@ -27,7 +27,7 @@ interface OwnProps {
     framerate: number
     pxPerSec: number
     scale: number
-    clipOffset: { x: number }
+    clipOffset: { x: number; width: number }
     scrollLeft: number
     scrollWidth: number
 }
@@ -118,13 +118,11 @@ export default withComponentContext(
                                     <Clip
                                         key={clip.id!}
                                         clip={{ ...clip }}
-                                        width={width}
+                                        width={active ? width + clipOffset.width : width}
                                         left={active ? left + clipOffset.x : left}
                                         active={active}
                                         postEffectPlugins={postEffectPlugins}
                                         hasError={hasError}
-                                        onChangePlace={this.handleChangeClipPlace}
-                                        onChangeDuration={this.handleChangeClipDuration}
                                     />
                                 )
                             })}
@@ -189,34 +187,6 @@ export default withComponentContext(
                     })
                     this.props.context.executeOperation(EditorOps.clearDragEntity, {})
                 }
-            }
-
-            private handleChangeClipPlace = (clipId: string, newPlacedPx: number) => {
-                const newPlacedFrame = TimePixelConversion.pixelToFrames({
-                    pxPerSec: this.props.pxPerSec,
-                    framerate: this.props.framerate,
-                    pixel: newPlacedPx,
-                    scale: this.props.scale,
-                })
-
-                this.props.context.executeOperation(ProjectOps.modifyClip, {
-                    clipId,
-                    patch: { placedFrame: newPlacedFrame },
-                })
-            }
-
-            private handleChangeClipDuration = (clipId: string, newWidth: number) => {
-                const newDurationFrames = TimePixelConversion.pixelToFrames({
-                    pxPerSec: this.props.pxPerSec,
-                    framerate: this.props.framerate,
-                    pixel: newWidth,
-                    scale: this.props.scale,
-                })
-
-                this.props.context.executeOperation(ProjectOps.modifyClip, {
-                    clipId: clipId,
-                    patch: { durationFrames: newDurationFrames },
-                })
             }
 
             private handleAddNewClip = ({ dataset }: MenuItemOption<{ rendererId: string }>) => {

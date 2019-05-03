@@ -24,41 +24,24 @@ interface OwnProps {
     active: boolean
     postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
     hasError: boolean
-    onChangePlace: (clipId: string, newPlacedPx: number) => any
-    onChangeDuration: (clipId: string, newDurationPx: number) => any
 }
 
 interface ConnectedProps {
     postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
 }
 
-interface State {
-    left: number
-}
-
 type Props = OwnProps & ConnectedProps & ContextProp & ClipDragProps
 
-export default decorate(
+export default decorate<OwnProps>(
     [withComponentContext, withClipDragContext],
-    class Clip extends React.Component<Props, State> {
-        public state: State = {
-            left: this.props.left,
-        }
-
-        public shouldComponentUpdate(nextProps: Props, nextState: State) {
-            const { props, state } = this
-            return !_.isEqual(props, nextProps) || !_.isEqual(state, nextState)
-        }
-
-        public componentDidUpdate(prevProps: Props) {
-            if (prevProps.left !== this.props.left) {
-                this.setState({ left: this.props.left })
-            }
+    class Clip extends React.Component<Props> {
+        public shouldComponentUpdate(nextProps: Props) {
+            const { props } = this
+            return !_.isEqual(props, nextProps)
         }
 
         public render() {
-            const { clip, active, postEffectPlugins, width, hasError } = this.props
-            const { left } = this.state
+            const { clip, active, postEffectPlugins, width, left, hasError } = this.props
 
             return (
                 <Rnd
@@ -74,7 +57,7 @@ export default decorate(
                     })}
                     dragAxis="x"
                     position={{ x: left, y: 2 }}
-                    size={{ width: width, height: 'auto' }}
+                    size={{ width, height: 'auto' }}
                     enableResizing={{
                         left: true,
                         right: true,
@@ -151,26 +134,39 @@ export default decorate(
 
         private handleDrag: DraggableEventHandler = (e, drag) => {
             const { clip } = this.props
-            this.props.emitClipDrag!(drag.x, clip.placedFrame)
+
+            this.props.emitClipDrag({
+                nextX: drag.x,
+                originalPlacedFrame: clip.placedFrame,
+            })
         }
 
         private handleDragEnd: DraggableEventHandler = (e, drag) => {
             const { clip } = this.props
-            this.props.emitClipDragEnd(drag.x, clip.placedFrame)
+            this.props.emitClipDragEnd({
+                nextX: drag.x,
+                originalPlacedFrame: clip.placedFrame,
+            })
         }
 
         private handleResize: RndResizeCallback = (e, dir, ref, delta, pos) => {
-            this.setState({ left: pos.x })
+            const { clip, width } = this.props
+
+            this.props.emitClipResize({
+                nextX: pos.x,
+                originalPlacedFrame: clip.placedFrame,
+                deltaWidth: delta.width,
+            })
         }
 
         private handleResizeEnd: RndResizeCallback = (e, direction, ref, delta, pos) => {
-            const { clip } = this.props
+            const { clip, width } = this.props
 
-            if (pos.x !== this.props.left) {
-                this.props.onChangePlace(clip.id, pos.x)
-            }
-
-            this.props.onChangeDuration(clip.id, this.props.width + delta.width)
+            this.props.emitClipResizeEnd({
+                nextX: pos.x,
+                originalPlacedFrame: clip.placedFrame,
+                deltaWidth: delta.width,
+            })
         }
 
         private handleAddEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {

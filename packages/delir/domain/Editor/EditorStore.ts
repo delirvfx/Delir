@@ -165,16 +165,17 @@ export default class EditorStore extends Store<EditorState> {
         const { project } = this.state
         if (project == null) return
 
-        this.updateWith(draft => {
+        this.updateWith(d => {
             if (target) {
                 const clip =
                     target.type === 'clip'
                         ? project.findClip(target.entityId)
                         : project.findEffectOwnerClip(target.entityId)
-                ;(draft.activeClip as EditorState['activeClip']) = clip
+
+                d.selectClipIds = [clip!.id]
             }
 
-            draft.activeParam = target
+            d.activeParam = target
         })
     })
 

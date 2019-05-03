@@ -107,7 +107,6 @@ export default withComponentContext(
             public render() {
                 const { scale, timelineScrollLeft, timelineScrollWidth } = this.state
                 const { previewPlayed, activeComp, activeClips, currentPointFrame } = this.props
-                const { framerate } = activeComp ? activeComp : { framerate: 30 }
                 const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
                 const measures = !activeComp
