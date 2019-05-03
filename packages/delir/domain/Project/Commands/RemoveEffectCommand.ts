@@ -32,7 +32,7 @@ export class RemoveEffectCommand implements Command {
     }
 
     private focusToParentClip(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveClipAction, {
+        context.dispatch(EditorActions.changeSelectClip, {
             clipId: this.holderClipId,
         })
     }

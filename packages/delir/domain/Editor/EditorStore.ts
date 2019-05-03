@@ -18,7 +18,7 @@ export interface EditorState {
     project: Delir.Entity.Project | null
     projectPath: string | null
     activeComp: Delir.Entity.Composition | null
-    activeClip: Delir.Entity.Clip | null
+    selectClipIds: string[]
     activeParam: ParameterTarget | null
     dragEntity: DragEntity | null
     processingState: string | null
@@ -35,7 +35,7 @@ export default class EditorStore extends Store<EditorState> {
         project: null,
         projectPath: null,
         activeComp: null,
-        activeClip: null,
+        selectClipIds: [],
         activeParam: null,
         dragEntity: null,
         processingState: null,
@@ -56,7 +56,6 @@ export default class EditorStore extends Store<EditorState> {
             // No clear activeComposition etc, if project saved as new file
             if (payload.project !== this.state.project) {
                 draft.activeComp = null
-                draft.activeClip = null
                 draft.activeParam = null
             }
         })
@@ -66,35 +65,45 @@ export default class EditorStore extends Store<EditorState> {
         if (this.state.activeComp && this.state.activeComp.id === payload.targetCompositionId) {
             this.updateWith(draft => {
                 draft.activeComp = null
-                draft.activeClip = null
                 draft.activeParam = null
             })
         }
     })
 
     private handleRemoveLayer = listen(ProjectActions.removeLayerAction, ({ targetLayerId }) => {
-        const { activeClip, project } = this.state
-        if (!activeClip) return
-        if (!this.state.project) return
+        const { selectClipIds, project } = this.state
+        if (!selectClipIds.length) return
+        if (!project) return
 
-        const clipOwnedLayer = project!.findClipOwnerLayer(activeClip.id)
+        this.updateWith(d => {
+            const ids = [...d.selectClipIds]
 
-        // Reset selected clip if removed layer contains selected clip
-        clipOwnedLayer &&
-            this.updateWith(d => {
-                d.activeClip = null
-                d.activeParam = null
+            ids.forEach((clipId, idx) => {
+                const clipOwnedLayer = project!.findClipOwnerLayer(clipId)
+                if (!clipOwnedLayer || clipOwnedLayer.id !== targetLayerId) return
+
+                // Reset selected clip if removed layer contains selected clip
+                d.selectClipIds.splice(idx, 1)
+
+                if (d.activeParam && d.activeParam.entityId === clipId) {
+                    d.activeParam = null
+                }
             })
+        })
     })
 
     private handleRemoveClip = listen(ProjectActions.removeClipAction, payload => {
-        const { activeClip } = this.state
+        const { selectClipIds, activeParam } = this.state
+        const index = selectClipIds.indexOf(payload.targetClipId)
 
-        if (activeClip && activeClip.id === payload.targetClipId) {
-            this.updateWith(draft => {
-                draft.activeClip = null
-                draft.activeParam = null
-            })
+        // Remove removing clip ID from selectClipIds
+        if (index !== -1) {
+            this.updateWith(d => d.selectClipIds.splice(index, 1))
+        }
+
+        // Clear activeParam if parameter owned by removing clip
+        if (activeParam && activeParam.type === 'clip' && activeParam.entityId === payload.targetClipId) {
+            this.updateWith(d => (d.activeParam = null))
         }
     })
 
@@ -122,18 +131,32 @@ export default class EditorStore extends Store<EditorState> {
 
         this.updateWith(d => {
             ;(d.activeComp as EditorState['activeComp']) = comp
-            d.activeClip = null
+            d.selectClipIds = []
             d.activeParam = null
         })
     })
 
-    private handleChangeActiveClip = listen(EditorActions.changeActiveClipAction, payload => {
+    private handleAddOrRemoveSelectClip = listen(EditorActions.addOrRemoveSelectClip, payload => {
         const { project } = this.state
         if (project == null) return
 
-        const clip = project.findClip(payload.clipId)
         this.updateWith(d => {
-            ;(d.activeClip as EditorState['activeClip']) = clip
+            const index = d.selectClipIds.indexOf(payload.clipId)
+
+            if (index === -1) {
+                d.selectClipIds.push(payload.clipId)
+            } else {
+                d.selectClipIds.splice(index, 1)
+            }
+        })
+    })
+
+    private handleChangeSelectClip = listen(EditorActions.changeSelectClip, payload => {
+        const { project } = this.state
+        if (project == null) return
+
+        this.updateWith(d => {
+            d.selectClipIds = payload.clipId == null ? [] : [payload.clipId]
             d.activeParam = null
         })
     })
@@ -206,8 +229,12 @@ export default class EditorStore extends Store<EditorState> {
         return this.state.activeComp ? { ...this.state.activeComp } : null
     }
 
-    public get activeClip() {
-        return this.state.activeClip ? { ...this.state.activeClip } : null
+    public get focusClipId() {
+        return this.state.selectClipIds.length === 1 ? this.state.selectClipIds[0] : null
+    }
+
+    public get selectClipIds() {
+        return this.state.selectClipIds
     }
 
     public get dragEntity() {

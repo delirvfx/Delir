@@ -5,6 +5,7 @@ import * as _ from 'lodash'
 import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
+import { decorate } from '../../utils/decorate'
 import { SpreadType } from '../../utils/Spread'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
@@ -14,6 +15,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import t from './Clip.i18n'
 import * as s from './Clip.styl'
+import { ClipDragProps, withClipDragContext } from './ClipDragContext'
 
 interface OwnProps {
     clip: SpreadType<Delir.Entity.Clip>
@@ -34,9 +36,10 @@ interface State {
     left: number
 }
 
-type Props = OwnProps & ConnectedProps & ContextProp
+type Props = OwnProps & ConnectedProps & ContextProp & ClipDragProps
 
-export default withComponentContext(
+export default decorate(
+    [withComponentContext, withClipDragContext],
     class Clip extends React.Component<Props, State> {
         public state: State = {
             left: this.props.left,
@@ -79,13 +82,14 @@ export default withComponentContext(
                         bottom: false,
                     }}
                     onDragStart={this.handleDragStart}
+                    onDrag={this.handleDrag}
                     onDragStop={this.handleDragEnd}
                     onResize={this.handleResize}
                     onResizeStop={this.handleResizeEnd}
-                    onMouseDown={this.handleClick}
                     tabIndex={-1}
+                    data-is-clip
                 >
-                    <div>
+                    <div className={s.inner} onMouseUp={this.handleMouseUp}>
                         <ContextMenu>
                             <MenuItem
                                 label={t(t.k.contextMenu.seekToHeadOfClip)}
@@ -122,12 +126,21 @@ export default withComponentContext(
             )
         }
 
-        private handleClick = () => {
+        private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+            if (this.props.active) return
+            e.preventDefault()
+            e.stopPropagation()
+
             GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
             GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
-            this.props.context.executeOperation(EditorOps.changeActiveClip, {
-                clipId: this.props.clip.id!,
-            })
+
+            if (e.shiftKey) {
+                this.props.context.executeOperation(EditorOps.addOrRemoveSelectClip, { clipId: this.props.clip.id })
+            } else {
+                this.props.context.executeOperation(EditorOps.changeSelectClip, {
+                    clipId: this.props.clip.id!,
+                })
+            }
         }
 
         private handleDragStart: DraggableEventHandler = e => {
@@ -136,8 +149,14 @@ export default withComponentContext(
             })
         }
 
+        private handleDrag: DraggableEventHandler = (e, drag) => {
+            const { clip } = this.props
+            this.props.emitClipDrag!(drag.x, clip.placedFrame)
+        }
+
         private handleDragEnd: DraggableEventHandler = (e, drag) => {
-            this.props.onChangePlace(this.props.clip.id, drag.x)
+            const { clip } = this.props
+            this.props.emitClipDragEnd(drag.x, clip.placedFrame)
         }
 
         private handleResize: RndResizeCallback = (e, dir, ref, delta, pos) => {

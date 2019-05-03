@@ -51,9 +51,8 @@ export const ProjectActions = actions('Project', {
         targetLayerId: string
         patch: Partial<Delir.Entity.Layer>
     }>(),
-    modifyClipAction: action<{
-        targetClipId: string
-        patch: Partial<Delir.Entity.Clip>
+    modifyClipsAction: action<{
+        patches: { clipId: string; patch: Partial<Delir.Entity.Clip> }[]
     }>(),
     modifyEffectAction: action<{
         parentClipId: string

@@ -10,6 +10,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
 import EditorStore from '../../domain/Editor/EditorStore'
+import { getSelectedClipIds, getSelectedClips } from '../../domain/Editor/selectors'
 import { hasErrorInClip } from '../../domain/Renderer/models'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
@@ -26,6 +27,7 @@ interface OwnProps {
     framerate: number
     pxPerSec: number
     scale: number
+    clipOffset: { x: number }
     scrollLeft: number
     scrollWidth: number
 }
@@ -37,7 +39,8 @@ interface State {
 }
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
-    activeClip: getStore(EditorStore).activeClip,
+    selectedClipIds: getSelectedClipIds()(getStore),
+    selectedClips: getSelectedClips()(getStore),
     postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
     userCodeException: getStore(RendererStore).getUserCodeException(),
 })
@@ -54,11 +57,12 @@ export default withComponentContext(
             public render() {
                 const {
                     layer,
-                    activeClip,
+                    selectedClipIds,
                     framerate,
                     pxPerSec,
                     scale,
                     scrollLeft,
+                    clipOffset,
                     scrollWidth,
                     postEffectPlugins,
                     userCodeException,
@@ -108,14 +112,15 @@ export default withComponentContext(
                                 })
 
                                 const hasError = hasErrorInClip(clip, userCodeException)
+                                const active = selectedClipIds.includes(clip.id)
 
                                 return (
                                     <Clip
                                         key={clip.id!}
                                         clip={{ ...clip }}
                                         width={width}
-                                        left={left}
-                                        active={!!activeClip && clip.id === activeClip.id}
+                                        left={active ? left + clipOffset.x : left}
+                                        active={active}
                                         postEffectPlugins={postEffectPlugins}
                                         hasError={hasError}
                                         onChangePlace={this.handleChangeClipPlace}
