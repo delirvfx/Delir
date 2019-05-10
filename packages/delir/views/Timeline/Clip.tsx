@@ -125,13 +125,13 @@ export default withComponentContext(
         private handleClick = () => {
             GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
             GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
-            this.props.context.executeOperation(EditorOps.changeActiveClip, {
+            this.props.executeOperation(EditorOps.changeActiveClip, {
                 clipId: this.props.clip.id!,
             })
         }
 
         private handleDragStart: DraggableEventHandler = e => {
-            this.props.context.executeOperation(EditorOps.setDragEntity, {
+            this.props.executeOperation(EditorOps.setDragEntity, {
                 entity: { type: 'clip', clip: this.props.clip },
             })
         }
@@ -155,39 +155,39 @@ export default withComponentContext(
         }
 
         private handleAddEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
-            this.props.context.executeOperation(ProjectOps.addEffectIntoClip, {
+            this.props.executeOperation(ProjectOps.addEffectIntoClip, {
                 clipId: dataset.clipId,
                 processorId: dataset.effectId,
             })
-            this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
+            this.props.executeOperation(EditorOps.seekPreviewFrame, {})
         }
 
         private handleRemoveClip = ({ dataset }: MenuItemOption<{ clipId: string }>) => {
-            this.props.context.executeOperation(ProjectOps.removeClip, {
+            this.props.executeOperation(ProjectOps.removeClip, {
                 clipId: dataset.clipId,
             })
         }
 
         private handleSeekToHeadOfClip = () => {
             const { clip } = this.props
-            this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
+            this.props.executeOperation(EditorOps.seekPreviewFrame, {
                 frame: clip.placedFrame,
             })
         }
 
         private handleGlobalCopy = () => {
-            this.props.context.executeOperation(EditorOps.copyEntity, {
+            this.props.executeOperation(EditorOps.copyEntity, {
                 type: 'clip',
                 entity: this.props.clip,
             })
         }
 
         private handleGlobalCut = () => {
-            this.props.context.executeOperation(EditorOps.copyEntity, {
+            this.props.executeOperation(EditorOps.copyEntity, {
                 type: 'clip',
                 entity: this.props.clip,
             })
-            this.props.context.executeOperation(ProjectOps.removeClip, {
+            this.props.executeOperation(ProjectOps.removeClip, {
                 clipId: this.props.clip.id,
             })
         }

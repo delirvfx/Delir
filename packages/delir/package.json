@@ -6,6 +6,7 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
+    "@delirvfx/core-test-helper": "*",
     "@types/classnames": "2.2.7",
     "@types/electron": "1.6.10",
     "@types/fs-extra": "5.0.5",
@@ -23,7 +24,6 @@
     "@types/react-transition-group": "2.9.0",
     "@types/typescript": "2.0.0",
     "@types/uuid": "3.4.4",
-    "@delirvfx/core-test-helper": "*",
     "devtron": "1.4.0",
     "jest": "24.7.1",
     "ts-jest": "24.0.2"
@@ -31,8 +31,8 @@
   "dependencies": {
     "@delirvfx/core": "*",
     "@ragg/deream": "*",
-    "@ragg/fleur": "0.0.12",
-    "@ragg/fleur-react": "0.0.13",
+    "@ragg/fleur": "0.0.16",
+    "@ragg/fleur-react": "0.0.17",
     "classnames": "2.2.6",
     "form-serialize": "0.7.2",
     "fs-extra": "7.0.1",

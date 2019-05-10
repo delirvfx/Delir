@@ -272,7 +272,7 @@ export default withComponentContext(
             }
 
             private handleNewProject = () => {
-                const project = this.props.context.getStore(EditorStore).getState().project
+                const project = this.props.getStore(EditorStore).getState().project
 
                 if (project) {
                     const acceptDiscard = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
@@ -286,11 +286,11 @@ export default withComponentContext(
                     }
                 }
 
-                this.props.context.executeOperation(EditorOps.newProject, {})
+                this.props.executeOperation(EditorOps.newProject, {})
             }
 
             private handleOpenProject = () => {
-                const { project } = this.props.context.getStore(EditorStore)
+                const { project } = this.props.getStore(EditorStore)
 
                 if (project) {
                     const acceptDiscard = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
@@ -313,11 +313,11 @@ export default withComponentContext(
 
                 if (!path || !path.length) return
 
-                this.props.context.executeOperation(EditorOps.openProject, { path: path[0] })
+                this.props.executeOperation(EditorOps.openProject, { path: path[0] })
             }
 
             private handleOpenPreference = () => {
-                this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
+                this.props.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
             }
 
             private handleCopy = () => {

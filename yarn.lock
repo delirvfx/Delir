@@ -948,18 +948,18 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/yargs" "^12.0.9"
 
-"@ragg/fleur-react@0.0.13":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.13.tgz#5991455804df35d37b3b0b7de183f40317718e0e"
-  integrity sha512-jQfGNKSE+GUWj6ryfI1YR0DfdYC6EGF/Hm4z+tlRgkTQ9xb3X/exuGSyvgDbw45N4qGtUfHO4Z3gYjxgu5zXlw==
+"@ragg/fleur-react@0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.17.tgz#f228abd7796e05d6563a2876ce8ff1b9492f136f"
+  integrity sha512-KpZ0SrrtXF6sHIbBcsi4wn+Wsucfi9G/HAqkrVz2VemfziY3Rgw3sakYcGxj0KQy6khSAZW6cSLfDGd7V8jABA==
 
-"@ragg/fleur@0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.12.tgz#a13eeaff2604dc297b7dc16ac6de84d9d473db69"
-  integrity sha512-hkfVhMTVRi7DohFaSPY45E1IsgKjbccToWxuw1kxlbRTedgnC6A53msu/qkm3jjtsLPnpFlyHxtD83AhZG4Eww==
+"@ragg/fleur@0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.16.tgz#f0d6e1caae75cd87617514151d700710d303e791"
+  integrity sha512-U6di7BNWhe5AQOmFIoSGPQRU1GCUs0FixWLXbp7+137bfeoOwi7Ebf8qKY/4HMylsXK35rHWk2ZzlcguluMGqQ==
   dependencies:
-    immer "1.8.0"
-    invariant "2.2.4"
+    immer "^1.8.0"
+    invariant "^2.2.4"
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
@@ -5585,10 +5585,10 @@ ignore-walk@^3.0.1:
   dependencies:
     minimatch "^3.0.4"
 
-immer@1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-1.8.0.tgz#afa8393996a1f3f5255019e7d10c29d42dd95225"
-  integrity sha512-zOox8DNAunPeQgKwbAiwEUAHhZXtMPZo7VZ7m7h9cpQL1I35bAeaxMfwYyLEIt6RZUelFfsOBfG1GJu/iQNgxw==
+immer@^1.8.0:
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-1.12.1.tgz#40c6e5b292c00560836c2993bda3a24379d466f5"
+  integrity sha512-3fmKM6ovaqDt0CdC9daXpNi5x/YCYS3i4cwLdTVkhJdk5jrDXoPs7lCm3IqM3yhfSnz4tjjxbRG2CziQ7m8ztg==
 
 import-fresh@^2.0.0:
   version "2.0.0"
@@ -5674,17 +5674,17 @@ into-stream@^3.1.0:
     from2 "^2.1.1"
     p-is-promise "^1.1.0"
 
-invariant@2.2.4, invariant@^2.2.4:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
-  integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
-  dependencies:
-    loose-envify "^1.0.0"
-
 invariant@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.2.tgz#9e1f56ac0acdb6bf303306f338be3b204ae60360"
   integrity sha1-nh9WrArNtr8wMwbzOL47IErmA2A=
+  dependencies:
+    loose-envify "^1.0.0"
+
+invariant@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
+  integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
   dependencies:
     loose-envify "^1.0.0"
 

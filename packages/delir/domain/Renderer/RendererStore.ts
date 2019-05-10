@@ -7,7 +7,6 @@ import { dirname } from 'path'
 import { EditorActions } from '../Editor/actions'
 import { RendererActions } from './actions'
 
-import { updateWith } from 'typescript'
 import * as Platform from '../../utils/platform'
 
 interface State {
