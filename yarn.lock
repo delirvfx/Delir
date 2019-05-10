@@ -948,10 +948,10 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/yargs" "^12.0.9"
 
-"@ragg/fleur-react@0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.16.tgz#16e409871bc947a67add469a8b6ddd24227afbe5"
-  integrity sha512-K5S10u20jY9jiMYCTFqYb1Q0aMGRn2y4Ov8OR4Ms9M3nK8+w6OeMzPFaOVXdL5EBDGbPJvFd4BlLSfdMXuEdrg==
+"@ragg/fleur-react@0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.17.tgz#f228abd7796e05d6563a2876ce8ff1b9492f136f"
+  integrity sha512-KpZ0SrrtXF6sHIbBcsi4wn+Wsucfi9G/HAqkrVz2VemfziY3Rgw3sakYcGxj0KQy6khSAZW6cSLfDGd7V8jABA==
 
 "@ragg/fleur@0.0.16":
   version "0.0.16"

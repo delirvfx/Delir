@@ -32,7 +32,7 @@
     "@delirvfx/core": "*",
     "@ragg/deream": "*",
     "@ragg/fleur": "0.0.16",
-    "@ragg/fleur-react": "0.0.16",
+    "@ragg/fleur-react": "0.0.17",
     "classnames": "2.2.6",
     "form-serialize": "0.7.2",
     "fs-extra": "7.0.1",
