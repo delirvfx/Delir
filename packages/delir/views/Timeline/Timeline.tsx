@@ -56,7 +56,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
  *       └ Clip
  */
 export default withComponentContext(
-    connectToStores([EditorStore, ProjectStore], mapStoresToProps)(
+    connectToStores([EditorStore, ProjectStore, RendererStore], mapStoresToProps)(
         class Timeline extends React.Component<Props, State> {
             public state: State = {
                 timelineScrollTop: 0,
