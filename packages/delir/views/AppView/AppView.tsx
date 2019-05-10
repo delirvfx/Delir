@@ -94,11 +94,11 @@ export default withComponentContext(
             }
 
             private projectAutoSaveTimer = () => {
-                this.props.context.executeOperation(EditorOps.autoSaveProject, {})
+                this.props.executeOperation(EditorOps.autoSaveProject, {})
             }
 
             private handlePreferenceClose = () => {
-                this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
+                this.props.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
             }
 
             private handleShortCutPreviewToggle = (e: KeyboardEvent) => {
@@ -111,14 +111,14 @@ export default withComponentContext(
                 }
 
                 const { previewPlaying } = this.props
-                const activeComp = this.props.context.getStore(EditorStore).getActiveComposition()
+                const activeComp = this.props.getStore(EditorStore).getActiveComposition()
 
                 if (!activeComp) return
 
                 if (previewPlaying) {
-                    this.props.context.executeOperation(RendererOps.stopPreview, {})
+                    this.props.executeOperation(RendererOps.stopPreview, {})
                 } else {
-                    this.props.context.executeOperation(RendererOps.startPreview, {
+                    this.props.executeOperation(RendererOps.startPreview, {
                         compositionId: activeComp.id,
                     })
                 }

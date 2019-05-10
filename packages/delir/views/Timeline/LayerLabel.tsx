@@ -79,7 +79,7 @@ class LayerLabelComponent extends React.Component<Props> {
     private layerNameChanged = (value: string) => {
         const { layer } = this.props
 
-        this.props.context.executeOperation(ProjectOps.modifyLayer, {
+        this.props.executeOperation(ProjectOps.modifyLayer, {
             layerId: layer.id!,
             patch: { name: value },
         })
@@ -100,7 +100,7 @@ class LayerLabelComponent extends React.Component<Props> {
         const { activeComp, layerIndex } = this.props
         if (!activeComp) return
 
-        this.props.context.executeOperation(ProjectOps.addLayer, {
+        this.props.executeOperation(ProjectOps.addLayer, {
             targetCompositionId: activeComp.id,
             index: layerIndex,
         })

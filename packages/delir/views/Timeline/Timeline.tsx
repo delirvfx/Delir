@@ -265,7 +265,7 @@ export default withComponentContext(
                 if (!activeComp) return
 
                 const layer = activeComp.layers[oldIndex]
-                this.props.context.executeOperation(ProjectOps.moveLayerOrder, {
+                this.props.executeOperation(ProjectOps.moveLayerOrder, {
                     layerId: layer.id,
                     newIndex,
                 })
@@ -275,14 +275,14 @@ export default withComponentContext(
                 const { activeComp } = this.props
 
                 if (!activeComp) return
-                this.props.context.executeOperation(ProjectOps.addLayer, {
+                this.props.executeOperation(ProjectOps.addLayer, {
                     targetCompositionId: activeComp.id,
                 })
             }
 
             private onLayerRemove = (layerId: string) => {
                 if (!this.props.activeComp) return
-                this.props.context.executeOperation(ProjectOps.removeLayer, {
+                this.props.executeOperation(ProjectOps.removeLayer, {
                     layerId,
                 })
             }
@@ -322,10 +322,10 @@ export default withComponentContext(
 
             private _dropAsset = (e: React.DragEvent<HTMLElement>) => {
                 const { activeComp } = this.props
-                const { dragEntity } = this.props.context.getStore(EditorStore).getState()
+                const { dragEntity } = this.props.getStore(EditorStore).getState()
 
                 if (!activeComp) {
-                    this.props.context.executeOperation(EditorOps.notify, {
+                    this.props.executeOperation(EditorOps.notify, {
                         message: t(t.k.errors.compositionNotSelected),
                         title: 'Woops',
                         level: 'info',
@@ -337,14 +337,14 @@ export default withComponentContext(
 
                 if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
                 const { asset } = dragEntity
-                this.props.context.executeOperation(ProjectOps.addLayerWithAsset, {
+                this.props.executeOperation(ProjectOps.addLayerWithAsset, {
                     targetComposition: activeComp,
                     asset,
                 })
             }
 
             private _onSeeked = (frame: number) => {
-                this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
+                this.props.executeOperation(EditorOps.seekPreviewFrame, {
                     frame,
                 })
             }

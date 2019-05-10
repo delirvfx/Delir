@@ -42,7 +42,7 @@ export default withComponentContext(
             private canvasRef = React.createRef<HTMLCanvasElement>()
 
             public componentDidMount() {
-                this.props.context.executeOperation(RendererOps.setPreviewCanvas, {
+                this.props.executeOperation(RendererOps.setPreviewCanvas, {
                     canvas: this.canvasRef.current!,
                 })
             }

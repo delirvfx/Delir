@@ -257,7 +257,7 @@ export default withComponentContext(
             const { parentClip } = this.props
             if (!parentClip) return
 
-            this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
+            this.props.executeOperation(EditorOps.seekPreviewFrame, {
                 frame: parentClip.placedFrame + parseInt(currentTarget.dataset!.frame!, 10),
             })
         }
