@@ -21,7 +21,7 @@ export class ModifyClipCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.modifyClipAction, {
+        context.dispatch(ProjectActions.modifyClip, {
             targetClipId: this.targetClipId,
             patch: this.toPreviousPatch,
         })
@@ -30,14 +30,14 @@ export class ModifyClipCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.modifyClipAction, {
+        context.dispatch(ProjectActions.modifyClip, {
             targetClipId: this.targetClipId,
             patch: this.patch,
         })
     }
 
     private focusToParentComposition(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveCompositionAction, {
+        context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })
     }

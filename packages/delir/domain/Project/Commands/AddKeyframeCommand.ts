@@ -15,7 +15,7 @@ export class AddKeyframeCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.removeKeyframeAction, {
+        context.dispatch(ProjectActions.removeKeyframe, {
             parentClipId: this.targetClipId,
             paramName: this.paramName,
             targetKeyframeId: this.addedKeyframe.id,
@@ -25,7 +25,7 @@ export class AddKeyframeCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.addKeyframeAction, {
+        context.dispatch(ProjectActions.addKeyframe, {
             targetClipId: this.targetClipId,
             paramName: this.paramName,
             keyframe: this.addedKeyframe,
@@ -33,7 +33,7 @@ export class AddKeyframeCommand implements Command {
     }
 
     private focusToChangedParam(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveParamAction, {
+        context.dispatch(EditorActions.changeActiveParam, {
             target: {
                 type: 'clip',
                 entityId: this.targetClipId,

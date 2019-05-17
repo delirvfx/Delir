@@ -17,14 +17,14 @@ export class ModifyCompositionCommand implements Command {
     }
 
     public undo(context: OperationContext<any>) {
-        context.dispatch(ProjectActions.modifyCompositionAction, {
+        context.dispatch(ProjectActions.modifyComposition, {
             targetCompositionId: this.subjectCompositionId,
             patch: this.toPreviousPatch,
         })
     }
 
     public redo(context: OperationContext<any>) {
-        context.dispatch(ProjectActions.modifyCompositionAction, {
+        context.dispatch(ProjectActions.modifyComposition, {
             targetCompositionId: this.subjectCompositionId,
             patch: this.patch,
         })

@@ -16,7 +16,7 @@ export class MoveClipToLayerCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.moveClipToLayerAction, {
+        context.dispatch(ProjectActions.moveClipToLayer, {
             destLayerId: this.sourceLayerId,
             clipId: this.subjectClipId,
         })
@@ -25,14 +25,14 @@ export class MoveClipToLayerCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.moveClipToLayerAction, {
+        context.dispatch(ProjectActions.moveClipToLayer, {
             destLayerId: this.destLayerId,
             clipId: this.subjectClipId,
         })
     }
 
     private focusToParentComposition(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveCompositionAction, {
+        context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })
     }
