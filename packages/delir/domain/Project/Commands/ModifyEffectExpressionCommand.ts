@@ -15,7 +15,7 @@ export class ModifyEffectExpressionCommand implements Command {
     ) {}
 
     public undo(context: OperationContext<any>) {
-        context.dispatch(ProjectActions.modifyEffectExpressionAction, {
+        context.dispatch(ProjectActions.modifyEffectExpression, {
             targetClipId: this.targetClipId,
             targetEffectId: this.effectId,
             paramName: this.paramName,
@@ -24,7 +24,7 @@ export class ModifyEffectExpressionCommand implements Command {
     }
 
     public redo(context: OperationContext<any>) {
-        context.dispatch(ProjectActions.modifyEffectExpressionAction, {
+        context.dispatch(ProjectActions.modifyEffectExpression, {
             targetClipId: this.targetClipId,
             targetEffectId: this.effectId,
             paramName: this.paramName,

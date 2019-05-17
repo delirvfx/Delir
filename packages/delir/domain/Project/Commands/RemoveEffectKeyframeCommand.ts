@@ -16,7 +16,7 @@ export class RemoveEffectKeyframeCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.addEffectKeyframeAction, {
+        context.dispatch(ProjectActions.addEffectKeyframe, {
             targetClipId: this.parentClipId,
             targetEffectId: this.effectId,
             paramName: this.paramName,
@@ -27,7 +27,7 @@ export class RemoveEffectKeyframeCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.removeEffectKeyframeAction, {
+        context.dispatch(ProjectActions.removeEffectKeyframe, {
             clipId: this.parentClipId,
             effectId: this.effectId,
             paramName: this.paramName,
@@ -36,7 +36,7 @@ export class RemoveEffectKeyframeCommand implements Command {
     }
 
     private focusToChangedParam(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveParamAction, {
+        context.dispatch(EditorActions.changeActiveParam, {
             target: {
                 type: 'effect',
                 entityId: this.effectId,

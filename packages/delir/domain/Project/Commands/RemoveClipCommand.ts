@@ -15,7 +15,7 @@ export class RemoveClipCommand implements Command {
     public undo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.addClipAction, {
+        context.dispatch(ProjectActions.addClip, {
             targetLayerId: this.parentLayerId,
             newClip: this.removedClip,
         })
@@ -24,13 +24,13 @@ export class RemoveClipCommand implements Command {
     public redo(context: OperationContext<any>) {
         this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.removeClipAction, {
+        context.dispatch(ProjectActions.removeClip, {
             targetClipId: this.removedClip.id,
         })
     }
 
     private focusToParentComposition(context: OperationContext<any>) {
-        context.dispatch(EditorActions.changeActiveCompositionAction, {
+        context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })
     }

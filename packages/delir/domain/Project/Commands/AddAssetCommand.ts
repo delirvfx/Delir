@@ -8,13 +8,13 @@ export class AddAssetCommand implements Command {
     constructor(private addedAsset: Delir.Entity.Asset) {}
 
     public undo(context: OperationContext<any>) {
-        context.dispatch(ProjectActions.removeAssetAction, {
+        context.dispatch(ProjectActions.removeAsset, {
             targetAssetId: this.addedAsset.id,
         })
     }
 
     public redo(context: OperationContext<any>) {
-        context.dispatch(ProjectActions.addAssetAction, {
+        context.dispatch(ProjectActions.addAsset, {
             asset: this.addedAsset,
         })
     }
