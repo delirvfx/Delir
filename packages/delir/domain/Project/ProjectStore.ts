@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { listen, Store } from '@ragg/fleur'
+import { listen, Store } from '@fleur/fleur'
 
 import { EditorActions } from '../Editor/actions'
 import { ProjectActions } from './actions'

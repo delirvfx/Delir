@@ -1,4 +1,4 @@
-import { ComponentContext } from '@ragg/fleur'
+import { ComponentContext } from '@fleur/fleur'
 
 import * as HistoryOps from '../domain/History/operations'
 import { GlobalEvent, GlobalEvents } from '../views/AppView/GlobalEvents'

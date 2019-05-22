@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as classNames from 'classnames'
 import { clipboard } from 'electron'
 import * as _ from 'lodash'
@@ -84,7 +84,7 @@ interface State {
 
 type Props = ConnectedProps & ContextProp
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, ProjectStore], getStore => ({
         editor: getStore(EditorStore).getState(),
     }))(

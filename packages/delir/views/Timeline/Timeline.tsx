@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as classNames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
@@ -55,7 +55,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
  *     └ ClipSpace
  *       └ Clip
  */
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, ProjectStore, RendererStore], mapStoresToProps)(
         class Timeline extends React.Component<Props, State> {
             public state: State = {

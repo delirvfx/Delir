@@ -1,4 +1,4 @@
-import { operation } from '@ragg/fleur'
+import { operation } from '@fleur/fleur'
 import { HistoryActions } from './actions'
 import HistoryStore, { Command } from './HistoryStore'
 

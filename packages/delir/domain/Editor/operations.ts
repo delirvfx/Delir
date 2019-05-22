@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { operation } from '@ragg/fleur'
+import { operation } from '@fleur/fleur'
 import { remote } from 'electron'
 import * as fs from 'fs-extra'
 import * as _ from 'lodash'

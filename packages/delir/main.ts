@@ -1,6 +1,6 @@
 import * as Delir from '@delirvfx/core'
-import Fleur, { withReduxDevTools } from '@ragg/fleur'
-import { createElementWithContext } from '@ragg/fleur-react'
+import Fleur, { withReduxDevTools } from '@fleur/fleur'
+import { createElementWithContext } from '@fleur/fleur-react'
 import * as os from 'os'
 import * as ReactDOM from 'react-dom'
 

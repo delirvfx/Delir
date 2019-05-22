@@ -1,4 +1,4 @@
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as Mousetrap from 'mousetrap'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
@@ -32,7 +32,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
     previewPlaying: getStore(RendererStore).previewPlaying,
 })
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class AppView extends React.PureComponent<Props> {
             public root = React.createRef<HTMLDivElement>()

@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { action, actions } from '@ragg/fleur'
+import { action, actions } from '@fleur/fleur'
 
 export const ProjectActions = actions('Project', {
     createComposition: action<{

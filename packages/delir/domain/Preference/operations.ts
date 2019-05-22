@@ -1,4 +1,4 @@
-import { operation, OperationContext } from '@ragg/fleur'
+import { operation, OperationContext } from '@fleur/fleur'
 import { remote } from 'electron'
 import { existsSync, readFileSync, writeFile } from 'fs'
 import * as _ from 'lodash'

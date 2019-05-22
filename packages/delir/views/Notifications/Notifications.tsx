@@ -1,4 +1,4 @@
-import { useComponentContext, useStore } from '@ragg/fleur-react'
+import { useFleurContext, useStore } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 
@@ -10,7 +10,7 @@ import t from './Notifications.i18n'
 import * as s from './style.styl'
 
 export const Notifications = () => {
-    const context = useComponentContext()
+    const context = useFleurContext()
 
     const { entries, userCodeException } = useStore([EditorStore, RendererStore], getStore => ({
         entries: getStore(EditorStore).getState().notifications,

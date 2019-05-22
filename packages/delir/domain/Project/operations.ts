@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { operation } from '@ragg/fleur'
+import { operation } from '@fleur/fleur'
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 import { safeAssign } from '../../utils/safeAssign'

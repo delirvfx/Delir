@@ -1,4 +1,4 @@
-import { listen, OperationContext, Store } from '@ragg/fleur'
+import { listen, OperationContext, Store } from '@fleur/fleur'
 
 import { EditorActions } from '../Editor/actions'
 import { HistoryActions } from './actions'

@@ -1,4 +1,4 @@
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as Electron from 'electron'
 import { remote } from 'electron'
 import * as React from 'react'
@@ -24,7 +24,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
     previewPlaying: getStore(RendererStore).previewPlaying,
 })
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class AppMenu extends React.Component<Props, State> {
             public state: State = {
