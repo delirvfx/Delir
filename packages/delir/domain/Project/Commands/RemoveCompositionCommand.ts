@@ -7,13 +7,13 @@ import { ProjectActions } from '../actions'
 export class RemoveCompositionCommand implements Command {
     constructor(private removedComposition: Delir.Entity.Composition) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         context.dispatch(ProjectActions.createComposition, {
             composition: this.removedComposition,
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         context.dispatch(ProjectActions.removeComposition, {
             targetCompositionId: this.removedComposition.id,
         })

@@ -8,7 +8,7 @@ import { ProjectActions } from '../actions'
 export class AddLayerCommand implements Command {
     constructor(private targetCompositionId: string, private addedLayer: Delir.Entity.Layer, private index: number) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.removeLayer, {
@@ -16,7 +16,7 @@ export class AddLayerCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.addLayer, {
@@ -26,7 +26,7 @@ export class AddLayerCommand implements Command {
         })
     }
 
-    private focusToParentComposition(context: OperationContext<any>) {
+    private focusToParentComposition(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.targetCompositionId,
         })

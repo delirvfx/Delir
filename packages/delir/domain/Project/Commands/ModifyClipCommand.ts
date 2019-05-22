@@ -18,7 +18,7 @@ export class ModifyClipCommand implements Command {
         this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Clip>
     }
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.modifyClip, {
@@ -27,7 +27,7 @@ export class ModifyClipCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.modifyClip, {
@@ -36,7 +36,7 @@ export class ModifyClipCommand implements Command {
         })
     }
 
-    private focusToParentComposition(context: OperationContext<any>) {
+    private focusToParentComposition(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })

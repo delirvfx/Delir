@@ -378,7 +378,7 @@ export default withFleurContext(
             }
 
             private onAssetDragEnd = () => {
-                this.props.executeOperation(EditorOps.clearDragEntity, {})
+                this.props.executeOperation(EditorOps.clearDragEntity)
             }
         },
     ),

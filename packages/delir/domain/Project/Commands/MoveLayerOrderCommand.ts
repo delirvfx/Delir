@@ -14,7 +14,7 @@ export class MoveLayerOrderCommand implements Command {
         private nextIndex: number,
     ) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.moveLayerOrder, {
@@ -24,7 +24,7 @@ export class MoveLayerOrderCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.moveLayerOrder, {
@@ -34,7 +34,7 @@ export class MoveLayerOrderCommand implements Command {
         })
     }
 
-    private focusToParentComposition(context: OperationContext<any>) {
+    private focusToParentComposition(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })

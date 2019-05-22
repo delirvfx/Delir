@@ -14,7 +14,7 @@ export class ModifyEffectExpressionCommand implements Command {
         private nextValue: Delir.Values.Expression,
     ) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         context.dispatch(ProjectActions.modifyEffectExpression, {
             targetClipId: this.targetClipId,
             targetEffectId: this.effectId,
@@ -23,7 +23,7 @@ export class ModifyEffectExpressionCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         context.dispatch(ProjectActions.modifyEffectExpression, {
             targetClipId: this.targetClipId,
             targetEffectId: this.effectId,

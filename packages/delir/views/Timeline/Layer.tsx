@@ -160,7 +160,7 @@ export default withFleurContext(
                     return
                 }
 
-                this.props.executeOperation(EditorOps.clearDragEntity, {})
+                this.props.executeOperation(EditorOps.clearDragEntity)
                 this.setState({ dragovered: false })
 
                 e.preventDefault()
@@ -176,13 +176,13 @@ export default withFleurContext(
                 const isChildClip = !!layer.clips.find(clip => clip.id! === dragEntity.clip.id!)
 
                 if (isChildClip) {
-                    this.props.executeOperation(EditorOps.clearDragEntity, {})
+                    this.props.executeOperation(EditorOps.clearDragEntity)
                 } else {
                     this.props.executeOperation(ProjectOps.moveClipToLayer, {
                         clipId: dragEntity.clip.id!,
                         destLayerId: this.props.layer.id!,
                     })
-                    this.props.executeOperation(EditorOps.clearDragEntity, {})
+                    this.props.executeOperation(EditorOps.clearDragEntity)
                 }
             }
 

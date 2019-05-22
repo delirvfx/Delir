@@ -12,7 +12,7 @@ export class RemoveEffectCommand implements Command {
         private beforeRemoveIndex: number,
     ) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToParentClip(context)
 
         context.dispatch(ProjectActions.addEffectIntoClip, {
@@ -22,7 +22,7 @@ export class RemoveEffectCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToParentClip(context)
 
         context.dispatch(ProjectActions.removeEffectFromClip, {
@@ -31,7 +31,7 @@ export class RemoveEffectCommand implements Command {
         })
     }
 
-    private focusToParentClip(context: OperationContext<any>) {
+    private focusToParentClip(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveClip, {
             clipId: this.holderClipId,
         })

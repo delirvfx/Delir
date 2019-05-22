@@ -13,7 +13,7 @@ export class AddEffectKeyframeCommand implements Command {
         private addedKeyframe: Delir.Entity.Keyframe,
     ) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.removeEffectKeyframe, {
@@ -24,7 +24,7 @@ export class AddEffectKeyframeCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.addEffectKeyframe, {
@@ -35,7 +35,7 @@ export class AddEffectKeyframeCommand implements Command {
         })
     }
 
-    private focusToChangedParam(context: OperationContext<any>) {
+    private focusToChangedParam(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveParam, {
             target: {
                 type: 'effect',

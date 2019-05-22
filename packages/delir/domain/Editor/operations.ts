@@ -25,7 +25,7 @@ export type DragEntity =
 // App services
 //
 
-export const openPluginDirectory = operation((context, arg: {}) => {
+export const openPluginDirectory = operation(context => {
     const userDir = remote.app.getPath('appData')
     const pluginsDir = path.join(userDir, 'delir/plugins')
     remote.shell.openItem(pluginsDir)
@@ -50,7 +50,7 @@ export const setDragEntity = operation((context, arg: { entity: DragEntity }) =>
     context.dispatch(EditorActions.setDragEntity, arg.entity)
 })
 
-export const clearDragEntity = operation((context, arg: {}) => {
+export const clearDragEntity = operation(context => {
     context.dispatch(EditorActions.clearDragEntity, {})
 })
 

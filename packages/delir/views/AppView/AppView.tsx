@@ -1,11 +1,9 @@
 import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
-import * as Mousetrap from 'mousetrap'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
-import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Pane from '../../components/pane'
@@ -85,7 +83,7 @@ export default withFleurContext(
             }
 
             private projectAutoSaveTimer = () => {
-                this.props.executeOperation(EditorOps.autoSaveProject, {})
+                this.props.executeOperation(EditorOps.autoSaveProject)
             }
 
             private handlePreferenceClose = () => {

@@ -51,8 +51,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         enableTimeTravel: false,
     }))
 
-    await context.executeOperation(RendererOps.loadPlugins, {})
-    await context.executeOperation(PreferenceOps.restoreApplicationPreference, {})
+    await context.executeOperation(RendererOps.loadPlugins)
+    await context.executeOperation(PreferenceOps.restoreApplicationPreference)
     await context.executeOperation(EditorOps.setActiveProject, {
         project: new Delir.Entity.Project({}),
     })

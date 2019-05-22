@@ -42,7 +42,7 @@ export const NavigationView = () => {
     }, [])
 
     const onClickPause = React.useCallback((e: React.MouseEvent<HTMLLIElement>) => {
-        context.executeOperation(RendererOps.stopPreview, {})
+        context.executeOperation(RendererOps.stopPreview)
     }, [])
 
     const onClickDest = React.useCallback(() => {

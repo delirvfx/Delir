@@ -4,8 +4,8 @@ import { EditorActions } from '../Editor/actions'
 import { HistoryActions } from './actions'
 
 export interface Command {
-    undo(context: OperationContext<any>): void
-    redo(context: OperationContext<any>): void
+    undo(context: OperationContext): void
+    redo(context: OperationContext): void
 }
 
 interface State {

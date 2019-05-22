@@ -62,7 +62,7 @@ export default withFleurContext(
             }
 
             private setApplicationMenu() {
-                const { context, previewPlaying } = this.props
+                const { previewPlaying, executeOperation, getStore } = this.props
                 const { devToolsFocused } = this.state
                 const { activeComp } = this.props.editor
                 const menu: Electron.MenuItemConstructorOptions[] = []
@@ -83,7 +83,7 @@ export default withFleurContext(
                         { type: 'separator' },
                         {
                             label: t(t.k.appMenu.openPluginDir),
-                            click: () => context.executeOperation(EditorOps.openPluginDirectory, {}),
+                            click: () => executeOperation(EditorOps.openPluginDirectory),
                         },
                         { type: 'separator' },
                         {
@@ -114,8 +114,8 @@ export default withFleurContext(
                                 label: t(t.k.file.save),
                                 accelerator: 'CmdOrCtrl+S',
                                 click: () => {
-                                    const state = context.getStore(EditorStore).getState()
-                                    let path: string | null = state.projectPath
+                                    const state = getStore(EditorStore).getState()
+                                    let path: string | null | undefined = state.projectPath
 
                                     if (!path) {
                                         path = remote.dialog.showSaveDialog({
@@ -133,7 +133,7 @@ export default withFleurContext(
                                         if (!path) return
                                     }
 
-                                    context.executeOperation(EditorOps.saveProject, { path })
+                                    executeOperation(EditorOps.saveProject, { path })
                                 },
                             },
                             {
@@ -154,7 +154,7 @@ export default withFleurContext(
                                     // cancelled
                                     if (!path) return
 
-                                    context.executeOperation(EditorOps.saveProject, { path })
+                                    executeOperation(EditorOps.saveProject, { path })
                                 },
                             },
                             { type: 'separator' },
@@ -162,9 +162,9 @@ export default withFleurContext(
                                 label: t(t.k.file.rendering),
                                 accelerator: 'CmdOrCtrl+Shift+R',
                                 click() {
-                                    const comp = context.getStore(EditorStore).getState().activeComp
+                                    const comp = getStore(EditorStore).getState().activeComp
                                     if (!comp) return
-                                    context.executeOperation(EditorOps.renderDestinate, {
+                                    executeOperation(EditorOps.renderDestinate, {
                                         compositionId: comp.id!,
                                     })
                                 },
@@ -233,11 +233,11 @@ export default withFleurContext(
                             enabled: !!activeComp,
                             click: () => {
                                 previewPlaying
-                                    ? context.executeOperation(RendererOps.stopPreview, {})
-                                    : context.executeOperation(RendererOps.startPreview, {
+                                    ? executeOperation(RendererOps.stopPreview)
+                                    : executeOperation(RendererOps.startPreview, {
                                           compositionId: activeComp!.id,
                                           // Delayed get for rendering performance
-                                          beginFrame: context.getStore(EditorStore).getState().currentPreviewFrame,
+                                          beginFrame: getStore(EditorStore).getState().currentPreviewFrame,
                                       })
                             },
                         },
@@ -286,7 +286,7 @@ export default withFleurContext(
                     }
                 }
 
-                this.props.executeOperation(EditorOps.newProject, {})
+                this.props.executeOperation(EditorOps.newProject)
             }
 
             private handleOpenProject = () => {
@@ -333,11 +333,11 @@ export default withFleurContext(
             }
 
             private handleUndo = () => {
-                uiActionUndo(this.props.context)
+                uiActionUndo(this.props.executeOperation)
             }
 
             private handleRedo = () => {
-                uiActionRedo(this.props.context)
+                uiActionRedo(this.props.executeOperation)
             }
         },
     ),

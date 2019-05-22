@@ -55,7 +55,7 @@ export const restoreApplicationPreference = operation(context => {
 export const savePreferences = (() => {
     let timeout: number = -1
 
-    const executeSave = async (context: OperationContext<any>) => {
+    const executeSave = async (context: OperationContext) => {
         const preference = context.getStore(PreferenceStore).dehydrate()
         writeFile(preferencePath, JSON.stringify(preference, null, 2), err => {
             // tslint:disable-next-line:no-console
@@ -77,12 +77,12 @@ export const setAudioVolume = operation(async (context, volume: number) => {
     })
 
     context.dispatch(RendererActions.setAudioVolume, { volume })
-    await context.executeOperation(savePreferences, {})
+    await context.executeOperation(savePreferences)
 })
 
 export const setRendererIgnoreMissingEffectPreference = operation(async (context, { ignore }: { ignore: boolean }) => {
     context.dispatch(PreferenceActions.changePreference, {
         patch: { renderer: { ignoreMissingEffect: ignore } },
     })
-    await context.executeOperation(savePreferences, {})
+    await context.executeOperation(savePreferences)
 })

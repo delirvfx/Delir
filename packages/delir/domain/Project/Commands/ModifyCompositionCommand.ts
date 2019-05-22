@@ -16,14 +16,14 @@ export class ModifyCompositionCommand implements Command {
         this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Composition>
     }
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         context.dispatch(ProjectActions.modifyComposition, {
             targetCompositionId: this.subjectCompositionId,
             patch: this.toPreviousPatch,
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         context.dispatch(ProjectActions.modifyComposition, {
             targetCompositionId: this.subjectCompositionId,
             patch: this.patch,

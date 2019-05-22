@@ -159,7 +159,7 @@ export default withFleurContext(
                 clipId: dataset.clipId,
                 processorId: dataset.effectId,
             })
-            this.props.executeOperation(EditorOps.seekPreviewFrame, {})
+            this.props.executeOperation(EditorOps.seekPreviewFrame)
         }
 
         private handleRemoveClip = ({ dataset }: MenuItemOption<{ clipId: string }>) => {

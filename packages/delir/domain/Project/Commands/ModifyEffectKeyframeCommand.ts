@@ -20,7 +20,7 @@ export class ModifyEffectKeyframeCommand implements Command {
         this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Keyframe>
     }
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.modifyEffectKeyframe, {
@@ -31,7 +31,7 @@ export class ModifyEffectKeyframeCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.modifyEffectKeyframe, {
@@ -42,7 +42,7 @@ export class ModifyEffectKeyframeCommand implements Command {
         })
     }
 
-    private focusToChangedParam(context: OperationContext<any>) {
+    private focusToChangedParam(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveParam, {
             target: {
                 type: 'effect',

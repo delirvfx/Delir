@@ -22,12 +22,12 @@ export const ShortcutHandler = () => {
         }
 
         const activeComp = context.getStore(EditorStore).getActiveComposition()
-        const { previewPlaying } = context.getStore(RendererStore).previewPlaying
+        const { previewPlaying } = context.getStore(RendererStore)
 
         if (!activeComp) return
 
         if (previewPlaying) {
-            context.executeOperation(RendererOps.stopPreview, {})
+            context.executeOperation(RendererOps.stopPreview)
         } else {
             context.executeOperation(RendererOps.startPreview, {
                 compositionId: activeComp.id,
@@ -54,7 +54,7 @@ export const ShortcutHandler = () => {
     const handleShortCutUndo = React.useCallback(
         makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
             e.preventDefault()
-            uiActionUndo(context)
+            uiActionUndo(context.executeOperation)
         }),
         [],
     )
@@ -63,7 +63,7 @@ export const ShortcutHandler = () => {
     const handleShortCutRedo = React.useCallback(
         makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
             e.preventDefault()
-            uiActionRedo(context)
+            uiActionRedo(context.executeOperation)
         }),
         [],
     )
