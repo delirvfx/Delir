@@ -8,8 +8,8 @@ Web Technology driven VFX Application
 - **Movie Production with Programming**
   - First class `p5.js` support for video production
   - Can be make custom post processing plugin with HTML5 Canvas and WebGL
-- Modern and simple software architecture
 - Standalone engine (`@delirvfx/core`) for makes your VFX app
+  - Modern and simple software architecture
 - Works on Web technology for rapid development (Fully TypeScript, HTML5, Canvas and WebGL)
 
 ## Feature
