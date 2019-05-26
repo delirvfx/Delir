@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProjectMigrator Migrate to 2019052601 from 2017091401 1`] = `
+Array [
+  Asset {
+    "fileType": "mp4",
+    "id": "78262d20-af63-4520-abfd-34e85e855618",
+    "name": "BigBuckBunny",
+    "path": "file:///Users/ragg/workspace/delir/packages/delir/utils/Dev/ExampleProject1/big_buck_bunny.mp4",
+  },
+  Asset {
+    "fileType": "mp3",
+    "id": "3748e817-9c43-43d4-be63-b8ddcd25a2fc",
+    "name": "Audio",
+    "path": "file:///Users/ragg/workspace/delir/packages/delir/utils/Dev/ExampleProject1/audio.mp3",
+  },
+  Asset {
+    "fileType": "png",
+    "id": "0bbb7142-e2c2-4a8a-9a98-4adc833bcff1",
+    "name": "Image",
+    "path": "file:///Users/ragg/workspace/delir/packages/delir/utils/Dev/ExampleProject1/image.png",
+  },
+]
+`;
