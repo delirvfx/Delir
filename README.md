@@ -3,8 +3,26 @@ Web Technology driven VFX Application
 
 ![screenshot](https://user-images.githubusercontent.com/8597982/51431908-d5c7c780-1c72-11e9-9f2a-4bee09200ffc.png)
 
-## How to develop Delir plugin
-See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/delir-core/plugin-example)
+## Concept
+
+- **Movie Production with Programming**
+  - First class `p5.js` support for video production
+  - Can be make custom post processing plugin with HTML5 Canvas and WebGL
+- Modern and simple software architecture
+- Standalone engine (`@delirvfx/core`) for makes your VFX app
+- Works on Web technology for rapid development (Fully TypeScript, HTML5, Canvas and WebGL)
+
+## Feature
+
+- Video, Image, Audio, Text and P5.js support
+- Adjustment clip
+- Keyframe animation editor
+  - With Expression support by JavaScript(TypeScript)
+- Post processing plugin support with Canvas2DContext and WebGL(experimental, now in develop)
+- Rendering to mp4(H.264 + aac) with ffmpeg
+
+## How to develop Post processing plugin
+See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/core/plugin-example)
 
 ## For developer
 
