@@ -10,9 +10,6 @@ export default (): webpack.Configuration => ({
     },
     resolve: {
         extensions: ['.js', '.ts'],
-        alias: {
-            net: 'node-libs-browser/mock/net.js',
-        },
     },
     module: {
         rules: [

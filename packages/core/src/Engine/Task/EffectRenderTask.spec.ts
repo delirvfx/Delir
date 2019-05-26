@@ -42,7 +42,7 @@ describe('EffectRenderTask', () => {
                             type: 'post-effect',
                         },
                         engines: {
-                            'delir-core': '*',
+                            '@delirvfx/core': '*',
                         },
                     },
                     type: 'post-effect',

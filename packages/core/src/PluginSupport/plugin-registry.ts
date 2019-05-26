@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import * as Joi from 'joi-browser'
 import * as _ from 'lodash'
 import * as semver from 'semver'
 
@@ -24,7 +24,8 @@ const effectPluginPackageJSONSchema = Joi.object()
         author: [Joi.string(), Joi.array().items(Joi.string())],
         main: Joi.string().optional(),
         engines: Joi.object().keys({
-            'delir-core': Joi.string()
+            'delir-core': Joi.string().regex(SEMVER_REGEXP),
+            '@delirvfx/core': Joi.string()
                 .regex(SEMVER_REGEXP)
                 .required(),
         }),
@@ -41,7 +42,8 @@ export default class PluginRegistry {
     public static validateEffectPluginPackageJSON(packageJSON: any): packageJSON is DelirPluginPackageJson {
         return (
             Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null &&
-            semver.valid(packageJSON.engines['delir-core']) != null &&
+            (semver.valid(packageJSON.engines['delir-core']) != null ||
+                semver.valid(packageJSON.engines['@delirvfx/core']) != null) &&
             semver.valid(packageJSON.version) != null
         )
     }
@@ -66,7 +68,7 @@ export default class PluginRegistry {
 
             const requiredEngineVersion =
                 entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
-            if (!semver.satisfies(engineVersion, requiredEngineVersion)) {
+            if (!semver.satisfies(engineVersion, requiredEngineVersion!)) {
                 throw new PluginLoadFailException(
                     `Plugin \`${entry.id}\` not compatible to current @delirvfx/core version`,
                 )

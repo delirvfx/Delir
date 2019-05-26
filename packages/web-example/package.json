@@ -10,7 +10,7 @@
   "dependencies": {
     "@delirvfx/core": "*",
     "lodash-es": "4.17.11",
-    "node-libs-browser": "2.2.0"
+    "random-emoji": "1.0.2"
   },
   "devDependencies": {
     "@types/lodash-es": "4.17.3",

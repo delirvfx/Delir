@@ -9,7 +9,7 @@ describe('PluginRegistry', () => {
                 author: 'ragg <ragg.devpr@gmail.com>',
                 main: 'index.js',
                 engines: {
-                    'delir-core': '0.0.0',
+                    '@delirvfx/core': '0.0.0',
                     node: '10.0.0',
                 },
                 delir: {
@@ -29,8 +29,8 @@ describe('PluginRegistry', () => {
                 version: '0.0.0',
                 author: 'ragg <ragg.devpr@gmail.com>',
                 engines: {
-                    'delir-core': '0.0.0',
-                    // 'delir-core': '0.0.0.1',
+                    '@delirvfx/core': '0.0.0',
+                    // '@delirvfx/core': '0.0.0.1',
                 },
                 delir: {
                     name: 'Effect',
