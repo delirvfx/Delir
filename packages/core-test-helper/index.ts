@@ -13,7 +13,7 @@ export const mockAsset = (props: Partial<LooseIdType<Entity.Asset>> = {}) =>
     safeAssign(
         new Entity.Asset({
             name: 'mock.png',
-            path: '/mocked/mock.png',
+            path: 'file:///mocked/mock.png',
             fileType: 'png',
         }),
         props as Partial<Entity.Asset>,
