@@ -30,6 +30,8 @@
   },
   "dependencies": {
     "@delirvfx/core": "*",
+    "@fleur/fleur": "1.0.0",
+    "@fleur/fleur-react": "1.0.0",
     "@ragg/deream": "*",
     "@ragg/fleur": "0.0.16",
     "@ragg/fleur-react": "0.0.17",

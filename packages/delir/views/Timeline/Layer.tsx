@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
@@ -42,7 +42,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
     userCodeException: getStore(RendererStore).getUserCodeException(),
 })
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class Layer extends React.Component<Props, State> {
             public state: State = {
@@ -160,7 +160,7 @@ export default withComponentContext(
                     return
                 }
 
-                this.props.executeOperation(EditorOps.clearDragEntity, {})
+                this.props.executeOperation(EditorOps.clearDragEntity)
                 this.setState({ dragovered: false })
 
                 e.preventDefault()
@@ -176,13 +176,13 @@ export default withComponentContext(
                 const isChildClip = !!layer.clips.find(clip => clip.id! === dragEntity.clip.id!)
 
                 if (isChildClip) {
-                    this.props.executeOperation(EditorOps.clearDragEntity, {})
+                    this.props.executeOperation(EditorOps.clearDragEntity)
                 } else {
                     this.props.executeOperation(ProjectOps.moveClipToLayer, {
                         clipId: dragEntity.clip.id!,
                         destLayerId: this.props.layer.id!,
                     })
-                    this.props.executeOperation(EditorOps.clearDragEntity, {})
+                    this.props.executeOperation(EditorOps.clearDragEntity)
                 }
             }
 

@@ -1,4 +1,4 @@
-import { listen, Store } from '@ragg/fleur'
+import { listen, Store } from '@fleur/fleur'
 import * as _ from 'lodash'
 
 import { PreferenceActions } from './actions'

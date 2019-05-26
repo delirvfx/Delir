@@ -1,6 +1,6 @@
 import * as Delir from '@delirvfx/core'
+import { listen, Store } from '@fleur/fleur'
 import deream, { RenderingProgress } from '@ragg/deream'
-import { listen, Store } from '@ragg/fleur'
 import { remote } from 'electron'
 import { dirname } from 'path'
 

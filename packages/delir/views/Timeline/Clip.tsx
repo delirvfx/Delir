@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
@@ -36,7 +36,7 @@ interface State {
 
 type Props = OwnProps & ConnectedProps & ContextProp
 
-export default withComponentContext(
+export default withFleurContext(
     class Clip extends React.Component<Props, State> {
         public state: State = {
             left: this.props.left,
@@ -159,7 +159,7 @@ export default withComponentContext(
                 clipId: dataset.clipId,
                 processorId: dataset.effectId,
             })
-            this.props.executeOperation(EditorOps.seekPreviewFrame, {})
+            this.props.executeOperation(EditorOps.seekPreviewFrame)
         }
 
         private handleRemoveClip = ({ dataset }: MenuItemOption<{ clipId: string }>) => {

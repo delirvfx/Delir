@@ -1,4 +1,4 @@
-import { action, actions } from '@ragg/fleur'
+import { action, actions } from '@fleur/fleur'
 
 export const RendererActions = actions('Renderer', {
     addPlugins: action<{ plugins: any[] }>(),

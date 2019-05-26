@@ -1,4 +1,4 @@
-import { operation } from '@ragg/fleur'
+import { operation } from '@fleur/fleur'
 import { remote } from 'electron'
 import { join } from 'path'
 

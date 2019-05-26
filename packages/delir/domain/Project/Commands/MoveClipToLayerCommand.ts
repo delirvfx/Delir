@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { OperationContext } from '@ragg/fleur'
+import { OperationContext } from '@fleur/fleur'
 
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
@@ -13,7 +13,7 @@ export class MoveClipToLayerCommand implements Command {
         private parentCompositionId: string,
     ) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.moveClipToLayer, {
@@ -22,7 +22,7 @@ export class MoveClipToLayerCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.moveClipToLayer, {
@@ -31,7 +31,7 @@ export class MoveClipToLayerCommand implements Command {
         })
     }
 
-    private focusToParentComposition(context: OperationContext<any>) {
+    private focusToParentComposition(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })

@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { action, actions } from '@ragg/fleur'
+import { action, actions } from '@fleur/fleur'
 
 import { DragEntity } from './operations'
 import { ClipboardEntry, ParameterTarget } from './types'
