@@ -1,6 +1,7 @@
-import { Engine, Entity, Values } from '@delirvfx/core'
+import { Engine, Entity, PluginRegistry, Values } from '@delirvfx/core'
 import { RenderingStatus } from '@delirvfx/core/typings/Engine/IRenderingStreamObserver'
 import { throttle } from 'lodash-es'
+import { ExamplePlugin } from './ExamplePlugin'
 
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.createElement('canvas')
@@ -8,7 +9,31 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.height = 360
     document.body.appendChild(canvas)
 
+    const pluginRegistry = new PluginRegistry()
     const engine = new Engine.Engine()
+    engine.pluginRegistry = pluginRegistry
+
+    pluginRegistry.registerPlugin([
+        {
+            type: 'post-effect',
+            id: 'example-plugin',
+            class: ExamplePlugin,
+            packageJson: {
+                name: 'example-plugin',
+                author: 'Mitsuka Hanakura',
+                version: '0.0.0',
+                main: 'index.js',
+                engines: {
+                    '@delirvfx/core': '>= 0.7.3',
+                },
+                delir: {
+                    name: 'Example plugin',
+                    type: 'post-effect' as const,
+                },
+            },
+        },
+    ])
+
     const project = new Entity.Project({})
     const asset = new Entity.Asset({
         name: 'Asset',
@@ -28,10 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
         durationFrames: 100,
     })
     project.addComposition(comp)
-
     comp.addLayer(new Entity.Layer({ name: 'Layer' }))
-    comp.layers[0].addClip(new Entity.Clip({ renderer: 'image', placedFrame: 0, durationFrames: 100 }))
-    comp.layers[0].clips[0].addKeyframe(
+
+    const clip = new Entity.Clip({ renderer: 'image', placedFrame: 0, durationFrames: 100 })
+    comp.layers[0].addClip(clip)
+
+    clip.addKeyframe(
         'source',
         new Entity.Keyframe({
             frameOnClip: 0,
@@ -39,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }),
     )
 
-    comp.layers[0].clips[0].addKeyframe(
+    clip.addKeyframe(
         'x',
         new Entity.Keyframe({
             frameOnClip: 0,
@@ -47,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }),
     )
 
-    comp.layers[0].clips[0].addKeyframe(
+    clip.addKeyframe(
         'x',
         new Entity.Keyframe({
             frameOnClip: 100,
@@ -55,7 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }),
     )
 
-    comp.layers[0].clips[0].setExpression('x', new Values.Expression('javascript', 'Math.random() * currentValue'))
+    clip.setExpression('x', new Values.Expression('javascript', 'Math.random() * currentValue'))
+
+    clip.addEffect(new Entity.Effect({ processor: 'example-plugin' }))
 
     // tslint:disable-next-line no-console
     const logger = throttle((status: RenderingStatus) => console.log(status), 2000)
