@@ -68,7 +68,7 @@ export default class PluginRegistry {
 
             const requiredEngineVersion =
                 entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
-            if (!semver.satisfies(engineVersion, requiredEngineVersion)) {
+            if (!semver.satisfies(engineVersion, requiredEngineVersion!)) {
                 throw new PluginLoadFailException(
                     `Plugin \`${entry.id}\` not compatible to current @delirvfx/core version`,
                 )
