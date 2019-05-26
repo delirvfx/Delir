@@ -80,7 +80,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
         }
 
         const video = (this._video = document.createElement('video'))
-        this._video.src = `file://${parameters.source.path}`
+        this._video.src = parameters.source.path
         this._video.loop = parameters.loop
         this._video.load()
         this._video.currentTime = -1

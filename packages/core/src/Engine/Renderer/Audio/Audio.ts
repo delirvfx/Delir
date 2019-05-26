@@ -68,8 +68,8 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
 
         // `AudioContext` cause depletion, use OfflineAudioContext
         const audioCtx = new OfflineAudioContext(1, context.audioChannels, context.samplingRate)
-        const content = fs.readFileSync(params.source.path)
-        const audioBuffer = await audioCtx.decodeAudioData(content.buffer as ArrayBuffer)
+        const content = await (await fetch(params.source.path)).arrayBuffer()
+        const audioBuffer = await audioCtx.decodeAudioData(content)
         const buffers = _.times(audioBuffer.numberOfChannels, ch => audioBuffer.getChannelData(ch))
 
         await resampling(audioBuffer.sampleRate, context.samplingRate, buffers)

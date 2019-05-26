@@ -73,7 +73,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams> {
         }
 
         this._image = new Image()
-        this._image.src = `file://${parameters.source.path}`
+        this._image.src = parameters.source.path
 
         await new Promise((resolve, reject) => {
             this._image!.addEventListener('load', () => resolve(), {

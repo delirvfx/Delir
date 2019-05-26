@@ -291,7 +291,7 @@ export default withComponentContext(
                     this.props.executeOperation(ProjectOps.addAsset, {
                         name: file.name,
                         fileType: path.extname(file.name).slice(1),
-                        path: file.path,
+                        path: 'file://' + file.path,
                     })
                 })
             }

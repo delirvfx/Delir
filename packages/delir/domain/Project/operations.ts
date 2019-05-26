@@ -420,6 +420,7 @@ export const addAsset = operation(
         },
     ) => {
         const asset = new Delir.Entity.Asset({ name, fileType, path })
+
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new AddAssetCommand(asset),
         })
