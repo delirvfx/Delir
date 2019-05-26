@@ -48,7 +48,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
             })
     }
 
-    private _audio: {
+    private audio: {
         sourcePath: string
         numberOfChannels: number
         buffers: Float32Array[]
@@ -58,11 +58,11 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
         const params = context.parameters
 
         if (!params.source) {
-            this._audio = null
+            this.audio = null
             return
         }
 
-        if (this._audio && this._audio.sourcePath === params.source.path) {
+        if (this.audio && this.audio.sourcePath === params.source.path) {
             return
         }
 
@@ -74,7 +74,7 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
 
         await resampling(audioBuffer.sampleRate, context.samplingRate, buffers)
 
-        this._audio = {
+        this.audio = {
             sourcePath: params.source.path,
             numberOfChannels: audioBuffer.numberOfChannels,
             buffers,
@@ -87,11 +87,11 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
 
     public async renderAudio(context: ClipRenderContext<AudioRendererParam>) {
         if (!context.isAudioBufferingNeeded) return
-        if (!this._audio) return
+        if (!this.audio) return
 
         const volume = _.clamp(context.parameters.volume / 100, 0, 1)
 
-        const source = this._audio
+        const source = this.audio
         const destBuffers = context.destAudioBuffer
 
         // Placement offset

@@ -69,21 +69,21 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
             })
     }
 
-    private _video: HTMLVideoElement | null
+    private video: HTMLVideoElement | null
 
     public async beforeRender(context: ClipPreRenderContext<VideoRendererParam>) {
         const parameters = context.parameters as any
 
         if (context.parameters.source == null) {
-            this._video = null
+            this.video = null
             return
         }
 
-        const video = (this._video = document.createElement('video'))
-        this._video.src = parameters.source.path
-        this._video.loop = parameters.loop
-        this._video.load()
-        this._video.currentTime = -1
+        const video = (this.video = document.createElement('video'))
+        this.video.src = parameters.source.path
+        this.video.loop = parameters.loop
+        this.video.load()
+        this.video.currentTime = -1
 
         await new Promise((resolve, reject) => {
             const onLoaded = () => {
@@ -114,7 +114,7 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
 
         const param = context.parameters
         const ctx = context.destCanvas.getContext('2d')!
-        const video = this._video
+        const video = this.video
 
         if (!video) return
 

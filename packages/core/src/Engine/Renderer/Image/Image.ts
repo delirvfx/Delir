@@ -62,37 +62,37 @@ export default class ImageLayer implements IRenderer<ImageRendererParams> {
             })
     }
 
-    private _image: HTMLImageElement | null = null
+    private image: HTMLImageElement | null = null
 
     public async beforeRender(context: ClipPreRenderContext<ImageRendererParams>) {
         const parameters = context.parameters
 
         if (!parameters.source) {
-            this._image = null
+            this.image = null
             return
         }
 
-        this._image = new Image()
-        this._image.src = parameters.source.path
+        this.image = new Image()
+        this.image.src = parameters.source.path
 
         await new Promise((resolve, reject) => {
-            this._image!.addEventListener('load', () => resolve(), {
+            this.image!.addEventListener('load', () => resolve(), {
                 once: true,
             } as any)
-            this._image!.addEventListener(
+            this.image!.addEventListener(
                 'error',
-                () => reject(new Error(`ImageLayer: Image not found (URL: ${this._image!.src})`)),
+                () => reject(new Error(`ImageLayer: Image not found (URL: ${this.image!.src})`)),
                 { once: true } as any,
             )
         })
     }
 
     public async render(context: ClipRenderContext<ImageRendererParams>) {
-        if (!this._image) return
+        if (!this.image) return
 
         const param = context.parameters
         const ctx = context.destCanvas.getContext('2d')!
-        const img = this._image
+        const img = this.image
         const rad = (param.rotate * Math.PI) / 180
 
         ctx.globalAlpha = _.clamp(param.opacity, 0, 100) / 100
