@@ -1,3 +1,7 @@
+### 0.7.3
+- [Experimental] `@delirvfx/core` now can be used as standalone package.
+- Export core version from `version`
+
 ### 0.7.1, 0.7.2
 - Fix typing publishing
 
