@@ -11,7 +11,7 @@ Object {
           "fileType": "png",
           "id": "uuid-asset",
           "name": "mock.png",
-          "path": "/mocked/mock.png",
+          "path": "file:///mocked/mock.png",
         },
       },
     ],
@@ -163,7 +163,7 @@ Object {
         },
       },
     ],
-    "formatVersion": "2017091401",
+    "formatVersion": "2019052601",
   },
 }
 `;

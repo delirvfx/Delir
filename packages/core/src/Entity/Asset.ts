@@ -17,6 +17,7 @@ class Asset implements AssetProps {
     /** Asset file extension (without `.` prefix) */
     public fileType: string
     public name: string
+    /** Full file path with schema (likes 'file:///path/to/asset.mp4) */
     public path: string
 
     constructor(props: AssetProps) {

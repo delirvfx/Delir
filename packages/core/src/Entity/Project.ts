@@ -9,7 +9,7 @@ export interface ProjectProps {
 }
 
 export class Project implements ProjectProps {
-    public readonly formatVersion: string = '2017091401'
+    public readonly formatVersion: string = '2019052601'
     public assets: ReadonlyArray<Asset> = []
     public compositions: ReadonlyArray<Composition> = []
 

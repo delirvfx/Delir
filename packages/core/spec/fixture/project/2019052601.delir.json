@@ -1,0 +1,300 @@
+{
+  "__type": "entity:Project",
+  "__value": {
+    "formatVersion": "2017091401",
+    "assets": [
+      {
+        "__type": "entity:Asset",
+        "__value": {
+          "id": "78262d20-af63-4520-abfd-34e85e855618",
+          "name": "BigBuckBunny",
+          "fileType": "mp4",
+          "path": "file:///Users/ragg/workspace/delir/packages/delir/utils/Dev/ExampleProject1/big_buck_bunny.mp4"
+        }
+      },
+      {
+        "__type": "entity:Asset",
+        "__value": {
+          "id": "3748e817-9c43-43d4-be63-b8ddcd25a2fc",
+          "name": "Audio",
+          "fileType": "mp3",
+          "path": "file:///Users/ragg/workspace/delir/packages/delir/utils/Dev/ExampleProject1/audio.mp3"
+        }
+      },
+      {
+        "__type": "entity:Asset",
+        "__value": {
+          "id": "0bbb7142-e2c2-4a8a-9a98-4adc833bcff1",
+          "name": "Image",
+          "fileType": "png",
+          "path": "file:///Users/ragg/workspace/delir/packages/delir/utils/Dev/ExampleProject1/image.png"
+        }
+      }
+    ],
+    "compositions": [
+      {
+        "__type": "entity:Composition",
+        "__value": {
+          "layers": [
+            {
+              "__type": "entity:Layer",
+              "__value": {
+                "clips": [
+                  {
+                    "__type": "entity:Clip",
+                    "__value": {
+                      "keyframes": {},
+                      "expressions": {},
+                      "effects": [
+                        {
+                          "__type": "entity:Effect",
+                          "__value": {
+                            "keyframes": {},
+                            "expressions": {},
+                            "referenceName": null,
+                            "id": "35f0f3b1-cbb1-42fc-84e1-d12c8f64327b",
+                            "processor": "@ragg/delir-posteffect-chromakey"
+                          }
+                        }
+                      ],
+                      "id": "a9051c4f-d29c-41e9-aa63-5245eaf2b0d0",
+                      "placedFrame": 0,
+                      "durationFrames": 300,
+                      "renderer": "adjustment"
+                    }
+                  }
+                ],
+                "id": "a0ddb7e0-2f68-4ccc-b1a5-1f0a170ea31b",
+                "name": "Audio"
+              }
+            },
+            {
+              "__type": "entity:Layer",
+              "__value": {
+                "clips": [
+                  {
+                    "__type": "entity:Clip",
+                    "__value": {
+                      "keyframes": {
+                        "text": [
+                          {
+                            "__type": "entity:Keyframe",
+                            "__value": {
+                              "easeInParam": [
+                                1,
+                                1
+                              ],
+                              "easeOutParam": [
+                                0,
+                                0
+                              ],
+                              "id": "8930d590-e735-431b-acf0-1629b36c6b3f",
+                              "frameOnClip": 0,
+                              "value": "test"
+                            }
+                          }
+                        ],
+                        "source": [
+                          {
+                            "__type": "entity:Keyframe",
+                            "__value": {
+                              "easeInParam": [
+                                1,
+                                1
+                              ],
+                              "easeOutParam": [
+                                0,
+                                0
+                              ],
+                              "id": "ceaefa04-be43-485e-9ccd-a9f88ec7d0a8",
+                              "frameOnClip": 0,
+                              "value": {
+                                "assetId": "78262d20-af63-4520-abfd-34e85e855618"
+                              }
+                            }
+                          }
+                        ],
+                        "loop": [
+                          {
+                            "__type": "entity:Keyframe",
+                            "__value": {
+                              "easeInParam": [
+                                1,
+                                1
+                              ],
+                              "easeOutParam": [
+                                0,
+                                0
+                              ],
+                              "id": "3d6efba8-5c1b-4d2b-82df-72afd401fe11",
+                              "frameOnClip": 0,
+                              "value": true
+                            }
+                          }
+                        ],
+                        "color": [
+                          {
+                            "__type": "entity:Keyframe",
+                            "__value": {
+                              "easeInParam": [
+                                1,
+                                1
+                              ],
+                              "easeOutParam": [
+                                0,
+                                0
+                              ],
+                              "id": "c541dd9f-9568-446b-80fe-c15f7824168e",
+                              "frameOnClip": 0,
+                              "value": {
+                                "__type": "value:ColorRGBA",
+                                "__value": {
+                                  "_red": 0,
+                                  "_green": 0,
+                                  "_blue": 0,
+                                  "_alpha": 1
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "expressions": {
+                        "text": {
+                          "__type": "value:Expression",
+                          "__value": {
+                            "language": "typescript",
+                            "code": "`time:${time}\\nframe:${frame}`"
+                          }
+                        }
+                      },
+                      "effects": [],
+                      "id": "18e7e762-6573-4870-9042-3413db72fc92",
+                      "placedFrame": 0,
+                      "durationFrames": 300,
+                      "renderer": "text"
+                    }
+                  }
+                ],
+                "id": "63d0293a-9a7e-451b-9a20-8b9f6a587c0a",
+                "name": "🔥 FIRE 🔥"
+              }
+            },
+            {
+              "__type": "entity:Layer",
+              "__value": {
+                "clips": [],
+                "id": "8029b087-d6a5-4c26-873f-020c5133891a",
+                "name": "NYAN = ^ . ^ = CAT"
+              }
+            },
+            {
+              "__type": "entity:Layer",
+              "__value": {
+                "clips": [
+                  {
+                    "__type": "entity:Clip",
+                    "__value": {
+                      "keyframes": {
+                        "sketch": [
+                          {
+                            "__type": "entity:Keyframe",
+                            "__value": {
+                              "easeInParam": [
+                                1,
+                                1
+                              ],
+                              "easeOutParam": [
+                                0,
+                                0
+                              ],
+                              "id": "b2b63621-1ed3-4baa-8122-6e91a9028c35",
+                              "frameOnClip": 0,
+                              "value": {
+                                "__type": "value:Expression",
+                                "__value": {
+                                  "language": "javascript",
+                                  "code": "\n// Link: https://p5js.org/examples/simulate-snowflakes.html\nlet snowflakes = []; // array to hold snowflake objects\nlet img\n\nfunction setup() {\n    // createCanvas(400, 600);\n    // fill(240);\n    noStroke();\n    img = loadImage('delir:0bbb7142-e2c2-4a8a-9a98-4adc833bcff1')\n}\n\nfunction draw() {\n    // background('brown');\n    clear();\n    image(img, 0, 0, img.width / 6, img.height / 6);\n    let t = frameCount / 60; // update time\n\n    // create a random number of snowflakes each frame\n    for (var i = 0; i < random(5); i++) {\n        snowflakes.push(new snowflake()); // append snowflake object\n    }\n\n    // loop through snowflakes with a for..of loop\n    for (let flake of snowflakes) {\n        flake.update(t); // update snowflake position\n        flake.display(); // draw snowflake\n    }\n}\n\n// snowflake class\nfunction snowflake() {\n    // initialize coordinates\n    this.posX = 0;\n    this.posY = random(-50, 0);\n    this.initialangle = random(0, 2 * PI);\n    this.size = random(2, 5);\n\n    // radius of snowflake spiral\n    // chosen so the snowflakes are uniformly spread out in area\n    this.radius = sqrt(random(pow(width / 2, 2)));\n\n    this.update = function(time) {\n        // x position follows a circle\n        let w = 0.6; // angular speed\n        let angle = w * time + this.initialangle;\n        this.posX = width / 2 + this.radius * sin(angle);\n\n        // different size snowflakes fall at slightly different y speeds\n        this.posY += pow(this.size, 0.5);\n\n        // delete snowflake if past end of screen\n        if (this.posY > height) {\n            let index = snowflakes.indexOf(this);\n            snowflakes.splice(index, 1);\n        }\n    };\n\n    this.display = function() {\n        ellipse(this.posX, this.posY, this.size);\n    };\n}\n"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "expressions": {},
+                      "effects": [],
+                      "id": "53a5c6e4-9bb8-4c4f-a6e7-02c790cae95c",
+                      "placedFrame": 0,
+                      "durationFrames": 300,
+                      "renderer": "p5js"
+                    }
+                  }
+                ],
+                "id": "b9ecc990-a5c5-4cfc-891b-7953adac2324",
+                "name": "VERY CUTE 🐰-CHAN"
+              }
+            },
+            {
+              "__type": "entity:Layer",
+              "__value": {
+                "clips": [
+                  {
+                    "__type": "entity:Clip",
+                    "__value": {
+                      "keyframes": {
+                        "source": [
+                          {
+                            "__type": "entity:Keyframe",
+                            "__value": {
+                              "easeInParam": [
+                                1,
+                                1
+                              ],
+                              "easeOutParam": [
+                                0,
+                                0
+                              ],
+                              "id": "e4bfa068-bb54-4c2e-9fda-70355af9149b",
+                              "frameOnClip": 0,
+                              "value": {
+                                "assetId": "78262d20-af63-4520-abfd-34e85e855618"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      "expressions": {},
+                      "effects": [],
+                      "id": "00c7c322-394d-4eb3-be49-5c31ce2a81c6",
+                      "placedFrame": 0,
+                      "durationFrames": 300,
+                      "renderer": "video"
+                    }
+                  }
+                ],
+                "id": "e7ec7d37-0015-40e2-943d-24b8225c085a",
+                "name": "GENERATIVE"
+              }
+            }
+          ],
+          "id": "784fda14-4075-4f85-9aab-d9413d3b2c1a",
+          "name": "Master Composition",
+          "width": 640,
+          "height": 360,
+          "framerate": 30,
+          "durationFrames": 300,
+          "audioChannels": 2,
+          "samplingRate": 48000,
+          "backgroundColor": {
+            "__type": "value:ColorRGB",
+            "__value": {
+              "_red": 0,
+              "_green": 188,
+              "_blue": 255
+            }
+          }
+        }
+      }
+    ]
+  }
+}
