@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import * as Joi from 'joi-browser'
 import * as _ from 'lodash'
 import * as semver from 'semver'
 
