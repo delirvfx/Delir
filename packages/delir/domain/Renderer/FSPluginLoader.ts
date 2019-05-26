@@ -3,8 +3,7 @@ import * as _ from 'lodash'
 import * as path from 'path'
 import * as semver from 'semver'
 
-import { PluginBase } from '@delirvfx/core'
-import * as DelirCorePackageJson from '@delirvfx/core/package.json'
+import { PluginBase, version as engineVersion } from '@delirvfx/core'
 import { DelirPluginPackageJson, PluginEntry } from '@delirvfx/core/src/PluginSupport/types'
 
 import PluginScriptLoader from './PluginScriptLoader'
@@ -54,8 +53,8 @@ export default class FSPluginLoader {
                         throw new Error(`Duplicate plugin ${json.name}`)
                     }
 
-                    const engineVersion = json.engines['@delirvfx/core'] || json.engines['delir-core']
-                    if (!semver.satisfies(DelirCorePackageJson.version, engineVersion)) {
+                    const requiredEngineVersion = json.engines['@delirvfx/core'] || json.engines['delir-core']
+                    if (!semver.satisfies(engineVersion, requiredEngineVersion)) {
                         throw new Error(`Plugin \`${json.name}\` not compatible to current @delirvfx/core version`)
                     }
 
