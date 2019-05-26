@@ -19,11 +19,11 @@ install:
     - rm -rf ./node_modules/speaker
 
 script:
-    - yarn test-front
     - cd packages/core
     - yarn prepublishOnly
     - cd -
     - yarn test-core
+    - yarn test-front
 
 addons:
     apt:
