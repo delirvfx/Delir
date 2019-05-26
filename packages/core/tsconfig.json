@@ -1,9 +1,9 @@
 {
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
-        "baseUrl": "./src",
+        "baseUrl": "./src/",
         "allowJs": false,
-        "resolveJsonModule": true
+        "resolveJsonModule": false
     },
     "files": ["./src/index", "./src/declarations.d.ts"]
 }
