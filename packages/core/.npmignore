@@ -2,7 +2,8 @@
 /spec
 /src
 /CHANGELOG.md
+/jest.config.js
+/plugin-example.zip
 /SCHEMA_CHANGELOG.md
 /tsconfig.json
 /tsconfig.test.json
-/jext.config.js
