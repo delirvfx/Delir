@@ -10,7 +10,7 @@ import PluginAssertionFailedException from '../Exceptions/plugin-assertion-faile
 import PluginLoadFailException from '../Exceptions/plugin-load-fail-exception'
 import UnknownPluginReferenceException from '../Exceptions/unknown-plugin-reference-exception'
 
-import * as DelirCorePackageJson from '../../package.json'
+const { version: engineVersion } = require('../../package.json')
 
 // SEE: https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39
 const SEMVER_REGEXP = /^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
@@ -64,8 +64,9 @@ export default class PluginRegistry {
             //     throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
             // }
 
-            const engineVersion = entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
-            if (!semver.satisfies(DelirCorePackageJson.version, engineVersion)) {
+            const requiredEngineVersion =
+                entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
+            if (!semver.satisfies(engineVersion, requiredEngineVersion)) {
                 throw new PluginLoadFailException(
                     `Plugin \`${entry.id}\` not compatible to current @delirvfx/core version`,
                 )

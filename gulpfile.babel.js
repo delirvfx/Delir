@@ -220,6 +220,8 @@ export function compileRendererJs(done) {
                     // Disable React development build for performance measurement
                     react: 'react/cjs/react.production.min.js',
                     'react-dom': 'react-dom/cjs/react-dom.production.min.js',
+                    // Using fresh development packages always
+                    '@delirvfx/core': join(paths.src.core, 'src/index.ts'),
                 },
             },
             module: {

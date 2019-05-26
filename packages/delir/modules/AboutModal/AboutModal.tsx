@@ -1,3 +1,4 @@
+import { version } from '@delirvfx/core'
 import * as React from 'react'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 
@@ -60,7 +61,7 @@ const AboutModal = (props: { onClosed: () => void }) => {
                         <dd>
                             Electron: {process.versions.electron} / Node.js: {process.versions.node}
                             <br />
-                            @delirvfx/core: {corePackageJson.version}
+                            @delirvfx/core: {version}
                         </dd>
                     </dl>
                 </TabPanel>

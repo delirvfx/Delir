@@ -17,6 +17,8 @@ import ProjectMigrator from './Migration/ProjectMigrator'
 
 import * as Entity from './Entity'
 
+const { version } = require('../package.json')
+
 export {
     // Core (Namaspaces)
     Entity,
@@ -39,4 +41,5 @@ export {
     Exporter,
     // Types
     AnyParameterTypeDescriptor,
+    version,
 }
