@@ -24,7 +24,8 @@ const effectPluginPackageJSONSchema = Joi.object()
         author: [Joi.string(), Joi.array().items(Joi.string())],
         main: Joi.string().optional(),
         engines: Joi.object().keys({
-            'delir-core': Joi.string()
+            'delir-core': Joi.string().regex(SEMVER_REGEXP),
+            '@delirvfx/core': Joi.string()
                 .regex(SEMVER_REGEXP)
                 .required(),
         }),
@@ -41,7 +42,8 @@ export default class PluginRegistry {
     public static validateEffectPluginPackageJSON(packageJSON: any): packageJSON is DelirPluginPackageJson {
         return (
             Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null &&
-            semver.valid(packageJSON.engines['delir-core']) != null &&
+            (semver.valid(packageJSON.engines['delir-core']) != null ||
+                semver.valid(packageJSON.engines['@delirvfx/core']) != null) &&
             semver.valid(packageJSON.version) != null
         )
     }
