@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { operation } from '@ragg/fleur'
+import { operation } from '@fleur/fleur'
 import { remote } from 'electron'
 import * as fs from 'fs-extra'
 import * as _ from 'lodash'
@@ -25,7 +25,7 @@ export type DragEntity =
 // App services
 //
 
-export const openPluginDirectory = operation((context, arg: {}) => {
+export const openPluginDirectory = operation(context => {
     const userDir = remote.app.getPath('appData')
     const pluginsDir = path.join(userDir, 'delir/plugins')
     remote.shell.openItem(pluginsDir)
@@ -50,7 +50,7 @@ export const setDragEntity = operation((context, arg: { entity: DragEntity }) =>
     context.dispatch(EditorActions.setDragEntity, arg.entity)
 })
 
-export const clearDragEntity = operation((context, arg: {}) => {
+export const clearDragEntity = operation(context => {
     context.dispatch(EditorActions.clearDragEntity, {})
 })
 
@@ -97,7 +97,9 @@ export const changeActiveComposition = operation((context, { compositionId }: { 
 })
 
 export const addOrRemoveSelectClip = operation((context, args: { clipIds: string[] }) => {
-    context.dispatch(EditorActions.addOrRemoveSelectClip, { clipIds: args.clipIds })
+    context.dispatch(EditorActions.addOrRemoveSelectClip, {
+        clipIds: args.clipIds,
+    })
 })
 
 export const changeSelectClip = operation((context, { clipIds }: { clipIds: string[] }) => {

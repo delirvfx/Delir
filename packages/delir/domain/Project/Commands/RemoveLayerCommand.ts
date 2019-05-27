@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { OperationContext } from '@ragg/fleur'
+import { OperationContext } from '@fleur/fleur'
 
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
@@ -12,7 +12,7 @@ export class RemoveLayerCommand implements Command {
         private beforeRemoveIndex: number,
     ) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.addLayer, {
@@ -22,7 +22,7 @@ export class RemoveLayerCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.removeLayer, {
@@ -30,7 +30,7 @@ export class RemoveLayerCommand implements Command {
         })
     }
 
-    private focusToParentComposition(context: OperationContext<any>) {
+    private focusToParentComposition(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })

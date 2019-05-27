@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { operation } from '@ragg/fleur'
+import { operation } from '@fleur/fleur'
 import * as _ from 'lodash'
 import * as uuid from 'uuid'
 import { safeAssign } from '../../utils/safeAssign'
@@ -420,6 +420,7 @@ export const addAsset = operation(
         },
     ) => {
         const asset = new Delir.Entity.Asset({ name, fileType, path })
+
         await context.executeOperation(HistoryOps.pushHistory, {
             command: new AddAssetCommand(asset),
         })

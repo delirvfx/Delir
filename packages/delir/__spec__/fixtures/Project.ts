@@ -11,25 +11,25 @@ const project = new Delir.Entity.Project({})
 const movieAsset = new Delir.Entity.Asset({
     name: 'Movie',
     fileType: 'mp4',
-    path: join(process.cwd(), 'video.mp4'),
+    path: 'file://' + join(process.cwd(), 'video.mp4'),
 })
 
 const audioAsset = new Delir.Entity.Asset({
     name: 'Audio',
     fileType: 'mp3',
-    path: join(process.cwd(), 'audio.mp3'),
+    path: 'file://' + join(process.cwd(), 'audio.mp3'),
 })
 
 const audioAsset2 = new Delir.Entity.Asset({
     name: 'Audio',
     fileType: 'mp3',
-    path: join(process.cwd(), 'audio.mp3'),
+    path: 'file://' + join(process.cwd(), 'audio.mp3'),
 })
 
 const imageAsset = new Delir.Entity.Asset({
     name: 'Image',
     fileType: 'jpg',
-    path: join(process.cwd(), 'image.jpg'),
+    path: 'file://' + join(process.cwd(), 'image.jpg'),
 })
 
 // Maser Composition

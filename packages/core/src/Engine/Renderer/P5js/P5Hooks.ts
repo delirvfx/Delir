@@ -31,7 +31,7 @@ export default class P5Hooks {
         const match = /^delir:(.+)/.exec(path)
 
         if (match) {
-            path = 'file://' + this.resolver.resolveAsset(match[1])!.path
+            path = this.resolver.resolveAsset(match[1])!.path
         }
 
         return P5.prototype.loadImage.call(this.p5, path, successCallback, failureCallback)

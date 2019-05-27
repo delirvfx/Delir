@@ -1,4 +1,4 @@
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as Electron from 'electron'
 import { remote } from 'electron'
 import * as React from 'react'
@@ -24,7 +24,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
     previewPlaying: getStore(RendererStore).previewPlaying,
 })
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class AppMenu extends React.Component<Props, State> {
             public state: State = {
@@ -62,7 +62,7 @@ export default withComponentContext(
             }
 
             private setApplicationMenu() {
-                const { context, previewPlaying } = this.props
+                const { previewPlaying, executeOperation, getStore } = this.props
                 const { devToolsFocused } = this.state
                 const { activeComp } = this.props.editor
                 const menu: Electron.MenuItemConstructorOptions[] = []
@@ -83,7 +83,7 @@ export default withComponentContext(
                         { type: 'separator' },
                         {
                             label: t(t.k.appMenu.openPluginDir),
-                            click: () => context.executeOperation(EditorOps.openPluginDirectory, {}),
+                            click: () => executeOperation(EditorOps.openPluginDirectory),
                         },
                         { type: 'separator' },
                         {
@@ -114,8 +114,8 @@ export default withComponentContext(
                                 label: t(t.k.file.save),
                                 accelerator: 'CmdOrCtrl+S',
                                 click: () => {
-                                    const state = context.getStore(EditorStore).getState()
-                                    let path: string | null = state.projectPath
+                                    const state = getStore(EditorStore).getState()
+                                    let path: string | null | undefined = state.projectPath
 
                                     if (!path) {
                                         path = remote.dialog.showSaveDialog({
@@ -133,7 +133,7 @@ export default withComponentContext(
                                         if (!path) return
                                     }
 
-                                    context.executeOperation(EditorOps.saveProject, { path })
+                                    executeOperation(EditorOps.saveProject, { path })
                                 },
                             },
                             {
@@ -154,7 +154,7 @@ export default withComponentContext(
                                     // cancelled
                                     if (!path) return
 
-                                    context.executeOperation(EditorOps.saveProject, { path })
+                                    executeOperation(EditorOps.saveProject, { path })
                                 },
                             },
                             { type: 'separator' },
@@ -162,9 +162,9 @@ export default withComponentContext(
                                 label: t(t.k.file.rendering),
                                 accelerator: 'CmdOrCtrl+Shift+R',
                                 click() {
-                                    const comp = context.getStore(EditorStore).getState().activeComp
+                                    const comp = getStore(EditorStore).getState().activeComp
                                     if (!comp) return
-                                    context.executeOperation(EditorOps.renderDestinate, {
+                                    executeOperation(EditorOps.renderDestinate, {
                                         compositionId: comp.id!,
                                     })
                                 },
@@ -233,11 +233,11 @@ export default withComponentContext(
                             enabled: !!activeComp,
                             click: () => {
                                 previewPlaying
-                                    ? context.executeOperation(RendererOps.stopPreview, {})
-                                    : context.executeOperation(RendererOps.startPreview, {
+                                    ? executeOperation(RendererOps.stopPreview)
+                                    : executeOperation(RendererOps.startPreview, {
                                           compositionId: activeComp!.id,
                                           // Delayed get for rendering performance
-                                          beginFrame: context.getStore(EditorStore).getState().currentPreviewFrame,
+                                          beginFrame: getStore(EditorStore).getState().currentPreviewFrame,
                                       })
                             },
                         },
@@ -272,7 +272,7 @@ export default withComponentContext(
             }
 
             private handleNewProject = () => {
-                const project = this.props.context.getStore(EditorStore).getState().project
+                const project = this.props.getStore(EditorStore).getState().project
 
                 if (project) {
                     const acceptDiscard = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
@@ -286,11 +286,11 @@ export default withComponentContext(
                     }
                 }
 
-                this.props.context.executeOperation(EditorOps.newProject, {})
+                this.props.executeOperation(EditorOps.newProject)
             }
 
             private handleOpenProject = () => {
-                const { project } = this.props.context.getStore(EditorStore)
+                const { project } = this.props.getStore(EditorStore)
 
                 if (project) {
                     const acceptDiscard = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
@@ -313,11 +313,11 @@ export default withComponentContext(
 
                 if (!path || !path.length) return
 
-                this.props.context.executeOperation(EditorOps.openProject, { path: path[0] })
+                this.props.executeOperation(EditorOps.openProject, { path: path[0] })
             }
 
             private handleOpenPreference = () => {
-                this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
+                this.props.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
             }
 
             private handleCopy = () => {
@@ -333,11 +333,11 @@ export default withComponentContext(
             }
 
             private handleUndo = () => {
-                uiActionUndo(this.props.context)
+                uiActionUndo(this.props.executeOperation)
             }
 
             private handleRedo = () => {
-                uiActionRedo(this.props.context)
+                uiActionRedo(this.props.executeOperation)
             }
         },
     ),

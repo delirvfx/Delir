@@ -1,4 +1,4 @@
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 
@@ -30,7 +30,7 @@ const mapStoresToProps = (getStore: StoreGetter) => {
     }
 }
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class PreviewView extends React.Component<Props, State> {
             public state = {
@@ -42,7 +42,7 @@ export default withComponentContext(
             private canvasRef = React.createRef<HTMLCanvasElement>()
 
             public componentDidMount() {
-                this.props.context.executeOperation(RendererOps.setPreviewCanvas, {
+                this.props.executeOperation(RendererOps.setPreviewCanvas, {
                     canvas: this.canvasRef.current!,
                 })
             }

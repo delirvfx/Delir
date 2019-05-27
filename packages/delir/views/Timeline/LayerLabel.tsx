@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'
@@ -79,7 +79,7 @@ class LayerLabelComponent extends React.Component<Props> {
     private layerNameChanged = (value: string) => {
         const { layer } = this.props
 
-        this.props.context.executeOperation(ProjectOps.modifyLayer, {
+        this.props.executeOperation(ProjectOps.modifyLayer, {
             layerId: layer.id!,
             patch: { name: value },
         })
@@ -100,14 +100,14 @@ class LayerLabelComponent extends React.Component<Props> {
         const { activeComp, layerIndex } = this.props
         if (!activeComp) return
 
-        this.props.context.executeOperation(ProjectOps.addLayer, {
+        this.props.executeOperation(ProjectOps.addLayer, {
             targetCompositionId: activeComp.id,
             index: layerIndex,
         })
     }
 }
 
-const LayerLabel = withComponentContext(
+const LayerLabel = withFleurContext(
     connectToStores([EditorStore], getStore => ({
         activeComp: getStore(EditorStore).getActiveComposition(),
     }))(LayerLabelComponent),

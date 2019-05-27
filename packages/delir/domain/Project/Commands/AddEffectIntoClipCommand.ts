@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { OperationContext } from '@ragg/fleur'
+import { OperationContext } from '@fleur/fleur'
 
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
@@ -8,7 +8,7 @@ import { ProjectActions } from '../actions'
 export class AddEffectIntoClipCommand implements Command {
     constructor(private clipId: string, private addedEffect: Delir.Entity.Effect) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToParentClip(context)
 
         context.dispatch(ProjectActions.removeEffectFromClip, {
@@ -17,7 +17,7 @@ export class AddEffectIntoClipCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToParentClip(context)
 
         context.dispatch(ProjectActions.addEffectIntoClip, {
@@ -26,7 +26,7 @@ export class AddEffectIntoClipCommand implements Command {
         })
     }
 
-    private focusToParentClip(context: OperationContext<any>) {
+    private focusToParentClip(context: OperationContext) {
         context.dispatch(EditorActions.changeSelectClip, {
             clipIds: [this.clipId],
         })

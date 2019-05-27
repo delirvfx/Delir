@@ -12,7 +12,7 @@ import AssetPointer from './Values/AssetPointer'
 import ColorRGB from './Values/ColorRGB'
 import Expression from './Values/Expression'
 
-import * as Exporter from './Exporter'
+import { deserializeProject, serializeProject } from './Exporter'
 
 describe('Export', () => {
     let project: Project
@@ -76,8 +76,8 @@ describe('Export', () => {
     })
 
     it('Should correct serialize / desrialize project', () => {
-        const serialized = Exporter.serializeProject(project)
+        const serialized = serializeProject(project)
         expect(serialized).toMatchSnapshot()
-        expect(Exporter.deserializeProject(serialized)).toEqual(project)
+        expect(deserializeProject(serialized)).toEqual(project)
     })
 })

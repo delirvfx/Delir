@@ -1,13 +1,12 @@
 import * as Delir from '@delirvfx/core'
+import { listen, Store } from '@fleur/fleur'
 import deream, { RenderingProgress } from '@ragg/deream'
-import { listen, Store } from '@ragg/fleur'
 import { remote } from 'electron'
 import { dirname } from 'path'
 
 import { EditorActions } from '../Editor/actions'
 import { RendererActions } from './actions'
 
-import { updateWith } from 'typescript'
 import * as Platform from '../../utils/platform'
 
 interface State {

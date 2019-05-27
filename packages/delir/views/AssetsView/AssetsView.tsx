@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as classNames from 'classnames'
 import { clipboard } from 'electron'
 import * as _ from 'lodash'
@@ -84,7 +84,7 @@ interface State {
 
 type Props = ConnectedProps & ContextProp
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, ProjectStore], getStore => ({
         editor: getStore(EditorStore).getState(),
     }))(
@@ -288,35 +288,35 @@ export default withComponentContext(
                 _.each(e.dataTransfer.files, (file, idx) => {
                     if (!e.dataTransfer.items[idx].webkitGetAsEntry().isFile) return
 
-                    this.props.context.executeOperation(ProjectOps.addAsset, {
+                    this.props.executeOperation(ProjectOps.addAsset, {
                         name: file.name,
                         fileType: path.extname(file.name).slice(1),
-                        path: file.path,
+                        path: 'file://' + file.path,
                     })
                 })
             }
 
             private removeAsset = ({ dataset }: MenuItemOption<{ assetId: string }>) => {
                 // TODO: Check references
-                this.props.context.executeOperation(ProjectOps.removeAsset, {
+                this.props.executeOperation(ProjectOps.removeAsset, {
                     assetId: dataset.assetId,
                 })
             }
 
             private changeComposition = ({ currentTarget }: React.MouseEvent<HTMLTableRowElement>) => {
-                this.props.context.executeOperation(EditorOps.changeActiveComposition, {
+                this.props.executeOperation(EditorOps.changeActiveComposition, {
                     compositionId: currentTarget.dataset.compositionId!,
                 })
             }
 
             private removeComposition = ({ dataset }: MenuItemOption<{ compId: string }>) => {
-                this.props.context.executeOperation(ProjectOps.removeComposition, {
+                this.props.executeOperation(ProjectOps.removeComposition, {
                     compositionId: dataset.compId,
                 })
             }
 
             private modifyCompName = (compositionId: string, newName: string) => {
-                this.props.context.executeOperation(ProjectOps.modifyComposition, {
+                this.props.executeOperation(ProjectOps.modifyComposition, {
                     compositionId,
                     patch: { name: newName },
                 })
@@ -327,7 +327,7 @@ export default withComponentContext(
                 const files = Array.from(target.files!)
 
                 files.forEach(file => {
-                    this.props.context.executeOperation(ProjectOps.addAsset, {
+                    this.props.executeOperation(ProjectOps.addAsset, {
                         name: file.name,
                         fileType: path.extname(file.name).slice(1),
                         path: file.path,
@@ -347,7 +347,7 @@ export default withComponentContext(
                 })
 
                 if (!req) return
-                this.props.context.executeOperation(ProjectOps.modifyComposition, {
+                this.props.executeOperation(ProjectOps.modifyComposition, {
                     compositionId: compositionId,
                     patch: castToCompositionProps(req as any),
                 })
@@ -357,7 +357,7 @@ export default withComponentContext(
                 const req = await CompositionSettingModal.show()
 
                 if (!req) return
-                this.props.context.executeOperation(ProjectOps.createComposition, {
+                this.props.executeOperation(ProjectOps.createComposition, {
                     ...castToCompositionProps(req as any),
                 })
             }
@@ -368,7 +368,7 @@ export default withComponentContext(
                 } = this.props
                 if (!project) return
 
-                this.props.context.executeOperation(EditorOps.setDragEntity, {
+                this.props.executeOperation(EditorOps.setDragEntity, {
                     entity: {
                         type: 'asset',
                         // FIXME: Use assetId instead of Asset instance
@@ -378,7 +378,7 @@ export default withComponentContext(
             }
 
             private onAssetDragEnd = () => {
-                this.props.context.executeOperation(EditorOps.clearDragEntity, {})
+                this.props.executeOperation(EditorOps.clearDragEntity)
             }
         },
     ),

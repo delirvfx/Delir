@@ -1,6 +1,6 @@
 import * as Delir from '@delirvfx/core'
-import Fleur, { withReduxDevTools } from '@ragg/fleur'
-import { createElementWithContext } from '@ragg/fleur-react'
+import Fleur, { withReduxDevTools } from '@fleur/fleur'
+import { createElementWithContext } from '@fleur/fleur-react'
 import * as os from 'os'
 import * as ReactDOM from 'react-dom'
 
@@ -51,8 +51,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         enableTimeTravel: false,
     }))
 
-    await context.executeOperation(RendererOps.loadPlugins, {})
-    await context.executeOperation(PreferenceOps.restoreApplicationPreference, {})
+    await context.executeOperation(RendererOps.loadPlugins)
+    await context.executeOperation(PreferenceOps.restoreApplicationPreference)
     await context.executeOperation(EditorOps.setActiveProject, {
         project: new Delir.Entity.Project({}),
     })

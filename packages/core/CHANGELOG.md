@@ -1,3 +1,11 @@
+### 0.7.4
+- #226 Fix plugin's package.json typing
+- #226 Replace `joi` dependency to `joi-browser`
+
+### 0.7.3
+- [Experimental] `@delirvfx/core` now can be used as standalone package
+- Export core version from `version`
+
 ### 0.7.1, 0.7.2
 - Fix typing publishing
 

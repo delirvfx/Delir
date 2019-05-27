@@ -1,4 +1,4 @@
-import * as Joi from 'joi'
+import * as Joi from 'joi-browser'
 import * as _ from 'lodash'
 import * as semver from 'semver'
 
@@ -10,7 +10,7 @@ import PluginAssertionFailedException from '../Exceptions/plugin-assertion-faile
 import PluginLoadFailException from '../Exceptions/plugin-load-fail-exception'
 import UnknownPluginReferenceException from '../Exceptions/unknown-plugin-reference-exception'
 
-import * as DelirCorePackageJson from '../../package.json'
+const { version: engineVersion } = require('../../package.json')
 
 // SEE: https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39
 const SEMVER_REGEXP = /^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
@@ -24,7 +24,8 @@ const effectPluginPackageJSONSchema = Joi.object()
         author: [Joi.string(), Joi.array().items(Joi.string())],
         main: Joi.string().optional(),
         engines: Joi.object().keys({
-            'delir-core': Joi.string()
+            'delir-core': Joi.string().regex(SEMVER_REGEXP),
+            '@delirvfx/core': Joi.string()
                 .regex(SEMVER_REGEXP)
                 .required(),
         }),
@@ -41,7 +42,8 @@ export default class PluginRegistry {
     public static validateEffectPluginPackageJSON(packageJSON: any): packageJSON is DelirPluginPackageJson {
         return (
             Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null &&
-            semver.valid(packageJSON.engines['delir-core']) != null &&
+            (semver.valid(packageJSON.engines['delir-core']) != null ||
+                semver.valid(packageJSON.engines['@delirvfx/core']) != null) &&
             semver.valid(packageJSON.version) != null
         )
     }
@@ -64,8 +66,9 @@ export default class PluginRegistry {
             //     throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
             // }
 
-            const engineVersion = entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
-            if (!semver.satisfies(DelirCorePackageJson.version, engineVersion)) {
+            const requiredEngineVersion =
+                entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
+            if (!semver.satisfies(engineVersion, requiredEngineVersion!)) {
                 throw new PluginLoadFailException(
                     `Plugin \`${entry.id}\` not compatible to current @delirvfx/core version`,
                 )

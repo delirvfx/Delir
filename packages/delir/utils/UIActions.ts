@@ -1,4 +1,4 @@
-import { ComponentContext } from '@ragg/fleur'
+import { ComponentContext } from '@fleur/fleur'
 
 import * as HistoryOps from '../domain/History/operations'
 import { GlobalEvent, GlobalEvents } from '../views/AppView/GlobalEvents'
@@ -39,22 +39,22 @@ export const uiActionPaste = () => {
     }
 }
 
-export const uiActionUndo = (context: ComponentContext) => {
+export const uiActionUndo = (executeOperation: ComponentContext['executeOperation']) => {
     const { activeElement } = document
 
     if (isSelectionInputElement(activeElement!)) {
         document.execCommand('undo')
     } else {
-        context.executeOperation(HistoryOps.doUndo, {})
+        executeOperation(HistoryOps.doUndo)
     }
 }
 
-export const uiActionRedo = (context: ComponentContext) => {
+export const uiActionRedo = (executeOperation: ComponentContext['executeOperation']) => {
     const { activeElement } = document
 
     if (isSelectionInputElement(activeElement!)) {
         document.execCommand('redo')
     } else {
-        context.executeOperation(HistoryOps.doRedo, {})
+        executeOperation(HistoryOps.doRedo)
     }
 }

@@ -7,7 +7,7 @@ import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import * as EditorOps from '../../domain/Editor/operations'
 
-import { ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as s from './KeyframeGraph.styl'
 
 interface OwnProps {
@@ -72,7 +72,7 @@ export interface KeyframePatch {
 
 const EASING_HANDLER_SIZE = 3
 
-export default withComponentContext(
+export default withFleurContext(
     class KeyframeGraph extends React.Component<Props, State> {
         public state: State = {
             activeKeyframeId: null,
@@ -257,7 +257,7 @@ export default withComponentContext(
             const { parentClip } = this.props
             if (!parentClip) return
 
-            this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
+            this.props.executeOperation(EditorOps.seekPreviewFrame, {
                 frame: parentClip.placedFrame + parseInt(currentTarget.dataset!.frame!, 10),
             })
         }

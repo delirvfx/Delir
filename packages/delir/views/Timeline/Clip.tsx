@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
@@ -33,7 +33,7 @@ interface ConnectedProps {
 type Props = OwnProps & ConnectedProps & ContextProp & ClipDragProps
 
 export default decorate<OwnProps>(
-    [withComponentContext, withClipDragContext],
+    [withFleurContext, withClipDragContext],
     class Clip extends React.Component<Props> {
         public shouldComponentUpdate(nextProps: Props) {
             const { props } = this
@@ -118,16 +118,16 @@ export default decorate<OwnProps>(
             GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
 
             if (e.shiftKey) {
-                this.props.context.executeOperation(EditorOps.addOrRemoveSelectClip, { clipId: this.props.clip.id })
+                this.props.executeOperation(EditorOps.addOrRemoveSelectClip, { clipIds: [this.props.clip.id] })
             } else {
-                this.props.context.executeOperation(EditorOps.changeSelectClip, {
+                this.props.executeOperation(EditorOps.changeSelectClip, {
                     clipIds: [this.props.clip.id!],
                 })
             }
         }
 
         private handleDragStart: DraggableEventHandler = e => {
-            this.props.context.executeOperation(EditorOps.setDragEntity, {
+            this.props.executeOperation(EditorOps.setDragEntity, {
                 entity: { type: 'clip', clip: this.props.clip },
             })
         }
@@ -170,39 +170,39 @@ export default decorate<OwnProps>(
         }
 
         private handleAddEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
-            this.props.context.executeOperation(ProjectOps.addEffectIntoClip, {
+            this.props.executeOperation(ProjectOps.addEffectIntoClip, {
                 clipId: dataset.clipId,
                 processorId: dataset.effectId,
             })
-            this.props.context.executeOperation(EditorOps.seekPreviewFrame, {})
+            this.props.executeOperation(EditorOps.seekPreviewFrame)
         }
 
         private handleRemoveClip = ({ dataset }: MenuItemOption<{ clipId: string }>) => {
-            this.props.context.executeOperation(ProjectOps.removeClip, {
+            this.props.executeOperation(ProjectOps.removeClip, {
                 clipId: dataset.clipId,
             })
         }
 
         private handleSeekToHeadOfClip = () => {
             const { clip } = this.props
-            this.props.context.executeOperation(EditorOps.seekPreviewFrame, {
+            this.props.executeOperation(EditorOps.seekPreviewFrame, {
                 frame: clip.placedFrame,
             })
         }
 
         private handleGlobalCopy = () => {
-            this.props.context.executeOperation(EditorOps.copyEntity, {
+            this.props.executeOperation(EditorOps.copyEntity, {
                 type: 'clip',
                 entity: this.props.clip,
             })
         }
 
         private handleGlobalCut = () => {
-            this.props.context.executeOperation(EditorOps.copyEntity, {
+            this.props.executeOperation(EditorOps.copyEntity, {
                 type: 'clip',
                 entity: this.props.clip,
             })
-            this.props.context.executeOperation(ProjectOps.removeClip, {
+            this.props.executeOperation(ProjectOps.removeClip, {
                 clipId: this.props.clip.id,
             })
         }

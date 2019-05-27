@@ -1,7 +1,7 @@
 import * as _ from 'lodash'
 
 import * as Delir from '@delirvfx/core'
-import { OperationContext } from '@ragg/fleur'
+import { OperationContext } from '@fleur/fleur'
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
@@ -14,7 +14,7 @@ export class MoveLayerOrderCommand implements Command {
         private nextIndex: number,
     ) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.moveLayerOrder, {
@@ -24,7 +24,7 @@ export class MoveLayerOrderCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToParentComposition(context)
 
         context.dispatch(ProjectActions.moveLayerOrder, {
@@ -34,7 +34,7 @@ export class MoveLayerOrderCommand implements Command {
         })
     }
 
-    private focusToParentComposition(context: OperationContext<any>) {
+    private focusToParentComposition(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveComposition, {
             compositionId: this.parentCompositionId,
         })

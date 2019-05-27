@@ -1,4 +1,4 @@
-import { useComponentContext, useStore } from '@ragg/fleur-react'
+import { useFleurContext, useStore } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
 
@@ -23,19 +23,20 @@ interface State {
 }
 
 const RendererGeneralPane = () => {
-    const context = useComponentContext()
+    const context = useFleurContext()
 
     const { preference } = useStore([PreferenceStore], getStore => ({
         preference: getStore(PreferenceStore).getPreferences(),
     }))
 
-    const handleRendererIgnoreMissingEffect = React.useCallback(({
-        currentTarget,
-    }: React.ChangeEvent<HTMLInputElement>) => {
-        context.executeOperation(PreferenceOps.setRendererIgnoreMissingEffectPreference, {
-            ignore: currentTarget.checked,
-        })
-    }, [])
+    const handleRendererIgnoreMissingEffect = React.useCallback(
+        ({ currentTarget }: React.ChangeEvent<HTMLInputElement>) => {
+            context.executeOperation(PreferenceOps.setRendererIgnoreMissingEffectPreference, {
+                ignore: currentTarget.checked,
+            })
+        },
+        [],
+    )
 
     return (
         <>

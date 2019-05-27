@@ -1,13 +1,9 @@
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
-import * as Mousetrap from 'mousetrap'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as React from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
-import { makeMousetrapIgnoreInputHandler } from '../../utils/makeMousetrapHandler'
-import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
-import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Pane from '../../components/pane'
@@ -22,6 +18,7 @@ import PreviewView from '../PreviewView/'
 import { RenderingWaiter } from '../RenderingWaiter'
 import { StatusBar } from '../StatusBar'
 import Timeline from '../Timeline'
+import { ShortcutHandler } from './ShortcutHandler'
 
 import * as s from './style.styl'
 
@@ -29,10 +26,9 @@ type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
     preferenceOpened: getStore(EditorStore).getState().preferenceOpened,
-    previewPlaying: getStore(RendererStore).previewPlaying,
 })
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class AppView extends React.PureComponent<Props> {
             public root = React.createRef<HTMLDivElement>()
@@ -42,14 +38,6 @@ export default withComponentContext(
                 window.addEventListener('dragenter', this.prevent, false)
                 window.addEventListener('dragover', this.prevent, false)
 
-                this.trap = new Mousetrap(document.body)
-                this.trap.bind('space', this.handleShortCutPreviewToggle)
-                this.trap.bind(['mod+c'], this.handleShortCutCopy)
-                this.trap.bind(['mod+x'], this.handleShortcutCut)
-                this.trap.bind(['mod+v'], this.handleShortcutPaste)
-                this.trap.bind(['mod+z'], this.handleShortCutUndo)
-                this.trap.bind(['mod+shift+z'], this.handleShortCutRedo)
-
                 window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
             }
 
@@ -58,6 +46,7 @@ export default withComponentContext(
 
                 return (
                     <div ref={this.root} className="_container" onDrop={this.prevent}>
+                        <ShortcutHandler />
                         <AppMenu />
                         <NavigationView />
                         <Workspace className="app-body" direction="vertical">
@@ -94,62 +83,12 @@ export default withComponentContext(
             }
 
             private projectAutoSaveTimer = () => {
-                this.props.context.executeOperation(EditorOps.autoSaveProject, {})
+                this.props.executeOperation(EditorOps.autoSaveProject)
             }
 
             private handlePreferenceClose = () => {
-                this.props.context.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
+                this.props.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
             }
-
-            private handleShortCutPreviewToggle = (e: KeyboardEvent) => {
-                if (
-                    e.target instanceof HTMLTextAreaElement ||
-                    e.target instanceof HTMLInputElement ||
-                    e.target instanceof HTMLSelectElement
-                ) {
-                    return
-                }
-
-                const { previewPlaying } = this.props
-                const activeComp = this.props.context.getStore(EditorStore).getActiveComposition()
-
-                if (!activeComp) return
-
-                if (previewPlaying) {
-                    this.props.context.executeOperation(RendererOps.stopPreview, {})
-                } else {
-                    this.props.context.executeOperation(RendererOps.startPreview, {
-                        compositionId: activeComp.id,
-                    })
-                }
-            }
-
-            private handleShortCutCopy = (e: KeyboardEvent) => {
-                e.preventDefault()
-                uiActionCopy()
-            }
-
-            private handleShortcutCut = (e: KeyboardEvent) => {
-                e.preventDefault()
-                uiActionCut()
-            }
-
-            private handleShortcutPaste = (e: KeyboardEvent) => {
-                e.preventDefault()
-                uiActionPaste()
-            }
-
-            // tslint:disable-next-line: member-ordering
-            private handleShortCutUndo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
-                e.preventDefault()
-                uiActionUndo(this.props.context)
-            })
-
-            // tslint:disable-next-line: member-ordering
-            private handleShortCutRedo = makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
-                e.preventDefault()
-                uiActionRedo(this.props.context)
-            })
         },
     ),
 )

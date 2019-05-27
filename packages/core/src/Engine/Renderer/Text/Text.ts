@@ -98,10 +98,10 @@ export default class TextLayer implements IRenderer<TextRendererParam> {
         return {}
     }
 
-    private _bufferCanvas: HTMLCanvasElement
+    private bufferCanvas: HTMLCanvasElement
 
     public async beforeRender(context: ClipPreRenderContext<TextRendererParam>) {
-        this._bufferCanvas = document.createElement('canvas')
+        this.bufferCanvas = document.createElement('canvas')
     }
 
     public async render(context: ClipRenderContext<TextRendererParam>) {

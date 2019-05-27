@@ -11,19 +11,19 @@ const project = new Delir.Entity.Project({})
 const videoAsset = new Delir.Entity.Asset({
     name: 'BigBuckBunny',
     fileType: 'mp4',
-    path: join(dirname, 'big_buck_bunny.mp4'),
+    path: 'file://' + join(dirname, 'big_buck_bunny.mp4'),
 })
 
 const audioAsset = new Delir.Entity.Asset({
     name: 'Audio',
     fileType: 'mp3',
-    path: join(dirname, 'Dawn.mp3'),
+    path: 'file://' + join(dirname, 'Dawn.mp3'),
 })
 
 const imageAsset = new Delir.Entity.Asset({
     name: 'Image',
     fileType: 'png',
-    path: join(dirname, 'image.png'),
+    path: 'file://' + join(dirname, 'image.png'),
 })
 ;[videoAsset, audioAsset, imageAsset].forEach(asset => project.addAsset(asset))
 

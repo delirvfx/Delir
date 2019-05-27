@@ -1,4 +1,4 @@
-import { StoreGetter, useComponentContext, useStore } from '@ragg/fleur-react'
+import { StoreGetter, useFleurContext, useStore } from '@fleur/fleur-react'
 import { remote } from 'electron'
 import * as path from 'path'
 import * as React from 'react'
@@ -15,7 +15,7 @@ import Pane from '../../components/pane'
 import * as s from './style.styl'
 
 export const NavigationView = () => {
-    const context = useComponentContext()
+    const context = useFleurContext()
 
     const {
         audioVolume,
@@ -42,7 +42,7 @@ export const NavigationView = () => {
     }, [])
 
     const onClickPause = React.useCallback((e: React.MouseEvent<HTMLLIElement>) => {
-        context.executeOperation(RendererOps.stopPreview, {})
+        context.executeOperation(RendererOps.stopPreview)
     }, [])
 
     const onClickDest = React.useCallback(() => {

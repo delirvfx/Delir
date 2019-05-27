@@ -1,4 +1,4 @@
-import { action, actions } from '@ragg/fleur'
+import { action, actions } from '@fleur/fleur'
 
 import { Preference } from './PreferenceStore'
 

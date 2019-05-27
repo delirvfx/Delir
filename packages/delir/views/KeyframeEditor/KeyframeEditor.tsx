@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import { clipboard } from 'electron'
 import * as _ from 'lodash'
@@ -65,7 +65,7 @@ interface State {
 
 type Props = OwnProps & ConnectedProps & ContextProp
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores(
         [EditorStore, ProjectStore, RendererStore],
         (getStore): ConnectedProps => ({
@@ -344,7 +344,7 @@ export default withComponentContext(
             }
 
             private renderEffectProperties = () => {
-                const rendererStore = this.props.context.getStore(RendererStore)
+                const rendererStore = this.props.getStore(RendererStore)
 
                 const {
                     activeClip,
@@ -571,7 +571,7 @@ export default withComponentContext(
             private handleClickExpressionIndicator = ({ currentTarget }: React.MouseEvent<HTMLSpanElement>) => {
                 const { entityType, entityId, paramName } = currentTarget.dataset
 
-                this.props.context.executeOperation(EditorOps.changeActiveParam, {
+                this.props.executeOperation(EditorOps.changeActiveParam, {
                     target: {
                         type: entityType as 'clip' | 'effect',
                         entityId: entityId!,
@@ -587,7 +587,7 @@ export default withComponentContext(
                 if (!activeClip) return
 
                 const effectId = activeClip.effects[oldIndex].id
-                this.props.context.executeOperation(ProjectOps.moveEffectOrder, { effectId, newIndex })
+                this.props.executeOperation(ProjectOps.moveEffectOrder, { effectId, newIndex })
             }
 
             private handleCopyReferenceName = ({
@@ -608,7 +608,7 @@ export default withComponentContext(
                 const { activeClip } = this.props
                 if (!activeClip) return
 
-                this.props.context.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
+                this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
                     clipId: activeClip.id,
                     frameOnClip: 0,
                     paramName: result.target.paramName,
@@ -625,7 +625,7 @@ export default withComponentContext(
                 if (!activeClip) return
 
                 if (result.target.type === 'clip') {
-                    this.props.context.executeOperation(ProjectOps.modifyClipExpression, {
+                    this.props.executeOperation(ProjectOps.modifyClipExpression, {
                         clipId: activeClip.id,
                         paramName: result.target.paramName,
                         expr: {
@@ -634,7 +634,7 @@ export default withComponentContext(
                         },
                     })
                 } else {
-                    this.props.context.executeOperation(ProjectOps.modifyEffectExpression, {
+                    this.props.executeOperation(ProjectOps.modifyEffectExpression, {
                         clipId: activeClip.id,
                         effectId: result.target.entityId,
                         paramName: result.target.paramName,
@@ -649,7 +649,7 @@ export default withComponentContext(
             }
 
             private handleAddEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
-                this.props.context.executeOperation(ProjectOps.addEffectIntoClip, {
+                this.props.executeOperation(ProjectOps.addEffectIntoClip, {
                     clipId: dataset.clipId,
                     processorId: dataset.effectId,
                 })
@@ -682,7 +682,7 @@ export default withComponentContext(
                     [_: string]: string
                 }
 
-                this.props.context.executeOperation(EditorOps.changeActiveParam, {
+                this.props.executeOperation(EditorOps.changeActiveParam, {
                     target: {
                         type: entityType as 'clip' | 'effect',
                         entityId,
@@ -700,7 +700,7 @@ export default withComponentContext(
 
                 const frameOnClip = currentPreviewFrame - activeClip.placedFrame
 
-                this.props.context.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
+                this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
                     clipId: activeClip.id!,
                     paramName: desc.paramName,
                     frameOnClip,
@@ -716,7 +716,7 @@ export default withComponentContext(
                 if (!activeClip) return
 
                 const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-                this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
+                this.props.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
                     clipId: activeClip.id,
                     effectId,
                     paramName: desc.paramName,
@@ -736,7 +736,7 @@ export default withComponentContext(
 
                 switch (activeParam.type) {
                     case 'clip': {
-                        this.props.context.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
+                        this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
                             clipId: parentClipId,
                             paramName,
                             frameOnClip,
@@ -746,7 +746,7 @@ export default withComponentContext(
                     }
 
                     case 'effect': {
-                        this.props.context.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
+                        this.props.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
                             clipId: parentClipId,
                             effectId: activeParam.entityId,
                             paramName,
@@ -767,13 +767,13 @@ export default withComponentContext(
                 if (!activeParam) return
 
                 if (activeParam.type === 'clip') {
-                    this.props.context.executeOperation(ProjectOps.removeKeyframe, {
+                    this.props.executeOperation(ProjectOps.removeKeyframe, {
                         clipId: parentClipId,
                         paramName: activeParam.paramName,
                         keyframeId,
                     })
                 } else {
-                    this.props.context.executeOperation(ProjectOps.removeEffectKeyframe, {
+                    this.props.executeOperation(ProjectOps.removeEffectKeyframe, {
                         clipId: parentClipId,
                         effectId: activeParam.entityId,
                         paramName: activeParam.paramName,
@@ -791,7 +791,7 @@ export default withComponentContext(
             }>) => {
                 const { entityType, entityId, paramName } = dataset
 
-                this.props.context.executeOperation(EditorOps.changeActiveParam, {
+                this.props.executeOperation(EditorOps.changeActiveParam, {
                     target: { type: entityType, entityId, paramName },
                 })
 
@@ -800,7 +800,7 @@ export default withComponentContext(
 
             private removeEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
                 this.setState({ editorOpened: false }, () => {
-                    this.props.context.executeOperation(ProjectOps.removeEffect, {
+                    this.props.executeOperation(ProjectOps.removeEffect, {
                         holderClipId: dataset.clipId,
                         effectId: dataset.effectId,
                     })
@@ -808,7 +808,7 @@ export default withComponentContext(
             }
 
             private handleChangeEffectReferenceName = (referenceName: string, { effectId }: { effectId: string }) => {
-                this.props.context.executeOperation(ProjectOps.modifyEffect, {
+                this.props.executeOperation(ProjectOps.modifyEffect, {
                     clipId: this.props.activeClip!.id,
                     effectId,
                     patch: { referenceName: referenceName !== '' ? referenceName : null },
@@ -816,7 +816,7 @@ export default withComponentContext(
             }
 
             private _getDescriptorByParamName(paramName: string | null) {
-                const rendererStore = this.props.context.getStore(RendererStore)
+                const rendererStore = this.props.getStore(RendererStore)
                 const { activeParam } = this.props
                 const activeEntityObject = this.activeEntityObject
 

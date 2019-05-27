@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { OperationContext } from '@ragg/fleur'
+import { OperationContext } from '@fleur/fleur'
 
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'
@@ -12,7 +12,7 @@ export class RemoveKeyframeCommand implements Command {
         private removedKeyframe: Delir.Entity.Keyframe,
     ) {}
 
-    public undo(context: OperationContext<any>) {
+    public undo(context: OperationContext) {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.addKeyframe, {
@@ -22,7 +22,7 @@ export class RemoveKeyframeCommand implements Command {
         })
     }
 
-    public redo(context: OperationContext<any>) {
+    public redo(context: OperationContext) {
         this.focusToChangedParam(context)
 
         context.dispatch(ProjectActions.removeKeyframe, {
@@ -32,7 +32,7 @@ export class RemoveKeyframeCommand implements Command {
         })
     }
 
-    private focusToChangedParam(context: OperationContext<any>) {
+    private focusToChangedParam(context: OperationContext) {
         context.dispatch(EditorActions.changeActiveParam, {
             target: {
                 type: 'clip',

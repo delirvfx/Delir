@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, StoreGetter, withComponentContext } from '@ragg/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import * as _ from 'lodash'
 import * as React from 'react'
@@ -45,7 +45,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
     userCodeException: getStore(RendererStore).getUserCodeException(),
 })
 
-export default withComponentContext(
+export default withFleurContext(
     connectToStores([EditorStore, RendererStore], mapStoresToProps)(
         class Layer extends React.Component<Props, State> {
             public state: State = {
@@ -140,7 +140,7 @@ export default withComponentContext(
             }
 
             private handleOnDrop = (e: React.DragEvent<HTMLDivElement>) => {
-                const { dragEntity, activeComp } = this.props.context.getStore(EditorStore)
+                const { dragEntity, activeComp } = this.props.getStore(EditorStore)
 
                 if (!activeComp || !dragEntity) return
 
@@ -154,7 +154,7 @@ export default withComponentContext(
                         pixel: (e.nativeEvent as any).layerX as number,
                         scale,
                     })
-                    this.props.context.executeOperation(ProjectOps.addClipWithAsset, {
+                    this.props.executeOperation(ProjectOps.addClipWithAsset, {
                         targetLayerId: this.props.layer.id,
                         asset,
                         placedFrame,
@@ -163,7 +163,7 @@ export default withComponentContext(
                     return
                 }
 
-                this.props.context.executeOperation(EditorOps.clearDragEntity, {})
+                this.props.executeOperation(EditorOps.clearDragEntity)
                 this.setState({ dragovered: false })
 
                 e.preventDefault()
@@ -172,25 +172,25 @@ export default withComponentContext(
 
             private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
                 const { layer } = this.props
-                const { dragEntity } = this.props.context.getStore(EditorStore)
+                const { dragEntity } = this.props.getStore(EditorStore)
 
                 if (!dragEntity || dragEntity.type !== 'clip') return
 
                 const isChildClip = !!layer.clips.find(clip => clip.id! === dragEntity.clip.id!)
 
                 if (isChildClip) {
-                    this.props.context.executeOperation(EditorOps.clearDragEntity, {})
+                    this.props.executeOperation(EditorOps.clearDragEntity)
                 } else {
-                    this.props.context.executeOperation(ProjectOps.moveClipToLayer, {
+                    this.props.executeOperation(ProjectOps.moveClipToLayer, {
                         clipId: dragEntity.clip.id!,
                         destLayerId: this.props.layer.id!,
                     })
-                    this.props.context.executeOperation(EditorOps.clearDragEntity, {})
+                    this.props.executeOperation(EditorOps.clearDragEntity)
                 }
             }
 
             private handleAddNewClip = ({ dataset }: MenuItemOption<{ rendererId: string }>) => {
-                this.props.context.executeOperation(ProjectOps.addClip, {
+                this.props.executeOperation(ProjectOps.addClip, {
                     layerId: this.props.layer.id!,
                     clipRendererId: dataset.rendererId,
                     durationFrames: 100,
@@ -199,17 +199,17 @@ export default withComponentContext(
 
             private handleAddLayer = () => {
                 const { layerIndex } = this.props
-                const { activeComp } = this.props.context.getStore(EditorStore)
+                const { activeComp } = this.props.getStore(EditorStore)
                 if (!activeComp) return
 
-                this.props.context.executeOperation(ProjectOps.addLayer, {
+                this.props.executeOperation(ProjectOps.addLayer, {
                     targetCompositionId: activeComp.id,
                     index: layerIndex,
                 })
             }
 
             private handleGlobalPaste = () => {
-                this.props.context.executeOperation(ProjectOps.pasteClipEntityIntoLayer, {
+                this.props.executeOperation(ProjectOps.pasteClipEntityIntoLayer, {
                     layerId: this.props.layer.id,
                 })
             }
