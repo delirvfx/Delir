@@ -1,4 +1,4 @@
-import { StoreGetter } from '@ragg/fleur-react'
+import { StoreGetter } from '@fleur/fleur-react'
 import ProjectStore from './ProjectStore'
 
 export const getClipById = (clipId: string) => (getStore: StoreGetter) => {

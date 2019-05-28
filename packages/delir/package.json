@@ -33,8 +33,6 @@
     "@fleur/fleur": "1.0.0",
     "@fleur/fleur-react": "1.0.0",
     "@ragg/deream": "*",
-    "@ragg/fleur": "0.0.16",
-    "@ragg/fleur-react": "0.0.17",
     "@simonwep/selection-js": "0.2.2",
     "classnames": "2.2.6",
     "form-serialize": "0.7.2",

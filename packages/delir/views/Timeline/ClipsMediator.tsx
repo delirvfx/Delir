@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { ContextProp, withComponentContext } from '@ragg/fleur-react'
+import { ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as Selection from '@simonwep/selection-js'
 import * as React from 'react'
 import { decorate } from '../../utils/decorate'
@@ -30,7 +30,7 @@ interface State {
 type Props = ContextProp & OwnProps
 
 export const ClipsMediator = decorate<OwnProps>(
-    [withComponentContext],
+    [withFleurContext],
     class ClipsMediator extends React.PureComponent<Props, State> {
         public state: State = {
             clipDragOffset: { x: 0, width: 0 },
