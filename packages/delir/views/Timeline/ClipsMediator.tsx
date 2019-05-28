@@ -114,7 +114,7 @@ export const ClipsMediator = decorate<OwnProps>(
         }
 
         private handleClipDragEnd: EmitClipDragHandler = ({ nextX, originalPlacedFrame }) => {
-            const clips = getSelectedClips()(this.props.context.getStore)
+            const clips = getSelectedClips()(this.props.getStore)
             const movementFrame = this.calcMovementFrame(nextX, originalPlacedFrame)
             const patches = clips.map(clip => {
                 return {
@@ -125,7 +125,7 @@ export const ClipsMediator = decorate<OwnProps>(
                 }
             })
 
-            this.props.context.executeOperation(ProjectOps.modifyClips, patches)
+            this.props.executeOperation(ProjectOps.modifyClips, patches)
             this.setState({ clipDragOffset: { x: 0, width: 0 } })
         }
 
@@ -156,7 +156,7 @@ export const ClipsMediator = decorate<OwnProps>(
             originalPlacedFrame,
             deltaWidth: nextWidth,
         }) => {
-            const clips = getSelectedClips()(this.props.context.getStore)
+            const clips = getSelectedClips()(this.props.getStore)
             const sizingFrame = this.calcMovementFrame(nextWidth, 0)
             const movementFrame = this.calcMovementFrame(nextX, originalPlacedFrame)
 
@@ -170,7 +170,7 @@ export const ClipsMediator = decorate<OwnProps>(
                 }
             })
 
-            this.props.context.executeOperation(ProjectOps.modifyClips, patches)
+            this.props.executeOperation(ProjectOps.modifyClips, patches)
             this.setState({ clipDragOffset: { x: 0, width: 0 } })
         }
 
@@ -188,9 +188,9 @@ export const ClipsMediator = decorate<OwnProps>(
             const clipIds = selectedElements.map(el => el.dataset.clipId!)
 
             if (originalEvent.shiftKey || originalEvent.metaKey) {
-                this.props.context.executeOperation(EditorOps.addOrRemoveSelectClip, { clipIds })
+                this.props.executeOperation(EditorOps.addOrRemoveSelectClip, { clipIds })
             } else {
-                this.props.context.executeOperation(EditorOps.changeSelectClip, { clipIds })
+                this.props.executeOperation(EditorOps.changeSelectClip, { clipIds })
             }
         }
     },
