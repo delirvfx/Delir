@@ -20,10 +20,8 @@ import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
 
 import KeyframeEditor from '../KeyframeEditor'
-import { ClipDragContext } from './ClipDragContext'
 import { ClipsMediator } from './ClipsMediator'
 import Gradations from './Gradations'
-import Layer from './Layer'
 import LayerLabelList from './LayerLabelList'
 
 import * as s from './style.styl'

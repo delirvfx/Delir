@@ -11,3 +11,8 @@ export const getSelectedClips = () => (getStore: StoreGetter) => {
     const clipIds = getStore(EditorStore).selectClipIds
     return getClipsByIds(clipIds)(getStore).filter(clip => clip != null) as Delir.Entity.Clip[]
 }
+
+export const getActiveComp = () => (getStore: StoreGetter) => {
+    const comp = getStore(EditorStore).activeComp
+    return comp
+}

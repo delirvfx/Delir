@@ -25,6 +25,7 @@ import DelirValueInput from './_DelirValueInput'
 import { EffectList, EffectListItem, EffectSortHandle } from './EffectList'
 import ExpressionEditor from './ExpressionEditor'
 import KeyframeGraph, { KeyframePatch } from './KeyframeGraph'
+import { KeyframeMediator } from './KeyframeMediator'
 import ScriptParamEditor from './ScriptParamEditor'
 
 import { SortEndHandler } from 'react-sortable-hoc'
@@ -220,21 +221,11 @@ export default withFleurContext(
                                     </div>
                                 </div>
                                 {activeClip && activeParamDescriptor && activeParam && keyframes && (
-                                    <KeyframeGraph
-                                        composition={editor.activeComp!}
-                                        parentClip={activeClip}
-                                        entity={activeEntityObject}
-                                        paramName={activeParam.paramName!}
+                                    <KeyframeMediator
+                                        activeClip={activeClip}
+                                        paramName={activeParam.paramName}
                                         descriptor={activeParamDescriptor}
-                                        width={graphWidth}
-                                        height={graphHeight}
-                                        viewBox={keyframeViewViewBox!}
-                                        scrollLeft={scrollLeft}
-                                        pxPerSec={this.props.pxPerSec}
-                                        zoomScale={this.props.scale}
-                                        keyframes={keyframes}
-                                        onKeyframeRemove={this.keyframeRemoved}
-                                        onModified={this.keyframeModified}
+                                        entity={activeEntityObject}
                                     />
                                 )}
                             </div>
