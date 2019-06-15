@@ -72,7 +72,7 @@ yarn build
     - **modules**  -- Modal windows
     - **utils**  -- View utilities non relate some domain
     - **views**  -- View components
-  - **delir-core**  -- Core module codes (Project structure, engine, calculation, renderer)
+  - **core**  -- Core module codes called `@delirvfx/core` (Project structure, engine, calculation, renderer)
   - **deream** -- Renderered frame exporter for ffmpeg
   - **plugins** -- Built-in Delir plugins (build with webpack)
 
