@@ -12,9 +12,16 @@ import KeyframeGraph from './KeyframeGraph'
 
 interface OwnProps {
     activeClip: SpreadType<Delir.Entity.Clip>
+    entity: SpreadType<Delir.Entity.Clip> | SpreadType<Delir.Entity.Effect> | null
     paramName: string
     descriptor: Delir.AnyParameterTypeDescriptor
-    entity: SpreadType<Delir.Entity.Clip> | SpreadType<Delir.Entity.Effect> | null
+    keyframeViewViewBox: { width: number; height: number } | undefined
+    graphWidth: number
+    graphHeight: number
+    scrollLeft: number
+    pxPerSec: number
+    scale: number
+    keyframes: readonly Delir.Entity.Keyframe[]
 }
 
 interface State {
@@ -23,8 +30,21 @@ interface State {
 
 // typeof
 
-export const KeyframeMediator = ({ activeClip }: OwnProps) => {
+export const KeyframeMediator = ({
+    activeClip,
+    entity,
+    paramName,
+    descriptor,
+    keyframeViewViewBox,
+    graphWidth,
+    graphHeight,
+    scrollLeft,
+    pxPerSec,
+    scale,
+    keyframes,
+}: OwnProps) => {
     const [keyframeDragOffsetX, setState] = React.useState(0)
+
     const { activeComp } = useStore([EditorStore], getStore => ({
         activeComp: getActiveComp()(getStore),
     }))
@@ -33,15 +53,15 @@ export const KeyframeMediator = ({ activeClip }: OwnProps) => {
         <KeyframeGraph
             composition={activeComp!}
             parentClip={activeClip}
-            entity={activeEntityObject}
-            paramName={activeParam.paramName!}
-            descriptor={activeParamDescriptor}
+            entity={entity}
+            paramName={paramName}
+            descriptor={descriptor}
             width={graphWidth}
             height={graphHeight}
-            viewBox={keyframeViewViewBox!}
+            viewBox={`0 0 ${keyframeViewViewBox!.width} ${keyframeViewViewBox!.height}`!}
             scrollLeft={scrollLeft}
-            pxPerSec={this.props.pxPerSec}
-            zoomScale={this.props.scale}
+            pxPerSec={pxPerSec}
+            zoomScale={scale}
             keyframes={keyframes}
             onKeyframeRemove={this.keyframeRemoved}
             onModified={this.keyframeModified}

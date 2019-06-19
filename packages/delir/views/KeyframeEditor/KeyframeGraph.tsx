@@ -35,35 +35,6 @@ interface State {
     easingHandleMovement: { x: number; y: number } | null
 }
 
-interface KeyframePoint {
-    keyframeId: string
-    frame: number
-    point: { x: number; y: number }
-    transitionPath: {
-        begin: {
-            x: number
-            y: number
-            handleX: number
-            handleY: number
-        }
-        end: { x: number; y: number; handleX: number; handleY: number }
-    } | null
-    easeOutLine: {
-        x: number
-        y: number
-        endX: number
-        endY: number
-    } | null
-    nextEaseInLine: {
-        x: number
-        y: number
-        endX: number
-        endY: number
-    } | null
-    easeOutHandle: { x: number; y: number } | null
-    nextEaseInHandle: { x: number; y: number } | null
-}
-
 export interface KeyframePatch {
     easeInParam?: [number, number]
     easeOutParam?: [number, number]

@@ -29,6 +29,7 @@ import { KeyframeMediator } from './KeyframeMediator'
 import ScriptParamEditor from './ScriptParamEditor'
 
 import { SortEndHandler } from 'react-sortable-hoc'
+import { PX_PER_SEC } from 'views/Timeline/Timeline'
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
@@ -59,7 +60,7 @@ interface ConnectedProps {
 interface State {
     graphWidth: number
     graphHeight: number
-    keyframeViewViewBox: string | undefined
+    keyframeViewViewBox: { width: number; height: number } | undefined
     editorOpened: boolean
     scriptParamEditorOpened: boolean
 }
@@ -114,7 +115,7 @@ export default withFleurContext(
             }
 
             public render() {
-                const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins } = this.props
+                const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins, scale } = this.props
                 const {
                     keyframeViewViewBox,
                     graphWidth,
@@ -226,6 +227,12 @@ export default withFleurContext(
                                         paramName={activeParam.paramName}
                                         descriptor={activeParamDescriptor}
                                         entity={activeEntityObject}
+                                        keyframeViewViewBox={keyframeViewViewBox}
+                                        graphWidth={graphWidth}
+                                        graphHeight={graphHeight}
+                                        scrollLeft={scrollLeft}
+                                        pxPerSec={PX_PER_SEC}
+                                        scale={scale}
                                     />
                                 )}
                             </div>
@@ -652,7 +659,7 @@ export default withFleurContext(
                 this.setState({
                     graphWidth: box.width,
                     graphHeight: box.height,
-                    keyframeViewViewBox: `0 0 ${box.width} ${box.height}`,
+                    keyframeViewViewBox: { width: box.width, height: box.height },
                 })
             }
 
