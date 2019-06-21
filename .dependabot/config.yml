@@ -1,12 +1,12 @@
 version: 1
 
 update_configs:
-  package_manager: "javascript"
-  directory: "/"
-  update_schedule: "weekly"
-  allowed_updates:
-    - match:
-      update_type: "direct"
-  automerged_updates:
-    - match:
-      update_type: "security:patch"
+  - package_manager: "javascript"
+    directory: "/"
+    update_schedule: "weekly"
+    allowed_updates:
+      - match:
+        update_type: "direct"
+    automerged_updates:
+      - match:
+        update_type: "security:patch"
