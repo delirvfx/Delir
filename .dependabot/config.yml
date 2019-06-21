@@ -6,7 +6,7 @@ update_configs:
     update_schedule: "weekly"
     allowed_updates:
       - match:
-        update_type: "direct"
+          dependency_type: "direct"
     automerged_updates:
       - match:
-        update_type: "security:patch"
+          update_type: "security:patch"
