@@ -65,7 +65,7 @@
     "tslint-config-prettier": "1.18.0",
     "tslint-loader": "3.6.0",
     "typescript": "3.4.4",
-    "webpack": "4.30.0",
+    "webpack": "4.35.0",
     "zip-dir": "1.0.2"
   },
   "dependencies": {
