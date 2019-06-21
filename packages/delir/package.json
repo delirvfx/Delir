@@ -48,7 +48,7 @@
     "node-timecodes": "2.5.0",
     "parse-color": "1.0.0",
     "react": "16.8.6",
-    "react-color": "2.17.0",
+    "react-color": "2.17.3",
     "react-dom": "16.8.6",
     "react-rnd": "9.1.2",
     "react-sortable-hoc": "1.8.3",
