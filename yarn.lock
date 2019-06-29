@@ -887,19 +887,6 @@
     "@types/istanbul-lib-coverage" "^2.0.0"
     "@types/yargs" "^12.0.9"
 
-"@ragg/fleur-react@0.0.17":
-  version "0.0.17"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur-react/-/fleur-react-0.0.17.tgz#f228abd7796e05d6563a2876ce8ff1b9492f136f"
-  integrity sha512-KpZ0SrrtXF6sHIbBcsi4wn+Wsucfi9G/HAqkrVz2VemfziY3Rgw3sakYcGxj0KQy6khSAZW6cSLfDGd7V8jABA==
-
-"@ragg/fleur@0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@ragg/fleur/-/fleur-0.0.16.tgz#f0d6e1caae75cd87617514151d700710d303e791"
-  integrity sha512-U6di7BNWhe5AQOmFIoSGPQRU1GCUs0FixWLXbp7+137bfeoOwi7Ebf8qKY/4HMylsXK35rHWk2ZzlcguluMGqQ==
-  dependencies:
-    immer "^1.8.0"
-    invariant "^2.2.4"
-
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
