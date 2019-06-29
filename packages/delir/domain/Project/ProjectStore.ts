@@ -12,7 +12,7 @@ export interface ProjectStoreState {
 export default class ProjectStore extends Store<ProjectStoreState> {
     public static storeName = 'ProjectStore'
 
-    protected state: ProjectStoreState = {
+    public state: ProjectStoreState = {
         project: null,
         lastChangeTime: 0,
     }
