@@ -1,21 +1,10 @@
-.preferenceEnter
-    opacity 0
-    transform scale(1.2)
+@import '../../assets/styles/_variables'
 
-.preferenceEnterActive
-    opacity 1
-    transform scale(1)
+.preference
+    position fixed
+    top 0
+    left 0
+    z-index $z-index-modal-window
 
-    transition-property opacity, transform
-    transition-duration .4s
-
-.preferenceLeave
-    opacity 1
-    transform scale(1)
-
-.preferenceLeaveActive
-    opacity 0
-    transform scale(1.2)
-
-    transition-property opacity, transform
-    transition-duration .4s
+    width 100vw
+    height 100vh

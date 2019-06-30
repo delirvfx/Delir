@@ -2,7 +2,7 @@ import { useStore } from '@fleur/fleur-react'
 import { RenderingProgress, RenderingStep } from '@ragg/deream'
 import * as classnames from 'classnames'
 import * as React from 'react'
-import { CSSTransitionGroup } from 'react-transition-group'
+import { animated, useTransition } from 'react-spring'
 
 import Button from '../../components/Button/Button'
 import RendererStore from '../../domain/Renderer/RendererStore'
@@ -43,38 +43,37 @@ export const RenderingWaiter = () => {
         setShow(true)
     }, [inRendering])
 
+    const transitions = useTransition(show && !!status, null, {
+        from: { opacity: 0 },
+        enter: { opacity: 1 },
+        leave: { opacity: 0 },
+    })
+
     return (
-        <CSSTransitionGroup
-            component="div"
-            transitionName={{
-                enter: s.transitionEnter,
-                enterActive: s.transitionEnterActive,
-                leave: s.transitionLeave,
-                leaveActive: s.transitionLeaveActive,
-            }}
-            transitionEnterTimeout={400}
-            transitionLeaveTimeout={400}
-        >
-            {show && status && (
-                <div className={s.RenderingWaiter}>
-                    {status.step === RenderingStep.Completed ? (
-                        <>
-                            <div className={s.status}>
-                                <img className={s.completedParrot} src={require('./parrot.gif')} />
-                                <div className={s.statusText}>{statusToText(status)}</div>
-                            </div>
-                            <Button type="primary" className={s.doneButton} onClick={handleClickDone}>
-                                {t(t.k.close)}
-                            </Button>
-                        </>
-                    ) : (
-                        <div className={s.status}>
-                            <i className={classnames('fa fa-circle-o-notch fa-3x', s.spinner)} />
-                            <div className={s.statusText}>{statusToText(status)}</div>
-                        </div>
-                    )}
-                </div>
+        <>
+            {transitions.map(
+                ({ item, key, props: style }) =>
+                    item && (
+                        <animated.div key={key} className={s.RenderingWaiter} style={style}>
+                            {status.step === RenderingStep.Completed ? (
+                                <>
+                                    <div className={s.status}>
+                                        <img className={s.completedParrot} src={require('./parrot.gif')} />
+                                        <div className={s.statusText}>{statusToText(status)}</div>
+                                    </div>
+                                    <Button type="primary" className={s.doneButton} onClick={handleClickDone}>
+                                        {t(t.k.close)}
+                                    </Button>
+                                </>
+                            ) : (
+                                <div className={s.status}>
+                                    <i className={classnames('fa fa-circle-o-notch fa-3x', s.spinner)} />
+                                    <div className={s.statusText}>{statusToText(status)}</div>
+                                </div>
+                            )}
+                        </animated.div>
+                    ),
             )}
-        </CSSTransitionGroup>
+        </>
     )
 }
