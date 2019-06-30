@@ -1,6 +1,6 @@
 import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as React from 'react'
-import { CSSTransitionGroup } from 'react-transition-group'
+import { animated, Transition } from 'react-spring/renderprops'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -61,19 +61,21 @@ export default withFleurContext(
                         <StatusBar />
                         <Notifications />
                         <RenderingWaiter />
-                        <CSSTransitionGroup
-                            component="div"
-                            transitionEnterTimeout={400}
-                            transitionLeaveTimeout={400}
-                            transitionName={{
-                                enter: s.preferenceEnter,
-                                enterActive: s.preferenceEnterActive,
-                                leave: s.preferenceLeave,
-                                leaveActive: s.preferenceLeaveActive,
-                            }}
+                        <Transition
+                            items={preferenceOpened}
+                            from={{ opacity: 0, transform: 'scale(1.2)' }}
+                            enter={{ opacity: 1, transform: 'scale(1)' }}
+                            leave={{ opacity: 0, transform: 'scale(1.2)' }}
                         >
-                            {preferenceOpened && <Preference onClose={this.handlePreferenceClose} />}
-                        </CSSTransitionGroup>
+                            {opened =>
+                                opened &&
+                                (style => (
+                                    <animated.div className={s.preference} style={style}>
+                                        <Preference onClose={this.handlePreferenceClose} />
+                                    </animated.div>
+                                ))
+                            }
+                        </Transition>
                     </div>
                 )
             }

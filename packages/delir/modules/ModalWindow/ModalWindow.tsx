@@ -22,7 +22,6 @@ export interface Props {
 
 interface State {
     show: boolean
-    onTransitionEnd?: () => void
 }
 
 export const show = <T extends JSX.Element = any>(component: T, props: Props = { show: true }): Portal => {
@@ -52,18 +51,9 @@ export default class ModalWindow extends React.Component<Props, State> {
                 className={classnames(s.root, {
                     [s['--show']]: this.state.show,
                 })}
-                onTransitionEnd={this.transitionEnd}
             >
                 {children ? children : <webview className={s.webview} src={url} autosize style={{ width, height }} />}
             </div>
         )
-    }
-
-    private transitionEnd = () => {
-        const { onTransitionEnd } = this.state
-
-        if (typeof onTransitionEnd === 'function') {
-            onTransitionEnd()
-        }
     }
 }

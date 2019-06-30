@@ -50,6 +50,7 @@
     "react-dom": "16.8.6",
     "react-rnd": "9.1.2",
     "react-sortable-hoc": "1.8.3",
+    "react-spring": "8.0.25",
     "react-tabs": "3.0.0",
     "react-transition-group": "1.2.1",
     "typescript": "3.4.4",

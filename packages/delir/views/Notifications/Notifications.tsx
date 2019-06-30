@@ -1,6 +1,7 @@
 import { useFleurContext, useStore } from '@fleur/fleur-react'
 import * as classnames from 'classnames'
 import * as React from 'react'
+import { animated, useTransition } from 'react-spring'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -34,17 +35,23 @@ export const Notifications = () => {
         })
     }, [userCodeException])
 
+    const transitions = useTransition(entries, null, {
+        from: { opacity: 0, transform: 'scaleY(0)', transformOrigin: 'top center' },
+        enter: { opacity: 1, transform: 'scaleY(1)' },
+        leave: { opacity: 0 },
+    })
+
     return (
         <div className={s.root}>
-            {entries.map(entry => (
-                <div key={entry.id} className={classnames(s.entry, s[`--${entry.level}`])}>
+            {transitions.map(({ item: entry, key, props: style }) => (
+                <animated.div key={key} className={classnames(s.entry, s[`--${entry.level}`])} style={style}>
                     <div className={s.close} onClick={handleCloseMessage} data-entry-id={entry.id}>
                         &times;
                     </div>
                     {entry.title != null && entry.title !== '' && <h1 className={s.entryTitle}>{entry.title}</h1>}
                     {entry.message && <p className={s.entryBody}>{entry.message}</p>}
                     {entry.detail != null && entry.detail !== '' && <pre className={s.detail}>{entry.detail}</pre>}
-                </div>
+                </animated.div>
             ))}
         </div>
     )
