@@ -45,7 +45,7 @@
     "gulp-load-plugins": "1.6.0",
     "gulp-plumber": "1.2.1",
     "gulp-pug": "4.0.1",
-    "husky": "2.4.1",
+    "husky": "2.7.0",
     "jsdom": "14.0.0",
     "jsdom-global": "3.0.2",
     "lint-staged": "8.1.5",
