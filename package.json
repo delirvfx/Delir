@@ -46,7 +46,7 @@
     "gulp-plumber": "1.2.1",
     "gulp-pug": "4.0.1",
     "husky": "2.4.1",
-    "jsdom": "14.0.0",
+    "jsdom": "15.1.1",
     "jsdom-global": "3.0.2",
     "lint-staged": "8.1.5",
     "monaco-editor-webpack-plugin": "1.7.0",
