@@ -48,7 +48,7 @@
     "husky": "2.4.1",
     "jsdom": "14.0.0",
     "jsdom-global": "3.0.2",
-    "lint-staged": "8.1.5",
+    "lint-staged": "9.1.0",
     "monaco-editor-webpack-plugin": "1.7.0",
     "nib": "1.1.2",
     "node-notifier": "5.4.0",
