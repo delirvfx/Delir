@@ -7,7 +7,7 @@
   "private": true,
   "devDependencies": {
     "@delirvfx/core-test-helper": "*",
-    "@types/classnames": "2.2.7",
+    "@types/classnames": "2.2.9",
     "@types/electron": "1.6.10",
     "@types/fs-extra": "5.0.5",
     "@types/jest": "24.0.15",
