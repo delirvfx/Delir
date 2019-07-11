@@ -37,7 +37,7 @@
     "fs-extra": "7.0.1",
     "joi": "14.3.1",
     "keymirror": "0.1.1",
-    "lodash": "4.17.11",
+    "lodash": "4.17.13",
     "monaco-editor": "0.16.2",
     "mouse-wheel": "1.2.0",
     "mousetrap": "1.6.3",

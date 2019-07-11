@@ -25,7 +25,7 @@
     "bezier-easing": "2.1.0",
     "font-manager": "0.3.0",
     "joi-browser": "^13.4.0",
-    "lodash": "4.17.11",
+    "lodash": "4.17.13",
     "p5": "0.8.0",
     "semver": "6.0.0",
     "typescript": "3.4.4",
