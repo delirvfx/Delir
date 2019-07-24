@@ -1749,7 +1749,7 @@ arr-flatten@^1.1.0:
   resolved "https://registry.yarnpkg.com/arr-flatten/-/arr-flatten-1.1.0.tgz#36048bbff4e7b47e136644316c99669ea5ae91f1"
   integrity sha512-L3hKV5R/p5o81R7O02IGnwpDmkp6E982XhtbuwSe3O4qOtMMMtodicASA1Cny2U+aCXcNpml+m4dPsvsJ3jatg==
 
-arr-map@^2.0.0:
+arr-map@^2.0.0, arr-map@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/arr-map/-/arr-map-2.0.2.tgz#3a77345ffc1cf35e2a91825601f9e58f2e24cac4"
   integrity sha1-Onc0X/wc814qkYJWAfnljy4kysQ=
@@ -1765,11 +1765,6 @@ arr-union@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/arr-union/-/arr-union-3.1.0.tgz#e39b09aea9def866a8f206e288af63919bae39c4"
   integrity sha1-45sJrqne+Gao8gbiiK9jkZuuOcQ=
-
-array-each@^0.1.0:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/array-each/-/array-each-0.1.1.tgz#c5d52ba8225f36d728178ba7aec413acfaddd0f9"
-  integrity sha1-xdUrqCJfNtcoF4unrsQTrPrd0Pk=
 
 array-each@^1.0.0, array-each@^1.0.1:
   version "1.0.1"
@@ -2811,15 +2806,14 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
-collection-map@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/collection-map/-/collection-map-0.1.0.tgz#4cff91d25108d79f4edeecce6ecee3e488f267c2"
-  integrity sha1-TP+R0lEI159O3uzObs7j5IjyZ8I=
+collection-map@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/collection-map/-/collection-map-1.0.0.tgz#aea0f06f8d26c780c2b75494385544b2255af18c"
+  integrity sha1-rqDwb40mx4DCt1SUOFVEsiVa8Yw=
   dependencies:
-    arr-map "^2.0.0"
-    get-values "^0.1.0"
-    is-plain-object "^2.0.1"
-    make-iterator "^0.1.1"
+    arr-map "^2.0.2"
+    for-own "^1.0.0"
+    make-iterator "^1.0.0"
 
 collection-visit@^1.0.0:
   version "1.0.0"
@@ -4484,13 +4478,6 @@ for-in@^1.0.1, for-in@^1.0.2:
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
   integrity sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
 
-for-own@^0.1.1, for-own@^0.1.3:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/for-own/-/for-own-0.1.5.tgz#5265c681a4f294dabbf17c9509b6763aa84510ce"
-  integrity sha1-UmXGgaTylNq78XyVCbZ2OqhFEM4=
-  dependencies:
-    for-in "^1.0.1"
-
 for-own@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/for-own/-/for-own-1.0.0.tgz#c63332f415cedc4b04dbfe70cf836494c53cb44b"
@@ -4763,13 +4750,6 @@ get-value@^2.0.3, get-value@^2.0.6:
   resolved "https://registry.yarnpkg.com/get-value/-/get-value-2.0.6.tgz#dc15ca1c672387ca76bd37ac0a395ba2042a2c28"
   integrity sha1-3BXKHGcjh8p2vTesCjlbogQqLCg=
 
-get-values@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/get-values/-/get-values-0.1.0.tgz#3ac035b65a44923d35db2fc2b7ba2322b6c3f29e"
-  integrity sha1-OsA1tlpEkj012y/Ct7ojIrbD8p4=
-  dependencies:
-    for-own "^0.1.3"
-
 getpass@^0.1.1:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
@@ -4806,13 +4786,15 @@ glob-to-regexp@^0.3.0:
   resolved "https://registry.yarnpkg.com/glob-to-regexp/-/glob-to-regexp-0.3.0.tgz#8c5a1494d2066c570cc3bfe4496175acc4d502ab"
   integrity sha1-jFoUlNIGbFcMw7/kSWF1rMTVAqs=
 
-glob-watcher@^5.0.0:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/glob-watcher/-/glob-watcher-5.0.1.tgz#239aaa621b6bd843b288fdf6b155f50963c7d7ea"
-  integrity sha512-fK92r2COMC199WCyGUblrZKhjra3cyVMDiypDdqg1vsSDmexnbYivK1kNR4QItiNXLKmGlqan469ks67RtNa2g==
+glob-watcher@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/glob-watcher/-/glob-watcher-5.0.3.tgz#88a8abf1c4d131eb93928994bc4a593c2e5dd626"
+  integrity sha512-8tWsULNEPHKQ2MR4zXuzSmqbdyV5PtwwCaWSGQ1WwHsJ07ilNeN1JB8ntxhckbnpSHaf9dXFUHzIWvm1I13dsg==
   dependencies:
+    anymatch "^2.0.0"
     async-done "^1.2.0"
     chokidar "^2.0.0"
+    is-negated-glob "^1.0.0"
     just-debounce "^1.0.0"
     object.defaults "^1.1.0"
 
@@ -5032,10 +5014,10 @@ gulp-babel@8.0.0:
     through2 "^2.0.0"
     vinyl-sourcemaps-apply "^0.2.0"
 
-gulp-cli@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/gulp-cli/-/gulp-cli-2.0.1.tgz#7847e220cb3662f2be8a6d572bf14e17be5a994b"
-  integrity sha512-RxujJJdN8/O6IW2nPugl7YazhmrIEjmiVfPKrWt68r71UCaLKS71Hp0gpKT+F6qOUFtr7KqtifDKaAJPRVvMYQ==
+gulp-cli@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/gulp-cli/-/gulp-cli-2.2.0.tgz#5533126eeb7fe415a7e3e84a297d334d5cf70ebc"
+  integrity sha512-rGs3bVYHdyJpLqR0TUBnlcZ1O5O++Zs4bA0ajm+zr3WFCfiSLjGwoCBqFs18wzN+ZxahT9DkOK5nDf26iDsWjA==
   dependencies:
     ansi-colors "^1.0.1"
     archy "^1.0.0"
@@ -5047,7 +5029,7 @@ gulp-cli@^2.0.0:
     gulplog "^1.0.0"
     interpret "^1.1.0"
     isobject "^3.0.1"
-    liftoff "^2.5.0"
+    liftoff "^3.1.0"
     matchdep "^2.0.0"
     mute-stdout "^1.0.0"
     pretty-hrtime "^1.0.0"
@@ -5091,14 +5073,14 @@ gulp-pug@4.0.1:
     replace-ext "^1.0.0"
     through2 "^2.0.3"
 
-gulp@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/gulp/-/gulp-4.0.0.tgz#95766c601dade4a77ed3e7b2b6dc03881b596366"
-  integrity sha1-lXZsYB2t5Kd+0+eyttwDiBtZY2Y=
+gulp@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/gulp/-/gulp-4.0.2.tgz#543651070fd0f6ab0a0650c6a3e6ff5a7cb09caa"
+  integrity sha512-dvEs27SCZt2ibF29xYgmnwwCYZxdxhQ/+LFWlbAW8y7jt68L/65402Lz3+CKy0Ov4rOs+NERmDq7YlZaDqUIfA==
   dependencies:
-    glob-watcher "^5.0.0"
-    gulp-cli "^2.0.0"
-    undertaker "^1.0.0"
+    glob-watcher "^5.0.3"
+    gulp-cli "^2.2.0"
+    undertaker "^1.2.1"
     vinyl-fs "^3.0.0"
 
 gulplog@^1.0.0:
@@ -6817,13 +6799,13 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-liftoff@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/liftoff/-/liftoff-2.5.0.tgz#2009291bb31cea861bbf10a7c15a28caf75c31ec"
-  integrity sha1-IAkpG7Mc6oYbvxCnwVooyvdcMew=
+liftoff@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/liftoff/-/liftoff-3.1.0.tgz#c9ba6081f908670607ee79062d700df062c52ed3"
+  integrity sha512-DlIPlJUkCV0Ips2zf2pJP0unEoT1kwYhiiPUGF3s/jtxTCjziNLoiVVh+jqWOWeFi6mmwQ5fNxvAUyPad4Dfog==
   dependencies:
     extend "^3.0.0"
-    findup-sync "^2.0.0"
+    findup-sync "^3.0.0"
     fined "^1.0.1"
     flagged-respawn "^1.0.0"
     is-plain-object "^2.0.4"
@@ -7138,13 +7120,6 @@ make-error@^1.1.1:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/make-error/-/make-error-1.3.0.tgz#52ad3a339ccf10ce62b4040b708fe707244b8b96"
   integrity sha1-Uq06M5zPEM5itAQLcI/nByRLi5Y=
-
-make-iterator@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/make-iterator/-/make-iterator-0.1.1.tgz#873d27b8198a465a81483b6f5d16da4e863ecf5b"
-  integrity sha1-hz0nuBmKRlqBSDtvXRbaToY+z1s=
-  dependencies:
-    for-own "^0.1.1"
 
 make-iterator@^1.0.0:
   version "1.0.0"
@@ -7900,17 +7875,7 @@ object.assign@^4.0.4, object.assign@^4.1.0:
     has-symbols "^1.0.0"
     object-keys "^1.0.11"
 
-object.defaults@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/object.defaults/-/object.defaults-0.3.0.tgz#b1eb9cbc78c4c7bd56cac6cae3dead5a7113882a"
-  integrity sha1-seucvHjEx71WysbK496tWnETiCo=
-  dependencies:
-    array-each "^0.1.0"
-    array-slice "^0.2.3"
-    for-own "^0.1.3"
-    isobject "^1.0.0"
-
-object.defaults@^1.1.0:
+object.defaults@^1.0.0, object.defaults@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/object.defaults/-/object.defaults-1.1.0.tgz#3a7f868334b407dea06da16d88d5cd29e435fecf"
   integrity sha1-On+GgzS0B96gbaFtiNXNKeQ1/s8=
@@ -7943,12 +7908,13 @@ object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
-object.reduce@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/object.reduce/-/object.reduce-0.1.7.tgz#d180e84f72d218348af45352b55165246b95046d"
-  integrity sha1-0YDoT3LSGDSK9FNStVFlJGuVBG0=
+object.reduce@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/object.reduce/-/object.reduce-1.0.1.tgz#6fe348f2ac7fa0f95ca621226599096825bb03ad"
+  integrity sha1-b+NI8qx/oPlcpiEiZZkJaCW7A60=
   dependencies:
-    for-own "^0.1.3"
+    for-own "^1.0.0"
+    make-iterator "^1.0.0"
 
 once@^1.3.0, once@^1.3.1, once@^1.3.2, once@^1.4.0:
   version "1.4.0"
@@ -10980,19 +10946,19 @@ undertaker-registry@^1.0.0:
   resolved "https://registry.yarnpkg.com/undertaker-registry/-/undertaker-registry-1.0.0.tgz#2da716c765999d8c94b9f9ed2c006df4923b052b"
   integrity sha1-LacWx2WZnYyUufntLABt9JI7BSs=
 
-undertaker@^1.0.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/undertaker/-/undertaker-1.1.0.tgz#0ba00e6fb6a8afe1e928631565aaf6dba6111aeb"
-  integrity sha1-C6AOb7aor+HpKGMVZar226YRGus=
+undertaker@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/undertaker/-/undertaker-1.2.1.tgz#701662ff8ce358715324dfd492a4f036055dfe4b"
+  integrity sha512-71WxIzDkgYk9ZS+spIB8iZXchFhAdEo2YU8xYqBYJ39DIUIqziK78ftm26eecoIY49X0J2MLhG4hr18Yp6/CMA==
   dependencies:
     arr-flatten "^1.0.1"
     arr-map "^2.0.0"
     bach "^1.0.0"
-    collection-map "^0.1.0"
+    collection-map "^1.0.0"
     es6-weak-map "^2.0.1"
     last-run "^1.1.0"
-    object.defaults "^0.3.0"
-    object.reduce "^0.1.7"
+    object.defaults "^1.0.0"
+    object.reduce "^1.0.0"
     undertaker-registry "^1.0.0"
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
