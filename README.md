@@ -76,6 +76,33 @@ yarn build
   - **deream** -- Renderered frame exporter for ffmpeg
   - **plugins** -- Built-in Delir plugins (build with webpack)
 
-## OpenCollective
-### Buckers
-[![](https://opencollective.com/delirvfx/backers.svg?width=890)](https://opencollective.com/delirvfx)
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/ra-gg/Delir/graphs/contributors"><img src="https://opencollective.com/delirvfx/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/delirvfx/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/delirvfx"><img src="https://opencollective.com/delirvfx/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/delirvfx/contribute)]
+
+<a href="https://opencollective.com/delirvfx/organization/0/website"><img src="https://opencollective.com/delirvfx/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/1/website"><img src="https://opencollective.com/delirvfx/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/2/website"><img src="https://opencollective.com/delirvfx/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/3/website"><img src="https://opencollective.com/delirvfx/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/4/website"><img src="https://opencollective.com/delirvfx/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/5/website"><img src="https://opencollective.com/delirvfx/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/6/website"><img src="https://opencollective.com/delirvfx/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/7/website"><img src="https://opencollective.com/delirvfx/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/8/website"><img src="https://opencollective.com/delirvfx/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/delirvfx/organization/9/website"><img src="https://opencollective.com/delirvfx/organization/9/avatar.svg"></a>
