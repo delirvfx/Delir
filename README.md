@@ -1,5 +1,7 @@
 # Delir
-Web Technology driven VFX Application
+Web Technology driven VFX Application.
+
+Runs on Windows, macOS, Linux.
 
 ![screenshot](https://user-images.githubusercontent.com/8597982/51431908-d5c7c780-1c72-11e9-9f2a-4bee09200ffc.png)
 
@@ -21,10 +23,10 @@ Web Technology driven VFX Application
 - Post processing plugin support with Canvas2DContext and WebGL(experimental, now in develop)
 - Rendering to mp4(H.264 + aac) with ffmpeg
 
-## How to develop Post processing plugin
-See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/core/plugin-example)
-
 ## For developer
+
+### How to develop Post processing plugin
+See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/core/plugin-example)
 
 ### Run Delir for development
 1. Delir depends to below softwares.
@@ -70,6 +72,10 @@ yarn build
     - **modules**  -- Modal windows
     - **utils**  -- View utilities non relate some domain
     - **views**  -- View components
-  - **delir-core**  -- Core module codes (Project structure, engine, calculation, renderer)
+  - **core**  -- Core module codes called `@delirvfx/core` (Project structure, engine, calculation, renderer)
   - **deream** -- Renderered frame exporter for ffmpeg
   - **plugins** -- Built-in Delir plugins (build with webpack)
+
+## OpenCollective
+### Buckers
+[![](https://opencollective.com/delirvfx/backers.svg?width=890)](https://opencollective.com/delirvfx)

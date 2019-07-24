@@ -31,16 +31,20 @@ export const dependencies = [
         "url": "https://github.com/Ragg-/Delir/tree/master/src/delir-core"
     },
     {
-        "name": "@ragg/deream",
-        "url": "https://github.com/Ragg-/deream-stream#readme"
+        "name": "@delirvfx/core-test-helper",
+        "url": "https://www.npmjs.com/package/@delirvfx/core-test-helper"
     },
     {
-        "name": "@ragg/fleur",
+        "name": "@fleur/fleur",
         "url": "https://github.com/ra-gg/fleur/tree/master/packages/fleur"
     },
     {
-        "name": "@ragg/fleur-react",
+        "name": "@fleur/fleur-react",
         "url": "https://github.com/ra-gg/fleur/tree/master/packages/fleur-react"
+    },
+    {
+        "name": "@ragg/deream",
+        "url": "https://github.com/Ragg-/deream-stream#readme"
     },
     {
         "name": "@types/classnames",
@@ -97,10 +101,6 @@ export const dependencies = [
     {
         "name": "@types/react-tabs",
         "url": "https://www.npmjs.com/package/@types/react-tabs"
-    },
-    {
-        "name": "@types/react-transition-group",
-        "url": "https://www.npmjs.com/package/@types/react-transition-group"
     },
     {
         "name": "@types/semver",
@@ -203,10 +203,6 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/gulp-babel"
     },
     {
-        "name": "gulp-changed",
-        "url": "https://www.npmjs.com/package/gulp-changed"
-    },
-    {
         "name": "gulp-load-plugins",
         "url": "https://www.npmjs.com/package/gulp-load-plugins"
     },
@@ -229,6 +225,10 @@ export const dependencies = [
     {
         "name": "joi",
         "url": "https://github.com/hapijs/joi"
+    },
+    {
+        "name": "joi-browser",
+        "url": "https://www.npmjs.com/package/joi-browser"
     },
     {
         "name": "jsdom",
@@ -319,16 +319,16 @@ export const dependencies = [
         "url": "https://github.com/clauderic/react-sortable-hoc"
     },
     {
+        "name": "react-spring",
+        "url": "https://github.com/drcmda/react-spring#readme"
+    },
+    {
         "name": "react-tabs",
         "url": "https://github.com/reactjs/react-tabs"
     },
     {
         "name": "react-test-renderer",
         "url": "https://reactjs.org/"
-    },
-    {
-        "name": "react-transition-group",
-        "url": "https://github.com/reactjs/react-transition-group#readme"
     },
     {
         "name": "semver",
@@ -384,7 +384,7 @@ export const dependencies = [
     },
     {
         "name": "yargs",
-        "url": "http://yargs.js.org/"
+        "url": "https://yargs.js.org/"
     },
     {
         "name": "zip-dir",

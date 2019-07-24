@@ -31,7 +31,7 @@ export interface EditorState {
 export default class EditorStore extends Store<EditorState> {
     public static storeName = 'EditorStore'
 
-    protected state: EditorState = {
+    public state: EditorState = {
         project: null,
         projectPath: null,
         activeComp: null,

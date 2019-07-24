@@ -33,7 +33,7 @@ const AUDIO_BUFFER_SIZE_SECONDS = 1
 export default class RendererStore extends Store<State> {
     public static storeName = 'RendererStore'
 
-    protected state: State = {
+    public state: State = {
         project: null,
         composition: null,
         progress: null,
