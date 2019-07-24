@@ -14,8 +14,7 @@
     "declare": "cross-env tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "clean-modules": "rm -rf node_modules/ packages/delir/node_modules packages/delir-core/node_modules",
     "test-core": "jest -c packages/core/jest.config.js",
-    "test-front": "jest -c packages/delir/jest.config.js",
-    "postinstall": "opencollective-postinstall || true"
+    "test-front": "jest -c packages/delir/jest.config.js"
   },
   "workspaces": [
     "packages/*"
@@ -69,8 +68,7 @@
     "zip-dir": "1.0.2"
   },
   "dependencies": {
-    "font-manager": "0.3.0",
-    "opencollective-postinstall": "^2.0.2"
+    "font-manager": "0.3.0"
   },
   "husky": {
     "hooks": {
@@ -88,9 +86,5 @@
       "tslint --fix",
       "git add"
     ]
-  },
-  "collective": {
-    "type": "opencollective",
-    "url": "https://opencollective.com/delirvfx"
   }
 }
