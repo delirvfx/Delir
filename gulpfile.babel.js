@@ -1,7 +1,6 @@
 const g = require('gulp')
 const $ = require('gulp-load-plugins')()
 const webpack = require('webpack')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const builder = require('electron-builder')
@@ -289,7 +288,6 @@ export function compileRendererJs(done) {
                 ],
             },
             plugins: [
-                new CleanWebpackPlugin({ verbose: true }),
                 new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
                 new webpack.LoaderOptionsPlugin({
                     test: /\.styl$/,
@@ -377,7 +375,6 @@ export function compilePlugins(done) {
                 ],
             },
             plugins: [
-                new CleanWebpackPlugin({ verbose: true }),
                 new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
                 new webpack.ExternalsPlugin('commonjs', ['@delirvfx/core']),
                 ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),

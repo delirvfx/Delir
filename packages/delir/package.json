@@ -7,7 +7,7 @@
   "private": true,
   "devDependencies": {
     "@delirvfx/core-test-helper": "*",
-    "@types/classnames": "2.2.7",
+    "@types/classnames": "2.2.9",
     "@types/electron": "1.6.10",
     "@types/fs-extra": "5.0.5",
     "@types/jest": "24.0.15",
@@ -17,14 +17,14 @@
     "@types/mousetrap": "1.6.2",
     "@types/msgpack5": "3.4.1",
     "@types/react": "16.8.13",
-    "@types/react-color": "3.0.0",
+    "@types/react-color": "3.0.1",
     "@types/react-dom": "16.8.4",
     "@types/react-sortable-hoc": "0.6.5",
     "@types/react-tabs": "2.3.1",
     "@types/typescript": "2.0.0",
     "@types/uuid": "3.4.4",
     "devtron": "1.4.0",
-    "jest": "24.7.1",
+    "jest": "24.8.0",
     "ts-jest": "24.0.2"
   },
   "dependencies": {
@@ -38,8 +38,8 @@
     "fs-extra": "7.0.1",
     "joi": "14.3.1",
     "keymirror": "0.1.1",
-    "lodash": "4.17.11",
-    "monaco-editor": "0.16.2",
+    "lodash": "4.17.13",
+    "monaco-editor": "0.17.1",
     "mouse-wheel": "1.2.0",
     "mousetrap": "1.6.3",
     "msgpack5": "4.2.1",
@@ -48,12 +48,12 @@
     "react": "16.8.6",
     "react-color": "2.17.3",
     "react-dom": "16.8.6",
-    "react-rnd": "9.1.2",
+    "react-rnd": "10.0.0",
     "react-sortable-hoc": "1.8.3",
     "react-spring": "8.0.25",
     "react-tabs": "3.0.0",
     "typescript": "3.4.4",
     "uuid": "3.3.2",
-    "yargs": "13.2.2"
+    "yargs": "13.2.4"
   }
 }
