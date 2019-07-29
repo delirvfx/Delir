@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@delirvfx/core": "*",
-    "lodash-es": "4.17.14",
+    "lodash-es": "4.17.15",
     "random-emoji": "1.0.2"
   },
   "devDependencies": {
