@@ -29,7 +29,7 @@ import { KeyframeMediator } from './KeyframeMediator'
 import ScriptParamEditor from './ScriptParamEditor'
 
 import { SortEndHandler } from 'react-sortable-hoc'
-import { PX_PER_SEC } from 'views/Timeline/Timeline'
+import { PX_PER_SEC } from '../Timeline/Timeline'
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
