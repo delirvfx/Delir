@@ -19,9 +19,9 @@ import { AddEffectKeyframeCommand } from './Commands/AddEffectKeyframeCommand'
 import { AddKeyframeCommand } from './Commands/AddKeyframeCommand'
 import { AddLayerCommand } from './Commands/AddLayerCommand'
 import { CreateCompositionCommand } from './Commands/CreateCompositionCommand'
-import { ModifyClipCommand } from './Commands/ModifyClipCommand'
 import { ModifyClipExpressionCommand } from './Commands/ModifyClipExpressionCommand'
 import { ModifyClipKeyframeCommand } from './Commands/ModifyClipKeyframeCommand'
+import { ModifyClipsCommand, ModifyClipsPatches } from './Commands/ModifyClipsCommand'
 import { ModifyCompositionCommand } from './Commands/ModifyCompositionCommand'
 import { ModifyEffectCommand } from './Commands/ModifyEffectCommand'
 import { ModifyEffectExpressionCommand } from './Commands/ModifyEffectExpressionCommand'
@@ -554,6 +554,7 @@ export const modifyLayer = operation(
     },
 )
 
+/** @deprecated */
 export const modifyClip = operation(
     async (
         context,
@@ -565,20 +566,34 @@ export const modifyClip = operation(
             patch: Partial<Delir.Entity.Clip>
         },
     ) => {
+        await context.executeOperation(modifyClips, [{ clipId, patch }])
+    },
+)
+
+export const modifyClips = operation(
+    async (context, patches: { clipId: string; patch: Partial<Delir.Entity.Clip> }[]) => {
         const project = context.getStore(ProjectStore).getProject()!
-        const clip = project.findClip(clipId)!
-        const layer = project.findClipOwnerLayer(clipId)!
-        const composition = project.findLayerOwnerComposition(layer.id)!
+        const comp = context.getStore(EditorStore).activeComp!
 
-        if (_.isMatch(clip, patch)) return
+        const effectivePatches: ModifyClipsPatches = []
 
-        await context.executeOperation(HistoryOps.pushHistory, {
-            command: new ModifyClipCommand(composition.id, clipId, { ...clip }, { ...patch }),
+        patches.forEach(({ clipId, patch }) => {
+            const clip = project.findClip(clipId)
+            if (!clip || _.isMatch(clip, patch)) return
+
+            effectivePatches.push({
+                clipId,
+                patch,
+                unpatched: { ...clip },
+            })
         })
 
-        context.dispatch(ProjectActions.modifyClip, {
-            targetClipId: clipId,
-            patch: patch,
+        await context.executeOperation(HistoryOps.pushHistory, {
+            command: new ModifyClipsCommand(comp.id, effectivePatches),
+        })
+
+        context.dispatch(ProjectActions.modifyClips, {
+            patches: effectivePatches,
         })
 
         await context.executeOperation(EditorOps.seekPreviewFrame, {})

@@ -8,9 +8,10 @@ import { SortEndHandler } from 'react-sortable-hoc'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import * as EditorOps from '../../domain/Editor/operations'
+import { getSelectedClips } from '../../domain/Editor/selectors'
 import * as ProjectOps from '../../domain/Project/operations'
 
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import EditorStore from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../domain/Project/ProjectStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
@@ -19,8 +20,8 @@ import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
 
 import KeyframeEditor from '../KeyframeEditor'
+import { ClipsMediator } from './ClipsMediator'
 import Gradations from './Gradations'
-import Layer from './Layer'
 import LayerLabelList from './LayerLabelList'
 
 import * as s from './style.styl'
@@ -35,13 +36,14 @@ interface State {
     cursorHeight: number
     scale: number
     selectedLayerId: string | null
+    clipDragOffset: { x: number }
 }
 
-const PX_PER_SEC = 30
+export const PX_PER_SEC = 30
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
     activeComp: getStore(EditorStore).activeComp,
-    activeClip: getStore(EditorStore).activeClip,
+    activeClips: getSelectedClips()(getStore),
     currentPointFrame: getStore(EditorStore).currentPointFrame,
     previewPlayed: getStore(RendererStore).previewPlaying,
 })
@@ -65,6 +67,7 @@ export default withFleurContext(
                 cursorHeight: 0,
                 scale: 1,
                 selectedLayerId: null,
+                clipDragOffset: { x: 0 },
             }
 
             private scaleList = React.createRef<DropDown>()
@@ -101,8 +104,7 @@ export default withFleurContext(
 
             public render() {
                 const { scale, timelineScrollLeft, timelineScrollWidth } = this.state
-                const { previewPlayed, activeComp, activeClip, currentPointFrame } = this.props
-                const { framerate } = activeComp ? activeComp : { framerate: 30 }
+                const { previewPlayed, activeComp, activeClips, currentPointFrame } = this.props
                 const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
                 const measures = !activeComp
@@ -194,22 +196,19 @@ export default withFleurContext(
                                         <div
                                             ref={this.timelineContainer}
                                             className={s.layerContainer}
+                                            style={{ display: 'flex' }}
+                                            onMouseUp={this.handleMouseUpOnTimeline}
                                             onKeyDown={this.handleKeydownTimeline}
                                             onScroll={this.handleScrollTimeline}
                                         >
-                                            {activeComp &&
-                                                layers.map((layer, idx) => (
-                                                    <Layer
-                                                        key={layer.id!}
-                                                        layer={{ ...layer }}
-                                                        layerIndex={idx}
-                                                        framerate={framerate}
-                                                        pxPerSec={PX_PER_SEC}
-                                                        scale={scale}
-                                                        scrollLeft={timelineScrollLeft}
-                                                        scrollWidth={timelineScrollWidth}
-                                                    />
-                                                ))}
+                                            {activeComp && (
+                                                <ClipsMediator
+                                                    comp={activeComp}
+                                                    scale={scale}
+                                                    scrollLeft={timelineScrollLeft}
+                                                    scrollWidth={timelineScrollWidth}
+                                                />
+                                            )}
                                         </div>
                                     </Pane>
                                 </Workspace>
@@ -218,7 +217,7 @@ export default withFleurContext(
                                 <KeyframeEditor
                                     ref={this.keyframeView}
                                     activeComposition={activeComp}
-                                    activeClip={activeClip}
+                                    activeClip={activeClips.length === 1 ? activeClips[0] : null}
                                     pxPerSec={PX_PER_SEC}
                                     scale={scale}
                                     scrollLeft={timelineScrollLeft}
@@ -241,6 +240,12 @@ export default withFleurContext(
                 this.setState({
                     cursorHeight: timelineHeight + keyFrameViewHeight + 1,
                 })
+            }
+
+            private handleMouseUpOnTimeline = (e: React.MouseEvent<HTMLDivElement>) => {
+                if (!(e.target as HTMLElement).closest('[data-clip-id]')) {
+                    this.props.executeOperation(EditorOps.changeSelectClip, { clipIds: [] })
+                }
             }
 
             private handleScrollLayerLabel = (e: React.UIEvent<HTMLDivElement>) => {

@@ -25,9 +25,11 @@ import DelirValueInput from './_DelirValueInput'
 import { EffectList, EffectListItem, EffectSortHandle } from './EffectList'
 import ExpressionEditor from './ExpressionEditor'
 import KeyframeGraph, { KeyframePatch } from './KeyframeGraph'
+import { KeyframeMediator } from './KeyframeMediator'
 import ScriptParamEditor from './ScriptParamEditor'
 
 import { SortEndHandler } from 'react-sortable-hoc'
+import { PX_PER_SEC } from '../Timeline/Timeline'
 import t from './KeyframeEditor.i18n'
 import * as s from './KeyframeEditor.styl'
 
@@ -58,7 +60,7 @@ interface ConnectedProps {
 interface State {
     graphWidth: number
     graphHeight: number
-    keyframeViewViewBox: string | undefined
+    keyframeViewViewBox: { width: number; height: number } | undefined
     editorOpened: boolean
     scriptParamEditorOpened: boolean
 }
@@ -113,7 +115,7 @@ export default withFleurContext(
             }
 
             public render() {
-                const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins } = this.props
+                const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins, scale } = this.props
                 const {
                     keyframeViewViewBox,
                     graphWidth,
@@ -220,21 +222,20 @@ export default withFleurContext(
                                     </div>
                                 </div>
                                 {activeClip && activeParamDescriptor && activeParam && keyframes && (
-                                    <KeyframeGraph
-                                        composition={editor.activeComp!}
-                                        parentClip={activeClip}
-                                        entity={activeEntityObject}
-                                        paramName={activeParam.paramName!}
+                                    <KeyframeMediator
+                                        activeClip={activeClip}
+                                        paramName={activeParam.paramName}
                                         descriptor={activeParamDescriptor}
-                                        width={graphWidth}
-                                        height={graphHeight}
-                                        viewBox={keyframeViewViewBox!}
+                                        entity={activeEntityObject}
+                                        keyframeViewViewBox={keyframeViewViewBox}
+                                        graphWidth={graphWidth}
+                                        graphHeight={graphHeight}
                                         scrollLeft={scrollLeft}
-                                        pxPerSec={this.props.pxPerSec}
-                                        zoomScale={this.props.scale}
+                                        pxPerSec={PX_PER_SEC}
                                         keyframes={keyframes}
-                                        onKeyframeRemove={this.keyframeRemoved}
-                                        onModified={this.keyframeModified}
+                                        scale={scale}
+                                        onRemoveKeyframe={this.handleRemoveKeyframe}
+                                        onModifyKeyframe={this.handleModifyKeyframe}
                                     />
                                 )}
                             </div>
@@ -661,7 +662,7 @@ export default withFleurContext(
                 this.setState({
                     graphWidth: box.width,
                     graphHeight: box.height,
-                    keyframeViewViewBox: `0 0 ${box.width} ${box.height}`,
+                    keyframeViewViewBox: { width: box.width, height: box.height },
                 })
             }
 
@@ -725,7 +726,7 @@ export default withFleurContext(
                 })
             }
 
-            private keyframeModified = (
+            private handleModifyKeyframe = (
                 parentClipId: string,
                 paramName: string,
                 frameOnClip: number,
@@ -762,7 +763,7 @@ export default withFleurContext(
                 }
             }
 
-            private keyframeRemoved = (parentClipId: string, keyframeId: string) => {
+            private handleRemoveKeyframe = (parentClipId: string, keyframeId: string) => {
                 const { activeParam } = this.props
                 if (!activeParam) return
 

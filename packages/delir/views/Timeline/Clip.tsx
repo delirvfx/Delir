@@ -6,6 +6,7 @@ import * as React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
 import { animated } from 'react-spring'
+import { decorate } from '../../utils/decorate'
 import { SpreadType } from '../../utils/Spread'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
@@ -16,6 +17,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import t from './Clip.i18n'
 import * as s from './Clip.styl'
+import { ClipDragProps, withClipDragContext } from './ClipDragContext'
 
 interface OwnProps {
     clip: SpreadType<Delir.Entity.Clip>
@@ -24,40 +26,24 @@ interface OwnProps {
     active: boolean
     postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
     hasError: boolean
-    onChangePlace: (clipId: string, newPlacedPx: number) => any
-    onChangeDuration: (clipId: string, newDurationPx: number) => any
 }
 
 interface ConnectedProps {
     postEffectPlugins: Delir.PluginSupport.Types.PluginSummary[]
 }
 
-interface State {
-    left: number
-}
+type Props = OwnProps & ConnectedProps & ContextProp & ClipDragProps
 
-type Props = OwnProps & ConnectedProps & ContextProp
-
-export default withFleurContext(
-    class Clip extends React.Component<Props, State> {
-        public state: State = {
-            left: this.props.left,
-        }
-
-        public shouldComponentUpdate(nextProps: Props, nextState: State) {
-            const { props, state } = this
-            return !_.isEqual(props, nextProps) || !_.isEqual(state, nextState)
-        }
-
-        public componentDidUpdate(prevProps: Props) {
-            if (prevProps.left !== this.props.left) {
-                this.setState({ left: this.props.left })
-            }
+export default decorate<OwnProps>(
+    [withFleurContext, withClipDragContext],
+    class Clip extends React.Component<Props> {
+        public shouldComponentUpdate(nextProps: Props) {
+            const { props } = this
+            return !_.isEqual(props, nextProps)
         }
 
         public render() {
-            const { clip, active, postEffectPlugins, width, hasError } = this.props
-            const { left } = this.state
+            const { clip, active, postEffectPlugins, width, left, hasError } = this.props
 
             return (
                 <MountTransition
@@ -77,11 +63,13 @@ export default withFleurContext(
                                 bottom: false,
                             }}
                             onDragStart={this.handleDragStart}
+                            onDrag={this.handleDrag}
                             onDragStop={this.handleDragEnd}
                             onResize={this.handleResize}
                             onResizeStop={this.handleResizeEnd}
                             onMouseDown={this.handleClick}
                             tabIndex={-1}
+                            data-clip-id={clip.id}
                         >
                             <animated.div
                                 className={classnames(s.inner, {
@@ -95,6 +83,7 @@ export default withFleurContext(
                                     [s.hasError]: hasError,
                                 })}
                                 style={style}
+                                onMouseUp={this.handleMouseUp}
                             >
                                 <ContextMenu>
                                     <MenuItem
@@ -134,12 +123,23 @@ export default withFleurContext(
             )
         }
 
-        private handleClick = () => {
+        private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+            if (this.props.active) return
+            e.preventDefault()
+            e.stopPropagation()
+
             GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
             GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
-            this.props.executeOperation(EditorOps.changeActiveClip, {
-                clipId: this.props.clip.id!,
-            })
+
+            if (e.shiftKey) {
+                this.props.executeOperation(EditorOps.addOrRemoveSelectClip, {
+                    clipIds: [this.props.clip.id],
+                })
+            } else {
+                this.props.executeOperation(EditorOps.changeSelectClip, {
+                    clipIds: [this.props.clip.id!],
+                })
+            }
         }
 
         private handleDragStart: DraggableEventHandler = e => {
@@ -148,22 +148,41 @@ export default withFleurContext(
             })
         }
 
+        private handleDrag: DraggableEventHandler = (e, drag) => {
+            const { clip } = this.props
+
+            this.props.emitClipDrag({
+                nextX: drag.x,
+                originalPlacedFrame: clip.placedFrame,
+            })
+        }
+
         private handleDragEnd: DraggableEventHandler = (e, drag) => {
-            this.props.onChangePlace(this.props.clip.id, drag.x)
+            const { clip } = this.props
+            this.props.emitClipDragEnd({
+                nextX: drag.x,
+                originalPlacedFrame: clip.placedFrame,
+            })
         }
 
         private handleResize: RndResizeCallback = (e, dir, ref, delta, pos) => {
-            this.setState({ left: pos.x })
+            const { clip } = this.props
+
+            this.props.emitClipResize({
+                nextX: pos.x,
+                originalPlacedFrame: clip.placedFrame,
+                deltaWidth: delta.width,
+            })
         }
 
         private handleResizeEnd: RndResizeCallback = (e, direction, ref, delta, pos) => {
-            const { clip } = this.props
+            const { clip, width } = this.props
 
-            if (pos.x !== this.props.left) {
-                this.props.onChangePlace(clip.id, pos.x)
-            }
-
-            this.props.onChangeDuration(clip.id, this.props.width + delta.width)
+            this.props.emitClipResizeEnd({
+                nextX: pos.x,
+                originalPlacedFrame: clip.placedFrame,
+                deltaWidth: delta.width,
+            })
         }
 
         private handleAddEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {

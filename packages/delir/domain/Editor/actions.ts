@@ -13,7 +13,8 @@ export const EditorActions = actions('Editor', {
     setDragEntity: action<DragEntity>(),
     clearDragEntity: action<{}>(),
     changeActiveComposition: action<{ compositionId: string }>(),
-    changeActiveClip: action<{ clipId: string }>(),
+    changeSelectClip: action<{ clipIds: string[] }>(),
+    addOrRemoveSelectClip: action<{ clipIds: string[] }>(),
     changeActiveParam: action<{ target: ParameterTarget | null }>(),
     renderDestinate: action<{
         compositionId: string

@@ -955,6 +955,11 @@
   dependencies:
     any-observable "^0.3.0"
 
+"@simonwep/selection-js@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-0.2.2.tgz#cd4da4f6eb1a351269bfdd927072dd82a838f635"
+  integrity sha512-F5bjNsSohfl2PkCGxdlL/rYTPFm+zQkKQwmEb7KA8FDHYcKyiYIveA/xoYbJNJvga5QD9jJ4pVPV+Jlalml2NQ==
+
 "@sindresorhus/is@^0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
@@ -1203,6 +1208,11 @@
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-6.0.1.tgz#a984b405c702fa5a7ec6abc56b37f2ba35ef5af6"
   integrity sha512-ffCdcrEE5h8DqVxinQjo+2d1q+FV5z7iNtPofw3JsrltSoSVlOGaW0rY8XxtO9XukdTn8TaCGWmk2VFGhI70mg==
+
+"@types/simonwep__selection-js@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@types/simonwep__selection-js/-/simonwep__selection-js-0.2.0.tgz#c701e215ec6b88d96ce46174e5ca7af6e054eb14"
+  integrity sha512-MzU7cjw9C7Lr8N0iO5pnZTHLzHo8VsUzDOUfXQHQn60RqwMozzTWNyFkcstlfqQiYF/DIKOy/todS8XXgTuqdg==
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"

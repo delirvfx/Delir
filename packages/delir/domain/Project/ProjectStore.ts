@@ -113,9 +113,13 @@ export default class ProjectStore extends Store<ProjectStoreState> {
         this.updateLastModified()
     })
 
-    private handleModifyClip = listen(ProjectActions.modifyClip, ({ targetClipId, patch }) => {
+    private handleModifyClips = listen(ProjectActions.modifyClips, ({ patches }) => {
         const { project } = this.state
-        project!.findClip(targetClipId)!.patch(patch)
+
+        patches.forEach(({ clipId, patch }) => {
+            project!.findClip(clipId)!.patch(patch)
+        })
+
         this.updateLastModified()
     })
 
@@ -252,6 +256,10 @@ export default class ProjectStore extends Store<ProjectStoreState> {
 
     public getProject() {
         return this.state.project
+    }
+
+    public findClip(clipId: string) {
+        return this.state.project!.findClip(clipId)
     }
 
     private updateLastModified = () => {
