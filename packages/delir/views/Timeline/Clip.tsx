@@ -166,7 +166,7 @@ export default decorate<OwnProps>(
         }
 
         private handleResize: RndResizeCallback = (e, dir, ref, delta, pos) => {
-            const { clip, width } = this.props
+            const { clip } = this.props
 
             this.props.emitClipResize({
                 nextX: pos.x,

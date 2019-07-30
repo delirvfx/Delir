@@ -4,11 +4,11 @@ import * as Selection from '@simonwep/selection-js'
 import * as React from 'react'
 import { decorate } from '../../utils/decorate'
 
-import { getActiveComp } from '../../domain/Editor/selectors'
+import { getActiveComp, getActiveParam } from '../../domain/Editor/selectors'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import { SpreadType } from '../../utils/Spread'
-import KeyframeGraph from './KeyframeGraph'
+import KeyframeGraph, { KeyframePatch } from './KeyframeGraph'
 
 interface OwnProps {
     activeClip: SpreadType<Delir.Entity.Clip>
@@ -22,6 +22,8 @@ interface OwnProps {
     pxPerSec: number
     scale: number
     keyframes: readonly Delir.Entity.Keyframe[]
+    onRemoveKeyframe(parentClipId: string, keyframeId: string): void
+    onModifyKeyframe(parentClipId: string, paramName: string, frameOnClip: number, patch: KeyframePatch): void
 }
 
 interface State {
@@ -42,9 +44,9 @@ export const KeyframeMediator = ({
     pxPerSec,
     scale,
     keyframes,
+    onRemoveKeyframe,
+    onModifyKeyframe,
 }: OwnProps) => {
-    const [keyframeDragOffsetX, setState] = React.useState(0)
-
     const { activeComp } = useStore([EditorStore], getStore => ({
         activeComp: getActiveComp()(getStore),
     }))
@@ -63,8 +65,8 @@ export const KeyframeMediator = ({
             pxPerSec={pxPerSec}
             zoomScale={scale}
             keyframes={keyframes}
-            onKeyframeRemove={this.keyframeRemoved}
-            onModified={this.keyframeModified}
+            onKeyframeRemove={onRemoveKeyframe}
+            onModified={onModifyKeyframe}
         />
     )
 }

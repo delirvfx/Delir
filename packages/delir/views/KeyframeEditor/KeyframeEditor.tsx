@@ -232,7 +232,10 @@ export default withFleurContext(
                                         graphHeight={graphHeight}
                                         scrollLeft={scrollLeft}
                                         pxPerSec={PX_PER_SEC}
+                                        keyframes={keyframes}
                                         scale={scale}
+                                        onRemoveKeyframe={this.handleRemoveKeyframe}
+                                        onModifyKeyframe={this.handleModifyKeyframe}
                                     />
                                 )}
                             </div>
@@ -723,7 +726,7 @@ export default withFleurContext(
                 })
             }
 
-            private keyframeModified = (
+            private handleModifyKeyframe = (
                 parentClipId: string,
                 paramName: string,
                 frameOnClip: number,
@@ -760,7 +763,7 @@ export default withFleurContext(
                 }
             }
 
-            private keyframeRemoved = (parentClipId: string, keyframeId: string) => {
+            private handleRemoveKeyframe = (parentClipId: string, keyframeId: string) => {
                 const { activeParam } = this.props
                 if (!activeParam) return
 

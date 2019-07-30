@@ -244,7 +244,7 @@ export default withFleurContext(
 
             private handleMouseUpOnTimeline = (e: React.MouseEvent<HTMLDivElement>) => {
                 if (!(e.target as HTMLElement).closest('[data-clip-id]')) {
-                    this.props.context.executeOperation(EditorOps.changeSelectClip, { clipIds: [] })
+                    this.props.executeOperation(EditorOps.changeSelectClip, { clipIds: [] })
                 }
             }
 
