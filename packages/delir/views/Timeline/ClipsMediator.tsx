@@ -178,14 +178,8 @@ export const ClipsMediator = decorate<OwnProps>(
             return !(e.target as HTMLElement).closest('[data-clip-id]')
         }
 
-        private handleSelectionStop = ({
-            selectedElements,
-            originalEvent,
-        }: {
-            selectedElements: HTMLElement[]
-            originalEvent: MouseEvent
-        }) => {
-            const clipIds = selectedElements.map(el => el.dataset.clipId!)
+        private handleSelectionStop = ({ selectedElements, originalEvent }: Selection.SelectionEvent) => {
+            const clipIds = selectedElements.map(el => (el as HTMLElement).dataset.clipId!)
 
             if (originalEvent.shiftKey || originalEvent.metaKey) {
                 this.props.executeOperation(EditorOps.addOrRemoveSelectClip, { clipIds })
