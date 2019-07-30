@@ -68,6 +68,7 @@ export default decorate<OwnProps>(
                             onResizeStop={this.handleResizeEnd}
                             onMouseDown={this.handleClick}
                             tabIndex={-1}
+                            data-clip-id={clip.id}
                         >
                             <animated.div
                                 className={classnames(s.inner, {
