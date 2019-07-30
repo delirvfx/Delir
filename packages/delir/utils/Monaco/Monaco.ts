@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import * as monaco from 'monaco-editor'
+import monaco from 'monaco-editor'
 
 type AvailableLibrary =
     | 'lib.es5.d.ts'

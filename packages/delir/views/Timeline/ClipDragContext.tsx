@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 
 export type EmitClipDragHandler = (arg: { nextX: number; originalPlacedFrame: number }) => void
 

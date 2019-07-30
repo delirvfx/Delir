@@ -1,7 +1,7 @@
-import * as fs from 'fs-extra'
-import * as _ from 'lodash'
-import * as path from 'path'
-import * as semver from 'semver'
+import fs from 'fs-extra'
+import _ from 'lodash'
+import path from 'path'
+import semver from 'semver'
 
 import { PluginBase, version as engineVersion } from '@delirvfx/core'
 import { DelirPluginPackageJson, PluginEntry } from '@delirvfx/core/src/PluginSupport/types'

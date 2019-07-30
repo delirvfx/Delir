@@ -1,5 +1,5 @@
-import * as _ from 'lodash'
-import * as timecodes from 'node-timecodes'
+import _ from 'lodash'
+import timecodes from 'node-timecodes'
 
 import { Clip, Effect, Project } from '../Entity'
 import EffectPluginBase from '../PluginSupport/PostEffectBase'

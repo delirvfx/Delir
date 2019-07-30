@@ -1,5 +1,5 @@
 import { remote } from 'electron'
-import * as React from 'react'
+import React from 'react'
 
 const openExternal = (e: React.MouseEvent<HTMLAnchorElement>) => {
     remote.shell.openExternal(e.currentTarget.href)

@@ -2,8 +2,8 @@ import arrayBufferToBuffer = require('arraybuffer-to-buffer')
 import audioBufferToWave = require('audiobuffer-to-wav')
 import { spawn } from 'child_process'
 import { nativeImage } from 'electron'
-import * as fs from 'mz/fs'
-import * as path from 'path'
+import fs from 'mz/fs'
+import path from 'path'
 
 import * as Delir from '@delirvfx/core'
 

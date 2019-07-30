@@ -1,5 +1,5 @@
 import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
-import * as React from 'react'
+import React from 'react'
 import { animated, Transition } from 'react-spring/renderprops'
 
 import EditorStore from '../../domain/Editor/EditorStore'
@@ -20,7 +20,7 @@ import { StatusBar } from '../StatusBar'
 import Timeline from '../Timeline'
 import { ShortcutHandler } from './ShortcutHandler'
 
-import * as s from './style.styl'
+import s from './style.styl'
 
 type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 

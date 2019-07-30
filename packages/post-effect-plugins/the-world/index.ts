@@ -1,6 +1,6 @@
 import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@delirvfx/core'
 
-import * as clamp from 'lodash/clamp'
+import clamp from 'lodash/clamp'
 
 interface Params {
     opacity: number

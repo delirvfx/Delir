@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 interface Texts {
     [key: string]: string | Texts

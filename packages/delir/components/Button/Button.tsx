@@ -1,7 +1,7 @@
-import * as classnames from 'classnames'
-import * as React from 'react'
+import classnames from 'classnames'
+import React from 'react'
 
-import * as s from './Button.styl'
+import s from './Button.styl'
 
 interface Props {
     children?: React.ReactNode

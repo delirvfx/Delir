@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import * as React from 'react'
+import React from 'react'
 import { SortableContainer } from 'react-sortable-hoc'
 
 import LayerLabel from './LayerLabel'

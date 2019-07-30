@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { AnimatedValue, useTransition } from 'react-spring'
 
 type TransionOption = Parameters<typeof useTransition>[2]

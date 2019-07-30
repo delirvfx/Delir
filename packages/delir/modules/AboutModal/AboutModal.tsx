@@ -1,5 +1,5 @@
 import { version } from '@delirvfx/core'
-import * as React from 'react'
+import React from 'react'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 
 import Button from '../../components/Button'
@@ -11,7 +11,7 @@ import * as packageJson from '../../../../package.json'
 import { dependencies } from './Licenses'
 
 import t from './AboutModal.i18n'
-import * as s from './AboutModal.styl'
+import s from './AboutModal.styl'
 
 export const show = (): void => {
     const modal = new ModalWindow({ closable: true })

@@ -1,6 +1,6 @@
 import { Exceptions, PostEffectBase, PreRenderRequest, RenderRequest, Type, TypeDescriptor } from '@delirvfx/core'
 
-import * as Th from 'three'
+import Th from 'three'
 import { MMDHelper, MMDLoader } from 'three-mmd-loader'
 
 interface Param {

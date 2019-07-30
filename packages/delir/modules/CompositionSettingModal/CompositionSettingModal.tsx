@@ -1,13 +1,13 @@
 import * as Delir from '@delirvfx/core'
-import * as serialize from 'form-serialize'
-import * as React from 'react'
+import serialize from 'form-serialize'
+import React from 'react'
 
 import Button from '../../components/Button'
 import FormStyle from '../../components/Form'
 import ModalWindow from '../../modules/ModalWindow/Controller'
 
 import t from './CompositionSettingModal.i18n'
-import * as s from './CompositionSettingModal.styl'
+import s from './CompositionSettingModal.styl'
 
 type SettingResult = { [props: string]: string } | void
 

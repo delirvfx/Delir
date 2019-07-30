@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 import { Clip, Effect } from '../../Entity'
 import { EffectPluginMissingException } from '../../Exceptions'

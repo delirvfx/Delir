@@ -1,5 +1,5 @@
-import * as monaco from 'monaco-editor'
-import * as React from 'react'
+import monaco from 'monaco-editor'
+import React from 'react'
 
 import MonacoUtil from '../../utils/Monaco'
 
@@ -9,7 +9,7 @@ import { ParameterTarget } from '../../domain/Editor/types'
 import { EditorResult } from './KeyframeEditor'
 
 import t from './KeyframeEditor.i18n'
-import * as s from './ScriptParamEditor.styl'
+import s from './ScriptParamEditor.styl'
 
 interface Props {
     title: string

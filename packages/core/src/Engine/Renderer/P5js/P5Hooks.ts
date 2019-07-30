@@ -1,4 +1,4 @@
-import * as P5 from 'p5'
+import P5 from 'p5'
 import DependencyResolver from '../../DependencyResolver'
 
 interface Sketch {

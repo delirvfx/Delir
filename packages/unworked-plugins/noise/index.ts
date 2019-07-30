@@ -7,7 +7,7 @@ import {
     TypeDescriptor,
 } from '@delirvfx/core'
 
-import * as Tooloud from 'tooloud'
+import Tooloud from 'tooloud'
 
 export default class NoiseEffectPlugin extends EffectPluginBase {
     public static async pluginDidLoad() {

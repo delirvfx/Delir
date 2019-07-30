@@ -1,11 +1,11 @@
 import * as Delir from '@delirvfx/core'
 import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
-import * as classNames from 'classnames'
+import classnames from 'classnames'
 import { clipboard } from 'electron'
-import * as _ from 'lodash'
-import * as parseColor from 'parse-color'
-import * as path from 'path'
-import * as React from 'react'
+import _ from 'lodash'
+import parseColor from 'parse-color'
+import path from 'path'
+import React from 'react'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
@@ -20,7 +20,7 @@ import Pane from '../../components/pane'
 import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
 
 import t from './AssetsView.i18n'
-import * as s from './style.styl'
+import s from './style.styl'
 
 interface CompositionProps {
     name: string
@@ -113,7 +113,7 @@ export default withFleurContext(
                         <h1 className={s.compositionsHeading}>
                             {t(t.k.compositions.title)}
                             <i
-                                className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}
+                                className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}
                                 onClick={this.openNewCompositionWindow}
                             />
                         </h1>
@@ -137,7 +137,7 @@ export default withFleurContext(
                                     {compositions.map(comp => (
                                         <tr
                                             key={comp.id}
-                                            className={classNames(comp.id === selectedCompositionId && s.selected)}
+                                            className={classnames(comp.id === selectedCompositionId && s.selected)}
                                             onClick={this.handleClickComposition}
                                             onDoubleClick={this.changeComposition}
                                             data-composition-id={comp.id}
@@ -180,7 +180,7 @@ export default withFleurContext(
                         </div>
                         <h1 className={s.assetsHeading}>
                             {t(t.k.assets.title)}
-                            <label className={classNames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
+                            <label className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
                                 <input
                                     ref="assetInput"
                                     type="file"
@@ -194,16 +194,16 @@ export default withFleurContext(
                             <table className={s.assetList}>
                                 <thead>
                                     <tr>
-                                        <td className={classNames(s.assetListIconColumn)} />
-                                        <td className={classNames(s.assetListNameColumn)}>{t(t.k.assets.name)}</td>
-                                        <td className={classNames(s.assetListTypeColumn)}>{t(t.k.assets.fileType)}</td>
+                                        <td className={classnames(s.assetListIconColumn)} />
+                                        <td className={classnames(s.assetListNameColumn)}>{t(t.k.assets.name)}</td>
+                                        <td className={classnames(s.assetListTypeColumn)}>{t(t.k.assets.fileType)}</td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {assets.map(asset => (
                                         <tr
                                             key={asset.id}
-                                            className={classNames(asset.id === selectedAssetId && s.selected)}
+                                            className={classnames(asset.id === selectedAssetId && s.selected)}
                                             draggable
                                             onClick={this.handleClickAsset}
                                             onDragStart={this.onAssetsDragStart}

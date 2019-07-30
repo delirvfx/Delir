@@ -1,5 +1,4 @@
-import * as Joi from 'joi'
-import { Preference } from './PreferenceStore'
+import Joi from 'joi'
 
 const preferenceSchema = Joi.object()
     .keys({

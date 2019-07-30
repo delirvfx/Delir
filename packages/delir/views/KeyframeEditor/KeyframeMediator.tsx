@@ -1,7 +1,7 @@
 import * as Delir from '@delirvfx/core'
 import { connectToStores, useStore, withFleurContext } from '@fleur/fleur-react'
-import * as Selection from '@simonwep/selection-js'
-import * as React from 'react'
+import Selection from '@simonwep/selection-js'
+import React from 'react'
 import { decorate } from '../../utils/decorate'
 
 import { getActiveComp, getActiveParam } from '../../domain/Editor/selectors'

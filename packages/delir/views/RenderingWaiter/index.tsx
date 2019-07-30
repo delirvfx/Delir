@@ -1,14 +1,14 @@
 import { useStore } from '@fleur/fleur-react'
 import { RenderingProgress, RenderingStep } from '@ragg/deream'
-import * as classnames from 'classnames'
-import * as React from 'react'
+import classnames from 'classnames'
+import React from 'react'
 import { animated, useTransition } from 'react-spring'
 
 import Button from '../../components/Button/Button'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
 import t from './RenderingWaiter.i18n'
-import * as s from './style.styl'
+import s from './style.styl'
 
 const statusToText = (progress: RenderingProgress) => {
     switch (progress.step) {

@@ -1,2 +1,2 @@
-import * as s from './style.styl'
+import s from './style.styl'
 export default s

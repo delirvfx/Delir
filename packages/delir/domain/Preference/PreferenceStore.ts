@@ -1,5 +1,5 @@
 import { listen, Store } from '@fleur/fleur'
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 import { PreferenceActions } from './actions'
 

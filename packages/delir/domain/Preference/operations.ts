@@ -1,8 +1,8 @@
 import { operation, OperationContext } from '@fleur/fleur'
 import { remote } from 'electron'
 import { existsSync, readFileSync, writeFile } from 'fs'
-import * as _ from 'lodash'
-import * as path from 'path'
+import _ from 'lodash'
+import path from 'path'
 
 import * as EditorOps from '../Editor/operations'
 import { RendererActions } from '../Renderer/actions'

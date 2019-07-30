@@ -1,9 +1,9 @@
 import * as Delir from '@delirvfx/core'
 import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
-import * as classNames from 'classnames'
-import * as _ from 'lodash'
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import classnames from 'classnames'
+import _ from 'lodash'
+import React, { createRef } from 'react'
+import ReactDOM from 'react-dom'
 import { SortEndHandler } from 'react-sortable-hoc'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
@@ -24,7 +24,7 @@ import { ClipsMediator } from './ClipsMediator'
 import Gradations from './Gradations'
 import LayerLabelList from './LayerLabelList'
 
-import * as s from './style.styl'
+import s from './style.styl'
 import t from './Timeline.i18n'
 
 type Props = ReturnType<typeof mapStoresToProps> & ContextProp
@@ -70,10 +70,10 @@ export default withFleurContext(
                 clipDragOffset: { x: 0 },
             }
 
-            private scaleList = React.createRef<DropDown>()
-            private timelineContainer = React.createRef<HTMLDivElement>()
-            private labelContainer = React.createRef<HTMLDivElement>()
-            private keyframeView = React.createRef<InstanceType<typeof KeyframeEditor>>()
+            private scaleList = createRef<DropDown>()
+            private timelineContainer = createRef<HTMLDivElement>()
+            private labelContainer = createRef<HTMLDivElement>()
+            private keyframeView = createRef<InstanceType<typeof KeyframeEditor>>()
 
             public componentDidMount() {
                 this.syncCursorHeight()
@@ -129,7 +129,7 @@ export default withFleurContext(
                                             <div className={s.columnName}>
                                                 {t(t.k.layers)}
                                                 <i
-                                                    className={classNames('twa twa-heavy-plus-sign', s.addLayerIcon)}
+                                                    className={classnames('twa twa-heavy-plus-sign', s.addLayerIcon)}
                                                     onClick={this.handleAddLayer}
                                                 />
                                             </div>

@@ -1,5 +1,5 @@
-import * as _ from 'lodash'
-import * as VM from 'vm'
+import _ from 'lodash'
+import VM from 'vm'
 import P5Hooks from './P5Hooks'
 
 import { UserCodeException } from '../../../Exceptions/UserCodeException'

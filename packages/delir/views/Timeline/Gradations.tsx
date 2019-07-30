@@ -1,7 +1,7 @@
 import * as Delir from '@delirvfx/core'
 import { connectToStores, StoreGetter } from '@fleur/fleur-react'
-import * as classnames from 'classnames'
-import * as React from 'react'
+import classnames from 'classnames'
+import React from 'react'
 
 import { SpreadType } from '../../utils/Spread'
 import TimePixelConversion, { MeasurePoint } from '../../utils/TimePixelConversion'
@@ -11,7 +11,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 import { ContextMenu, MenuItem } from '../../components/ContextMenu/ContextMenu'
 
 import t from './Gradations.i18n'
-import * as s from './Gradations.styl'
+import s from './Gradations.styl'
 
 interface OwnProps {
     currentFrame: number

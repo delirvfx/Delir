@@ -1,7 +1,7 @@
 import { StoreGetter, useFleurContext, useStore } from '@fleur/fleur-react'
 import { remote } from 'electron'
-import * as path from 'path'
-import * as React from 'react'
+import path from 'path'
+import React from 'react'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -12,7 +12,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Pane from '../../components/pane'
 
-import * as s from './style.styl'
+import s from './style.styl'
 
 export const NavigationView = () => {
     const context = useFleurContext()

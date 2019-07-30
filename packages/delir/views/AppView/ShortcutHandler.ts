@@ -1,6 +1,6 @@
 import { useFleurContext } from '@fleur/fleur-react'
-import * as Mousetrap from 'mousetrap'
-import * as React from 'react'
+import Mousetrap from 'mousetrap'
+import React, { useCallback, useMemo } from 'react'
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
@@ -10,9 +10,9 @@ import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } 
 export const ShortcutHandler = () => {
     const context = useFleurContext()
 
-    const trap = React.useMemo(() => new Mousetrap(document.body), [])
+    const trap = useMemo(() => new Mousetrap(document.body), [])
 
-    const handleShortCutPreviewToggle = React.useCallback((e: KeyboardEvent) => {
+    const handleShortCutPreviewToggle = useCallback((e: KeyboardEvent) => {
         if (
             e.target instanceof HTMLTextAreaElement ||
             e.target instanceof HTMLInputElement ||
@@ -35,23 +35,23 @@ export const ShortcutHandler = () => {
         }
     }, [])
 
-    const handleShortCutCopy = React.useCallback((e: KeyboardEvent) => {
+    const handleShortCutCopy = useCallback((e: KeyboardEvent) => {
         e.preventDefault()
         uiActionCopy()
     }, [])
 
-    const handleShortcutCut = React.useCallback((e: KeyboardEvent) => {
+    const handleShortcutCut = useCallback((e: KeyboardEvent) => {
         e.preventDefault()
         uiActionCut()
     }, [])
 
-    const handleShortcutPaste = React.useCallback((e: KeyboardEvent) => {
+    const handleShortcutPaste = useCallback((e: KeyboardEvent) => {
         e.preventDefault()
         uiActionPaste()
     }, [])
 
     // tslint:disable-next-line: member-ordering
-    const handleShortCutUndo = React.useCallback(
+    const handleShortCutUndo = useCallback(
         makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
             e.preventDefault()
             uiActionUndo(context.executeOperation)
@@ -60,7 +60,7 @@ export const ShortcutHandler = () => {
     )
 
     // tslint:disable-next-line: member-ordering
-    const handleShortCutRedo = React.useCallback(
+    const handleShortCutRedo = useCallback(
         makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
             e.preventDefault()
             uiActionRedo(context.executeOperation)

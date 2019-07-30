@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 import { Asset, Clip, Composition, Effect, Keyframe, Layer, Project } from './Entity'
 import { AssetPointer, ColorRGB, ColorRGBA, Expression } from './Values'

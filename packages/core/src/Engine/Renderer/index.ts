@@ -1,7 +1,7 @@
 import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
 import { IRenderer, IRendererStatic } from './RendererBase'
 
-import * as _ from 'lodash'
+import _ from 'lodash'
 import UnknownPluginReferenceException from '../../Exceptions/unknown-plugin-reference-exception'
 
 import AdjustmentRenderer from './Adjustment/Adjustment'

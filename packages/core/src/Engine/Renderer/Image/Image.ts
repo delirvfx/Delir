@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import _ from 'lodash'
 import Type from '../../../PluginSupport/type-descriptor'
 import { IRenderer } from '../RendererBase'
 

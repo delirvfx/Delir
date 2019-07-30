@@ -1,5 +1,5 @@
 import { useStore } from '@fleur/fleur-react'
-import * as React from 'react'
+import React from 'react'
 
 import Pane from '../../components/pane'
 import EditorStore from '../../domain/Editor/EditorStore'

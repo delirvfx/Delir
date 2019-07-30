@@ -1,4 +1,4 @@
-import * as uuid from 'uuid'
+import uuid from 'uuid'
 import { Branded } from '../helper/Branded'
 import { safeAssign } from '../helper/safeAssign'
 

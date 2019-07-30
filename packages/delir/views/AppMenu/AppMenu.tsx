@@ -1,7 +1,7 @@
 import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
 import * as Electron from 'electron'
 import { remote } from 'electron'
-import * as React from 'react'
+import React from 'react'
 import * as Platform from '../../utils/platform'
 import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 

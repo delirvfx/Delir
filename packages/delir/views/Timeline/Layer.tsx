@@ -1,8 +1,8 @@
 import * as Delir from '@delirvfx/core'
 import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
-import * as classnames from 'classnames'
-import * as _ from 'lodash'
-import * as React from 'react'
+import classnames from 'classnames'
+import _ from 'lodash'
+import React from 'react'
 import { SpreadType } from '../../utils/Spread'
 
 import * as EditorOps from '../../domain/Editor/operations'
@@ -19,7 +19,7 @@ import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import Clip from './Clip'
 
 import t from './Layer.i18n'
-import * as s from './Layer.styl'
+import s from './Layer.styl'
 
 interface OwnProps {
     layer: SpreadType<Delir.Entity.Layer>

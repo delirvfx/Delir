@@ -1,14 +1,14 @@
 import * as Delir from '@delirvfx/core'
-import * as classnames from 'classnames'
-import * as _ from 'lodash'
-import * as React from 'react'
+import classnames from 'classnames'
+import _ from 'lodash'
+import React from 'react'
 import { SpreadType } from '../../utils/Spread'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import * as EditorOps from '../../domain/Editor/operations'
 
 import { ContextProp, withFleurContext } from '@fleur/fleur-react'
-import * as s from './KeyframeGraph.styl'
+import s from './KeyframeGraph.styl'
 
 interface OwnProps {
     width: number

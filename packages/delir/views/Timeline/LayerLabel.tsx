@@ -1,7 +1,7 @@
 import * as Delir from '@delirvfx/core'
 import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
-import * as classnames from 'classnames'
-import * as React from 'react'
+import classnames from 'classnames'
+import React from 'react'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'
 
 import EditorStore from '../../domain/Editor/EditorStore'
@@ -11,7 +11,7 @@ import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextM
 import LabelInput from '../../components/label-input'
 
 import t from './LayerLabel.i18n'
-import * as s from './LayerLabel.styl'
+import s from './LayerLabel.styl'
 
 interface OwnProps {
     layer: Delir.Entity.Layer

@@ -1,6 +1,6 @@
 import { useFleurContext, useStore } from '@fleur/fleur-react'
-import * as classnames from 'classnames'
-import * as React from 'react'
+import classnames from 'classnames'
+import React from 'react'
 
 import * as PreferenceOps from '../../domain/Preference/operations'
 import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Preference/PreferenceStore'
@@ -8,7 +8,7 @@ import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Pref
 import Button from '../../components/Button'
 
 import t from './Preference.i18n'
-import * as s from './style.styl'
+import s from './style.styl'
 
 interface Props {
     onClose(): void

@@ -1,8 +1,8 @@
 import * as Delir from '@delirvfx/core'
-import * as fs from 'fs'
+import fs from 'fs'
 import Module = require('module')
-import * as path from 'path'
-import * as vm from 'vm'
+import path from 'path'
+import vm from 'vm'
 
 export default class PluginScriptLoader {
     public static load(path: string) {

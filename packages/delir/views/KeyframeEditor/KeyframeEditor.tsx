@@ -1,10 +1,10 @@
 import * as Delir from '@delirvfx/core'
 import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
-import * as classnames from 'classnames'
+import classnames from 'classnames'
 import { clipboard } from 'electron'
-import * as _ from 'lodash'
-import * as mouseWheel from 'mouse-wheel'
-import * as React from 'react'
+import _ from 'lodash'
+import mouseWheel from 'mouse-wheel'
+import React from 'react'
 import { SpreadType } from '../../utils/Spread'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
@@ -31,7 +31,7 @@ import ScriptParamEditor from './ScriptParamEditor'
 import { SortEndHandler } from 'react-sortable-hoc'
 import { PX_PER_SEC } from '../Timeline/Timeline'
 import t from './KeyframeEditor.i18n'
-import * as s from './KeyframeEditor.styl'
+import s from './KeyframeEditor.styl'
 
 export interface EditorResult {
     code: string | null

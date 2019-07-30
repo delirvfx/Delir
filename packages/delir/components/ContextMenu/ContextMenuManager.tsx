@@ -1,4 +1,4 @@
-import * as Electron from 'electron'
+import Electron from 'electron'
 import { MenuItemOption } from './ContextMenu'
 
 export default class ContextMenuManager {

@@ -1,5 +1,5 @@
 import { ChildProcess, spawn } from 'child_process'
-import * as duplexer from 'duplexer3'
+import duplexer from 'duplexer3'
 import { Duplex } from 'stream'
 
 const isObject = (target: any): target is Object => Object.getPrototypeOf(target) === Object.prototype

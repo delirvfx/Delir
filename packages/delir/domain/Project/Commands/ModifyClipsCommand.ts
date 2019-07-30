@@ -1,6 +1,6 @@
 import * as Delir from '@delirvfx/core'
 import { OperationContext } from '@ragg/fleur'
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 import { EditorActions } from '../../Editor/actions'
 import { Command } from '../../History/HistoryStore'

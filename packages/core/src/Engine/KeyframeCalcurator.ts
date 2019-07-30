@@ -1,4 +1,4 @@
-import * as bezierEasing from 'bezier-easing'
+import bezierEasing from 'bezier-easing'
 
 import { Keyframe, KeyframeValueTypes } from '../Entity'
 import ColorRGB from '../Values/ColorRGB'

@@ -1,7 +1,7 @@
 import * as Delir from '@delirvfx/core'
 import { ContextProp, withFleurContext } from '@fleur/fleur-react'
 import * as Selection from '@simonwep/selection-js'
-import * as React from 'react'
+import React from 'react'
 import { decorate } from '../../utils/decorate'
 
 import * as EditorOps from '../../domain/Editor/operations'
@@ -14,7 +14,7 @@ import { ClipDragContext, EmitClipDragHandler, EmitClipResizeHandler } from './C
 import Layer from './Layer'
 import { PX_PER_SEC } from './Timeline'
 
-import * as s from './ClipMediator.styl'
+import s from './ClipMediator.styl'
 
 interface OwnProps {
     comp: SpreadType<Delir.Entity.Composition>

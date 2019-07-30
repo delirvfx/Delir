@@ -1,14 +1,10 @@
-import * as classnames from 'classnames'
-import { remote } from 'electron'
-import * as _ from 'lodash'
-import * as path from 'path'
-import * as qs from 'querystring'
-import * as React from 'react'
-import * as URL from 'url'
+import classnames from 'classnames'
+import _ from 'lodash'
+import React from 'react'
 
 import Portal from '../Portal'
 
-import * as s from './ModalWindow.styl'
+import s from './ModalWindow.styl'
 
 export interface Props {
     show?: boolean

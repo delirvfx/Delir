@@ -1,8 +1,8 @@
 import * as Delir from '@delirvfx/core'
 import { ContextProp, withFleurContext } from '@fleur/fleur-react'
-import * as classnames from 'classnames'
-import * as _ from 'lodash'
-import * as React from 'react'
+import classnames from 'classnames'
+import _ from 'lodash'
+import React from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
 import { animated } from 'react-spring'
@@ -16,7 +16,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import t from './Clip.i18n'
-import * as s from './Clip.styl'
+import s from './Clip.styl'
 import { ClipDragProps, withClipDragContext } from './ClipDragContext'
 
 interface OwnProps {

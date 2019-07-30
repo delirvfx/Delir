@@ -1,6 +1,6 @@
-import * as Electron from 'electron'
-import * as _ from 'lodash'
-import * as React from 'react'
+import Electron from 'electron'
+import _ from 'lodash'
+import React from 'react'
 
 import propsToDataset from '../../utils/propsToDataset'
 import ContextMenuManager from './ContextMenuManager'

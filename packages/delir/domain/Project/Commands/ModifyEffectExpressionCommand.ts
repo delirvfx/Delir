@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 import * as Delir from '@delirvfx/core'
 import { OperationContext } from '@fleur/fleur'

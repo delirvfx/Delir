@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra'
+import fs from 'fs-extra'
 import { join } from 'path'
 import { Expression } from '../../../Values'
 import { RenderContextBase } from '../../RenderContext/RenderContextBase'

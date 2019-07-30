@@ -1,6 +1,6 @@
-import * as Joi from 'joi-browser'
-import * as _ from 'lodash'
-import * as semver from 'semver'
+import Joi from 'joi-browser'
+import _ from 'lodash'
+import semver from 'semver'
 
 import EffectPluginBase from './PostEffectBase'
 import { AnyParameterTypeDescriptor } from './type-descriptor'

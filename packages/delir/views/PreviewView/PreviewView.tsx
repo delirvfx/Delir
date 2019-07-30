@@ -1,5 +1,5 @@
 import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
-import * as React from 'react'
+import React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 
 import DropDown from '../../components/dropdown'
@@ -10,7 +10,7 @@ import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore, { RenderState } from '../../domain/Renderer/RendererStore'
 
 import t from './PreviewView.i18n'
-import * as s from './style.styl'
+import s from './style.styl'
 
 type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
