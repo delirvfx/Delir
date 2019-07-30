@@ -1,3 +1,5 @@
+// tslint:disable:no-console
+
 const g = require('gulp')
 const $ = require('gulp-load-plugins')()
 const webpack = require('webpack')
@@ -72,7 +74,7 @@ export function buildBrowserJs(done) {
                     : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
         },
-        function(err, stats) {
+        function (err, stats) {
             err && console.error(err)
             stats.compilation.errors.length &&
                 stats.compilation.errors.forEach(e => {
@@ -100,10 +102,10 @@ export async function buildPublishPackageJSON(done) {
 
     try {
         await fs.mkdir(paths.compiled.root)
-    } catch (e) {}
+    } catch (e) { }
     try {
         await fs.writeFile(join(paths.compiled.root, 'package.json'), newJson, { encoding: 'utf8' })
-    } catch (e) {}
+    } catch (e) { }
 
     done()
 }
@@ -306,7 +308,7 @@ export function compileRendererJs(done) {
                 ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
         },
-        function(err, stats) {
+        function (err, stats) {
             err && console.error(err)
             stats.compilation.errors.length &&
                 stats.compilation.errors.forEach(e => {
@@ -335,13 +337,13 @@ export function compilePlugins(done) {
                 'chromakey/index': './chromakey/index',
                 ...(__DEV__
                     ? {
-                          'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
-                          // 'filler/index': '../experimental-plugins/filler/index',
-                          // 'mmd/index': '../experimental-plugins/mmd/index',
-                          // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
-                          // 'plane/index': '../experimental-plugins/plane/index',
-                          // 'noise/index': '../experimental-plugins/noise/index',
-                      }
+                        'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
+                        // 'filler/index': '../experimental-plugins/filler/index',
+                        // 'mmd/index': '../experimental-plugins/mmd/index',
+                        // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
+                        // 'plane/index': '../experimental-plugins/plane/index',
+                        // 'noise/index': '../experimental-plugins/noise/index',
+                    }
                     : {}),
             },
             output: {
@@ -380,7 +382,7 @@ export function compilePlugins(done) {
                 ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
             ],
         },
-        function(err, stats) {
+        function (err, stats) {
             err && console.error(err)
             stats.compilation.errors.length &&
                 stats.compilation.errors.forEach(e => {
@@ -528,7 +530,7 @@ export async function clean(done) {
     if (fs.existsSync(join(paths.compiled.root, 'node_modules'))) {
         try {
             await fs.unlink(join(paths.compiled.root, 'node_modules'))
-        } catch (e) {}
+        } catch (e) { }
     }
 
     done()
@@ -542,7 +544,7 @@ export async function cleanRendererScripts(done) {
 export function run(done) {
     const electron = spawn(require('electron'), [join(paths.compiled.frontend, 'browser.js')], { stdio: 'inherit' })
     electron.on('close', code => {
-        code === 0 && run(() => {})
+        code === 0 && run(() => { })
     })
     done()
 }
