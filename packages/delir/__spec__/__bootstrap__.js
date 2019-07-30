@@ -12,7 +12,7 @@ require('ts-node').register({
 })
 
 require('css-modules-require-hook')({
-  extensions: ['.styl'],
+  extensions: ['.styl', '.sass'],
   preprocessCss: (css, filename) =>
     stylus(css)
       .set('filename', filename)

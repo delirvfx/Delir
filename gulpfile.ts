@@ -285,6 +285,27 @@ export function compileRendererJs(done) {
             ],
           },
           {
+            test: /\.sass$/,
+            use: [
+              {
+                loader: 'style-loader',
+              },
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  localIdentName: __DEV__ ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]',
+                },
+              },
+              {
+                loader: 'sass-loader',
+                options: {
+                  implementation: require('sass'),
+                },
+              },
+            ],
+          },
+          {
             test: /\.css$/,
             use: ['style-loader', 'css-loader'],
           },

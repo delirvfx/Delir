@@ -1,9 +1,9 @@
 import classnames from 'classnames'
 import React from 'react'
 
-import Portal from '../modules/Portal'
+import Portal from '../modules/Portal/Portal'
 
-import s from './dropdown.styl'
+import s from './Dropdown.sass'
 
 interface Props {
   shownInitial?: boolean

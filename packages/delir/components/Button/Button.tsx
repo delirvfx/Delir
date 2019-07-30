@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import React from 'react'
 
-import s from './Button.styl'
+import s from './Button.sass'
 
 interface Props {
   children?: React.ReactNode

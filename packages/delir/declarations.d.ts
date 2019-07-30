@@ -3,6 +3,11 @@ declare module '*.styl' {
   export = _
 }
 
+declare module '*.sass' {
+  const _: { [className: string]: string }
+  export = _
+}
+
 declare module '*.json' {
   const _: { [key: string]: any }
   export = _
