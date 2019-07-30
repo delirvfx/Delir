@@ -63,6 +63,7 @@ export default decorate<OwnProps>(
                                 bottom: false,
                             }}
                             onDragStart={this.handleDragStart}
+                            onDrag={this.handleDrag}
                             onDragStop={this.handleDragEnd}
                             onResize={this.handleResize}
                             onResizeStop={this.handleResizeEnd}
