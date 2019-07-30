@@ -6,42 +6,42 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class RemoveEffectKeyframeCommand implements Command {
-    constructor(
-        private parentClipId: string,
-        private effectId: string,
-        private paramName: string,
-        private removedKeyframe: Delir.Entity.Keyframe,
-    ) {}
+  constructor(
+    private parentClipId: string,
+    private effectId: string,
+    private paramName: string,
+    private removedKeyframe: Delir.Entity.Keyframe,
+  ) {}
 
-    public undo(context: OperationContext) {
-        this.focusToChangedParam(context)
+  public undo(context: OperationContext) {
+    this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.addEffectKeyframe, {
-            targetClipId: this.parentClipId,
-            targetEffectId: this.effectId,
-            paramName: this.paramName,
-            keyframe: this.removedKeyframe,
-        })
-    }
+    context.dispatch(ProjectActions.addEffectKeyframe, {
+      targetClipId: this.parentClipId,
+      targetEffectId: this.effectId,
+      paramName: this.paramName,
+      keyframe: this.removedKeyframe,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToChangedParam(context)
+  public redo(context: OperationContext) {
+    this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.removeEffectKeyframe, {
-            clipId: this.parentClipId,
-            effectId: this.effectId,
-            paramName: this.paramName,
-            targetKeyframeId: this.removedKeyframe.id,
-        })
-    }
+    context.dispatch(ProjectActions.removeEffectKeyframe, {
+      clipId: this.parentClipId,
+      effectId: this.effectId,
+      paramName: this.paramName,
+      targetKeyframeId: this.removedKeyframe.id,
+    })
+  }
 
-    private focusToChangedParam(context: OperationContext) {
-        context.dispatch(EditorActions.changeActiveParam, {
-            target: {
-                type: 'effect',
-                entityId: this.effectId,
-                paramName: this.paramName,
-            },
-        })
-    }
+  private focusToChangedParam(context: OperationContext) {
+    context.dispatch(EditorActions.changeActiveParam, {
+      target: {
+        type: 'effect',
+        entityId: this.effectId,
+        paramName: this.paramName,
+      },
+    })
+  }
 }

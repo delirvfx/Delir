@@ -6,34 +6,34 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class MoveClipToLayerCommand implements Command {
-    constructor(
-        private sourceLayerId: string,
-        private destLayerId: string,
-        private subjectClipId: string,
-        private parentCompositionId: string,
-    ) {}
+  constructor(
+    private sourceLayerId: string,
+    private destLayerId: string,
+    private subjectClipId: string,
+    private parentCompositionId: string,
+  ) {}
 
-    public undo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public undo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.moveClipToLayer, {
-            destLayerId: this.sourceLayerId,
-            clipId: this.subjectClipId,
-        })
-    }
+    context.dispatch(ProjectActions.moveClipToLayer, {
+      destLayerId: this.sourceLayerId,
+      clipId: this.subjectClipId,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public redo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.moveClipToLayer, {
-            destLayerId: this.destLayerId,
-            clipId: this.subjectClipId,
-        })
-    }
+    context.dispatch(ProjectActions.moveClipToLayer, {
+      destLayerId: this.destLayerId,
+      clipId: this.subjectClipId,
+    })
+  }
 
-    private focusToParentComposition(context: OperationContext) {
-        context.dispatch(EditorActions.changeActiveComposition, {
-            compositionId: this.parentCompositionId,
-        })
-    }
+  private focusToParentComposition(context: OperationContext) {
+    context.dispatch(EditorActions.changeActiveComposition, {
+      compositionId: this.parentCompositionId,
+    })
+  }
 }

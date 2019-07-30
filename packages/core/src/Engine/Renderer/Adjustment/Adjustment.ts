@@ -7,32 +7,32 @@ import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 interface Param {
-    opacity: number
+  opacity: number
 }
 
 export default class AdjustmentRenderer implements IRenderer<Param> {
-    public static get rendererId(): string {
-        return 'adjustment'
-    }
+  public static get rendererId(): string {
+    return 'adjustment'
+  }
 
-    public static provideAssetAssignMap() {
-        return {}
-    }
+  public static provideAssetAssignMap() {
+    return {}
+  }
 
-    public static provideParameters(): TypeDescriptor {
-        return Type.number('opacity', {
-            label: 'Opacity',
-            defaultValue: 100,
-            animatable: true,
-        })
-    }
+  public static provideParameters(): TypeDescriptor {
+    return Type.number('opacity', {
+      label: 'Opacity',
+      defaultValue: 100,
+      animatable: true,
+    })
+  }
 
-    public async beforeRender(context: ClipPreRenderContext<Param>) {
-        return
-    }
+  public async beforeRender(context: ClipPreRenderContext<Param>) {
+    return
+  }
 
-    public async render(context: ClipRenderContext<Param>) {
-        const ctx = context.destCanvas.getContext('2d')!
-        ctx.drawImage(context.srcCanvas!, 0, 0)
-    }
+  public async render(context: ClipRenderContext<Param>) {
+    const ctx = context.destCanvas.getContext('2d')!
+    ctx.drawImage(context.srcCanvas!, 0, 0)
+  }
 }

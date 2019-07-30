@@ -6,29 +6,29 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class AddEffectIntoClipCommand implements Command {
-    constructor(private clipId: string, private addedEffect: Delir.Entity.Effect) {}
+  constructor(private clipId: string, private addedEffect: Delir.Entity.Effect) {}
 
-    public undo(context: OperationContext) {
-        this.focusToParentClip(context)
+  public undo(context: OperationContext) {
+    this.focusToParentClip(context)
 
-        context.dispatch(ProjectActions.removeEffectFromClip, {
-            holderClipId: this.clipId,
-            targetEffectId: this.addedEffect.id,
-        })
-    }
+    context.dispatch(ProjectActions.removeEffectFromClip, {
+      holderClipId: this.clipId,
+      targetEffectId: this.addedEffect.id,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToParentClip(context)
+  public redo(context: OperationContext) {
+    this.focusToParentClip(context)
 
-        context.dispatch(ProjectActions.addEffectIntoClip, {
-            clipId: this.clipId,
-            effect: this.addedEffect,
-        })
-    }
+    context.dispatch(ProjectActions.addEffectIntoClip, {
+      clipId: this.clipId,
+      effect: this.addedEffect,
+    })
+  }
 
-    private focusToParentClip(context: OperationContext) {
-        context.dispatch(EditorActions.changeSelectClip, {
-            clipIds: [this.clipId],
-        })
-    }
+  private focusToParentClip(context: OperationContext) {
+    context.dispatch(EditorActions.changeSelectClip, {
+      clipIds: [this.clipId],
+    })
+  }
 }

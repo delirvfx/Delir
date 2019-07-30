@@ -7,45 +7,45 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class ModifyClipKeyframeCommand implements Command {
-    private toPreviousPatch: Partial<Delir.Entity.Keyframe>
+  private toPreviousPatch: Partial<Delir.Entity.Keyframe>
 
-    constructor(
-        private targetKeyframeId: string,
-        unpatched: Partial<Delir.Entity.Keyframe>,
-        private patch: Partial<Delir.Entity.Keyframe>,
-        private parentClipId: string,
-        private paramName: string,
-    ) {
-        this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Keyframe>
-    }
+  constructor(
+    private targetKeyframeId: string,
+    unpatched: Partial<Delir.Entity.Keyframe>,
+    private patch: Partial<Delir.Entity.Keyframe>,
+    private parentClipId: string,
+    private paramName: string,
+  ) {
+    this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Keyframe>
+  }
 
-    public undo(context: OperationContext) {
-        this.focusToChangedParam(context)
+  public undo(context: OperationContext) {
+    this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyKeyframe, {
-            parentClipId: this.parentClipId,
-            targetKeyframeId: this.targetKeyframeId,
-            patch: this.toPreviousPatch,
-        })
-    }
+    context.dispatch(ProjectActions.modifyKeyframe, {
+      parentClipId: this.parentClipId,
+      targetKeyframeId: this.targetKeyframeId,
+      patch: this.toPreviousPatch,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToChangedParam(context)
+  public redo(context: OperationContext) {
+    this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyKeyframe, {
-            parentClipId: this.parentClipId,
-            targetKeyframeId: this.targetKeyframeId,
-            patch: this.patch,
-        })
-    }
+    context.dispatch(ProjectActions.modifyKeyframe, {
+      parentClipId: this.parentClipId,
+      targetKeyframeId: this.targetKeyframeId,
+      patch: this.patch,
+    })
+  }
 
-    private focusToChangedParam(context: OperationContext) {
-        context.dispatch(EditorActions.changeActiveParam, {
-            target: {
-                type: 'clip',
-                entityId: this.parentClipId,
-                paramName: this.paramName,
-            },
-        })
-    }
+  private focusToChangedParam(context: OperationContext) {
+    context.dispatch(EditorActions.changeActiveParam, {
+      target: {
+        type: 'clip',
+        entityId: this.parentClipId,
+        paramName: this.paramName,
+      },
+    })
+  }
 }

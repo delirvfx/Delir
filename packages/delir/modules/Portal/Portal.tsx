@@ -2,37 +2,37 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 export default class Portal {
-    public static mount(component: JSX.Element) {
-        const portal = new Portal()
-        portal.mount(component)
-        return portal
-    }
-    public root: Element
-    private mounted: boolean = false
-    private mountedComponent: React.Component<any, any> | null
+  public static mount(component: JSX.Element) {
+    const portal = new Portal()
+    portal.mount(component)
+    return portal
+  }
+  public root: Element
+  private mounted: boolean = false
+  private mountedComponent: React.Component<any, any> | null
 
-    constructor() {
-        this.root = document.createElement('div')
-    }
+  constructor() {
+    this.root = document.createElement('div')
+  }
 
-    public mount<T extends JSX.Element>(component: T): React.Component<any, any> {
-        if (!this.mounted) {
-            document.body.appendChild(this.root)
-            this.mounted = true
-        }
-
-        this.mountedComponent = ReactDOM.render(component, this.root) as React.Component<any, any>
-        return this.mountedComponent
+  public mount<T extends JSX.Element>(component: T): React.Component<any, any> {
+    if (!this.mounted) {
+      document.body.appendChild(this.root)
+      this.mounted = true
     }
 
-    public unmount() {
-        ReactDOM.unmountComponentAtNode(this.root)
+    this.mountedComponent = ReactDOM.render(component, this.root) as React.Component<any, any>
+    return this.mountedComponent
+  }
 
-        if (this.root.parentElement) {
-            this.root.parentElement.removeChild(this.root)
-        }
+  public unmount() {
+    ReactDOM.unmountComponentAtNode(this.root)
 
-        this.mountedComponent = null
-        this.mounted = false
+    if (this.root.parentElement) {
+      this.root.parentElement.removeChild(this.root)
     }
+
+    this.mountedComponent = null
+    this.mounted = false
+  }
 }

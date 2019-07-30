@@ -20,26 +20,26 @@ import * as Entity from './Entity'
 const { version } = require('../package.json')
 
 export {
-    // Core (Namaspaces)
-    Entity,
-    Engine,
-    PluginSupport,
-    Exceptions,
-    Values,
-    // Plugins
-    Type,
-    TypeDescriptor,
-    PluginBase,
-    PostEffectBase,
-    EffectPreRenderContext,
-    EffectRenderContext,
-    PluginRegistry,
-    // import shorthand
-    KeyframeCalcurator,
-    ProjectMigrator,
-    MigrationHelper,
-    Exporter,
-    // Types
-    AnyParameterTypeDescriptor,
-    version,
+  // Core (Namaspaces)
+  Entity,
+  Engine,
+  PluginSupport,
+  Exceptions,
+  Values,
+  // Plugins
+  Type,
+  TypeDescriptor,
+  PluginBase,
+  PostEffectBase,
+  EffectPreRenderContext,
+  EffectRenderContext,
+  PluginRegistry,
+  // import shorthand
+  KeyframeCalcurator,
+  ProjectMigrator,
+  MigrationHelper,
+  Exporter,
+  // Types
+  AnyParameterTypeDescriptor,
+  version,
 }

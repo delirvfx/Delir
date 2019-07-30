@@ -7,36 +7,36 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class MoveLayerOrderCommand implements Command {
-    constructor(
-        private parentCompositionId: string,
-        private targetLayerId: string,
-        private previousIndex: number,
-        private nextIndex: number,
-    ) {}
+  constructor(
+    private parentCompositionId: string,
+    private targetLayerId: string,
+    private previousIndex: number,
+    private nextIndex: number,
+  ) {}
 
-    public undo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public undo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.moveLayerOrder, {
-            parentCompositionId: this.parentCompositionId,
-            targetLayerId: this.targetLayerId,
-            newIndex: this.previousIndex,
-        })
-    }
+    context.dispatch(ProjectActions.moveLayerOrder, {
+      parentCompositionId: this.parentCompositionId,
+      targetLayerId: this.targetLayerId,
+      newIndex: this.previousIndex,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public redo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.moveLayerOrder, {
-            parentCompositionId: this.parentCompositionId,
-            targetLayerId: this.targetLayerId,
-            newIndex: this.nextIndex,
-        })
-    }
+    context.dispatch(ProjectActions.moveLayerOrder, {
+      parentCompositionId: this.parentCompositionId,
+      targetLayerId: this.targetLayerId,
+      newIndex: this.nextIndex,
+    })
+  }
 
-    private focusToParentComposition(context: OperationContext) {
-        context.dispatch(EditorActions.changeActiveComposition, {
-            compositionId: this.parentCompositionId,
-        })
-    }
+  private focusToParentComposition(context: OperationContext) {
+    context.dispatch(EditorActions.changeActiveComposition, {
+      compositionId: this.parentCompositionId,
+    })
+  }
 }

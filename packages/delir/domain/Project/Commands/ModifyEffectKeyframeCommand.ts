@@ -7,48 +7,48 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class ModifyEffectKeyframeCommand implements Command {
-    private toPreviousPatch: Partial<Delir.Entity.Keyframe>
+  private toPreviousPatch: Partial<Delir.Entity.Keyframe>
 
-    constructor(
-        private targetClipId: string,
-        private targetEffectId: string,
-        private paramName: string,
-        private targetKeyframeId: string,
-        unpatched: Partial<Delir.Entity.Keyframe>,
-        private patch: Partial<Delir.Entity.Keyframe>,
-    ) {
-        this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Keyframe>
-    }
+  constructor(
+    private targetClipId: string,
+    private targetEffectId: string,
+    private paramName: string,
+    private targetKeyframeId: string,
+    unpatched: Partial<Delir.Entity.Keyframe>,
+    private patch: Partial<Delir.Entity.Keyframe>,
+  ) {
+    this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Keyframe>
+  }
 
-    public undo(context: OperationContext) {
-        this.focusToChangedParam(context)
+  public undo(context: OperationContext) {
+    this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyEffectKeyframe, {
-            targetClipId: this.targetClipId,
-            effectId: this.targetEffectId,
-            targetKeyframeId: this.targetKeyframeId,
-            patch: this.toPreviousPatch,
-        })
-    }
+    context.dispatch(ProjectActions.modifyEffectKeyframe, {
+      targetClipId: this.targetClipId,
+      effectId: this.targetEffectId,
+      targetKeyframeId: this.targetKeyframeId,
+      patch: this.toPreviousPatch,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToChangedParam(context)
+  public redo(context: OperationContext) {
+    this.focusToChangedParam(context)
 
-        context.dispatch(ProjectActions.modifyEffectKeyframe, {
-            targetClipId: this.targetClipId,
-            effectId: this.targetEffectId,
-            targetKeyframeId: this.targetKeyframeId,
-            patch: this.patch,
-        })
-    }
+    context.dispatch(ProjectActions.modifyEffectKeyframe, {
+      targetClipId: this.targetClipId,
+      effectId: this.targetEffectId,
+      targetKeyframeId: this.targetKeyframeId,
+      patch: this.patch,
+    })
+  }
 
-    private focusToChangedParam(context: OperationContext) {
-        context.dispatch(EditorActions.changeActiveParam, {
-            target: {
-                type: 'effect',
-                entityId: this.targetEffectId,
-                paramName: this.paramName,
-            },
-        })
-    }
+  private focusToChangedParam(context: OperationContext) {
+    context.dispatch(EditorActions.changeActiveParam, {
+      target: {
+        type: 'effect',
+        entityId: this.targetEffectId,
+        paramName: this.paramName,
+      },
+    })
+  }
 }

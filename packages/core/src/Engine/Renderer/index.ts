@@ -14,53 +14,53 @@ import VideoRenderer from './Video/Video'
 export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment' | 'p5js'
 
 export const RENDERERS: { [name: string]: IRendererStatic } = {
-    audio: AudioRenderer,
-    video: VideoRenderer,
-    image: ImageRenderer,
-    text: TextRenderer,
-    adjustment: AdjustmentRenderer,
-    p5js: P5jsRenderer,
+  audio: AudioRenderer,
+  video: VideoRenderer,
+  image: ImageRenderer,
+  text: TextRenderer,
+  adjustment: AdjustmentRenderer,
+  p5js: P5jsRenderer,
 }
 
 interface PluginInfo {
-    id: string
-    handlableFileTypes: string[]
-    assetAssignMap: { [extName: string]: string }
-    parameter: TypeDescriptor
+  id: string
+  handlableFileTypes: string[]
+  assetAssignMap: { [extName: string]: string }
+  parameter: TypeDescriptor
 }
 
 const RENDERER_SUMMARY = _.mapValues(RENDERERS, renderer => {
-    const assetAssignMap = renderer.provideAssetAssignMap()
-    const handlableFileTypes = Object.keys(assetAssignMap)
+  const assetAssignMap = renderer.provideAssetAssignMap()
+  const handlableFileTypes = Object.keys(assetAssignMap)
 
-    return {
-        id: renderer.rendererId,
-        handlableFileTypes,
-        assetAssignMap,
-        parameter: renderer.provideParameters(),
-    }
+  return {
+    id: renderer.rendererId,
+    handlableFileTypes,
+    assetAssignMap,
+    parameter: renderer.provideParameters(),
+  }
 }) as { [name: string]: PluginInfo }
 
 export function getAvailableRenderers() {
-    return _.values(_.clone(RENDERER_SUMMARY))
+  return _.values(_.clone(RENDERER_SUMMARY))
 }
 
 export function getInfo(renderer: AvailableRenderer) {
-    const summary = RENDERER_SUMMARY[renderer]
+  const summary = RENDERER_SUMMARY[renderer]
 
-    if (!summary) {
-        throw new UnknownPluginReferenceException(`Missing renderer specified(${renderer}`)
-    }
+  if (!summary) {
+    throw new UnknownPluginReferenceException(`Missing renderer specified(${renderer}`)
+  }
 
-    return summary
+  return summary
 }
 
 export function create(renderer: AvailableRenderer): IRenderer<any> {
-    const Renderer = RENDERERS[renderer]
+  const Renderer = RENDERERS[renderer]
 
-    if (!Renderer) {
-        throw new UnknownPluginReferenceException(`Missing renderer creating (${renderer}`)
-    }
+  if (!Renderer) {
+    throw new UnknownPluginReferenceException(`Missing renderer creating (${renderer}`)
+  }
 
-    return new Renderer()
+  return new Renderer()
 }

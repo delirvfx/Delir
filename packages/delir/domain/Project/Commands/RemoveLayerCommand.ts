@@ -6,33 +6,33 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class RemoveLayerCommand implements Command {
-    constructor(
-        private parentCompositionId: string,
-        private removedLayer: Delir.Entity.Layer,
-        private beforeRemoveIndex: number,
-    ) {}
+  constructor(
+    private parentCompositionId: string,
+    private removedLayer: Delir.Entity.Layer,
+    private beforeRemoveIndex: number,
+  ) {}
 
-    public undo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public undo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.addLayer, {
-            targetCompositionId: this.parentCompositionId,
-            layer: this.removedLayer,
-            index: this.beforeRemoveIndex,
-        })
-    }
+    context.dispatch(ProjectActions.addLayer, {
+      targetCompositionId: this.parentCompositionId,
+      layer: this.removedLayer,
+      index: this.beforeRemoveIndex,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public redo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.removeLayer, {
-            targetLayerId: this.removedLayer.id,
-        })
-    }
+    context.dispatch(ProjectActions.removeLayer, {
+      targetLayerId: this.removedLayer.id,
+    })
+  }
 
-    private focusToParentComposition(context: OperationContext) {
-        context.dispatch(EditorActions.changeActiveComposition, {
-            compositionId: this.parentCompositionId,
-        })
-    }
+  private focusToParentComposition(context: OperationContext) {
+    context.dispatch(EditorActions.changeActiveComposition, {
+      compositionId: this.parentCompositionId,
+    })
+  }
 }

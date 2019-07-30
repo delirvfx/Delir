@@ -6,32 +6,32 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class AddClipCommand implements Command {
-    constructor(
-        private parentCompositionId: string,
-        private targetLayerId: string,
-        private addedClip: Delir.Entity.Clip,
-    ) {}
+  constructor(
+    private parentCompositionId: string,
+    private targetLayerId: string,
+    private addedClip: Delir.Entity.Clip,
+  ) {}
 
-    public undo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public undo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.removeClip, {
-            targetClipId: this.addedClip.id,
-        })
-    }
+    context.dispatch(ProjectActions.removeClip, {
+      targetClipId: this.addedClip.id,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public redo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.addClip, {
-            targetLayerId: this.targetLayerId,
-            newClip: this.addedClip,
-        })
-    }
+    context.dispatch(ProjectActions.addClip, {
+      targetLayerId: this.targetLayerId,
+      newClip: this.addedClip,
+    })
+  }
 
-    private focusToParentComposition(context: OperationContext) {
-        context.dispatch(EditorActions.changeActiveComposition, {
-            compositionId: this.parentCompositionId,
-        })
-    }
+  private focusToParentComposition(context: OperationContext) {
+    context.dispatch(EditorActions.changeActiveComposition, {
+      compositionId: this.parentCompositionId,
+    })
+  }
 }

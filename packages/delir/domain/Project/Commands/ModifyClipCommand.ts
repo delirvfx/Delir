@@ -7,38 +7,38 @@ import { Command } from '../../History/HistoryStore'
 import { ProjectActions } from '../actions'
 
 export class ModifyClipCommand implements Command {
-    private toPreviousPatch: Partial<Delir.Entity.Clip>
+  private toPreviousPatch: Partial<Delir.Entity.Clip>
 
-    constructor(
-        private parentCompositionId: string,
-        private targetClipId: string,
-        unpatched: Partial<Delir.Entity.Clip>,
-        private patch: Partial<Delir.Entity.Clip>,
-    ) {
-        this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Clip>
-    }
+  constructor(
+    private parentCompositionId: string,
+    private targetClipId: string,
+    unpatched: Partial<Delir.Entity.Clip>,
+    private patch: Partial<Delir.Entity.Clip>,
+  ) {
+    this.toPreviousPatch = _.pick(unpatched, Object.keys(patch)) as Partial<Delir.Entity.Clip>
+  }
 
-    public undo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public undo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.modifyClip, {
-            targetClipId: this.targetClipId,
-            patch: this.toPreviousPatch,
-        })
-    }
+    context.dispatch(ProjectActions.modifyClip, {
+      targetClipId: this.targetClipId,
+      patch: this.toPreviousPatch,
+    })
+  }
 
-    public redo(context: OperationContext) {
-        this.focusToParentComposition(context)
+  public redo(context: OperationContext) {
+    this.focusToParentComposition(context)
 
-        context.dispatch(ProjectActions.modifyClip, {
-            targetClipId: this.targetClipId,
-            patch: this.patch,
-        })
-    }
+    context.dispatch(ProjectActions.modifyClip, {
+      targetClipId: this.targetClipId,
+      patch: this.patch,
+    })
+  }
 
-    private focusToParentComposition(context: OperationContext) {
-        context.dispatch(EditorActions.changeActiveComposition, {
-            compositionId: this.parentCompositionId,
-        })
-    }
+  private focusToParentComposition(context: OperationContext) {
+    context.dispatch(EditorActions.changeActiveComposition, {
+      compositionId: this.parentCompositionId,
+    })
+  }
 }
