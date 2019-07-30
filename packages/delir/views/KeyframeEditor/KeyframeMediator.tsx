@@ -9,6 +9,7 @@ import { getActiveComp, getActiveParam } from '../../domain/Editor/selectors'
 import EditorStore from '../../domain/Editor/EditorStore'
 import { SpreadType } from '../../utils/Spread'
 import KeyframeGraph, { KeyframePatch } from './KeyframeGraph'
+import * as s from './KeyframeMediator.styl'
 
 interface OwnProps {
     activeClip: SpreadType<Delir.Entity.Clip>
@@ -30,7 +31,7 @@ interface State {
     keyframeDragOffsetX: number
 }
 
-// typeof
+export const KeyframeDragContext = React.createContext<any>(null)
 
 export const KeyframeMediator = ({
     activeClip,
@@ -51,22 +52,47 @@ export const KeyframeMediator = ({
         activeComp: getActiveComp()(getStore),
     }))
 
+    const rootRef = React.useRef<HTMLDivElement>(null)
+    const selection = React.useRef<Selection | null>(null)
+
+    const handleSelectionStop = React.useCallback(({ selectedElements }: Selection.SelectionEvent) => {
+        // console.log(selectedElements)
+    }, [])
+
+    const handleValidateSelectionStart = React.useCallback((e: MouseEvent) => {
+        return !(e.target as HTMLElement).closest('[data-keyframe-id]')
+    }, [])
+
+    React.useEffect(() => {
+        selection.current = Selection.create({
+            class: s.selectionArea,
+            selectionAreaContainer: rootRef.current!,
+            startareas: [`.${s.root}`],
+            boundaries: [`.${s.root}`],
+            selectables: ['[data-keyframe-id]'],
+            validateStart: handleValidateSelectionStart,
+            onStop: handleSelectionStop,
+        })
+    }, [])
+
     return (
-        <KeyframeGraph
-            composition={activeComp!}
-            parentClip={activeClip}
-            entity={entity}
-            paramName={paramName}
-            descriptor={descriptor}
-            width={graphWidth}
-            height={graphHeight}
-            viewBox={`0 0 ${keyframeViewViewBox!.width} ${keyframeViewViewBox!.height}`!}
-            scrollLeft={scrollLeft}
-            pxPerSec={pxPerSec}
-            zoomScale={scale}
-            keyframes={keyframes}
-            onKeyframeRemove={onRemoveKeyframe}
-            onModified={onModifyKeyframe}
-        />
+        <div ref={rootRef} className={s.root}>
+            <KeyframeGraph
+                composition={activeComp!}
+                parentClip={activeClip}
+                entity={entity}
+                paramName={paramName}
+                descriptor={descriptor}
+                width={graphWidth}
+                height={graphHeight}
+                viewBox={`0 0 ${keyframeViewViewBox!.width} ${keyframeViewViewBox!.height}`!}
+                scrollLeft={scrollLeft}
+                pxPerSec={pxPerSec}
+                zoomScale={scale}
+                keyframes={keyframes}
+                onKeyframeRemove={onRemoveKeyframe}
+                onModified={onModifyKeyframe}
+            />
+        </div>
     )
 }
