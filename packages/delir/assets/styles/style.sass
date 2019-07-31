@@ -2,6 +2,7 @@
 @import './mixins'
 @import './variables'
 @import './twemoji'
+@import './reset.css'
 
 *, *::before, *::after
   box-sizing: border-box
@@ -12,12 +13,12 @@
     --background: #353535
     // --pane-background: linear-gradient(to bottom, #24242b, 30% #0c070f, 50% #111)
     --pane-background: transparent
-    --pane-border-color: rgba(#222, .9)
-    --active-pane-border: rgba(#6900a8, .5)
-    --text-color: $color-text
-    --text-subbed: $color-text-subbed
+    --pane-border-color: #{rgba(#222, .9)}
+    --active-pane-border: #{rgba(#6900a8, .5)}
+    --text-color: #{$color-text}
+    --text-subbed: #{$color-text-subbed}
     --caption-row-background: #3a3340
-    --color-theming: $color-theming
+    --color-theming: #{$color-theming}
 
   html, body
     width: 100%
