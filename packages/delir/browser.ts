@@ -78,6 +78,7 @@ const install = async () => {
     const window = new BrowserWindow({
       titleBarStyle: 'hidden',
       webPreferences: {
+        nodeIntegration: true,
         webgl: true,
         experimentalFeatures: true,
         experimentalCanvasFeatures: true,
