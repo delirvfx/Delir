@@ -6,7 +6,6 @@ const webpack = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const builder = require('electron-builder')
-const nib = require('nib')
 const notifier = require('node-notifier')
 const download = require('download')
 const zipDir = require('zip-dir')
@@ -298,14 +297,6 @@ export function compileRendererJs(done) {
       },
       plugins: [
         new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
-        new webpack.LoaderOptionsPlugin({
-          test: /\.styl$/,
-          stylus: {
-            default: {
-              use: [nib()],
-            },
-          },
-        }),
         // preserve require() for native modules
         new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
         new MonacoEditorWebpackPlugin(),
