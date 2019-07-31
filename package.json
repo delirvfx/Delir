@@ -43,11 +43,15 @@
     "monaco-editor-webpack-plugin": "1.7.0",
     "node-notifier": "5.4.0",
     "prettier": "1.17.0",
+    "prettier-stylelint": "0.4.2",
     "raw-loader": "3.1.0",
     "react-test-renderer": "16.8.6",
     "sass": "1.22.9",
     "sass-loader": "7.1.0",
     "style-loader": "0.23.1",
+    "stylelint": "10.1.0",
+    "stylelint-config-rational-order": "0.1.2",
+    "stylelint-config-standard": "18.3.0",
     "ts-loader": "6.0.4",
     "ts-node": "8.1.0",
     "tslint": "5.16.0",
@@ -74,6 +78,11 @@
     "*.js": [
       "prettier --write",
       "tslint --fix",
+      "git add"
+    ],
+    "*.{sass,scss,css}": [
+      "prettier --write",
+      "stylelint --fix",
       "git add"
     ]
   }
