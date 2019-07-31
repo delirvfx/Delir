@@ -1,0 +1,177 @@
+@import './mixins'
+@import './variables'
+@import './twemoji'
+@import './reset.css'
+
+*, *::before, *::after
+  box-sizing: border-box
+
+:global
+  body.theme--default
+    --background: #353535
+    // --pane-background: linear-gradient(to bottom, #24242b, 30% #0c070f, 50% #111)
+    --pane-background: transparent
+    --pane-border-color: #{rgba(#222, .9)}
+    --active-pane-border: #{rgba(#6900a8, .5)}
+
+    --text-color: #{$color-text}
+    --text-subbed: #{$color-text-subbed}
+
+    --caption-row-background: #3a3340
+
+    --color-theming: #{$color-theming}
+
+
+  html, body
+    width: 100%
+    height: 100%
+    user-select: none
+    cursor: default
+
+    font-family: 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Roboto, 'YuGothic', '游ゴシック Medium', 'Hiragino Kaku Gothic ProN', meiryo, sans-serif
+    font-size: 14px
+
+    background: var(--background)
+    color: var(--text-color)
+
+  a
+    color: #6acfff
+    text-decoration: none
+
+    &:hover
+      text-decoration: underline
+
+  #loading
+    position: fixed
+    top: 0
+    left: 0
+
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 100%
+    height: 100%
+
+    color: #fff
+    font-size: 18px
+
+  #root, ._container
+    display: flex
+    width: 100%
+    height: 100%
+    overflow: hidden
+
+    flex-direction: column
+
+    font-family: 'Avenir Next', 'Helvetica Neue', 'Hiragino Kaku Gothic ProN', sans-serif
+    font-size: 14px
+
+  .app-body
+    flex: 1
+
+  //-- Workspace
+  ._workspace
+    display: flex
+    width: 100%
+    height: 100%
+
+  ._workspace--horizontal
+    flex-direction: row
+
+    & > ._workspace-pane + ._workspace-pane
+      padding-left: $pane-border-width
+      // & + &
+      //     border-left 1px solid var(--pane-border-color)
+
+      & > ._workspace-pane-handle
+        width: $pane-border-width
+        height: calc(100% + 1px)
+        // cursor ew-resize
+
+  ._workspace--horizontal > ._workspace-pane + ._workspace-pane > ._workspace-pane-handle
+      position: absolute
+      top: -1px
+      left: 0
+      display: block
+
+  ._workspace--vertical
+    flex-direction: column
+
+    & > ._workspace-pane + ._workspace-pane
+      padding-top: $pane-border-width
+      // & + ._workspace-pane
+      //     border-top 1px solid var(--pane-border-color)
+
+      & > ._workspace-pane-handle
+        width: 100%
+        height: $pane-border-width
+        // cursor ns-resize
+
+  ._workspace--vertical > ._workspace-pane + ._workspace-pane >._workspace-pane-handle
+    position: absolute
+    top: 0
+    left: 0
+    display: block
+
+  ._workspace-pane
+    position: relative
+    flex: 1
+    background: $pane-background
+    // background var(--pane-background)
+
+    // border 1px solid transparent
+    transition: border-color .1s
+
+    // &._workspace-pane--allow-focus
+    //     &:active, &:focus
+    //         box-shadow 0 0 0 1px var(--active-pane-border)
+
+  ._workspace-pane-handle
+    display: none
+    background-color: var(--pane-border-color)
+
+  ._input
+  ._label-input
+    display: inline-block
+    min-width: 1rem
+    min-height: 1em
+
+    font-family: inherit
+    background-color: transparent
+    color: inherit
+    outline: none
+
+    border: none
+    border-bottom: 1px solid var(--color-theming)
+
+    transition: border-bottom-color .1s
+
+    &[readonly]
+      border-bottom: 1px solid transparent
+      user-select: none
+      cursor: default
+
+      &:focus
+        border-bottom: 1px solid rgba($color-theming, .3)
+
+  ._select-list
+    .select-list-item
+      transition-property: background-color
+      transition-duration: $animate-bgcolor-duration
+      transition-timing-function: $animate-function
+
+      &.selected
+        background-color: rgba(#fff, .2)
+
+  // Views
+  .body-pane
+    flex: 1
+    overflow: hidden
+
+  .view-status
+    flex: none
+    height: 18px
+    padding: 4px
+
+    font-size: .8rem
+    border-top: 1px solid rgba(#fff, .1)

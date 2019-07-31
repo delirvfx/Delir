@@ -1,0 +1,75 @@
+@import '../../assets/styles/variables'
+@import '../../assets/styles/mixins'
+
+.AboutModal
+  width: 800px
+  max-width: 100%
+  min-width: 400px
+  padding: 24px 24px 16px
+  align-self: center
+  font-size: 16px
+
+  background-color: var(--background)
+
+  h1
+    border-bottom: 1px solid white
+    padding-bottom: 8px
+    margin-bottom: 16px
+    font-size: 32px
+
+    small
+      margin-left: 16px
+      font-size: 16px
+
+  dl
+    line-height: 32px
+
+    &::after
+      content: ''
+      display: table
+      clear: both
+
+  dt
+    width: 96px
+    float: left
+    clear: both
+
+  dd
+    display: inline-block
+    float: left
+
+.tabList
+  margin-bottom: 16px
+
+.tab
+  display: inline-block
+  padding: 4px 0
+  border-bottom: 1px solid transparent
+  transition-property: border-bottom
+  transition-duration: $animate-bgcolor-duration
+  transition-timing-function: $animate-function
+
+  + .tab
+    margin-left: 16px
+
+.tabSelected
+  border-bottom: 1px solid var(--color-theming)
+
+.licensesTitle
+  margin-bottom: 8px
+
+.licenseContainer
+  +thin-scrollbar
+
+  max-height: 30vh
+  overflow: auto
+
+.licenseList
+  column-count: 2
+
+.licenseLink
+  display: block
+
+.close
+  margin-top: 16px
+  float: right

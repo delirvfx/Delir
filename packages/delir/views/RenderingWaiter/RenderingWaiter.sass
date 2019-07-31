@@ -1,0 +1,46 @@
+@import '../../assets/styles/variables'
+
+.RenderingWaiter
+  position: fixed
+  top: 0
+  left: 0
+  z-index: $z-index-modal-window
+
+  display: flex
+  flex-flow: column
+  align-items: center
+  justify-content: center
+  flex-wrap: wrap
+  width: 100vw
+  height: 100vh
+  background: rgba($color-app-bg-dark, .8)
+
+:global(.platform-mac)
+  .RenderingWaiter
+    top: 21px
+
+.spinner
+  animation: spin .5s infinite linear
+
+.completedParrot
+  height: 3em
+
+.status
+  display: flex
+  justify-content: center
+
+.statusText
+  display: flex
+  align-items: center
+  margin-left: 16px
+  font-size: 24px
+
+.doneButton
+  margin-top: 8px
+
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+
+  100%
+    transform: rotate(359deg)

@@ -8,7 +8,7 @@ import Button from '../../components/Button'
 import { ParameterTarget } from '../../domain/Editor/types'
 import { EditorResult } from './KeyframeEditor'
 
-import s from './ExpressionEditor.styl'
+import s from './ExpressionEditor.sass'
 import t from './KeyframeEditor.i18n'
 
 interface Props {

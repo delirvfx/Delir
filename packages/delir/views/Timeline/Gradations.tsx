@@ -11,7 +11,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 import { ContextMenu, MenuItem } from '../../components/ContextMenu/ContextMenu'
 
 import t from './Gradations.i18n'
-import s from './Gradations.styl'
+import s from './Gradations.sass'
 
 interface OwnProps {
   currentFrame: number

@@ -2,7 +2,7 @@ import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fl
 import React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 
-import DropDown from '../../components/dropdown'
+import Dropdown from '../../components/Dropdown'
 import Pane from '../../components/pane'
 
 import EditorStore from '../../domain/Editor/EditorStore'
@@ -10,7 +10,7 @@ import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore, { RenderState } from '../../domain/Renderer/RendererStore'
 
 import t from './PreviewView.i18n'
-import s from './style.styl'
+import s from './PreviewView.sass'
 
 type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
@@ -38,7 +38,7 @@ export default withFleurContext(
         scaleListShown: false,
       }
 
-      private scaleListRef = React.createRef<DropDown>()
+      private scaleListRef = React.createRef<Dropdown>()
       private canvasRef = React.createRef<HTMLCanvasElement>()
 
       public componentDidMount() {
@@ -75,7 +75,7 @@ export default withFleurContext(
                 <label className={s.FooterItem} onClick={this.toggleScaleList}>
                   <i className="fa fa-search-plus" />
                   <span className={s.currentScale}>{currentScale}%</span>
-                  <DropDown ref={this.scaleListRef} className={s.dropdown} shownInitial={scaleListShown}>
+                  <Dropdown ref={this.scaleListRef} className={s.dropdown} shownInitial={scaleListShown}>
                     <li data-value="50" onClick={this.selectScale}>
                       50%
                     </li>
@@ -94,7 +94,7 @@ export default withFleurContext(
                     <li data-value="300" onClick={this.selectScale}>
                       300%
                     </li>
-                  </DropDown>
+                  </Dropdown>
                 </label>
                 <div className={s.FooterItem}>{timecode}</div>
               </div>

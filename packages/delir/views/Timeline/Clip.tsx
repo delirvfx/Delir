@@ -16,7 +16,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import t from './Clip.i18n'
-import s from './Clip.styl'
+import s from './Clip.sass'
 import { ClipDragProps, withClipDragContext } from './ClipDragContext'
 
 interface OwnProps {

@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import React from 'react'
 
-import Portal from '../modules/Portal/Portal'
+import Portal from '../../modules/Portal/Portal'
 
 import s from './Dropdown.sass'
 

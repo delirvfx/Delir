@@ -1,0 +1,68 @@
+@import '../../assets/styles/variables'
+
+.Preference
+  box-sizing: border-box
+  display: flex
+  align-self: center
+  width: 100%
+  height: 100%
+  font-size: 16px
+
+  -webkit-app-region: drag
+
+.sidebarRegion
+  flex: 1 0 200px
+  background-color: $color-app-bg-dark
+
+.sidebar
+  box-sizing: border-box
+  width: 200px
+  padding: 64px 16px 0
+  margin-left: auto
+
+.contentRegion
+  flex: 1 1 800px
+  background-color: $color-app-bg
+
+.header
+  margin: 8px 0 16px
+  font-size: 12px
+  font-weight: bold
+  color: #939d9e
+
+.item
+  padding: 4px 8px
+  border-radius: 3px
+  cursor: pointer
+
+  &:hover
+    background-color: rgba(#fff, .3)
+
+  &.itemActive
+    background-color: $color-theming
+
+.content
+  padding: 64px 32px 0
+  max-width: 800px
+
+  h2
+    margin: 8px 0 24px
+    font-size: 24px
+    font-weight: bold
+
+.contentFoot
+  margin-top: 32px
+  padding: 16px 8px 8px
+  border-top: 1px solid rgba(#fff, .2)
+  text-align: right
+
+.checkboxCard
+  label
+      cursor: pointer
+
+  small
+      display: block
+      margin-top: 8px
+      font-size: 14px
+      color: #939d9e
+

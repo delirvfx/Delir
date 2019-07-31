@@ -1,9 +1,9 @@
 import classnames from 'classnames'
 import _ from 'lodash'
 import React from 'react'
-import * as Platform from '../utils/platform'
+import * as Platform from '../../utils/platform'
 
-import s from './DragNumberInput.styl'
+import s from './DragNumberInput.sass'
 
 interface Props {
   className?: string

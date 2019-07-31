@@ -12,7 +12,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Pane from '../../components/pane'
 
-import s from './style.styl'
+import s from './NavigationView.sass'
 
 export const NavigationView = () => {
   const context = useFleurContext()

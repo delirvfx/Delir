@@ -8,7 +8,7 @@ import * as EditorOps from '../../domain/Editor/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
 import t from './Notifications.i18n'
-import s from './style.styl'
+import s from './Notifications.sass'
 
 export const Notifications = () => {
   const context = useFleurContext()

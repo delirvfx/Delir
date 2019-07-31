@@ -15,7 +15,7 @@ import EditorStore from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../domain/Project/ProjectStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
-import DropDown from '../../components/dropdown'
+import DropDown from '../../components/Dropdown'
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
 
@@ -24,8 +24,8 @@ import { ClipsMediator } from './ClipsMediator'
 import Gradations from './Gradations'
 import LayerLabelList from './LayerLabelList'
 
-import s from './style.styl'
 import t from './Timeline.i18n'
+import s from './Timeline.sass'
 
 type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 

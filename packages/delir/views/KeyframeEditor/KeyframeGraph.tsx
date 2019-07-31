@@ -8,7 +8,7 @@ import TimePixelConversion from '../../utils/TimePixelConversion'
 import * as EditorOps from '../../domain/Editor/operations'
 
 import { ContextProp, withFleurContext } from '@fleur/fleur-react'
-import s from './KeyframeGraph.styl'
+import s from './KeyframeGraph.sass'
 
 interface OwnProps {
   width: number

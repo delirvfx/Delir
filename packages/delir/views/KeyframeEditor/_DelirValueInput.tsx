@@ -2,11 +2,11 @@ import * as Delir from '@delirvfx/core'
 import React from 'react'
 import { ChromePicker } from 'react-color'
 
-import DragNumberInput from '../../components/drag-number-input'
-import Dropdown from '../../components/dropdown'
+import DragNumberInput from '../../components/DragNumberInput'
+import Dropdown from '../../components/Dropdown'
 
 import t from './_DelirValueInput.i18n'
-import s from './delir-value-input.styl'
+import s from './DelirValueInput.sass'
 
 interface DelirValueInputProps {
   assets: ReadonlyArray<Delir.Entity.Asset> | null

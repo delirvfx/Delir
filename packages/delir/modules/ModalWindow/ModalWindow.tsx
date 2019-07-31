@@ -4,7 +4,7 @@ import React from 'react'
 
 import Portal from '../Portal'
 
-import s from './ModalWindow.styl'
+import s from './ModalWindow.sass'
 
 export interface Props {
   show?: boolean

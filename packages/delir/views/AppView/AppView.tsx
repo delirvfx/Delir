@@ -12,7 +12,7 @@ import Workspace from '../../components/workspace'
 import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
 import { NavigationView } from '../NavigationView'
-import { Notifications } from '../Notifications'
+import { Notifications } from '../Notifications/Notifications'
 import { Preference } from '../Preference'
 import PreviewView from '../PreviewView/'
 import { RenderingWaiter } from '../RenderingWaiter'
@@ -20,7 +20,7 @@ import { StatusBar } from '../StatusBar'
 import Timeline from '../Timeline'
 import { ShortcutHandler } from './ShortcutHandler'
 
-import s from './style.styl'
+import s from './AppView.sass'
 
 type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 

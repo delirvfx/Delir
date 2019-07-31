@@ -1,0 +1,81 @@
+@import '../../assets/styles/variables'
+@import '../../assets/styles/mixins'
+
+.assetsView
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  width: 300px
+  flex: none
+
+.assetList, .compositionList
+  width: 100%
+  padding-bottom: 16px
+  flex: 1
+
+  border-top: 1px solid rgba(#666, .6)
+
+  thead
+    font-size: 12px
+
+    tr:last-of-type
+      td
+        border-bottom: 1px solid rgba(#666, .6)
+
+  td
+    padding: 4px
+
+.compositionsTableContainer
+  +thin-scrollbar
+  width: 100%
+  flex: 1
+  overflow-x: hidden
+  overflow-y: auto
+
+.assetsTableContainer
+  +thin-scrollbar
+  width: 100%
+  flex: 3
+  overflow-x: hidden
+  overflow-y: auto
+
+.compositionListIconColumn
+  width: 2rem
+
+.compositionListNameColumn
+  width: 20rem
+
+.assetListIconColumn
+  width: 2rem
+
+.assetListNameColumn
+  width: 10rem
+
+.assetListTypeColumn
+  width: 5rem
+
+.selected
+  background-color: rgba(#fff, .2)
+  transition: $animate-bgcolor-duration $animate-function
+  transition-property: background-color
+
+.compositionsHeading, .assetsHeading
+  width: 100%
+  padding: 4px 8px
+  font-size: 12px
+  line-height: 14px
+
+.assetsHeading
+  border-top: 1px solid rgba(255, 255, 255, 0.2)
+
+.addAssetPlusSign
+  margin-left: 4px
+  margin-bottom: -1px
+  filter: invert(100%)
+  cursor: pointer
+
+  &:hover
+    background-color: rgba(invert(#fff), .2) // inverted, it appear as white
+
+.IconField
+  text-align: center

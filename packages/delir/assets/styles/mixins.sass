@@ -1,29 +1,26 @@
-disable-scrollbar()
-    &::-webkit-scrollbar
-        display none
+= disable-scrollbar
+  &::-webkit-scrollbar
+    display: none
 
-thin-scrollbar()
-    &::-webkit-scrollbar
-        // overflow auto
-        width 3px
-        height 3px
-        background-color rgba(#fff, .2)
+= thin-scrollbar
+  &::-webkit-scrollbar
+    width: 3px
+    height: 3px
+    background-color: rgba(#fff, .2)
 
-        // &:hover, &:active
+  &::-webkit-scrollbar-thumb
+    width: 3px
+    height: 3px
+    border-radius: 500px
+    background-color: rgba(#fff, .2)
 
-
-    &::-webkit-scrollbar-thumb
-        width 3px
-        height 3px
-        border-radius 500px
-        background-color rgba(#fff, .2)
-
-        &:hover, &:active
-            background-color rgba(#fff, .8)
+    &:hover, &:active
+      background-color: rgba(#fff, .8)
 
 
-    // &::-webkit-scrollbar-track-piece
-    //     background rgba(#fff, 0)
-    //     transition background .1s
-    //     &:hover, &:active
-    //         background rgba(#fff, .5)
+  // &::-webkit-scrollbar-track-piece
+  //   background rgba(#fff, 0)
+  //   transition background .1s
+  //
+  //   &:hover, &:active
+  //     background rgba(#fff, .5)

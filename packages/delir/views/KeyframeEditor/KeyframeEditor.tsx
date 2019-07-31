@@ -31,7 +31,7 @@ import ScriptParamEditor from './ScriptParamEditor'
 import { SortEndHandler } from 'react-sortable-hoc'
 import { PX_PER_SEC } from '../Timeline/Timeline'
 import t from './KeyframeEditor.i18n'
-import s from './KeyframeEditor.styl'
+import s from './KeyframeEditor.sass'
 
 export interface EditorResult {
   code: string | null

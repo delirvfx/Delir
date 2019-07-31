@@ -14,7 +14,7 @@ import { ClipDragContext, EmitClipDragHandler, EmitClipResizeHandler } from './C
 import Layer from './Layer'
 import { PX_PER_SEC } from './Timeline'
 
-import s from './ClipMediator.styl'
+import s from './ClipsMediator.sass'
 
 interface OwnProps {
   comp: SpreadType<Delir.Entity.Composition>

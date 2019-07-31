@@ -1,0 +1,87 @@
+@import '../../assets/styles/variables'
+@import '../../assets/styles/mixins'
+
+.Timeline
+  display: flex
+  height: 50%
+  flex: none
+  font-size: 12px
+
+.timelineRegion
+  height: 50%
+
+.keyframeGraphRegion
+  height: 50%
+
+.addLayerIcon
+  margin-left: 4px
+  margin-bottom: -1px
+  filter: invert(100%)
+  cursor: pointer
+
+  &:hover
+    background-color: rgba(invert(#fff), .2) // inverted, it appear as white
+
+.labelsContainer
+  display: flex
+  flex-direction: column
+  width: 280px
+  flex: none
+  background-color: $pane-background
+
+.labelsHeader
+  display: flex
+  width: 100%
+  height: 30px
+  padding: 0 4px
+  border-bottom: 1px solid rgba(#fff, .4)
+
+  .columnName
+    display: inline-flex
+    align-items: center
+    flex: 1
+    overflow: hidden
+    white-space: normal
+    text-overflow: ellipsis
+
+  // .--col-visibility,
+  // .--col-lock
+  //     display inline-flex
+  //     align-items center
+  //     width 16px
+
+.labels
+  +thin-scrollbar
+
+  display: block
+  flex: 1
+  overflow: auto
+  padding-bottom: 20px
+
+.timelineContainer
+  display: flex
+  flex-direction: column
+  flex: 1
+  max-width: 100%
+  background-color: $pane-background
+
+.layerContainer
+  +thin-scrollbar
+  flex: 1
+  padding-bottom: 20px
+  overflow: auto
+
+.currentScale
+  display: inline-block
+  margin-left: 4px
+
+.scaleLabel
+  display: inline-flex
+  align-items: center
+  font-size: 12px
+
+.scaleList
+  width: 200px
+  border: 1px solid $color-dropdown-border
+  background-color: $color-dropdown-bg
+  transform: translateY(6px)

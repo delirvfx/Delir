@@ -11,7 +11,7 @@ import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextM
 import LabelInput from '../../components/label-input'
 
 import t from './LayerLabel.i18n'
-import s from './LayerLabel.styl'
+import s from './LayerLabel.sass'
 
 interface OwnProps {
   layer: Delir.Entity.Layer

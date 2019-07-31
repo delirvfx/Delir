@@ -8,7 +8,7 @@ import Button from '../../components/Button/Button'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
 import t from './RenderingWaiter.i18n'
-import s from './style.styl'
+import s from './RenderingWaiter.sass'
 
 const statusToText = (progress: RenderingProgress) => {
   switch (progress.step) {

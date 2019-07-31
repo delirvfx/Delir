@@ -8,7 +8,7 @@ import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Pref
 import Button from '../../components/Button'
 
 import t from './Preference.i18n'
-import s from './style.styl'
+import s from './Preference.sass'
 
 interface Props {
   onClose(): void

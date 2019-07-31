@@ -285,7 +285,7 @@ export function compileRendererJs(done) {
             ],
           },
           {
-            test: /\.sass$/,
+            test: /\.s(a|c)ss$/,
             use: [
               {
                 loader: 'style-loader',

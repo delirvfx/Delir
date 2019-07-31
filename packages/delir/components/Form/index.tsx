@@ -1,2 +1,2 @@
-import s from './style.styl'
+import s from './Form.sass'
 export default s

@@ -9,7 +9,7 @@ import { ParameterTarget } from '../../domain/Editor/types'
 import { EditorResult } from './KeyframeEditor'
 
 import t from './KeyframeEditor.i18n'
-import s from './ScriptParamEditor.styl'
+import s from './ScriptParamEditor.sass'
 
 interface Props {
   title: string

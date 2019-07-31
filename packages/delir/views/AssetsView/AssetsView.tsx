@@ -20,7 +20,7 @@ import Pane from '../../components/pane'
 import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
 
 import t from './AssetsView.i18n'
-import s from './style.styl'
+import s from './AssetsView.sass'
 
 interface CompositionProps {
   name: string

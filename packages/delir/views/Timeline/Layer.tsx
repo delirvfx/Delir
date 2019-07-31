@@ -19,7 +19,7 @@ import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import Clip from './Clip'
 
 import t from './Layer.i18n'
-import s from './Layer.styl'
+import s from './Layer.sass'
 
 interface OwnProps {
   layer: SpreadType<Delir.Entity.Layer>

@@ -6,12 +6,11 @@ import Button from '../../components/Button'
 import Link from '../../components/Link'
 import ModalWindow from '../ModalWindow/Controller'
 
-import * as corePackageJson from '@delirvfx/core/package.json'
 import * as packageJson from '../../../../package.json'
 import { dependencies } from './Licenses'
 
 import t from './AboutModal.i18n'
-import s from './AboutModal.styl'
+import s from './AboutModal.sass'
 
 export const show = (): void => {
   const modal = new ModalWindow({ closable: true })

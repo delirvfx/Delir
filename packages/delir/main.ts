@@ -9,7 +9,7 @@ import * as PreferenceOps from './domain/Preference/operations'
 import * as RendererOps from './domain/Renderer/operations'
 
 import './assets/styles/font-awesome.min.css'
-import './assets/styles/style.styl'
+import './assets/styles/style.sass'
 
 import AppView from './views/AppView'
 
