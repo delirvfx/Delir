@@ -262,29 +262,6 @@ export function compileRendererJs(done) {
             ],
           },
           {
-            test: /\.styl$/,
-            exclude: /node_modules/,
-            use: [
-              {
-                loader: 'style-loader',
-              },
-              {
-                loader: 'css-loader',
-                options: {
-                  modules: true,
-                  localIdentName: __DEV__ ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]',
-                },
-              },
-              {
-                loader: 'stylus-loader',
-                options: {
-                  'include css': true,
-                  use: [require('nib')()],
-                },
-              },
-            ],
-          },
-          {
             test: /\.s(a|c)ss$/,
             use: [
               {
