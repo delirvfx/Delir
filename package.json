@@ -81,8 +81,7 @@
       "git add"
     ],
     "*.{sass,scss,css}": [
-      "prettier --write",
-      "stylelint --fix",
+      "stylelint",
       "git add"
     ]
   }
