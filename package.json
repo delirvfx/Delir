@@ -85,5 +85,9 @@
       "tslint --fix",
       "git add"
     ]
+  },
+  "collective": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/delirvfx"
   }
 }
