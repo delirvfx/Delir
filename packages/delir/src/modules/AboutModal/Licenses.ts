@@ -3,30 +3,6 @@
 // prettier-ignore
 export const dependencies = [
     {
-        "name": "@babel/core",
-        "url": "https://babeljs.io/"
-    },
-    {
-        "name": "@babel/plugin-proposal-class-properties",
-        "url": "https://www.npmjs.com/package/@babel/plugin-proposal-class-properties"
-    },
-    {
-        "name": "@babel/plugin-proposal-object-rest-spread",
-        "url": "https://www.npmjs.com/package/@babel/plugin-proposal-object-rest-spread"
-    },
-    {
-        "name": "@babel/plugin-transform-modules-commonjs",
-        "url": "https://www.npmjs.com/package/@babel/plugin-transform-modules-commonjs"
-    },
-    {
-        "name": "@babel/preset-env",
-        "url": "https://babeljs.io/"
-    },
-    {
-        "name": "@babel/register",
-        "url": "https://www.npmjs.com/package/@babel/register"
-    },
-    {
         "name": "@delirvfx/core",
         "url": "https://github.com/Ragg-/Delir/tree/master/src/delir-core"
     },
@@ -45,6 +21,18 @@ export const dependencies = [
     {
         "name": "@ragg/deream",
         "url": "https://github.com/Ragg-/deream-stream#readme"
+    },
+    {
+        "name": "@simonwep/selection-js",
+        "url": "https://github.com/Simonwep/selection#readme"
+    },
+    {
+        "name": "@storybook/react",
+        "url": "https://github.com/storybookjs/storybook/tree/master/app/react"
+    },
+    {
+        "name": "@types/audiobuffer-to-wav",
+        "url": "https://www.npmjs.com/package/@types/audiobuffer-to-wav"
     },
     {
         "name": "@types/classnames",
@@ -107,6 +95,10 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/semver"
     },
     {
+        "name": "@types/simonwep__selection-js",
+        "url": "https://www.npmjs.com/package/@types/simonwep__selection-js"
+    },
+    {
         "name": "@types/typescript",
         "url": "https://www.npmjs.com/package/@types/typescript"
     },
@@ -119,20 +111,12 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/webgl2"
     },
     {
-        "name": "babel-loader",
-        "url": "https://github.com/babel/babel-loader"
-    },
-    {
         "name": "bezier-easing",
         "url": "https://www.npmjs.com/package/bezier-easing"
     },
     {
         "name": "classnames",
         "url": "https://www.npmjs.com/package/classnames"
-    },
-    {
-        "name": "clean-webpack-plugin",
-        "url": "https://github.com/johnagan/clean-webpack-plugin"
     },
     {
         "name": "cross-env",
@@ -196,23 +180,11 @@ export const dependencies = [
     },
     {
         "name": "gulp",
-        "url": "http://gulpjs.com"
+        "url": "https://gulpjs.com"
     },
     {
-        "name": "gulp-babel",
-        "url": "https://www.npmjs.com/package/gulp-babel"
-    },
-    {
-        "name": "gulp-load-plugins",
-        "url": "https://www.npmjs.com/package/gulp-load-plugins"
-    },
-    {
-        "name": "gulp-plumber",
-        "url": "https://github.com/floatdrop/gulp-plumber"
-    },
-    {
-        "name": "gulp-pug",
-        "url": "https://www.npmjs.com/package/gulp-pug"
+        "name": "html-webpack-plugin",
+        "url": "https://github.com/jantimon/html-webpack-plugin"
     },
     {
         "name": "husky",
@@ -271,10 +243,6 @@ export const dependencies = [
         "url": "https://github.com/mcollina/msgpack5"
     },
     {
-        "name": "nib",
-        "url": "https://www.npmjs.com/package/nib"
-    },
-    {
         "name": "node-notifier",
         "url": "https://github.com/mikaelbr/node-notifier#readme"
     },
@@ -293,6 +261,10 @@ export const dependencies = [
     {
         "name": "prettier",
         "url": "https://prettier.io"
+    },
+    {
+        "name": "prettier-stylelint",
+        "url": "https://www.npmjs.com/package/prettier-stylelint"
     },
     {
         "name": "raw-loader",
@@ -331,6 +303,14 @@ export const dependencies = [
         "url": "https://reactjs.org/"
     },
     {
+        "name": "sass",
+        "url": "https://github.com/sass/dart-sass"
+    },
+    {
+        "name": "sass-loader",
+        "url": "https://github.com/webpack-contrib/sass-loader"
+    },
+    {
         "name": "semver",
         "url": "https://www.npmjs.com/package/semver"
     },
@@ -339,12 +319,16 @@ export const dependencies = [
         "url": "https://github.com/webpack-contrib/style-loader#readme"
     },
     {
-        "name": "stylus",
-        "url": "https://github.com/stylus/stylus"
+        "name": "stylelint",
+        "url": "https://stylelint.io"
     },
     {
-        "name": "stylus-loader",
-        "url": "https://www.npmjs.com/package/stylus-loader"
+        "name": "stylelint-config-rational-order",
+        "url": "https://github.com/constverum/stylelint-config-rational-order"
+    },
+    {
+        "name": "stylelint-config-standard",
+        "url": "https://www.npmjs.com/package/stylelint-config-standard"
     },
     {
         "name": "ts-jest",

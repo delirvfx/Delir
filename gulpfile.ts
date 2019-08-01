@@ -184,7 +184,7 @@ export async function downloadAndDeployFFmpeg() {
 }
 
 export async function generateLicenses() {
-  const destination = join(paths.src.frontend, '/modules/AboutModal/Licenses.ts')
+  const destination = join(paths.src.frontend, '/src/modules/AboutModal/Licenses.ts')
 
   const jsons = [
     JSON.parse(await fs.readFile(join(__dirname, 'package.json'), { encoding: 'UTF-8' })),
@@ -539,6 +539,12 @@ export function watch() {
   g.watch(join(__dirname, 'node_modules'), symlinkNativeModules)
 }
 
+export function runStorybook(done) {
+  console.log(paths.src.frontend)
+  spawn('yarn', ['storybook'], { stdio: 'inherit', cwd: paths.src.frontend })
+  done()
+}
+
 const buildRendererWithoutJs = g.parallel(copyImage)
 const buildRenderer = g.parallel(
   g.series(
@@ -551,7 +557,7 @@ const buildRenderer = g.parallel(
 
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules))
 const build = g.parallel(buildRenderer, buildBrowser)
-const buildAndWatch = g.series(clean, build, run, watch)
+const buildAndWatch = g.series(clean, build, run, runStorybook, watch)
 const publish = g.series(clean, generateLicenses, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage)
 
 export { publish, build }
