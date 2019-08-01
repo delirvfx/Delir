@@ -531,7 +531,6 @@ export function run(done) {
 }
 
 export function watch() {
-  g.watch(join(paths.src.frontend, 'browser.js'), buildBrowserJs)
   g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
   g.watch(
     join(paths.src.root, '**/package.json'),
