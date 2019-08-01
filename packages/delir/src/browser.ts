@@ -57,7 +57,7 @@ const install = async () => {
   const args = parseCommandLine()
   await install()
 
-  if (process.env.DELIR_ENV === 'dev') {
+  if (process.env.NODE_ENV === 'development') {
     // tslint:disable-next-line:no-console
     console.log('Run as develop mode')
 

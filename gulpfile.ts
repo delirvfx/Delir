@@ -37,7 +37,7 @@ const paths = {
 const isWindows = os.type() === 'Windows_NT'
 const isMacOS = os.type() === 'Darwin'
 const isLinux = os.type() === 'Linux'
-const __DEV__ = process.env.DELIR_ENV === 'dev'
+const __DEV__ = process.env.NODE_ENV === 'development'
 
 export function buildBrowserJs(done) {
   webpack(
