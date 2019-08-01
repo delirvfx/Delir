@@ -24,7 +24,7 @@ script:
     - cd -
     - cd packages/delir
     - yarn build-storybook
-    - cs -
+    - cd -
     - yarn test-core
     - yarn test-front
 
