@@ -542,7 +542,11 @@ export function watch() {
 
 const buildRendererWithoutJs = g.parallel(copyImage)
 const buildRenderer = g.parallel(
-  g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)),
+  g.series(
+    generateLicenses,
+    compileRendererJs,
+    g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson),
+  ),
   copyImage,
 )
 
