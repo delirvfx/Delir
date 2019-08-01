@@ -60,6 +60,6 @@ export default <T extends I18nTexts<any>>(json: T): Translater<T['en']> => {
     return params ? replacePlaceHolder(text, params) : text
   }
 
-  translater.k = extractPathEnum(json.en)
+  translater.k = extractPathEnum(json.en) as T['en']
   return translater
 }

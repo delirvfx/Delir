@@ -6,7 +6,7 @@ import Button from '../../components/Button'
 import Link from '../../components/Link'
 import ModalWindow from '../ModalWindow/Controller'
 
-import * as packageJson from '../../../../package.json'
+import * as packageJson from '../../../../../package.json'
 import { dependencies } from './Licenses'
 
 import t from './AboutModal.i18n'

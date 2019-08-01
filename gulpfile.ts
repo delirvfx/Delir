@@ -1,10 +1,10 @@
 // tslint:disable:no-console
 
 const g = require('gulp')
-const $ = require('gulp-load-plugins')()
 const webpack = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const builder = require('electron-builder')
 const notifier = require('node-notifier')
 const download = require('download')
@@ -50,7 +50,7 @@ export function buildBrowserJs(done) {
       watch: __DEV__,
       context: paths.src.frontend,
       entry: {
-        browser: ['./browser'],
+        browser: ['./src/browser'],
       },
       output: {
         filename: '[name].js',
@@ -221,7 +221,7 @@ export function compileRendererJs(done) {
       watch: __DEV__,
       context: paths.src.frontend,
       entry: {
-        main: ['./main'],
+        main: ['./src/main'],
       },
       output: {
         filename: '[name].js',
@@ -234,8 +234,8 @@ export function compileRendererJs(done) {
         modules: ['node_modules'],
         alias: {
           // Disable React development build for performance measurement
-          react: 'react/cjs/react.production.min.js',
-          'react-dom': 'react-dom/cjs/react-dom.production.min.js',
+          // react: 'react/cjs/react.production.min.js',
+          // 'react-dom': 'react-dom/cjs/react-dom.production.min.js',
           // Using fresh development packages always
           '@delirvfx/core': join(paths.src.core, 'src/index.ts'),
         },
@@ -300,6 +300,9 @@ export function compileRendererJs(done) {
         // preserve require() for native modules
         new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
         new MonacoEditorWebpackPlugin(),
+        new HtmlWebpackPlugin({
+          template: join(paths.src.frontend, 'src/index.html'),
+        }),
         new ForkTsCheckerWebpackPlugin({
           tsconfig: join(paths.src.frontend, 'tsconfig.json'),
         }),
@@ -405,14 +408,6 @@ export function copyExperimentalPluginsPackageJson() {
   return __DEV__
     ? g.src(join(paths.src.root, 'experimental-plugins/*/package.json')).pipe(g.dest(paths.compiled.plugins))
     : Promise.resolve()
-}
-
-export function compilePugTempates() {
-  return g
-    .src(join(paths.src.frontend, '**/[^_]*.pug'))
-    .pipe($.plumber())
-    .pipe($.pug())
-    .pipe(g.dest(paths.compiled.frontend))
 }
 
 export function copyImage() {
@@ -545,10 +540,9 @@ export function watch() {
   g.watch(join(__dirname, 'node_modules'), symlinkNativeModules)
 }
 
-const buildRendererWithoutJs = g.parallel(compilePugTempates, copyImage)
+const buildRendererWithoutJs = g.parallel(copyImage)
 const buildRenderer = g.parallel(
   g.series(compileRendererJs, g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson)),
-  compilePugTempates,
   copyImage,
 )
 
