@@ -52,7 +52,6 @@ const install = async () => {
     throw e
   }
 }
-
 ;(async () => {
   const args = parseCommandLine()
   await install()
@@ -76,7 +75,8 @@ const install = async () => {
 
   const run = () => {
     const window = new BrowserWindow({
-      titleBarStyle: 'hidden',
+      titleBarStyle: process.env.NODE_ENV === 'development' ? 'default' : 'hidden',
+      tabbingIdentifier: process.env.NODE_ENV === 'development' ? 'main' : undefined,
       webPreferences: {
         nodeIntegration: true,
         webgl: true,
@@ -85,8 +85,25 @@ const install = async () => {
       },
     })
 
+    if (process.env.NODE_ENV === 'development') {
+      const storybookWindow = new BrowserWindow({
+        titleBarStyle: 'default',
+        tabbingIdentifier: 'main',
+        webPreferences: {
+          nodeIntegration: true,
+          webgl: true,
+          experimentalFeatures: true,
+          experimentalCanvasFeatures: true,
+        },
+      })
+
+      storybookWindow.loadURL('http://localhost:6123')
+      window.show()
+    }
+
     window.loadURL(`file://${path.join(__dirname, '/../delir/index.html')}`)
     window.show()
+
     args.devMode && window.webContents.openDevTools()
   }
 
