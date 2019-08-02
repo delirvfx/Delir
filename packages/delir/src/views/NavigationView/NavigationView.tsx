@@ -39,7 +39,7 @@ export const NavigationView = () => {
     context.executeOperation(RendererOps.startPreview, {
       compositionId: activeComp.id!,
     })
-  }, [])
+  }, [activeComp])
 
   const onClickPause = React.useCallback((e: React.MouseEvent<HTMLLIElement>) => {
     context.executeOperation(RendererOps.stopPreview)
@@ -51,7 +51,7 @@ export const NavigationView = () => {
     context.executeOperation(EditorOps.renderDestinate, {
       compositionId: activeComp.id!,
     })
-  }, [])
+  }, [activeComp])
 
   const handleChangeVolume = React.useCallback(({ currentTarget }: React.ChangeEvent<HTMLInputElement>) => {
     context.executeOperation(PreferenceOps.setAudioVolume, currentTarget.valueAsNumber)
