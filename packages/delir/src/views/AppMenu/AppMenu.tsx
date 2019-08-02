@@ -9,7 +9,7 @@ import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
-import * as AboutModal from '../../modules/AboutModal'
+import * as AboutModal from '../../modals/AboutModal'
 
 import t from './AppMenu.i18n'
 

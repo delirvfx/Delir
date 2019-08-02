@@ -17,7 +17,7 @@ import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextM
 import LabelInput from '../../components/label-input'
 import Pane from '../../components/pane'
 
-import * as CompositionSettingModal from '../../modules/CompositionSettingModal'
+import * as CompositionSettingModal from '../../modals/CompositionSettingModal'
 
 import t from './AssetsView.i18n'
 import s from './AssetsView.sass'

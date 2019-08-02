@@ -1,6 +1,6 @@
 import React from 'react'
 import Portal from '../Portal/Portal'
-import { Modal, Props } from './ModalWindow'
+import { Modal, Props } from './Modal'
 
 export class ModalController {
   private portal: Portal | null
