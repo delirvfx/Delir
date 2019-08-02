@@ -1,10 +1,8 @@
 import classnames from 'classnames'
 import _ from 'lodash'
 import React from 'react'
-
-import Portal from '../Portal/Portal'
-
 import s from './Modal.sass'
+import { ModalController } from './ModalController'
 
 export interface Props {
   show?: boolean
@@ -17,8 +15,10 @@ interface State {
   show: boolean
 }
 
-export const show = <T extends JSX.Element = any>(component: T, props: Props = { show: true }): Portal => {
-  return Portal.mount(<Modal {...props}>{component}</Modal>)
+export const show = <T extends JSX.Element = any>(component: T, props: Props = { show: true }): ModalController => {
+  const controller = new ModalController()
+  controller.mount(<Modal {...props}>{component}</Modal>)
+  return controller
 }
 
 export class Modal extends React.Component<Props, State> {

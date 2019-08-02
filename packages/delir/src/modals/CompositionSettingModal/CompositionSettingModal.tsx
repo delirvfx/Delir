@@ -20,9 +20,7 @@ export const show = (props: { composition?: Delir.Entity.Composition } = {}): Pr
     }
 
     const modal = new ModalController()
-
     modal.mount(<CompositionSettingModal composition={props.composition} onConfirm={resolver} onCancel={resolver} />)
-
     modal.show()
   })
 }

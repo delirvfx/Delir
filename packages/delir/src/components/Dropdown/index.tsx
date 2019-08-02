@@ -1,8 +1,6 @@
 import classnames from 'classnames'
-import React from 'react'
-
-import Portal from '../../modals/Portal/Portal'
-
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import s from './Dropdown.sass'
 
 interface Props {
@@ -11,84 +9,65 @@ interface Props {
   children?: React.ReactNode
 }
 
-interface State {
-  show: boolean
+interface DropdownHandles {
+  show(): void
+  hide(): void
+  toggle(): void
 }
 
-export default class Dropdown extends React.Component<Props, State> {
-  public static defaultProps = {
-    shownInitial: false,
-  }
+export type Dropdown = DropdownHandles
 
-  public refs: {
-    inspector: HTMLDivElement
-  }
+export const Dropdown = React.forwardRef<DropdownHandles, Props>(
+  ({ children, className, shownInitial }: Props, ref) => {
+    const inspector = useRef<HTMLDivElement | null>(null)
+    const dropdownRoot = useRef<HTMLUListElement | null>(null)
+    const [position, setPosition] = useState({ left: 0, top: 0 })
+    const [show, setShow] = useState(shownInitial)
 
-  public state: State = {
-    show: this.props.shownInitial || false,
-  }
+    const handleClickOutSide = useCallback((e: MouseEvent) => {
+      const path = e.composedPath() as Element[]
+      const clickSelfOrChild = path.includes(dropdownRoot.current!)
 
-  private _portal: Portal = new Portal()
+      if (clickSelfOrChild) return
+      setShow(false)
+    }, [])
 
-  public show = (callback?: () => void) => {
-    this.setState({ show: true }, callback)
-  }
-
-  public hide = (callback?: () => void) => {
-    this.setState({ show: false }, callback)
-  }
-
-  public toggle = () => {
-    this.setState({ show: !this.state.show })
-  }
-
-  public componentDidMount() {
-    window.addEventListener('click', this.hideOnOutsideClicked, {
-      capture: true,
-    })
-  }
-
-  public componentWillUnmount() {
-    window.removeEventListener('click', this.hideOnOutsideClicked, {
-      capture: true,
-    })
-    this._portal.unmount()
-  }
-
-  public shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const { props, state } = this
-    return props.className !== nextProps.className || state.show !== nextState.show
-  }
-
-  public componentDidUpdate() {
-    const {
-      props: { className, children },
-      state: { show },
-    } = this
-    const { left, top } = this.refs.inspector.getBoundingClientRect()
-
-    this._portal.mount(
-      <ul
-        className={classnames(s.dropdown, className, {
-          [s['--shown']]: show,
-        })}
-        style={{ left, top }}
-      >
-        {children}
-      </ul>,
+    useImperativeHandle(
+      ref,
+      (): DropdownHandles => ({
+        show: () => setShow(true),
+        hide: () => setShow(false),
+        toggle: () => setShow(show => !show),
+      }),
+      [],
     )
-  }
 
-  public render() {
-    return <div ref="inspector" className={s.dropdownInspector} />
-  }
+    useEffect(() => {
+      const { left, top } = inspector.current!.getBoundingClientRect()
+      setPosition({ left, top })
+    }, [])
 
-  private hideOnOutsideClicked = (e: MouseEvent) => {
-    const path = (e as any).path as Element[]
-    const clickSelfOrChild = path.includes(this._portal.root)
+    useEffect(() => {
+      window.addEventListener('click', handleClickOutSide, { capture: true })
+      return () => window.removeEventListener('click', handleClickOutSide, { capture: true })
+    }, [])
 
-    if (!clickSelfOrChild && this.state.show) {
-      this.hide()
-    }
-  }
-}
+    return (
+      <>
+        <div ref={inspector} className={s.dropdownInspector} />
+        {createPortal(
+          <ul
+            ref={dropdownRoot}
+            className={classnames(s.dropdown, className, {
+              [s['--shown']]: show,
+            })}
+            style={{ left: position.left, top: position.top }}
+          >
+            {children}
+          </ul>,
+          document.body,
+        )}
+      </>
+    )
+  },
+)

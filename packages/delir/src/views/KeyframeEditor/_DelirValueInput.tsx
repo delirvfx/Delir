@@ -3,7 +3,7 @@ import React from 'react'
 import { ChromePicker } from 'react-color'
 
 import DragNumberInput from '../../components/DragNumberInput'
-import Dropdown from '../../components/Dropdown'
+import { Dropdown } from '../../components/Dropdown'
 
 import t from './_DelirValueInput.i18n'
 import s from './DelirValueInput.sass'

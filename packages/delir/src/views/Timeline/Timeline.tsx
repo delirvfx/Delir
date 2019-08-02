@@ -15,7 +15,7 @@ import EditorStore from '../../domain/Editor/EditorStore'
 import ProjectStore from '../../domain/Project/ProjectStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
-import DropDown from '../../components/Dropdown'
+import { Dropdown } from '../../components/Dropdown'
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
 
@@ -70,7 +70,7 @@ export default withFleurContext(
         clipDragOffset: { x: 0 },
       }
 
-      private scaleList = createRef<DropDown>()
+      private scaleList = createRef<Dropdown>()
       private timelineContainer = createRef<HTMLDivElement>()
       private labelContainer = createRef<HTMLDivElement>()
       private keyframeView = createRef<InstanceType<typeof KeyframeEditor>>()
@@ -134,7 +134,7 @@ export default withFleurContext(
                         />
                       </div>
                       <div className={s.scaleLabel} onClick={this._toggleScaleList}>
-                        <DropDown ref={this.scaleList} className={s.scaleList} shownInitial={false}>
+                        <Dropdown ref={this.scaleList} className={s.scaleList} shownInitial={false}>
                           <li data-value="50" onClick={this._selectScale}>
                             50%
                           </li>
@@ -153,7 +153,7 @@ export default withFleurContext(
                           <li data-value="300" onClick={this._selectScale}>
                             300%
                           </li>
-                        </DropDown>
+                        </Dropdown>
                         <i className="fa fa-search-plus" />
                         <span className={s.currentScale}>{(scale * 100) | 0}%</span>
                       </div>

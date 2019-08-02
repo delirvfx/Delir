@@ -2,7 +2,7 @@ import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fl
 import React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 
-import Dropdown from '../../components/Dropdown'
+import { Dropdown } from '../../components/Dropdown'
 import Pane from '../../components/pane'
 
 import EditorStore from '../../domain/Editor/EditorStore'
