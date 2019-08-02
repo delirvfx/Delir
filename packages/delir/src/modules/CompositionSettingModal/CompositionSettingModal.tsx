@@ -4,7 +4,7 @@ import React from 'react'
 
 import Button from '../../components/Button'
 import FormStyle from '../../components/Form'
-import { ModalController } from '../ModalWindow/ModalController'
+import { ModalController } from '../Modal/ModalController'
 
 import t from './CompositionSettingModal.i18n'
 import s from './CompositionSettingModal.sass'

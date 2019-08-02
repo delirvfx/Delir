@@ -2,7 +2,7 @@ import classnames from 'classnames'
 import _ from 'lodash'
 import React from 'react'
 
-import Portal from '../Portal'
+import Portal from '../Portal/Portal'
 
 import s from './ModalWindow.sass'
 
@@ -18,10 +18,10 @@ interface State {
 }
 
 export const show = <T extends JSX.Element = any>(component: T, props: Props = { show: true }): Portal => {
-  return Portal.mount(<ModalWindow {...props}>{component}</ModalWindow>)
+  return Portal.mount(<Modal {...props}>{component}</Modal>)
 }
 
-export class ModalWindow extends React.Component<Props, State> {
+export class Modal extends React.Component<Props, State> {
   public static defaultProps = {
     show: false,
     url: 'about:blank',

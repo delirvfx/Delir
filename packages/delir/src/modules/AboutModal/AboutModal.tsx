@@ -4,7 +4,7 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 
 import Button from '../../components/Button'
 import Link from '../../components/Link'
-import { ModalController } from '../ModalWindow/ModalController'
+import { ModalController } from '../Modal/ModalController'
 
 import * as packageJson from '../../../../../package.json'
 import { dependencies } from './Licenses'

@@ -1,10 +1,10 @@
 import React from 'react'
 import Portal from '../Portal/Portal'
-import { ModalWindow, Props } from './ModalWindow'
+import { Modal, Props } from './ModalWindow'
 
 export class ModalController {
   private portal: Portal | null
-  private modal: ModalWindow | null
+  private modal: Modal | null
   private modalOption: Props
 
   constructor(modalOption: Props = {}) {
@@ -14,10 +14,10 @@ export class ModalController {
 
   public mount(element: JSX.Element) {
     this.modal = this.portal!.mount(
-      <ModalWindow show={false} {...this.modalOption}>
+      <Modal show={false} {...this.modalOption}>
         {element}
-      </ModalWindow>,
-    ) as ModalWindow
+      </Modal>,
+    ) as Modal
   }
 
   public dispose() {
