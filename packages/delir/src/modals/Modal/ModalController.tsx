@@ -17,12 +17,12 @@ export class ModalController {
       throw new Error('ModalController already disposed')
     }
 
-    ReactDOM.render(
+    this.modal = (ReactDOM.render(
       <Modal show={false} {...this.modalOption}>
         {element}
       </Modal>,
       this.container,
-    )
+    ) as any) as Modal
 
     document.body.appendChild(this.container)
   }
