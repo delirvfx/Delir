@@ -3,7 +3,7 @@ import React from 'react'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 
 import Button from '../../components/Button'
-import Link from '../../components/Link'
+import { ExternalLink } from '../../components/ExternalLink'
 import { ModalController } from '../Modal/ModalController'
 
 import * as packageJson from '../../../../../package.json'
@@ -43,17 +43,17 @@ const AboutModal = (props: { onClosed: () => void }) => {
           <dl>
             <dt>Contact</dt>
             <dd>
-              <Link href="https://twitter.com/@DelirVFX">Twitter: @DelirVFX</Link>
+              <ExternalLink href="https://twitter.com/@DelirVFX">Twitter: @DelirVFX</ExternalLink>
             </dd>
 
             <dt>GitHub</dt>
             <dd>
-              <Link href="https://github.com/ra-gg/Delir">https://github.com/ra-gg/Delir</Link>
+              <ExternalLink href="https://github.com/ra-gg/Delir">https://github.com/ra-gg/Delir</ExternalLink>
             </dd>
 
             <dt>Discord</dt>
             <dd>
-              <Link href="https://discord.gg/rrr2z2E">DelirVFX</Link>
+              <ExternalLink href="https://discord.gg/rrr2z2E">DelirVFX</ExternalLink>
             </dd>
 
             <dt>Runtime</dt>
@@ -69,9 +69,9 @@ const AboutModal = (props: { onClosed: () => void }) => {
           <div className={s.licenseContainer}>
             <div className={s.licenseList}>
               {dependencies.map(({ name, url }) => (
-                <Link className={s.licenseLink} href={url}>
+                <ExternalLink className={s.licenseLink} href={url}>
                   {name}
-                </Link>
+                </ExternalLink>
               ))}
             </div>
           </div>
