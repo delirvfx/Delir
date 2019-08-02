@@ -4,7 +4,7 @@ import React from 'react'
 
 import Button from '../../components/Button'
 import FormStyle from '../../components/Form'
-import ModalWindow from '../../modules/ModalWindow/Controller'
+import { ModalController } from '../ModalWindow/ModalController'
 
 import t from './CompositionSettingModal.i18n'
 import s from './CompositionSettingModal.sass'
@@ -19,7 +19,7 @@ export const show = (props: { composition?: Delir.Entity.Composition } = {}): Pr
       resolve(result)
     }
 
-    const modal = new ModalWindow()
+    const modal = new ModalController()
 
     modal.mount(<CompositionSettingModal composition={props.composition} onConfirm={resolver} onCancel={resolver} />)
 

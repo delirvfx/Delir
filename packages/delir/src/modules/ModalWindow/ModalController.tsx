@@ -1,8 +1,8 @@
 import React from 'react'
-import Portal from '../Portal'
-import ModalWindow, { Props } from './ModalWindow'
+import Portal from '../Portal/Portal'
+import { ModalWindow, Props } from './ModalWindow'
 
-export default class Modal {
+export class ModalController {
   private portal: Portal | null
   private modal: ModalWindow | null
   private modalOption: Props
@@ -28,13 +28,13 @@ export default class Modal {
 
   public show() {
     return new Promise(resolve => {
-      this.modal!.setState({ show: true, onTransitionEnd: resolve })
+      this.modal!.toggleShow({ show: true, onTransitionEnd: resolve })
     })
   }
 
   public hide(): Promise<void> {
     return new Promise(resolve => {
-      this.modal!.setState({ show: false, onTransitionEnd: resolve })
+      this.modal!.toggleShow({ show: false, onTransitionEnd: resolve })
     })
   }
 }

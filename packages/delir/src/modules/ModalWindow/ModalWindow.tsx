@@ -8,9 +8,6 @@ import s from './ModalWindow.sass'
 
 export interface Props {
   show?: boolean
-  url?: string
-  width?: number
-  height?: number
   closable?: boolean
   query?: { [name: string]: string | number }
   onHide?: () => any
@@ -24,12 +21,14 @@ export const show = <T extends JSX.Element = any>(component: T, props: Props = {
   return Portal.mount(<ModalWindow {...props}>{component}</ModalWindow>)
 }
 
-export default class ModalWindow extends React.Component<Props, State> {
+export class ModalWindow extends React.Component<Props, State> {
   public static defaultProps = {
     show: false,
     url: 'about:blank',
     closable: true,
   }
+
+  private rootRef = React.createRef<HTMLDivElement>()
 
   constructor(props: Props) {
     super(props)
@@ -39,16 +38,23 @@ export default class ModalWindow extends React.Component<Props, State> {
     }
   }
 
+  public toggleShow({ show, onTransitionEnd }: { show: boolean; onTransitionEnd: () => void }) {
+    this.setState({ show }, () => {
+      this.rootRef.current!.addEventListener('transitionend', () => onTransitionEnd(), { once: true })
+    })
+  }
+
   public render() {
-    const { children, url, width, height } = this.props
+    const { children } = this.props
 
     return (
       <div
+        ref={this.rootRef}
         className={classnames(s.root, {
           [s['--show']]: this.state.show,
         })}
       >
-        {children ? children : <webview className={s.webview} src={url} autosize style={{ width, height }} />}
+        {children}
       </div>
     )
   }
