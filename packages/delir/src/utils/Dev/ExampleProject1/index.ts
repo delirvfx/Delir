@@ -1,7 +1,7 @@
 import * as Delir from '@delirvfx/core'
 import { join } from 'path'
 
-const dirname = join(process.cwd(), 'packages/delir/utils/Dev/ExampleProject1')
+const dirname = join(process.cwd(), 'packages/delir/src/utils/Dev/ExampleProject1')
 const assign = <T>(dest: T, ...sources: Partial<T>[]): T => Object.assign(dest as any, ...sources)
 
 const fps = 30
