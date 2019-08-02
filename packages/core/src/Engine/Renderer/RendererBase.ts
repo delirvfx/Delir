@@ -3,14 +3,14 @@ import { ClipPreRenderContext } from '../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../RenderContext/ClipRenderContext'
 
 export interface IRendererStatic {
-    rendererId: string
+  rendererId: string
 
-    new (): IRenderer<any>
-    provideAssetAssignMap(): { [extName: string]: string }
-    provideParameters(): TypeDescriptor
+  new (): IRenderer<any>
+  provideAssetAssignMap(): { [extName: string]: string }
+  provideParameters(): TypeDescriptor
 }
 
 export interface IRenderer<T> {
-    beforeRender(request: ClipPreRenderContext<T>): Promise<void>
-    render(request: ClipRenderContext<T>): Promise<void>
+  beforeRender(request: ClipPreRenderContext<T>): Promise<void>
+  render(request: ClipRenderContext<T>): Promise<void>
 }

@@ -3,9 +3,9 @@ import { deserializeProject } from '../Exporter'
 import ProjectMigrator from './ProjectMigrator'
 
 describe('ProjectMigrator', () => {
-    it('Migrate to 2019052601 from 2017091401', () => {
-        const beforeMigration = deserializeProject(p2017091401)
-        const afterMigration = ProjectMigrator.migrate(beforeMigration)
-        expect(afterMigration.assets).toMatchSnapshot()
-    })
+  it('Migrate to 2019052601 from 2017091401', () => {
+    const beforeMigration = deserializeProject(p2017091401)
+    const afterMigration = ProjectMigrator.migrate(beforeMigration)
+    expect(afterMigration.assets).toMatchSnapshot()
+  })
 })

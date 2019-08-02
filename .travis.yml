@@ -22,6 +22,9 @@ script:
     - cd packages/core
     - yarn prepublishOnly
     - cd -
+    - cd packages/delir
+    - yarn build-storybook
+    - cd -
     - yarn test-core
     - yarn test-front
 

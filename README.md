@@ -48,7 +48,7 @@ See [plugin-example](https://github.com/ra-gg/Delir/tree/master/packages/core/pl
 
 3. Install dependency and start development
   ```
-  yarn dev
+  yarn start
   ```
 
   Ctrl+C to interrupt

@@ -3,10 +3,10 @@ import { RealParameterValues } from '../ParametersTable'
 import { IRenderContextBase } from './IRenderContextBase'
 
 export interface ClipPreRenderContext<T extends { [paramName: string]: any }>
-    extends IRenderContextBase,
-        ClipPreRenderContextAttributes<T> {}
+  extends IRenderContextBase,
+    ClipPreRenderContextAttributes<T> {}
 
 export interface ClipPreRenderContextAttributes<T extends RealParameterValues> {
-    clip: Clip
-    parameters: T
+  clip: Clip
+  parameters: T
 }

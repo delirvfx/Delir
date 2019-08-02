@@ -1,3 +1,3 @@
 export default class Size2D {
-    constructor(public width: number, public height: number) {}
+  constructor(public width: number, public height: number) {}
 }

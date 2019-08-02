@@ -1,0 +1,27 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+[*.{styl,sass}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+
+[*.{js,ts,tsx}]
+indent_style = space
+indent_size = 2
+
+[{*.json,.travis.yml}]
+indent_style = space
+indent_size = 4
+
+[{package.json,tsconfig.json,.prettierrc,.vscode/settings.json}]
+indent_style = space
+indent_size = 2
