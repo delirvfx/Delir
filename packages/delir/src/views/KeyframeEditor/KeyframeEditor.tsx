@@ -18,7 +18,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 
 import Button from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
-import LabelInput from '../../components/label-input'
+import { LabelInput } from '../../components/LabelInput'
 import Pane from '../../components/pane'
 import Workspace from '../../components/workspace'
 import DelirValueInput from './_DelirValueInput'

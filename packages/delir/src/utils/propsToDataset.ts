@@ -1,3 +1,4 @@
+/** Extract `data-` attributes in props */
 export const propsToDataset = <T = any>(props: { [prop: string]: any }): { [K in keyof T]: string } => {
   const MATCHER = /^data-(.+?)$/
   const REPLACER = /(-[a-z])/g
@@ -10,7 +11,15 @@ export const propsToDataset = <T = any>(props: { [prop: string]: any }): { [K in
     dataset[propName] = props[key]
   })
 
-  return dataset
+  return Object.freeze(dataset)
+}
+
+/** Extract `data-` attributes in props to array for hooks dependency list */
+export const propsToDatasetArray = (props: Record<string, any>): any[] => {
+  const dataset = propsToDataset(props)
+  const result: any[] = []
+  Object.entries(dataset).forEach(([key, value]) => result.push(key, value))
+  return result
 }
 
 export default propsToDataset

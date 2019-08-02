@@ -8,7 +8,7 @@ import EditorStore from '../../domain/Editor/EditorStore'
 import * as ProjectOps from '../../domain/Project/operations'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
-import LabelInput from '../../components/label-input'
+import { LabelInput } from '../../components/LabelInput'
 
 import t from './LayerLabel.i18n'
 import s from './LayerLabel.sass'
