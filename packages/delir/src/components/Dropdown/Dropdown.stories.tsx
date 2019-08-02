@@ -1,7 +1,7 @@
 import { withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react'
 import React, { useRef } from 'react'
-import { Dropdown } from './index'
+import { Dropdown } from './Dropdown'
 
 const Content = () => {
   const dropdownRef = useRef<Dropdown | null>(null)

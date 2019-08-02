@@ -1,4 +1,3 @@
 {
-    "main": "./Button.tsx",
-    "typings": "./Button.tsx"
+    "main": "./Button.tsx"
 }

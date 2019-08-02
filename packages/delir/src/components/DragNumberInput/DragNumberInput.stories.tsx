@@ -1,7 +1,7 @@
-import { boolean, number, select, text, withKnobs } from '@storybook/addon-knobs'
+import { boolean, number, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react'
 import React from 'react'
-import DragNumberInput from './index'
+import DragNumberInput from './DragNumberInput'
 
 storiesOf('DragNumberInput', module)
   .addDecorator(withKnobs)
