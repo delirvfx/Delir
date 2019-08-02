@@ -3,7 +3,7 @@ import React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 
 import { Dropdown } from '../../components/Dropdown'
-import Pane from '../../components/pane'
+import { Pane } from '../../components/Pane'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as RendererOps from '../../domain/Renderer/operations'

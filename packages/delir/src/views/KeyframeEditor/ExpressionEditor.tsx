@@ -3,7 +3,7 @@ import React from 'react'
 import * as monaco from 'monaco-editor'
 import MonacoUtil from '../../utils/Monaco'
 
-import Button from '../../components/Button'
+import { Button } from '../../components/Button'
 
 import { ParameterTarget } from '../../domain/Editor/types'
 import { EditorResult } from './KeyframeEditor'

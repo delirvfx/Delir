@@ -16,13 +16,13 @@ import ProjectStore from '../../domain/Project/ProjectStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
 import { Dropdown } from '../../components/Dropdown'
-import Pane from '../../components/pane'
-import Workspace from '../../components/workspace'
+import { Pane } from '../../components/Pane'
+import { Workspace } from '../../components/Workspace'
 
-import KeyframeEditor from '../KeyframeEditor'
+import { KeyframeEditor } from '../KeyframeEditor'
 import { ClipsMediator } from './ClipsMediator'
-import Gradations from './Gradations'
-import LayerLabelList from './LayerLabelList'
+import { Gradations } from './Gradations'
+import { LayerLabelList } from './LayerLabelList'
 
 import t from './Timeline.i18n'
 import s from './Timeline.sass'

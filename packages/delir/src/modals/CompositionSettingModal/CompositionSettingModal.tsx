@@ -2,7 +2,7 @@ import * as Delir from '@delirvfx/core'
 import serialize from 'form-serialize'
 import React from 'react'
 
-import Button from '../../components/Button'
+import { Button } from '../../components/Button'
 import FormStyle from '../../components/Form'
 import { ModalController } from '../Modal/ModalController'
 

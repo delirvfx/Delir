@@ -2,7 +2,7 @@ import * as Delir from '@delirvfx/core'
 import React from 'react'
 import { SortableContainer } from 'react-sortable-hoc'
 
-import LayerLabel from './LayerLabel'
+import { LayerLabel } from './LayerLabel'
 
 interface Props {
   layers: Delir.Entity.Layer[]
@@ -10,7 +10,7 @@ interface Props {
   onLayerRemove: (layerId: string) => void
 }
 
-export default SortableContainer((props: Props) => (
+export const LayerLabelList = SortableContainer((props: Props) => (
   <ul>
     {props.layers.map((layer, idx) => (
       <LayerLabel

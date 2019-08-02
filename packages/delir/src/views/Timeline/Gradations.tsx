@@ -36,7 +36,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
   lastRenderState: getStore(RendererStore).getLastRenderState(),
 })
 
-export default connectToStores([RendererStore], mapStoresToProps)(
+export const Gradations = connectToStores([RendererStore], mapStoresToProps)(
   class Gradations extends React.Component<Props, GradationsState> {
     public static defaultProps = {
       scrollLeft: 0,

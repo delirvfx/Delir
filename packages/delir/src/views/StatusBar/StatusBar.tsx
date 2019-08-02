@@ -1,7 +1,7 @@
 import { useStore } from '@fleur/fleur-react'
 import React from 'react'
 
-import Pane from '../../components/pane'
+import { Pane } from '../../components/Pane'
 import EditorStore from '../../domain/Editor/EditorStore'
 
 export const StatusBar = () => {

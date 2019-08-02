@@ -10,7 +10,7 @@ import PreferenceStore from '../../domain/Preference/PreferenceStore'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
-import Pane from '../../components/pane'
+import { Pane } from '../../components/Pane'
 
 import s from './NavigationView.sass'
 

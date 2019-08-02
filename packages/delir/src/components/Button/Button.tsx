@@ -11,7 +11,7 @@ interface Props {
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 
-const Button = (props: Props) => {
+export const Button = (props: Props) => {
   const { children, className, type, htmlType, onClick } = props
 
   return (
@@ -26,5 +26,3 @@ const Button = (props: Props) => {
     </button>
   )
 }
-
-export default Button

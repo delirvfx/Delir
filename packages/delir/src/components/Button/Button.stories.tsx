@@ -1,7 +1,7 @@
 import { select, text, withKnobs } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react'
 import React from 'react'
-import Button from './Button'
+import { Button } from './Button'
 
 storiesOf('Button', module)
   .addDecorator(withKnobs)

@@ -107,10 +107,10 @@ class LayerLabelComponent extends React.Component<Props> {
   }
 }
 
-const LayerLabel = withFleurContext(
+const LayerLabelConnected = withFleurContext(
   connectToStores([EditorStore], getStore => ({
     activeComp: getStore(EditorStore).getActiveComposition(),
   }))(LayerLabelComponent),
 )
 
-export default SortableElement((props: OwnProps) => <LayerLabel {...props} />)
+export const LayerLabel = SortableElement((props: OwnProps) => <LayerLabelConnected {...props} />)

@@ -2,7 +2,7 @@ import { version } from '@delirvfx/core'
 import React from 'react'
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 
-import Button from '../../components/Button'
+import { Button } from '../../components/Button'
 import { ExternalLink } from '../../components/ExternalLink'
 import { ModalController } from '../Modal/ModalController'
 

@@ -5,7 +5,7 @@ import React from 'react'
 import * as PreferenceOps from '../../domain/Preference/operations'
 import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Preference/PreferenceStore'
 
-import Button from '../../components/Button'
+import { Button } from '../../components/Button'
 
 import t from './Preference.i18n'
 import s from './Preference.sass'

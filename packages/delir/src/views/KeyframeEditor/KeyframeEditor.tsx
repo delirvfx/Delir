@@ -16,11 +16,11 @@ import { ParameterTarget } from '../../domain/Editor/types'
 import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
-import Button from '../../components/Button'
+import { Button } from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
 import { LabelInput } from '../../components/LabelInput'
-import Pane from '../../components/pane'
-import Workspace from '../../components/workspace'
+import { Pane } from '../../components/Pane'
+import { Workspace } from '../../components/Workspace'
 import DelirValueInput from './_DelirValueInput'
 import { EffectList, EffectListItem, EffectSortHandle } from './EffectList'
 import ExpressionEditor from './ExpressionEditor'
@@ -67,7 +67,7 @@ interface State {
 
 type Props = OwnProps & ConnectedProps & ContextProp
 
-export default withFleurContext(
+export const KeyframeEditor = withFleurContext(
   connectToStores(
     [EditorStore, ProjectStore, RendererStore],
     (getStore): ConnectedProps => ({

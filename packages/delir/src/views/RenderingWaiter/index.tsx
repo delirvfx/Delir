@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import React from 'react'
 import { animated, useTransition } from 'react-spring'
 
-import Button from '../../components/Button/Button'
+import { Button } from '../../components/Button/Button'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
 import t from './RenderingWaiter.i18n'

@@ -6,8 +6,8 @@ import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
-import Pane from '../../components/pane'
-import Workspace from '../../components/workspace'
+import { Pane } from '../../components/Pane'
+import { Workspace } from '../../components/Workspace'
 
 import AppMenu from '../AppMenu'
 import AssetsView from '../AssetsView'
