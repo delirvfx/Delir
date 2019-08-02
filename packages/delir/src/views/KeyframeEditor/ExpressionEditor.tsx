@@ -1,6 +1,6 @@
 import React from 'react'
 
-import monaco from 'monaco-editor'
+import * as monaco from 'monaco-editor'
 import MonacoUtil from '../../utils/Monaco'
 
 import Button from '../../components/Button'

@@ -1,4 +1,4 @@
-import monaco from 'monaco-editor'
+import * as monaco from 'monaco-editor'
 import React from 'react'
 
 import MonacoUtil from '../../utils/Monaco'
