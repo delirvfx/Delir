@@ -541,7 +541,7 @@ export function watch() {
 
 export function runStorybook(done) {
   console.log(paths.src.frontend)
-  spawn('yarn', ['storybook'], { stdio: 'inherit', cwd: paths.src.frontend })
+  spawn('yarn', ['storybook', '--ci'], { stdio: 'inherit', cwd: paths.src.frontend })
   done()
 }
 
