@@ -27,6 +27,10 @@ export const dependencies = [
         "url": "https://github.com/Simonwep/selection#readme"
     },
     {
+        "name": "@storybook/addon-knobs",
+        "url": "https://github.com/storybookjs/storybook/tree/master/addons/knobs"
+    },
+    {
         "name": "@storybook/react",
         "url": "https://github.com/storybookjs/storybook/tree/master/app/react"
     },
@@ -97,6 +101,14 @@ export const dependencies = [
     {
         "name": "@types/simonwep__selection-js",
         "url": "https://www.npmjs.com/package/@types/simonwep__selection-js"
+    },
+    {
+        "name": "@types/storybook__addon-knobs",
+        "url": "https://www.npmjs.com/package/@types/storybook__addon-knobs"
+    },
+    {
+        "name": "@types/storybook__react",
+        "url": "https://www.npmjs.com/package/@types/storybook__react"
     },
     {
         "name": "@types/typescript",
