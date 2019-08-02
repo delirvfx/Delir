@@ -184,7 +184,7 @@ export async function downloadAndDeployFFmpeg() {
 }
 
 export async function generateLicenses() {
-  const destination = join(paths.src.frontend, '/src/modules/AboutModal/Licenses.ts')
+  const destination = join(paths.src.frontend, '/src/modals/AboutModal/Licenses.ts')
 
   const jsons = [
     JSON.parse(await fs.readFile(join(__dirname, 'package.json'), { encoding: 'UTF-8' })),
