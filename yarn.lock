@@ -1398,10 +1398,10 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@simonwep/selection-js@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-0.2.2.tgz#cd4da4f6eb1a351269bfdd927072dd82a838f635"
-  integrity sha512-F5bjNsSohfl2PkCGxdlL/rYTPFm+zQkKQwmEb7KA8FDHYcKyiYIveA/xoYbJNJvga5QD9jJ4pVPV+Jlalml2NQ==
+"@simonwep/selection-js@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-1.1.1.tgz#2b9e3016fa59d04691841c5759394fd8a5ed6d09"
+  integrity sha512-8tkZT/LHDev9v/O1wotlki4WRhNtcBezAE7Hd5tOgmeLtt+OwL7Qf/ZYjEbXN9feRDRDO5oanAXw4wtsbyTipA==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
