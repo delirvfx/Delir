@@ -10,7 +10,7 @@ interface Param {
   opacity: number
 }
 
-export default class AdjustmentRenderer implements IRenderer<Param> {
+export class AdjustmentRenderer implements IRenderer<Param> {
   public static get rendererId(): string {
     return 'adjustment'
   }

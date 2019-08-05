@@ -6,7 +6,7 @@ interface Sketch {
   draw(): void
 }
 
-export default class P5Hooks {
+export class P5Hooks {
   public p5: any
   private node: HTMLDivElement
 

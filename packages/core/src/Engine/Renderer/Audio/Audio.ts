@@ -16,7 +16,7 @@ interface AudioRendererParam {
   startTime: number
 }
 
-export default class AudioRenderer implements IRenderer<AudioRendererParam> {
+export class AudioRenderer implements IRenderer<AudioRendererParam> {
   public static get rendererId(): string {
     return 'audio'
   }
