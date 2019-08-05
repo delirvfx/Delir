@@ -18,6 +18,7 @@ import ProgressPromise from '../helper/progress-promise'
 import { proxyDeepFreeze } from '../helper/proxyFreeze'
 import DependencyResolver from './DependencyResolver'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
+import { Inspector } from './Inspector/Inspector'
 import { ClipRenderContext } from './RenderContext/ClipRenderContext'
 import { RenderContextBase } from './RenderContext/RenderContextBase'
 import ClipRenderTask from './Task/ClipRenderTask'
@@ -54,25 +55,25 @@ type TaskGroup = {
 }[]
 
 export default class Engine {
+  // private _gl: WebGL2RenderingContext
+  public inspector: Inspector
+  public pluginRegistry: PluginRegistry
+
   private _fpsCounter: FPSCounter = new FPSCounter()
   private _seqRenderPromise: ProgressPromise<void> | null = null
   private _project: Project
-  private _pluginRegistry: PluginRegistry = new PluginRegistry()
   private _destinationAudioNode: AudioNode
   private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
   private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
   private _streamObserver: IRenderingStreamObserver | null = null
-  // private _gl: WebGL2RenderingContext
-
-  get pluginRegistry() {
-    return this._pluginRegistry
-  }
-  set pluginRegistry(pluginRegistry: PluginRegistry) {
-    this._pluginRegistry = pluginRegistry
-  }
 
   // get destinationAudioNode() { return this._destinationAudioNode }
   // set destinationAudioNode(destinationAudioNode: AudioNode) { this._destinationAudioNode = destinationAudioNode }
+
+  constructor() {
+    this.inspector = new Inspector(this)
+    this.pluginRegistry = new PluginRegistry()
+  }
 
   public setProject(project: Project) {
     this._project = project
@@ -285,12 +286,12 @@ export default class Engine {
 
   private _initStage(compositionId: string, option: RenderingOption): RenderContextBase {
     if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
-    if (!this._pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
+    if (!this.pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
 
     const rootComposition = this._project.findComposition(compositionId)
     if (!rootComposition) throw new RenderingFailedException('Specified composition not found')
 
-    const resolver = new DependencyResolver(this._project, this._pluginRegistry)
+    const resolver = new DependencyResolver(this._project, this.pluginRegistry)
 
     const canvas = document.createElement('canvas') as HTMLCanvasElement
     canvas.width = rootComposition.width
