@@ -25,7 +25,7 @@ const imageAsset = new Delir.Entity.Asset({
   fileType: 'png',
   path: 'file://' + join(dirname, 'image.png'),
 })
-;[videoAsset, audioAsset, imageAsset].forEach(asset => project.addAsset(asset))
+  ;[videoAsset, audioAsset, imageAsset].forEach(asset => project.addAsset(asset))
 
 // Maser Composition
 const composition = new Delir.Entity.Composition({
@@ -59,7 +59,12 @@ const layer4 = new Delir.Entity.Layer({
 const layer5 = new Delir.Entity.Layer({
   name: 'VERY CUTE 🐰-CHAN',
 })
-;[layer5, layer4, layer3, layer2, layer1].forEach(layer => {
+
+const layer6 = new Delir.Entity.Layer({
+  name: 'SOLID'
+});
+
+[layer6, layer5, layer4, layer3, layer2, layer1].forEach(layer => {
   composition.addLayer(layer)
 })
 
@@ -277,11 +282,30 @@ const videoClip = assign(
   },
 )
 
+const solidClip = assign(
+  new Delir.Entity.Clip({
+    renderer: 'solid',
+    placedFrame: 100,
+    durationFrames: 120
+  }),
+  {
+    keyframes: {
+      color: [
+        new Delir.Entity.Keyframe({
+          value: new Delir.Values.ColorRGB(100, 100, 100),
+          frameOnClip: 0,
+        })
+      ]
+    }
+  }
+)
+
 layer1.addClip(adjustmentClip)
 layer2.addClip(textClip)
 layer3.addClip(audioClip)
 layer4.addClip(p5jsClip)
 layer5.addClip(videoClip)
+layer6.addClip(solidClip)
 
 //
 // Effects

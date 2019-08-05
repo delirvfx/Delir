@@ -10,12 +10,14 @@ import ImageRenderer from './Image/Image'
 import P5jsRenderer from './P5js/P5js'
 import TextRenderer from './Text/Text'
 import VideoRenderer from './Video/Video'
+import { SolidRenderer } from './Solid/Solid'
 
-export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment' | 'p5js'
+export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment' | 'p5js' | 'solid'
 
 export const RENDERERS: { [name: string]: IRendererStatic } = {
-  audio: AudioRenderer,
+  solid: SolidRenderer,
   video: VideoRenderer,
+  audio: AudioRenderer,
   image: ImageRenderer,
   text: TextRenderer,
   adjustment: AdjustmentRenderer,
