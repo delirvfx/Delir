@@ -62,6 +62,6 @@
         "react-tabs": "3.0.0",
         "typescript": "3.4.4",
         "uuid": "3.3.2",
-        "yargs": "13.2.4"
+        "yargs": "13.3.0"
     }
 }
