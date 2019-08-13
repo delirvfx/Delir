@@ -1,6 +1,6 @@
 import * as Delir from '@delirvfx/core'
 import { ContextProp, withFleurContext } from '@fleur/fleur-react'
-import * as Selection from '@simonwep/selection-js'
+import Selection from '@simonwep/selection-js'
 import React from 'react'
 import { decorate } from '../../utils/decorate'
 
@@ -46,9 +46,9 @@ export const ClipsMediator = decorate<OwnProps>(
         startareas: [`.${s.root}`],
         boundaries: [`.${s.root}`],
         selectables: ['[data-clip-id]'],
-        validateStart: this.handleSelectionStartValidate,
-        onStop: this.handleSelectionStop,
       })
+        .on('beforestart', this.handleSelectionStartValidate)
+        .on('stop', this.handleSelectionStop)
     }
 
     public componentWillUnmount() {
@@ -170,14 +170,14 @@ export const ClipsMediator = decorate<OwnProps>(
       this.setState({ clipDragOffset: { x: 0, width: 0 } })
     }
 
-    private handleSelectionStartValidate = (e: MouseEvent) => {
-      return !(e.target as HTMLElement).closest('[data-clip-id]')
+    private handleSelectionStartValidate = ({ oe }: Selection.SelectionEvent) => {
+      return !(oe.target as HTMLElement).closest('[data-clip-id]')
     }
 
-    private handleSelectionStop = ({ selectedElements, originalEvent }: Selection.SelectionEvent) => {
-      const clipIds = selectedElements.map(el => (el as HTMLElement).dataset.clipId!)
+    private handleSelectionStop = ({ oe, selected }: Selection.SelectionEvent) => {
+      const clipIds = selected.map(el => (el as HTMLElement).dataset.clipId!)
 
-      if (originalEvent.shiftKey || originalEvent.metaKey) {
+      if (oe.shiftKey || oe.metaKey) {
         this.props.executeOperation(EditorOps.addOrRemoveSelectClip, { clipIds })
       } else {
         this.props.executeOperation(EditorOps.changeSelectClip, { clipIds })
