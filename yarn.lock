@@ -1419,10 +1419,10 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@simonwep/selection-js@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-0.2.2.tgz#cd4da4f6eb1a351269bfdd927072dd82a838f635"
-  integrity sha512-F5bjNsSohfl2PkCGxdlL/rYTPFm+zQkKQwmEb7KA8FDHYcKyiYIveA/xoYbJNJvga5QD9jJ4pVPV+Jlalml2NQ==
+"@simonwep/selection-js@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-1.2.0.tgz#62f609f0b649bce238e6d30077ade9035b8f98dc"
+  integrity sha512-U5T8a0y6mHEgCoUX0kN9Z/cCN8i4v316+OToCOBlclklBEDUqHCGKBOzn/tf2dRjzX4dIaZOOhjVgqmRXb5L/w==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"

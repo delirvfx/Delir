@@ -40,7 +40,7 @@
         "@fleur/fleur": "1.1.1",
         "@fleur/fleur-react": "1.0.0",
         "@ragg/deream": "*",
-        "@simonwep/selection-js": "0.2.2",
+        "@simonwep/selection-js": "1.2.0",
         "classnames": "2.2.6",
         "form-serialize": "0.7.2",
         "fs-extra": "8.1.0",
