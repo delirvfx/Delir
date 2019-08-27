@@ -38,7 +38,7 @@
     "dependencies": {
         "@delirvfx/core": "*",
         "@fleur/fleur": "1.1.1",
-        "@fleur/fleur-react": "1.0.0",
+        "@fleur/fleur-react": "1.0.1",
         "@ragg/deream": "*",
         "@simonwep/selection-js": "1.2.0",
         "classnames": "2.2.6",

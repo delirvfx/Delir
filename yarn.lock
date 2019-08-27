@@ -1203,10 +1203,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.3.tgz#dfa0c92efe44a1d1a7974fb49ffeb40ef2da5a27"
   integrity sha512-zVgvPwGK7c1aVdUVc9Qv7SqepOGRDrqCw7KZPSZziWGxSlbII3gmvGLPzLX4d0n0BMbamBacUrN22zOMyFFEkQ==
 
-"@fleur/fleur-react@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@fleur/fleur-react/-/fleur-react-1.0.0.tgz#771d6acd8608e07e0c897368b1bfdcc96174100c"
-  integrity sha512-/XBvUYnLw68VJ1SaSAdU59glYofpxH85VUD9JQIy9hwuqUUEyG7laFw2dmOI1Ok6upf7e9qTwrjxAy74mWSvxg==
+"@fleur/fleur-react@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@fleur/fleur-react/-/fleur-react-1.0.1.tgz#54c3740ced4c35895f3d050401ab1881f445a685"
+  integrity sha512-YV3ofByGQruqZvxtji05hUAQ8uxZBRUh+IuLOKfdj0GM8T/WVFkGFFOazXvbBX9Cb7cRgL36mb1qYXI9rVFbZw==
 
 "@fleur/fleur@1.1.1":
   version "1.1.1"
