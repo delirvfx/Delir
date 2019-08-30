@@ -109,7 +109,7 @@ export default class Engine {
         audioBufferSizeSecond: 1,
       }
 
-      const request = this._initStage(compositionId, renderingOption)
+      const request = this.createContext(compositionId, renderingOption)
 
       try {
         const renderTasks = await this._taskingStage(request, renderingOption)
@@ -158,7 +158,7 @@ export default class Engine {
           this._seqRenderPromise = null
         })
 
-        let context = this._initStage(compositionId, renderingOption)
+        let context = this.createContext(compositionId, renderingOption)
         let renderTasks: LayerRenderTask[]
 
         try {
@@ -284,7 +284,7 @@ export default class Engine {
     return this._seqRenderPromise
   }
 
-  private _initStage(compositionId: string, option: RenderingOption): RenderContextBase {
+  public createContext(compositionId: string, option: RenderingOption): RenderContextBase {
     if (!this._project) throw new RenderingFailedException('Project must be set before rendering')
     if (!this.pluginRegistry) throw new RenderingFailedException('Plugin registry not set')
 

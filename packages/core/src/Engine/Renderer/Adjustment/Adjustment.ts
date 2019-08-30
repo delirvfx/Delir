@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import Type from '../../../PluginSupport/type-descriptor'
 import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
+import { BBox2D } from '../../Inspector/BBox2D'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
@@ -25,6 +26,17 @@ export default class AdjustmentRenderer implements IRenderer<Param> {
       defaultValue: 100,
       animatable: true,
     })
+  }
+
+  public async getBBox(context: ClipPreRenderContext<Param>): Promise<BBox2D> {
+    return {
+      visible: true,
+      x: 0,
+      y: 0,
+      width: context.width,
+      height: context.height,
+      angleRad: 0,
+    }
   }
 
   public async beforeRender(context: ClipPreRenderContext<Param>) {

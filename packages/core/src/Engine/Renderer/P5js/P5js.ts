@@ -6,6 +6,7 @@ import { UserCodeException } from '../../../Exceptions/UserCodeException'
 import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
 import Type from '../../../PluginSupport/type-descriptor'
 import Expression from '../../../Values/Expression'
+import { BBox2D } from '../../Inspector/BBox2D'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
@@ -42,6 +43,17 @@ export default class P5jsRenderer implements IRenderer<Params> {
   private vmExposedVariables: any
   private p5ex: P5Hooks
   private canvas: HTMLCanvasElement
+
+  public async getBBox(context: ClipPreRenderContext<Params>): Promise<BBox2D> {
+    return {
+      visible: true,
+      x: 0,
+      y: 0,
+      width: context.width,
+      height: context.height,
+      angleRad: 0,
+    }
+  }
 
   public async beforeRender(context: ClipPreRenderContext<Params>) {
     this.p5ex = new P5Hooks(context.resolver)

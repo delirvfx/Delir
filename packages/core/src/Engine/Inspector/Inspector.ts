@@ -1,7 +1,8 @@
 import { flatten } from 'lodash-es'
 import Engine from '../Engine'
 import ClipRenderTask from '../Task/ClipRenderTask'
-import { BBox } from './BBox'
+import { BBox2D } from './BBox2D'
+import { StageElement } from './StageElement'
 
 export class Inspector {
   constructor(private engine: Engine) {}
@@ -14,7 +15,7 @@ export class Inspector {
     compositionId: string
     clipId: string
     frame: number
-  }): Promise<BBox | null> {
+  }): Promise<BBox2D | null> {
     const context = this.engine._initStage(compositionId, { beginFrame: frame, audioBufferSizeSecond: 1 })
     const tasks = await this.engine._taskingStage(context, { beginFrame: frame })
 
@@ -32,8 +33,14 @@ export class Inspector {
     return clipTask.clipRenderer.getBBox(context)
   }
 
-  public async inspectElementsAtFrame({ compositionId, frame }: { compositionId: string; frame: number }) {
-    const context = this.engine._initStage(compositionId, {
+  public async inspectElementsAtFrame({
+    compositionId,
+    frame,
+  }: {
+    compositionId: string
+    frame: number
+  }): Promise<StageElement[]> {
+    const context = this.engine.createContext(compositionId, {
       beginFrame: frame,
       endFrame: frame,
       loop: false,
@@ -41,6 +48,7 @@ export class Inspector {
       ignoreMissingEffect: true,
       realtime: false,
     })
+
     const tasks = await this.engine._taskingStage(context, {
       beginFrame: frame,
       endFrame: frame,
@@ -55,8 +63,8 @@ export class Inspector {
     const elements = await Promise.all(
       flatten<ClipRenderTask>(clipTasks).map(async clipTask => {
         return {
-          clip: clipTask.clip,
-          bBox: await clipTask.clipRenderer.getBBox(context),
+          clip: clipTask.clipEntity,
+          bbox: await clipTask.clipRenderer.getBBox(context),
         }
       }),
     )

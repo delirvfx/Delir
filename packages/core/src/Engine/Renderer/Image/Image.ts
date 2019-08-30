@@ -3,6 +3,7 @@ import Type from '../../../PluginSupport/type-descriptor'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
+import { BBox2D } from '../../Inspector/BBox2D'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
@@ -64,6 +65,22 @@ export default class ImageLayer implements IRenderer<ImageRendererParams> {
 
   private image: HTMLImageElement | null = null
 
+  public async getBBox(context: ClipPreRenderContext<ImageRendererParams>): Promise<BBox2D> {
+    if (!this.image) this.image = await this.loadImage(context.parameters.source.path)
+
+    const img = this.image
+    const { scale, x, y, rotate } = context.parameters
+
+    return {
+      visible: true,
+      x,
+      y,
+      width: img.width * (scale / 100),
+      height: img.height * (scale / 100),
+      angleRad: (rotate * Math.PI) / 180,
+    }
+  }
+
   public async beforeRender(context: ClipPreRenderContext<ImageRendererParams>) {
     const parameters = context.parameters
 
@@ -72,19 +89,7 @@ export default class ImageLayer implements IRenderer<ImageRendererParams> {
       return
     }
 
-    this.image = new Image()
-    this.image.src = parameters.source.path
-
-    await new Promise((resolve, reject) => {
-      this.image!.addEventListener('load', () => resolve(), {
-        once: true,
-      } as any)
-      this.image!.addEventListener(
-        'error',
-        () => reject(new Error(`ImageLayer: Image not found (URL: ${this.image!.src})`)),
-        { once: true } as any,
-      )
-    })
+    this.image = await this.loadImage(parameters.source.path)
   }
 
   public async render(context: ClipRenderContext<ImageRendererParams>) {
@@ -103,5 +108,29 @@ export default class ImageLayer implements IRenderer<ImageRendererParams> {
     ctx.translate(-img.width / 2, -img.height / 2)
 
     ctx.drawImage(img, 0, 0)
+  }
+
+  private async loadImage(url: string): Promise<HTMLImageElement> {
+    const image = new Image()
+    image.src = url
+
+    if (image.decode) {
+      await image.decode()
+      return image
+    }
+
+    await new Promise((resolve, reject) => {
+      this.image!.addEventListener('load', () => resolve(), {
+        once: true,
+      } as any)
+
+      this.image!.addEventListener(
+        'error',
+        () => reject(new Error(`ImageClip: failed to load image (URL: ${image.src})`)),
+        { once: true } as any,
+      )
+    })
+
+    return image
   }
 }

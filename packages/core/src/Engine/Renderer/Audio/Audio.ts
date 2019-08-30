@@ -7,6 +7,7 @@ import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
+import { BBox2D } from '../../Inspector/BBox2D'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
@@ -53,6 +54,17 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
     numberOfChannels: number
     buffers: Float32Array[]
   } | null
+
+  public async getBBox(): Promise<BBox2D> {
+    return {
+      visible: false,
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      angleRad: 0,
+    }
+  }
 
   public async beforeRender(context: ClipPreRenderContext<AudioRendererParam>) {
     const params = context.parameters

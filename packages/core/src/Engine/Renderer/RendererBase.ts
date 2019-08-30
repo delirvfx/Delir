@@ -1,5 +1,5 @@
 import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
-import { BBox } from '../Inspector/BBox'
+import { BBox2D } from '../Inspector/BBox2D'
 import { ClipPreRenderContext } from '../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../RenderContext/ClipRenderContext'
 
@@ -12,7 +12,7 @@ export interface IRendererStatic {
 }
 
 export interface IRenderer<T> {
-  getBBox(request: ClipPreRenderContext<T>): Promise<BBox>
+  getBBox(request: ClipPreRenderContext<T>): Promise<BBox2D>
   beforeRender(request: ClipPreRenderContext<T>): Promise<void>
   render(request: ClipRenderContext<T>): Promise<void>
 }
