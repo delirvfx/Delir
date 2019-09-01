@@ -15,8 +15,8 @@ export const dependencies = [
         "url": "https://github.com/ra-gg/fleur/tree/master/packages/fleur"
     },
     {
-        "name": "@fleur/fleur-react",
-        "url": "https://github.com/ra-gg/fleur/tree/master/packages/fleur-react"
+        "name": "@fleur/react",
+        "url": "https://www.npmjs.com/package/@fleur/react"
     },
     {
         "name": "@ragg/deream",

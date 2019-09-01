@@ -1,4 +1,4 @@
-import { useFleurContext } from '@fleur/fleur-react'
+import { useFleurContext } from '@fleur/react'
 import Mousetrap from 'mousetrap'
 import React, { useCallback, useMemo } from 'react'
 import EditorStore from '../../domain/Editor/EditorStore'

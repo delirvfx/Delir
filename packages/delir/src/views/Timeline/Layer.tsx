@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
 import React from 'react'

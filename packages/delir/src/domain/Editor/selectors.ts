@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { StoreGetter } from '@fleur/fleur-react'
+import { StoreGetter } from '@fleur/react'
 import { getClipsByIds } from '../Project/selectors'
 import EditorStore from './EditorStore'
 

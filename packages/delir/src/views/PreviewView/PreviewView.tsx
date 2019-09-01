@@ -1,4 +1,4 @@
-import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
+import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/react'
 import React from 'react'
 import { frameToTimeCode } from '../../utils/Timecode'
 

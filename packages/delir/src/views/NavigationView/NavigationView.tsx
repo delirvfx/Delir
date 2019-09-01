@@ -1,4 +1,4 @@
-import { StoreGetter, useFleurContext, useStore } from '@fleur/fleur-react'
+import { StoreGetter, useFleurContext, useStore } from '@fleur/react'
 import { remote } from 'electron'
 import path from 'path'
 import React from 'react'

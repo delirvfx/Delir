@@ -1,4 +1,4 @@
-import { useStore } from '@fleur/fleur-react'
+import { useStore } from '@fleur/react'
 import { RenderingProgress, RenderingStep } from '@ragg/deream'
 import classnames from 'classnames'
 import React from 'react'

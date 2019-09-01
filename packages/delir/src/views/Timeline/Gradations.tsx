@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, StoreGetter } from '@fleur/fleur-react'
+import { connectToStores, StoreGetter } from '@fleur/react'
 import classnames from 'classnames'
 import React from 'react'
 

@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { ContextProp, withFleurContext } from '@fleur/fleur-react'
+import { ContextProp, withFleurContext } from '@fleur/react'
 import Selection from '@simonwep/selection-js'
 import React from 'react'
 import { decorate } from '../../utils/decorate'
