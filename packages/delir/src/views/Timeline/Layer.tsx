@@ -1,5 +1,6 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/react'
+import { StoreGetter } from '@fleur/fleur'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
 import React from 'react'
@@ -39,8 +40,8 @@ interface State {
 }
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
-  selectedClipIds: getSelectedClipIds()(getStore),
-  selectedClips: getSelectedClips()(getStore),
+  selectedClipIds: getSelectedClipIds(getStore),
+  selectedClips: getSelectedClips(getStore),
   postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
   userCodeException: getStore(RendererStore).getUserCodeException(),
 })

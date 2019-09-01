@@ -1,4 +1,4 @@
-import { StoreGetter, useFleurContext, useStore } from '@fleur/react'
+import { useFleurContext, useStore } from '@fleur/react'
 import { remote } from 'electron'
 import path from 'path'
 import React from 'react'
@@ -21,7 +21,7 @@ export const NavigationView = () => {
     audioVolume,
     previewPlaying,
     editor: { activeComp, project, projectPath },
-  } = useStore([EditorStore, RendererStore, PreferenceStore], (getStore: StoreGetter) => ({
+  } = useStore([EditorStore, RendererStore, PreferenceStore], getStore => ({
     editor: getStore(EditorStore).getState(),
     previewPlaying: getStore(RendererStore).previewPlaying,
     audioVolume: getStore(PreferenceStore).audioVolume,

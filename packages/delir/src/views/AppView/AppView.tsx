@@ -1,4 +1,5 @@
-import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/react'
+import { StoreGetter } from '@fleur/fleur'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import React from 'react'
 import { animated, Transition } from 'react-spring/renderprops'
 

@@ -234,10 +234,6 @@ export default class EditorStore extends Store<EditorState> {
     return this.state.selectClipIds.length === 1 ? this.state.selectClipIds[0] : null
   }
 
-  public get selectClipIds() {
-    return this.state.selectClipIds
-  }
-
   public get dragEntity() {
     return this.state.dragEntity
   }

@@ -1,14 +1,14 @@
-import { StoreGetter } from '@fleur/react'
+import { selector } from '@fleur/fleur'
 import ProjectStore from './ProjectStore'
 
-export const getClipById = (clipId: string) => (getStore: StoreGetter) => {
-  const project = getStore(ProjectStore).getProject()
+export const getClipById = selector((getState, clipId: string) => {
+  const { project } = getState(ProjectStore)
   if (!project) return []
   return project.findClip(clipId)
-}
+})
 
-export const getClipsByIds = (clipIds: string[]) => (getStore: StoreGetter) => {
-  const project = getStore(ProjectStore).getProject()
+export const getClipsByIds = selector((getState, clipIds: string[]) => {
+  const { project } = getState(ProjectStore)
   if (!project) return []
   return clipIds.map(id => project.findClip(id))
-}
+})

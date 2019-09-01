@@ -1,4 +1,5 @@
-import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/react'
+import { StoreGetter } from '@fleur/fleur'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import * as Electron from 'electron'
 import { remote } from 'electron'
 import React from 'react'

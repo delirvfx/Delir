@@ -114,7 +114,7 @@ export const ClipsMediator = decorate<OwnProps>(
     }
 
     private handleClipDragEnd: EmitClipDragHandler = ({ nextX, originalPlacedFrame }) => {
-      const clips = getSelectedClips()(this.props.getStore)
+      const clips = getSelectedClips(this.props.getStore)
       const movementFrame = this.calcMovementFrame(nextX, originalPlacedFrame)
       const patches = clips.map(clip => {
         return {
@@ -152,7 +152,7 @@ export const ClipsMediator = decorate<OwnProps>(
     }
 
     private handleClipResizeEnd: EmitClipResizeHandler = ({ nextX, originalPlacedFrame, deltaWidth: nextWidth }) => {
-      const clips = getSelectedClips()(this.props.getStore)
+      const clips = getSelectedClips(this.props.getStore)
       const sizingFrame = this.calcMovementFrame(nextWidth, 0)
       const movementFrame = this.calcMovementFrame(nextX, originalPlacedFrame)
 
