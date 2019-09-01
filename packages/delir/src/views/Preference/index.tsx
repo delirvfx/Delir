@@ -1,4 +1,4 @@
-import { useFleurContext, useStore } from '@fleur/fleur-react'
+import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
 import React from 'react'
 

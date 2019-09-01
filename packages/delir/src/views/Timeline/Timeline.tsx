@@ -1,5 +1,6 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, StoreGetter, withFleurContext } from '@fleur/fleur-react'
+import { StoreGetter } from '@fleur/fleur'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
 import React, { createRef } from 'react'
@@ -43,7 +44,7 @@ export const PX_PER_SEC = 30
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
   activeComp: getStore(EditorStore).activeComp,
-  activeClips: getSelectedClips()(getStore),
+  activeClips: getSelectedClips(getStore),
   currentPointFrame: getStore(EditorStore).currentPointFrame,
   previewPlayed: getStore(RendererStore).previewPlaying,
 })

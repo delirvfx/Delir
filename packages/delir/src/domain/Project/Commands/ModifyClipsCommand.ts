@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { OperationContext } from '@ragg/fleur'
+import { OperationContext } from '@fleur/fleur'
 import _ from 'lodash'
 
 import { EditorActions } from '../../Editor/actions'
@@ -29,7 +29,7 @@ export class ModifyClipsCommand implements Command {
     })
   }
 
-  public undo(context: OperationContext<any>) {
+  public undo(context: OperationContext) {
     this.focusToParentComposition(context)
 
     context.dispatch(ProjectActions.modifyClips, {
@@ -37,7 +37,7 @@ export class ModifyClipsCommand implements Command {
     })
   }
 
-  public redo(context: OperationContext<any>) {
+  public redo(context: OperationContext) {
     this.focusToParentComposition(context)
 
     context.dispatch(ProjectActions.modifyClips, {
@@ -45,7 +45,7 @@ export class ModifyClipsCommand implements Command {
     })
   }
 
-  private focusToParentComposition(context: OperationContext<any>) {
+  private focusToParentComposition(context: OperationContext) {
     context.dispatch(EditorActions.changeActiveComposition, {
       compositionId: this.parentCompositionId,
     })
