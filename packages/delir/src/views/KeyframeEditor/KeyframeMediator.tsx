@@ -48,7 +48,7 @@ export const KeyframeMediator = ({
   onModifyKeyframe,
 }: OwnProps) => {
   const { activeComp } = useStore([EditorStore], getStore => ({
-    activeComp: getActiveComp()(getStore),
+    activeComp: getActiveComp(getStore),
   }))
 
   return (
