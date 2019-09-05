@@ -5,13 +5,13 @@ import { Clip, Keyframe } from '../Entity'
 import { UserCodeException } from '../Exceptions/UserCodeException'
 import { ParameterValueTypes, TypeDescriptor } from '../PluginSupport/TypeDescriptor'
 import { AssetPointer, ColorRGB, ColorRGBA, Expression } from '../Values'
-import AssetProxy from './AssetProxy'
 import { compileTypeScript } from './ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
 import ExpressionVM from './ExpressionSupport/ExpressionVM'
 import * as KeyframeCalcurator from './KeyframeCalcurator'
 import { ClipRenderContext } from './RenderContext/ClipRenderContext'
 import { RenderContextBase } from './RenderContext/RenderContextBase'
+import AssetProxy from './RuntimeValue/AssetProxy'
 
 export type RealParameterValueTypes = number | string | boolean | ColorRGB | ColorRGBA | AssetProxy | null
 
