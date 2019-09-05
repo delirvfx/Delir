@@ -3,7 +3,7 @@ import _ from 'lodash'
 import semver from 'semver'
 
 import EffectPluginBase from './PostEffectBase'
-import { AnyParameterTypeDescriptor } from './type-descriptor'
+import { AnyParameterTypeDescriptor } from './TypeDescriptor'
 import { DelirPluginPackageJson, PluginEntry, PluginSummary } from './types'
 
 import PluginAssertionFailedException from '../Exceptions/plugin-assertion-failed-exception'

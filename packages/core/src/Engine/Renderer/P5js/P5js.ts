@@ -4,7 +4,7 @@ import P5Hooks from './P5Hooks'
 
 import { UserCodeException } from '../../../Exceptions/UserCodeException'
 import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
-import Type from '../../../PluginSupport/type-descriptor'
+import Type from '../../../PluginSupport/TypeDescriptor'
 import Expression from '../../../Values/Expression'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
