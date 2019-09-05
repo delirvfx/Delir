@@ -178,7 +178,7 @@ export const KeyframeEditor = withFleurContext(
                   activeParamDescriptor.type === 'CODE' &&
                   (() => {
                     const value = activeClip
-                      ? Delir.KeyframeCalcurator.calcKeyframeValueAt(
+                      ? Delir.KeyframeCalcurator.calcKeyframeAt(
                           editor.currentPreviewFrame,
                           activeClip.placedFrame,
                           activeParamDescriptor,
@@ -242,7 +242,7 @@ export const KeyframeEditor = withFleurContext(
 
         return this.clipParamDescriptors.map(desc => {
           const value = activeClip
-            ? Delir.KeyframeCalcurator.calcKeyframeValueAt(
+            ? Delir.KeyframeCalcurator.calcKeyframeAt(
                 editor.currentPreviewFrame,
                 activeClip.placedFrame,
                 desc,
@@ -426,7 +426,7 @@ export const KeyframeEditor = withFleurContext(
                   effect.expressions[desc.paramName] && effect.expressions[desc.paramName].code !== ''
 
                 const value = activeClip
-                  ? Delir.KeyframeCalcurator.calcKeyframeValueAt(
+                  ? Delir.KeyframeCalcurator.calcKeyframeAt(
                       editor.currentPreviewFrame,
                       activeClip.placedFrame,
                       desc,

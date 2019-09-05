@@ -35,7 +35,7 @@ export class ParametersTable {
     const assetPramNames = paramTypes.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
 
     // Calculate initial parameters
-    const rawRendererInitParam = KeyframeCalcurator.calcKeyframeValuesAt(0, clip.placedFrame, paramTypes, keyframes)
+    const rawRendererInitParam = KeyframeCalcurator.calcKeyframesAt(0, clip.placedFrame, paramTypes, keyframes)
     const initialParams: RealParameterValues = {
       ...(rawRendererInitParam as any),
     }
@@ -47,7 +47,7 @@ export class ParametersTable {
     })
 
     // Calculate look up table
-    const rawKeyframeLUT = KeyframeCalcurator.calcKeyFrames(
+    const rawKeyframeLUT = KeyframeCalcurator.calcKeyframesInRange(
       paramTypes,
       keyframes,
       clip.placedFrame,

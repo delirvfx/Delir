@@ -1,35 +1,35 @@
 {
-  "name": "@delirvfx/core",
-  "version": "0.7.4",
-  "description": "JavaScript VFX Engine",
-  "main": "lib/index.js",
-  "types": "typings/index.d.ts",
-  "author": "Ragg <ragg.devpr@gmail.com>",
-  "license": "MIT",
-  "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
-  "scripts": {
-    "prepublishOnly": "rm -rf ./{typings,lib} && tsc --emitDeclarationOnly --declaration --outDir ./typings && tsc --outDir lib"
-  },
-  "devDependencies": {
-    "@delirvfx/core-test-helper": "*",
-    "@types/audiobuffer-to-wav": "1.0.0",
-    "@types/jest": "24.0.15",
-    "@types/joi": "14.3.3",
-    "@types/lodash": "4.14.123",
-    "@types/semver": "6.0.1",
-    "@types/uuid": "3.4.4",
-    "@types/webgl2": "0.0.5",
-    "jest": "24.9.0",
-    "ts-jest": "24.0.2"
-  },
-  "dependencies": {
-    "bezier-easing": "2.1.0",
-    "font-manager": "0.3.0",
-    "joi-browser": "^13.4.0",
-    "lodash": "4.17.13",
-    "p5": "0.9.0",
-    "semver": "6.0.0",
-    "typescript": "3.4.4",
-    "uuid": "3.3.2"
-  }
+    "name": "@delirvfx/core",
+    "version": "0.8.0",
+    "description": "JavaScript VFX Engine",
+    "main": "lib/index.js",
+    "types": "typings/index.d.ts",
+    "author": "Ragg <ragg.devpr@gmail.com>",
+    "license": "MIT",
+    "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
+    "scripts": {
+        "prepublishOnly": "rm -rf ./{typings,lib} && tsc --emitDeclarationOnly --declaration --outDir ./typings && tsc --outDir lib"
+    },
+    "devDependencies": {
+        "@delirvfx/core-test-helper": "*",
+        "@types/audiobuffer-to-wav": "1.0.0",
+        "@types/jest": "24.0.15",
+        "@types/joi": "14.3.3",
+        "@types/lodash": "4.14.123",
+        "@types/semver": "6.0.1",
+        "@types/uuid": "3.4.4",
+        "@types/webgl2": "0.0.5",
+        "jest": "24.9.0",
+        "ts-jest": "24.0.2"
+    },
+    "dependencies": {
+        "bezier-easing": "2.1.0",
+        "font-manager": "0.3.0",
+        "joi-browser": "^13.4.0",
+        "lodash": "4.17.13",
+        "p5": "0.9.0",
+        "semver": "6.0.0",
+        "typescript": "3.4.4",
+        "uuid": "3.3.2"
+    }
 }
