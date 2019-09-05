@@ -1,5 +1,13 @@
 {
-  "name": "@ragg/delir-post-effect-plugins",
-  "version": "0.0.0",
-  "license": "MIT"
+    "name": "@ragg/delir-post-effect-plugins",
+    "version": "0.0.0",
+    "license": "MIT",
+    "scripts": {
+        "test": "jest"
+    },
+    "devDependencies": {
+        "glob-promise": "^3.4.0",
+        "jest": "24.9.0",
+        "semver": "6.3.0"
+    }
 }

@@ -14,7 +14,8 @@
     "declare": "cross-env tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "clean-modules": "rm -rf node_modules/ packages/delir/node_modules packages/delir-core/node_modules",
     "test-core": "jest -c packages/core/jest.config.js",
-    "test-front": "jest -c packages/delir/jest.config.js"
+    "test-front": "jest -c packages/delir/jest.config.js",
+    "test-plugins": "jest -c packages/post-effect-plugins/jest.config.js"
   },
   "workspaces": [
     "packages/*"
