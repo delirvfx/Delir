@@ -22,22 +22,18 @@ describe('KeyframeHelper', () => {
       })
 
       it('Before first keyframe', () => {
-        const actual = KeyframeHelper.calcKeyframeValuesAt(0, clipPlacedFrame, mockDesc, sequence).string
+        const actual = KeyframeHelper.calcKeyframesAt(0, clipPlacedFrame, mockDesc, sequence).string
         expect(actual).toBe('ABC')
       })
 
       it('On first keyframe', () => {
-        const actual = KeyframeHelper.calcKeyframeValuesAt(
-          /* first kf position */ 10,
-          clipPlacedFrame,
-          mockDesc,
-          sequence,
-        ).string
+        const actual = KeyframeHelper.calcKeyframesAt(/* first kf position */ 10, clipPlacedFrame, mockDesc, sequence)
+          .string
         expect(actual).toBe('ABC')
       })
 
       it('On before second keyframe', () => {
-        const actual = KeyframeHelper.calcKeyframeValuesAt(
+        const actual = KeyframeHelper.calcKeyframesAt(
           /* before second kf position */ 49,
           clipPlacedFrame,
           mockDesc,
@@ -47,17 +43,13 @@ describe('KeyframeHelper', () => {
       })
 
       it('On second keyframe', () => {
-        const actual = KeyframeHelper.calcKeyframeValuesAt(
-          /* second kf position */ 50,
-          clipPlacedFrame,
-          mockDesc,
-          sequence,
-        ).string
+        const actual = KeyframeHelper.calcKeyframesAt(/* second kf position */ 50, clipPlacedFrame, mockDesc, sequence)
+          .string
         expect(actual).toBe('DEF')
       })
 
       it('On after second keyframe', () => {
-        const actual = KeyframeHelper.calcKeyframeValuesAt(
+        const actual = KeyframeHelper.calcKeyframesAt(
           /* after second kf position */ 51,
           clipPlacedFrame,
           mockDesc,
@@ -67,17 +59,13 @@ describe('KeyframeHelper', () => {
       })
 
       it('On last keyframe', () => {
-        const actual = KeyframeHelper.calcKeyframeValuesAt(
-          /* last kf position */ 100,
-          clipPlacedFrame,
-          mockDesc,
-          sequence,
-        ).string
+        const actual = KeyframeHelper.calcKeyframesAt(/* last kf position */ 100, clipPlacedFrame, mockDesc, sequence)
+          .string
         expect(actual).toBe('XYZ')
       })
 
       it('After last keyframe', () => {
-        const actual = KeyframeHelper.calcKeyframeValuesAt(
+        const actual = KeyframeHelper.calcKeyframesAt(
           /* after last kf position */ 101,
           clipPlacedFrame,
           mockDesc,
