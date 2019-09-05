@@ -1,4 +1,5 @@
 import bezierEasing from 'bezier-easing'
+import * as flubber from 'flubber'
 
 import { Keyframe, KeyframeValueTypes } from '../Entity'
 import ColorRGB from '../Values/ColorRGB'
@@ -6,6 +7,7 @@ import ColorRGBA from '../Values/ColorRGBA'
 
 import { AnyParameterTypeDescriptor, TypeDescriptor } from '../PluginSupport/TypeDescriptor'
 import { AssetPointer } from '../Values'
+import { ShapeProxy } from './RuntimeValue/ShapeProxy'
 
 interface KeyFrameLink<T extends KeyframeValueTypes> {
   previous: Keyframe<T> | null
@@ -72,6 +74,8 @@ export function calcKeyframeAt(
     //     return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcArrayOfKeyFrames)[frame]
     case 'ASSET':
       return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcAssetKeyFrames)[frame]
+    case 'SHAPE':
+      return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcShapeKeyframes)[frame]
     default:
       throw new Error('Unsupported parameter type')
   }
@@ -203,6 +207,15 @@ export function calcKeyframesInRange(
           calcNonAnimatableKeyframes,
         )
         break
+      case 'SHAPE':
+        tables[paramName] = calcKeyframe(
+          paramDesc,
+          propSequence,
+          clipPlacedFrame,
+          beginFrame,
+          calcFrames,
+          calcShapeKeyframes,
+        )
     }
   }
 
@@ -436,6 +449,18 @@ function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameL
   return keyFrameLink.previous
     ? (keyFrameLink.previous.value! as AssetPointer)
     : (keyFrameLink.active!.value as AssetPointer)
+}
+
+function calcShapeKeyframes(rate: number, frame: number, keyframeLink: KeyFrameLink<string>): string {
+  return keyframeLink.previous
+    ? flubber.interpolate(
+        keyframeLink.previous.value,
+        (keyframeLink.next ? keyframeLink.next.value : keyframeLink.previous.value) || keyframeLink.previous.value,
+      )(rate)
+    : flubber.interpolate(
+        keyframeLink.active!.value,
+        keyframeLink.next ? keyframeLink.next.value : keyframeLink.active.value,
+      )(rate)
 }
 
 function calcNonAnimatableKeyframes(rate: number, frame: number, keyFrameLink: KeyFrameLink<any>): any {

@@ -7,7 +7,7 @@ import { TypeDescriptor } from '../../PluginSupport/TypeDescriptor'
 import DependencyResolver from '../DependencyResolver'
 import * as ExpressionContext from '../ExpressionSupport/ExpressionContext'
 import { ReferenceableEffectsParams } from '../ExpressionSupport/ExpressionContext'
-import { RealParameterValueTypes } from '../ParametersTable'
+import { RuntimeParameterValueTypes } from '../ParametersTable'
 import { ParametersTable } from '../ParametersTable'
 import { RenderContextBase } from '../RenderContext/RenderContextBase'
 
@@ -55,7 +55,7 @@ export default class EffectRenderTask {
   public effectRenderer: EffectPluginBase
   public paramTypes: TypeDescriptor
   public expressions: {
-    [paramName: string]: (exposes: ExpressionContext.ContextSource) => RealParameterValueTypes
+    [paramName: string]: (exposes: ExpressionContext.ContextSource) => RuntimeParameterValueTypes
   }
   public keyframeTable: ParametersTable
 

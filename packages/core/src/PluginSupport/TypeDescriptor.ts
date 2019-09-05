@@ -464,6 +464,8 @@ export class TypeDescriptor {
       enabled,
       animatable,
     })
+
+    return this
   }
 
   // public arrayOf(paramName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)

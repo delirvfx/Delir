@@ -1,10 +1,11 @@
 import _ from 'lodash'
 
 import { EffectRenderContext } from '..'
-import { Clip, Keyframe } from '../Entity'
+import { Clip, Keyframe, KeyframeValueTypes } from '../Entity'
 import { UserCodeException } from '../Exceptions/UserCodeException'
 import { ParameterValueTypes, TypeDescriptor } from '../PluginSupport/TypeDescriptor'
 import { AssetPointer, ColorRGB, ColorRGBA, Expression } from '../Values'
+import { convertRawValueToKfValues } from './convertRawValueToKfValues'
 import { compileTypeScript } from './ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
 import ExpressionVM from './ExpressionSupport/ExpressionVM'
@@ -12,20 +13,39 @@ import * as KeyframeCalcurator from './KeyframeCalcurator'
 import { ClipRenderContext } from './RenderContext/ClipRenderContext'
 import { RenderContextBase } from './RenderContext/RenderContextBase'
 import AssetProxy from './RuntimeValue/AssetProxy'
+import { ShapeProxy } from './RuntimeValue/ShapeProxy'
 
-export type RealParameterValueTypes = number | string | boolean | ColorRGB | ColorRGBA | AssetProxy | null
+export type RuntimeParameterValueTypes =
+  | number
+  | string
+  | boolean
+  | ColorRGB
+  | ColorRGBA
+  | AssetProxy
+  | ShapeProxy
+  | null
 
 export interface RealParameterValues {
-  [paramName: string]: RealParameterValueTypes
+  [paramName: string]: RuntimeParameterValueTypes
+}
+
+export interface RawKeyframeTable {
+  [paramName: string]: {
+    [frame: number]: KeyframeValueTypes
+  }
+}
+
+export interface RuntimeKeyframeLookupTable {
+  [paramName: string]: {
+    [frame: number]: RuntimeParameterValueTypes
+  }
 }
 
 export class ParametersTable {
   public static build(
     context: RenderContextBase,
     clip: Clip,
-    keyframes: {
-      [paramName: string]: ReadonlyArray<Keyframe>
-    },
+    keyframes: { [paramName: string]: readonly Keyframe[] },
     expressions: {
       [paramName: string]: Expression
     },
@@ -35,16 +55,11 @@ export class ParametersTable {
     const assetPramNames = paramTypes.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
 
     // Calculate initial parameters
-    const rawRendererInitParam = KeyframeCalcurator.calcKeyframesAt(0, clip.placedFrame, paramTypes, keyframes)
-    const initialParams: RealParameterValues = {
-      ...(rawRendererInitParam as any),
-    }
-    assetPramNames.forEach(propName => {
-      // resolve asset
-      initialParams[propName] = rawRendererInitParam[propName]
-        ? context.resolver.resolveAsset((rawRendererInitParam[propName] as AssetPointer).assetId)
-        : null
-    })
+    const rawRendererInitParam = KeyframeCalcurator.calcKeyframesInRange(paramTypes, keyframes, clip.placedFrame, 0, 0)
+    const initialParams = _.mapValues(
+      convertRawValueToKfValues(context, paramTypes, rawRendererInitParam),
+      frames => frames[0],
+    )
 
     // Calculate look up table
     const rawKeyframeLUT = KeyframeCalcurator.calcKeyframesInRange(
@@ -54,15 +69,7 @@ export class ParametersTable {
       0,
       context.durationFrames,
     )
-    const lookupTable: {
-      [paramName: string]: { [frame: number]: RealParameterValueTypes }
-    } = { ...(rawKeyframeLUT as any) }
-    assetPramNames.forEach(paramName => {
-      // resolve asset
-      lookupTable[paramName] = _.map(rawKeyframeLUT[paramName], value => {
-        return value ? context.resolver.resolveAsset((value as AssetPointer).assetId) : null
-      })
-    })
+    const lookupTable: RuntimeKeyframeLookupTable = convertRawValueToKfValues(context, paramTypes, rawKeyframeLUT)
 
     // Compile Expression code
     const rendererExpressions = _(expressions)
@@ -86,14 +93,9 @@ export class ParametersTable {
   }
 
   public initialParams: {
-    [paramName: string]: RealParameterValueTypes
+    [paramName: string]: RuntimeParameterValueTypes
   }
-
-  public lookUpTable: {
-    [paramName: string]: {
-      [frame: number]: RealParameterValueTypes
-    }
-  }
+  public lookUpTable: RuntimeKeyframeLookupTable
 
   public expressions: {
     [paramName: string]: (exposes: ExpressionContext.ContextSource) => any
