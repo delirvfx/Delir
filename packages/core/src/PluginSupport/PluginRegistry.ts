@@ -51,8 +51,8 @@ export default class PluginRegistry {
   private _plugins: {
     'post-effect': { [packageName: string]: Readonly<PluginEntry> }
   } = {
-    'post-effect': {},
-  }
+      'post-effect': {},
+    }
 
   public registerPlugin(entries: PluginEntry[]) {
     for (const entry of entries) {
