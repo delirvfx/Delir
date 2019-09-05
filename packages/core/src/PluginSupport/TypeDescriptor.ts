@@ -20,8 +20,9 @@ export type ParameterType =
   // | 'PULSE'
   | 'ASSET'
   | 'CODE'
-// | 'ARRAY'
-// | 'STRUCTURE'
+  // | 'ARRAY'
+  // | 'STRUCTURE'
+  | 'SHAPE'
 
 export interface ParameterTypeDescriptor<T extends ParameterType> {
   type: T
@@ -84,6 +85,10 @@ export interface CodeTypeDescripter extends ParameterTypeDescriptor<'CODE'> {
 //     subType: TypeDescriptor
 // }
 
+export interface ShapeTypeDescripter extends ParameterTypeDescriptor<'SHAPE'> {
+  defaultValue?: string
+}
+
 export type AnyParameterTypeDescriptor =
   // | Point2DTypeDescripter
   // | Point3DTypeDescripter
@@ -101,6 +106,7 @@ export type AnyParameterTypeDescriptor =
   // | ClipTypeDescripter
   | AssetTypeDescripter
   | CodeTypeDescripter
+  | ShapeTypeDescripter
 // | ArrayOfTypeDescripter
 // | StructureTypeDescripter
 
@@ -435,6 +441,31 @@ export class TypeDescriptor {
     return this
   }
 
+  public shape(
+    paramName: string,
+    option: {
+      label: string
+      defaultValue: string
+      enabled?: boolean
+      animatable?: boolean
+    },
+  ) {
+    const { label, defaultValue, enabled, animatable } = defaults(option, {
+      defaultValue: '',
+      enabled: true,
+      animatable: true,
+    })
+
+    this.properties.push({
+      type: 'SHAPE',
+      paramName,
+      label,
+      defaultValue,
+      enabled,
+      animatable,
+    })
+  }
+
   // public arrayOf(paramName: string, conf: {label: string, enabled?: boolean}, type: TypeDescriptor)
   // {
   //     const {label, enabled} = defaults(conf, {
@@ -578,6 +609,18 @@ export default class Type {
     },
   ) {
     return new TypeDescriptor().code(paramName, option)
+  }
+
+  public static shape(
+    paramName: string,
+    option: {
+      label: string
+      defaultValue: string
+      enabled?: boolean
+      animatable?: boolean
+    },
+  ) {
+    return new TypeDescriptor().shape(paramName, option)
   }
 
   // public static arrayOf(paramName: string, option: {label: string, enabled?: boolean}, type: TypeDescriptor)
