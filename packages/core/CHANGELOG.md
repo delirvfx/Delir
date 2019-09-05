@@ -1,3 +1,11 @@
+### 0.8.0
+#### Breaking changes
+- Refactor `KeyframeCalculator`
+  - Renamed `.calcKeyframeValuesAt` -> `.calcKeyframesAt`
+  - Renamed `.calcKeyframeValueAt` -> `.calcKeyframeAt`
+  - Renamed `.calcKeyFrames` -> `.calcKeyframesInRange`
+  - `.calcKeyframe` now privated
+
 ### 0.7.4
 - #226 Fix plugin's package.json typing
 - #226 Replace `joi` dependency to `joi-browser`
