@@ -84,13 +84,19 @@ export class ShapeRenderer implements IRenderer<Params> {
     this.svgRoot.setAttribute('height', `${context.height}`)
 
     this.pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+    this.pathEl.setAttribute('shape-rendering', 'optimizeSpeed')
     this.svgRoot.appendChild(this.pathEl)
   }
 
   public async render(context: ClipRenderContext<Params>) {
     const { shape, ...params } = context.parameters
+
     this.pathEl.setAttribute('d', shape.toString())
     this.pathEl.style.fill = params.fill.toCSSColor()
+    this.pathEl.style.stroke = params.fill.toCSSColor()
+    this.pathEl.style.strokeWidth = `${params.strokeWidth}`
+    this.pathEl.style.transform = `translate(${params.x}px, ${params.y}px) scale(${params.scale / 100}) `
+    this.pathEl.style.opacity = `${params.opacity / 100}`
 
     const blob = new Blob([`<?xml version="1.0"?>${this.svgRoot.outerHTML}`], { type: 'image/svg+xml' })
     const url = URL.createObjectURL(blob)
