@@ -299,7 +299,7 @@ const shapeClip = assign(
           frameOnClip: 0,
         }),
         new Delir.Entity.Keyframe({
-          value: 'M99.13,2l97.4,168.7H1.73L99.13,2 M99.13,0L0,171.7h198.26L99.13,0L99.13,0',
+          value: 'M99.13,2l97.4,168.7H1.73L99.13,2 M99.13,0L0,171.7h198.26L99.13,0L99.13,0z',
           frameOnClip: 100,
         }),
       ],
