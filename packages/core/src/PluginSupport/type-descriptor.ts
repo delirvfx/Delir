@@ -2,26 +2,8 @@ import AssetProxy from '../Engine/AssetProxy'
 import PluginLoadFailException from '../Exceptions/plugin-load-fail-exception'
 import defaults from '../helper/defaults'
 
+import { ParameterType } from '../Entity/KeyframeTrack'
 import { ColorRGB, ColorRGBA, Expression, Point2D, Point3D, Size2D, Size3D } from '../Values'
-
-export type ParameterType =
-  // | 'POINT_2D'
-  // | 'POINT_3D'
-  // | 'SIZE_2D'
-  // | 'SIZE_3D'
-  | 'COLOR_RGB'
-  | 'COLOR_RGBA'
-  | 'BOOL'
-  | 'STRING'
-  | 'NUMBER'
-  | 'FLOAT'
-  | 'ENUM'
-  // | 'CLIP'
-  // | 'PULSE'
-  | 'ASSET'
-  | 'CODE'
-// | 'ARRAY'
-// | 'STRUCTURE'
 
 export interface ParameterTypeDescriptor<T extends ParameterType> {
   type: T
