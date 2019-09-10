@@ -16,8 +16,9 @@ module.exports = ({ config }: { config: Configuration }) => {
         {
           loader: 'css-loader',
           options: {
-            modules: true,
-            localIdentName: '[path][name]__[local]--[emoji:4]',
+            modules: {
+              localIdentName: '[path][name]__[local]--[emoji:4]',
+            },
           },
         },
         {
