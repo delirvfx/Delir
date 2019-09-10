@@ -206,19 +206,6 @@ export default class RendererStore extends Store<State> {
         ? 'ffmpeg'
         : require('path').resolve(appPath, Platform.isMacOS() ? '../Resources/ffmpeg' : './ffmpeg.exe')
 
-    // TODO: View側で聞いてくれ
-    const file = remote.dialog.showSaveDialog({
-      title: 'Destinate',
-      buttonLabel: 'Render',
-      filters: [
-        {
-          name: 'mp4',
-          extensions: ['mp4'],
-        },
-      ],
-    })
-
-    if (!file) return
     if (!this.state.project || !this.state.composition || !this.pluginRegistry) return
 
     // deream() の前に一瞬待たないとフリーズしてしまうので
@@ -237,7 +224,7 @@ export default class RendererStore extends Store<State> {
       await deream({
         project: this.state.project,
         rootCompId: this.state.composition.id,
-        exportPath: file,
+        exportPath: payload.path,
         pluginRegistry: this.pluginRegistry,
         ignoreMissingEffect: payload.ignoreMissingEffect,
         temporaryDir: remote.app.getPath('temp'),
