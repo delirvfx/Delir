@@ -35,7 +35,7 @@ interface Uniform {
     | 'matrix2x4fv'
     | 'matrix3x4fv'
     | 'matrix4fv'
-  value: ArrayLike<number>
+  value: ReadonlyArray<number>
 }
 
 const DEFAULT_VERTEX_SHADER = `
