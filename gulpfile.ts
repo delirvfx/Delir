@@ -269,8 +269,9 @@ export function compileRendererJs(done) {
               {
                 loader: 'css-loader',
                 options: {
-                  modules: true,
-                  localIdentName: __DEV__ ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]',
+                  modules: {
+                    localIdentName: __DEV__ ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]',
+                  },
                 },
               },
               {
