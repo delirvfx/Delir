@@ -1,4 +1,4 @@
-import PluginBase from './plugin-base'
+import PluginBase from './PluginBase'
 
 export type PluginTypes = 'post-effect'
 
