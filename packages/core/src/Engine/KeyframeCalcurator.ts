@@ -9,7 +9,7 @@ import { AnyParameterTypeDescriptor, TypeDescriptor } from '../PluginSupport/Typ
 import { AssetPointer } from '../Values'
 import { ShapeProxy } from './RuntimeValue/ShapeProxy'
 
-interface KeyFrameLink<T extends KeyframeValueTypes> {
+interface KeyframeLink<T extends KeyframeValueTypes> {
   previous: Keyframe<T> | null
   active: Keyframe<T>
   next: Keyframe<T> | null
@@ -228,16 +228,16 @@ function calcKeyframe(
   clipPlacedFrame: number,
   beginFrame: number,
   calcFrames: number,
-  transformer: (rate: number, frame: number, keyFrameLink: KeyFrameLink<KeyframeValueTypes>) => any,
+  transformer: (rate: number, frame: number, keyFrameLink: KeyframeLink<KeyframeValueTypes>) => any,
 ): KeyframeParamValueSequence {
   const orderedSequense: Keyframe[] = keyFrameSequense.slice(0).sort((kfA, kfB) => kfA.frameOnClip - kfB.frameOnClip)
 
-  const linkedSequense: KeyFrameLink<KeyframeValueTypes>[] = _buildLinkedKeyFrame(orderedSequense)
+  const linkedSequense: KeyframeLink<KeyframeValueTypes>[] = buildLinkedKeyFrame(orderedSequense)
 
   const table: KeyframeParamValueSequence = {}
 
   for (let frame = beginFrame, end = beginFrame + calcFrames; frame <= end; frame++) {
-    const activeKeyFrame: KeyFrameLink<KeyframeValueTypes> | null = activeKeyFrameOfFrame(
+    const activeKeyFrame: KeyframeLink<KeyframeValueTypes> | null = activeKeyFrameOfFrame(
       linkedSequense,
       clipPlacedFrame,
       frame,
@@ -290,7 +290,7 @@ function calcKeyframe(
   return table
 }
 
-function _buildLinkedKeyFrame(orderedKeyFrameSeq: Keyframe[]): KeyFrameLink<KeyframeValueTypes>[] {
+function buildLinkedKeyFrame(orderedKeyFrameSeq: Keyframe[]): KeyframeLink<KeyframeValueTypes>[] {
   const linked = []
   const placedFrames = (Object.keys(orderedKeyFrameSeq) as any[]) as number[]
 
@@ -306,10 +306,10 @@ function _buildLinkedKeyFrame(orderedKeyFrameSeq: Keyframe[]): KeyFrameLink<Keyf
 }
 
 function activeKeyFrameOfFrame(
-  linkedKeyFrameSeq: KeyFrameLink<KeyframeValueTypes>[],
+  linkedKeyFrameSeq: KeyframeLink<KeyframeValueTypes>[],
   clipPlacedFrame: number,
   frame: number,
-): KeyFrameLink<KeyframeValueTypes> | null {
+): KeyframeLink<KeyframeValueTypes> | null {
   if (linkedKeyFrameSeq.length === 1) {
     return linkedKeyFrameSeq[0]
   }
@@ -383,7 +383,7 @@ function activeKeyFrameOfFrame(
 function calcColorRgbKeyFrames(
   rate: number,
   frame: number,
-  keyFrameLink: KeyFrameLink<ColorRGB>,
+  keyFrameLink: KeyframeLink<ColorRGB>,
 ): { red: number; green: number; blue: number } {
   const redVector = keyFrameLink.next!.value!.red - keyFrameLink.active.value!.red
   const greenVector = keyFrameLink.next!.value!.green - keyFrameLink.active.value!.green
@@ -399,7 +399,7 @@ function calcColorRgbKeyFrames(
 function calcColorRgbaKeyFrames(
   rate: number,
   frame: number,
-  keyFrameLink: KeyFrameLink<ColorRGBA>,
+  keyFrameLink: KeyframeLink<ColorRGBA>,
 ): { red: number; green: number; blue: number; alpha: number } {
   const redVector = keyFrameLink.next!.value!.red - keyFrameLink.active.value!.red
   const greenVector = keyFrameLink.next!.value!.green - keyFrameLink.active.value!.green
@@ -414,29 +414,29 @@ function calcColorRgbaKeyFrames(
   )
 }
 
-function calcBoolKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<boolean>): boolean {
+function calcBoolKeyFrames(rate: number, frame: number, keyFrameLink: KeyframeLink<boolean>): boolean {
   return keyFrameLink.previous ? !!keyFrameLink.previous.value : !!keyFrameLink.active.value
 }
 
-function calcStringKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<string>): string {
+function calcStringKeyFrames(rate: number, frame: number, keyFrameLink: KeyframeLink<string>): string {
   return keyFrameLink.active!.value as string
 }
 
-function calcNumberKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<number>): number {
+function calcNumberKeyFrames(rate: number, frame: number, keyFrameLink: KeyframeLink<number>): number {
   const numVector = (keyFrameLink.next!.value as number) - (keyFrameLink.active!.value as number)
   return Math.round((keyFrameLink.active!.value as number) + numVector * rate)
 }
 
-function calcFloatKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<number>): number {
+function calcFloatKeyFrames(rate: number, frame: number, keyFrameLink: KeyframeLink<number>): number {
   const floatVector = (keyFrameLink.next!.value as number) - (keyFrameLink.active!.value! as number)
   return (keyFrameLink.active.value as number) + floatVector * rate
 }
 
-function calcPulseKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<any>): boolean {
+function calcPulseKeyFrames(rate: number, frame: number, keyFrameLink: KeyframeLink<any>): boolean {
   return keyFrameLink.active.frameOnClip === frame ? true : false
 }
 
-function calcEnumKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<string>): any {
+function calcEnumKeyFrames(rate: number, frame: number, keyFrameLink: KeyframeLink<string>): any {
   return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
 }
 
@@ -445,13 +445,13 @@ function calcEnumKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLi
 //     return keyFrameLink.previous ? keyFrameLink.previous.value : keyFrameLink.active.value
 // }
 
-function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameLink<AssetPointer>): AssetPointer {
+function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyframeLink<AssetPointer>): AssetPointer {
   return keyFrameLink.previous
     ? (keyFrameLink.previous.value! as AssetPointer)
     : (keyFrameLink.active!.value as AssetPointer)
 }
 
-function calcShapeKeyframes(rate: number, frame: number, keyframeLink: KeyFrameLink<string>): string {
+function calcShapeKeyframes(rate: number, frame: number, keyframeLink: KeyframeLink<string>): string {
   return keyframeLink.previous
     ? flubber.interpolate(
         keyframeLink.previous.value,
@@ -463,7 +463,7 @@ function calcShapeKeyframes(rate: number, frame: number, keyframeLink: KeyFrameL
       )(rate)
 }
 
-function calcNonAnimatableKeyframes(rate: number, frame: number, keyFrameLink: KeyFrameLink<any>): any {
+function calcNonAnimatableKeyframes(rate: number, frame: number, keyFrameLink: KeyframeLink<any>): any {
   return keyFrameLink.active.value
 }
 
