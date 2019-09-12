@@ -119,10 +119,6 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/uuid"
     },
     {
-        "name": "@types/webgl2",
-        "url": "https://www.npmjs.com/package/@types/webgl2"
-    },
-    {
         "name": "bezier-easing",
         "url": "https://www.npmjs.com/package/bezier-easing"
     },
