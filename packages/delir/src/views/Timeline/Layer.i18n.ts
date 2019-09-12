@@ -13,6 +13,7 @@ export default I18n({
       text: '📝 テキスト',
       adjustment: '✨ 調整クリップ',
       p5js: '🔡 p5.js スクリプト',
+      shape: '△ 図形',
     },
   },
   en: {
@@ -27,6 +28,7 @@ export default I18n({
       text: '📝 Text',
       adjustment: '✨ Adjustment clip',
       p5js: '🔡 p5.js script',
+      shape: '△ Shape',
     },
   },
 })

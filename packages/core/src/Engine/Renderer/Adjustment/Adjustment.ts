@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
-import Type from '../../../PluginSupport/type-descriptor'
-import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
+import Type from '../../../PluginSupport/TypeDescriptor'
+import { TypeDescriptor } from '../../../PluginSupport/TypeDescriptor'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'

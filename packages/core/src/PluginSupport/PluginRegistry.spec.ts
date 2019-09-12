@@ -1,4 +1,4 @@
-import PluginRegistry from './plugin-registry'
+import PluginRegistry from './PluginRegistry'
 
 describe('PluginRegistry', () => {
   it('Shold pass validation with valid package.json', () => {

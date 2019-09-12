@@ -3,12 +3,12 @@ import timecodes from 'node-timecodes'
 
 import { Clip, Effect, Project } from '../Entity'
 import EffectPluginBase from '../PluginSupport/PostEffectBase'
-import { ParameterValueTypes } from '../PluginSupport/type-descriptor'
+import { ParameterValueTypes } from '../PluginSupport/TypeDescriptor'
 
 import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
 import { IRenderer } from './Renderer/RendererBase'
 
-import PluginRegistry from '../PluginSupport/plugin-registry'
+import PluginRegistry from '../PluginSupport/PluginRegistry'
 
 import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'

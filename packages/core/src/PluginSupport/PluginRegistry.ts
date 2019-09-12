@@ -3,7 +3,7 @@ import _ from 'lodash'
 import semver from 'semver'
 
 import EffectPluginBase from './PostEffectBase'
-import { AnyParameterTypeDescriptor } from './type-descriptor'
+import { AnyParameterTypeDescriptor } from './TypeDescriptor'
 import { DelirPluginPackageJson, PluginEntry, PluginSummary } from './types'
 
 import PluginAssertionFailedException from '../Exceptions/plugin-assertion-failed-exception'
@@ -51,8 +51,8 @@ export default class PluginRegistry {
   private _plugins: {
     'post-effect': { [packageName: string]: Readonly<PluginEntry> }
   } = {
-    'post-effect': {},
-  }
+      'post-effect': {},
+    }
 
   public registerPlugin(entries: PluginEntry[]) {
     for (const entry of entries) {

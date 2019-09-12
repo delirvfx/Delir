@@ -15,6 +15,15 @@ interface DelirValueInputProps {
   onChange: (desc: Delir.AnyParameterTypeDescriptor, value: Delir.Entity.KeyframeValueTypes) => void
 }
 
+const toReactColorValue = (value: Delir.Values.ColorRGB | Delir.Values.ColorRGBA) => {
+  return {
+    r: value.r,
+    g: value.g,
+    b: value.b,
+    ...(value instanceof Delir.Values.ColorRGBA ? { a: value.a / 255 } : {}),
+  }
+}
+
 export default class DelirValueInput extends React.PureComponent<DelirValueInputProps, any> {
   public state = {
     value: this.props.value,
@@ -100,7 +109,11 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
               </button>
               <ChromePicker
                 ref={this.ref.colorPicker}
-                color={value ? '#000' : ((value as unknown) as Delir.Values.ColorRGB | Delir.Values.ColorRGBA)}
+                color={
+                  value
+                    ? '#000'
+                    : toReactColorValue((value as unknown) as Delir.Values.ColorRGB | Delir.Values.ColorRGBA)
+                }
                 disableAlpha={descriptor.type === 'COLOR_RGB'}
               />
             </Dropdown>
@@ -257,7 +270,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
         const { colorPicker } = this.ref
         // FIXME: Use onChange handler argument
         const rgba = (colorPicker.current!.state as any).rgb
-        this.props.onChange(descriptor, new Delir.Values.ColorRGBA(rgba.r, rgba.g, rgba.b, rgba.a))
+        this.props.onChange(descriptor, new Delir.Values.ColorRGBA(rgba.r, rgba.g, rgba.b, rgba.a * 255))
         break
       }
 

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 import { Asset, Clip, Composition, Effect, Keyframe, Layer, Project } from './Entity'
-import { AssetPointer, ColorRGB, ColorRGBA, Expression } from './Values'
+import { AssetPointer, ColorRGB, ColorRGBA, Expression, Shape } from './Values'
 
 const typeMap = {
   'entity:Asset': Asset,
@@ -15,6 +15,7 @@ const typeMap = {
   'value:ColorRGB': ColorRGB,
   'value:ColorRGBA': ColorRGBA,
   'value:Expression': Expression,
+  'value:Shape': Shape,
 }
 
 export const serializeEntity = (node: any): any => {

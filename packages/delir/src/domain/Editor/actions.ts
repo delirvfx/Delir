@@ -19,6 +19,7 @@ export const EditorActions = actions('Editor', {
   renderDestinate: action<{
     compositionId: string
     ignoreMissingEffect: boolean
+    path: string
   }>(),
   updateProcessingState: action<{ stateText: string }>(),
   addMessage: action<{

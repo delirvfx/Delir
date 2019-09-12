@@ -1,26 +1,26 @@
-import { Asset } from '../Entity'
+import { Asset } from '../../Entity'
 
 export default class AssetProxy {
   get id(): string {
-    return this._asset.id
+    return this.asset.id
   }
 
   /**
    * Asset file extension (without `.` prefix)
    */
   get fileType(): string {
-    return this._asset.fileType
+    return this.asset.fileType
   }
 
   get name(): string {
-    return this._asset.name
+    return this.asset.name
   }
 
   get path(): string {
-    return this._asset.path
+    return this.asset.path
   }
 
-  constructor(private _asset: Asset) {
+  constructor(private asset: Asset) {
     Object.seal(this)
   }
 }

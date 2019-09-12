@@ -59,7 +59,11 @@ const layer4 = new Delir.Entity.Layer({
 const layer5 = new Delir.Entity.Layer({
   name: 'VERY CUTE 🐰-CHAN',
 })
-;[layer5, layer4, layer3, layer2, layer1].forEach(layer => {
+
+const layer0 = new Delir.Entity.Layer({
+  name: 'Shape up',
+})
+;[layer5, layer4, layer3, layer2, layer1, layer0].forEach(layer => {
   composition.addLayer(layer)
 })
 
@@ -277,6 +281,33 @@ const videoClip = assign(
   },
 )
 
+const shapeClip = assign(
+  new Delir.Entity.Clip({
+    renderer: 'shape',
+    placedFrame: 0,
+    durationFrames: 200,
+  }),
+  {
+    keyframes: {
+      shape: [
+        new Delir.Entity.Keyframe({
+          value:
+            'M146.38,2.26l44.34,89.84l0.23,0.47l0.52,0.08l99.14,14.41l-71.74,69.93l-0.38,0.37l0.09,0.52l16.94,98.74l-88.68-46.62' +
+            'l-0.47-0.24l-0.47,0.24l-88.68,46.62l16.94-98.74l0.09-0.52l-0.38-0.37L2.15,107.05l99.14-14.41l0.52-0.08l0.23-0.47L146.38,2.26' +
+            ' M146.38,0l-45.23,91.66L0,106.35l73.19,71.34L55.91,278.44l90.47-47.56l90.47,47.56L219.57,177.7l73.19-71.34l-101.15-14.7' +
+            'L146.38,0L146.38,0z',
+          frameOnClip: 0,
+        }),
+        new Delir.Entity.Keyframe({
+          value: 'M99.13,2l97.4,168.7H1.73L99.13,2 M99.13,0L0,171.7h198.26L99.13,0L99.13,0z',
+          frameOnClip: 100,
+        }),
+      ],
+    },
+  },
+)
+
+layer0.addClip(shapeClip)
 layer1.addClip(adjustmentClip)
 layer2.addClip(textClip)
 layer3.addClip(audioClip)

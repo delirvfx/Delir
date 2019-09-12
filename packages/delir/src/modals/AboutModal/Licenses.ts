@@ -171,6 +171,10 @@ export const dependencies = [
         "url": "https://github.com/webpack-contrib/file-loader"
     },
     {
+        "name": "flubber",
+        "url": "https://github.com/veltman/flubber#readme"
+    },
+    {
         "name": "font-manager",
         "url": "https://github.com/devongovett/font-manager"
     },
@@ -337,6 +341,10 @@ export const dependencies = [
     {
         "name": "stylelint-config-standard",
         "url": "https://www.npmjs.com/package/stylelint-config-standard"
+    },
+    {
+        "name": "svgpath",
+        "url": "https://www.npmjs.com/package/svgpath"
     },
     {
         "name": "ts-jest",

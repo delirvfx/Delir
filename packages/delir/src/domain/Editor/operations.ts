@@ -110,12 +110,27 @@ export const changeActiveParam = operation((context, { target }: { target: Param
   context.dispatch(EditorActions.changeActiveParam, { target })
 })
 
-export const renderDestinate = operation((context, arg: { compositionId: string }) => {
+export const renderDestinate = operation(async (context, arg: { compositionId: string }) => {
   const preference = context.getStore(PreferenceStore).getPreferences()
+
+  // TODO: View側で聞いてくれ
+  const path = await remote.dialog.showSaveDialog({
+    title: 'Destinate',
+    buttonLabel: 'Render',
+    filters: [
+      {
+        name: 'mp4',
+        extensions: ['mp4'],
+      },
+    ],
+  })
+
+  if (path.canceled || !path.filePath) return
 
   context.dispatch(EditorActions.renderDestinate, {
     compositionId: arg.compositionId,
     ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
+    path: path.filePath,
   })
 })
 
