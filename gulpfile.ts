@@ -307,6 +307,7 @@ export function compileRendererJs(done) {
         new ForkTsCheckerWebpackPlugin({
           tsconfig: join(paths.src.frontend, 'tsconfig.json'),
         }),
+        new webpack.IgnorePlugin({ resourceRegExp: /@microsoft\/typescript-etw/, contextRegExp: /typescript/ }),
         ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
