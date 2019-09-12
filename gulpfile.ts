@@ -270,7 +270,7 @@ export function compileRendererJs(done) {
                 loader: 'css-loader',
                 options: {
                   modules: {
-                    localIdentName: __DEV__ ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]',
+                    localIdentName: __DEV__ ? '[path][name]__[local]--[hash:base64:5]' : '[local]--[hash:base64:5]',
                   },
                 },
               },
