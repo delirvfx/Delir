@@ -2997,10 +2997,10 @@ array.prototype.flatmap@^1.2.1:
     es-abstract "^1.10.0"
     function-bind "^1.1.1"
 
-arraybuffer-to-buffer@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/arraybuffer-to-buffer/-/arraybuffer-to-buffer-0.0.5.tgz#e9674a7c043401d745276d91f08c702ddc90ecfb"
-  integrity sha512-0trREOEceZLcLWDwAStIoEARDLXw8OZsUgot15FQkHT+ey6MG54yt4aWWsAaZfI55BDEIeAHd2Ua7K3I1pwlIQ==
+arraybuffer-to-buffer@0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/arraybuffer-to-buffer/-/arraybuffer-to-buffer-0.0.7.tgz#d621634aab1010bbebbb4970f5f78f4b2de7d70f"
+  integrity sha512-WAIA2Mq+KLJ7Ua40KD6zMshvSsJbnXRuVG0/MNEIPhIMEWRkcmLMcQvx0OkAeMIZi2jHJOXxK9ZqVJ+A+Z6knw==
 
 arrify@^1.0.0, arrify@^1.0.1:
   version "1.0.1"
