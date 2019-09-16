@@ -10,7 +10,7 @@
     },
     "devDependencies": {
         "@delirvfx/core-test-helper": "*",
-        "@storybook/addon-knobs": "5.1.11",
+        "@storybook/addon-knobs": "5.2.0",
         "@storybook/react": "5.1.10",
         "@types/classnames": "2.2.9",
         "@types/electron": "1.6.10",
