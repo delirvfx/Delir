@@ -50,7 +50,7 @@
     "style-loader": "1.0.0",
     "stylelint": "10.1.0",
     "stylelint-config-rational-order": "0.1.2",
-    "stylelint-config-standard": "18.3.0",
+    "stylelint-config-standard": "19.0.0",
     "ts-loader": "6.0.4",
     "ts-node": "8.3.0",
     "tslint": "5.19.0",
