@@ -11,7 +11,7 @@
     "devDependencies": {
         "@delirvfx/core-test-helper": "*",
         "@storybook/addon-knobs": "5.2.1",
-        "@storybook/react": "5.1.10",
+        "@storybook/react": "5.2.1",
         "@types/classnames": "2.2.9",
         "@types/electron": "1.6.10",
         "@types/fs-extra": "8.0.0",
