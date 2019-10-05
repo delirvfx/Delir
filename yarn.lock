@@ -12190,10 +12190,10 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.2.1, rc@^1.2.7, rc@^1.2.8:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-re-resizable@6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/re-resizable/-/re-resizable-6.0.0.tgz#84258f098b0dde214a39ca6d9ca9959aeefbc26d"
-  integrity sha512-RTrnhbGgYyZ4hTc6db4JeMnRfmloEPWtuYaXZEa2PRaEC4mreWNFnZtMVsHil3z3iX+WchD+da8BLlTJBcstMA==
+re-resizable@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/re-resizable/-/re-resizable-6.1.0.tgz#ba4ece505b48f05691446d57837151349d7575e8"
+  integrity sha512-Jj9zdYW6SnUto8pmH4b/3Kms/PKPv9CuWE70W1IuUIR1HlrEibgsqhbUe8BYDRBTuagH1gav09806k7TieUeSA==
   dependencies:
     fast-memoize "^2.5.1"
 
@@ -12370,12 +12370,12 @@ react-popper@^1.3.3:
     typed-styles "^0.0.7"
     warning "^4.0.2"
 
-react-rnd@10.1.0:
-  version "10.1.0"
-  resolved "https://registry.yarnpkg.com/react-rnd/-/react-rnd-10.1.0.tgz#8bf938f8d454e7b37f566309d4c591b9a5414dfc"
-  integrity sha512-lEuPyY2KKWpU872l2zW/ya6aUIztX77nXkvpjtYugvN5pR8cONCyfjP9kuIiLB58pep9zD5Nf9zutUm/WZ8F4g==
+react-rnd@10.1.1:
+  version "10.1.1"
+  resolved "https://registry.yarnpkg.com/react-rnd/-/react-rnd-10.1.1.tgz#4f4d9d28c46a6060acb64600df7a88490862a324"
+  integrity sha512-KwNUbNd4Kg2DTLdw/Eb8dSC3T5nMRQIRfyyVjdoLT85hKXpeCkMRb2zo4BHCzkgdgCbFGgYLDmj1qRH5DUkTGA==
   dependencies:
-    re-resizable "6.0.0"
+    re-resizable "6.1.0"
     react-draggable "4.0.3"
     tslib "1.10.0"
 
