@@ -152,6 +152,9 @@ export default decorate<OwnProps>(
 
     private handleDragEnd: DraggableEventHandler = (e, drag) => {
       const { clip } = this.props
+
+      this.props.executeOperation(EditorOps.clearDragEntity)
+
       this.props.emitClipDragEnd({
         nextX: drag.x,
         originalPlacedFrame: clip.placedFrame,
