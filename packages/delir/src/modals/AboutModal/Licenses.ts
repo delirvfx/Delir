@@ -324,7 +324,7 @@ export const dependencies = [
     },
     {
         "name": "style-loader",
-        "url": "https://github.com/webpack-contrib/style-loader#readme"
+        "url": "https://github.com/webpack-contrib/style-loader"
     },
     {
         "name": "stylelint",
