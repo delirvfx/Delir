@@ -11,7 +11,10 @@ import * as HistoryOps from '../History/operations'
 import RendererStore from '../Renderer/RendererStore'
 import { ProjectActions } from './actions'
 import ProjectStore from './ProjectStore'
+import { getProject } from './selectors'
 
+import { HistoryGroup } from '../History/HistoryGroup'
+import { Command } from '../History/HistoryStore'
 import { AddAssetCommand } from './Commands/AddAssetCommand'
 import { AddClipCommand } from './Commands/AddClipCommand'
 import { AddEffectIntoClipCommand } from './Commands/AddEffectIntoClipCommand'
@@ -205,26 +208,29 @@ export const addClip = operation(
 
 export const addClipWithAsset = operation(
   async (
-    context,
+    { executeOperation, getStore, dispatch },
     {
       targetLayerId,
-      asset,
+      assetId,
       placedFrame = 0,
       durationFrames = 100,
     }: {
       targetLayerId: string
-      asset: Delir.Entity.Asset
+      assetId: string
       placedFrame?: number
       durationFrames?: number
     },
   ) => {
+    const asset = getProject(getStore)!.findAsset(assetId)!
+    if (!asset) return
+
     const processablePlugin = Delir.Engine.Renderers.getAvailableRenderers().filter(entry =>
       entry.handlableFileTypes.includes(asset.fileType),
     )[0]
 
     // TODO: Support selection
     if (!processablePlugin) {
-      context.executeOperation(EditorOps.notify, {
+      executeOperation(EditorOps.notify, {
         message: `plugin not available for \`${asset.fileType}\``,
         title: '😢 Supported plugin not available',
         level: 'info',
@@ -255,19 +261,19 @@ export const addClipWithAsset = operation(
       },
     )
 
-    const project = context.getStore(ProjectStore).getProject()!
+    const project = getStore(ProjectStore).getProject()!
     const parentComposition = project.findLayerOwnerComposition(targetLayerId)!
 
-    await context.executeOperation(HistoryOps.pushHistory, {
+    await executeOperation(HistoryOps.pushHistory, {
       command: new AddClipCommand(parentComposition.id, targetLayerId, newClip),
     })
 
-    context.dispatch(ProjectActions.addClip, {
+    dispatch(ProjectActions.addClip, {
       targetLayerId: targetLayerId,
       newClip,
     })
 
-    await context.executeOperation(EditorOps.seekPreviewFrame, {})
+    await executeOperation(EditorOps.seekPreviewFrame, {})
   },
 )
 
@@ -464,26 +470,40 @@ export const moveClipToLayer = operation(
   async (
     context,
     {
-      clipId,
-      destLayerId,
+      baseClipId,
+      clipIds,
+      moveDestLayerId,
     }: {
-      clipId: string
-      destLayerId: string
+      baseClipId: string
+      clipIds: string[]
+      moveDestLayerId: string
     },
   ) => {
     const project = context.getStore(ProjectStore).getProject()!
-    const sourceLayer = project.findClipOwnerLayer(clipId)!
-    const parentComposition = project.findLayerOwnerComposition(sourceLayer.id)!
+    const composition = project.findLayerOwnerComposition(moveDestLayerId)!
+    const { layers } = composition
 
-    await context.executeOperation(HistoryOps.pushHistory, {
-      command: new MoveClipToLayerCommand(sourceLayer.id, destLayerId, clipId, parentComposition.id),
-    })
+    const baseLayerIndex = layers.findIndex(layer => !!layer.findClip(baseClipId))
+    const moveDestLayerIndex = layers.findIndex(layer => layer.id === moveDestLayerId)
+    const layerMovement = moveDestLayerIndex - baseLayerIndex
 
-    context.dispatch(ProjectActions.moveClipToLayer, {
-      destLayerId: destLayerId,
-      clipId: clipId,
-    })
+    if (layerMovement === 0) return
 
+    const commands: Command[] = []
+    for (const clipId of clipIds) {
+      const sourceLayer = project.findClipOwnerLayer(clipId)!
+      const sourceLayerIndex = layers.findIndex(layer => layer.id === sourceLayer.id)
+      const destLayer = layers[Math.max(0, Math.min(sourceLayerIndex + layerMovement, layers.length - 1))]
+
+      commands.push(new MoveClipToLayerCommand(sourceLayer.id, destLayer.id, clipId, composition.id))
+
+      context.dispatch(ProjectActions.moveClipToLayer, {
+        destLayerId: destLayer.id,
+        clipId: clipId,
+      })
+    }
+
+    await context.executeOperation(HistoryOps.pushHistory, { command: new HistoryGroup(commands) })
     await context.executeOperation(EditorOps.seekPreviewFrame, {})
   },
 )

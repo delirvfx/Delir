@@ -367,6 +367,10 @@ export const dependencies = [
         "url": "https://www.typescriptlang.org/"
     },
     {
+        "name": "use-immer",
+        "url": "https://github.com/mweststrate/use-immer#readme"
+    },
+    {
         "name": "uuid",
         "url": "https://www.npmjs.com/package/uuid"
     },

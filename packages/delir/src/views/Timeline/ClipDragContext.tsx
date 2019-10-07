@@ -1,6 +1,6 @@
 import React from 'react'
 
-export type EmitClipDragHandler = (arg: { nextX: number; originalPlacedFrame: number }) => void
+export type EmitClipDragHandler = (arg: { nextX: number; nextY: number; originalPlacedFrame: number }) => void
 
 export type EmitClipResizeHandler = (arg: { nextX: number; originalPlacedFrame: number; deltaWidth: number }) => void
 
