@@ -48,9 +48,8 @@
     "sass": "1.22.12",
     "sass-loader": "8.0.0",
     "style-loader": "1.0.0",
-    "stylelint": "10.1.0",
-    "stylelint-config-rational-order": "0.1.2",
-    "stylelint-config-standard": "18.3.0",
+    "sass-lint": "1.13.1",
+    "sass-lint-auto-fix": "0.17.0",
     "ts-loader": "6.0.4",
     "ts-node": "8.3.0",
     "tslint": "5.19.0",
@@ -77,8 +76,9 @@
       "tslint --fix",
       "git add"
     ],
-    "*.{sass,scss,css}": [
-      "stylelint",
+    "*.{sass,scss}": [
+      "sass-lint-auto-fix",
+      "sass-lint -vq",
       "git add"
     ]
   },

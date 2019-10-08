@@ -2,19 +2,19 @@
 @import '../../assets/styles/mixins'
 
 .AboutModal
-  width: 800px
-  max-width: 100%
-  min-width: 400px
-  padding: 24px 24px 16px
   align-self: center
-  font-size: 16px
-
+  width: 800px
+  min-width: 400px
+  max-width: 100%
+  padding: 24px 24px 16px
   background-color: var(--background)
 
+  font-size: 16px
+
   h1
-    border-bottom: 1px solid white
-    padding-bottom: 8px
     margin-bottom: 16px
+    padding-bottom: 8px
+    border-bottom: 1px solid #ffffff
     font-size: 32px
 
     small
@@ -25,9 +25,9 @@
     line-height: 32px
 
     &::after
-      content: ''
       display: table
       clear: both
+      content: ''
 
   dt
     width: 96px
@@ -44,10 +44,10 @@
 .tab
   display: inline-block
   padding: 4px 0
-  border-bottom: 1px solid transparent
-  transition-property: border-bottom
   transition-duration: $animate-bgcolor-duration
+  transition-property: border-bottom
   transition-timing-function: $animate-function
+  border-bottom: 1px solid transparent
 
   + .tab
     margin-left: 16px

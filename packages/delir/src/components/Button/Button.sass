@@ -2,15 +2,15 @@
 
 .Button
   padding: 4px 16px
+  transition: background-color $animate-bgcolor-duration $animate-function
+  border: 0
+  border-radius: 3px
+  outline: none
+  background-color: #eee
   font-size: 12px
   line-height: 16px
-  background-color: #eee
-  border-radius: 3px
-  border: none
-  outline: none
-  cursor: default
 
-  transition: background-color $animate-bgcolor-duration $animate-function
+  cursor: default
 
   & + &
     margin-left: 8px
@@ -20,8 +20,8 @@
 
 
 .Button--primary
-  color: #fff
   background-color: #0081eb
+  color: #fff
 
   &:hover
     background-color: darken(#0081eb, 10%)
