@@ -30,7 +30,7 @@
     "electron-devtools-installer": "2.2.4",
     "electron-icon-maker": "0.0.4",
     "electron-rebuild": "1.8.6",
-    "file-loader": "4.1.0",
+    "file-loader": "4.2.0",
     "fork-ts-checker-webpack-plugin": "1.5.0",
     "fs-extra": "8.1.0",
     "gulp": "4.0.2",
