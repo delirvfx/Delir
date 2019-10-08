@@ -1,10 +1,12 @@
 import * as Delir from '@delirvfx/core'
 import { operation } from '@fleur/fleur'
+import archiver from 'archiver';
 import { remote } from 'electron'
 import fs from 'fs-extra'
 import _ from 'lodash'
 import MsgPack from 'msgpack5'
 import path from 'path'
+import uuid from 'uuid'
 import { SpreadType } from '../../utils/Spread'
 
 import PreferenceStore from '../Preference/PreferenceStore'
@@ -12,6 +14,7 @@ import { migrateProject } from '../Project/models'
 import RendererStore from '../Renderer/RendererStore'
 import EditorStore from './EditorStore'
 
+import { getProject } from '../Project/selectors'
 import { EditorActions } from './actions'
 import t from './operations.i18n'
 import { ClipboardEntry, ParameterTarget } from './types'
@@ -221,6 +224,38 @@ export const autoSaveProject = operation(async context => {
     level: 'info',
     timeout: 2000,
   })
+})
+
+export const exportProjectPack = operation(async ({ getStore }, {dist}: {dist: string}) => {
+  const project = getProject(getStore)
+  if (!project) return
+
+  // const assetMap = project.assets.reduce((accum, assets) => {
+  //   accum[assets.id] = assets.path
+  // }, {})
+
+  const tmpDir = path.join(remote.app.getPath('temp'), `delirpp-${uuid.v4()}`)
+  await fs.mkdirp(tmpDir)
+  await Promise.all(
+    project.assets.map(async asset => {
+      const assetPath = /^file:\/\/(.*)$/.exec(asset.path)?.[1]
+      if (!assetPath) return
+      const fileName = path.basename(assetPath[1])
+
+      await fs.copyFile(assetPath[1], path.join(tmpDir))
+    }),
+  )
+
+  // TODO: remap assets in project
+
+  await fs.writeFile(path.join(tmpDir, 'project.msgpack'), (MsgPack().encode({
+    project: Delir.Exporter.serializeProject(project),
+  }) as any) as Buffer)
+
+  const archive = archiver('zip', {zlib:{level:9}})
+  archive.pipe(fs.createWriteStream(dist))
+  archive.directory(tmpDir, false)
+  await archive.finalize()
 })
 
 export const changePreferenceOpenState = operation((context, { open }: { open: boolean }) => {

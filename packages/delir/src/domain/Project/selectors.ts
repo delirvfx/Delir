@@ -1,6 +1,8 @@
 import { selector } from '@fleur/fleur'
 import ProjectStore from './ProjectStore'
 
+export const getProject = selector(getState => getState(ProjectStore).project)
+
 export const getClipById = selector((getState, clipId: string) => {
   const { project } = getState(ProjectStore)
   if (!project) return []
