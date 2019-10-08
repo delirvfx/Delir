@@ -1,31 +1,31 @@
 .DragNumberInput
-  box-sizing: border-box
-
   display: inline-block
+
   width: 100%
-  padding: 0 4px
   min-width: 1em
   min-height: 1em
+  padding: 0 4px
+  transition: border-bottom-color .1s
 
-  border: none
+  border: 0
   border-bottom: 1px dotted #ff7a00
 
-  font-family: inherit
-  background-color: transparent
-  text-align: right
   outline: none
-
+  background-color: transparent
   color: #ff7a00
-  transition: border-bottom-color .1s
+  font-family: inherit
+
+  text-align: right
   cursor: ew-resize
+  box-sizing: border-box
 
   &[readonly]
-    color: var(--text-subbed)
-    cursor: default
-
     border-bottom: 1px solid transparent
-    user-select: none
+    color: var(--text-subbed)
+
     cursor: default
+    cursor: default
+    user-select: none
 
 :global(.platform-win)
   .DragNumberInput
