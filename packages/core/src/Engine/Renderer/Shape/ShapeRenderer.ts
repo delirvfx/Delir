@@ -82,9 +82,11 @@ export class ShapeRenderer implements IRenderer<Params> {
     this.svgRoot.setAttribute('viewBox', `0 0 ${context.width} ${context.height}`)
     this.svgRoot.setAttribute('width', `${context.width}`)
     this.svgRoot.setAttribute('height', `${context.height}`)
+    this.svgRoot.style.transform = 'translateZ(0)'
+    document.body.appendChild(this.svgRoot)
 
     this.pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    this.pathEl.setAttribute('shape-rendering', 'optimizeSpeed')
+    this.pathEl.setAttribute('shape-rendering', 'geometricPrecision')
     this.svgRoot.appendChild(this.pathEl)
   }
 
@@ -102,7 +104,9 @@ export class ShapeRenderer implements IRenderer<Params> {
     const url = URL.createObjectURL(blob)
     const img = new Image()
     img.src = url
+    console.time('Decode');
     await img.decode()
+    console.timeEnd('Decode');
     context.destCanvas.getContext('2d')!.drawImage(img, 0, 0)
 
     URL.revokeObjectURL(url)

@@ -80,6 +80,7 @@ export default decorate<OwnProps>(
                   [s.image]: clip.renderer === 'image',
                   [s.adjustment]: clip.renderer === 'adjustment',
                   [s.p5js]: clip.renderer === 'p5js',
+                  [s.shape]: clip.renderer === 'shape',
                   [s.hasError]: hasError,
                 })}
                 style={style}
