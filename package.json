@@ -50,7 +50,7 @@
     "style-loader": "1.0.0",
     "sass-lint": "1.13.1",
     "sass-lint-auto-fix": "0.17.0",
-    "ts-loader": "6.0.4",
+    "ts-loader": "6.2.0",
     "ts-node": "8.3.0",
     "tslint": "5.19.0",
     "tslint-config-prettier": "1.18.0",
