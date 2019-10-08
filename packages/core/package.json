@@ -15,7 +15,7 @@
         "@types/audiobuffer-to-wav": "1.0.0",
         "@types/jest": "24.0.18",
         "@types/joi": "14.3.3",
-        "@types/lodash": "4.14.123",
+        "@types/lodash": "4.14.142",
         "@types/semver": "6.0.2",
         "@types/uuid": "3.4.5",
         "jest": "24.9.0",
