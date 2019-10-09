@@ -1,6 +1,5 @@
 import { configure } from '@storybook/react'
+import '../src/assets/styles/style.sass'
+import './patch.sass'
 
-configure(() => {
-  const req = require.context('../src', true, /\.stories\.tsx$/)
-  req.keys().forEach(req)
-}, module)
+configure(require.context('../src', true, /\.stories\.tsx$/), module)

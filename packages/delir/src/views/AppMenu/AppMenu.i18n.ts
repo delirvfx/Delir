@@ -14,8 +14,8 @@ export default I18n({
       openProject: 'プロジェクトを開く',
       save: '保存',
       saveAs: '別名で保存',
-      importProject: 'パッケージからプロジェクトを開く',
-      exportProject: 'プロジェクトをパッケージ',
+      importProjectPack: 'パッケージからプロジェクトを開く',
+      exportProjectPack: 'プロジェクトをパッケージ',
       rendering: 'レンダリング',
     },
     edit: {
@@ -81,8 +81,8 @@ export default I18n({
       openProject: 'Open',
       save: 'Save',
       saveAs: 'Save as ...',
-      importProject: 'Import project from .delirpp',
-      exportProject: 'Export project as package',
+      importProjectPack: 'Import project from .delirpp',
+      exportProjectPack: 'Export project as package',
       rendering: 'Rendering',
     },
     edit: {

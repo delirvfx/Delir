@@ -115,12 +115,12 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/storybook__react"
     },
     {
-        "name": "@types/typescript",
-        "url": "https://www.npmjs.com/package/@types/typescript"
+        "name": "@types/styled-components",
+        "url": "https://www.npmjs.com/package/@types/styled-components"
     },
     {
-        "name": "@types/unzip",
-        "url": "https://www.npmjs.com/package/@types/unzip"
+        "name": "@types/typescript",
+        "url": "https://www.npmjs.com/package/@types/typescript"
     },
     {
         "name": "@types/unzipper",
@@ -181,6 +181,10 @@ export const dependencies = [
     {
         "name": "electron-rebuild",
         "url": "https://github.com/electron/electron-rebuild"
+    },
+    {
+        "name": "fast-glob",
+        "url": "https://www.npmjs.com/package/fast-glob"
     },
     {
         "name": "file-loader",
@@ -283,6 +287,10 @@ export const dependencies = [
         "url": "https://github.com/substack/parse-color"
     },
     {
+        "name": "polished",
+        "url": "https://polished.js.org"
+    },
+    {
         "name": "prettier",
         "url": "https://prettier.io"
     },
@@ -349,6 +357,10 @@ export const dependencies = [
     {
         "name": "style-loader",
         "url": "https://github.com/webpack-contrib/style-loader"
+    },
+    {
+        "name": "styled-components",
+        "url": "https://styled-components.com"
     },
     {
         "name": "ts-jest",

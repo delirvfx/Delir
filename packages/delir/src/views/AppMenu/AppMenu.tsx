@@ -6,11 +6,13 @@ import React from 'react'
 import * as Platform from '../../utils/platform'
 import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
+import { ModalMounterProps, withModalMounter } from '../../components/ModalOwner/ModalOwner'
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
-import * as AboutModal from '../../modals/AboutModal'
+import {AboutModal} from '../../modals/AboutModal'
+import { ImportPackModal, ImportPackResponse } from '../../modals/ImportPackModal/ImportPackModal'
 
 import t from './AppMenu.i18n'
 
@@ -18,7 +20,7 @@ interface State {
   devToolsFocused: boolean
 }
 
-type Props = ReturnType<typeof mapStoresToProps> & ContextProp
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp & ModalMounterProps
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
   editor: getStore(EditorStore).getState(),
@@ -27,6 +29,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 
 export default withFleurContext(
   connectToStores([EditorStore, RendererStore], mapStoresToProps)(
+    withModalMounter(
     class AppMenu extends React.Component<Props, State> {
       public state: State = {
         devToolsFocused: false,
@@ -160,35 +163,11 @@ export default withFleurContext(
               },
               { type: 'separator' },
               {
-                label: t(t.k.file.importProject),
-                click: async () => {
-                  const source = await remote.dialog.showOpenDialog({
-                    title: t(t.k.modals.importProject.title),
-                    buttonLabel: t(t.k.modals.importProject.open),
-                    filters: [
-                      {
-                        name: 'Delir project package',
-                        extensions: ['delirpp'],
-                      },
-                    ],
-                    properties: ['openFile'],
-                  })
-
-                  if (!source.filePaths?.[0]) return
-
-                  const dist = await remote.dialog.showOpenDialog({
-                    title: t(t.k.modals.importProject.titleExtract),
-                    buttonLabel: t(t.k.modals.importProject.extract),
-                    properties: ['openDirectory', 'createDirectory'],
-                  })
-
-                  if (!dist.filePaths?.[0]) return
-
-                  executeOperation(EditorOps.importProjectPack, { src: source.filePaths[0], dist: dist.filePaths[0] })
-                },
+                label: t(t.k.file.importProjectPack),
+                click: this.handleImportProjectPack,
               },
               {
-                label: t(t.k.file.exportProject),
+                label: t(t.k.file.exportProjectPack),
                 click: async () => {
                   const path = await remote.dialog.showSaveDialog({
                     title: t(t.k.modals.exportProject.title),
@@ -365,6 +344,35 @@ export default withFleurContext(
         this.props.executeOperation(EditorOps.openProject, { path: path.filePaths[0] })
       }
 
+      private handleImportProjectPack = async () => {
+        const {src, dist, cancelled} = await this.props.mountModal<ImportPackResponse>(resolve => <ImportPackModal onClose={resolve} />)
+        if (cancelled) return
+
+        // const source = await remote.dialog.showOpenDialog({
+        //   title: t(t.k.modals.importProject.title),
+        //   buttonLabel: t(t.k.modals.importProject.open),
+        //   filters: [
+        //     {
+        //       name: 'Delir project package',
+        //       extensions: ['delirpp'],
+        //     },
+        //   ],
+        //   properties: ['openFile'],
+        // })
+
+        // if (!source.filePaths?.[0]) return
+
+        // const dist = await remote.dialog.showOpenDialog({
+        //   title: t(t.k.modals.importProject.titleExtract),
+        //   buttonLabel: t(t.k.modals.importProject.extract),
+        //   properties: ['openDirectory', 'createDirectory'],
+        // })
+
+        // if (!dist.filePaths?.[0]) return
+
+        // executeOperation(EditorOps.importProjectPack, { src: source.filePaths[0], dist: dist.filePaths[0] })
+      }
+
       private handleOpenPreference = () => {
         this.props.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
       }
@@ -389,5 +397,5 @@ export default withFleurContext(
         uiActionRedo(this.props.executeOperation)
       }
     },
-  ),
-)
+  )
+))

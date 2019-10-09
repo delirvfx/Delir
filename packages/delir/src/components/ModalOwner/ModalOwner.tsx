@@ -2,13 +2,13 @@ import React, { ComponentClass, createContext, FC, ReactNode, useCallback, useCo
 import { Fragment } from 'react'
 import { useMemo } from 'react'
 import { animated, useTransition } from 'react-spring'
+import styled from 'styled-components'
 import { useImmer } from 'use-immer'
 import uuid from 'uuid'
-import { MountTransition } from '../MountTransition/MountTransition'
 import s from './ModalOwner.sass'
 
 interface MountModal {
-  <T>(arg: (arg: T) => ReactNode): PromiseLike<T> & { abort: () => void }
+  <T>(arg: (resolver: (result: T) => void) => ReactNode): PromiseLike<T> & { promise: Promise<T>; abort: () => void }
 }
 
 export interface ModalMounterProps {
@@ -16,6 +16,17 @@ export interface ModalMounterProps {
 }
 
 const context = createContext<MountModal | null>(null)
+
+const ModalWrapper = styled.div`
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+`
 
 export const useModalMounter = () => {
   const mountModal = useContext(context)!
@@ -52,13 +63,14 @@ export const ModalOwner: React.FC = ({ children }: { children: (modals: ReactNod
 
     return {
       abort: () => unmount(),
+      promise: promise as Promise<any>,
       then: (fullfiled: any): any => {
         return promise.then(fullfiled)
       },
     }
   }, [])
 
-  const modalsArray = useMemo(() => Object.values(modals), [modals])
+  const modalsArray = useMemo(() => Object.entries(modals), [modals])
   const transitions = useTransition(modalsArray.length > 0, null, {
     from: {
       backdropFilter: 'blur(0px)',
@@ -83,7 +95,9 @@ export const ModalOwner: React.FC = ({ children }: { children: (modals: ReactNod
       {transitions.map(({ item, props }) =>
         item ? (
           <animated.div className={s.root} style={props}>
-            {modalsArray}
+            {modalsArray.map(([key, modal]) => (
+              <ModalWrapper key={key}>{modal}</ModalWrapper>
+            ))}
           </animated.div>
         ) : null,
       )}

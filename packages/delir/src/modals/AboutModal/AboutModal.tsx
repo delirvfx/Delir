@@ -24,7 +24,7 @@ export const show = (): void => {
   setTimeout(() => modal.show(), 1000)
 }
 
-const AboutModal = (props: { onClosed: () => void }) => {
+export const AboutModal = (props: { onClosed: () => void }) => {
   return (
     <div className={s.AboutModal}>
       <Tabs>
