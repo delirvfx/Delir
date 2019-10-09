@@ -10,10 +10,12 @@ export default I18n({
     },
     file: {
       label: 'ファイル',
-      openProject: 'プロジェクトを開く',
       newProject: '新規プロジェクト',
+      openProject: 'プロジェクトを開く',
       save: '保存',
       saveAs: '別名で保存',
+      importProject: 'パッケージからプロジェクトを開く',
+      exportProject: 'プロジェクトをパッケージ',
       rendering: 'レンダリング',
     },
     edit: {
@@ -43,6 +45,16 @@ export default I18n({
         title: '新しいファイルに保存',
         save: '保存',
       },
+      importProject: {
+        title: 'パッケージからプロジェクトを開く',
+        open: '開く',
+        titleExtract: 'プロジェクトの展開先を選択',
+        extract: '展開',
+      },
+      exportProject: {
+        title: 'プロジェクトパッケージを保存',
+        save: '保存',
+      },
       openProject: {
         title: 'プロジェクトを開く',
         confirm: '現在のプロジェクトを破棄してプロジェクトを開きますか？',
@@ -65,10 +77,12 @@ export default I18n({
     },
     file: {
       label: 'File',
-      openProject: 'Open',
       newProject: 'New Project',
+      openProject: 'Open',
       save: 'Save',
       saveAs: 'Save as ...',
+      importProject: 'Import project from .delirpp',
+      exportProject: 'Export project as package',
       rendering: 'Rendering',
     },
     edit: {
@@ -96,6 +110,16 @@ export default I18n({
     modals: {
       saveAs: {
         title: 'Save as ...',
+        save: 'Save',
+      },
+      importProject: {
+        title: 'Import project from .delirpp',
+        open: 'Open',
+        titleExtract: 'Select where to extract the project',
+        extract: 'Extract',
+      },
+      exportProject: {
+        title: 'Save project package',
         save: 'Save',
       },
       openProject: {

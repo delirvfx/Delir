@@ -35,6 +35,10 @@ export const dependencies = [
         "url": "https://github.com/storybookjs/storybook/tree/master/app/react"
     },
     {
+        "name": "@types/archiver",
+        "url": "https://www.npmjs.com/package/@types/archiver"
+    },
+    {
         "name": "@types/audiobuffer-to-wav",
         "url": "https://www.npmjs.com/package/@types/audiobuffer-to-wav"
     },
@@ -115,8 +119,20 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/typescript"
     },
     {
+        "name": "@types/unzip",
+        "url": "https://www.npmjs.com/package/@types/unzip"
+    },
+    {
+        "name": "@types/unzipper",
+        "url": "https://www.npmjs.com/package/@types/unzipper"
+    },
+    {
         "name": "@types/uuid",
         "url": "https://www.npmjs.com/package/@types/uuid"
+    },
+    {
+        "name": "archiver",
+        "url": "https://github.com/archiverjs/node-archiver"
     },
     {
         "name": "bezier-easing",
@@ -315,6 +331,14 @@ export const dependencies = [
         "url": "https://github.com/sass/dart-sass"
     },
     {
+        "name": "sass-lint",
+        "url": "https://github.com/sasstools/sass-lint"
+    },
+    {
+        "name": "sass-lint-auto-fix",
+        "url": "https://github.com/srowhani/sass-lint-auto-fix#README.md"
+    },
+    {
         "name": "sass-loader",
         "url": "https://github.com/webpack-contrib/sass-loader"
     },
@@ -325,18 +349,6 @@ export const dependencies = [
     {
         "name": "style-loader",
         "url": "https://github.com/webpack-contrib/style-loader"
-    },
-    {
-        "name": "stylelint",
-        "url": "https://stylelint.io"
-    },
-    {
-        "name": "stylelint-config-rational-order",
-        "url": "https://github.com/constverum/stylelint-config-rational-order"
-    },
-    {
-        "name": "stylelint-config-standard",
-        "url": "https://www.npmjs.com/package/stylelint-config-standard"
     },
     {
         "name": "ts-jest",
@@ -365,6 +377,10 @@ export const dependencies = [
     {
         "name": "typescript",
         "url": "https://www.typescriptlang.org/"
+    },
+    {
+        "name": "unzipper",
+        "url": "https://www.npmjs.com/package/unzipper"
     },
     {
         "name": "use-immer",
