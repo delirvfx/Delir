@@ -1,0 +1,20 @@
+{
+    "rules": {
+        "class-name-format": [2, {
+            "convention": "camelcase"
+        }],
+        "mixins-before-declarations": [0],
+        "mixin-name-format": [2, {
+            "allow-leading-underscore": false,
+            "convention": "camelcase"
+        }],
+        "no-ids": [0],
+        "no-duplicate-properties": [2],
+        "property-sort-order": [2, {
+            "order": 'smacss'
+        }],
+        "quotes": [2, {
+            "style": "single",
+        }],
+    }
+}

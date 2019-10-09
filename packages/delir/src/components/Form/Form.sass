@@ -21,31 +21,31 @@
           display: table-cell
 
     .formControl
-      position: relative
       display: inline-block
+      position: relative
 
       input, select
         display: inline-block
         padding: 4px
 
-        background-color: transparent
-        color: inherit
-        font-family: inherit
-        outline: none
-
-        border: none
+        transition: border-bottom-color .1s
+        border: 0
         border-bottom: 1px solid #aaa
         border-radius: 0
 
-        transition: border-bottom-color .1s
+        outline: none
+        background-color: transparent
+        color: inherit
+
+        font-family: inherit
 
         &:active, &:focus
           border-bottom-color: var(--color-theming)
 
         &[readonly]
           border-bottom: 1px solid transparent
-          user-select: none
           cursor: default
+          user-select: none
 
 
         &.invalid
@@ -54,31 +54,31 @@
 
           &.alert
             &::after
+              position: absolute
+
+              bottom: calc(-100% + 1.3rem + 2px)
+              left: 2px
+              border: 4px solid transparent
+
+              border-bottom-color: #fff
               content: ''
 
-              position: absolute
-              left: 2px
-              bottom: calc(-100% + 1.3rem + 2px)
-
-              border: 4px solid transparent
-              border-bottom-color: #fff
-
             &::before
-              content: attr(data-message)
-
               display: inline-block
+
+              position: absolute
+              bottom: calc(-100% + 2px)
+              left: 0
+
               width: auto
               padding: 2px
+              border-radius: 2px
 
-              position: absolute
-              left: 0
-              bottom: calc(-100% + 2px)
-
-              white-space: nowrap
+              background-color: #fff
 
               color: #000
-              background-color: #fff
-              border-radius: 2px
+              white-space: nowrap
+              content: attr(data-message)
 
           & + .unit
             display: inline-block
@@ -86,15 +86,15 @@
 
     .button
       padding: 4px 16px
-      font-size: 12px
-      background-color: #eeeeee
-      border: none
+      border: 0
       outline: none
+      background-color: #eee
+      font-size: 12px
       cursor: default
 
       &.primary
-        color: #fff
         background-color: #0081eb
+        color: #fff
 
       & + &
         margin-left: 8px

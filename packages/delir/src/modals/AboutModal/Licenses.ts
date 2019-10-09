@@ -324,7 +324,7 @@ export const dependencies = [
     },
     {
         "name": "style-loader",
-        "url": "https://github.com/webpack-contrib/style-loader#readme"
+        "url": "https://github.com/webpack-contrib/style-loader"
     },
     {
         "name": "stylelint",
@@ -365,6 +365,10 @@ export const dependencies = [
     {
         "name": "typescript",
         "url": "https://www.typescriptlang.org/"
+    },
+    {
+        "name": "use-immer",
+        "url": "https://github.com/mweststrate/use-immer#readme"
     },
     {
         "name": "uuid",

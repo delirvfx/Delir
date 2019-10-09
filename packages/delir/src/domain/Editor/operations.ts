@@ -21,7 +21,7 @@ import { ClipboardEntry, ParameterTarget } from './types'
 
 export type DragEntity =
   | { type: 'asset'; asset: Delir.Entity.Asset }
-  | { type: 'clip'; clip: SpreadType<Delir.Entity.Clip> }
+  | { type: 'clip'; baseClipId: string }
   | { type: 'clip-resizing'; clip: SpreadType<Delir.Entity.Clip> }
 
 //
@@ -97,6 +97,10 @@ export const changeActiveComposition = operation((context, { compositionId }: { 
   context.dispatch(EditorActions.changeActiveComposition, {
     compositionId,
   })
+})
+
+export const changeActiveLayer = operation(({ dispatch }, layerId: string) => {
+  dispatch(EditorActions.changeActiveLayer, { layerId })
 })
 
 export const addOrRemoveSelectClip = operation((context, args: { clipIds: string[] }) => {

@@ -21,7 +21,7 @@ import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
 
 import { KeyframeEditor } from '../KeyframeEditor'
-import { ClipsMediator } from './ClipsMediator'
+import { ClipDragMediator } from './ClipDragMediator'
 import { Gradations } from './Gradations'
 import { LayerLabelList } from './LayerLabelList'
 
@@ -195,7 +195,7 @@ export default withFleurContext(
                       onScroll={this.handleScrollTimeline}
                     >
                       {activeComp && (
-                        <ClipsMediator
+                        <ClipDragMediator
                           comp={activeComp}
                           scale={scale}
                           scrollLeft={timelineScrollLeft}
