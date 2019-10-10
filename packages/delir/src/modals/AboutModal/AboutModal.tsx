@@ -77,7 +77,7 @@ export const AboutModal = (props: { onClosed: () => void }) => {
           </div>
         </TabPanel>
       </Tabs>
-      <Button type="normal" className={s.close} onClick={props.onClosed}>
+      <Button kind="normal" className={s.close} onClick={props.onClosed}>
         {t(t.k.close)}
       </Button>
     </div>

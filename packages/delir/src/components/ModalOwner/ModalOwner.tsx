@@ -64,8 +64,8 @@ export const ModalOwner: React.FC = ({ children }: { children: (modals: ReactNod
     return {
       abort: () => unmount(),
       promise: promise as Promise<any>,
-      then: (fullfiled: any): any => {
-        return promise.then(fullfiled)
+      then: (fullfiled: any, rejected: any): any => {
+        return promise.then(fullfiled, rejected)
       },
     }
   }, [])

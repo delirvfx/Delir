@@ -26,7 +26,7 @@ export const normal = () => (
       footer={
         <>
           <Button>Cancel</Button>
-          <Button type={'primary'}>Continue</Button>
+          <Button kind="primary">Continue</Button>
         </>
       }
     >

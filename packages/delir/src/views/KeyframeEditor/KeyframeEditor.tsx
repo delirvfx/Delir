@@ -311,7 +311,7 @@ export const KeyframeEditor = withFleurContext(
               <span className={s.paramItemName}>{desc.label}</span>
               <div className={s.paramItemInput}>
                 {desc.type === 'CODE' ? (
-                  <Button type="normal" onClick={this.handleOpenScriptParamEditor}>
+                  <Button kind="normal" onClick={this.handleOpenScriptParamEditor}>
                     {t(t.k.editScriptParam)}
                   </Button>
                 ) : (

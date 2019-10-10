@@ -14,11 +14,11 @@ import { SpreadType } from '../../utils/Spread'
 
 import PreferenceStore from '../Preference/PreferenceStore'
 import { migrateProject } from '../Project/models'
-import RendererStore from '../Renderer/RendererStore'
-import EditorStore from './EditorStore'
-
 import { getProject } from '../Project/selectors'
+import RendererStore from '../Renderer/RendererStore'
 import { EditorActions } from './actions'
+import EditorStore from './EditorStore'
+import { NotificationTimeouts} from './models'
 import t from './operations.i18n'
 import { ClipboardEntry, ParameterTarget } from './types'
 
@@ -160,10 +160,11 @@ export const newProject = operation(async context => {
 })
 
 export const openProject = operation(async (context, { path }: { path: string }) => {
-  const projectMpk = await fs.readFile(path[0])
+  const projectMpk = await fs.readFile(path)
   const projectJson = MsgPack().decode(projectMpk).project
   const project = Delir.Exporter.deserializeProject(projectJson)
   const migrated = migrateProject(Delir.ProjectMigrator.migrate(project))
+
 
   await context.executeOperation(setActiveProject, {
     project: migrated,
@@ -211,7 +212,7 @@ export const autoSaveProject = operation(async context => {
       message: t(t.k.letsSave),
       title: '',
       level: 'info',
-      timeout: 5000,
+      timeout: NotificationTimeouts.verbose,
     })
 
     return
@@ -231,13 +232,15 @@ export const autoSaveProject = operation(async context => {
     message: t(t.k.autoSaved, { fileName: autoSaveFileName }),
     title: '',
     level: 'info',
-    timeout: 2000,
+    timeout: NotificationTimeouts.verbose,
   })
 })
 
-export const exportProjectPack = operation(async ({ getStore }, {dist}: {dist: string}) => {
+export const exportProjectPack = operation(async ({ getStore, executeOperation }, {dist}: {dist: string}) => {
   const project = cloneDeep(getProject(getStore)) as Delir.Entity.Project | null
   if (!project) return
+
+  await executeOperation(notify, {level:'info', timeout: NotificationTimeouts.verbose, message: t(t.k.packageExporting) })
 
   const tmpDir = path.join(remote.app.getPath('temp'), `delirpp-export-${uuid.v4()}`)
   const assetMap: ProjectPackAssetMap = {}
@@ -268,6 +271,7 @@ export const exportProjectPack = operation(async ({ getStore }, {dist}: {dist: s
   archive.pipe(fs.createWriteStream(dist))
   archive.directory(tmpDir, false)
   await archive.finalize()
+  await executeOperation(notify, {level:'info', timeout: NotificationTimeouts.verbose, message: t(t.k.packageExportCompleted) })
 })
 
 export const importProjectPack = operation(async ({executeOperation}, { src, dist: distDir }: {src: string, dist: string}) => {
@@ -289,7 +293,7 @@ export const importProjectPack = operation(async ({executeOperation}, { src, dis
   await Promise.all(Object.entries(assets as ProjectPackAssetMap).map(async ([id, {fileName, tmpName}]) => {
     const asset = project.findAsset(id)!
     await fs.rename(path.join(tmpDir, tmpName), path.join(tmpDir, fileName))
-    asset.patch({path: path.join(tmpDir, fileName) })
+    asset.patch({path: path.join(/* Target to finalized dir */distDir, fileName) })
   }))
 
   // Save project to .delir

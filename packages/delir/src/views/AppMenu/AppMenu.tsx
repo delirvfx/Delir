@@ -9,6 +9,7 @@ import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } 
 import { ModalMounterProps, withModalMounter } from '../../components/ModalOwner/ModalOwner'
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
+import { getProject } from '../../domain/Project/selectors'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import {AboutModal} from '../../modals/AboutModal'
@@ -168,22 +169,7 @@ export default withFleurContext(
               },
               {
                 label: t(t.k.file.exportProjectPack),
-                click: async () => {
-                  const path = await remote.dialog.showSaveDialog({
-                    title: t(t.k.modals.exportProject.title),
-                    buttonLabel: t(t.k.modals.exportProject.save),
-                    filters: [
-                      {
-                        name: 'Delir project package',
-                        extensions: ['delirpp'],
-                      },
-                    ],
-                  })
-
-                  if (path.canceled) return
-
-                  executeOperation(EditorOps.exportProjectPack, { dist: path.filePath! })
-                },
+                click: this.handleExportProjectPack,
               },
               { type: 'separator' },
               {
@@ -345,32 +331,41 @@ export default withFleurContext(
       }
 
       private handleImportProjectPack = async () => {
-        const {src, dist, cancelled} = await this.props.mountModal<ImportPackResponse>(resolve => <ImportPackModal onClose={resolve} />)
-        if (cancelled) return
+        const project = getProject(this.props.getStore)
 
-        // const source = await remote.dialog.showOpenDialog({
-        //   title: t(t.k.modals.importProject.title),
-        //   buttonLabel: t(t.k.modals.importProject.open),
-        //   filters: [
-        //     {
-        //       name: 'Delir project package',
-        //       extensions: ['delirpp'],
-        //     },
-        //   ],
-        //   properties: ['openFile'],
-        // })
+        if (project) {
+          const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            type: 'question',
+            message: t(t.k.modals.openProject.confirm),
+            buttons: [t(t.k.modals.openProject.continue), t(t.k.modals.openProject.cancel)],
+            defaultId: 0,
+          })
 
-        // if (!source.filePaths?.[0]) return
+          if (acceptDiscard.response === 1) {
+            return
+          }
+        }
 
-        // const dist = await remote.dialog.showOpenDialog({
-        //   title: t(t.k.modals.importProject.titleExtract),
-        //   buttonLabel: t(t.k.modals.importProject.extract),
-        //   properties: ['openDirectory', 'createDirectory'],
-        // })
+        const result = await this.props.mountModal<ImportPackResponse>(resolve => <ImportPackModal onClose={resolve} />)
+        if (result.cancelled) return
+        this.props.executeOperation(EditorOps.importProjectPack, { src: result.src, dist: result.dist })
+      }
 
-        // if (!dist.filePaths?.[0]) return
+      private handleExportProjectPack = async () => {
+        const path = await remote.dialog.showSaveDialog({
+          title: t(t.k.modals.exportProject.title),
+          buttonLabel: t(t.k.modals.exportProject.save),
+          filters: [
+            {
+              name: 'Delir project package',
+              extensions: ['delirpp'],
+            },
+          ],
+        })
 
-        // executeOperation(EditorOps.importProjectPack, { src: source.filePaths[0], dist: dist.filePaths[0] })
+        if (path.canceled) return
+
+        this.props.executeOperation(EditorOps.exportProjectPack, { dist: path.filePath! })
       }
 
       private handleOpenPreference = () => {

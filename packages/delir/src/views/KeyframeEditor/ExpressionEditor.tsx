@@ -60,7 +60,7 @@ export default class ExpressionEditor extends React.Component<Props> {
       <div className={s.ExpressionEditor}>
         <div className={s.ExpressionEditor__Toolbar}>
           <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
-          <Button type="primary" onClick={this.handleClickClose}>
+          <Button kind="primary" onClick={this.handleClickClose}>
             {t(t.k.save)}
           </Button>
         </div>
