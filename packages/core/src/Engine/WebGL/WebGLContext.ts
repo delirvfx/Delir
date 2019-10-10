@@ -148,19 +148,19 @@ export default class WebGLContext {
 
   // Uniforms
   public uni1i(...value: [number]): Uniform {
-    return { type: '1ui', value }
+    return { type: '1i', value }
   }
 
   public uni2i(...value: [number, number]): Uniform {
-    return { type: '2ui', value }
+    return { type: '2i', value }
   }
 
   public uni3i(...value: [number, number, number]): Uniform {
-    return { type: '3ui', value }
+    return { type: '3i', value }
   }
 
   public uni4i(...value: [number, number, number, number]): Uniform {
-    return { type: '4ui', value }
+    return { type: '4i', value }
   }
 
   public uni1ui(...value: [number]): Uniform {
