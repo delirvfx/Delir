@@ -1,4 +1,4 @@
-import AssetProxy from '../Engine/AssetProxy'
+import { AssetProxy } from '../Engine/AssetProxy'
 import { PluginLoadFailException } from '../Exceptions'
 import defaults from '../helper/defaults'
 
