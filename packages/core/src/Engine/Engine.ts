@@ -8,7 +8,7 @@ import { ParameterValueTypes } from '../PluginSupport/TypeDescriptor'
 import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
 import { IRenderer } from './Renderer/RendererBase'
 
-import PluginRegistry from '../PluginSupport/plugin-registry'
+import PluginRegistry from '../PluginSupport/PluginRegistry'
 
 import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
