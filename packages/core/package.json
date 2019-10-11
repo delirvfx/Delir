@@ -8,7 +8,7 @@
     "license": "MIT",
     "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
     "scripts": {
-        "prepublishOnly": "rm -rf ./{typings,lib} && tsc --emitDeclarationOnly --declaration --outDir ./typings && tsc --outDir lib"
+        "prepublishOnly": "rm -rf ./{typings,lib} && tsc --emitDeclarationOnly --declaration --outDir ./lib && tsc --outDir lib"
     },
     "devDependencies": {
         "@delirvfx/core-test-helper": "*",
