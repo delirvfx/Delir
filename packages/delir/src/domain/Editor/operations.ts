@@ -243,6 +243,7 @@ export const exportProjectPack = operation(async ({ getStore, executeOperation }
   await executeOperation(notify, {level:'info', timeout: NotificationTimeouts.verbose, message: t(t.k.packageExporting) })
 
   const tmpDir = path.join(remote.app.getPath('temp'), `delirpp-export-${uuid.v4()}`)
+  const fileNames = new Set()
   const assetMap: ProjectPackAssetMap = {}
   await fs.mkdirp(tmpDir)
   await Promise.all(
@@ -250,10 +251,22 @@ export const exportProjectPack = operation(async ({ getStore, executeOperation }
       const assetPath = /^file:\/\/(.*)$/.exec(asset.path)?.[1]
       if (!assetPath) return
 
-      const fileName = path.basename(assetPath)
+      const sourceFileName = path.basename(assetPath)
+      let distFileName: string = sourceFileName
+      {
+        let idx = 0
+        while (true) {
+          if (!fileNames.has(distFileName)) break
+          idx++
+          const {name, ext} = path.parse(sourceFileName)
+          distFileName = `${name} (${idx})${ext}`
+        }
+      }
+      fileNames.add(distFileName)
+
       const ext = path.extname(assetPath)
       const tmpName = `${uuid.v4()}${ext}`
-      assetMap[asset.id] = {fileName, tmpName}
+      assetMap[asset.id] = { fileName: distFileName, tmpName}
       asset.patch({path: tmpName})
       await fs.copyFile(assetPath, path.join(tmpDir, tmpName))
     }),
