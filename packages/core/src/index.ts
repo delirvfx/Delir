@@ -5,8 +5,8 @@ import * as Values from './Values'
 
 import { EffectPreRenderContext } from './Engine/RenderContext/EffectPreRenderContext'
 import { EffectRenderContext } from './Engine/RenderContext/EffectRenderContext'
-import PluginBase from './PluginSupport/plugin-base'
 import PluginRegistry from './PluginSupport/plugin-registry'
+import PluginBase from './PluginSupport/PluginBase'
 import PostEffectBase from './PluginSupport/PostEffectBase'
 import Type, { AnyParameterTypeDescriptor, TypeDescriptor } from './PluginSupport/TypeDescriptor'
 
