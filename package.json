@@ -51,7 +51,7 @@
     "sass-loader": "8.0.0",
     "style-loader": "1.0.0",
     "ts-loader": "6.2.0",
-    "ts-node": "8.3.0",
+    "ts-node": "8.4.1",
     "tslint": "5.20.0",
     "tslint-config-prettier": "1.18.0",
     "tslint-loader": "3.6.0",
