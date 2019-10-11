@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 import { EffectRenderContext } from '..'
 import { Clip, Keyframe } from '../Entity'
-import { UserCodeException } from '../Exceptions/UserCodeException'
+import { UserCodeException } from '../Exceptions'
 import { ParameterValueTypes, TypeDescriptor } from '../PluginSupport/TypeDescriptor'
 import { AssetPointer, ColorRGB, ColorRGBA, Expression } from '../Values'
 import AssetProxy from './AssetProxy'

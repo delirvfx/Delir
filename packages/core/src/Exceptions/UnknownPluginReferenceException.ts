@@ -1,3 +1,3 @@
-import DelirException from './DelirException'
+import { DelirException } from './DelirException'
 
-export default class UnknownPluginReferenceException extends DelirException {}
+export class UnknownPluginReferenceException extends DelirException {}

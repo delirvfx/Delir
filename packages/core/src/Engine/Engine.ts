@@ -10,7 +10,7 @@ import { IRenderer } from './Renderer/RendererBase'
 
 import PluginRegistry from '../PluginSupport/PluginRegistry'
 
-import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
+import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'

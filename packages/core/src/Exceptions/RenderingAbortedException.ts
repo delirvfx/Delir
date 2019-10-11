@@ -1,3 +1,3 @@
-import DelirException from './DelirException'
+import { DelirException } from './DelirException'
 
-export default class RenderingAbortedException extends DelirException {}
+export class RenderingAbortedException extends DelirException {}

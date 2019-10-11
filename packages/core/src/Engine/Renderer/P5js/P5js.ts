@@ -2,7 +2,7 @@ import _ from 'lodash'
 import VM from 'vm'
 import P5Hooks from './P5Hooks'
 
-import { UserCodeException } from '../../../Exceptions/UserCodeException'
+import { UserCodeException } from '../../../Exceptions'
 import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
 import Type from '../../../PluginSupport/TypeDescriptor'
 import Expression from '../../../Values/Expression'

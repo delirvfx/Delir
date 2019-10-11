@@ -6,9 +6,7 @@ import EffectPluginBase from './PostEffectBase'
 import { AnyParameterTypeDescriptor } from './TypeDescriptor'
 import { DelirPluginPackageJson, PluginEntry, PluginSummary } from './types'
 
-import PluginAssertionFailedException from '../Exceptions/PlugiinAssertionFailedException'
-import PluginLoadFailException from '../Exceptions/PluginLoadFailException'
-import UnknownPluginReferenceException from '../Exceptions/UnknownPluginReferenceException'
+import { PluginAssertionFailedException, PluginLoadFailException, UnknownPluginReferenceException } from '../Exceptions'
 
 const { version: engineVersion } = require('../../package.json')
 

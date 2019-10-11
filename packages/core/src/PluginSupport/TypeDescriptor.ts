@@ -1,5 +1,5 @@
 import AssetProxy from '../Engine/AssetProxy'
-import PluginLoadFailException from '../Exceptions/PluginLoadFailException'
+import { PluginLoadFailException } from '../Exceptions'
 import defaults from '../helper/defaults'
 
 import { ColorRGB, ColorRGBA, Expression, Point2D, Point3D, Size2D, Size3D } from '../Values'

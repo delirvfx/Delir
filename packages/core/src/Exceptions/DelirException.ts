@@ -1,4 +1,4 @@
-export default class DelirException extends Error {
+export class DelirException extends Error {
   public before: Error
   public message: string
   public info?: Object
