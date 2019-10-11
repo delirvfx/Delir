@@ -85,7 +85,7 @@ export const Preference = (props: Props) => {
         <div className={s.content}>
           {activePanel === 'renderer-general' && <RendererGeneralPane />}
           <div className={s.contentFoot}>
-            <Button type="normal" onClick={props.onClose}>
+            <Button kind="normal" onClick={props.onClose}>
               {t(t.k.close)}
             </Button>
           </div>

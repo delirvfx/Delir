@@ -24,7 +24,7 @@ export const show = (): void => {
   setTimeout(() => modal.show(), 1000)
 }
 
-const AboutModal = (props: { onClosed: () => void }) => {
+export const AboutModal = (props: { onClosed: () => void }) => {
   return (
     <div className={s.AboutModal}>
       <Tabs>
@@ -77,7 +77,7 @@ const AboutModal = (props: { onClosed: () => void }) => {
           </div>
         </TabPanel>
       </Tabs>
-      <Button type="normal" className={s.close} onClick={props.onClosed}>
+      <Button kind="normal" className={s.close} onClick={props.onClosed}>
         {t(t.k.close)}
       </Button>
     </div>

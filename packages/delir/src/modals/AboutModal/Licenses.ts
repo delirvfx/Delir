@@ -35,6 +35,10 @@ export const dependencies = [
         "url": "https://github.com/storybookjs/storybook/tree/master/app/react"
     },
     {
+        "name": "@types/archiver",
+        "url": "https://www.npmjs.com/package/@types/archiver"
+    },
+    {
         "name": "@types/audiobuffer-to-wav",
         "url": "https://www.npmjs.com/package/@types/audiobuffer-to-wav"
     },
@@ -111,12 +115,24 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/storybook__react"
     },
     {
+        "name": "@types/styled-components",
+        "url": "https://www.npmjs.com/package/@types/styled-components"
+    },
+    {
         "name": "@types/typescript",
         "url": "https://www.npmjs.com/package/@types/typescript"
     },
     {
+        "name": "@types/unzipper",
+        "url": "https://www.npmjs.com/package/@types/unzipper"
+    },
+    {
         "name": "@types/uuid",
         "url": "https://www.npmjs.com/package/@types/uuid"
+    },
+    {
+        "name": "archiver",
+        "url": "https://github.com/archiverjs/node-archiver"
     },
     {
         "name": "bezier-easing",
@@ -165,6 +181,10 @@ export const dependencies = [
     {
         "name": "electron-rebuild",
         "url": "https://github.com/electron/electron-rebuild"
+    },
+    {
+        "name": "fast-glob",
+        "url": "https://www.npmjs.com/package/fast-glob"
     },
     {
         "name": "file-loader",
@@ -267,6 +287,10 @@ export const dependencies = [
         "url": "https://github.com/substack/parse-color"
     },
     {
+        "name": "polished",
+        "url": "https://polished.js.org"
+    },
+    {
         "name": "prettier",
         "url": "https://prettier.io"
     },
@@ -315,6 +339,14 @@ export const dependencies = [
         "url": "https://github.com/sass/dart-sass"
     },
     {
+        "name": "sass-lint",
+        "url": "https://github.com/sasstools/sass-lint"
+    },
+    {
+        "name": "sass-lint-auto-fix",
+        "url": "https://github.com/srowhani/sass-lint-auto-fix#README.md"
+    },
+    {
         "name": "sass-loader",
         "url": "https://github.com/webpack-contrib/sass-loader"
     },
@@ -327,16 +359,8 @@ export const dependencies = [
         "url": "https://github.com/webpack-contrib/style-loader"
     },
     {
-        "name": "stylelint",
-        "url": "https://stylelint.io"
-    },
-    {
-        "name": "stylelint-config-rational-order",
-        "url": "https://github.com/constverum/stylelint-config-rational-order"
-    },
-    {
-        "name": "stylelint-config-standard",
-        "url": "https://www.npmjs.com/package/stylelint-config-standard"
+        "name": "styled-components",
+        "url": "https://styled-components.com"
     },
     {
         "name": "ts-jest",
@@ -365,6 +389,10 @@ export const dependencies = [
     {
         "name": "typescript",
         "url": "https://www.typescriptlang.org/"
+    },
+    {
+        "name": "unzipper",
+        "url": "https://www.npmjs.com/package/unzipper"
     },
     {
         "name": "use-immer",

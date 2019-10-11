@@ -1,6 +1,6 @@
 {
     "name": "@delirvfx/core",
-    "version": "0.8.0",
+    "version": "0.8.1",
     "description": "JavaScript VFX Engine",
     "main": "lib/index.js",
     "types": "typings/index.d.ts",
@@ -8,7 +8,7 @@
     "license": "MIT",
     "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
     "scripts": {
-        "prepublishOnly": "rm -rf ./{typings,lib} && tsc --emitDeclarationOnly --declaration --outDir ./typings && tsc --outDir lib"
+        "prepublishOnly": "rm -rf ./{typings,lib} && tsc --emitDeclarationOnly --declaration --outDir ./lib && tsc --outDir lib"
     },
     "devDependencies": {
         "@delirvfx/core-test-helper": "*",

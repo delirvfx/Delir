@@ -6,11 +6,14 @@ import React from 'react'
 import * as Platform from '../../utils/platform'
 import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
+import { ModalMounterProps, withModalMounter } from '../../components/ModalOwner/ModalOwner'
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
+import { getProject } from '../../domain/Project/selectors'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
-import * as AboutModal from '../../modals/AboutModal'
+import {AboutModal} from '../../modals/AboutModal'
+import { ImportPackModal, ImportPackResponse } from '../../modals/ImportPackModal/ImportPackModal'
 
 import t from './AppMenu.i18n'
 
@@ -18,7 +21,7 @@ interface State {
   devToolsFocused: boolean
 }
 
-type Props = ReturnType<typeof mapStoresToProps> & ContextProp
+type Props = ReturnType<typeof mapStoresToProps> & ContextProp & ModalMounterProps
 
 const mapStoresToProps = (getStore: StoreGetter) => ({
   editor: getStore(EditorStore).getState(),
@@ -27,6 +30,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 
 export default withFleurContext(
   connectToStores([EditorStore, RendererStore], mapStoresToProps)(
+    withModalMounter(
     class AppMenu extends React.Component<Props, State> {
       public state: State = {
         devToolsFocused: false,
@@ -114,12 +118,12 @@ export default withFleurContext(
               {
                 label: t(t.k.file.save),
                 accelerator: 'CmdOrCtrl+S',
-                click: () => {
-                  const state = getStore(EditorStore).getState()
-                  let path: string | null | undefined = state.projectPath
+                click: async () => {
+                  const { projectPath } = getStore(EditorStore).getState()
+                  let path: string | null = projectPath
 
                   if (!path) {
-                    path = remote.dialog.showSaveDialog({
+                    let result = await remote.dialog.showSaveDialog({
                       title: t(t.k.modals.saveAs.title),
                       buttonLabel: t(t.k.modals.saveAs.save),
                       filters: [
@@ -130,8 +134,8 @@ export default withFleurContext(
                       ],
                     })
 
-                    // cancelled
-                    if (!path) return
+                    if (!result.canceled) return
+                    path = result.filePath!
                   }
 
                   executeOperation(EditorOps.saveProject, { path })
@@ -140,8 +144,8 @@ export default withFleurContext(
               {
                 label: t(t.k.file.saveAs),
                 accelerator: 'CmdOrCtrl+Shift+S',
-                click: () => {
-                  const path = remote.dialog.showSaveDialog({
+                click: async () => {
+                  const path = await remote.dialog.showSaveDialog({
                     title: t(t.k.modals.saveAs.title),
                     buttonLabel: t(t.k.modals.saveAs.save),
                     filters: [
@@ -153,10 +157,19 @@ export default withFleurContext(
                   })
 
                   // cancelled
-                  if (!path) return
+                  if (!path.canceled) return
 
-                  executeOperation(EditorOps.saveProject, { path })
+                  executeOperation(EditorOps.saveProject, { path: path.filePath! })
                 },
+              },
+              { type: 'separator' },
+              {
+                label: t(t.k.file.importProjectPack),
+                click: this.handleImportProjectPack,
+              },
+              {
+                label: t(t.k.file.exportProjectPack),
+                click: this.handleExportProjectPack,
               },
               { type: 'separator' },
               {
@@ -189,38 +202,38 @@ export default withFleurContext(
                 label: t(t.k.edit.undo),
                 accelerator: 'CmdOrCtrl+Z',
                 click: this.handleUndo,
-                ...(devToolsFocused ? { role: 'undo' } : {}),
+                ...(devToolsFocused ? { role: 'undo' as const } : {}),
               },
               {
                 label: t(t.k.edit.redo),
                 accelerator: Platform.isMacOS() ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
                 click: this.handleRedo,
-                ...(devToolsFocused ? { role: 'redo' } : {}),
+                ...(devToolsFocused ? { role: 'redo' as const } : {}),
               },
               {
-                type: 'separator',
+                type: 'separator' as const,
               },
               {
                 label: t(t.k.edit.cut),
                 accelerator: 'CmdOrCtrl+X',
                 click: this.handleCut,
-                ...(devToolsFocused ? { role: 'cut' } : {}),
+                ...(devToolsFocused ? { role: 'cut' as const } : {}),
               },
               {
                 label: t(t.k.edit.copy),
                 accelerator: 'CmdOrCtrl+C',
                 click: this.handleCopy,
-                ...(devToolsFocused ? { role: 'copy' } : {}),
+                ...(devToolsFocused ? { role: 'copy' as const } : {}),
               },
               {
                 label: t(t.k.edit.paste),
                 accelerator: 'CmdOrCtrl+V',
                 click: this.handlePaste,
-                ...(devToolsFocused ? { role: 'paste' } : {}),
+                ...(devToolsFocused ? { role: 'paste' as const } : {}),
               },
               {
                 label: t(t.k.edit.selectAll),
-                role: 'selectall',
+                role: 'selectAll' as const,
               },
             ],
           },
@@ -272,17 +285,17 @@ export default withFleurContext(
         AboutModal.show()
       }
 
-      private handleNewProject = () => {
+      private handleNewProject = async () => {
         const project = this.props.getStore(EditorStore).getState().project
 
         if (project) {
-          const acceptDiscard = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+          const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'question',
             message: t(t.k.modals.newProject.confirm),
             buttons: [t(t.k.modals.newProject.continue), t(t.k.modals.newProject.cancel)],
           })
 
-          if (acceptDiscard === 1) {
+          if (acceptDiscard.response === 1) {
             return
           }
         }
@@ -290,31 +303,69 @@ export default withFleurContext(
         this.props.executeOperation(EditorOps.newProject)
       }
 
-      private handleOpenProject = () => {
+      private handleOpenProject = async () => {
         const { project } = this.props.getStore(EditorStore)
 
         if (project) {
-          const acceptDiscard = remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+          const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
             type: 'question',
             message: t(t.k.modals.openProject.confirm),
             buttons: [t(t.k.modals.openProject.continue), t(t.k.modals.openProject.cancel)],
             defaultId: 0,
           })
 
-          if (acceptDiscard === 1) {
+          if (acceptDiscard.response === 1) {
             return
           }
         }
 
-        const path = remote.dialog.showOpenDialog({
+        const path = await remote.dialog.showOpenDialog({
           title: t(t.k.modals.openProject.title),
           filters: [{ name: 'Delir project', extensions: ['delir'] }],
           properties: ['openFile'],
         })
 
-        if (!path || !path.length) return
+        if (!path.filePaths?.[0]) return
 
-        this.props.executeOperation(EditorOps.openProject, { path: path[0] })
+        this.props.executeOperation(EditorOps.openProject, { path: path.filePaths[0] })
+      }
+
+      private handleImportProjectPack = async () => {
+        const project = getProject(this.props.getStore)
+
+        if (project) {
+          const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+            type: 'question',
+            message: t(t.k.modals.openProject.confirm),
+            buttons: [t(t.k.modals.openProject.continue), t(t.k.modals.openProject.cancel)],
+            defaultId: 0,
+          })
+
+          if (acceptDiscard.response === 1) {
+            return
+          }
+        }
+
+        const result = await this.props.mountModal<ImportPackResponse>(resolve => <ImportPackModal onClose={resolve} />)
+        if (result.cancelled) return
+        this.props.executeOperation(EditorOps.importProjectPack, { src: result.src, dist: result.dist })
+      }
+
+      private handleExportProjectPack = async () => {
+        const path = await remote.dialog.showSaveDialog({
+          title: t(t.k.modals.exportProject.title),
+          buttonLabel: t(t.k.modals.exportProject.save),
+          filters: [
+            {
+              name: 'Delir project package',
+              extensions: ['delirpp'],
+            },
+          ],
+        })
+
+        if (path.canceled) return
+
+        this.props.executeOperation(EditorOps.exportProjectPack, { dist: path.filePath! })
       }
 
       private handleOpenPreference = () => {
@@ -341,5 +392,5 @@ export default withFleurContext(
         uiActionRedo(this.props.executeOperation)
       }
     },
-  ),
-)
+  )
+))

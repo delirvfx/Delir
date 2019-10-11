@@ -1,3 +1,7 @@
+### 0.8.1
+- [#371](https://github.com/ra-gg/Delir/pull/371) Fix incorrect WebGL uniform assigning
+- [#371](https://github.com/ra-gg/Delir/pull/371) Add returned type to `Exporter.deserializeProject`
+
 ### 0.8.0
 #### Breaking changes
 - Refactor `KeyframeCalculator`

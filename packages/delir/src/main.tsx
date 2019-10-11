@@ -1,7 +1,8 @@
 import * as Delir from '@delirvfx/core'
 import Fleur, { withReduxDevTools } from '@fleur/fleur'
-import { createElementWithContext } from '@fleur/react'
+import { FleurContext } from '@fleur/react'
 import os from 'os'
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 import * as EditorOps from './domain/Editor/operations'
@@ -13,6 +14,7 @@ import './assets/styles/style.sass'
 
 import AppView from './views/AppView'
 
+import { ModalOwner } from './components/ModalOwner/ModalOwner'
 import EditorStore from './domain/Editor/EditorStore'
 import HistoryStore from './domain/History/HistoryStore'
 import PreferenceStore from './domain/Preference/PreferenceStore'
@@ -57,9 +59,17 @@ window.addEventListener('DOMContentLoaded', async () => {
     project: new Delir.Entity.Project({}),
   })
 
-  ReactDOM.render(createElementWithContext(context, AppView, {}), document.querySelector('#root'), () => {
-    ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
-  })
+  ReactDOM.render(
+    <FleurContext value={context}>
+      <ModalOwner>
+        <AppView />
+      </ModalOwner>
+    </FleurContext>,
+    document.querySelector('#root'),
+    () => {
+      ;(document.querySelector('#loading') as HTMLElement).style.display = 'none'
+    },
+  )
 
   if (__DEV__) {
     const project = require('./utils/Dev/ExampleProject1').default

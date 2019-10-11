@@ -35,7 +35,7 @@ export const Notifications = () => {
     })
   }, [userCodeException])
 
-  const transitions = useTransition(entries, null, {
+  const transitions = useTransition(entries, item => item.id, {
     from: { opacity: 0, transform: 'scaleY(0)', transformOrigin: 'top center' },
     enter: { opacity: 1, transform: 'scaleY(1)' },
     leave: { opacity: 0 },

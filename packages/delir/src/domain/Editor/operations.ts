@@ -1,18 +1,24 @@
 import * as Delir from '@delirvfx/core'
 import { operation } from '@fleur/fleur'
+import archiver from 'archiver';
 import { remote } from 'electron'
+import glob from 'fast-glob'
 import fs from 'fs-extra'
 import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import MsgPack from 'msgpack5'
 import path from 'path'
+import unzipper from 'unzipper'
+import uuid from 'uuid'
 import { SpreadType } from '../../utils/Spread'
 
 import PreferenceStore from '../Preference/PreferenceStore'
 import { migrateProject } from '../Project/models'
+import { getProject } from '../Project/selectors'
 import RendererStore from '../Renderer/RendererStore'
-import EditorStore from './EditorStore'
-
 import { EditorActions } from './actions'
+import EditorStore from './EditorStore'
+import { NotificationTimeouts} from './models'
 import t from './operations.i18n'
 import { ClipboardEntry, ParameterTarget } from './types'
 
@@ -20,6 +26,8 @@ export type DragEntity =
   | { type: 'asset'; asset: Delir.Entity.Asset }
   | { type: 'clip'; baseClipId: string }
   | { type: 'clip-resizing'; clip: SpreadType<Delir.Entity.Clip> }
+
+type ProjectPackAssetMap = Record<string, {fileName: string, tmpName: string}>
 
 //
 // App services
@@ -152,10 +160,11 @@ export const newProject = operation(async context => {
 })
 
 export const openProject = operation(async (context, { path }: { path: string }) => {
-  const projectMpk = await fs.readFile(path[0])
+  const projectMpk = await fs.readFile(path)
   const projectJson = MsgPack().decode(projectMpk).project
   const project = Delir.Exporter.deserializeProject(projectJson)
   const migrated = migrateProject(Delir.ProjectMigrator.migrate(project))
+
 
   await context.executeOperation(setActiveProject, {
     project: migrated,
@@ -203,7 +212,7 @@ export const autoSaveProject = operation(async context => {
       message: t(t.k.letsSave),
       title: '',
       level: 'info',
-      timeout: 5000,
+      timeout: NotificationTimeouts.verbose,
     })
 
     return
@@ -223,8 +232,101 @@ export const autoSaveProject = operation(async context => {
     message: t(t.k.autoSaved, { fileName: autoSaveFileName }),
     title: '',
     level: 'info',
-    timeout: 2000,
+    timeout: NotificationTimeouts.verbose,
   })
+})
+
+export const exportProjectPack = operation(async ({ getStore, executeOperation }, {dist}: {dist: string}) => {
+  const project = cloneDeep(getProject(getStore)) as Delir.Entity.Project | null
+  if (!project) return
+
+  await executeOperation(notify, {level:'info', timeout: NotificationTimeouts.verbose, message: t(t.k.packageExporting) })
+
+  const tmpDir = path.join(remote.app.getPath('temp'), `delirpp-export-${uuid.v4()}`)
+  const fileNames = new Set()
+  const assetMap: ProjectPackAssetMap = {}
+  await fs.mkdirp(tmpDir)
+  await Promise.all(
+    (project.assets as Delir.Entity.Asset[]).map(async asset => {
+      const assetPath = /^file:\/\/(.*)$/.exec(asset.path)?.[1]
+      if (!assetPath) return
+
+      const sourceFileName = path.basename(assetPath)
+      let distFileName: string = sourceFileName
+      {
+        let idx = 0
+        while (true) {
+          if (!fileNames.has(distFileName)) break
+          idx++
+          const {name, ext} = path.parse(sourceFileName)
+          distFileName = `${name} (${idx})${ext}`
+        }
+      }
+      fileNames.add(distFileName)
+
+      const ext = path.extname(assetPath)
+      const tmpName = `${uuid.v4()}${ext}`
+      assetMap[asset.id] = { fileName: distFileName, tmpName}
+      asset.patch({path: tmpName})
+      await fs.copyFile(assetPath, path.join(tmpDir, tmpName))
+    }),
+  )
+
+  // Erase privacy data (path)
+  project.assets.forEach(asset => asset.patch({path: ''}))
+
+  await fs.writeFile(path.join(tmpDir, 'project.msgpack'), (MsgPack().encode({
+    project: Delir.Exporter.serializeProject(project),
+    assets: assetMap
+  }) as any) as Buffer)
+
+  const archive = archiver('zip', {zlib:{level:9}})
+  archive.pipe(fs.createWriteStream(dist))
+  archive.directory(tmpDir, false)
+  await archive.finalize()
+  await executeOperation(notify, {level:'info', timeout: NotificationTimeouts.verbose, message: t(t.k.packageExportCompleted) })
+})
+
+export const importProjectPack = operation(async ({executeOperation}, { src, dist: distDir }: {src: string, dist: string}) => {
+  const tmpDir = path.join(remote.app.getPath('temp'), `delirpp-import-${uuid.v4()}`)
+  await fs.mkdirp(tmpDir)
+
+  await new Promise(resolve => {
+    fs.createReadStream(src)
+      .pipe(unzipper.Extract({ path: tmpDir }))
+      .once('close',resolve)
+  })
+
+  const msgpack = MsgPack()
+  const packProjectPath = path.join(tmpDir, 'project.msgpack')
+  const {project: rawProject, assets} = msgpack.decode(await fs.readFile(packProjectPath))
+  const project = Delir.Exporter.deserializeProject(rawProject)
+
+  // Restore asset paths
+  await Promise.all(Object.entries(assets as ProjectPackAssetMap).map(async ([id, {fileName, tmpName}]) => {
+    const asset = project.findAsset(id)!
+    await fs.rename(path.join(tmpDir, tmpName), path.join(tmpDir, fileName))
+    asset.patch({path: path.join(/* Target to finalized dir */distDir, fileName) })
+  }))
+
+  // Save project to .delir
+  const packFileName = path.parse(src).name
+  const tmpProjectPath = path.join(tmpDir, `${packFileName}.delir`)
+
+  await fs.writeFile(tmpProjectPath, msgpack.encode({
+    project: Delir.Exporter.serializeProject(project)
+  }))
+
+  // Finalize
+  await fs.remove(packProjectPath)
+  const files = await glob(`**`, {cwd: tmpDir, absolute: true})
+  await Promise.all(files.map(async file => {
+    const distName = path.relative(tmpDir, file)
+    await fs.move(file, path.join(distDir, distName))
+  }))
+
+  const projectPath = path.join(distDir, `${packFileName}.delir`)
+  await executeOperation(setActiveProject, {project, path: projectPath})
 })
 
 export const changePreferenceOpenState = operation((context, { open }: { open: boolean }) => {
