@@ -77,7 +77,7 @@ export default withFleurContext(
           submenu: [
             {
               label: t(t.k.appMenu.about),
-              click: this.openAbout,
+              click: this.handleOpenAbout,
             },
             { type: 'separator' },
             {
@@ -246,7 +246,6 @@ export default withFleurContext(
               label: previewPlaying ? t(t.k.preview.pause) : t(t.k.preview.play),
               enabled: !!activeComp,
               accelerator: 'space',
-              acceleratorWorksWhenHidden: false,
               click: () => {
                 previewPlaying
                   ? executeOperation(RendererOps.stopPreview)
@@ -283,8 +282,8 @@ export default withFleurContext(
         remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(menu))
       }
 
-      private openAbout = () => {
-        AboutModal.show()
+      private handleOpenAbout = async() => {
+        await this.props.mountModal<void>((resolve)=> <AboutModal onClose={resolve} />)
       }
 
       private handleNewProject = async () => {
