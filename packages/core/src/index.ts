@@ -3,6 +3,7 @@ import * as Exceptions from './Exceptions'
 import * as PluginSupport from './PluginSupport'
 import * as Values from './Values'
 
+import { ParamType } from './Engine'
 import { EffectPreRenderContext } from './Engine/RenderContext/EffectPreRenderContext'
 import { EffectRenderContext } from './Engine/RenderContext/EffectRenderContext'
 import PluginBase from './PluginSupport/PluginBase'
@@ -41,5 +42,6 @@ export {
   Exporter,
   // Types
   AnyParameterTypeDescriptor,
+  ParamType,
   version,
 }

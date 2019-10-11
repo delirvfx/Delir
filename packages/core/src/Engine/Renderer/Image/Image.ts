@@ -2,17 +2,17 @@ import _ from 'lodash'
 import Type from '../../../PluginSupport/TypeDescriptor'
 import { IRenderer } from '../RendererBase'
 
-import { Asset } from '../../../Entity'
+import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface ImageRendererParams {
-  source: Asset
-  x: number
-  y: number
-  scale: number
-  rotate: number
-  opacity: number
+  source: ParamType.Asset
+  x: ParamType.Number
+  y: ParamType.Number
+  scale: ParamType.Float
+  rotate: ParamType.Float
+  opacity: ParamType.Float
 }
 
 export default class ImageLayer implements IRenderer<ImageRendererParams> {

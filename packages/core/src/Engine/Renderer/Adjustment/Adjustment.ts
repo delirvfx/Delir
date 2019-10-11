@@ -2,12 +2,13 @@ import _ from 'lodash'
 
 import Type from '../../../PluginSupport/TypeDescriptor'
 import { TypeDescriptor } from '../../../PluginSupport/TypeDescriptor'
+import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 interface Param {
-  opacity: number
+  opacity: ParamType.Number
 }
 
 export default class AdjustmentRenderer implements IRenderer<Param> {

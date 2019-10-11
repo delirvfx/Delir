@@ -6,13 +6,14 @@ import { UserCodeException } from '../../../Exceptions'
 import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
 import Type from '../../../PluginSupport/TypeDescriptor'
 import Expression from '../../../Values/Expression'
+import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 interface Params {
-  sketch: Expression
-  opacity: number
+  sketch: ParamType.Code
+  opacity: ParamType.Number
 }
 
 const VM_GLOBAL_WHITELIST = ['Array', 'Math', 'Date']
