@@ -7,6 +7,7 @@ interface Props {
   shownInitial?: boolean
   className?: string
   children?: React.ReactNode
+  hideOnClickOutside?: boolean
 }
 
 interface DropdownHandles {
@@ -18,13 +19,15 @@ interface DropdownHandles {
 export type Dropdown = DropdownHandles
 
 export const Dropdown = React.forwardRef<DropdownHandles, Props>(
-  ({ children, className, shownInitial }: Props, ref) => {
+  ({ children, className, shownInitial, hideOnClickOutside }: Props, ref) => {
     const inspector = useRef<HTMLDivElement | null>(null)
     const dropdownRoot = useRef<HTMLUListElement | null>(null)
     const [position, setPosition] = useState({ left: 0, top: 0 })
     const [show, setShow] = useState(shownInitial)
 
     const handleClickOutSide = useCallback((e: MouseEvent) => {
+      if (hideOnClickOutside === false) return
+
       const path = e.composedPath() as Element[]
       const clickSelfOrChild = path.includes(dropdownRoot.current!)
 
@@ -56,7 +59,7 @@ export const Dropdown = React.forwardRef<DropdownHandles, Props>(
       <>
         <div ref={inspector} className={s.dropdownInspector} />
         {createPortal(
-          <ul
+          <div
             ref={dropdownRoot}
             className={classnames(s.dropdown, className, {
               [s['--shown']]: show,
@@ -64,7 +67,7 @@ export const Dropdown = React.forwardRef<DropdownHandles, Props>(
             style={{ left: position.left, top: position.top }}
           >
             {children}
-          </ul>,
+          </div>,
           document.body,
         )}
       </>

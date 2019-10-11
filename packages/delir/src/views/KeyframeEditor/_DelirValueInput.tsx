@@ -2,9 +2,10 @@ import * as Delir from '@delirvfx/core'
 import React from 'react'
 import { ChromePicker } from 'react-color'
 
+import { Button } from '../../components/Button/Button'
 import DragNumberInput from '../../components/DragNumberInput'
 import { Dropdown } from '../../components/Dropdown'
-
+import { Input } from '../../components/Input/Input'
 import t from './_DelirValueInput.i18n'
 import s from './DelirValueInput.sass'
 
@@ -122,14 +123,18 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
 
       case 'STRING':
         component = (
-          <>
-            <Dropdown ref={this.ref.textInputDropdown}>
-              <textarea
+          <div>
+            <Dropdown ref={this.ref.textInputDropdown} hideOnClickOutside={false}>
+              <Input
                 ref={this.ref.textArea}
-                className={s.textArea}
-                onKeyDown={this.onKeydownTextArea}
+                small
+                multiline
                 defaultValue={value as string}
+                onKeyDown={this.onKeydownTextArea}
               />
+              <Button blocked kind="primary" onClick={null}>
+                OK
+              </Button>
             </Dropdown>
             <input
               ref={this.ref.textSummary}
@@ -139,7 +144,7 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
               value={value as string}
               readOnly
             />
-          </>
+          </div>
         )
         break
 
@@ -299,9 +304,8 @@ export default class DelirValueInput extends React.PureComponent<DelirValueInput
   private onFocusTextInput = (e: React.FocusEvent<HTMLInputElement>) => {
     e.preventDefault()
     e.stopPropagation()
-    this.ref.textInputDropdown.current!.show(() => {
-      setTimeout(() => this.ref.textArea.current!.focus(), 0)
-    })
+    this.ref.textInputDropdown.current!.show()
+    this.ref.textArea.current!.focus()
   }
 
   private onKeydownTextArea = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

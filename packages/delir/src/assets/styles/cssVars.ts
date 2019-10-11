@@ -5,5 +5,6 @@ export const cssVars = {
   },
   colors: {
     error: '#f83737',
+    theming: '#7b14ea',
   },
 }

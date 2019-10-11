@@ -4,6 +4,7 @@ import { cssVars } from '../../assets/styles/cssVars'
 
 interface Props {
   kind?: 'normal' | 'primary'
+  blocked?: boolean
 }
 
 const normal = css`
@@ -24,6 +25,12 @@ const primary = css`
 `
 
 export const Button = stlyed.button<Props>`
+  ${({ blocked }) =>
+    blocked &&
+    css`
+      display: block;
+      width: 100%;
+    `}
   padding: 4px 16px;
   transition: background-color ${cssVars.animate.bgColorDuration} ${cssVars.animate.function};
   border: 0;
@@ -38,8 +45,8 @@ export const Button = stlyed.button<Props>`
     margin-left: 8px;
   }
 
-  ${props => props.kind === 'normal' && normal}
-  ${props => props.kind === 'primary' && primary}
+  ${({ kind }) => kind === 'normal' && normal}
+  ${({ kind }) => kind === 'primary' && primary}
 `
 
 Button.defaultProps = {

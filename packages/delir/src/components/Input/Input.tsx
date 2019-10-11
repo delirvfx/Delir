@@ -19,9 +19,9 @@ const base = css<Props>`
   font-family: inherit;
   outline: none;
   vertical-align: bottom;
-  background-color: #555;
-  caret-color: #eee;
-  color: #eee;
+  background-color: #eee;
+  caret-color: #333;
+  color: #333;
 
   &:hover {
   }
