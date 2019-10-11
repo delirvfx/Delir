@@ -28,8 +28,6 @@
         "@types/react-sortable-hoc": "0.6.5",
         "@types/react-tabs": "2.3.1",
         "@types/simonwep__selection-js": "1.2.0",
-        "@types/storybook__addon-knobs": "5.0.4",
-        "@types/storybook__react": "4.0.2",
         "@types/styled-components": "4.1.19",
         "@types/typescript": "2.0.0",
         "@types/unzipper": "0.10.0",
