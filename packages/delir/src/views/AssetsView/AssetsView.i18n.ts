@@ -19,6 +19,7 @@ export default I18n({
       fileType: '種類',
       contextMenu: {
         rename: '名前を変更',
+        replace: 'ファイルを変更',
         remove: '削除',
         copyAssetURI: 'アセットのURIをコピー',
       },
@@ -42,6 +43,7 @@ export default I18n({
       fileType: 'Type',
       contextMenu: {
         rename: 'Rename',
+        replace: 'Change file',
         remove: 'Remove',
         copyAssetURI: 'Copy asset URI',
       },

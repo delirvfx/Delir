@@ -99,6 +99,13 @@ export default class ProjectStore extends Store<ProjectStoreState> {
     this.updateLastModified()
   })
 
+  private modifyAsset = listen(ProjectActions.modifyAsset, ({assetId, patch}) => {
+    this.updateWith(({project}) => {
+      project!.findAsset(assetId)!.patch(patch)
+    })
+    this.updateLastModified()
+  })
+
   private handleModifyComposition = listen(ProjectActions.modifyComposition, ({ targetCompositionId, patch }) => {
     this.updateWith(({ project }) => {
       project!.findComposition(targetCompositionId)!.patch(patch)

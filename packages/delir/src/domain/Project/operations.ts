@@ -22,6 +22,7 @@ import { AddEffectKeyframeCommand } from './Commands/AddEffectKeyframeCommand'
 import { AddKeyframeCommand } from './Commands/AddKeyframeCommand'
 import { AddLayerCommand } from './Commands/AddLayerCommand'
 import { CreateCompositionCommand } from './Commands/CreateCompositionCommand'
+import { ModifyAssetCommand } from './Commands/ModifyAssetCommand'
 import { ModifyClipExpressionCommand } from './Commands/ModifyClipExpressionCommand'
 import { ModifyClipKeyframeCommand } from './Commands/ModifyClipKeyframeCommand'
 import { ModifyClipsCommand, ModifyClipsPatches } from './Commands/ModifyClipsCommand'
@@ -507,6 +508,17 @@ export const moveClipToLayer = operation(
     await context.executeOperation(EditorOps.seekPreviewFrame, {})
   },
 )
+
+export const modifyAsset = operation(async (context, {assetId, patch}: {assetId: string, patch: Partial<Delir.Entity.Asset>}) => {
+  const project = getProject(context.getStore)!
+  const asset = project.findAsset(assetId)!
+
+  if (_.isMatch(asset, patch)) return
+
+  await context.executeOperation(HistoryOps.pushHistory, { command: new ModifyAssetCommand(assetId, {...asset}, patch) })
+  context.dispatch(ProjectActions.modifyAsset, { assetId, patch })
+})
+
 
 export const modifyComposition = operation(
   async (
