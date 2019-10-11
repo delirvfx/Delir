@@ -1,3 +1,3 @@
-import DelirException from './delir-exception'
+import DelirException from './DelirException'
 
 export default class PluginAssertionFailedException extends DelirException {}

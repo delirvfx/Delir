@@ -1,5 +1,5 @@
 import { Project } from '../Entity'
-import UnknownPluginReferenceException from '../Exceptions/unknown-plugin-reference-exception'
+import UnknownPluginReferenceException from '../Exceptions/UnknownPluginReferenceException'
 import PluginRegistry from '../PluginSupport/PluginRegistry'
 import { EffectPluginClass } from '../PluginSupport/PostEffectBase'
 import AssetProxy from './AssetProxy'
