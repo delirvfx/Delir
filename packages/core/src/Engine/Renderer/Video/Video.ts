@@ -5,6 +5,7 @@ import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
 import { IRenderer } from '../RendererBase'
 
 import { Asset } from '../../../Entity'
+import { BBox2D } from '../../Inspector/BBox2D'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
@@ -71,40 +72,42 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
 
   private video: HTMLVideoElement | null
 
+  public async getBBox(context: ClipPreRenderContext<VideoRendererParam>): Promise<BBox2D> {
+    const { x, y, scale, rotate } = context.parameters
+
+    if (!context.parameters.source) {
+      return {
+        visible: false,
+        x,
+        y,
+        width: 0,
+        height: 0,
+        angleRad: 0,
+      }
+    }
+
+    if (!this.video) this.video = await this.loadVideo(context.parameters.source.path)
+
+    return {
+      visible: false,
+      x,
+      y,
+      width: this.video.videoWidth * (scale / 100),
+      height: this.video.videoHeight * (scale / 100),
+      angleRad: (rotate * Math.PI) / 180,
+    }
+  }
+
   public async beforeRender(context: ClipPreRenderContext<VideoRendererParam>) {
-    const parameters = context.parameters as any
+    const parameters = context.parameters
 
     if (context.parameters.source == null) {
       this.video = null
       return
     }
 
-    const video = (this.video = document.createElement('video'))
-    this.video.src = parameters.source.path
+    this.video = await this.loadVideo(parameters.source.path)
     this.video.loop = parameters.loop
-    this.video.load()
-    this.video.currentTime = -1
-
-    await new Promise((resolve, reject) => {
-      const onLoaded = () => {
-        resolve()
-        video.removeEventListener('error', onError, false)
-      }
-
-      const onError = () => {
-        reject(new Error('video not found'))
-        video.removeEventListener('loadeddata', onLoaded, false)
-      }
-
-      video.addEventListener('loadeddata', onLoaded, {
-        once: true,
-        capture: false,
-      } as any)
-      video.addEventListener('error', onError, {
-        once: true,
-        capture: false,
-      } as any)
-    })
   }
 
   public async render(context: ClipRenderContext<VideoRendererParam>) {
@@ -137,5 +140,36 @@ export default class VideoLayer implements IRenderer<VideoRendererParam> {
     ctx.translate(-video.videoWidth / 2, -video.videoHeight / 2)
 
     ctx.drawImage(video, 0, 0)
+  }
+
+  private async loadVideo(url: string): Promise<HTMLVideoElement> {
+    const video = document.createElement('video')
+    video.src = url
+    video.load()
+    video.currentTime = -1
+
+    await new Promise((resolve, reject) => {
+      const onLoaded = () => {
+        resolve()
+        video.removeEventListener('error', onError, { capture: false })
+      }
+
+      const onError = () => {
+        reject(new Error('VideoClip: video load error'))
+        video.removeEventListener('loadeddata', onLoaded, { capture: false })
+      }
+
+      video.addEventListener('loadeddata', onLoaded, {
+        once: true,
+        capture: false,
+      })
+
+      video.addEventListener('error', onError, {
+        once: true,
+        capture: false,
+      })
+    })
+
+    return video
   }
 }

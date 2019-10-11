@@ -7,6 +7,7 @@ import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 import ColorRGBA from '../../../Values/ColorRGBA'
+import { BBox2D } from '../../Inspector/BBox2D'
 
 interface TextRendererParam {
   text: string
@@ -100,6 +101,22 @@ export default class TextLayer implements IRenderer<TextRendererParam> {
 
   private bufferCanvas: HTMLCanvasElement
 
+  public async getBBox(context: ClipPreRenderContext<TextRendererParam>): Promise<BBox2D> {
+    const { x, y, rotate, text, size, lineHeight } = context.parameters
+    const lineHeightPx = size * (lineHeight / 100)
+    const { width, height } = this.calculateSize(context.destCanvas.getContext('2d')!, text, lineHeightPx)
+
+    // TODO
+    return {
+      visible: true,
+      x,
+      y,
+      width,
+      height,
+      angleRad: (rotate * Math.PI) / 180,
+    }
+  }
+
   public async beforeRender(context: ClipPreRenderContext<TextRendererParam>) {
     this.bufferCanvas = document.createElement('canvas')
   }
@@ -116,8 +133,7 @@ export default class TextLayer implements IRenderer<TextRendererParam> {
     ctx.font = `${param.weight} ${param.size}px/${lineHeight} ${family}`
 
     const lines = param.text.split('\n')
-    const height = lines.length * lineHeight
-    const width = lines.reduce((mostLongWidth, line) => Math.max(mostLongWidth, ctx.measureText(line).width), 0)
+    const { width, height } = this.calculateSize(ctx, param.text, lineHeight)
 
     ctx.translate(param.x, param.y)
     ctx.translate(width / 2, height / 2)
@@ -134,5 +150,12 @@ export default class TextLayer implements IRenderer<TextRendererParam> {
       ctx.fillText(line, 0, placePointY)
       placePointY += lineHeight
     }
+  }
+
+  private calculateSize(ctx: CanvasRenderingContext2D, text: string, lineHeight: number) {
+    const lines = text.split('\n')
+    const height = lines.length * lineHeight
+    const width = lines.reduce((mostLongWidth, line) => Math.max(mostLongWidth, ctx.measureText(line).width), 0)
+    return { width, height }
   }
 }
