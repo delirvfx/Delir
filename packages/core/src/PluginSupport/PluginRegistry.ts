@@ -75,6 +75,10 @@ export default class PluginRegistry {
     }
   }
 
+  public unregisterPlugin(id: string) {
+    delete this._plugins['post-effect'][id]
+  }
+
   /**
    * get plugin constructor class
    * @param   {string}    target plugin ID
