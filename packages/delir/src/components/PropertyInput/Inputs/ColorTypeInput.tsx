@@ -1,11 +1,12 @@
 import * as Delir from '@delirvfx/core'
+import { cssVars } from 'assets/styles/cssVars'
 import { Button } from 'components/Button/Button'
 import { Portal } from 'components/Portal/Portal'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChromePicker, ColorChangeHandler, RGBColor } from 'react-color'
 import styled from 'styled-components'
 import { usePopper } from 'utils/hooks'
-const s = {}
+import t from './Inputs.i18n'
 
 const ValuePreview = styled.div<{ bgColor: string }>`
   display: inline-block;
@@ -13,6 +14,18 @@ const ValuePreview = styled.div<{ bgColor: string }>`
   height: 18px;
   border: 1px solid #aaa;
   background-color: ${({ bgColor }) => bgColor};
+`
+
+const EditorWrapper = styled.div<{ opened: boolean }>`
+  padding: 4px;
+  visibility: ${({ opened }) => (opened ? 'visible' : 'hidden')};
+  pointer-events: ${({ opened }) => (opened ? 'all' : 'none')};
+  background-color: ${cssVars.colors.popupBg};
+  border-radius: ${cssVars.size.radius};
+
+  .chrome-picker {
+    box-shadow: none !important;
+  }
 `
 
 export const ColorTypeInput = ({
@@ -37,11 +50,16 @@ export const ColorTypeInput = ({
     setOpened(true)
   }, [])
 
-  const handleClickClose = useCallback(() => {
+  const handleClickOk = useCallback(() => {
     const { r, g, b, a } = currentColor
     onChange(alpha ? new Delir.Values.ColorRGBA(r, g, b, a!) : new Delir.Values.ColorRGB(r, g, b))
     setOpened(false)
   }, [onChange, currentColor])
+
+  const handleClickDiscard = useCallback(() => {
+    setColor(soruceValue)
+    setOpened(false)
+  }, [soruceValue.toCSSColor()])
 
   useEffect(() => {
     setColor(soruceValue)
@@ -51,14 +69,17 @@ export const ColorTypeInput = ({
     <>
       <ValuePreview ref={parentRef as any} bgColor={soruceValue.toCSSColor()} onClick={handleClickOpenColorPicker} />
       <Portal>
-        <div style={{ visibility: opened ? 'visible' : 'hidden', pointerEvents: opened ? 'all' : 'none' }}>
-          <div ref={poppingRef as any}>
-            <ChromePicker color={currentColor} disableAlpha={!alpha} onChange={handleChangeColor} />
-            <Button kind="primary" onClick={handleClickClose}>
-              Close
+        <EditorWrapper opened={opened} ref={poppingRef as any}>
+          <ChromePicker color={currentColor} disableAlpha={!alpha} onChange={handleChangeColor} />
+          <div style={{ marginTop: '4px' }}>
+            <Button kind="primary" onClick={handleClickOk}>
+              {t(t.k.ok)}
+            </Button>
+            <Button kind="normal" onClick={handleClickDiscard}>
+              {t(t.k.discard)}
             </Button>
           </div>
-        </div>
+        </EditorWrapper>
       </Portal>
     </>
   )

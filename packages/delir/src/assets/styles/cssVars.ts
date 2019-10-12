@@ -2,7 +2,7 @@ import { lighten, rgba } from 'polished'
 
 export const cssVars = {
   animate: {
-    bgColorDuration: '100ms',
+    bgColorDuration: '200ms',
     function: 'cubic-bezier(.3, 1, .72, 1.06)',
   },
   colors: {
