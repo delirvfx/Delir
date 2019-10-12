@@ -10,22 +10,14 @@ import { PluginAssertionFailedException, PluginLoadFailException, UnknownPluginR
 
 const { version: engineVersion } = require('../../package.json')
 
-// SEE: https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39
-const SEMVER_REGEXP = /^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
-
 const effectPluginPackageJSONSchema = Joi.object()
   .keys({
     name: Joi.string().required(),
-    version: Joi.string()
-      .regex(SEMVER_REGEXP)
-      .required(),
+    version: Joi.string().required(),
     author: [Joi.string(), Joi.array().items(Joi.string())],
     main: Joi.string().optional(),
     engines: Joi.object().keys({
-      'delir-core': Joi.string().regex(SEMVER_REGEXP),
-      '@delirvfx/core': Joi.string()
-        .regex(SEMVER_REGEXP)
-        .required(),
+      '@delirvfx/core': Joi.string().required(),
     }),
     delir: Joi.object()
       .keys({
@@ -37,13 +29,22 @@ const effectPluginPackageJSONSchema = Joi.object()
   .options({ allowUnknown: true })
 
 export default class PluginRegistry {
-  public static validateEffectPluginPackageJSON(packageJSON: any): packageJSON is DelirPluginPackageJson {
-    return (
-      Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null &&
-      (semver.valid(packageJSON.engines['delir-core']) != null ||
-        semver.valid(packageJSON.engines['@delirvfx/core']) != null) &&
-      semver.valid(packageJSON.version) != null
-    )
+  public static validateEffectPluginPackageJSON(packageJSON: any) {
+    const schemaInvalidity = Joi.validate(packageJSON, effectPluginPackageJSONSchema).error
+    const engineVersionValidity =
+      !!semver.validRange(packageJSON.engines['delir-core']) ||
+      !!semver.validRange(packageJSON.engines['@delirvfx/core'])
+    const versionValidity = !!semver.valid(packageJSON.version)
+    const hasError = schemaInvalidity != null || !engineVersionValidity || !versionValidity
+
+    return {
+      hasError,
+      reason: ([] as any[]).concat(
+        schemaInvalidity != null ? [schemaInvalidity] : [],
+        !engineVersionValidity ? ["Invalid semantic version of `engines['@delirvfx/core']` field"] : [],
+        !versionValidity ? ['Invalid semantic version of `version` fieled'] : [],
+      ),
+    }
   }
 
   private _plugins: {
@@ -58,11 +59,13 @@ export default class PluginRegistry {
       //     throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
       // }
 
-      // const result = validatePluginPackageJSON(entry.packageJson)
+      const result = PluginRegistry.validateEffectPluginPackageJSON(entry.packageJson)
 
-      // if (!result.valid) {
-      //     throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
-      // }
+      if (result.hasError) {
+        throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\``, {
+          reason: result.reason,
+        })
+      }
 
       const requiredEngineVersion =
         entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']

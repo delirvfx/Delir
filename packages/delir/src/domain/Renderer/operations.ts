@@ -18,12 +18,12 @@ export const loadPlugins = operation(async context => {
 
   const loaded = [
     await (__DEV__
-      ? FSPluginLoader.loadPackageDir(join((global as any).__dirname, '../plugins'))
+      ? FSPluginLoader.loadPackageDirs(join((global as any).__dirname, '../plugins'))
       : { loaded: [], failed: [] }),
     await (!__DEV__
-      ? FSPluginLoader.loadPackageDir(join(remote.app.getAppPath(), '/plugins'))
+      ? FSPluginLoader.loadPackageDirs(join(remote.app.getAppPath(), '/plugins'))
       : { loaded: [], failed: [] }),
-    await FSPluginLoader.loadPackageDir(join(userDir, '/delir/plugins')),
+    await FSPluginLoader.loadPackageDirs(join(userDir, '/delir/plugins')),
   ]
 
   const successes = [].concat(...loaded.map<any>(({ loaded }) => loaded))
@@ -31,11 +31,13 @@ export const loadPlugins = operation(async context => {
 
   if (fails.length > 0) {
     const failedPlugins = fails.map((fail: any) => fail.package).join(', ')
-    const message = fails.map((fail: any) => fail.reason).join('\n\n')
+    const message = fails
+      .map((fail: any) => `${fail.package}\n${fail.reason.map((r: string) => `  - ${r}\n`)}`)
+      .join('\n')
 
     await context.executeOperation(EditorOps.notify, {
-      message: `${failedPlugins}`,
       title: `Failed to load ${fails.length} plugins`,
+      message: `${failedPlugins}`,
       level: 'error',
       detail: message,
     })
