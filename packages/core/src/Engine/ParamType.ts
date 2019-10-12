@@ -9,7 +9,7 @@ export namespace ParamType {
   export type String = string
   export type Number = number
   export type Float = number
-  export type Enum = number
+  export type Enum = string
   export type Asset = AssetProxy
   export type Code = Expression
 }
