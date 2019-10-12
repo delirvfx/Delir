@@ -1,3 +1,7 @@
-import { DelirException } from './DelirException'
+import { DelirException, ErrorDetail } from './DelirException'
 
-export class PluginLoadFailException extends DelirException {}
+interface Reason extends ErrorDetail {
+  reason: string[]
+}
+
+export class PluginLoadFailException extends DelirException<Reason> {}

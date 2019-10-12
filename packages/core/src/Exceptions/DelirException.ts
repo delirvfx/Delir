@@ -1,13 +1,17 @@
-export class DelirException extends Error {
-  public before: Error
-  public message: string
-  public info?: Object
+export interface ErrorDetail {
+  before?: Error
+}
 
-  constructor(message: string, info: any = {}) {
+export class DelirException<T extends ErrorDetail = {}> extends Error {
+  public before?: Error
+  public message: string
+  public detail?: ErrorDetail
+
+  constructor(message: string, detail: T = {} as T) {
     super(message)
 
     this.message = message
-    this.before = info.before
-    this.info = info
+    this.before = detail.before
+    this.detail = detail
   }
 }

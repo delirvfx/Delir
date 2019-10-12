@@ -1,11 +1,7 @@
-import { DelirException } from './DelirException'
+import { DelirException, ErrorDetail } from './DelirException'
 
-interface EffectPluginMissingExceptionDetail {
+interface MissingDetail extends ErrorDetail {
   effectId: string
 }
 
-export class EffectPluginMissingException extends DelirException {
-  constructor(message: string, public detail: EffectPluginMissingExceptionDetail) {
-    super(message)
-  }
-}
+export class EffectPluginMissingException extends DelirException<MissingDetail> {}
