@@ -207,7 +207,7 @@ export default withFleurContext(
               },
               {
                 label: t(t.k.edit.redo),
-                accelerator: Platform.isMacOS() ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
+                accelerator: Platform.isMacOS ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
                 click: this.handleRedo,
                 ...(devToolsFocused ? { role: 'redo' as const } : {}),
               },
