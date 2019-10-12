@@ -51,9 +51,7 @@ export const Notifications = () => {
           </div>
           {entry.title != null && entry.title !== '' && <h1 className={s.entryTitle}>{entry.title}</h1>}
           {entry.message && <p className={s.entryBody}>{preserveLineBreak(entry.message)}</p>}
-          {entry.detail != null && entry.detail !== '' && (
-            <div className={s.detail}>{preserveLineBreak(entry.detail)}</div>
-          )}
+          {entry.detail != null && entry.detail !== '' && <pre className={s.detail}>{entry.detail}</pre>}
         </animated.div>
       ))}
     </div>

@@ -1,3 +1,4 @@
+import * as Delir from '@delirvfx/core'
 import { operation } from '@fleur/fleur'
 import { remote } from 'electron'
 import { exists } from 'fs-extra'
@@ -49,6 +50,11 @@ export const loadPlugins = operation(async context => {
 })
 
 export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch, executeOperation }) => {
+  interface ErrorEntry {
+    package: string
+    reasons: string[]
+  }
+
   const developmentPluginDirs = getDevelopPluginDirs(getStore)
 
   const wp = new Watchpack({
@@ -57,30 +63,58 @@ export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch,
   wp.watch([], developmentPluginDirs, Date.now())
 
   wp.on('aggregated', async (changes: string[]) => {
-    const plugins = getLoadedPlugins(getStore)
     const updatedPackages: any[] = []
+    const failedPackages: ErrorEntry[] = []
+
     for (const packageDir of changes) {
-      const packageJsonPath = join(packageDir, 'package.json')
-      if (!(await (exists as any)(packageJsonPath))) return
+      try {
+        const packageJsonPath = join(packageDir, 'package.json')
+        if (!(await (exists as any)(packageJsonPath))) return
 
-      const packageInfo = await FSPluginLoader.loadPackage(packageDir)
-      const changedPlugin = plugins.find((entry: any) => entry.id === packageInfo.id)
-      if (!changedPlugin) return
+        const packageInfo = await FSPluginLoader.loadPackage(packageDir)
 
-      updatedPackages.push(packageInfo)
+        const valid = Delir.PluginRegistry.validateEffectPluginPackageJSON(packageInfo.packageJson)
+        if (valid.hasError) {
+          failedPackages.push({
+            package: packageInfo.id,
+            reasons: valid.reason,
+          })
+          continue
+        }
+
+        updatedPackages.push(packageInfo)
+      } catch (e) {
+        failedPackages.push({
+          package: packageDir,
+          reasons: [`Error: ${e.message}`],
+        })
+      }
     }
 
     const updatedIds = updatedPackages.map((packageInfo: any) => packageInfo.id)
     dispatch(RendererActions.unregisterPlugins, { ids: updatedIds })
     dispatch(RendererActions.registerPlugins, { plugins: updatedPackages })
-    dispatch(RendererActions.clearCache)
+    dispatch(RendererActions.clearCache, {})
 
-    await executeOperation(EditorOps.notify, {
-      level: 'info',
-      title: 'Dev: Plugin has been reloaded',
-      message: updatedIds.map(id => `- ${id}`).join('\n'),
-      timeout: NotificationTimeouts.verbose,
-    })
+    if (failedPackages.length) {
+      await executeOperation(EditorOps.notify, {
+        level: 'error',
+        title: 'Dev: Failed to reload plugins',
+        detail: failedPackages
+          .map(entry => `${entry.package}\n${entry.reasons.map(r => `  - ${r}`).join('\n')}`)
+          .join('\n'),
+        timeout: NotificationTimeouts.error,
+      })
+    }
+
+    if (updatedPackages.length) {
+      await executeOperation(EditorOps.notify, {
+        level: 'info',
+        title: 'Dev: Plugins has been reloaded',
+        detail: updatedIds.map(id => `- ${id}`).join('\n'),
+        timeout: NotificationTimeouts.verbose,
+      })
+    }
   })
 
   return () => wp.close()

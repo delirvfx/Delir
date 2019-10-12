@@ -57,7 +57,7 @@ export default class FSPluginLoader {
         } catch (e) {
           failedPackages.push({
             package: dir,
-            reason: [e.message],
+            reason: [`Error: ${e.message}`],
           })
         }
       }),
