@@ -1,5 +1,11 @@
 import os from 'os'
 
-export const isWindows = () => os.type() === 'Windows_NT'
-export const isMacOS = () => os.type() === 'Darwin'
-export const isLinux = () => os.type() === 'Linux'
+export const Platform = {
+  get cmdOrCtrl() {
+    return this.isMacOS ? 'Cmd' : 'Ctrl'
+  },
+
+  isWindows: os.type() === 'Windows_NT',
+  isMacOS: os.type() === 'Darwin',
+  isLinux: os.type() === 'Linux',
+}

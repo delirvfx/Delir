@@ -7,7 +7,7 @@ import { dirname } from 'path'
 import { EditorActions } from '../Editor/actions'
 import { RendererActions } from './actions'
 
-import * as Platform from '../../utils/platform'
+import { Platform } from 'utils/platform'
 
 interface State {
   project: Delir.Entity.Project | null
@@ -215,9 +215,9 @@ export default class RendererStore extends Store<State> {
   private handleRenderDestinate = listen(EditorActions.renderDestinate, async payload => {
     const appPath = dirname(remote.app.getPath('exe'))
     const ffmpegBin =
-      __DEV__ || Platform.isLinux()
+      __DEV__ || Platform.isLinux
         ? 'ffmpeg'
-        : require('path').resolve(appPath, Platform.isMacOS() ? '../Resources/ffmpeg' : './ffmpeg.exe')
+        : require('path').resolve(appPath, Platform.isMacOS ? '../Resources/ffmpeg' : './ffmpeg.exe')
 
     // TODO: View側で聞いてくれ
     const file = remote.dialog.showSaveDialogSync({

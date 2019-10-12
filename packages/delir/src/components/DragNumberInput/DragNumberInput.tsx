@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import _ from 'lodash'
 import React from 'react'
-import * as Platform from '../../utils/platform'
+import { Platform } from 'utils/platform'
 
 import s from './DragNumberInput.sass'
 
@@ -131,12 +131,12 @@ export default class DragNumberInput extends React.Component<Props, State> {
 
   private handleMouseDown = (e: React.MouseEvent<HTMLSpanElement>) => {
     // MouseEvent#movement is buggy on Windows. Disable modification by drag.
-    if (Platform.isWindows()) return
+    if (Platform.isWindows) return
   }
 
   private handleMouseMove = (e: React.MouseEvent<HTMLSpanElement>) => {
     // MouseEvent#movement is buggy on Windows. Disable modification by drag.
-    if (Platform.isWindows()) return
+    if (Platform.isWindows) return
 
     if (e.nativeEvent.which !== 1) return // not mouse left pressed
 
@@ -161,7 +161,7 @@ export default class DragNumberInput extends React.Component<Props, State> {
 
   private handleMouseUp = (e: React.MouseEvent<HTMLInputElement>) => {
     // MouseEvent#movement is buggy on Windows. Disable modification by drag.
-    if (Platform.isWindows()) return
+    if (Platform.isWindows) return
 
     const input = this.input.current!
 

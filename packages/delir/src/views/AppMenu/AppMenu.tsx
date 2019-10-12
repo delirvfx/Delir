@@ -3,7 +3,7 @@ import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import * as Electron from 'electron'
 import { remote } from 'electron'
 import React from 'react'
-import * as Platform from '../../utils/platform'
+import { Platform } from 'utils/platform'
 import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
 import { ModalMounterProps, withModalMounter } from '../../components/ModalOwner/ModalOwner'
@@ -184,7 +184,7 @@ export default withFleurContext(
                   })
                 },
               },
-              ...(Platform.isWindows()
+              ...(Platform.isWindows
                 ? [
                     { type: 'separator' } as any,
                     {
