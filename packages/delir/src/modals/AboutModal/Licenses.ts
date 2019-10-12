@@ -123,6 +123,10 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/uuid"
     },
     {
+        "name": "@types/watchpack",
+        "url": "https://www.npmjs.com/package/@types/watchpack"
+    },
+    {
         "name": "archiver",
         "url": "https://github.com/archiverjs/node-archiver"
     },
@@ -367,6 +371,10 @@ export const dependencies = [
         "url": "https://github.com/TypeStrong/ts-node"
     },
     {
+        "name": "tsconfig-paths-webpack-plugin",
+        "url": "https://www.npmjs.com/package/tsconfig-paths-webpack-plugin"
+    },
+    {
         "name": "tslint",
         "url": "https://palantir.github.io/tslint"
     },
@@ -393,6 +401,10 @@ export const dependencies = [
     {
         "name": "uuid",
         "url": "https://www.npmjs.com/package/uuid"
+    },
+    {
+        "name": "watchpack",
+        "url": "https://github.com/webpack/watchpack"
     },
     {
         "name": "webpack",

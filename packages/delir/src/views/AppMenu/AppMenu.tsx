@@ -83,6 +83,7 @@ export default withFleurContext(
             {
               label: t(t.k.appMenu.preference),
               accelerator: 'CmdOrCtrl+,',
+              acceleratorWorksWhenHidden: false,
               click: this.handleOpenPreference,
             },
             { type: 'separator' },

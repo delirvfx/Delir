@@ -346,7 +346,7 @@ export function compilePlugins(done) {
         'chromakey/index': './chromakey/index',
         ...(__DEV__
           ? {
-              'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
+              // 'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
               // 'filler/index': '../experimental-plugins/filler/index',
               // 'mmd/index': '../experimental-plugins/mmd/index',
               // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',

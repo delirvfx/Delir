@@ -11,10 +11,10 @@
         "no-ids": [0],
         "no-duplicate-properties": [2],
         "property-sort-order": [2, {
-            "order": 'smacss'
+            "order": ["smacss"],
         }],
         "quotes": [2, {
-            "style": "single",
-        }],
+            "style": "single"
+        }]
     }
 }

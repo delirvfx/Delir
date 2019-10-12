@@ -12,6 +12,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 
 import { Pane } from '../../components/Pane'
 
+import { getAudioVolume } from 'domain/Preference/selectors'
 import s from './NavigationView.sass'
 
 export const NavigationView = () => {
@@ -24,7 +25,7 @@ export const NavigationView = () => {
   } = useStore([EditorStore, RendererStore, PreferenceStore], getStore => ({
     editor: getStore(EditorStore).getState(),
     previewPlaying: getStore(RendererStore).previewPlaying,
-    audioVolume: getStore(PreferenceStore).audioVolume,
+    audioVolume: getAudioVolume(getStore),
   }))
 
   const projectName = project ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project') : 'Delir'

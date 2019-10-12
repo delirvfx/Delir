@@ -48,3 +48,15 @@ export const useValidation = (validator: Validator, deps: any[]) => {
 
   return { errors, isValid, setError }
 }
+
+export const useObjectState = <T>(initialState: T) => {
+  const [state, update] = useImmer<T>(initialState)
+
+  const updater = useCallback((part: Partial<T>) => {
+    update(draft => {
+      Object.assign(draft, part)
+    })
+  }, [])
+
+  return [state, updater] as const
+}

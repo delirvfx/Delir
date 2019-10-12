@@ -1,12 +1,15 @@
 import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
-import React from 'react'
-
-import * as PreferenceOps from '../../domain/Preference/operations'
-import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Preference/PreferenceStore'
+import React, { useEffect } from 'react'
 
 import { Button } from '../../components/Button'
+import { FormSection } from '../../components/FormSection/FormSection'
+import * as PreferenceOps from '../../domain/Preference/operations'
+import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Preference/PreferenceStore'
+import { useObjectState } from '../../utils/hooks'
 
+import { getAllPreferences } from 'domain/Preference/selectors'
+import { DevelopmentPlguinPane } from './Panes/Development/Plugin'
 import t from './Preference.i18n'
 import s from './Preference.sass'
 
@@ -19,14 +22,14 @@ interface ConnectedProps {
 }
 
 interface State {
-  activePanel: 'renderer-general'
+  activePanel: 'renderer-general' | 'development-plugin'
 }
 
 const RendererGeneralPane = () => {
   const context = useFleurContext()
 
   const { preference } = useStore([PreferenceStore], getStore => ({
-    preference: getStore(PreferenceStore).getPreferences(),
+    preference: getAllPreferences(getStore),
   }))
 
   const handleRendererIgnoreMissingEffect = React.useCallback(
@@ -54,9 +57,8 @@ const RendererGeneralPane = () => {
     </>
   )
 }
-
 export const Preference = (props: Props) => {
-  const [{ activePanel }] = React.useState({
+  const [{ activePanel }, update] = useObjectState<State>({
     activePanel: 'renderer-general',
   })
 
@@ -66,24 +68,36 @@ export const Preference = (props: Props) => {
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.addEventListener('keyup', handleWindowKeyup)
     return () => window.removeEventListener('keyup', handleWindowKeyup)
   })
 
   return (
-    <div className={s.Preference}>
+    <div className={s.preference}>
       <div className={s.sidebarRegion}>
         <div className={s.sidebar}>
           <div className={s.header}>{t(t.k.sidebar.renderer)}</div>
-          <div className={classnames(s.item, activePanel === 'renderer-general' && s.itemActive)}>
+          <div
+            className={classnames(s.item, activePanel === 'renderer-general' && s.itemActive)}
+            onClick={() => update({ activePanel: 'renderer-general' })}
+          >
             {t(t.k.sidebar.rendererGeneral)}
+          </div>
+
+          <div className={s.header}>{t(t.k.sidebar.devel)}</div>
+          <div
+            className={classnames(s.item, activePanel === 'development-plugin' && s.itemActive)}
+            onClick={() => update({ activePanel: 'development-plugin' })}
+          >
+            {t(t.k.sidebar.develPlugin)}
           </div>
         </div>
       </div>
       <div className={s.contentRegion}>
         <div className={s.content}>
           {activePanel === 'renderer-general' && <RendererGeneralPane />}
+          {activePanel === 'development-plugin' && <DevelopmentPlguinPane />}
           <div className={s.contentFoot}>
             <Button kind="normal" onClick={props.onClose}>
               {t(t.k.close)}

@@ -44,7 +44,7 @@ export const Notifications = () => {
   return (
     <div className={s.root}>
       {transitions.map(({ item: entry, key, props: style }) => (
-        <animated.div key={key} className={classnames(s.entry, s[`--${entry.level}`])} style={style}>
+        <animated.div key={key} className={classnames(s.entry, s[entry.level])} style={style}>
           <div className={s.close} onClick={handleCloseMessage} data-entry-id={entry.id}>
             &times;
           </div>
