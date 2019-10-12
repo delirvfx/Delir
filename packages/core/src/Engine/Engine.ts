@@ -94,6 +94,11 @@ export default class Engine {
     }
   }
 
+  public clearCache() {
+    this._clipRendererCache = new WeakMap()
+    this._effectCache = new WeakMap()
+  }
+
   public renderFrame(compositionId: string, beginFrame: number): ProgressPromise<void> {
     return new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
       let aborted = false
