@@ -1,5 +1,5 @@
+import Popper from 'popper.js'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ReactNode } from 'react'
 import { useCallback } from 'react'
 import { useTransition } from 'react-spring'
 import { useImmer } from 'use-immer'
@@ -59,4 +59,26 @@ export const useObjectState = <T>(initialState: T) => {
   }, [])
 
   return [state, updater] as const
+}
+
+export const usePopper = (options: Popper.PopperOptions = {}) => {
+  const parentRef = useRef<Element | null>(null)
+  const poppingRef = useRef<Element | null>(null)
+  const popperRef = useRef<Popper | null>(null)
+
+  useEffect(() => {
+    if (!parentRef.current || !poppingRef.current) return
+    const opt = Object.assign({}, options, {
+      modifiers: {
+        preventOverflow: { boundariesElement: document.body },
+      },
+    })
+    popperRef.current = new Popper(parentRef.current.parentElement!.parentElement!, poppingRef.current!, opt)
+
+    return () => {
+      popperRef.current!.destroy()
+    }
+  }, [parentRef.current, poppingRef.current])
+
+  return { parentRef, poppingRef }
 }

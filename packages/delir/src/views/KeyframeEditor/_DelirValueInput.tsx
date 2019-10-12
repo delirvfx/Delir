@@ -9,17 +9,20 @@ import { Input } from '../../components/Input/Input'
 import t from './_DelirValueInput.i18n'
 import s from './DelirValueInput.sass'
 
-interface DelirValueInputProps {
+interface Props {
   assets: ReadonlyArray<Delir.Entity.Asset> | null
   descriptor: Delir.AnyParameterTypeDescriptor
   value: Delir.Entity.KeyframeValueTypes
   onChange: (desc: Delir.AnyParameterTypeDescriptor, value: Delir.Entity.KeyframeValueTypes) => void
 }
 
-export default class DelirValueInput extends React.PureComponent<DelirValueInputProps, any> {
-  public state = {
-    value: this.props.value,
-  }
+interface State {
+  currentValue: Delir.Entity.KeyframeValueTypes
+}
+
+export default PropertyInput
+
+export class DelirValueInput extends React.PureComponent<Props, State> {
   private ref = {
     numberInput: React.createRef<DragNumberInput>(),
     propX: React.createRef<DragNumberInput>(),
