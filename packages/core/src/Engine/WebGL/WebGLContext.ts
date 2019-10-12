@@ -70,6 +70,15 @@ export default class WebGLContext {
     this.tex2DBuffer = this.gl.createBuffer()!
   }
 
+  public setSize(width: number, height: number) {
+    this.glCanvas.width = width
+    this.glCanvas.height = height
+    this.gl.viewport(0, 0, width, height)
+
+    this.texBufferCanvas.width = width
+    this.texBufferCanvas.height = height
+  }
+
   public getProgram(fragmentShaderSource: string, vertexShaderSource: string = DEFAULT_VERTEX_SHADER): WebGLProgram {
     const program = this.gl.createProgram()!
 

@@ -62,6 +62,7 @@ export default class Engine {
   private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
   private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
   private _streamObserver: IRenderingStreamObserver | null = null
+  private glContext: WebGLContext = new WebGLContext(1, 1)
   // private _gl: WebGL2RenderingContext
 
   get pluginRegistry() {
@@ -318,6 +319,8 @@ export default class Engine {
     const currentFrame = option.beginFrame
     const currentTime = currentFrame / rootComposition.framerate
 
+    this.glContext.setSize(rootComposition.width, rootComposition.height)
+
     return new RenderContextBase({
       time: currentTime,
       timeOnComposition: currentTime,
@@ -340,7 +343,7 @@ export default class Engine {
 
       rootComposition,
       resolver,
-      gl: new WebGLContext(rootComposition.width, rootComposition.height),
+      gl: this.glContext,
     })
   }
 
