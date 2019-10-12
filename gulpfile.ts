@@ -9,6 +9,7 @@ const builder = require('electron-builder')
 const notifier = require('node-notifier')
 const download = require('download')
 const zipDir = require('zip-dir')
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 
 const os = require('os')
 const fs = require('fs-extra')
@@ -239,6 +240,11 @@ export function compileRendererJs(done) {
           // Using fresh development packages always
           '@delirvfx/core': join(paths.src.core, 'src/index.ts'),
         },
+        plugins: [
+          new TsconfigPathsPlugin({
+            configFile: join(paths.src.frontend, 'tsconfig.json'),
+          }),
+        ],
       },
       module: {
         rules: [
