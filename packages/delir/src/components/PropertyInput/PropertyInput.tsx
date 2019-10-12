@@ -1,6 +1,7 @@
 import * as Delir from '@delirvfx/core'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ColorTypeInput } from './Inputs/ColorTypeInput'
+import { StringTypeInput } from './Inputs/StringTypeInput'
 
 const s = {} as any
 
@@ -23,6 +24,8 @@ export const PropertyInput = ({ assets, descriptor, value, onChange }: Props) =>
     case 'COLOR_RGB':
     case 'COLOR_RGBA':
       return <ColorTypeInput value={value as any} alpha={descriptor.type === 'COLOR_RGBA'} onChange={handleOnChange} />
+    case 'STRING':
+      return <StringTypeInput value={value as any} onChange={handleOnChange} />
     default:
       return <></>
   }
