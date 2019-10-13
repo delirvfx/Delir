@@ -18,6 +18,7 @@ export interface IRenderContextBase {
   audioChannels: number
   neededSamples: number
   isAudioBufferingNeeded: boolean
+  transparentBackground: boolean
 
   rootComposition: Readonly<Composition>
 

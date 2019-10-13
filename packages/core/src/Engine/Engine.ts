@@ -37,6 +37,7 @@ interface RenderingOption {
   ignoreMissingEffect: boolean
   realtime: boolean
   audioBufferSizeSecond: number
+  enableAlpha: boolean
 }
 
 interface RenderProgression {
@@ -100,7 +101,11 @@ export default class Engine {
     this._effectCache = new WeakMap()
   }
 
-  public renderFrame(compositionId: string, beginFrame: number): ProgressPromise<void> {
+  public renderFrame(
+    compositionId: string,
+    beginFrame: number,
+    options: Partial<RenderingOption> = {},
+  ): ProgressPromise<void> {
     return new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
       let aborted = false
       onAbort(() => (aborted = true))
@@ -112,6 +117,8 @@ export default class Engine {
         loop: false,
         realtime: false,
         audioBufferSizeSecond: 1,
+        enableAlpha: false,
+        ...options,
       }
 
       const request = this._initStage(compositionId, renderingOption)
@@ -150,6 +157,7 @@ export default class Engine {
       ignoreMissingEffect: false,
       realtime: false,
       audioBufferSizeSecond: 1,
+      enableAlpha: false,
     })
 
     this.stopCurrentRendering()
@@ -340,6 +348,7 @@ export default class Engine {
       neededSamples: rootComposition.samplingRate * option.audioBufferSizeSecond,
       audioChannels: rootComposition.audioChannels,
       isAudioBufferingNeeded: false,
+      transparentBackground: !!option.enableAlpha,
 
       rootComposition,
       resolver,
@@ -416,8 +425,12 @@ export default class Engine {
     const destBufferCanvas = baseContext.destCanvas
     const destBufferCtx = destBufferCanvas.getContext('2d')!
 
-    destBufferCtx.fillStyle = baseContext.rootComposition.backgroundColor.toString()
-    destBufferCtx.fillRect(0, 0, baseContext.width, baseContext.height)
+    if (baseContext.transparentBackground) {
+      destBufferCtx.clearRect(0, 0, baseContext.width, baseContext.height)
+    } else {
+      destBufferCtx.fillStyle = baseContext.rootComposition.backgroundColor.toString()
+      destBufferCtx.fillRect(0, 0, baseContext.width, baseContext.height)
+    }
 
     const taskGroupChunks: TaskGroup[] = []
     const audioTaskGroup: TaskGroup = []

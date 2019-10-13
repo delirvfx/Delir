@@ -1,14 +1,11 @@
+import * as Delir from '@delirvfx/core'
 import arrayBufferToBuffer = require('arraybuffer-to-buffer')
 import audioBufferToWave = require('audiobuffer-to-wav')
 import { spawn } from 'child_process'
+import duplexer3 from 'duplexer3'
 import { nativeImage } from 'electron'
 import fs from 'mz/fs'
 import path from 'path'
-
-import * as Delir from '@delirvfx/core'
-
-// import PromiseQueue from './utils/PromiseQueue'
-import * as Exporter from './exporter'
 
 export enum RenderingStep {
   Started = 'started',
@@ -67,7 +64,7 @@ const optionToFfmpegArgs = (option: EncodingOption & { videoInput: string; audio
     '-b:v',
     option.vBitrate ?? '1024k',
     '-pix_fmt',
-    option.useAlpha ? 'yuva420p' : 'yuv420p',
+    option.useAlpha ? 'rgba' : 'yuv420p',
     ...(option.aCodec === ACodecs.aacLow ? ['-profile:a', 'aac_low', '-c:a', 'aac'] : []),
     '-b:a',
     option.aBitrate ? option.aBitrate : '256k',
@@ -101,14 +98,26 @@ export default async (options: ExportOptions): Promise<void> => {
       new Float32Array(new ArrayBuffer(4 /* bytes */ * comp.samplingRate * Math.ceil(durationFrames / comp.framerate))),
   )
 
-  const exporter = Exporter.video({
-    args: {
-      'c:v': 'utvideo',
-    },
-    inputFramerate: comp.framerate,
-    dest: tmpMovieFilePath,
-    ffmpegBin: ffmpegBin || 'ffmpeg',
-  })
+  const sourceFFmpegProcess = spawn(ffmpegBin || 'ffmpeg', [
+    '-y',
+    '-framerate',
+    `${comp.framerate}`,
+    '-i',
+    'pipe:0',
+    '-c:v',
+    'png_pipe',
+    '-c:v',
+    'utvideo',
+    '-pix_fmt',
+    'rgba',
+    // 'yuva420p',
+    tmpMovieFilePath
+  ])
+
+  // tslint:disable-next-line:no-console
+  sourceFFmpegProcess.stderr.on('data', chunk => console.log('ffmpeg:', chunk.toString()))
+
+  const sourceFFmpegStream = duplexer3(sourceFFmpegProcess.stdin, sourceFFmpegProcess.stdout)
 
   const pipeline = new Delir.Engine.Engine()
   pipeline.setProject(project)
@@ -131,7 +140,7 @@ export default async (options: ExportOptions): Promise<void> => {
       // })
 
       const png = nativeImage.createFromDataURL(canvas.toDataURL('image/png'))
-      exporter.write(png.toPNG())
+      sourceFFmpegStream.write(png.toPNG())
     },
     onAudioBuffered: buffers => {
       for (let ch = 0, l = comp.audioChannels; ch < l; ch++) {
@@ -150,13 +159,14 @@ export default async (options: ExportOptions): Promise<void> => {
   await pipeline.renderSequencial(rootCompId, {
     loop: false,
     ignoreMissingEffect: options.ignoreMissingEffect,
+    enableAlpha: options.encoding.useAlpha,
     realtime: false,
     audioBufferSizeSecond: 1,
   })
   // await queue.waitEmpty()
 
   // queue.stop()
-  exporter.end()
+  sourceFFmpegStream.end()
 
   onProgress({ step: RenderingStep.Encoding, progression: 0 })
 
@@ -174,7 +184,13 @@ export default async (options: ExportOptions): Promise<void> => {
       return fs.writeFile(tmpAudioFilePath, arrayBufferToBuffer(wav))
     })(),
     (async () => {
-      await new Promise(resolve => exporter.ffmpeg.on('exit', resolve))
+      await new Promise(resolve => {
+        if ((sourceFFmpegProcess as any).exitCode != null) {
+          resolve()
+        } else {
+          sourceFFmpegProcess.on('exit', resolve)
+        }
+      })
     })(),
   ])
 
