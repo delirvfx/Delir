@@ -10,7 +10,7 @@ import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } 
 export const ShortcutHandler = () => {
   const context = useFleurContext()
 
-  const trap = useMemo(() => new Mousetrap(document.body), [])
+  const trap = useMemo(() => new Mousetrap((window as unknown) as Element), [])
 
   const handleShortCutPreviewToggle = useCallback((e: KeyboardEvent) => {
     if (
@@ -20,6 +20,9 @@ export const ShortcutHandler = () => {
     ) {
       return
     }
+
+    e.preventDefault()
+    e.stopPropagation()
 
     const activeComp = context.getStore(EditorStore).getActiveComposition()
     const { previewPlaying } = context.getStore(RendererStore)
