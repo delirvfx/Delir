@@ -212,61 +212,42 @@ export default class RendererStore extends Store<State> {
     })
   })
 
-  private handleRenderDestinate = listen(EditorActions.renderDestinate, async payload => {
-    const appPath = dirname(remote.app.getPath('exe'))
-    const ffmpegBin =
-      __DEV__ || Platform.isLinux
-        ? 'ffmpeg'
-        : require('path').resolve(appPath, Platform.isMacOS ? '../Resources/ffmpeg' : './ffmpeg.exe')
+  private handleRenderDestinate = listen(
+    EditorActions.renderDestinate,
+    async ({ compositionId, ignoreMissingEffect, encodingOption, destPath }) => {
+      const appPath = dirname(remote.app.getPath('exe'))
+      const ffmpegBin =
+        __DEV__ || Platform.isLinux
+          ? 'ffmpeg'
+          : require('path').resolve(appPath, Platform.isMacOS ? '../Resources/ffmpeg' : './ffmpeg.exe')
 
-    // TODO: View側で聞いてくれ
-    const file = remote.dialog.showSaveDialogSync({
-      title: 'Destinate',
-      buttonLabel: 'Render',
-      filters: [
-        {
-          name: 'mp4',
-          extensions: ['mp4'],
-        },
-      ],
-    })
+      if (!this.state.project || !this.state.composition || !this.pluginRegistry) return
 
-    if (!file) return
-    if (!this.state.project || !this.state.composition || !this.pluginRegistry) return
+      this.updateWith(d => (d.isInRendering = true))
 
-    // deream() の前に一瞬待たないとフリーズしてしまうので
-    // awaitを噛ませてステータスを確実に出す
-    // await new Promise(resolve => {
-    //     setImmediate(() => {
-    //         EditorOps.autoSaveProject()
-    //         EditorOps.updateProcessingState('Rendering: Initializing')
-    //         resolve()
-    //     })
-    // })
-
-    this.updateWith(d => (d.isInRendering = true))
-
-    try {
-      await deream({
-        project: this.state.project,
-        rootCompId: this.state.composition.id,
-        exportPath: file,
-        pluginRegistry: this.pluginRegistry,
-        ignoreMissingEffect: payload.ignoreMissingEffect,
-        temporaryDir: remote.app.getPath('temp'),
-        ffmpegBin,
-        onProgress: progress => {
-          setTimeout(() => {
-            this.updateWith(draft => (draft.exportRenderState = progress))
-          }, 0)
-        },
-      })
-    } catch (e) {
-      throw e
-    } finally {
-      this.updateWith(d => (d.isInRendering = false))
-    }
-  })
+      try {
+        await deream({
+          project: this.state.project,
+          rootCompId: this.state.composition.id,
+          encoding: encodingOption,
+          exportPath: destPath,
+          pluginRegistry: this.pluginRegistry,
+          ignoreMissingEffect,
+          temporaryDir: remote.app.getPath('temp'),
+          ffmpegBin,
+          onProgress: progress => {
+            setTimeout(() => {
+              this.updateWith(draft => (draft.exportRenderState = progress))
+            }, 0)
+          },
+        })
+      } catch (e) {
+        throw e
+      } finally {
+        this.updateWith(d => (d.isInRendering = false))
+      }
+    },
+  )
 
   constructor(context: StoreContext) {
     super(context)

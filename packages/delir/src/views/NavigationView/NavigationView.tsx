@@ -3,20 +3,21 @@ import { remote } from 'electron'
 import path from 'path'
 import React from 'react'
 
-import EditorStore from '../../domain/Editor/EditorStore'
-import * as EditorOps from '../../domain/Editor/operations'
-import * as PreferenceOps from '../../domain/Preference/operations'
-import PreferenceStore from '../../domain/Preference/PreferenceStore'
-import * as RendererOps from '../../domain/Renderer/operations'
-import RendererStore from '../../domain/Renderer/RendererStore'
-
-import { Pane } from '../../components/Pane'
-
+import { useModalMounter } from 'components/ModalOwner/ModalOwner'
+import { Pane } from 'components/Pane'
+import EditorStore from 'domain/Editor/EditorStore'
+import * as EditorOps from 'domain/Editor/operations'
+import * as PreferenceOps from 'domain/Preference/operations'
+import PreferenceStore from 'domain/Preference/PreferenceStore'
 import { getAudioVolume } from 'domain/Preference/selectors'
+import * as RendererOps from 'domain/Renderer/operations'
+import RendererStore from 'domain/Renderer/RendererStore'
+import { RenderingOption, RenderingSettingModal } from 'modals/RenderingSettingModal/RenderingSettingModal'
 import s from './NavigationView.sass'
 
 export const NavigationView = () => {
   const context = useFleurContext()
+  const { mountModal } = useModalMounter()
 
   const {
     audioVolume,
@@ -46,13 +47,18 @@ export const NavigationView = () => {
     context.executeOperation(RendererOps.stopPreview)
   }, [])
 
-  const onClickDest = React.useCallback(() => {
+  const onClickDest = React.useCallback(async () => {
     if (!activeComp) return
+
+    const result = await mountModal<RenderingOption | false>(resolve => <RenderingSettingModal onClose={resolve} />)
+    if (!result) return
 
     context.executeOperation(EditorOps.renderDestinate, {
       compositionId: activeComp.id!,
+      destPath: result.destination,
+      encodingOption: result.encodingOption,
     })
-  }, [activeComp])
+  }, [activeComp, mountModal])
 
   const handleChangeVolume = React.useCallback(({ currentTarget }: React.ChangeEvent<HTMLInputElement>) => {
     context.executeOperation(PreferenceOps.setAudioVolume, currentTarget.valueAsNumber)

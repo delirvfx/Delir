@@ -13,6 +13,11 @@ const Container = styled.div`
     line-height: 32px;
     margin-bottom: 16px;
   }
+
+  h2 {
+    font-size: 20px;
+    margin: 24px 0 12px;
+  }
 `
 
 const Footer = styled.div`

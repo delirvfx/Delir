@@ -24,15 +24,55 @@ export interface RenderingProgress {
   progression: number
 }
 
+export enum VCodecs {
+  libx264 = 'libx264',
+  libx265 = 'libx265',
+  utvideo = 'utvideo',
+}
+
+export enum ACodecs {
+  aacLow = 'aac_low',
+  pcm = 'pcm',
+}
+
+export interface EncodingOption {
+  vCodec: VCodecs
+  vBitrate: string | null
+  aCodec: ACodecs
+  aBitrate: string | null
+  useAlpha: boolean
+}
+
 interface ExportOptions {
   project: Delir.Entity.Project
   rootCompId: string
   temporaryDir: string
   exportPath: string
   pluginRegistry: Delir.PluginRegistry
+  encoding: EncodingOption
   ignoreMissingEffect?: boolean
   onProgress?: (progress: RenderingProgress) => void
   ffmpegBin?: string
+}
+
+const optionToFfmpegArgs = (option: EncodingOption & { videoInput: string; audioInput: string; destPath: string }) => {
+  return [
+    '-y',
+    '-i',
+    option.videoInput,
+    '-i',
+    option.audioInput,
+    '-c:v',
+    option.vCodec,
+    '-b:v',
+    option.vBitrate ?? '1024k',
+    '-pix_fmt',
+    option.useAlpha ? 'yuva420p' : 'yuv420p',
+    ...(option.aCodec === ACodecs.aacLow ? ['-profile:a', 'aac_low', '-c:a', 'aac'] : []),
+    '-b:a',
+    option.aBitrate ? option.aBitrate : '256k',
+    option.destPath,
+  ]
 }
 
 export default async (options: ExportOptions): Promise<void> => {
@@ -64,28 +104,11 @@ export default async (options: ExportOptions): Promise<void> => {
   const exporter = Exporter.video({
     args: {
       'c:v': 'utvideo',
-      // 'b:v': '1024k',
-      // 'pix_fmt': 'yuv420p',
-      // 'r': rootComp.framerate,
-      // 'an': ''
-      // 'f': 'mp4',
     },
     inputFramerate: comp.framerate,
     dest: tmpMovieFilePath,
     ffmpegBin: ffmpegBin || 'ffmpeg',
   })
-
-  // const progPromise = Renderer.render({
-  //     project: this._project,
-  //     pluginRegistry: this._pluginRegistry,
-  //     rootCompId: req.targetCompositionId,
-  //     beginFrame: 0,
-  //     destinationCanvas: canvas,
-  //     destinationAudioBuffers: audioBuffer,
-  //     requestAnimationFrame: window.requestAnimationFrame.bind(window),
-  // })
-
-  // const queue = new PromiseQueue()
 
   const pipeline = new Delir.Engine.Engine()
   pipeline.setProject(project)
@@ -143,8 +166,8 @@ export default async (options: ExportOptions): Promise<void> => {
         {
           sampleRate: comp.samplingRate,
           numberOfChannels: pcmAudioData.length,
-          getChannelData: ch => pcmAudioData[ch],
-        },
+          getChannelData: (ch: number) => pcmAudioData[ch],
+        } as any,
         { float32: true },
       )
 
@@ -158,34 +181,17 @@ export default async (options: ExportOptions): Promise<void> => {
   onProgress({ step: RenderingStep.Concat, progression: 0 })
 
   await new Promise((resolve, reject) => {
-    const ffmpeg = spawn(ffmpegBin || 'ffmpeg', [
-      '-y',
-      // '-f',
-      // 'utvideo',
-      '-i',
-      tmpMovieFilePath,
-      '-i',
-      tmpAudioFilePath,
-      // '-c:a',
-      // 'pcm_f32be',
-      '-c:v',
-      'libx264',
-      '-pix_fmt',
-      'yuv420p',
-      // '-profile:v',
-      // 'baseline',
-      // '-level:v',
-      // '3.1',
-      '-b:v',
-      '1024k',
-      '-profile:a',
-      'aac_low',
-      // '-c:a',
-      // 'libfaac',
-      // '-b:a',
-      // '320k',
-      exportPath,
-    ])
+    const args = optionToFfmpegArgs({
+      ...options.encoding,
+      videoInput: tmpMovieFilePath,
+      audioInput: tmpAudioFilePath,
+      destPath: exportPath,
+    })
+
+    // tslint:disable-next-line
+    console.info(`🤜🤛 Mixing started with \`ffmpeg ${args.join(' ')}\``)
+
+    const ffmpeg = spawn(ffmpegBin || 'ffmpeg', args)
 
     let lastMessage: string
     ffmpeg.stderr.on('data', (buffer: Buffer) => {

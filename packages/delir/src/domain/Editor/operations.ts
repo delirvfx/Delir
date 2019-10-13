@@ -1,5 +1,6 @@
 import * as Delir from '@delirvfx/core'
 import { operation } from '@fleur/fleur'
+import { EncodingOption } from '@ragg/deream';
 import archiver from 'archiver';
 import { remote } from 'electron'
 import glob from 'fast-glob'
@@ -122,11 +123,21 @@ export const changeActiveParam = operation((context, { target }: { target: Param
   context.dispatch(EditorActions.changeActiveParam, { target })
 })
 
-export const renderDestinate = operation((context, arg: { compositionId: string }) => {
+export const renderDestinate = operation((context, {
+  compositionId,
+  destPath,
+  encodingOption
+}: {
+  compositionId: string,
+  destPath: string,
+  encodingOption: EncodingOption
+}) => {
   const preference = getAllPreferences(context.getStore)
 
   context.dispatch(EditorActions.renderDestinate, {
-    compositionId: arg.compositionId,
+    compositionId,
+    destPath,
+    encodingOption,
     ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
   })
 })
