@@ -9,6 +9,7 @@ import path from 'path'
 import React, { ChangeEvent, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { useObjectState, useValidation } from 'utils/hooks'
+import t from './RenderingSettingModal.i18n'
 
 export interface RenderingOption {
   destination: string
@@ -55,7 +56,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
 
   const { errors, isValid } = useValidation(
     errors => {
-      errors.destPath = destPath == '' ? 'Require to select destination file' : null
+      errors.destPath = destPath == '' ? t(t.k.errors.destRequired) : null
     },
     [videoCodec, audioCodec, destPath],
   )
@@ -131,17 +132,17 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
       footer={
         <>
           <Button kind="normal" onClick={handleClickCancel}>
-            Cancel
+            {t(t.k.cancel)}
           </Button>
           <Button kind="primary" onClick={handleClickStart}>
-            Start rendering
+            {t(t.k.startRendering)}
           </Button>
         </>
       }
     >
-      <h1>Start rendering</h1>
+      <h1>{t(t.k.title)}</h1>
 
-      <FormSection label="Encoding preset">
+      <FormSection label={t(t.k.encodingPreset)}>
         <SelectBox onChange={handleChangePreset} value="">
           <option value="mp4">MP4 (H.264 + AAC)</option>
           {/* <option value="qt">Qt Animation (Alpha channel)</option> */}
@@ -149,15 +150,15 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
         </SelectBox>
       </FormSection>
 
-      <FormSection label="Save to" error={errors.destPath}>
+      <FormSection label={t(t.k.saveTo)} error={errors.destPath}>
         <Input blocked readOnly onClick={handleClickSelectFile} placeholder="Click to select a file" value={destPath} />
       </FormSection>
 
-      <h2>Advanced options</h2>
+      <h2>{t(t.k.advancedOptions)}</h2>
 
       <Row>
         <Column>
-          <FormSection label="Video codec">
+          <FormSection label={t(t.k.videoCodec)}>
             <SelectBox value={videoCodec} onChange={handleChangeVideoCodec}>
               <option value="libx264">H.264</option>
               <option value="libx265">H.265</option>
@@ -167,7 +168,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
           </FormSection>
         </Column>
         <Column>
-          <FormSection label="Bitrate">
+          <FormSection label={t(t.k.bitrate)}>
             <SelectBox value={videoBitrate} onChange={handleChangeVideoBitrate}>
               <option value="" selected={videoBitrate === ''} />
               <option value="1024k">1024k</option>
@@ -181,7 +182,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
         <FormSection
           label={
             <label>
-              <span style={{ marginRight: '8px' }}> Render background as transparent if codec supported</span>{' '}
+              <span style={{ marginRight: '8px' }}> {t(t.k.useAlpha)}</span>{' '}
               <Checkbox checked={useAlpha} onChange={handleChangeUseAlpha} />
             </label>
           }
@@ -190,7 +191,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
 
       <Row style={{ marginTop: '16px' }}>
         <Column>
-          <FormSection label="Audio codec">
+          <FormSection label={t(t.k.audioCodec)}>
             <SelectBox value={audioCodec} onChange={handleChangeAudioCodec}>
               <option value="aac_low">AAC Low profile</option>
               <option value="pcm">PCM</option>
@@ -198,7 +199,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
           </FormSection>
         </Column>
         <Column>
-          <FormSection label="Bitrate">
+          <FormSection label={t(t.k.bitrate)}>
             <SelectBox value={audioBitrate} onChange={handleChangeAudioBitrate}>
               <option value="" selected={audioBitrate === ''} />
               <option value="128k">128k</option>
