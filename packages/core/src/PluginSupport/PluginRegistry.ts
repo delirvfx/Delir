@@ -31,17 +31,22 @@ const effectPluginPackageJSONSchema = Joi.object()
 export default class PluginRegistry {
   public static validateEffectPluginPackageJSON(packageJSON: any) {
     const schemaInvalidity = Joi.validate(packageJSON, effectPluginPackageJSONSchema).error
-    const engineVersionValidity =
-      !!semver.validRange(packageJSON.engines['delir-core']) ||
-      !!semver.validRange(packageJSON.engines['@delirvfx/core'])
+    const neededVersion = packageJSON.engines['@delirvfx/core']
+    const engineVersionValidity = !!semver.validRange(neededVersion)
+    const engineVersionCompatible = engineVersionValidity && semver.satisfies(engineVersion, neededVersion)
     const versionValidity = !!semver.valid(packageJSON.version)
-    const hasError = schemaInvalidity != null || !engineVersionValidity || !versionValidity
+    const hasError = schemaInvalidity != null || !engineVersionCompatible || !engineVersionValidity || !versionValidity
 
     return {
       hasError,
       reason: ([] as any[]).concat(
         schemaInvalidity != null ? [schemaInvalidity] : [],
         !engineVersionValidity ? ["Invalid semantic version of `engines['@delirvfx/core']` field"] : [],
+        engineVersionValidity && !engineVersionCompatible
+          ? [
+              `Plugin not compatible to current @delirvfx/core version (you expected: ${neededVersion} current: ${engineVersion})`,
+            ]
+          : [],
         !versionValidity ? ['Invalid semantic version of `version` fieled'] : [],
       ),
     }
@@ -65,12 +70,6 @@ export default class PluginRegistry {
         throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\``, {
           reason: result.reason,
         })
-      }
-
-      const requiredEngineVersion =
-        entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
-      if (!semver.satisfies(engineVersion, requiredEngineVersion!)) {
-        throw new PluginLoadFailException(`Plugin \`${entry.id}\` not compatible to current @delirvfx/core version`)
       }
 
       // entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
