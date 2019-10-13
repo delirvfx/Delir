@@ -33,6 +33,14 @@ const VCODEC_TO_EXT: Record<string, string> = {
   libx264: 'mp4',
   libx265: 'mp4',
   utvideo: 'avi',
+  'libvpx-vp9': 'webm',
+}
+
+const AVAILABLE_ACODEC_FOR_VCODEC: Record<string, { label: string; value: string }[]> = {
+  libx264: [{ label: 'AAC Low profile', value: 'aac_low' }],
+  libx265: [{ label: 'AAC Low profile', value: 'aac_low' }],
+  utvideo: [{ label: 'PCM', value: 'pcm' }],
+  'libvpx-vp9': [{ label: 'Opus', value: 'libopus' }],
 }
 
 const Row = styled.div`
@@ -72,6 +80,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
     const filters: Electron.FileFilter[] =
       videoCodec === 'libx264' || videoCodec === 'libx265' ? [{ extensions: ['mp4'], name: 'mp4' }]
       : videoCodec === 'utvideo' ? [{ extensions: ['avi'], name: 'avi' }]
+      : videoCodec === 'libvpx-vp9' ? [{extensions: ['webm'], name: 'WebM' }]
       // : videoCodec === 'qt' ? [{ extensions: ['mov'], name: 'QuickTime movie' }]
       : []
 
@@ -83,14 +92,28 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
 
   const handleChangePreset = useCallback(value => {
     if (value === 'mp4') {
-      setState({ videoCodec: 'libx264', audioCodec: 'aacLow', useAlpha: false })
+      setState({ videoCodec: 'libx264', audioCodec: 'aac_low', useAlpha: false })
     } else if (value === 'utvideoAlpha') {
       setState({ videoCodec: 'utvideo', audioCodec: 'pcm', useAlpha: true, videoBitrate: '', audioBitrate: '' })
+    } else if (value === 'webm') {
+      setState({
+        videoCodec: 'libvpx-vp9',
+        audioCodec: 'libopus',
+        useAlpha: false,
+        videoBitrate: '1024k',
+        audioBitrate: '256k',
+      })
     }
   }, [])
 
   const handleChangeVideoCodec = useCallback((value: string) => {
-    setState({ videoCodec: value as any, ...(value === 'utvideo' ? { videoBitrate: '' } : {}) })
+    setState({
+      videoCodec: value as any,
+      ...(value === 'utvideo' ? { videoBitrate: '' } : {}),
+      audioCodec:
+        AVAILABLE_ACODEC_FOR_VCODEC[value].filter(({value}) => value === audioCodec)?.[0]?.value
+          ?? AVAILABLE_ACODEC_FOR_VCODEC[value][0].value,
+    })
   }, [])
 
   const handleChangeVideoBitrate = useCallback((value: string) => {
@@ -115,6 +138,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
 
   const handleClickStart = useCallback(() => {
     if (!isValid()) return
+
     onClose({
       destination: destPath,
       encodingOption: {
@@ -147,6 +171,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
           <option value="mp4">MP4 (H.264 + AAC)</option>
           {/* <option value="qt">Qt Animation (Alpha channel)</option> */}
           <option value="utvideoAlpha">Ut Video (Alpha channel)</option>
+          <option value="webm">WebM</option>
         </SelectBox>
       </FormSection>
 
@@ -163,6 +188,7 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
               <option value="libx264">H.264</option>
               <option value="libx265">H.265</option>
               {/* <option value="qt">Qt Animation (Alpha channel)</option> */}
+              <option value="libvpx-vp9">WebM</option>
               <option value="utvideo">Ut video codec</option>
             </SelectBox>
           </FormSection>
@@ -193,8 +219,11 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
         <Column>
           <FormSection label={t(t.k.audioCodec)}>
             <SelectBox value={audioCodec} onChange={handleChangeAudioCodec}>
-              <option value="aac_low">AAC Low profile</option>
-              <option value="pcm">PCM</option>
+              {AVAILABLE_ACODEC_FOR_VCODEC[videoCodec].map(({ label, value }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </SelectBox>
           </FormSection>
         </Column>

@@ -25,11 +25,13 @@ export enum VCodecs {
   libx264 = 'libx264',
   libx265 = 'libx265',
   utvideo = 'utvideo',
+  libvpxVp9 = 'libvpx-vp9',
 }
 
 export enum ACodecs {
   aacLow = 'aac_low',
   pcm = 'pcm',
+  opus = 'libopus',
 }
 
 export interface EncodingOption {
@@ -61,13 +63,12 @@ const optionToFfmpegArgs = (option: EncodingOption & { videoInput: string; audio
     option.audioInput,
     '-c:v',
     option.vCodec,
-    '-b:v',
-    option.vBitrate ?? '1024k',
+
+    ...(option.vCodec !== VCodecs.utvideo ? ['-b:v', option.vBitrate ?? '1024k'] : []),
     '-pix_fmt',
     option.useAlpha ? 'rgba' : 'yuv420p',
     ...(option.aCodec === ACodecs.aacLow ? ['-profile:a', 'aac_low', '-c:a', 'aac'] : []),
-    '-b:a',
-    option.aBitrate ? option.aBitrate : '256k',
+    ... (option.aCodec !== ACodecs.pcm ? ['-b:a', option.aBitrate ? option.aBitrate : '256k',] : []),
     option.destPath,
   ]
 }
