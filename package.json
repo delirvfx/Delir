@@ -67,6 +67,10 @@
     }
   },
   "lint-staged": {
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ],
     "*.{ts,tsx}": [
       "prettier --write",
       "tslint --fix",
