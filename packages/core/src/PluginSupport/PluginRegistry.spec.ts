@@ -18,7 +18,7 @@ describe('PluginRegistry', () => {
         },
         extraField: {},
       }),
-    ).toBe(true)
+    ).toMatchObject({ hasError: false, reason: [] })
   })
 
   it('Should failed validation with invalid package.json', () => {
@@ -38,6 +38,13 @@ describe('PluginRegistry', () => {
           type: 'post-effect-lol',
         },
       }),
-    ).toBe(false)
+    ).toMatchInlineSnapshot(`
+      Object {
+        "hasError": true,
+        "reason": Array [
+          [ValidationError: child "delir" fails because [child "type" fails because ["type" must be one of [post-effect]]]],
+        ],
+      }
+    `)
   })
 })

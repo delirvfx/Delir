@@ -35,7 +35,7 @@ describe('EffectRenderTask', () => {
           class: EffectPluginBase as any,
           packageJson: {
             name: 'existing-effect',
-            author: '',
+            author: 'delirvfx',
             version: '0.0.0',
             delir: {
               name: 'exit-effect',
