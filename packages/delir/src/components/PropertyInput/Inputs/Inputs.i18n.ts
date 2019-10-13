@@ -6,10 +6,12 @@ export default I18n({
     ok: `更新`,
     okWithShortcutKey: `更新 (${Platform.cmdOrCtrl}+Enter)`,
     discard: 'キャンセル',
+    noAssets: '利用可能なアセットはありません',
   },
   en: {
     ok: `Change`,
     okWithShortcutKey: `Change (${Platform.cmdOrCtrl}+Enter)`,
     discard: 'Cancel',
+    noAssets: 'No usable assets',
   },
 })

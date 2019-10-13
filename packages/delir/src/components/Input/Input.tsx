@@ -1,20 +1,31 @@
+import { cssVars } from 'assets/styles/cssVars'
 import { rgba } from 'polished'
-import React, { InputHTMLAttributes, ReactElement, ReactNode, RefObject } from 'react'
+import React, { InputHTMLAttributes, RefObject } from 'react'
 import styled, { css } from 'styled-components'
 
 interface Props extends InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   blocked?: boolean
   small?: boolean
   multiline?: boolean
+  resize?: boolean
 }
+
+const normalCss = css`
+  padding: 4px;
+  font-size: 14px;
+  line-height: 24px;
+`
+
+const smallCss = css`
+  padding: 2px;
+  font-size: 12px;
+  line-height: 1.4;
+`
 
 const base = css<Props>`
   display: ${props => (props.blocked ? 'block' : 'inline-block')};
   width: ${props => (props.blocked ? '100%' : 'auto')}
-  padding: 4px;
-  font-size: ${props => (props.small ? '12px' : '14px')};
-  line-height: 24px;
-  border-radius: 4px;
+  border-radius: ${cssVars.size.radius};
   border: none;
   font-family: inherit;
   outline: none;
@@ -22,12 +33,14 @@ const base = css<Props>`
   background-color: #eee;
   caret-color: #333;
   color: #333;
+  resize: ${({ resize }) => (resize ? 'both' : 'none')}
+  ${({ small }) => (small ? smallCss : normalCss)}
 
   &:hover {
   }
   &:focus,
   &:active {
-    box-shadow: 0 0 0 2px ${rgba('#aa5bff', 0.4)};
+    box-shadow: ${cssVars.style.activeBoxShadow};
   }
 `
 

@@ -287,6 +287,10 @@ export const dependencies = [
         "url": "https://polished.js.org"
     },
     {
+        "name": "popper.js",
+        "url": "https://popper.js.org"
+    },
+    {
         "name": "prettier",
         "url": "https://prettier.io"
     },

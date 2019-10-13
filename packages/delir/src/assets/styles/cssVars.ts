@@ -14,6 +14,7 @@ export const cssVars = {
     listItemHovered: rgba('#fff', 0.1),
   },
   style: {
+    activeBoxShadow: `0 0 0 3px ${rgba('#aa5bff', 0.4)}`,
     popupDropshadow: `0 0 4px ${rgba('#112', 0.5)}`,
   },
   size: {
