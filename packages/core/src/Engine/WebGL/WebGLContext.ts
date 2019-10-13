@@ -70,6 +70,7 @@ export default class WebGLContext {
     this.tex2DBuffer = this.gl.createBuffer()!
   }
 
+  /** [DO NOT USE] This is Delir internal API */
   public setSize(width: number, height: number) {
     this.glCanvas.width = width
     this.glCanvas.height = height
