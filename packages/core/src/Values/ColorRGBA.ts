@@ -15,6 +15,12 @@ export default class ColorRGBA {
   private _blue: number
   private _alpha: number
 
+  /**
+   * @param r 0 to 255
+   * @param g 0 to 255
+   * @param b 0 to 255
+   * @param a 0 to 1
+   */
   constructor(r: number = 0, g: number = 0, b: number = 0, a: number = 0) {
     this._red = r
     this._green = g
