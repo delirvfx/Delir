@@ -565,7 +565,7 @@ const buildRenderer = g.parallel(
 
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules))
 const build = g.parallel(buildRenderer, buildBrowser)
-const buildAndWatch = g.series(clean, build, run, runStorybook, watch)
+const buildAndWatch = g.series(clean, g.parallel(runStorybook, build), run, watch)
 const publish = g.series(clean, generateLicenses, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage)
 
 export { publish, build }
