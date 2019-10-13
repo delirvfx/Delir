@@ -9,7 +9,7 @@ export const cssVars = {
     error: '#f83737',
     theming: '#7b14ea',
     appBg: '#353535',
-    popupBg: lighten(0.4, '#353535'),
+    popupBg: lighten(0.08, '#353535'),
     listArea: rgba('#000', 0.2),
     listItemHovered: rgba('#fff', 0.1),
   },
