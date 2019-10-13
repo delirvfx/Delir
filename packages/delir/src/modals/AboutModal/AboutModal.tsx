@@ -4,7 +4,6 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
 
 import { Button } from '../../components/Button'
 import { ExternalLink } from '../../components/ExternalLink'
-import { ModalController } from '../Modal/ModalController'
 
 import * as packageJson from '../../../../../package.json'
 import { dependencies } from './Licenses'
@@ -12,19 +11,7 @@ import { dependencies } from './Licenses'
 import t from './AboutModal.i18n'
 import s from './AboutModal.sass'
 
-export const show = (): void => {
-  const modal = new ModalController({ closable: true })
-
-  const onClosed = async () => {
-    await modal.hide()
-    modal.dispose()
-  }
-
-  modal.mount(<AboutModal onClosed={onClosed} />)
-  setTimeout(() => modal.show(), 1000)
-}
-
-export const AboutModal = (props: { onClosed: () => void }) => {
+export const AboutModal = (props: { onClose: () => void }) => {
   return (
     <div className={s.AboutModal}>
       <Tabs>
@@ -77,7 +64,7 @@ export const AboutModal = (props: { onClosed: () => void }) => {
           </div>
         </TabPanel>
       </Tabs>
-      <Button kind="normal" className={s.close} onClick={props.onClosed}>
+      <Button kind="normal" className={s.close} onClick={props.onClose}>
         {t(t.k.close)}
       </Button>
     </div>

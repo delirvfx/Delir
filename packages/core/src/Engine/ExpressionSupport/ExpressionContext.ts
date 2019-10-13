@@ -1,5 +1,5 @@
 import { proxyDeepFreeze } from '../../helper/proxyFreeze'
-import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
+import { ParameterValueTypes } from '../../PluginSupport/TypeDescriptor'
 import { ClipRenderContext } from '../RenderContext/ClipRenderContext'
 import { EffectRenderContext } from '../RenderContext/EffectRenderContext'
 import { ExpressionContext } from './ExpressionVM'

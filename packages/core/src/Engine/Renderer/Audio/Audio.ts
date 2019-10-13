@@ -1,19 +1,18 @@
-import fs from 'fs'
 import _ from 'lodash'
 
 import { resampling } from '../../../helper/Audio'
-import Type from '../../../PluginSupport/type-descriptor'
-import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
+import Type from '../../../PluginSupport/TypeDescriptor'
+import { TypeDescriptor } from '../../../PluginSupport/TypeDescriptor'
+import { ParamType } from '../../ParamType'
 import { IRenderer } from '../RendererBase'
 
-import { Asset } from '../../../Entity'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface AudioRendererParam {
-  source: Asset
-  volume: number
-  startTime: number
+  source: ParamType.Asset
+  volume: ParamType.Float
+  startTime: ParamType.Float
 }
 
 export default class AudioRenderer implements IRenderer<AudioRendererParam> {

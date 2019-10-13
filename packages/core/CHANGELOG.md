@@ -1,3 +1,8 @@
+### 0.9.0
+- [#379](https://github.com/ra-gg/Delir/pull/379) Add ParamType namespace for easy to understand relationship between parameter definition (in `#provideParameters`) and interface definition
+- [#379](https://github.com/ra-gg/Delir/pull/379) Internal refactoring
+- [#379](https://github.com/ra-gg/Delir/pull/379) Now disallows `engines['delir-core']` definition in plugin package.json
+
 ### 0.8.1
 - [#371](https://github.com/ra-gg/Delir/pull/371) Fix incorrect WebGL uniform assigning
 - [#371](https://github.com/ra-gg/Delir/pull/371) Add returned type to `Exporter.deserializeProject`

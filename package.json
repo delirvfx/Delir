@@ -52,6 +52,7 @@
     "style-loader": "1.0.0",
     "ts-loader": "6.2.0",
     "ts-node": "8.4.1",
+    "tsconfig-paths-webpack-plugin": "3.2.0",
     "tslint": "5.20.0",
     "tslint-config-prettier": "1.18.0",
     "tslint-loader": "3.6.0",
@@ -66,6 +67,10 @@
     }
   },
   "lint-staged": {
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ],
     "*.{ts,tsx}": [
       "prettier --write",
       "tslint --fix",

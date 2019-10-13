@@ -8,10 +8,11 @@ interface Props {
 }
 
 const normal = css`
-  background-color: #eee;
+  color: #fff;
+  background-color: #555;
 
   &:hover {
-    background-color: ${darken(0.2, '#eee')};
+    background-color: ${darken(0.2, '#aaa')};
   }
 `
 
@@ -31,6 +32,7 @@ export const Button = stlyed.button<Props>`
       display: block;
       width: 100%;
     `}
+  ${({ blocked }) => !blocked && 'display: inline-block'}
   padding: 4px 16px;
   transition: background-color ${cssVars.animate.bgColorDuration} ${cssVars.animate.function};
   border: 0;

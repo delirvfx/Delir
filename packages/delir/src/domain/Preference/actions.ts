@@ -7,4 +7,5 @@ type DeepPartial<T extends object> = { [P in keyof T]?: T[P] extends object ? De
 export const PreferenceActions = actions('Preference', {
   restorePreference: action<{ preference: Preference }>(),
   changePreference: action<{ patch: DeepPartial<Preference> }>(),
+  changeDevelopPluginDirs: action<{ dirs: string[] }>(),
 })

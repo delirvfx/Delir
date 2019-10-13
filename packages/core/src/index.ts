@@ -3,12 +3,13 @@ import * as Exceptions from './Exceptions'
 import * as PluginSupport from './PluginSupport'
 import * as Values from './Values'
 
+import { ParamType } from './Engine'
 import { EffectPreRenderContext } from './Engine/RenderContext/EffectPreRenderContext'
 import { EffectRenderContext } from './Engine/RenderContext/EffectRenderContext'
-import PluginBase from './PluginSupport/plugin-base'
-import PluginRegistry from './PluginSupport/plugin-registry'
+import PluginBase from './PluginSupport/PluginBase'
+import PluginRegistry from './PluginSupport/PluginRegistry'
 import PostEffectBase from './PluginSupport/PostEffectBase'
-import Type, { AnyParameterTypeDescriptor, TypeDescriptor } from './PluginSupport/type-descriptor'
+import Type, { AnyParameterTypeDescriptor, TypeDescriptor } from './PluginSupport/TypeDescriptor'
 
 import * as KeyframeCalcurator from './Engine/KeyframeCalcurator'
 import * as Exporter from './Exporter'
@@ -41,5 +42,6 @@ export {
   Exporter,
   // Types
   AnyParameterTypeDescriptor,
+  ParamType,
   version,
 }

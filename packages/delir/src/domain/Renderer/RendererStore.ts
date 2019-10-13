@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { listen, Store } from '@fleur/fleur'
+import { listen, Store, StoreContext } from '@fleur/fleur'
 import deream, { RenderingProgress } from '@ragg/deream'
 import { remote } from 'electron'
 import { dirname } from 'path'
@@ -7,7 +7,7 @@ import { dirname } from 'path'
 import { EditorActions } from '../Editor/actions'
 import { RendererActions } from './actions'
 
-import * as Platform from '../../utils/platform'
+import { Platform } from 'utils/platform'
 
 interface State {
   project: Delir.Entity.Project | null
@@ -31,6 +31,10 @@ export interface RenderState {
 const AUDIO_BUFFER_SIZE_SECONDS = 1
 
 export default class RendererStore extends Store<State> {
+  public get previewPlaying() {
+    return this.state.previewPlaying
+  }
+
   public static storeName = 'RendererStore'
 
   public state: State = {
@@ -44,8 +48,9 @@ export default class RendererStore extends Store<State> {
     exception: null,
   }
 
+  public pluginRegistry: Delir.PluginRegistry
+
   private pipeline = new Delir.Engine.Engine()
-  private pluginRegistry = this.pipeline.pluginRegistry
 
   private destCanvas: HTMLCanvasElement | null = null
   private destCanvasCtx: CanvasRenderingContext2D | null = null
@@ -77,8 +82,16 @@ export default class RendererStore extends Store<State> {
     // renderer.stop()
   })
 
-  private handleAddPlugins = listen(RendererActions.addPlugins, payload => {
+  private handleUnregisterPlugin = listen(RendererActions.unregisterPlugins, ({ id }) => {
+    this.pluginRegistry.unregisterPlugin(id)
+  })
+
+  private handleAddPlugins = listen(RendererActions.registerPlugins, payload => {
     this.pluginRegistry.registerPlugin(payload.plugins)
+  })
+
+  private handleClearCache = listen(RendererActions.clearCache, () => {
+    this.pipeline.clearCache()
   })
 
   private handleSetPreviewCanvas = listen(RendererActions.setPreviewCanvas, payload => {
@@ -91,7 +104,7 @@ export default class RendererStore extends Store<State> {
     this.gainNode && (this.gainNode.gain.value = volume / 100)
   })
 
-  private handleStartPreveiew = listen(
+  private handleStartPreview = listen(
     RendererActions.startPreview,
     async ({ compositionId, beginFrame, ignoreMissingEffect }) => {
       if (!this.state.project || !this.state.composition || !this.destCanvas || !this.destCanvasCtx) return
@@ -202,12 +215,12 @@ export default class RendererStore extends Store<State> {
   private handleRenderDestinate = listen(EditorActions.renderDestinate, async payload => {
     const appPath = dirname(remote.app.getPath('exe'))
     const ffmpegBin =
-      __DEV__ || Platform.isLinux()
+      __DEV__ || Platform.isLinux
         ? 'ffmpeg'
-        : require('path').resolve(appPath, Platform.isMacOS() ? '../Resources/ffmpeg' : './ffmpeg.exe')
+        : require('path').resolve(appPath, Platform.isMacOS ? '../Resources/ffmpeg' : './ffmpeg.exe')
 
     // TODO: View側で聞いてくれ
-    const file = remote.dialog.showSaveDialog({
+    const file = remote.dialog.showSaveDialogSync({
       title: 'Destinate',
       buttonLabel: 'Render',
       filters: [
@@ -255,6 +268,11 @@ export default class RendererStore extends Store<State> {
     }
   })
 
+  constructor(context: StoreContext) {
+    super(context)
+    this.pluginRegistry = this.pipeline.pluginRegistry
+  }
+
   public getPostEffectPlugins() {
     return this.pluginRegistry.getPostEffectPlugins()
   }
@@ -273,10 +291,6 @@ export default class RendererStore extends Store<State> {
 
   public getUserCodeException() {
     return this.state.exception
-  }
-
-  public get previewPlaying() {
-    return this.state.previewPlaying
   }
 
   public isInRendering() {

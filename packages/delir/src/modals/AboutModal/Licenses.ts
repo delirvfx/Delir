@@ -107,14 +107,6 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/simonwep__selection-js"
     },
     {
-        "name": "@types/storybook__addon-knobs",
-        "url": "https://www.npmjs.com/package/@types/storybook__addon-knobs"
-    },
-    {
-        "name": "@types/storybook__react",
-        "url": "https://www.npmjs.com/package/@types/storybook__react"
-    },
-    {
         "name": "@types/styled-components",
         "url": "https://www.npmjs.com/package/@types/styled-components"
     },
@@ -129,6 +121,10 @@ export const dependencies = [
     {
         "name": "@types/uuid",
         "url": "https://www.npmjs.com/package/@types/uuid"
+    },
+    {
+        "name": "@types/watchpack",
+        "url": "https://www.npmjs.com/package/@types/watchpack"
     },
     {
         "name": "archiver",
@@ -291,6 +287,10 @@ export const dependencies = [
         "url": "https://polished.js.org"
     },
     {
+        "name": "popper.js",
+        "url": "https://popper.js.org"
+    },
+    {
         "name": "prettier",
         "url": "https://prettier.io"
     },
@@ -375,6 +375,10 @@ export const dependencies = [
         "url": "https://github.com/TypeStrong/ts-node"
     },
     {
+        "name": "tsconfig-paths-webpack-plugin",
+        "url": "https://www.npmjs.com/package/tsconfig-paths-webpack-plugin"
+    },
+    {
         "name": "tslint",
         "url": "https://palantir.github.io/tslint"
     },
@@ -401,6 +405,10 @@ export const dependencies = [
     {
         "name": "uuid",
         "url": "https://www.npmjs.com/package/uuid"
+    },
+    {
+        "name": "watchpack",
+        "url": "https://github.com/webpack/watchpack"
     },
     {
         "name": "webpack",

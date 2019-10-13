@@ -1,22 +1,22 @@
 import _ from 'lodash'
 
-import Type from '../../../PluginSupport/type-descriptor'
-import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
+import Type from '../../../PluginSupport/TypeDescriptor'
+import { TypeDescriptor } from '../../../PluginSupport/TypeDescriptor'
 import { IRenderer } from '../RendererBase'
 
-import { Asset } from '../../../Entity'
+import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface VideoRendererParam {
-  source: Asset
-  loop: boolean
-  offsetTime: number
-  x: number
-  y: number
-  scale: number
-  rotate: number
-  opacity: number
+  source: ParamType.Asset
+  offsetTime: ParamType.Number
+  loop: ParamType.Bool
+  x: ParamType.Number
+  y: ParamType.Number
+  scale: ParamType.Float
+  rotate: ParamType.Float
+  opacity: ParamType.Float
 }
 
 export default class VideoLayer implements IRenderer<VideoRendererParam> {

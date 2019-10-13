@@ -3,31 +3,21 @@ import _ from 'lodash'
 import semver from 'semver'
 
 import EffectPluginBase from './PostEffectBase'
-import { AnyParameterTypeDescriptor } from './type-descriptor'
+import { AnyParameterTypeDescriptor } from './TypeDescriptor'
 import { DelirPluginPackageJson, PluginEntry, PluginSummary } from './types'
 
-import PluginAssertionFailedException from '../Exceptions/plugin-assertion-failed-exception'
-import PluginLoadFailException from '../Exceptions/plugin-load-fail-exception'
-import UnknownPluginReferenceException from '../Exceptions/unknown-plugin-reference-exception'
+import { PluginAssertionFailedException, PluginLoadFailException, UnknownPluginReferenceException } from '../Exceptions'
 
 const { version: engineVersion } = require('../../package.json')
-
-// SEE: https://gist.github.com/jhorsman/62eeea161a13b80e39f5249281e17c39
-const SEMVER_REGEXP = /^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$/
 
 const effectPluginPackageJSONSchema = Joi.object()
   .keys({
     name: Joi.string().required(),
-    version: Joi.string()
-      .regex(SEMVER_REGEXP)
-      .required(),
+    version: Joi.string().required(),
     author: [Joi.string(), Joi.array().items(Joi.string())],
     main: Joi.string().optional(),
     engines: Joi.object().keys({
-      'delir-core': Joi.string().regex(SEMVER_REGEXP),
-      '@delirvfx/core': Joi.string()
-        .regex(SEMVER_REGEXP)
-        .required(),
+      '@delirvfx/core': Joi.string().required(),
     }),
     delir: Joi.object()
       .keys({
@@ -39,13 +29,27 @@ const effectPluginPackageJSONSchema = Joi.object()
   .options({ allowUnknown: true })
 
 export default class PluginRegistry {
-  public static validateEffectPluginPackageJSON(packageJSON: any): packageJSON is DelirPluginPackageJson {
-    return (
-      Joi.validate(packageJSON, effectPluginPackageJSONSchema).error == null &&
-      (semver.valid(packageJSON.engines['delir-core']) != null ||
-        semver.valid(packageJSON.engines['@delirvfx/core']) != null) &&
-      semver.valid(packageJSON.version) != null
-    )
+  public static validateEffectPluginPackageJSON(packageJSON: any) {
+    const schemaInvalidity = Joi.validate(packageJSON, effectPluginPackageJSONSchema).error
+    const neededVersion = packageJSON.engines['@delirvfx/core']
+    const engineVersionValidity = !!semver.validRange(neededVersion)
+    const engineVersionCompatible = engineVersionValidity && semver.satisfies(engineVersion, neededVersion)
+    const versionValidity = !!semver.valid(packageJSON.version)
+    const hasError = schemaInvalidity != null || !engineVersionCompatible || !engineVersionValidity || !versionValidity
+
+    return {
+      hasError,
+      reason: ([] as any[]).concat(
+        schemaInvalidity != null ? [schemaInvalidity] : [],
+        !engineVersionValidity ? ["Invalid semantic version of `engines['@delirvfx/core']` field"] : [],
+        engineVersionValidity && !engineVersionCompatible
+          ? [
+              `Plugin not compatible to current @delirvfx/core version (you expected: ${neededVersion} current: ${engineVersion})`,
+            ]
+          : [],
+        !versionValidity ? ['Invalid semantic version of `version` fieled'] : [],
+      ),
+    }
   }
 
   private _plugins: {
@@ -60,21 +64,21 @@ export default class PluginRegistry {
       //     throw new PluginLoadFailException(`Duplicate plugin id ${entry.id}`)
       // }
 
-      // const result = validatePluginPackageJSON(entry.packageJson)
+      const result = PluginRegistry.validateEffectPluginPackageJSON(entry.packageJson)
 
-      // if (!result.valid) {
-      //     throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\` (${result.errors[0]}${result.errors[1] ? '. and more...' : ''})`)
-      // }
-
-      const requiredEngineVersion =
-        entry.packageJson.engines['@delirvfx/core'] || entry.packageJson.engines['delir-core']
-      if (!semver.satisfies(engineVersion, requiredEngineVersion!)) {
-        throw new PluginLoadFailException(`Plugin \`${entry.id}\` not compatible to current @delirvfx/core version`)
+      if (result.hasError) {
+        throw new PluginLoadFailException(`Invalid package.json for \`${entry.id}\``, {
+          reason: result.reason,
+        })
       }
 
       // entry.pluginInfo.acceptFileTypes = entry.pluginInfo.acceptFileTypes || {}
       this._plugins[entry.type][entry.id] = Object.freeze(_.cloneDeep(entry))
     }
+  }
+
+  public unregisterPlugin(id: string) {
+    delete this._plugins['post-effect'][id]
   }
 
   /**

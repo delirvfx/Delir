@@ -3,7 +3,7 @@ import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import * as Electron from 'electron'
 import { remote } from 'electron'
 import React from 'react'
-import * as Platform from '../../utils/platform'
+import { Platform } from 'utils/platform'
 import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
 import { ModalMounterProps, withModalMounter } from '../../components/ModalOwner/ModalOwner'
@@ -77,12 +77,13 @@ export default withFleurContext(
           submenu: [
             {
               label: t(t.k.appMenu.about),
-              click: this.openAbout,
+              click: this.handleOpenAbout,
             },
             { type: 'separator' },
             {
               label: t(t.k.appMenu.preference),
               accelerator: 'CmdOrCtrl+,',
+              acceleratorWorksWhenHidden: false,
               click: this.handleOpenPreference,
             },
             { type: 'separator' },
@@ -183,7 +184,7 @@ export default withFleurContext(
                   })
                 },
               },
-              ...(Platform.isWindows()
+              ...(Platform.isWindows
                 ? [
                     { type: 'separator' } as any,
                     {
@@ -206,7 +207,7 @@ export default withFleurContext(
               },
               {
                 label: t(t.k.edit.redo),
-                accelerator: Platform.isMacOS() ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
+                accelerator: Platform.isMacOS ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
                 click: this.handleRedo,
                 ...(devToolsFocused ? { role: 'redo' as const } : {}),
               },
@@ -246,7 +247,6 @@ export default withFleurContext(
               label: previewPlaying ? t(t.k.preview.pause) : t(t.k.preview.play),
               enabled: !!activeComp,
               accelerator: 'space',
-              acceleratorWorksWhenHidden: false,
               click: () => {
                 previewPlaying
                   ? executeOperation(RendererOps.stopPreview)
@@ -283,8 +283,8 @@ export default withFleurContext(
         remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(menu))
       }
 
-      private openAbout = () => {
-        AboutModal.show()
+      private handleOpenAbout = async() => {
+        await this.props.mountModal<void>((resolve)=> <AboutModal onClose={resolve} />)
       }
 
       private handleNewProject = async () => {

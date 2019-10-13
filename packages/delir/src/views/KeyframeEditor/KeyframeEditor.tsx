@@ -16,15 +16,15 @@ import { ParameterTarget } from '../../domain/Editor/types'
 import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
+import { PropertyInput } from 'components/PropertyInput/PropertyInput'
 import { Button } from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
 import { LabelInput } from '../../components/LabelInput'
 import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
-import DelirValueInput from './_DelirValueInput'
 import { EffectList, EffectListItem, EffectSortHandle } from './EffectList'
 import ExpressionEditor from './ExpressionEditor'
-import KeyframeGraph, { KeyframePatch } from './KeyframeGraph'
+import { KeyframePatch } from './KeyframeGraph'
 import { KeyframeMediator } from './KeyframeMediator'
 import ScriptParamEditor from './ScriptParamEditor'
 
@@ -315,7 +315,7 @@ export const KeyframeEditor = withFleurContext(
                     {t(t.k.editScriptParam)}
                   </Button>
                 ) : (
-                  <DelirValueInput
+                  <PropertyInput
                     assets={project ? project.assets : null}
                     descriptor={desc}
                     value={value!}
@@ -481,7 +481,7 @@ export const KeyframeEditor = withFleurContext(
                     </span>
                     <span className={s.paramItemName}>{desc.label}</span>
                     <div className={s.paramItemInput}>
-                      <DelirValueInput
+                      <PropertyInput
                         key={desc.paramName}
                         assets={project ? project.assets : null}
                         descriptor={desc}

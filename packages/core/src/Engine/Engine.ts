@@ -3,14 +3,14 @@ import timecodes from 'node-timecodes'
 
 import { Clip, Effect, Project } from '../Entity'
 import EffectPluginBase from '../PluginSupport/PostEffectBase'
-import { ParameterValueTypes } from '../PluginSupport/type-descriptor'
+import { ParameterValueTypes } from '../PluginSupport/TypeDescriptor'
 
 import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
 import { IRenderer } from './Renderer/RendererBase'
 
-import PluginRegistry from '../PluginSupport/plugin-registry'
+import PluginRegistry from '../PluginSupport/PluginRegistry'
 
-import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
+import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'
@@ -62,6 +62,7 @@ export default class Engine {
   private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
   private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
   private _streamObserver: IRenderingStreamObserver | null = null
+  private glContext: WebGLContext = new WebGLContext(1, 1)
   // private _gl: WebGL2RenderingContext
 
   get pluginRegistry() {
@@ -92,6 +93,11 @@ export default class Engine {
     if (this._seqRenderPromise) {
       this._seqRenderPromise.abort()
     }
+  }
+
+  public clearCache() {
+    this._clipRendererCache = new WeakMap()
+    this._effectCache = new WeakMap()
   }
 
   public renderFrame(compositionId: string, beginFrame: number): ProgressPromise<void> {
@@ -313,6 +319,8 @@ export default class Engine {
     const currentFrame = option.beginFrame
     const currentTime = currentFrame / rootComposition.framerate
 
+    this.glContext.setSize(rootComposition.width, rootComposition.height)
+
     return new RenderContextBase({
       time: currentTime,
       timeOnComposition: currentTime,
@@ -335,7 +343,7 @@ export default class Engine {
 
       rootComposition,
       resolver,
-      gl: new WebGLContext(rootComposition.width, rootComposition.height),
+      gl: this.glContext,
     })
   }
 

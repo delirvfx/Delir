@@ -58,6 +58,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await context.executeOperation(EditorOps.setActiveProject, {
     project: new Delir.Entity.Project({}),
   })
+  await context.executeOperation(RendererOps.watchDevelopmentPlugins)
 
   ReactDOM.render(
     <FleurContext value={context}>

@@ -1,4 +1,4 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type, Values } from '@delirvfx/core'
+import { EffectPreRenderContext, EffectRenderContext, ParamType, PostEffectBase, Type, Values } from '@delirvfx/core'
 
 // prettier-ignore
 const clamp = (num: number, min: number, max: number) =>
@@ -7,8 +7,8 @@ const clamp = (num: number, min: number, max: number) =>
     num
 
 interface Params {
-  threshold: number
-  keyColor: Values.ColorRGB
+  threshold: ParamType.Float
+  keyColor: ParamType.ColorRGB
 }
 
 export default class Chromakey extends PostEffectBase {

@@ -8,7 +8,7 @@ import uuid from 'uuid'
 import s from './ModalOwner.sass'
 
 interface MountModal {
-  <T>(arg: (resolver: (result: T) => void) => ReactNode): PromiseLike<T> & { promise: Promise<T>; abort: () => void }
+  <T>(arg: (resolver: (result?: T) => void) => ReactNode): PromiseLike<T> & { promise: Promise<T>; abort: () => void }
 }
 
 export interface ModalMounterProps {

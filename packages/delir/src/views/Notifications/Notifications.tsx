@@ -2,6 +2,7 @@ import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
 import React from 'react'
 import { animated, useTransition } from 'react-spring'
+import { preserveLineBreak } from 'utils/React'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -44,12 +45,12 @@ export const Notifications = () => {
   return (
     <div className={s.root}>
       {transitions.map(({ item: entry, key, props: style }) => (
-        <animated.div key={key} className={classnames(s.entry, s[`--${entry.level}`])} style={style}>
+        <animated.div key={key} className={classnames(s.entry, s[entry.level])} style={style}>
           <div className={s.close} onClick={handleCloseMessage} data-entry-id={entry.id}>
             &times;
           </div>
           {entry.title != null && entry.title !== '' && <h1 className={s.entryTitle}>{entry.title}</h1>}
-          {entry.message && <p className={s.entryBody}>{entry.message}</p>}
+          {entry.message && <p className={s.entryBody}>{preserveLineBreak(entry.message)}</p>}
           {entry.detail != null && entry.detail !== '' && <pre className={s.detail}>{entry.detail}</pre>}
         </animated.div>
       ))}
