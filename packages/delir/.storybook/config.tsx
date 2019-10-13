@@ -3,6 +3,7 @@ import { addDecorator } from '@storybook/react'
 import React from 'react'
 import { createGlobalStyle } from 'styled-components'
 import { cssVars } from '../src/assets/styles/cssVars'
+import '../src/assets/styles/font-awesome.min.css'
 import '../src/assets/styles/style.sass'
 import './patch.sass'
 
