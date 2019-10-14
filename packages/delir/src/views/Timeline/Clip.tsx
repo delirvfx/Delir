@@ -14,7 +14,6 @@ import { MountTransition } from '../../components/MountTransition'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
-import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import t from './Clip.i18n'
 import s from './Clip.sass'
 import { ClipDragProps, withClipDragContext } from './ClipDragContext'
@@ -158,9 +157,6 @@ export default decorate<OwnProps>(
           break onClick
         }
 
-        GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
-        GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
-
         if (active) return
 
         if (e.shiftKey) {
@@ -233,14 +229,6 @@ export default decorate<OwnProps>(
       this.props.executeOperation(EditorOps.seekPreviewFrame, {
         frame: clip.placedFrame,
       })
-    }
-
-    private handleGlobalCopy = () => {
-      this.props.executeOperation(EditorOps.copyClips)
-    }
-
-    private handleGlobalCut = () => {
-      this.props.executeOperation(EditorOps.cutClips)
     }
   },
 )
