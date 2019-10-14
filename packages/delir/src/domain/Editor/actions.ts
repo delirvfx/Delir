@@ -18,12 +18,6 @@ export const EditorActions = actions('Editor', {
   changeSelectClip: action<{ clipIds: string[] }>(),
   addOrRemoveSelectClip: action<{ clipIds: string[] }>(),
   changeActiveParam: action<{ target: ParameterTarget | null }>(),
-  renderDestinate: action<{
-    compositionId: string
-    ignoreMissingEffect: boolean
-    destPath: string
-    encodingOption: EncodingOption
-  }>(),
   updateProcessingState: action<{ stateText: string }>(),
   addMessage: action<{
     id: string

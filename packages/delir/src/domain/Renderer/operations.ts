@@ -1,18 +1,25 @@
 import * as Delir from '@delirvfx/core'
 import { operation } from '@fleur/fleur'
+import deream, { EncodingOption, RenderingProgress } from '@ragg/deream'
 import { remote } from 'electron'
 import { exists } from 'fs-extra'
 import { join } from 'path'
+import { dirname } from 'path'
 import Watchpack from 'watchpack'
 
+import { Platform } from 'utils/platform'
+
 import { NotificationTimeouts } from 'domain/Editor/models'
+import { getActiveComp } from 'domain/Editor/selectors'
 import { getAllPreferences, getDevelopPluginDirs } from 'domain/Preference/selectors'
+import { getProject } from 'domain/Project/selectors'
 import { keepAliveOperation } from 'utils/keepAliveOperation'
 import EditorStore from '../Editor/EditorStore'
 import * as EditorOps from '../Editor/operations'
 import { RendererActions } from './actions'
 import FSPluginLoader from './FSPluginLoader'
-import { getLoadedPlugins } from './selectors'
+import t from './operations.i18n'
+import RendererStore from './RendererStore'
 
 export const loadPlugins = operation(async context => {
   const userDir = remote.app.getPath('appData')
@@ -140,3 +147,59 @@ export const startPreview = operation(
 export const stopPreview = operation(context => {
   context.dispatch(RendererActions.stopPreview, {})
 })
+
+export const renderDestinate = operation(
+  async (
+    context,
+    {
+      compositionId,
+      destPath,
+      encodingOption,
+    }: {
+      compositionId: string
+      destPath: string
+      encodingOption: EncodingOption
+    },
+  ) => {
+    const project = getProject(context.getStore)
+    const composition = getActiveComp(context.getStore)
+    const preference = getAllPreferences(context.getStore)
+    const { engine, pluginRegistry } = context.getStore(RendererStore)
+
+    const appPath = dirname(remote.app.getPath('exe'))
+    const ffmpegBin =
+      __DEV__ || Platform.isLinux
+        ? 'ffmpeg'
+        : require('path').resolve(appPath, Platform.isMacOS ? '../Resources/ffmpeg' : './ffmpeg.exe')
+
+    if (!project || !composition) return
+
+    context.dispatch(RendererActions.setInRenderingStatus, { isInRendering: true })
+
+    try {
+      await deream({
+        project,
+        rootCompId: composition.id,
+        encoding: encodingOption,
+        exportPath: destPath,
+        pluginRegistry: pluginRegistry,
+        ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
+        temporaryDir: remote.app.getPath('temp'),
+        ffmpegBin,
+        onProgress: progress => {
+          context.dispatch(RendererActions.setRenderingProgress, { progress })
+        },
+      })
+    } catch (e) {
+      await context.executeOperation(EditorOps.notify, {
+        level: 'error',
+        title: t(t.k.renderingFailed.title),
+        detail: e.message,
+        timeout: NotificationTimeouts.userConfirmationNecessary,
+      })
+    } finally {
+      context.dispatch(RendererActions.setInRenderingStatus, { isInRendering: false })
+      context.dispatch(RendererActions.setRenderingProgress, { progress: null })
+    }
+  },
+)

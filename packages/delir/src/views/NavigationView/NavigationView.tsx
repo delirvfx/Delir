@@ -53,7 +53,7 @@ export const NavigationView = () => {
     const result = await mountModal<RenderingOption | false>(resolve => <RenderingSettingModal onClose={resolve} />)
     if (!result) return
 
-    context.executeOperation(EditorOps.renderDestinate, {
+    context.executeOperation(RendererOps.renderDestinate, {
       compositionId: activeComp.id!,
       destPath: result.destination,
       encodingOption: result.encodingOption,

@@ -372,7 +372,7 @@ export default withFleurContext(
         const result = await this.props.mountModal<RenderingOption | false>(resolve => <RenderingSettingModal onClose={resolve} />)
         if (!result) return
 
-        this.props.executeOperation(EditorOps.renderDestinate, {
+        this.props.executeOperation(RendererOps.renderDestinate, {
           compositionId: comp.id!,
           destPath: result.destination,
           encodingOption: result.encodingOption

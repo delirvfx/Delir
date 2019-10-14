@@ -1,13 +1,9 @@
 import * as Delir from '@delirvfx/core'
 import { listen, Store, StoreContext } from '@fleur/fleur'
-import deream, { RenderingProgress } from '@ragg/deream'
-import { remote } from 'electron'
-import { dirname } from 'path'
+import { RenderingProgress } from '@ragg/deream'
 
 import { EditorActions } from '../Editor/actions'
 import { RendererActions } from './actions'
-
-import { Platform } from 'utils/platform'
 
 interface State {
   project: Delir.Entity.Project | null
@@ -49,8 +45,7 @@ export default class RendererStore extends Store<State> {
   }
 
   public pluginRegistry: Delir.PluginRegistry
-
-  private pipeline = new Delir.Engine.Engine()
+  public engine = new Delir.Engine.Engine()
 
   private destCanvas: HTMLCanvasElement | null = null
   private destCanvasCtx: CanvasRenderingContext2D | null = null
@@ -65,7 +60,7 @@ export default class RendererStore extends Store<State> {
   }
 
   private handleSetActiveProject = listen(EditorActions.setActiveProject, ({ project }) => {
-    this.pipeline.setProject(project)
+    this.engine.setProject(project)
     this.updateWith(d => {
       ;((d.project as any) as Delir.Entity.Project | null) = project
     })
@@ -91,7 +86,7 @@ export default class RendererStore extends Store<State> {
   })
 
   private handleClearCache = listen(RendererActions.clearCache, () => {
-    this.pipeline.clearCache()
+    this.engine.clearCache()
   })
 
   private handleSetPreviewCanvas = listen(RendererActions.setPreviewCanvas, payload => {
@@ -134,7 +129,7 @@ export default class RendererStore extends Store<State> {
       )
 
       let playbackRate: number = 1
-      this.pipeline.setStreamObserver({
+      this.engine.setStreamObserver({
         onFrame: (canvas, status) => {
           this.updateWith(d => {
             d.previewRenderState = {
@@ -162,7 +157,7 @@ export default class RendererStore extends Store<State> {
         },
       })
 
-      const promise = this.pipeline.renderSequencial(targetComposition.id, {
+      const promise = this.engine.renderSequencial(targetComposition.id, {
         beginFrame: beginFrame,
         loop: true,
         ignoreMissingEffect: ignoreMissingEffect,
@@ -193,7 +188,7 @@ export default class RendererStore extends Store<State> {
   )
 
   private handleStopPreview = listen(RendererActions.stopPreview, () => {
-    this.pipeline.stopCurrentRendering()
+    this.engine.stopCurrentRendering()
     this.audioBufferSource && this.audioBufferSource.stop()
     this.updateWith(s => (s.previewPlaying = false))
   })
@@ -202,56 +197,27 @@ export default class RendererStore extends Store<State> {
     const { frame } = payload
     const targetComposition = this.state.composition!
 
-    this.pipeline.setStreamObserver({
+    this.engine.setStreamObserver({
       onFrame: canvas => this.destCanvasCtx!.drawImage(canvas, 0, 0),
     })
 
-    this.pipeline!.renderFrame(targetComposition.id, frame).catch(e => {
+    this.engine!.renderFrame(targetComposition.id, frame).catch(e => {
       // tslint:disable-next-line
       console.error(e)
     })
   })
 
-  private handleRenderDestinate = listen(
-    EditorActions.renderDestinate,
-    async ({ compositionId, ignoreMissingEffect, encodingOption, destPath }) => {
-      const appPath = dirname(remote.app.getPath('exe'))
-      const ffmpegBin =
-        __DEV__ || Platform.isLinux
-          ? 'ffmpeg'
-          : require('path').resolve(appPath, Platform.isMacOS ? '../Resources/ffmpeg' : './ffmpeg.exe')
+  private handleSetInRenderingStatus = listen(RendererActions.setInRenderingStatus, ({ isInRendering }) => {
+    this.updateWith(draft => (draft.isInRendering = isInRendering))
+  })
 
-      if (!this.state.project || !this.state.composition || !this.pluginRegistry) return
-
-      this.updateWith(d => (d.isInRendering = true))
-
-      try {
-        await deream({
-          project: this.state.project,
-          rootCompId: this.state.composition.id,
-          encoding: encodingOption,
-          exportPath: destPath,
-          pluginRegistry: this.pluginRegistry,
-          ignoreMissingEffect,
-          temporaryDir: remote.app.getPath('temp'),
-          ffmpegBin,
-          onProgress: progress => {
-            setTimeout(() => {
-              this.updateWith(draft => (draft.exportRenderState = progress))
-            }, 0)
-          },
-        })
-      } catch (e) {
-        throw e
-      } finally {
-        this.updateWith(d => (d.isInRendering = false))
-      }
-    },
-  )
+  private setSetRenderingProgress = listen(RendererActions.setRenderingProgress, ({ progress }) => {
+    this.updateWith(draft => (draft.exportRenderState = progress))
+  })
 
   constructor(context: StoreContext) {
     super(context)
-    this.pluginRegistry = this.pipeline.pluginRegistry
+    this.pluginRegistry = this.engine.pluginRegistry
   }
 
   public getPostEffectPlugins() {

@@ -1,6 +1,6 @@
 import * as Delir from '@delirvfx/core'
 import { selector, selectorWithStore } from '@fleur/fleur'
-import { getClipsByIds } from '../Project/selectors'
+import { getClipsByIds, getCompositionById } from '../Project/selectors'
 import EditorStore from './EditorStore'
 
 export const getSelectedClipIds = selector(getState => {
@@ -14,7 +14,8 @@ export const getSelectedClips = selectorWithStore(getStore => {
 
 export const getActiveLayerId = selector(getState => getState(EditorStore).activeLayerId)
 
-export const getActiveComp = selector(getState => {
-  const comp = getState(EditorStore).activeComp
-  return comp ? { ...comp } : null
+export const getActiveComp = selectorWithStore(getStore => {
+  const id = getStore(EditorStore).state.activeComp?.id
+  if (!id) return null
+  return getCompositionById(getStore, id)
 })
