@@ -33,7 +33,7 @@ Please send a feature request issue before making a new feature pull request. Ma
 
 We receive the issue and discuss for the feature and triage the implementation timing. Please note that we may close the new feature pull request before sending the feature request issue.
 
-### ポストエフェクトの開発
+### Development post effect
 
 We are also accepting post-effect development 🌈  
 For adding post effects, please send a pull request according to the following flow.
