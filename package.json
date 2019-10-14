@@ -15,7 +15,8 @@
     "clean-modules": "rm -rf node_modules/ packages/delir/node_modules packages/delir-core/node_modules",
     "test-core": "jest -c packages/core/jest.config.js",
     "test-front": "jest -c packages/delir/jest.config.js",
-    "test-plugins": "jest -c packages/post-effect-plugins/jest.config.js"
+    "test-plugins": "jest -c packages/post-effect-plugins/jest.config.js",
+    "test-contrib-pep": "jest -c packages/contrib-posteffect/jest.config.js"
   },
   "workspaces": [
     "packages/*"
@@ -30,6 +31,7 @@
     "electron-devtools-installer": "2.2.4",
     "electron-icon-maker": "0.0.4",
     "electron-rebuild": "1.8.6",
+    "fast-glob": "3.1.0",
     "file-loader": "4.2.0",
     "fork-ts-checker-webpack-plugin": "1.5.0",
     "fs-extra": "8.1.0",

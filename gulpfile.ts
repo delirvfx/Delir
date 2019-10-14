@@ -10,11 +10,12 @@ const notifier = require('node-notifier')
 const download = require('download')
 const zipDir = require('zip-dir')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
+const glob: typeof import('fast-glob') = require('fast-glob')
 
 const os = require('os')
 const fs = require('fs-extra')
 const path = require('path')
-const { join } = require('path')
+const { join, parse: pathParse } = require('path')
 const { spawn } = require('child_process')
 
 const NATIVE_MODULES = ['font-manager']
@@ -23,6 +24,7 @@ const paths = {
   src: {
     root: join(__dirname, './packages/'),
     plugins: join(__dirname, './packages/post-effect-plugins'),
+    contribPEP: join(__dirname, './packages/contrib-posteffect'),
     frontend: join(__dirname, './packages/delir/'),
     core: join(__dirname, './packages/core/'),
   },
@@ -332,7 +334,13 @@ export function compileRendererJs(done) {
   )
 }
 
-export function compilePlugins(done) {
+export async function compilePlugins(done) {
+  const contribPEP = (await glob.sync('*/index.ts', { cwd: paths.src.contribPEP })).reduce((memo, entry) => {
+    const { dir, name } = pathParse(entry)
+    memo[`${dir}/${name}`] = join(paths.src.contribPEP, entry)
+    return memo
+  }, {})
+
   webpack(
     {
       mode: __DEV__ ? 'development' : 'production',
@@ -344,6 +352,7 @@ export function compilePlugins(done) {
         'numeric-slider/index': './numeric-slider/index',
         'color-slider/index': './color-slider/index',
         'chromakey/index': './chromakey/index',
+        ...contribPEP,
         ...(__DEV__
           ? {
               // 'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
@@ -409,6 +418,12 @@ export function compilePlugins(done) {
 export function copyPluginsPackageJson() {
   return g
     .src(join(paths.src.plugins, '*/package.json'), { base: join(paths.src.plugins) })
+    .pipe(g.dest(paths.compiled.plugins))
+}
+
+export function copyContribPEPPackageJson() {
+  return g
+    .src(join(paths.src.contribPEP, '*/package.json'), { base: join(paths.src.contribPEP) })
     .pipe(g.dest(paths.compiled.plugins))
 }
 
@@ -542,7 +557,7 @@ export function watch() {
   g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
   g.watch(
     join(paths.src.root, '**/package.json'),
-    g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson),
+    g.parallel(copyPluginsPackageJson, copyContribPEPPackageJson, copyExperimentalPluginsPackageJson),
   )
   g.watch(join(__dirname, 'node_modules'), symlinkNativeModules)
 }
@@ -558,7 +573,7 @@ const buildRenderer = g.parallel(
   g.series(
     generateLicenses,
     compileRendererJs,
-    g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson),
+    g.parallel(compilePlugins, copyPluginsPackageJson, copyContribPEPPackageJson, copyExperimentalPluginsPackageJson),
   ),
   copyImage,
 )
