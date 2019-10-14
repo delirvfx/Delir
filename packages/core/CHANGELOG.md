@@ -1,3 +1,8 @@
+### 0.10.0
+- [#380](https://github.com/ra-gg/Delir/pull/380) Support alpha channel (transparent background) rendering
+  from `Engine#{renderFrame,renderSequencial}(options: { enableAlpha: true })`
+- [#380](https://github.com/ra-gg/Delir/pull/380) `Engine#renderFrame` now accepts rendering options in 3rd argument
+
 ### 0.9.0
 - [#379](https://github.com/ra-gg/Delir/pull/379) Add ParamType namespace for easy to understand relationship between parameter definition (in `#provideParameters`) and interface definition
 - [#379](https://github.com/ra-gg/Delir/pull/379) Internal refactoring
