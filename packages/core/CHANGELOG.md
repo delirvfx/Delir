@@ -1,3 +1,6 @@
+### 0.11.0
+- [#296](https://github.com/ra-gg/Delir/pull/296) Add `solid` clip
+
 ### 0.10.0
 - [#380](https://github.com/ra-gg/Delir/pull/380) Support alpha channel (transparent background) rendering
   from `Engine#{renderFrame,renderSequencial}(options: { enableAlpha: true })`
