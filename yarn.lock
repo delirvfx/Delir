@@ -1514,10 +1514,10 @@
     "@sentry/types" "5.6.1"
     tslib "^1.9.3"
 
-"@simonwep/selection-js@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-1.2.0.tgz#62f609f0b649bce238e6d30077ade9035b8f98dc"
-  integrity sha512-U5T8a0y6mHEgCoUX0kN9Z/cCN8i4v316+OToCOBlclklBEDUqHCGKBOzn/tf2dRjzX4dIaZOOhjVgqmRXb5L/w==
+"@simonwep/selection-js@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-1.2.1.tgz#7c1154d125227c4c24f9f352adf1671519b291fd"
+  integrity sha512-Z+uPRqbhct9M5FvBzMNjAeYVcZ3XuzirWaNjOYLyulPRDRVBY5eQZMMimy0VS8tW1U41WFCcaJ4Xxrrfl+MelQ==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"

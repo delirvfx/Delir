@@ -42,7 +42,7 @@
     "@fleur/fleur": "^1.2.2",
     "@fleur/react": "2.0.0",
     "@ragg/deream": "*",
-    "@simonwep/selection-js": "1.2.0",
+    "@simonwep/selection-js": "1.2.1",
     "archiver": "3.1.1",
     "classnames": "2.2.6",
     "fast-glob": "3.1.0",
