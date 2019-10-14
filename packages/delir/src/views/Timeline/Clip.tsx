@@ -150,7 +150,7 @@ export default decorate<OwnProps>(
     }
 
     private handleDragEnd: DraggableEventHandler = (e, drag) => {
-      const { clip } = this.props
+      const { clip, active } = this.props
 
       onClick: {
         // Prevent clip deselection after drag
@@ -160,6 +160,8 @@ export default decorate<OwnProps>(
 
         GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
         GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
+
+        if (active) return
 
         if (e.shiftKey) {
           this.props.executeOperation(EditorOps.addOrRemoveSelectClip, {
