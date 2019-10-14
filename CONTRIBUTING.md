@@ -38,7 +38,7 @@ We are also accepting post-effect development 🌈
 For adding post effects, please send a pull request according to the following flow.
 
 - Fork Delir
-- Create a post effects directory in `packages / posteffect-contrib`
+- Create a post effects directory in `packages/contrib-posteffect`
     - Create a directory with the same name as the `name` field in package.json
 - Place the post-effect code and `package.json` under the created directory
     - Follow npm `package.json` format.

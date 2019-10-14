@@ -36,7 +36,7 @@ GitHub上で気軽にIssueを立ててください。
 ポストエフェクトの追加に関しては以下のフローにのっとり、プルリクエストをお送りください
 
 - Delirをフォークする
-- `packages/posteffect-contrib` にポストエフェクトのディレクトリを作る
+- `packages/contrib-posteffect` にポストエフェクトのディレクトリを作る
     - package.jsonの `name` フィールドと同じ名前のディレクトリを作成してください
 - 作成したディレクトリ以下に、ポストエフェクトのコードと`package.json`を配置する
     - npmの `package.json` の形式に準拠してください。

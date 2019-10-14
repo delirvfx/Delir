@@ -2,37 +2,38 @@ sudo: false
 language: node_js
 
 cache:
-    yarn: true
-    directories:
-        - node_modules
+  yarn: true
+  directories:
+    - node_modules
 
 node_js:
-    - '11'
+  - '11'
 
 env:
-    - CXX=g++-4.8
+  - CXX=g++-4.8
 
 install:
-    - npm i -g yarn
-    - yarn install -s --no-optional
-    # Remove problem optional module
-    - rm -rf ./node_modules/speaker
+  - npm i -g yarn
+  - yarn install -s --no-optional
+  # Remove problem optional module
+  - rm -rf ./node_modules/speaker
 
 script:
-    - cd packages/core
-    - yarn prepublishOnly
-    - cd -
-    - cd packages/delir
-    - yarn build-storybook
-    - cd -
-    - yarn test-core
-    - yarn test-front
-    - yarn test-plugins
+  - cd packages/core
+  - yarn prepublishOnly
+  - cd -
+  - cd packages/delir
+  - yarn build-storybook
+  - cd -
+  - yarn test-core
+  - yarn test-front
+  - yarn test-plugins
+  - yarn test-contrib-pep
 
 addons:
-    apt:
-        sources:
-            - ubuntu-toolchain-r-test
-        packages:
-            - g++-4.8
-            - libfontconfig1-dev
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
+      - libfontconfig1-dev
