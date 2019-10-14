@@ -12,14 +12,21 @@ import unzipper from 'unzipper'
 import uuid from 'uuid'
 import { SpreadType } from '../../utils/Spread'
 
+import { HistoryGroup } from 'domain/History/HistoryGroup';
+import { Command } from 'domain/History/HistoryStore';
+import { ProjectActions } from 'domain/Project/actions';
+import { AddClipCommand } from 'domain/Project/Commands/AddClipCommand';
+import * as HistoryOps from '../History/operations'
 import { migrateProject } from '../Project/models'
+import * as ProjectOps from '../Project/operations'
 import { getProject } from '../Project/selectors'
 import RendererStore from '../Renderer/RendererStore'
 import { EditorActions } from './actions'
 import EditorStore from './EditorStore'
 import { NotificationTimeouts} from './models'
 import t from './operations.i18n'
-import { ClipboardEntry, ParameterTarget } from './types'
+import { getActiveComp, getClipboardEntry, getCurrentPreviewFrame, getSelectedClipIds } from './selectors';
+import { ClipboardEntryClip, ParameterTarget } from './types'
 
 export type DragEntity =
   | { type: 'asset'; asset: Delir.Entity.Asset }
@@ -39,10 +46,11 @@ export const openPluginDirectory = operation(context => {
 })
 
 export const setActiveProject = operation(
-  (context, payload: { project: Delir.Entity.Project; path?: string | null }) => {
+  async (context, payload: { project: Delir.Entity.Project; path?: string | null }) => {
     const { project: activeProject } = context.getStore(EditorStore).getState()
+    const projectChanged = payload.project !== activeProject
 
-    if (!activeProject || payload.project !== activeProject) {
+    if (!activeProject || projectChanged) {
       context.dispatch(EditorActions.clearActiveProject, {})
     }
 
@@ -50,6 +58,10 @@ export const setActiveProject = operation(
       project: payload.project,
       path: payload.path,
     })
+
+    if (projectChanged) {
+      await context.executeOperation(HistoryOps.clearHistory)
+    }
   },
 )
 
@@ -328,22 +340,74 @@ export const changePreferenceOpenState = operation((context, { open }: { open: b
 //
 // Internal clipboard
 //
-export const copyEntity = operation(
-  (
-    context,
-    {
-      type,
-      entity,
-    }: {
-      type: ClipboardEntry['type']
-      entity: SpreadType<Delir.Entity.Clip>
-    },
-  ) => {
-    context.dispatch(EditorActions.setClipboardEntry, {
-      entry: {
-        type,
-        entityClone: Delir.Exporter.serializeEntity(entity),
-      },
+export const copyClips = operation(({getStore, dispatch}) => {
+    const clipIds = getSelectedClipIds(getStore)
+    const comp = getActiveComp(getStore)!
+    const firstLayerIndexOfSelection = comp.layers.findIndex(layer => !!layer.findClip(clipIds[0]))
+
+    const entities: ClipboardEntryClip['entities'] = []
+    let offset = 0
+    for (let idx = firstLayerIndexOfSelection; idx < comp.layers.length; idx++) {
+      const layer = comp.layers[idx]
+
+      // find clips in current layer
+      const containedClips = clipIds
+        .map(clipId => layer.findClip(clipId))
+        .filter((clip): clip is Delir.Entity.Clip => !!clip)
+
+      entities[offset] = {offset, clips: containedClips}
+      offset++
+    }
+
+
+    dispatch(EditorActions.setClipboardEntry, {
+      entry: { type: 'clip', entities },
     })
   },
 )
+
+export const cutClips = operation(({executeOperation, getStore}) => {
+  executeOperation(copyClips)
+  executeOperation(ProjectOps.removeClips, { clipIds: getSelectedClipIds(getStore) })
+})
+
+export const pasteClipIntoLayer = operation(async (context, { layerId }: { layerId: string }) => {
+  const entry = getClipboardEntry(context.getStore)
+  if (!entry || entry.type !== 'clip') return
+
+  const {entities} = entry
+  const project = getProject(context.getStore)!
+  const placedFrame = getCurrentPreviewFrame(context.getStore)
+  const composition = project.findLayerOwnerComposition(layerId)!
+  const firstLayerIdxOfEntity = composition.layers.findIndex(layer => layer.id === layerId)
+  const headClipPlacedFrame = entities
+    .flatMap(({clips}) => clips)
+    .reduce((headPlacedFrame: number, next) => Math.min(headPlacedFrame, next.placedFrame), Infinity)
+
+  const commands: Command[] = []
+  for (const {offset, clips} of entities) {
+    const layer = composition.layers[Math.min(firstLayerIdxOfEntity + offset, composition.layers.length - 1)]
+
+    for (const sourceClip of clips) {
+      const clip = sourceClip.clone()
+
+      clip.patch({
+        placedFrame: (sourceClip.placedFrame - headClipPlacedFrame) + placedFrame,
+      })
+
+      context.dispatch(ProjectActions.addClip, {
+        targetLayerId: layer.id,
+        newClip: clip,
+      })
+
+      commands.push(new AddClipCommand(composition.id, layer.id, clip))
+    }
+  }
+
+  await context.executeOperation(HistoryOps.pushHistory, {
+    command: new HistoryGroup(commands),
+  })
+
+
+  await context.executeOperation(seekPreviewFrame, {})
+})

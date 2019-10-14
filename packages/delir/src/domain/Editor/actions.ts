@@ -1,9 +1,8 @@
 import * as Delir from '@delirvfx/core'
 import { action, actions } from '@fleur/fleur'
-import { EncodingOption } from '@ragg/deream'
 
 import { DragEntity } from './operations'
-import { ClipboardEntry, ParameterTarget } from './types'
+import { ClipboardEntryClip, ParameterTarget } from './types'
 
 export const EditorActions = actions('Editor', {
   setActiveProject: action<{
@@ -28,6 +27,6 @@ export const EditorActions = actions('Editor', {
   }>(),
   removeMessage: action<{ id: string }>(),
   seekPreviewFrame: action<{ frame: number }>(),
-  setClipboardEntry: action<{ entry: ClipboardEntry }>(),
+  setClipboardEntry: action<{ entry: ClipboardEntryClip }>(),
   changePreferenceOpenState: action<{ open: boolean }>(),
 })

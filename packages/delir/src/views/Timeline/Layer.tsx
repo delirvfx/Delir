@@ -57,7 +57,7 @@ export const Layer = (props: Props) => {
   const convertOption = { pxPerSec, framerate, scale }
 
   const handleGlobalPaste = useCallback(() => {
-    executeOperation(ProjectOps.pasteClipEntityIntoLayer, {
+    executeOperation(EditorOps.pasteClipIntoLayer, {
       layerId: layer.id,
     })
   }, [layer])

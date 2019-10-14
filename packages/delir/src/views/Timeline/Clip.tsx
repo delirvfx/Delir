@@ -221,8 +221,8 @@ export default decorate<OwnProps>(
     }
 
     private handleRemoveClip = ({ dataset }: MenuItemOption<{ clipId: string }>) => {
-      this.props.executeOperation(ProjectOps.removeClip, {
-        clipId: dataset.clipId,
+      this.props.executeOperation(ProjectOps.removeClips, {
+        clipIds: [dataset.clipId],
       })
     }
 
@@ -234,20 +234,11 @@ export default decorate<OwnProps>(
     }
 
     private handleGlobalCopy = () => {
-      this.props.executeOperation(EditorOps.copyEntity, {
-        type: 'clip',
-        entity: this.props.clip,
-      })
+      this.props.executeOperation(EditorOps.copyClips)
     }
 
     private handleGlobalCut = () => {
-      this.props.executeOperation(EditorOps.copyEntity, {
-        type: 'clip',
-        entity: this.props.clip,
-      })
-      this.props.executeOperation(ProjectOps.removeClip, {
-        clipId: this.props.clip.id,
-      })
+      this.props.executeOperation(EditorOps.cutClips)
     }
   },
 )
