@@ -57,21 +57,12 @@ const RendererGeneralPane = () => {
     </>
   )
 }
-export const Preference = (props: Props) => {
+export const Preference = ({ onClose }: Props) => {
   const [{ activePanel }, update] = useObjectState<State>({
     activePanel: 'renderer-general',
   })
 
-  const handleWindowKeyup = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      props.onClose()
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener('keyup', handleWindowKeyup)
-    return () => window.removeEventListener('keyup', handleWindowKeyup)
-  })
+  useEscKeyListener(() => onClose(), [onClose])
 
   return (
     <div className={s.preference}>
@@ -99,7 +90,7 @@ export const Preference = (props: Props) => {
           {activePanel === 'renderer-general' && <RendererGeneralPane />}
           {activePanel === 'development-plugin' && <DevelopmentPlguinPane />}
           <div className={s.contentFoot}>
-            <Button kind="normal" onClick={props.onClose}>
+            <Button kind="normal" onClick={onClose}>
               {t(t.k.close)}
             </Button>
           </div>

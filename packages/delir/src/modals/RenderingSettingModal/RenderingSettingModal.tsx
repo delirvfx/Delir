@@ -8,7 +8,7 @@ import { SelectBox } from 'components/SelectBox/SelectBox'
 import path from 'path'
 import React, { ChangeEvent, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
-import { useObjectState, useValidation } from 'utils/hooks'
+import { useEscKeyListener, useObjectState, useValidation } from 'utils/hooks'
 import t from './RenderingSettingModal.i18n'
 
 export interface RenderingOption {
@@ -74,6 +74,8 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
     const { dir, name } = path.parse(destPath)
     setState({ destPath: path.format({ dir, name, ext: `.${VCODEC_TO_EXT[videoCodec]}` }) })
   }, [videoCodec])
+
+  useEscKeyListener(() => onClose(false), [onClose])
 
   const handleClickSelectFile = useCallback(async () => {
     // prettier-ignore
