@@ -59,7 +59,7 @@ export const RenderingWaiter = () => {
                 <>
                   <div className={s.status}>
                     <img className={s.completedParrot} src={require('./parrot.gif')} />
-                    <div className={s.statusText}>{statusToText(status)}</div>
+                    <div className={s.statusText}>{statusToText(status!)}</div>
                   </div>
                   <Button kind="primary" className={s.doneButton} onClick={handleClickDone}>
                     {t(t.k.close)}

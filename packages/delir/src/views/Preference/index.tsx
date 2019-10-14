@@ -1,12 +1,11 @@
 import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { Button } from '../../components/Button'
-import { FormSection } from '../../components/FormSection/FormSection'
 import * as PreferenceOps from '../../domain/Preference/operations'
 import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Preference/PreferenceStore'
-import { useObjectState } from '../../utils/hooks'
+import { useEscKeyListener, useObjectState } from '../../utils/hooks'
 
 import { getAllPreferences } from 'domain/Preference/selectors'
 import { DevelopmentPlguinPane } from './Panes/Development/Plugin'

@@ -197,9 +197,10 @@ export const renderDestinate = operation(
         detail: e.message,
         timeout: NotificationTimeouts.userConfirmationNecessary,
       })
+
+      context.dispatch(RendererActions.setRenderingProgress, { progress: null })
     } finally {
       context.dispatch(RendererActions.setInRenderingStatus, { isInRendering: false })
-      context.dispatch(RendererActions.setRenderingProgress, { progress: null })
     }
   },
 )
