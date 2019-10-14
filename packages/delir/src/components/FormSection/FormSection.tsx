@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import { cssVars } from '../../assets/styles/cssVars'
 
 interface Props {
-  label: string
+  label: ReactNode
   error?: string | null
-  children: ReactNode
+  children?: ReactNode
 }
 
 const Container = styled.label`

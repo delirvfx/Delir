@@ -12,7 +12,6 @@ import unzipper from 'unzipper'
 import uuid from 'uuid'
 import { SpreadType } from '../../utils/Spread'
 
-import { getAllPreferences } from 'domain/Preference/selectors'
 import { migrateProject } from '../Project/models'
 import { getProject } from '../Project/selectors'
 import RendererStore from '../Renderer/RendererStore'
@@ -120,15 +119,6 @@ export const changeSelectClip = operation((context, { clipIds }: { clipIds: stri
 
 export const changeActiveParam = operation((context, { target }: { target: ParameterTarget | null }) => {
   context.dispatch(EditorActions.changeActiveParam, { target })
-})
-
-export const renderDestinate = operation((context, arg: { compositionId: string }) => {
-  const preference = getAllPreferences(context.getStore)
-
-  context.dispatch(EditorActions.renderDestinate, {
-    compositionId: arg.compositionId,
-    ignoreMissingEffect: preference.renderer.ignoreMissingEffect,
-  })
 })
 
 export const updateProcessingState = operation((context, arg: { stateText: string }) => {

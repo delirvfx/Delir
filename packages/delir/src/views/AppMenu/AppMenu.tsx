@@ -6,6 +6,8 @@ import React from 'react'
 import { Platform } from 'utils/platform'
 import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } from '../../utils/UIActions'
 
+import { getActiveComp } from 'domain/Editor/selectors'
+import { RenderingOption, RenderingSettingModal } from 'modals/RenderingSettingModal/RenderingSettingModal'
 import { ModalMounterProps, withModalMounter } from '../../components/ModalOwner/ModalOwner'
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
@@ -14,7 +16,6 @@ import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import {AboutModal} from '../../modals/AboutModal'
 import { ImportPackModal, ImportPackResponse } from '../../modals/ImportPackModal/ImportPackModal'
-
 import t from './AppMenu.i18n'
 
 interface State {
@@ -176,13 +177,7 @@ export default withFleurContext(
               {
                 label: t(t.k.file.rendering),
                 accelerator: 'CmdOrCtrl+Shift+R',
-                click() {
-                  const comp = getStore(EditorStore).getState().activeComp
-                  if (!comp) return
-                  executeOperation(EditorOps.renderDestinate, {
-                    compositionId: comp.id!,
-                  })
-                },
+                click: this.handleRenderDestinate,
               },
               ...(Platform.isWindows
                 ? [
@@ -368,6 +363,20 @@ export default withFleurContext(
         if (path.canceled) return
 
         this.props.executeOperation(EditorOps.exportProjectPack, { dist: path.filePath! })
+      }
+
+      private handleRenderDestinate = async () =>{
+        const comp = getActiveComp(this.props.getStore)
+        if (!comp) return
+
+        const result = await this.props.mountModal<RenderingOption | false>(resolve => <RenderingSettingModal onClose={resolve} />)
+        if (!result) return
+
+        this.props.executeOperation(RendererOps.renderDestinate, {
+          compositionId: comp.id!,
+          destPath: result.destination,
+          encodingOption: result.encodingOption
+        })
       }
 
       private handleOpenPreference = () => {

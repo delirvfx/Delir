@@ -1,12 +1,11 @@
 import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import { Button } from '../../components/Button'
-import { FormSection } from '../../components/FormSection/FormSection'
 import * as PreferenceOps from '../../domain/Preference/operations'
 import PreferenceStore, { Preference as PreferenceJson } from '../../domain/Preference/PreferenceStore'
-import { useObjectState } from '../../utils/hooks'
+import { useEscKeyListener, useObjectState } from '../../utils/hooks'
 
 import { getAllPreferences } from 'domain/Preference/selectors'
 import { DevelopmentPlguinPane } from './Panes/Development/Plugin'
@@ -57,21 +56,12 @@ const RendererGeneralPane = () => {
     </>
   )
 }
-export const Preference = (props: Props) => {
+export const Preference = ({ onClose }: Props) => {
   const [{ activePanel }, update] = useObjectState<State>({
     activePanel: 'renderer-general',
   })
 
-  const handleWindowKeyup = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      props.onClose()
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener('keyup', handleWindowKeyup)
-    return () => window.removeEventListener('keyup', handleWindowKeyup)
-  })
+  useEscKeyListener(() => onClose(), [onClose])
 
   return (
     <div className={s.preference}>
@@ -99,7 +89,7 @@ export const Preference = (props: Props) => {
           {activePanel === 'renderer-general' && <RendererGeneralPane />}
           {activePanel === 'development-plugin' && <DevelopmentPlguinPane />}
           <div className={s.contentFoot}>
-            <Button kind="normal" onClick={props.onClose}>
+            <Button kind="normal" onClick={onClose}>
               {t(t.k.close)}
             </Button>
           </div>

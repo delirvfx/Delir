@@ -1,4 +1,5 @@
 import { action, actions } from '@fleur/fleur'
+import { EncodingOption, RenderingProgress } from '@ragg/deream'
 
 export const RendererActions = actions('Renderer', {
   registerPlugins: action<{ plugins: any[] }>(),
@@ -8,4 +9,6 @@ export const RendererActions = actions('Renderer', {
   setAudioVolume: action<{ volume: number }>(),
   startPreview: action<{ compositionId: string; beginFrame: number; ignoreMissingEffect: boolean }>(),
   stopPreview: action<{}>(),
+  setInRenderingStatus: action<{ isInRendering: boolean }>(),
+  setRenderingProgress: action<{ progress: RenderingProgress | null }>(),
 })

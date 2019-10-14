@@ -82,3 +82,19 @@ export const usePopper = (options: Popper.PopperOptions = {}) => {
 
   return { parentRef, poppingRef }
 }
+
+export const useEscKeyListener = (callback: () => void, deps: any[] = []) => {
+  const handleWindowKeyup = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        callback()
+      }
+    },
+    [callback, ...deps],
+  )
+
+  useEffect(() => {
+    window.addEventListener('keyup', handleWindowKeyup)
+    return () => window.removeEventListener('keyup', handleWindowKeyup)
+  }, [handleWindowKeyup])
+}
