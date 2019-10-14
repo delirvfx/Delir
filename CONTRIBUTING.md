@@ -11,19 +11,20 @@ Contributions include the following:
     - Includes new post-effect API features
 - Bug fixes
 - New post effect development
+- etc..
 
 
 ### Bug report / Feature request
 
-We accept bug reports and requests for new features 🌟
+We accept bug reports and requests for new features 🌟  
 Please feel free to set up an issue on GitHub.
 
 ### Bugfix
 
-We accept pull requests for bug fixes 🐛
+We accept pull requests for bug fixes 🐛  
 Please send a patch on GitHub that conforms to the coding rules described below.
 
-Review the pull request sent and merge if there is no problem.
+Review the pull request sent and merge if there is no problem.  
 Determine when bug fixes are released based on their importance.
 
 ### New feature pull request
@@ -34,7 +35,7 @@ We receive the issue and discuss for the feature and triage the implementation t
 
 ### ポストエフェクトの開発
 
-We are also accepting post-effect development 🌈
+We are also accepting post-effect development 🌈  
 For adding post effects, please send a pull request according to the following flow.
 
 - Fork Delir
@@ -47,13 +48,13 @@ For adding post effects, please send a pull request according to the following f
 - Create a branch and make a pull request to Delir
 - Delir team members will review the code and merge if there is no problem
 
-The merged code is maintained to the extent that `package.engines['@ delirvfx/core']` follows.
+The merged code is maintained to the extent that `package.engines['@ delirvfx/core']` follows.  
 New features and plugins that have become technically difficult to follow will be excluded from maintenance, so please send a modification pull request to the plugin if necessary.
 
 ## Coding conventions
 
-In principle, follow the Linter settings set for the project.
-Delir enables automatic code formatting by `prettier`,` tslint`, `sass-lint` at commit time.
+In principle, follow the Linter settings set for the project.  
+Delir enables automatic code formatting by `prettier`,` tslint`, `sass-lint` at commit time.  
 Commit by `git commit --no-verify` is allowed when Linter is not available, such as when Linter does not function properly due to the new syntax.
 
 ## Disclaimer
