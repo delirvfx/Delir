@@ -47,7 +47,7 @@
     "react-test-renderer": "16.9.0",
     "sass": "1.22.12",
     "sass-lint": "1.13.1",
-    "sass-lint-auto-fix": "0.17.0",
+    "sass-lint-auto-fix": "0.18.0",
     "sass-loader": "8.0.0",
     "style-loader": "1.0.0",
     "ts-loader": "6.2.0",
