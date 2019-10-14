@@ -195,12 +195,7 @@ export default withFleurContext(
                       onSeeked={this._onSeeked}
                     />
 
-                    <div
-                      ref={this.timelineContainer}
-                      className={s.layerContainer}
-                      onScroll={this.handleScrollTimeline}
-                      tabIndex={-1}
-                    >
+                    <div ref={this.timelineContainer} className={s.layerContainer} onScroll={this.handleScrollTimeline}>
                       <div style={{ display: 'flex' }} onKeyDown={this.handleKeydownTimeline}>
                         {activeComp && (
                           <ClipDragMediator
