@@ -6,7 +6,7 @@ import { P5jsRenderer } from './P5js'
 
 jest.mock('./P5Hooks', () => ({
   __esModule: true,
-  default: class {
+  P5Hooks: class {
     public p5 = {
       canvas: {},
       createCanvas: () => {},
