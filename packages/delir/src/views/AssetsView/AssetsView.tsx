@@ -1,22 +1,20 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
-import { clipboard } from 'electron'
+import {clipboard, remote } from 'electron'
 import _ from 'lodash'
 import parseColor from 'parse-color'
 import path from 'path'
 import React from 'react'
 
-import * as EditorOps from '../../domain/Editor/operations'
-import * as ProjectOps from '../../domain/Project/operations'
-
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
-import ProjectStore from '../../domain/Project/ProjectStore'
-
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
 import { LabelInput } from '../../components/LabelInput'
 import { Pane } from '../../components/Pane'
-
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import * as EditorOps from '../../domain/Editor/operations'
+import * as ProjectOps from '../../domain/Project/operations'
+import ProjectStore from '../../domain/Project/ProjectStore'
+import { getAssetById } from '../../domain/Project/selectors'
 import * as CompositionSettingModal from '../../modals/CompositionSettingModal'
 
 import t from './AssetsView.i18n'
@@ -178,7 +176,7 @@ export default withFleurContext(
             <h1 className={s.assetsHeading}>
               {t(t.k.assets.title)}
               <label className={classnames('twa twa-heavy-plus-sign', s.addAssetPlusSign)}>
-                <input ref="assetInput" type="file" style={{ display: 'none' }} onChange={this.selectAsset} multiple />
+                <input type="file" style={{ display: 'none' }} onChange={this.handleSelectAsset} multiple />
               </label>
             </h1>
             <div className={s.assetsTableContainer} onDrop={this.handleDropAsset}>
@@ -203,7 +201,6 @@ export default withFleurContext(
                     >
                       <ContextMenu elementType="td">
                         <MenuItem type="separator" />
-                        {/*<MenuItem label='Reload' onClick={() => {}} />*/}
                         <MenuItem
                           label={t(t.k.assets.contextMenu.remove)}
                           data-asset-id={asset.id}
@@ -223,6 +220,11 @@ export default withFleurContext(
                           <MenuItem
                             label={t(t.k.assets.contextMenu.rename)}
                             onClick={this.handleClickRenameAsset}
+                            data-asset-id={asset.id}
+                          />
+                          <MenuItem
+                            label={t(t.k.assets.contextMenu.replace)}
+                            onClick={this.handleClickReplaceAsset}
                             data-asset-id={asset.id}
                           />
                         </ContextMenu>
@@ -271,6 +273,25 @@ export default withFleurContext(
         this.assetInputRefs[dataset.assetId].enableAndFocus()
       }
 
+      private handleClickReplaceAsset = async({dataset}: MenuItemOption<{assetId: string}>) => {
+        const {assetId} = dataset
+        const asset = getAssetById(this.props.getStore, assetId)!
+
+        const {filePaths} = await remote.dialog.showOpenDialog({
+          filters: [{name: asset.fileType, extensions: [asset.fileType] }],
+          properties: ['openFile'],
+        })
+
+        if (!filePaths?.[0]) return
+
+        const [filePath] = filePaths
+        const {ext} = path.parse(filePaths[0])
+        this.props.executeOperation(ProjectOps.modifyAsset, {
+          assetId: assetId,
+          patch: {fileType: ext.slice(1), path: filePath}
+        })
+      }
+
       private handleCopyAssetURI = ({ dataset }: MenuItemOption<{ assetId: string }>) => {
         clipboard.writeText(`delir:${dataset.assetId}`)
       }
@@ -313,7 +334,7 @@ export default withFleurContext(
         })
       }
 
-      private selectAsset = ({ nativeEvent: e }: React.ChangeEvent<HTMLInputElement>) => {
+      private handleSelectAsset = ({ nativeEvent: e }: React.ChangeEvent<HTMLInputElement>) => {
         const target = e.target as HTMLInputElement
         const files = Array.from(target.files!)
 

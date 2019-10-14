@@ -7,7 +7,7 @@ import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import * as EditorOps from '../../domain/Editor/operations'
 
-import { ContextProp, withFleurContext } from '@fleur/fleur-react'
+import { ContextProp, withFleurContext } from '@fleur/react'
 import s from './KeyframeGraph.sass'
 
 interface OwnProps {

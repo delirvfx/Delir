@@ -1,7 +1,7 @@
-import { useStore } from '@fleur/fleur-react'
+import { useStore } from '@fleur/react'
 import { RenderingProgress, RenderingStep } from '@ragg/deream'
 import classnames from 'classnames'
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { animated, useTransition } from 'react-spring'
 
 import { Button } from '../../components/Button/Button'
@@ -28,18 +28,18 @@ const statusToText = (progress: RenderingProgress) => {
 }
 
 export const RenderingWaiter = () => {
-  const [show, setShow] = React.useState(true)
+  const [show, setShow] = useState(true)
 
   const { inRendering, status } = useStore([RendererStore], getStore => ({
     inRendering: getStore(RendererStore).isInRendering(),
     status: getStore(RendererStore).getExportingState(),
   }))
 
-  const handleClickDone = React.useCallback(() => {
+  const handleClickDone = useCallback(() => {
     setShow(false)
   }, [])
 
-  React.useEffect(() => {
+  useEffect(() => {
     setShow(true)
   }, [inRendering])
 
@@ -55,22 +55,22 @@ export const RenderingWaiter = () => {
         ({ item, key, props: style }) =>
           item && (
             <animated.div key={key} className={s.RenderingWaiter} style={style}>
-              {status.step === RenderingStep.Completed ? (
+              {status?.step === RenderingStep.Completed ? (
                 <>
                   <div className={s.status}>
                     <img className={s.completedParrot} src={require('./parrot.gif')} />
-                    <div className={s.statusText}>{statusToText(status)}</div>
+                    <div className={s.statusText}>{statusToText(status!)}</div>
                   </div>
-                  <Button type="primary" className={s.doneButton} onClick={handleClickDone}>
+                  <Button kind="primary" className={s.doneButton} onClick={handleClickDone}>
                     {t(t.k.close)}
                   </Button>
                 </>
-              ) : (
+              ) : status ? (
                 <div className={s.status}>
                   <i className={classnames('fa fa-circle-o-notch fa-3x', s.spinner)} />
                   <div className={s.statusText}>{statusToText(status)}</div>
                 </div>
-              )}
+              ) : null}
             </animated.div>
           ),
       )}

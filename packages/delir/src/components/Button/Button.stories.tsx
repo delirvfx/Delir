@@ -8,7 +8,7 @@ storiesOf('Button', module)
   .add('Button', () => {
     const label = text('label', 'Hello!')
     return (
-      <Button type={select('type', { normal: 'normal', primary: 'primary' }, 'normal')} onClick={() => {}}>
+      <Button kind={select('kind', { normal: 'normal', primary: 'primary' }, 'normal')} onClick={() => {}}>
         {label}
       </Button>
     )

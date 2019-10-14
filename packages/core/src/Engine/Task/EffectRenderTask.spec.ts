@@ -1,7 +1,7 @@
 import { mockClip, mockComposition, mockEffect, mockLayer, mockProject } from '@delirvfx/core-test-helper'
 import { Clip, Project } from '../../Entity'
 import { EffectPluginMissingException } from '../../Exceptions'
-import PluginRegistry from '../../PluginSupport/plugin-registry'
+import PluginRegistry from '../../PluginSupport/PluginRegistry'
 import EffectPluginBase from '../../PluginSupport/PostEffectBase'
 import DependencyResolver from '../DependencyResolver'
 import { RenderContextBase } from '../RenderContext/RenderContextBase'
@@ -35,7 +35,7 @@ describe('EffectRenderTask', () => {
           class: EffectPluginBase as any,
           packageJson: {
             name: 'existing-effect',
-            author: '',
+            author: 'delirvfx',
             version: '0.0.0',
             delir: {
               name: 'exit-effect',

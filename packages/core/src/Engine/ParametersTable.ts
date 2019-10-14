@@ -2,10 +2,10 @@ import _ from 'lodash'
 
 import { EffectRenderContext } from '..'
 import { Clip, Keyframe } from '../Entity'
-import { UserCodeException } from '../Exceptions/UserCodeException'
-import { ParameterValueTypes, TypeDescriptor } from '../PluginSupport/type-descriptor'
+import { UserCodeException } from '../Exceptions'
+import { ParameterValueTypes, TypeDescriptor } from '../PluginSupport/TypeDescriptor'
 import { AssetPointer, ColorRGB, ColorRGBA, Expression } from '../Values'
-import AssetProxy from './AssetProxy'
+import { AssetProxy } from './AssetProxy'
 import { compileTypeScript } from './ExpressionSupport/ExpressionCompiler'
 import * as ExpressionContext from './ExpressionSupport/ExpressionContext'
 import ExpressionVM from './ExpressionSupport/ExpressionVM'
@@ -35,7 +35,7 @@ export class ParametersTable {
     const assetPramNames = paramTypes.properties.filter(prop => prop.type === 'ASSET').map(prop => prop.paramName)
 
     // Calculate initial parameters
-    const rawRendererInitParam = KeyframeCalcurator.calcKeyframeValuesAt(0, clip.placedFrame, paramTypes, keyframes)
+    const rawRendererInitParam = KeyframeCalcurator.calcKeyframesAt(0, clip.placedFrame, paramTypes, keyframes)
     const initialParams: RealParameterValues = {
       ...(rawRendererInitParam as any),
     }
@@ -47,7 +47,7 @@ export class ParametersTable {
     })
 
     // Calculate look up table
-    const rawKeyframeLUT = KeyframeCalcurator.calcKeyFrames(
+    const rawKeyframeLUT = KeyframeCalcurator.calcKeyframesInRange(
       paramTypes,
       keyframes,
       clip.placedFrame,

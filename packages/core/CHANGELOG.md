@@ -1,3 +1,25 @@
+### 0.10.0
+- [#380](https://github.com/ra-gg/Delir/pull/380) Support alpha channel (transparent background) rendering
+  from `Engine#{renderFrame,renderSequencial}(options: { enableAlpha: true })`
+- [#380](https://github.com/ra-gg/Delir/pull/380) `Engine#renderFrame` now accepts rendering options in 3rd argument
+
+### 0.9.0
+- [#379](https://github.com/ra-gg/Delir/pull/379) Add ParamType namespace for easy to understand relationship between parameter definition (in `#provideParameters`) and interface definition
+- [#379](https://github.com/ra-gg/Delir/pull/379) Internal refactoring
+- [#379](https://github.com/ra-gg/Delir/pull/379) Now disallows `engines['delir-core']` definition in plugin package.json
+
+### 0.8.1
+- [#371](https://github.com/ra-gg/Delir/pull/371) Fix incorrect WebGL uniform assigning
+- [#371](https://github.com/ra-gg/Delir/pull/371) Add returned type to `Exporter.deserializeProject`
+
+### 0.8.0
+#### Breaking changes
+- Refactor `KeyframeCalculator`
+  - Renamed `.calcKeyframeValuesAt` -> `.calcKeyframesAt`
+  - Renamed `.calcKeyframeValueAt` -> `.calcKeyframeAt`
+  - Renamed `.calcKeyFrames` -> `.calcKeyframesInRange`
+  - `.calcKeyframe` now privated
+
 ### 0.7.4
 - #226 Fix plugin's package.json typing
 - #226 Replace `joi` dependency to `joi-browser`

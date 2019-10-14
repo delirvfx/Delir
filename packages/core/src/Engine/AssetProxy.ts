@@ -1,6 +1,6 @@
 import { Asset } from '../Entity'
 
-export default class AssetProxy {
+export class AssetProxy {
   get id(): string {
     return this._asset.id
   }

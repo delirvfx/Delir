@@ -15,6 +15,24 @@
   overflow: hidden
   user-select: text
 
+  &.info
+    background-color: lighten($color-info, 20%)
+
+    .entryTitle
+      background-color: $color-info
+
+    .entryBody
+      color: darken($color-info, 40%)
+
+  &.error
+    background-color: lighten($color-error, 20%)
+
+    .entryTitle
+      background-color: $color-error
+
+    .entryBody
+      color: darken($color-error, 40%)
+
   .close
     position: absolute
     right: 0
@@ -41,21 +59,3 @@
     background: rgba(255, 255, 255, 0.5)
     border-radius: 2px
     color: rgba(#000, .8)
-
-  &.--info
-    background-color: lighten($color-info, 20%)
-
-    .entryTitle
-      background-color: $color-info
-
-    .entryBody
-      color: darken($color-info, 40%)
-
-  &.--error
-    background-color: lighten($color-error, 20%)
-
-    .entryTitle
-      background-color: $color-error
-
-    .entryBody
-      color: darken($color-error, 40%)

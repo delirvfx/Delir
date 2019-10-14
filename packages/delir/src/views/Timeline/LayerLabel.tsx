@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withFleurContext } from '@fleur/fleur-react'
+import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import React from 'react'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'

@@ -82,6 +82,8 @@ export const video = (options: ExportOption): VideoExporter => {
     '-c:v',
     'png_pipe',
     ...specificArgs,
+    '-pix_fmt',
+    'yuva420p',
     '-y',
     _options.dest ? _options.dest : 'pipe:1',
   ]

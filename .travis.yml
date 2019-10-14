@@ -27,6 +27,7 @@ script:
     - cd -
     - yarn test-core
     - yarn test-front
+    - yarn test-plugins
 
 addons:
     apt:

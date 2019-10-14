@@ -163,10 +163,10 @@ class CompositionSettingModal extends React.PureComponent<Props, any> {
           </div>
 
           <div className={s.modalFooter}>
-            <Button type="normal" onClick={this.onCancel}>
+            <Button kind="normal" onClick={this.onCancel}>
               {t(t.k.cancel)}
             </Button>
-            <Button type="primary" htmlType="submit" onClick={this.onConfirm}>
+            <Button kind="primary" type="submit" onClick={this.onConfirm}>
               {comp ? t(t.k.apply) : t(t.k.create)}
             </Button>
           </div>

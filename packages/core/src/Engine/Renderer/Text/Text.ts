@@ -1,24 +1,24 @@
 import _ from 'lodash'
 
-import Type from '../../../PluginSupport/type-descriptor'
-import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
+import Type from '../../../PluginSupport/TypeDescriptor'
+import { TypeDescriptor } from '../../../PluginSupport/TypeDescriptor'
+import ColorRGBA from '../../../Values/ColorRGBA'
+import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
-import ColorRGBA from '../../../Values/ColorRGBA'
-
 interface TextRendererParam {
-  text: string
-  family: string
-  weight: string
-  size: number
-  lineHeight: number
-  color: ColorRGBA
-  x: number
-  y: number
-  rotate: number
-  opacity: number
+  text: ParamType.String
+  family: ParamType.Enum
+  weight: ParamType.Enum
+  size: ParamType.Number
+  lineHeight: ParamType.Number
+  color: ParamType.ColorRGBA
+  x: ParamType.Number
+  y: ParamType.Number
+  rotate: ParamType.Float
+  opacity: ParamType.Float
 }
 
 export class TextRenderer implements IRenderer<TextRendererParam> {

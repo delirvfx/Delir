@@ -1,9 +1,9 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@delirvfx/core'
+import { EffectPreRenderContext, EffectRenderContext, ParamType, PostEffectBase, Type } from '@delirvfx/core'
 
 import clamp from 'lodash/clamp'
 
 interface Params {
-  opacity: number
+  opacity: ParamType.Float
 }
 
 export default class TheWorldPostEffect extends PostEffectBase {

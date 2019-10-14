@@ -1,5 +1,5 @@
 import * as Delir from '@delirvfx/core'
-import { ContextProp, withFleurContext } from '@fleur/fleur-react'
+import { ContextProp, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
 import React from 'react'
@@ -21,6 +21,7 @@ import { ClipDragProps, withClipDragContext } from './ClipDragContext'
 
 interface OwnProps {
   clip: SpreadType<Delir.Entity.Clip>
+  top: number
   left: number
   width: number
   active: boolean
@@ -37,13 +38,15 @@ type Props = OwnProps & ConnectedProps & ContextProp & ClipDragProps
 export default decorate<OwnProps>(
   [withFleurContext, withClipDragContext],
   class Clip extends React.Component<Props> {
+    private isDragMoved: boolean = false
+
     public shouldComponentUpdate(nextProps: Props) {
       const { props } = this
       return !_.isEqual(props, nextProps)
     }
 
     public render() {
-      const { clip, active, postEffectPlugins, width, left, hasError } = this.props
+      const { clip, active, postEffectPlugins, width, left, top, hasError } = this.props
 
       return (
         <MountTransition
@@ -53,8 +56,8 @@ export default decorate<OwnProps>(
           {style => (
             <Rnd
               className={s.clip}
-              dragAxis="x"
-              position={{ x: left, y: 2 }}
+              dragAxis="both"
+              position={{ x: left, y: 2 + top }}
               size={{ width, height: 'auto' }}
               enableResizing={{
                 left: true,
@@ -67,9 +70,9 @@ export default decorate<OwnProps>(
               onDragStop={this.handleDragEnd}
               onResize={this.handleResize}
               onResizeStop={this.handleResizeEnd}
-              onMouseDown={this.handleClick}
               tabIndex={-1}
               data-clip-id={clip.id}
+              dragGrid={[1, 24]}
             >
               <animated.div
                 className={classnames(s.inner, {
@@ -84,7 +87,6 @@ export default decorate<OwnProps>(
                   [s.hasError]: hasError,
                 })}
                 style={style}
-                onMouseUp={this.handleMouseUp}
               >
                 <ContextMenu>
                   <MenuItem label={t(t.k.contextMenu.seekToHeadOfClip)} onClick={this.handleSeekToHeadOfClip} />
@@ -117,46 +119,78 @@ export default decorate<OwnProps>(
       )
     }
 
-    private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (this.props.active) return
-      e.preventDefault()
-      e.stopPropagation()
+    private handleDragStart: DraggableEventHandler = e => {
+      // When click with shift-key, Expects raise selection/deselection behaviour
+      // (Prevent clip selection clearing)
+      if (e.shiftKey) return
 
-      GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
-      GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
-
-      if (e.shiftKey) {
-        this.props.executeOperation(EditorOps.addOrRemoveSelectClip, {
+      // Enable dragging from unselected state
+      if (!this.props.active) {
+        this.props.executeOperation(EditorOps.changeSelectClip, {
           clipIds: [this.props.clip.id],
         })
-      } else {
-        this.props.executeOperation(EditorOps.changeSelectClip, {
-          clipIds: [this.props.clip.id!],
-        })
       }
-    }
 
-    private handleDragStart: DraggableEventHandler = e => {
       this.props.executeOperation(EditorOps.setDragEntity, {
-        entity: { type: 'clip', clip: this.props.clip },
+        entity: { type: 'clip', baseClipId: this.props.clip.id! },
       })
     }
 
     private handleDrag: DraggableEventHandler = (e, drag) => {
       const { clip } = this.props
 
+      if (drag.deltaX !== 0 || drag.deltaY !== 0) {
+        this.isDragMoved = true
+      }
+
       this.props.emitClipDrag({
         nextX: drag.x,
+        nextY: drag.y,
         originalPlacedFrame: clip.placedFrame,
       })
     }
 
     private handleDragEnd: DraggableEventHandler = (e, drag) => {
       const { clip } = this.props
-      this.props.emitClipDragEnd({
-        nextX: drag.x,
-        originalPlacedFrame: clip.placedFrame,
-      })
+
+      onClick: {
+        // Prevent clip deselection after drag
+        if (this.isDragMoved) {
+          break onClick
+        }
+
+        GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
+        GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
+
+        if (e.shiftKey) {
+          this.props.executeOperation(EditorOps.addOrRemoveSelectClip, {
+            clipIds: [clip.id],
+          })
+        } else {
+          this.props.executeOperation(EditorOps.changeSelectClip, {
+            clipIds: [clip.id!],
+          })
+        }
+      }
+
+      dragEnd: {
+        if (!this.isDragMoved) {
+          break dragEnd
+        }
+
+        // Delay clearing for drag handling in Layer component
+        setTimeout(() => {
+          this.props.executeOperation(EditorOps.clearDragEntity)
+        })
+
+        this.props.emitClipDragEnd({
+          nextX: drag.x,
+          nextY: drag.y,
+          originalPlacedFrame: clip.placedFrame,
+        })
+      }
+
+      this.isDragMoved = false
     }
 
     private handleResize: RndResizeCallback = (e, dir, ref, delta, pos) => {

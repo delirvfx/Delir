@@ -4,7 +4,7 @@ import { Keyframe, KeyframeValueTypes } from '../Entity'
 import ColorRGB from '../Values/ColorRGB'
 import ColorRGBA from '../Values/ColorRGBA'
 
-import { AnyParameterTypeDescriptor, TypeDescriptor } from '../PluginSupport/type-descriptor'
+import { AnyParameterTypeDescriptor, TypeDescriptor } from '../PluginSupport/TypeDescriptor'
 import { AssetPointer } from '../Values'
 
 interface KeyFrameLink<T extends KeyframeValueTypes> {
@@ -17,7 +17,7 @@ export interface KeyframeParamValueSequence {
   [frame: number]: KeyframeValueTypes
 }
 
-export function calcKeyframeValuesAt(
+export function calcKeyframesAt(
   frame: number,
   clipPlacedFrame: number,
   descriptor: TypeDescriptor,
@@ -25,7 +25,7 @@ export function calcKeyframeValuesAt(
 ): { [paramName: string]: KeyframeValueTypes } {
   return descriptor.properties
     .map<[string, KeyframeValueTypes]>(desc => {
-      return [desc.paramName, calcKeyframeValueAt(frame, clipPlacedFrame, desc, keyframes[desc.paramName] || [])]
+      return [desc.paramName, calcKeyframeAt(frame, clipPlacedFrame, desc, keyframes[desc.paramName] || [])]
     })
     .reduce((values, entry) => {
       values[entry[0]] = entry[1]
@@ -33,7 +33,7 @@ export function calcKeyframeValuesAt(
     }, Object.create(null))
 }
 
-export function calcKeyframeValueAt(
+export function calcKeyframeAt(
   frame: number,
   clipPlacedFrame: number,
   desc: AnyParameterTypeDescriptor,
@@ -63,7 +63,7 @@ export function calcKeyframeValueAt(
     case 'ENUM':
       return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcEnumKeyFrames)[frame]
     case 'CODE':
-      return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNoAnimatableKeyframes)[frame]
+      return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNonAnimatableKeyframes)[frame]
     // case 'CLIP':
     //     return calcKeyframe(desc, keyframes, clipPlacedFrame, frame, 1, calcNoAnimatable)[frame]
     // case 'PULSE':
@@ -77,7 +77,7 @@ export function calcKeyframeValueAt(
   }
 }
 
-export function calcKeyFrames(
+export function calcKeyframesInRange(
   paramTypes: TypeDescriptor | AnyParameterTypeDescriptor[],
   keyFrames: { [paramName: string]: ReadonlyArray<Keyframe> },
   clipPlacedFrame: number,
@@ -200,7 +200,7 @@ export function calcKeyFrames(
           clipPlacedFrame,
           beginFrame,
           calcFrames,
-          calcNoAnimatableKeyframes,
+          calcNonAnimatableKeyframes,
         )
         break
     }
@@ -209,7 +209,7 @@ export function calcKeyFrames(
   return tables
 }
 
-export function calcKeyframe(
+function calcKeyframe(
   propDesc: AnyParameterTypeDescriptor,
   keyFrameSequense: ReadonlyArray<Keyframe>,
   clipPlacedFrame: number,
@@ -224,7 +224,7 @@ export function calcKeyframe(
   const table: KeyframeParamValueSequence = {}
 
   for (let frame = beginFrame, end = beginFrame + calcFrames; frame <= end; frame++) {
-    const activeKeyFrame: KeyFrameLink<KeyframeValueTypes> | null = _activeKeyFrameOfFrame(
+    const activeKeyFrame: KeyFrameLink<KeyframeValueTypes> | null = activeKeyFrameOfFrame(
       linkedSequense,
       clipPlacedFrame,
       frame,
@@ -292,7 +292,7 @@ function _buildLinkedKeyFrame(orderedKeyFrameSeq: Keyframe[]): KeyFrameLink<Keyf
   return linked
 }
 
-function _activeKeyFrameOfFrame(
+function activeKeyFrameOfFrame(
   linkedKeyFrameSeq: KeyFrameLink<KeyframeValueTypes>[],
   clipPlacedFrame: number,
   frame: number,
@@ -438,7 +438,7 @@ function calcAssetKeyFrames(rate: number, frame: number, keyFrameLink: KeyFrameL
     : (keyFrameLink.active!.value as AssetPointer)
 }
 
-function calcNoAnimatableKeyframes(rate: number, frame: number, keyFrameLink: KeyFrameLink<any>): any {
+function calcNonAnimatableKeyframes(rate: number, frame: number, keyFrameLink: KeyFrameLink<any>): any {
   return keyFrameLink.active.value
 }
 

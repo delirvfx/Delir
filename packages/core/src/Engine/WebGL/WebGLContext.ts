@@ -35,7 +35,7 @@ interface Uniform {
     | 'matrix2x4fv'
     | 'matrix3x4fv'
     | 'matrix4fv'
-  value: ArrayLike<number>
+  value: ReadonlyArray<number>
 }
 
 const DEFAULT_VERTEX_SHADER = `
@@ -68,6 +68,16 @@ export default class WebGLContext {
     this.texBufferCanvas = Object.assign(document.createElement('canvas'), { width, height })
     this.vertexBuffer = this.gl.createBuffer()!
     this.tex2DBuffer = this.gl.createBuffer()!
+  }
+
+  /** [DO NOT USE] This is Delir internal API */
+  public setSize(width: number, height: number) {
+    this.glCanvas.width = width
+    this.glCanvas.height = height
+    this.gl.viewport(0, 0, width, height)
+
+    this.texBufferCanvas.width = width
+    this.texBufferCanvas.height = height
   }
 
   public getProgram(fragmentShaderSource: string, vertexShaderSource: string = DEFAULT_VERTEX_SHADER): WebGLProgram {
@@ -148,19 +158,19 @@ export default class WebGLContext {
 
   // Uniforms
   public uni1i(...value: [number]): Uniform {
-    return { type: '1ui', value }
+    return { type: '1i', value }
   }
 
   public uni2i(...value: [number, number]): Uniform {
-    return { type: '2ui', value }
+    return { type: '2i', value }
   }
 
   public uni3i(...value: [number, number, number]): Uniform {
-    return { type: '3ui', value }
+    return { type: '3i', value }
   }
 
   public uni4i(...value: [number, number, number, number]): Uniform {
-    return { type: '4ui', value }
+    return { type: '4i', value }
   }
 
   public uni1ui(...value: [number]): Uniform {

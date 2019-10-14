@@ -1,4 +1,4 @@
-import { listen, Store } from '@fleur/fleur'
+import { listen, reducerStore, Store } from '@fleur/fleur'
 import _ from 'lodash'
 
 import { PreferenceActions } from './actions'
@@ -7,6 +7,9 @@ export interface Preference {
   editor: {
     /** Audio volume of 0 to 100 */
     audioVolume: number
+  }
+  develop: {
+    pluginDirs: string[]
   }
   renderer: {
     ignoreMissingEffect: boolean
@@ -17,31 +20,21 @@ export const defaultPreferance = {
   editor: {
     audioVolume: 100,
   },
+  develop: {
+    pluginDirs: [],
+  },
   renderer: {
     ignoreMissingEffect: false,
   },
 }
 
-export default class PreferenceStore extends Store<Preference> {
-  public static storeName = 'PreferenceStore'
-
-  public state: Preference = defaultPreferance
-
-  private restorePreference = listen(PreferenceActions.restorePreference, ({ preference }) => {
-    this.updateWith(draft => _.merge(draft, preference))
+export default reducerStore<Preference>('PreferenceStore', () => ({ ...defaultPreferance }))
+  .listen(PreferenceActions.restorePreference, (draft, { preference }) => {
+    _.merge(draft, preference)
   })
-
-  private handlePreferenceChange = listen(PreferenceActions.changePreference, ({ patch }) => {
-    this.updateWith(draft => {
-      _.merge(draft, patch)
-    })
+  .listen(PreferenceActions.changePreference, (draft, { patch }) => {
+    _.merge(draft, patch)
   })
-
-  public get audioVolume() {
-    return this.state.editor.audioVolume
-  }
-
-  public getPreferences() {
-    return this.state
-  }
-}
+  .listen(PreferenceActions.changeDevelopPluginDirs, (draft, { dirs }) => {
+    draft.develop.pluginDirs = dirs
+  })

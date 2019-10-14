@@ -1,5 +1,6 @@
 import * as Delir from '@delirvfx/core'
 import { action, actions } from '@fleur/fleur'
+import { EncodingOption } from '@ragg/deream'
 
 import { DragEntity } from './operations'
 import { ClipboardEntry, ParameterTarget } from './types'
@@ -13,13 +14,10 @@ export const EditorActions = actions('Editor', {
   setDragEntity: action<DragEntity>(),
   clearDragEntity: action<{}>(),
   changeActiveComposition: action<{ compositionId: string }>(),
+  changeActiveLayer: action<{ layerId: string }>(),
   changeSelectClip: action<{ clipIds: string[] }>(),
   addOrRemoveSelectClip: action<{ clipIds: string[] }>(),
   changeActiveParam: action<{ target: ParameterTarget | null }>(),
-  renderDestinate: action<{
-    compositionId: string
-    ignoreMissingEffect: boolean
-  }>(),
   updateProcessingState: action<{ stateText: string }>(),
   addMessage: action<{
     id: string

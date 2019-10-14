@@ -18,6 +18,7 @@ export interface EditorState {
   project: Delir.Entity.Project | null
   projectPath: string | null
   activeComp: Delir.Entity.Composition | null
+  activeLayerId: string | null
   selectClipIds: string[]
   activeParam: ParameterTarget | null
   dragEntity: DragEntity | null
@@ -35,6 +36,7 @@ export default class EditorStore extends Store<EditorState> {
     project: null,
     projectPath: null,
     activeComp: null,
+    activeLayerId: null,
     selectClipIds: [],
     activeParam: null,
     dragEntity: null,
@@ -72,23 +74,26 @@ export default class EditorStore extends Store<EditorState> {
 
   private handleRemoveLayer = listen(ProjectActions.removeLayer, ({ targetLayerId }) => {
     const { selectClipIds, project } = this.state
-    if (!selectClipIds.length) return
     if (!project) return
 
     this.updateWith(d => {
-      const ids = [...d.selectClipIds]
+      // Remove clip from selection if removed layer contains selected clip
+      if (selectClipIds.length) {
+        d.selectClipIds.forEach((clipId, idx) => {
+          const clipOwnedLayer = project!.findClipOwnerLayer(clipId)
+          if (!clipOwnedLayer || clipOwnedLayer.id !== targetLayerId) return
 
-      ids.forEach((clipId, idx) => {
-        const clipOwnedLayer = project!.findClipOwnerLayer(clipId)
-        if (!clipOwnedLayer || clipOwnedLayer.id !== targetLayerId) return
+          d.selectClipIds.splice(idx, 1)
 
-        // Reset selected clip if removed layer contains selected clip
-        d.selectClipIds.splice(idx, 1)
+          if (d.activeParam && d.activeParam.entityId === clipId) {
+            d.activeParam = null
+          }
+        })
+      }
 
-        if (d.activeParam && d.activeParam.entityId === clipId) {
-          d.activeParam = null
-        }
-      })
+      if (targetLayerId === d.activeLayerId) {
+        d.activeLayerId = null
+      }
     })
   })
 
@@ -134,6 +139,10 @@ export default class EditorStore extends Store<EditorState> {
       d.selectClipIds = []
       d.activeParam = null
     })
+  })
+
+  private handleChangeActiveLayer = listen(EditorActions.changeActiveLayer, ({ layerId }) => {
+    this.updateWith(d => (d.activeLayerId = layerId))
   })
 
   private handleAddOrRemoveSelectClip = listen(EditorActions.addOrRemoveSelectClip, payload => {
@@ -187,7 +196,7 @@ export default class EditorStore extends Store<EditorState> {
     this.updateWith(d => (d.currentPreviewFrame = Math.round(payload.frame)))
   })
 
-  private handleaddMessage = listen(EditorActions.addMessage, payload => {
+  private handleAddMessage = listen(EditorActions.addMessage, payload => {
     this.updateWith(d => {
       d.notifications.push({
         id: payload.id,
@@ -232,10 +241,6 @@ export default class EditorStore extends Store<EditorState> {
 
   public get focusClipId() {
     return this.state.selectClipIds.length === 1 ? this.state.selectClipIds[0] : null
-  }
-
-  public get selectClipIds() {
-    return this.state.selectClipIds
   }
 
   public get dragEntity() {

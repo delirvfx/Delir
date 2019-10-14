@@ -1,18 +1,21 @@
 import * as Delir from '@delirvfx/core'
-import { StoreGetter } from '@fleur/fleur-react'
-import { getClipsByIds } from '../Project/selectors'
+import { selector, selectorWithStore } from '@fleur/fleur'
+import { getClipsByIds, getCompositionById } from '../Project/selectors'
 import EditorStore from './EditorStore'
 
-export const getSelectedClipIds = () => (getStore: StoreGetter) => {
-  return getStore(EditorStore).selectClipIds
-}
+export const getSelectedClipIds = selector(getState => {
+  return getState(EditorStore).selectClipIds
+})
 
-export const getSelectedClips = () => (getStore: StoreGetter) => {
-  const clipIds = getStore(EditorStore).selectClipIds
-  return getClipsByIds(clipIds)(getStore).filter(clip => clip != null) as Delir.Entity.Clip[]
-}
+export const getSelectedClips = selectorWithStore(getStore => {
+  const clipIds = getSelectedClipIds(getStore)
+  return getClipsByIds(getStore, clipIds).filter(clip => clip != null) as Delir.Entity.Clip[]
+})
 
-export const getActiveComp = () => (getStore: StoreGetter) => {
-  const comp = getStore(EditorStore).activeComp
-  return comp
-}
+export const getActiveLayerId = selector(getState => getState(EditorStore).activeLayerId)
+
+export const getActiveComp = selectorWithStore(getStore => {
+  const id = getStore(EditorStore).state.activeComp?.id
+  if (!id) return null
+  return getCompositionById(getStore, id)
+})

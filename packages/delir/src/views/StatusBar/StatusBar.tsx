@@ -1,4 +1,4 @@
-import { useStore } from '@fleur/fleur-react'
+import { useStore } from '@fleur/react'
 import React from 'react'
 
 import { Pane } from '../../components/Pane'

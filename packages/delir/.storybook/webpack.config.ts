@@ -1,6 +1,20 @@
-import { Configuration } from 'webpack'
+import { join } from 'path'
+import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
+import { Configuration, DefinePlugin } from 'webpack'
+import webpack = require('webpack')
 
 module.exports = ({ config }: { config: Configuration }) => {
+  config.resolve!.plugins = [
+    new TsconfigPathsPlugin({
+      configFile: join(__dirname, '../tsconfig.json'),
+    }),
+  ]
+
+  config.plugins!.push(
+    new DefinePlugin({ __DEV__: true }),
+    new (webpack as any).ExternalsPlugin('commonjs', ['font-manager']),
+  )
+
   config.module!.rules.push(
     {
       test: /\.tsx?/,
@@ -16,8 +30,9 @@ module.exports = ({ config }: { config: Configuration }) => {
         {
           loader: 'css-loader',
           options: {
-            modules: true,
-            localIdentName: '[path][name]__[local]--[emoji:4]',
+            modules: {
+              localIdentName: '[path][name]__[local]--[emoji:4]',
+            },
           },
         },
         {

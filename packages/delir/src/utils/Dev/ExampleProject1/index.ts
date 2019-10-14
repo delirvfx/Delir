@@ -30,8 +30,8 @@ const imageAsset = new Delir.Entity.Asset({
 // Maser Composition
 const composition = new Delir.Entity.Composition({
   name: 'Master Composition',
-  width: 640,
-  height: 360,
+  width: 1280,
+  height: 720,
   framerate: fps,
   durationFrames: durationFrames,
   audioChannels: 2,

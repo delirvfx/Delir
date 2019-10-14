@@ -9,6 +9,7 @@ const builder = require('electron-builder')
 const notifier = require('node-notifier')
 const download = require('download')
 const zipDir = require('zip-dir')
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 
 const os = require('os')
 const fs = require('fs-extra')
@@ -239,6 +240,11 @@ export function compileRendererJs(done) {
           // Using fresh development packages always
           '@delirvfx/core': join(paths.src.core, 'src/index.ts'),
         },
+        plugins: [
+          new TsconfigPathsPlugin({
+            configFile: join(paths.src.frontend, 'tsconfig.json'),
+          }),
+        ],
       },
       module: {
         rules: [
@@ -269,8 +275,9 @@ export function compileRendererJs(done) {
               {
                 loader: 'css-loader',
                 options: {
-                  modules: true,
-                  localIdentName: __DEV__ ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]',
+                  modules: {
+                    localIdentName: __DEV__ ? '[path][name]__[local]--[hash:base64:5]' : '[local]--[hash:base64:5]',
+                  },
                 },
               },
               {
@@ -306,6 +313,7 @@ export function compileRendererJs(done) {
         new ForkTsCheckerWebpackPlugin({
           tsconfig: join(paths.src.frontend, 'tsconfig.json'),
         }),
+        new webpack.IgnorePlugin({ resourceRegExp: /@microsoft\/typescript-etw/, contextRegExp: /typescript/ }),
         ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
@@ -338,7 +346,7 @@ export function compilePlugins(done) {
         'chromakey/index': './chromakey/index',
         ...(__DEV__
           ? {
-              'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
+              // 'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
               // 'filler/index': '../experimental-plugins/filler/index',
               // 'mmd/index': '../experimental-plugins/mmd/index',
               // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
@@ -557,7 +565,7 @@ const buildRenderer = g.parallel(
 
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules))
 const build = g.parallel(buildRenderer, buildBrowser)
-const buildAndWatch = g.series(clean, build, run, runStorybook, watch)
+const buildAndWatch = g.series(clean, g.parallel(runStorybook, build), run, watch)
 const publish = g.series(clean, generateLicenses, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage)
 
 export { publish, build }
