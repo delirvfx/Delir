@@ -59,6 +59,7 @@ export default class EditorStore extends Store<EditorState> {
       if (payload.project !== this.state.project) {
         draft.activeComp = null
         draft.activeParam = null
+        draft.clipboard = null
       }
     })
   })

@@ -509,16 +509,19 @@ export const moveClipToLayer = operation(
   },
 )
 
-export const modifyAsset = operation(async (context, {assetId, patch}: {assetId: string, patch: Partial<Delir.Entity.Asset>}) => {
-  const project = getProject(context.getStore)!
-  const asset = project.findAsset(assetId)!
+export const modifyAsset = operation(
+  async (context, { assetId, patch }: { assetId: string; patch: Partial<Delir.Entity.Asset> }) => {
+    const project = getProject(context.getStore)!
+    const asset = project.findAsset(assetId)!
 
-  if (_.isMatch(asset, patch)) return
+    if (_.isMatch(asset, patch)) return
 
-  await context.executeOperation(HistoryOps.pushHistory, { command: new ModifyAssetCommand(assetId, {...asset}, patch) })
-  context.dispatch(ProjectActions.modifyAsset, { assetId, patch })
-})
-
+    await context.executeOperation(HistoryOps.pushHistory, {
+      command: new ModifyAssetCommand(assetId, { ...asset }, patch),
+    })
+    context.dispatch(ProjectActions.modifyAsset, { assetId, patch })
+  },
+)
 
 export const modifyComposition = operation(
   async (
@@ -799,18 +802,24 @@ export const removeLayer = operation(async (context, { layerId }: { layerId: str
   await context.executeOperation(EditorOps.seekPreviewFrame, {})
 })
 
-export const removeClip = operation(async (context, { clipId }: { clipId: string }) => {
+export const removeClips = operation(async (context, { clipIds }: { clipIds: string[] }) => {
   const project = context.getStore(ProjectStore).getProject()!
-  const parentLayer = project.findClipOwnerLayer(clipId)!
-  const composition = project.findLayerOwnerComposition(parentLayer.id)!
-  const clip = project.findClip(clipId)!
 
-  await context.executeOperation(HistoryOps.pushHistory, {
-    command: new RemoveClipCommand(parentLayer.id, clip, composition.id),
+  const commands: Command[] = []
+  clipIds.forEach(clipId => {
+    const parentLayer = project.findClipOwnerLayer(clipId)!
+    const composition = project.findLayerOwnerComposition(parentLayer.id)!
+    const clip = project.findClip(clipId)!
+
+    context.dispatch(ProjectActions.removeClip, {
+      targetClipId: clipId,
+    })
+
+    commands.push(new RemoveClipCommand(parentLayer.id, clip, composition.id))
   })
 
-  context.dispatch(ProjectActions.removeClip, {
-    targetClipId: clip.id,
+  await context.executeOperation(HistoryOps.pushHistory, {
+    command: new HistoryGroup(commands),
   })
 
   await context.executeOperation(EditorOps.seekPreviewFrame, {})
@@ -898,42 +907,3 @@ export const removeEffect = operation(
     await context.executeOperation(EditorOps.seekPreviewFrame, {})
   },
 )
-
-// Clipboard operations
-export const pasteClipEntityIntoLayer = operation(async (context, { layerId }: { layerId: string }) => {
-  const entry = context.getStore(EditorStore).getClipboardEntry()
-  if (!entry || entry.type !== 'clip') return
-
-  const project = context.getStore(ProjectStore).getProject()!
-  const placedFrame = context.getStore(EditorStore).getState().currentPreviewFrame
-  const composition = project.findLayerOwnerComposition(layerId)!
-
-  const clipProps = Delir.Exporter.deserializeEntity(entry.entityClone) as Delir.Entity.Clip
-  const clip = new Delir.Entity.Clip({
-    ...clipProps,
-    id: uuid.v4(),
-    placedFrame,
-  })
-
-  // Regenerate ids
-  clip.effects.forEach(effect => {
-    effect.id = uuid.v4() as Delir.Entity.Effect.Id
-  })
-
-  _.each(clip.keyframes, keyframes => {
-    keyframes.forEach(keyframe => {
-      keyframe.id = uuid.v4() as Delir.Entity.Keyframe.Id
-    })
-  })
-
-  await context.executeOperation(HistoryOps.pushHistory, {
-    command: new AddClipCommand(composition.id, layerId, clip),
-  })
-
-  context.dispatch(ProjectActions.addClip, {
-    targetLayerId: layerId,
-    newClip: clip,
-  })
-
-  await context.executeOperation(EditorOps.seekPreviewFrame, {})
-})

@@ -14,7 +14,6 @@ import { MountTransition } from '../../components/MountTransition'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
-import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import t from './Clip.i18n'
 import s from './Clip.sass'
 import { ClipDragProps, withClipDragContext } from './ClipDragContext'
@@ -151,7 +150,7 @@ export default decorate<OwnProps>(
     }
 
     private handleDragEnd: DraggableEventHandler = (e, drag) => {
-      const { clip } = this.props
+      const { clip, active } = this.props
 
       onClick: {
         // Prevent clip deselection after drag
@@ -159,8 +158,7 @@ export default decorate<OwnProps>(
           break onClick
         }
 
-        GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
-        GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
+        if (active) return
 
         if (e.shiftKey) {
           this.props.executeOperation(EditorOps.addOrRemoveSelectClip, {
@@ -222,8 +220,8 @@ export default decorate<OwnProps>(
     }
 
     private handleRemoveClip = ({ dataset }: MenuItemOption<{ clipId: string }>) => {
-      this.props.executeOperation(ProjectOps.removeClip, {
-        clipId: dataset.clipId,
+      this.props.executeOperation(ProjectOps.removeClips, {
+        clipIds: [dataset.clipId],
       })
     }
 
@@ -231,23 +229,6 @@ export default decorate<OwnProps>(
       const { clip } = this.props
       this.props.executeOperation(EditorOps.seekPreviewFrame, {
         frame: clip.placedFrame,
-      })
-    }
-
-    private handleGlobalCopy = () => {
-      this.props.executeOperation(EditorOps.copyEntity, {
-        type: 'clip',
-        entity: this.props.clip,
-      })
-    }
-
-    private handleGlobalCut = () => {
-      this.props.executeOperation(EditorOps.copyEntity, {
-        type: 'clip',
-        entity: this.props.clip,
-      })
-      this.props.executeOperation(ProjectOps.removeClip, {
-        clipId: this.props.clip.id,
       })
     }
   },

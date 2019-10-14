@@ -57,7 +57,7 @@ export const Layer = (props: Props) => {
   const convertOption = { pxPerSec, framerate, scale }
 
   const handleGlobalPaste = useCallback(() => {
-    executeOperation(ProjectOps.pasteClipEntityIntoLayer, {
+    executeOperation(EditorOps.pasteClipIntoLayer, {
       layerId: layer.id,
     })
   }, [layer])
@@ -107,9 +107,6 @@ export const Layer = (props: Props) => {
 
   const handleMouseUp = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      // Stop propagation to Timeline component for prevent selection clearing
-      e.stopPropagation()
-
       onDrop: {
         const { dragEntity } = getStore(EditorStore)
         const clipIds = getSelectedClipIds(getStore)
@@ -134,6 +131,8 @@ export const Layer = (props: Props) => {
       }
 
       onMouseUp: {
+        const isOnClip = e.nativeEvent.composedPath().find((el: Element) => el.matches && el.matches('[data-clip-id]'))
+        if (!isOnClip) executeOperation(EditorOps.changeSelectClip, { clipIds: [] })
         executeOperation(EditorOps.changeActiveLayer, layer.id)
       }
     },

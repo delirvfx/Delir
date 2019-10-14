@@ -44,7 +44,7 @@ export const ProjectActions = actions('Project', {
     clipId: string
   }>(),
   modifyAsset: action<{
-    assetId: string,
+    assetId: string
     patch: Partial<Delir.Entity.Asset>
   }>(),
   modifyComposition: action<{

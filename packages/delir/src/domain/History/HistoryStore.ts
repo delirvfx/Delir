@@ -1,6 +1,5 @@
 import { listen, OperationContext, Store } from '@fleur/fleur'
 
-import { EditorActions } from '../Editor/actions'
 import { HistoryActions } from './actions'
 
 export interface Command {
@@ -21,10 +20,10 @@ export default class HistoryStore extends Store<State> {
     redoStack: [],
   }
 
-  private handleChangeProject = listen(EditorActions.clearActiveProject, () => {
+  private handleClearHistory = listen(HistoryActions.clearHistory, () => {
     this.updateWith(draft => {
-      draft.undoStack = []
       draft.redoStack = []
+      draft.undoStack = []
     })
   })
 
