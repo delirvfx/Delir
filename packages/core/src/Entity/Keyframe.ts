@@ -1,4 +1,5 @@
-import clamp = require('lodash/clamp')
+import clamp from 'lodash/clamp'
+import cloneDeep from 'lodash/cloneDeep'
 import uuid from 'uuid'
 
 import { Branded } from '../helper/Branded'
@@ -48,6 +49,11 @@ class Keyframe<T extends KeyframeValueTypes = KeyframeValueTypes> implements Key
   public patch(props: Partial<KeyframeProps>) {
     safeAssign<Keyframe>(this, props as Keyframe)
     this.normalize()
+  }
+
+  /** Clone keyframe with different Id */
+  public clone() {
+    return new Keyframe({ ...cloneDeep(this), id: uuid.v4() })
   }
 
   private normalize() {

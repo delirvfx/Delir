@@ -27,6 +27,15 @@ class Effect extends Animatable implements EffectProps {
   public patch(props: Partial<EffectProps>) {
     safeAssign(this, props)
   }
+
+  /** Clone effect with different Id */
+  public clone(): Effect {
+    const { expressions, keyframes } = super.cloneKeyframes()
+    const effect = new Effect({ ...this, id: uuid.v4() })
+    effect.expressions = expressions
+    effect.keyframes = keyframes
+    return effect
+  }
 }
 
 namespace Effect {
