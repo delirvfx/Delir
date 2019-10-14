@@ -186,22 +186,17 @@ export default withFleurContext(
                       onSeeked={this._onSeeked}
                     />
 
-                    <div
-                      ref={this.timelineContainer}
-                      className={s.layerContainer}
-                      style={{ display: 'flex' }}
-                      onMouseUp={this.handleMouseUpOnTimeline}
-                      onKeyDown={this.handleKeydownTimeline}
-                      onScroll={this.handleScrollTimeline}
-                    >
-                      {activeComp && (
-                        <ClipDragMediator
-                          comp={activeComp}
-                          scale={scale}
-                          scrollLeft={timelineScrollLeft}
-                          scrollWidth={timelineScrollWidth}
-                        />
-                      )}
+                    <div ref={this.timelineContainer} className={s.layerContainer} onScroll={this.handleScrollTimeline}>
+                      <div style={{ display: 'flex' }} onKeyDown={this.handleKeydownTimeline}>
+                        {activeComp && (
+                          <ClipDragMediator
+                            comp={activeComp}
+                            scale={scale}
+                            scrollLeft={timelineScrollLeft}
+                            scrollWidth={timelineScrollWidth}
+                          />
+                        )}
+                      </div>
                     </div>
                   </Pane>
                 </Workspace>
@@ -232,12 +227,6 @@ export default withFleurContext(
         this.setState({
           cursorHeight: timelineHeight + keyFrameViewHeight + 1,
         })
-      }
-
-      private handleMouseUpOnTimeline = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!(e.target as HTMLElement).closest('[data-clip-id]')) {
-          this.props.executeOperation(EditorOps.changeSelectClip, { clipIds: [] })
-        }
       }
 
       private handleScrollLayerLabel = (e: React.UIEvent<HTMLDivElement>) => {
