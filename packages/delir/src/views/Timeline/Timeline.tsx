@@ -8,18 +8,16 @@ import ReactDOM from 'react-dom'
 import { SortEndHandler } from 'react-sortable-hoc'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
-import * as EditorOps from '../../domain/Editor/operations'
-import { getSelectedClips } from '../../domain/Editor/selectors'
-import * as ProjectOps from '../../domain/Project/operations'
-
-import EditorStore from '../../domain/Editor/EditorStore'
-import ProjectStore from '../../domain/Project/ProjectStore'
-import RendererStore from '../../domain/Renderer/RendererStore'
-
 import { Dropdown } from '../../components/Dropdown'
 import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
-
+import EditorStore from '../../domain/Editor/EditorStore'
+import * as EditorOps from '../../domain/Editor/operations'
+import { getSelectedClips } from '../../domain/Editor/selectors'
+import * as ProjectOps from '../../domain/Project/operations'
+import ProjectStore from '../../domain/Project/ProjectStore'
+import RendererStore from '../../domain/Renderer/RendererStore'
+import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import { KeyframeEditor } from '../KeyframeEditor'
 import { ClipDragMediator } from './ClipDragMediator'
 import { Gradations } from './Gradations'
@@ -78,6 +76,17 @@ export default withFleurContext(
 
       public componentDidMount() {
         this.syncCursorHeight()
+
+        this.timelineContainer.current!.addEventListener('focusin', () => {
+          GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
+          GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
+        })
+
+        this.timelineContainer.current!.addEventListener('focusout', () => {
+          GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
+          GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
+        })
+
         window.addEventListener('resize', _.debounce(this.syncCursorHeight, 1000 / 30))
       }
 
@@ -186,22 +195,17 @@ export default withFleurContext(
                       onSeeked={this._onSeeked}
                     />
 
-                    <div
-                      ref={this.timelineContainer}
-                      className={s.layerContainer}
-                      style={{ display: 'flex' }}
-                      onMouseUp={this.handleMouseUpOnTimeline}
-                      onKeyDown={this.handleKeydownTimeline}
-                      onScroll={this.handleScrollTimeline}
-                    >
-                      {activeComp && (
-                        <ClipDragMediator
-                          comp={activeComp}
-                          scale={scale}
-                          scrollLeft={timelineScrollLeft}
-                          scrollWidth={timelineScrollWidth}
-                        />
-                      )}
+                    <div ref={this.timelineContainer} className={s.layerContainer} onScroll={this.handleScrollTimeline}>
+                      <div style={{ display: 'flex' }} onKeyDown={this.handleKeydownTimeline}>
+                        {activeComp && (
+                          <ClipDragMediator
+                            comp={activeComp}
+                            scale={scale}
+                            scrollLeft={timelineScrollLeft}
+                            scrollWidth={timelineScrollWidth}
+                          />
+                        )}
+                      </div>
                     </div>
                   </Pane>
                 </Workspace>
@@ -224,6 +228,14 @@ export default withFleurContext(
         )
       }
 
+      private handleGlobalCopy = () => {
+        this.props.executeOperation(EditorOps.copyClips)
+      }
+
+      private handleGlobalCut = () => {
+        this.props.executeOperation(EditorOps.cutClips)
+      }
+
       private syncCursorHeight = () => {
         const timelineHeight = this.timelineContainer.current!.getBoundingClientRect().height
         const keyFrameViewHeight = (ReactDOM.findDOMNode(this.keyframeView.current!) as Element).getBoundingClientRect()
@@ -232,12 +244,6 @@ export default withFleurContext(
         this.setState({
           cursorHeight: timelineHeight + keyFrameViewHeight + 1,
         })
-      }
-
-      private handleMouseUpOnTimeline = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!(e.target as HTMLElement).closest('[data-clip-id]')) {
-          this.props.executeOperation(EditorOps.changeSelectClip, { clipIds: [] })
-        }
       }
 
       private handleScrollLayerLabel = (e: React.UIEvent<HTMLDivElement>) => {

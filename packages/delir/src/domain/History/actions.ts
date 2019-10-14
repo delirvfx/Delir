@@ -4,6 +4,7 @@ import { Command } from './HistoryStore'
 
 export const HistoryActions = actions('History', {
   pushHistory: action<{ command: Command }>(),
+  clearHistory: action<{}>(),
   undoing: action<{}>(),
   redoing: action<{}>(),
 })

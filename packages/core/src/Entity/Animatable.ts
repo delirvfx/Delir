@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep'
 import { Expression } from '../Values'
 import { Keyframe } from './Keyframe'
 
@@ -86,5 +87,19 @@ export class Animatable {
     }
 
     this.expressions[paramName] = expression
+  }
+
+  public cloneKeyframes() {
+    const keyframes = Object.fromEntries(
+      // prettier-ignore
+      Object.entries(this.keyframes)
+        .map(([paramName, keyframes]) => [
+          paramName, keyframes.map(kf => kf.clone())
+        ]),
+    )
+
+    const expressions = cloneDeep(this.expressions)
+
+    return { keyframes, expressions }
   }
 }
