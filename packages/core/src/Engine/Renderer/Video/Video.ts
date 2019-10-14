@@ -19,7 +19,7 @@ interface VideoRendererParam {
   opacity: ParamType.Float
 }
 
-export default class VideoLayer implements IRenderer<VideoRendererParam> {
+export class VideoRenderer implements IRenderer<VideoRendererParam> {
   public static get rendererId(): string {
     return 'video'
   }

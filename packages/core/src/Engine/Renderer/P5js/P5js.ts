@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import VM from 'vm'
-import P5Hooks from './P5Hooks'
+import { P5Hooks } from './P5Hooks'
 
 import { UserCodeException } from '../../../Exceptions'
 import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
@@ -18,7 +18,7 @@ interface Params {
 
 const VM_GLOBAL_WHITELIST = ['Array', 'Math', 'Date']
 
-export default class P5jsRenderer implements IRenderer<Params> {
+export class P5jsRenderer implements IRenderer<Params> {
   public static get rendererId(): string {
     return 'p5js'
   }

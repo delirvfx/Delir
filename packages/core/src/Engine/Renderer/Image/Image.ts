@@ -15,7 +15,7 @@ interface ImageRendererParams {
   opacity: ParamType.Float
 }
 
-export default class ImageLayer implements IRenderer<ImageRendererParams> {
+export class ImageRenderer implements IRenderer<ImageRendererParams> {
   public static get rendererId(): string {
     return 'image'
   }

@@ -21,7 +21,7 @@ interface TextRendererParam {
   opacity: ParamType.Float
 }
 
-export default class TextLayer implements IRenderer<TextRendererParam> {
+export class TextRenderer implements IRenderer<TextRendererParam> {
   public static get rendererId(): string {
     return 'text'
   }

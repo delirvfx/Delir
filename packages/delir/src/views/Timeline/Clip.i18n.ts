@@ -15,6 +15,7 @@ export default I18n({
       text: 'text',
       adjustment: 'adjust',
       p5js: 'p5.js',
+      solid: 'solid',
     },
   },
   en: {
@@ -31,6 +32,7 @@ export default I18n({
       text: 'text',
       adjustment: 'adjust',
       p5js: 'p5.js',
+      solid: 'solid',
     },
   },
 })

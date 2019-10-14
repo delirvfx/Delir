@@ -1,12 +1,7 @@
 import P5 from 'p5'
 import DependencyResolver from '../../DependencyResolver'
 
-interface Sketch {
-  setup(): void
-  draw(): void
-}
-
-export default class P5Hooks {
+export class P5Hooks {
   public p5: any
   private node: HTMLDivElement
 

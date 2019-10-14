@@ -82,6 +82,7 @@ export default decorate<OwnProps>(
                   [s.image]: clip.renderer === 'image',
                   [s.adjustment]: clip.renderer === 'adjustment',
                   [s.p5js]: clip.renderer === 'p5js',
+                  [s.solid]: clip.renderer === 'solid',
                   [s.hasError]: hasError,
                 })}
                 style={style}
@@ -100,8 +101,8 @@ export default decorate<OwnProps>(
                         />
                       ))
                     ) : (
-                      <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
-                    )}
+                        <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
+                      )}
                   </MenuItem>
                   {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
                   <MenuItem type="separator" />
