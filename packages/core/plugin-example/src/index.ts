@@ -1,11 +1,11 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type, Values } from '@delirvfx/core'
+import { EffectPreRenderContext, EffectRenderContext, ParamType, PostEffectBase, Type, Values } from '@delirvfx/core'
 
 interface Params {
-  x: number
-  y: number
-  width: number
-  height: number
-  color: Values.ColorRGBA
+  x: ParamType.Number
+  y: ParamType.Number
+  width: ParamType.Number
+  height: ParamType.Number
+  color: ParamType.ColorRGBA
 }
 
 export default class ExamplePlugin extends PostEffectBase {
