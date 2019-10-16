@@ -23,7 +23,7 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'awesome-typescript-loader',
+        loader: 'ts-loader',
         options: {
           // If you want to type checking, please set 'false' to this option.
           transpileOnly: true,
