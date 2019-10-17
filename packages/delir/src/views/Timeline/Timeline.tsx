@@ -134,26 +134,20 @@ export default withFleurContext(
                           onClick={this.handleAddLayer}
                         />
                       </div>
-                      <div className={s.scaleLabel} onClick={this._toggleScaleList}>
-                        <Dropdown ref={this.scaleList} className={s.scaleList} shownInitial={false}>
-                          <li data-value="50" onClick={this._selectScale}>
+                      <div className={s.scaleLabel} onClick={this.handleClickOpenScaleList}>
+                        <Dropdown ref={this.scaleList} className={s.scaleList}>
+                          <div data-value="50" onClick={this.handleSelectScale}>
                             50%
-                          </li>
-                          <li data-value="100" onClick={this._selectScale}>
+                          </div>
+                          <div data-value="100" onClick={this.handleSelectScale}>
                             100%
-                          </li>
-                          <li data-value="150" onClick={this._selectScale}>
-                            150%
-                          </li>
-                          <li data-value="200" onClick={this._selectScale}>
-                            200%
-                          </li>
-                          <li data-value="250" onClick={this._selectScale}>
-                            250%
-                          </li>
-                          <li data-value="300" onClick={this._selectScale}>
+                          </div>
+                          <div data-value="300" onClick={this.handleSelectScale}>
                             300%
-                          </li>
+                          </div>
+                          <div data-value="1000" onClick={this.handleSelectScale}>
+                            1000%
+                          </div>
                         </Dropdown>
                         <i className="fa fa-search-plus" />
                         <span className={s.currentScale}>{(scale * 100) | 0}%</span>
@@ -304,11 +298,13 @@ export default withFleurContext(
         this.setState({ timelineScrollLeft: this.timelineContainer.current!.scrollLeft })
       }
 
-      private _toggleScaleList = () => {
-        this.scaleList.current!.toggle()
+      private handleClickOpenScaleList = () => {
+        this.scaleList.current!.show()
       }
 
-      private _selectScale = ({ nativeEvent: e }: React.MouseEvent<HTMLLIElement>) => {
+      private handleSelectScale = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+
         const scale = +(e.target as HTMLLIElement).dataset.value! / 100
         this.scaleList.current!.hide()
         this.setState({ scale: scale })

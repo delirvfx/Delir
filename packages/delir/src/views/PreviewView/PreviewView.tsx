@@ -77,24 +77,24 @@ export default withFleurContext(
                   <i className="fa fa-search-plus" />
                   <span className={s.currentScale}>{currentScale}%</span>
                   <Dropdown ref={this.scaleListRef} className={s.dropdown} shownInitial={scaleListShown}>
-                    <li data-value="50" onClick={this.selectScale}>
+                    <div data-value="50" onClick={this.handleSelectScale}>
                       50%
-                    </li>
-                    <li data-value="100" onClick={this.selectScale}>
+                    </div>
+                    <div data-value="100" onClick={this.handleSelectScale}>
                       100%
-                    </li>
-                    <li data-value="150" onClick={this.selectScale}>
+                    </div>
+                    <div data-value="150" onClick={this.handleSelectScale}>
                       150%
-                    </li>
-                    <li data-value="200" onClick={this.selectScale}>
+                    </div>
+                    <div data-value="200" onClick={this.handleSelectScale}>
                       200%
-                    </li>
-                    <li data-value="250" onClick={this.selectScale}>
+                    </div>
+                    <div data-value="250" onClick={this.handleSelectScale}>
                       250%
-                    </li>
-                    <li data-value="300" onClick={this.selectScale}>
+                    </div>
+                    <div data-value="300" onClick={this.handleSelectScale}>
                       300%
-                    </li>
+                    </div>
                   </Dropdown>
                 </label>
                 <div className={s.FooterItem}>{timecode}</div>
@@ -104,7 +104,9 @@ export default withFleurContext(
         )
       }
 
-      private selectScale = (e: React.MouseEvent<HTMLLIElement>) => {
+      private handleSelectScale = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+
         this.scaleListRef.current!.hide()
 
         this.setState({
