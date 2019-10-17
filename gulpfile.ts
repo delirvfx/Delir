@@ -459,7 +459,7 @@ export async function pack(done) {
   await fs.remove(join(paths.build, 'node_modules'))
 
   await new Promise((resolve, reject) => {
-    spawn(yarnBin, ['install'], { cwd: paths.build })
+    spawn(yarnBin, ['install'], { cwd: paths.build, stdio: 'inherit' })
       .on('error', err => reject(err))
       .on('close', (code, signal) => (code === 0 ? resolve() : reject(new Error(code))))
   })
