@@ -67,17 +67,17 @@ export const Gradations = connectToStores([RendererStore], mapStoresToProps)(
       return (
         <div
           className={s.Gradations}
-          onMouseDown={this._seeking}
-          onMouseMove={this._seeking}
-          onMouseUp={this._seeking}
-          onClick={this._seeking}
+          onMouseDown={this.handleSeeking}
+          onMouseMove={this.handleSeeking}
+          onMouseUp={this.handleSeeking}
+          onClick={this.handleSeeking}
         >
           <ContextMenu>
             <MenuItem label={t(t.k.contextMenu.seekToHead)} onClick={this.seekToHead} />
           </ContextMenu>
           <div className={s.measureLayerTrimer}>
             <div ref="measureLayer" className={s.measureLayer}>
-              {this._renderMeasure()}
+              {this.renderMeasures()}
             </div>
           </div>
           <div
@@ -126,7 +126,7 @@ export const Gradations = connectToStores([RendererStore], mapStoresToProps)(
       this.intervalId = requestAnimationFrame(this._updateCursor)
     }
 
-    private _seeking = ({ nativeEvent: e }: React.MouseEvent<HTMLDivElement>) => {
+    private handleSeeking = ({ nativeEvent: e }: React.MouseEvent<HTMLDivElement>) => {
       // Accepy only "left only" click
       if (e.buttons !== 1) return
 
@@ -156,7 +156,7 @@ export const Gradations = connectToStores([RendererStore], mapStoresToProps)(
       this.props.onSeeked(0)
     }
 
-    private _renderMeasure = (): JSX.Element[] => {
+    private renderMeasures = (): JSX.Element[] => {
       const { measures, activeComposition } = this.props
       const components: JSX.Element[] = []
 
