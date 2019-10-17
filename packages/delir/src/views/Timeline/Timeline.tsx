@@ -47,15 +47,6 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
   previewPlayed: getStore(RendererStore).previewPlaying,
 })
 
-/**
- * Timeline structure:
- *
- * Timeline
- *   └ Layer
- *     └ LayerLabel
- *     └ ClipSpace
- *       └ Clip
- */
 export default withFleurContext(
   connectToStores([EditorStore, ProjectStore, RendererStore], mapStoresToProps)(
     class Timeline extends React.Component<Props, State> {
