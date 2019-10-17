@@ -34,7 +34,6 @@ interface State {
   timelineScrollWidth: number
   cursorHeight: number
   scale: number
-  selectedLayerId: string | null
   clipDragOffset: { x: number }
 }
 
@@ -56,7 +55,6 @@ export default withFleurContext(
         timelineScrollWidth: 0,
         cursorHeight: 0,
         scale: 1,
-        selectedLayerId: null,
         clipDragOffset: { x: 0 },
       }
 
@@ -245,7 +243,7 @@ export default withFleurContext(
       }
 
       private onLayerSelect = (layerId: string) => {
-        this.setState({ selectedLayerId: layerId })
+        this.props.executeOperation(EditorOps.changeActiveLayer, layerId)
       }
 
       private onLayerSort: SortEndHandler = ({ oldIndex, newIndex }) => {

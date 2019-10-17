@@ -1,16 +1,14 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, useFleurContext, useStore, withFleurContext } from '@fleur/react'
-import classnames from 'classnames'
+import { useFleurContext, useStore } from '@fleur/react'
+import classNames from 'classnames'
 import React, { useCallback, useRef } from 'react'
 import { SortableElement, SortableHandle } from 'react-sortable-hoc'
 
-import EditorStore from '../../domain/Editor/EditorStore'
-import * as ProjectOps from '../../domain/Project/operations'
-
-import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
-import { LabelInput } from '../../components/LabelInput'
-
-import { getActiveComp } from 'domain/Editor/selectors'
+import { ContextMenu, MenuItem, MenuItemOption } from 'components/ContextMenu/ContextMenu'
+import { LabelInput } from 'components/LabelInput'
+import EditorStore from 'domain/Editor/EditorStore'
+import { getActiveComp, getActiveLayerId } from 'domain/Editor/selectors'
+import * as ProjectOps from 'domain/Project/operations'
 import t from './LayerLabel.i18n'
 import s from './LayerLabel.sass'
 
@@ -33,8 +31,9 @@ const SortHandle = SortableHandle(() => <i className="fa fa-bars" />)
 
 const LayerLabelComponent = ({ layer, layerIndex, onSelect, onRemove }: Props) => {
   const { executeOperation } = useFleurContext()
-  const { activeComp } = useStore([EditorStore], getStore => ({
+  const { activeComp, activeLayerId } = useStore([EditorStore], getStore => ({
     activeComp: getActiveComp(getStore),
+    activeLayerId: getActiveLayerId(getStore),
   }))
 
   const layerNameInputRef = useRef<LabelInput | null>(null)
@@ -70,14 +69,19 @@ const LayerLabelComponent = ({ layer, layerIndex, onSelect, onRemove }: Props) =
   }, [activeComp, layerIndex])
 
   const handleClickLayer = useCallback(
-    ({ currentTarget }: React.MouseEvent<HTMLLIElement>) => {
+    ({ currentTarget }: React.MouseEvent<HTMLUListElement>) => {
       onSelect(currentTarget.dataset.layerId!)
     },
     [onSelect],
   )
 
   return (
-    <ul key={layer.id} className={s.LaneLabel}>
+    <ul
+      key={layer.id}
+      className={classNames(s.LayerLabel, layer.id === activeLayerId && s.active)}
+      onClick={handleClickLayer}
+      data-layer-id={layer.id}
+    >
       <ContextMenu>
         <MenuItem type="separator" />
         <MenuItem label={t(t.k.contextMenu.renameLayer)} onClick={handleFocusLayerNameInput} />
@@ -86,15 +90,11 @@ const LayerLabelComponent = ({ layer, layerIndex, onSelect, onRemove }: Props) =
         <MenuItem label={t(t.k.contextMenu.addLayerHere)} onClick={handleAddLayer} />
       </ContextMenu>
 
-      <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--Handle'])}>
+      <li className={classNames(s.LayerLabel_Col, s['LayerLabel_Col--Handle'])}>
         <SortHandle />
       </li>
 
-      <li
-        className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-name'])}
-        data-layer-id={layer.id}
-        onClick={handleClickLayer}
-      >
+      <li className={classNames(s.LayerLabel_Col, s['LayerLabel_Col--col-name'])}>
         <LabelInput
           ref={layerNameInputRef}
           defaultValue={layer.name}
@@ -102,10 +102,10 @@ const LayerLabelComponent = ({ layer, layerIndex, onSelect, onRemove }: Props) =
           onChange={handleChangeLayerName}
         />
       </li>
-      <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-visibility'])}>
+      <li className={classNames(s.LayerLabel_Col, s['LayerLabel_Col--col-visibility'])}>
         <i className="twa twa-eye" />
       </li>
-      <li className={classnames(s.LaneLabel_Col, s['LaneLabel_Col--col-lock'])}>
+      <li className={classNames(s.LayerLabel_Col, s['LayerLabel_Col--col-lock'])}>
         <i className="twa twa-lock" />
       </li>
     </ul>
