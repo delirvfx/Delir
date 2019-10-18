@@ -62,7 +62,7 @@ interface ClipAttributes {
     effect(referenceName: string): EffectAttributes
 }
 
-interface EffectAttributes {
+interface EffectProxy {
     params: { [paramName: string]: any }
 }
 

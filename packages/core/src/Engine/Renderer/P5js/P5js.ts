@@ -3,9 +3,9 @@ import VM from 'vm'
 import { P5Hooks } from './P5Hooks'
 
 import { UserCodeException } from '../../../Exceptions'
-import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
 import Type from '../../../PluginSupport/TypeDescriptor'
 import Expression from '../../../Values/Expression'
+import { createExpressionContext } from '../../ExpressionSupport/createExpressionContext'
 import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
@@ -132,26 +132,6 @@ export class P5jsRenderer implements IRenderer<Params> {
   }
 
   private makeVmExposeVariables(context: ClipPreRenderContext<Params> | ClipRenderContext<Params>) {
-    return {
-      thisComp: {
-        width: context.width,
-        height: context.height,
-        time: context.timeOnComposition,
-        frame: context.frameOnComposition,
-        duration: context.durationFrames / context.framerate,
-        durationFrames: context.durationFrames,
-        audioBuffer: (context as ClipRenderContext<Params>).srcAudioBuffer,
-      },
-      thisClip: {
-        time: (context as ClipRenderContext<Params>).timeOnClip,
-        frame: (context as ClipRenderContext<Params>).frameOnClip,
-        params: null,
-        effect: (referenceName: string) => {
-          const targetEffect = (context as ClipRenderContext<Params>).clipEffectParams[referenceName]
-          if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
-          return { params: proxyDeepFreeze(targetEffect) }
-        },
-      },
-    }
+    return createExpressionContext(context)
   }
 }
