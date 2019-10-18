@@ -4,7 +4,7 @@ import { Input } from '../Input/Input'
 import { FormSection } from './FormSection'
 
 export default {
-  title: 'FormSection',
+  title: 'Components|FormSection',
   decorators: [withKnobs],
 }
 

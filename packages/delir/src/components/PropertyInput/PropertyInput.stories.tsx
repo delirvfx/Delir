@@ -5,7 +5,7 @@ import { ColorTypeInput } from './Inputs/ColorTypeInput'
 import { StringTypeInput } from './Inputs/StringTypeInput'
 
 export default {
-  title: 'PropertyInput',
+  title: 'Components|PropertyInput',
 }
 
 export const color = () => {

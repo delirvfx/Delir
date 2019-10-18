@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react'
 import React from 'react'
 import DragNumberInput from './DragNumberInput'
 
-storiesOf('DragNumberInput', module)
+storiesOf('Components|DragNumberInput', module)
   .addDecorator(withKnobs)
   .add('DragNumberInput', () => {
     return (
