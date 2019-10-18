@@ -99,6 +99,7 @@ export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch,
     }
 
     const updatedIds = updatedPackages.map((packageInfo: any) => packageInfo.id)
+    await executeOperation(stopPreview)
     dispatch(RendererActions.unregisterPlugins, { ids: updatedIds })
     dispatch(RendererActions.registerPlugins, { plugins: updatedPackages })
     dispatch(RendererActions.clearCache, {})

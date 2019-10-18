@@ -181,7 +181,10 @@ export default class RendererStore extends Store<State> {
             // tslint:disable-next-line:no-console
             console.log(e)
           }
-          this.updateWith(s => (s.previewPlaying = false))
+          this.updateWith(s => {
+            s.previewPlaying = false
+            s.previewRenderState = null
+          })
         },
       )
     },
