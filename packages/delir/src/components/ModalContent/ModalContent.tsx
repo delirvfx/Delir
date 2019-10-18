@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   min-width: 500px;
+  max-width: 800px;
   width: 70vw;
   padding: 24px 16px 16px;
   background: ${cssVars.colors.popupBg};
