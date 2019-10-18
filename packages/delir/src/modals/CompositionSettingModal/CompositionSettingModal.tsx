@@ -7,8 +7,9 @@ import { Button } from 'components/Button'
 import FormStyle from 'components/Form'
 import { SpreadType } from 'utils/Spread'
 
+import { ModalContent } from 'components/ModalContent/ModalContent'
+import styled from 'styled-components'
 import t from './CompositionSettingModal.i18n'
-import s from './CompositionSettingModal.sass'
 
 interface FormResult {
   name: string
@@ -43,26 +44,32 @@ interface Props {
 
 export type CompositionSettingResult = Partial<SpreadType<Delir.Entity.Composition>>
 
+const Container = styled(ModalContent)`
+  max-width: 500px;
+
+  .label) {
+    width: 10rem;
+  }
+`
+
 export const CompositionSettingModal = ({ composition: comp, onClose }: Props) => {
   const formRef = useRef<HTMLFormElement | null>(null)
 
   const handleSubmit = useCallback(
-    (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      e.stopPropagation()
-
+    (e: FormEvent<HTMLButtonElement>) => {
       const opts = (serialize(formRef.current!, { hash: true }) as unknown) as FormResult
       onClose(castToCompositionPatch(opts))
     },
     [onClose],
   )
 
-  const handleCancel = useCallback(() => {
-    ;(e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCancel = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
       onClose(false)
-    }
-  }, [onClose])
+    },
+    [onClose],
+  )
 
   const toRGBHash = ({ r, g, b }: Delir.Values.ColorRGB) => '#' + [r, g, b].map(c => c.toString(16)).join('')
   const values: { [prop: string]: any } = {
@@ -77,8 +84,19 @@ export const CompositionSettingModal = ({ composition: comp, onClose }: Props) =
   }
 
   return (
-    <div className={s.newCompModalRoot}>
-      <form ref={formRef} className={FormStyle.formHorizontal} onSubmit={handleSubmit}>
+    <Container
+      footer={
+        <>
+          <Button kind="normal" onClick={handleCancel}>
+            {t(t.k.cancel)}
+          </Button>
+          <Button kind="primary" onClick={handleSubmit}>
+            {comp ? t(t.k.apply) : t(t.k.create)}
+          </Button>
+        </>
+      }
+    >
+      <form ref={formRef} className={FormStyle.formHorizontal}>
         <div className="formGroup">
           <label className="label">{t(t.k.fields.compositionName)}:</label>
           <div className="input">
@@ -181,16 +199,7 @@ export const CompositionSettingModal = ({ composition: comp, onClose }: Props) =
             </div>
           </div>
         </div>
-
-        <div className={s.modalFooter}>
-          <Button kind="normal" onClick={handleCancel}>
-            {t(t.k.cancel)}
-          </Button>
-          <Button kind="primary" type="submit" onClick={handleSubmit}>
-            {comp ? t(t.k.apply) : t(t.k.create)}
-          </Button>
-        </div>
       </form>
-    </div>
+    </Container>
   )
 }
