@@ -29,8 +29,14 @@ const Footer = styled.div`
   margin-top: 24px
 `
 
-export const ModalContent = ({ children, footer }: { children: ReactNode; footer: ReactNode }) => (
-  <Container>
+interface Props {
+  children: ReactNode
+  className?: string
+  footer: ReactNode
+}
+
+export const ModalContent = ({ children, className, footer }: Props) => (
+  <Container className={className}>
     {children}
     <Footer>{footer}</Footer>
   </Container>
