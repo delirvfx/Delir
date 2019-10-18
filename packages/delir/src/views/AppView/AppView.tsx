@@ -33,7 +33,6 @@ export default withFleurContext(
   connectToStores([EditorStore, RendererStore], mapStoresToProps)(
     class AppView extends React.PureComponent<Props> {
       public root = React.createRef<HTMLDivElement>()
-      public trap: InstanceType<typeof Mousetrap>
 
       public componentDidMount() {
         window.addEventListener('dragenter', this.prevent, false)

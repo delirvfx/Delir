@@ -1,9 +1,8 @@
-import * as Delir from '@delirvfx/core'
+import { StoreGetter } from '@fleur/fleur'
 import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import {clipboard, remote } from 'electron'
 import _ from 'lodash'
-import parseColor from 'parse-color'
 import path from 'path'
 import React from 'react'
 
@@ -15,38 +14,12 @@ import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 import ProjectStore from '../../domain/Project/ProjectStore'
 import { getAssetById } from '../../domain/Project/selectors'
-import * as CompositionSettingModal from '../../modals/CompositionSettingModal'
+import {CompositionSettingModal, CompositionSettingResult} from '../../modals/CompositionSettingModal'
 
 import { ModalMounterProps, withModalMounter } from 'components/ModalOwner/ModalOwner'
 import { decorate } from 'utils/decorate'
 import t from './AssetsView.i18n'
 import s from './AssetsView.sass'
-
-interface CompositionProps {
-  name: string
-  width: string
-  height: string
-  framerate: string
-  durationSeconds: string
-  backgroundColor: string
-  samplingRate: string
-  audioChannels: string
-}
-
-const castToCompositionProps = (req: CompositionProps) => {
-  const bgColor = parseColor(req.backgroundColor)
-
-  return {
-    name: req.name,
-    width: +req.width,
-    height: +req.height,
-    framerate: +req.framerate,
-    durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
-    backgroundColor: new Delir.Values.ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
-    samplingRate: +req.samplingRate,
-    audioChannels: +req.audioChannels,
-  }
-}
 
 const fileIconFromExtension = (ext: string) => {
   switch (ext) {
@@ -84,6 +57,10 @@ interface State {
 
 type Props = ConnectedProps & ModalMounterProps & ContextProp
 
+
+const mapStateToProps = (getStore: StoreGetter) => ({
+  editor: getStore(EditorStore).getState(),
+})
 
 class AssetsView extends React.Component<Props, State> {
   public state = {
@@ -353,24 +330,20 @@ class AssetsView extends React.Component<Props, State> {
     const { compositionId } = dataset
 
     const comp = this.props.editor.project.findComposition(compositionId)!
-    const req = await CompositionSettingModal.show({
-      composition: comp,
-    })
+    const req = await this.props.mountModal<CompositionSettingResult | false>(resolve => <CompositionSettingModal composition={comp} onClose={resolve} />)
 
     if (!req) return
     this.props.executeOperation(ProjectOps.modifyComposition, {
       compositionId: compositionId,
-      patch: castToCompositionProps(req as any),
+      patch: req
     })
   }
 
   private openNewCompositionWindow = async () => {
-    const req = await CompositionSettingModal.show()
+    const req = await this.props.mountModal<CompositionSettingResult | false>(resolve => <CompositionSettingModal onClose={resolve} />)
 
     if (!req) return
-    this.props.executeOperation(ProjectOps.createComposition, {
-      ...castToCompositionProps(req as any),
-    })
+    this.props.executeOperation(ProjectOps.createComposition, req)
   }
 
   private onAssetsDragStart = ({ currentTarget }: React.DragEvent<HTMLTableRowElement>) => {
@@ -393,6 +366,4 @@ class AssetsView extends React.Component<Props, State> {
   }
 }
 
-export default decorate([ withModalMounter,withFleurContext, connectToStores([EditorStore, ProjectStore], getStore => ({
-  editor: getStore(EditorStore).getState(),
-}))], AssetsView)
+export default decorate([ withModalMounter, withFleurContext, connectToStores([EditorStore, ProjectStore], mapStateToProps)], AssetsView)

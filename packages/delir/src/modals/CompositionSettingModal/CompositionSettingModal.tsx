@@ -1,34 +1,47 @@
 import * as Delir from '@delirvfx/core'
 import serialize from 'form-serialize'
+import parseColor from 'parse-color'
 import React, { FormEvent, useCallback, useRef } from 'react'
 
-import { Button } from '../../components/Button'
-import FormStyle from '../../components/Form'
-import { ModalController } from '../Modal/ModalController'
+import { Button } from 'components/Button'
+import FormStyle from 'components/Form'
+import { SpreadType } from 'utils/Spread'
 
 import t from './CompositionSettingModal.i18n'
 import s from './CompositionSettingModal.sass'
 
-type SettingResult = { [props: string]: string } | void
+interface FormResult {
+  name: string
+  width: string
+  height: string
+  framerate: string
+  durationSeconds: string
+  backgroundColor: string
+  samplingRate: string
+  audioChannels: string
+}
 
-export const show = (props: { composition?: Delir.Entity.Composition } = {}): Promise<SettingResult> => {
-  return new Promise(resolve => {
-    const resolver = async (result?: SettingResult) => {
-      await modal.hide()
-      modal.dispose()
-      resolve(result)
-    }
+const castToCompositionPatch = (req: FormResult): CompositionSettingResult => {
+  const bgColor = parseColor(req.backgroundColor)
 
-    const modal = new ModalController()
-    modal.mount(<CompositionSettingModal composition={props.composition} onConfirm={resolver} onCancel={resolver} />)
-    modal.show()
-  })
+  return {
+    name: req.name,
+    width: +req.width,
+    height: +req.height,
+    framerate: +req.framerate,
+    durationFrames: +req.framerate * parseInt(req.durationSeconds, 10),
+    backgroundColor: new Delir.Values.ColorRGB(bgColor.rgb[0], bgColor.rgb[1], bgColor.rgb[2]),
+    samplingRate: +req.samplingRate,
+    audioChannels: +req.audioChannels,
+  }
 }
 
 interface Props {
   composition?: Delir.Entity.Composition
-  onConfirm: (opts: Record<string, string> | false) => void
+  onClose: (opts: CompositionSettingResult | false) => void
 }
+
+export type CompositionSettingResult = Partial<SpreadType<Delir.Entity.Composition>>
 
 export const CompositionSettingModal = ({ composition: comp, onClose }: Props) => {
   const formRef = useRef<HTMLFormElement | null>(null)
@@ -38,8 +51,8 @@ export const CompositionSettingModal = ({ composition: comp, onClose }: Props) =
       e.preventDefault()
       e.stopPropagation()
 
-      const opts = serialize(formRef.current!, { hash: true })
-      onClose(opts as { [p: string]: string })
+      const opts = (serialize(formRef.current!, { hash: true }) as unknown) as FormResult
+      onClose(castToCompositionPatch(opts))
     },
     [onClose],
   )
