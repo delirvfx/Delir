@@ -12,6 +12,7 @@ export interface NotificationEntry {
   message?: string
   level: 'info' | 'error'
   detail?: string
+  timeout: number | undefined
 }
 
 export interface EditorState {
@@ -199,13 +200,7 @@ export default class EditorStore extends Store<EditorState> {
 
   private handleAddMessage = listen(EditorActions.addMessage, payload => {
     this.updateWith(d => {
-      d.notifications.push({
-        id: payload.id,
-        title: payload.title,
-        message: payload.message!,
-        level: payload.level,
-        detail: payload.detail,
-      })
+      d.notifications.push(payload)
     })
   })
 

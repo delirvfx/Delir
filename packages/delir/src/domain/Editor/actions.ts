@@ -1,6 +1,7 @@
 import * as Delir from '@delirvfx/core'
 import { action, actions } from '@fleur/fleur'
 
+import { NotificationEntry } from './EditorStore'
 import { DragEntity } from './operations'
 import { ClipboardEntryClip, ParameterTarget } from './types'
 
@@ -18,13 +19,7 @@ export const EditorActions = actions('Editor', {
   addOrRemoveSelectClip: action<{ clipIds: string[] }>(),
   changeActiveParam: action<{ target: ParameterTarget | null }>(),
   updateProcessingState: action<{ stateText: string }>(),
-  addMessage: action<{
-    id: string
-    title?: string
-    level: 'info' | 'error'
-    message?: string
-    detail?: string
-  }>(),
+  addMessage: action<NotificationEntry>(),
   removeMessage: action<{ id: string }>(),
   seekPreviewFrame: action<{ frame: number }>(),
   setClipboardEntry: action<{ entry: ClipboardEntryClip }>(),

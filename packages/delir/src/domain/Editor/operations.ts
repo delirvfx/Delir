@@ -92,13 +92,8 @@ export const notify = operation(
       message: arg.message,
       detail: arg.detail,
       level: arg.level || 'info',
+      timeout: arg.timeout
     })
-
-    if (arg.timeout != null) {
-      setTimeout(() => {
-        context.dispatch(EditorActions.removeMessage, { id })
-      }, arg.timeout)
-    }
   },
 )
 
