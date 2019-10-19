@@ -13,6 +13,7 @@ import { selectFile } from 'utils/selectFile'
 import t from './Plugin.i18n'
 
 const DirList = styled.div`
+  margin-top: 8px;
   padding: 8px;
   background-color: ${cssVars.colors.listArea};
   border-radius: 4px;
@@ -37,7 +38,7 @@ const Entry = styled.div`
 const DirEntry = ({ path, onRemove }: { path: string; onRemove: (path: string) => void }) => {
   const handleRemove = useCallback(() => {
     onRemove(path)
-  }, [onRemove])
+  }, [path, onRemove])
 
   return (
     <Entry>
@@ -73,20 +74,24 @@ export const DevelopmentPlguinPane = () => {
   )
 
   useEffect(() => {
-    executeOperation(PreferecenOps.setPluginDirectories, dirs)
+    executeOperation(PreferecenOps.setDevPluginDirectories, dirs)
   }, [dirs])
 
   return (
     <>
       <h2>{t(t.k.title)}</h2>
-      <FormSection label={'Update watching plugin directories'}>
+      <FormSection label={t(t.k.watchesTitle)} labelType="div">
         <DirList>
-          {dirs.length === 0
-            ? 'No any plugin watches'
-            : dirs.map(dir => <DirEntry path={dir} onRemove={handleRemoveDir} />)}
+          {dirs.length === 0 ? (
+            <Entry style={{ color: cssVars.textColors.muted }}>{t(t.k.noEntry)}</Entry>
+          ) : (
+            dirs.map(dir => <DirEntry path={dir} onRemove={handleRemoveDir} />)
+          )}
         </DirList>
         <div style={{ marginTop: '8px' }}>
-          <Button onClick={handleAdd}>Add</Button>
+          <Button type="button" onClick={handleAdd}>
+            {t(t.k.add)}
+          </Button>
         </div>
       </FormSection>
     </>

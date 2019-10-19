@@ -5,6 +5,9 @@ export const cssVars = {
     bgColorDuration: '200ms',
     function: 'cubic-bezier(.3, 1, .72, 1.06)',
   },
+  textColors: {
+    muted: '#888',
+  },
   colors: {
     error: '#f83737',
     theming: '#7b14ea',

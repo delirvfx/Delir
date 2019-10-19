@@ -71,7 +71,7 @@ export const savePreferences = (() => {
   })
 })()
 
-export const setPluginDirectories = operation(async ({ dispatch }, dirs: string[]) => {
+export const setDevPluginDirectories = operation(async ({ dispatch }, dirs: string[]) => {
   dispatch(PreferenceActions.changeDevelopPluginDirs, { dirs })
 })
 
