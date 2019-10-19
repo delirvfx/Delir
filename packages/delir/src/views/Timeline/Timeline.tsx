@@ -179,7 +179,7 @@ export default withFleurContext(
                     />
 
                     <div ref={this.timelineContainer} className={s.layerContainer} onScroll={this.handleScrollTimeline}>
-                      <div style={{ display: 'flex' }} onKeyDown={this.handleKeydownTimeline}>
+                      <div style={{ display: 'flex', height: '100%' }} onKeyDown={this.handleKeydownTimeline}>
                         {activeComp && (
                           <ClipDragMediator
                             comp={activeComp}
