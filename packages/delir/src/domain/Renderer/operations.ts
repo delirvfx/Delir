@@ -56,77 +56,94 @@ export const loadPlugins = operation(async context => {
   context.dispatch(RendererActions.registerPlugins, { plugins: successes })
 })
 
-export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch, executeOperation }) => {
-  interface ErrorEntry {
-    package: string
-    reasons: string[]
-  }
+export const watchDevelopmentPlugins = keepAliveOperation(
+  (
+    { getStore, dispatch, executeOperation },
+    { silentSuccess }: { silentSuccess?: boolean } = { silentSuccess: false },
+  ) => {
+    interface ErrorEntry {
+      package: string
+      reasons: string[]
+    }
 
-  const developmentPluginDirs = getDevPluginDirs(getStore)
+    const devPluginDirs = getDevPluginDirs(getStore)
 
-  const wp = new Watchpack({
-    aggregateTimeout: 1000,
-  })
-  wp.watch([], developmentPluginDirs, Date.now())
+    const handleChanges = async (changedDirs: string[]) => {
+      const updatedPackages: any[] = []
+      const failedPackages: ErrorEntry[] = []
 
-  wp.on('aggregated', async (changes: string[]) => {
-    const updatedPackages: any[] = []
-    const failedPackages: ErrorEntry[] = []
+      for (const packageDir of changedDirs) {
+        try {
+          const packageJsonPath = join(packageDir, 'package.json')
 
-    for (const packageDir of changes) {
-      try {
-        const packageJsonPath = join(packageDir, 'package.json')
-        if (!(await (exists as any)(packageJsonPath))) return
+          if (!(await (exists as any)(packageJsonPath))) {
+            failedPackages.push({
+              package: packageDir,
+              reasons: [`package.json not found`],
+            })
 
-        const packageInfo = await FSPluginLoader.loadPackage(packageDir)
+            continue
+          }
 
-        const valid = Delir.PluginRegistry.validateEffectPluginPackageJSON(packageInfo.packageJson)
-        if (valid.hasError) {
+          const packageInfo = await FSPluginLoader.loadPackage(packageDir)
+
+          const valid = Delir.PluginRegistry.validateEffectPluginPackageJSON(packageInfo.packageJson)
+          if (valid.hasError) {
+            failedPackages.push({
+              package: packageInfo.id,
+              reasons: valid.reason,
+            })
+            continue
+          }
+
+          updatedPackages.push(packageInfo)
+        } catch (e) {
           failedPackages.push({
-            package: packageInfo.id,
-            reasons: valid.reason,
+            package: packageDir,
+            reasons: [`Error: ${e.message}`],
           })
-          continue
         }
+      }
 
-        updatedPackages.push(packageInfo)
-      } catch (e) {
-        failedPackages.push({
-          package: packageDir,
-          reasons: [`Error: ${e.message}`],
+      const updatedIds = updatedPackages.map((packageInfo: any) => packageInfo.id)
+      await executeOperation(stopPreview)
+      dispatch(RendererActions.unregisterPlugins, { ids: updatedIds })
+      dispatch(RendererActions.registerPlugins, { plugins: updatedPackages })
+      dispatch(RendererActions.clearCache, {})
+
+      if (failedPackages.length) {
+        await executeOperation(EditorOps.notify, {
+          level: 'error',
+          title: 'Dev: Failed to reload plugins',
+          detail: failedPackages
+            .map(entry => `${entry.package}\n${entry.reasons.map(r => `  - ${r}`).join('\n')}`)
+            .join('\n'),
+          timeout: NotificationTimeouts.error,
+        })
+      }
+
+      if (updatedPackages.length && !silentSuccess) {
+        await executeOperation(EditorOps.notify, {
+          level: 'info',
+          title: 'Dev: Plugins has been reloaded',
+          detail: updatedIds.map(id => `- ${id}`).join('\n'),
+          timeout: NotificationTimeouts.verbose,
         })
       }
     }
 
-    const updatedIds = updatedPackages.map((packageInfo: any) => packageInfo.id)
-    await executeOperation(stopPreview)
-    dispatch(RendererActions.unregisterPlugins, { ids: updatedIds })
-    dispatch(RendererActions.registerPlugins, { plugins: updatedPackages })
-    dispatch(RendererActions.clearCache, {})
+    const wp = new Watchpack({
+      aggregateTimeout: 1000,
+    })
+    wp.watch([], devPluginDirs, Date.now())
+    wp.on('aggregated', handleChanges)
 
-    if (failedPackages.length) {
-      await executeOperation(EditorOps.notify, {
-        level: 'error',
-        title: 'Dev: Failed to reload plugins',
-        detail: failedPackages
-          .map(entry => `${entry.package}\n${entry.reasons.map(r => `  - ${r}`).join('\n')}`)
-          .join('\n'),
-        timeout: NotificationTimeouts.error,
-      })
-    }
+    // Load plugins
+    handleChanges(devPluginDirs)
 
-    if (updatedPackages.length) {
-      await executeOperation(EditorOps.notify, {
-        level: 'info',
-        title: 'Dev: Plugins has been reloaded',
-        detail: updatedIds.map(id => `- ${id}`).join('\n'),
-        timeout: NotificationTimeouts.verbose,
-      })
-    }
-  })
-
-  return () => wp.close()
-})
+    return () => wp.close()
+  },
+)
 
 export const setPreviewCanvas = operation((context, arg: { canvas: HTMLCanvasElement }) => {
   context.dispatch(RendererActions.setPreviewCanvas, arg)
