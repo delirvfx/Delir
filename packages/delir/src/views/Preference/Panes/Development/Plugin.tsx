@@ -1,7 +1,7 @@
 import { useFleurContext, useStore } from '@fleur/react'
 import { cssVars } from 'assets/styles/cssVars'
 import { FormSection } from 'components/FormSection/FormSection'
-import { getDevelopPluginDirs } from 'domain/Preference/selectors'
+import { getDevPluginDirs } from 'domain/Preference/selectors'
 import React, { useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 
@@ -52,7 +52,7 @@ const DirEntry = ({ path, onRemove }: { path: string; onRemove: (path: string) =
 export const DevelopmentPlguinPane = () => {
   const { executeOperation } = useFleurContext()
   const { currentDirs } = useStore([PreferenceStore], getStore => ({
-    currentDirs: getDevelopPluginDirs(getStore),
+    currentDirs: getDevPluginDirs(getStore),
   }))
   const [{ dirs }, update] = useImmer({ dirs: currentDirs })
 

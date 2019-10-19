@@ -1,7 +1,9 @@
 import * as Delir from '@delirvfx/core'
 import Fleur, { withReduxDevTools } from '@fleur/fleur'
 import { FleurContext } from '@fleur/react'
+import glob from 'fast-glob'
 import os from 'os'
+import path from 'path'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -14,6 +16,7 @@ import './assets/styles/style.sass'
 
 import AppView from './views/AppView'
 
+import { getDevPluginDirs } from 'domain/Preference/selectors'
 import { ModalOwner } from './components/ModalOwner/ModalOwner'
 import EditorStore from './domain/Editor/EditorStore'
 import HistoryStore from './domain/History/HistoryStore'
@@ -74,6 +77,16 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   if (__DEV__) {
     const project = require('./utils/Dev/ExampleProject1').default
+
+    const devPluginDirs = getDevPluginDirs(context.getStore)
+    await context.executeOperation(PreferenceOps.setDevPluginDirectories, [
+      ...devPluginDirs,
+      ...(await glob('*', {
+        cwd: path.join(process.cwd(), 'prepublish/plugins'),
+        onlyDirectories: true,
+        absolute: true,
+      })),
+    ])
 
     await context.executeOperation(EditorOps.setActiveProject, { project })
     await context.executeOperation(EditorOps.changeActiveComposition, {

@@ -26,16 +26,6 @@ export const restoreApplicationPreference = operation(async context => {
   let preference: Preference
   try {
     preference = _.defaultsDeep(JSON.parse(json), defaultPreferance)
-
-    if (__DEV__) {
-      preference.develop.pluginDirs.push(
-        ...(await glob('*', {
-          cwd: path.join(process.cwd(), 'prepublish/plugins'),
-          onlyDirectories: true,
-          absolute: true,
-        })),
-      )
-    }
   } catch {
     context.executeOperation(EditorOps.notify, {
       title: 'App preference loading failed',

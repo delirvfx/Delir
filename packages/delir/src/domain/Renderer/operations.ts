@@ -11,7 +11,7 @@ import { Platform } from 'utils/platform'
 
 import { NotificationTimeouts } from 'domain/Editor/models'
 import { getActiveComp } from 'domain/Editor/selectors'
-import { getAllPreferences, getDevelopPluginDirs } from 'domain/Preference/selectors'
+import { getAllPreferences, getDevPluginDirs } from 'domain/Preference/selectors'
 import { getProject } from 'domain/Project/selectors'
 import { keepAliveOperation } from 'utils/keepAliveOperation'
 import EditorStore from '../Editor/EditorStore'
@@ -62,7 +62,7 @@ export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch,
     reasons: string[]
   }
 
-  const developmentPluginDirs = getDevelopPluginDirs(getStore)
+  const developmentPluginDirs = getDevPluginDirs(getStore)
 
   const wp = new Watchpack({
     aggregateTimeout: 1000,
