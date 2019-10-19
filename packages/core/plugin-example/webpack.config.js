@@ -5,7 +5,7 @@ const sourceDir = path.join(__dirname, 'src')
 const distDir = path.join(__dirname, 'dist')
 
 module.exports = {
-  target: 'electron',
+  target: 'web',
   context: sourceDir,
   entry: {
     index: './index.ts',
