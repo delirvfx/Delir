@@ -66,7 +66,7 @@ export interface FloatTypeDescripter extends ParameterTypeDescriptor<'FLOAT'> {
 // }
 export interface EnumTypeDescripter extends ParameterTypeDescriptor<'ENUM'> {
   selection: string[]
-  defaultValue: () => string
+  defaultValue: () => string | null
 }
 // export interface ClipTypeDescripter extends ParameterTypeDescriptor<'CLIP'> {}
 export interface AssetTypeDescripter extends ParameterTypeDescriptor<'ASSET'> {
@@ -352,6 +352,7 @@ export class TypeDescriptor {
   ) {
     const { defaultValue, label, enabled, selection } = defaults(conf, {
       enabled: true,
+      defaultValue: () => null,
       selection: [],
     })
 
@@ -362,7 +363,8 @@ export class TypeDescriptor {
       throw new PluginLoadFailException('`selection` must be an array of string')
     }
 
-    if (defaultValue != null && !selection.includes(defaultValue())) {
+    const realDefaultValue = defaultValue()
+    if (realDefaultValue != null && !selection.includes(realDefaultValue)) {
       throw new PluginLoadFailException('Default value not included in selection')
     }
 
@@ -423,6 +425,7 @@ export class TypeDescriptor {
     },
   ) {
     const { defaultValue, label, enabled, langType } = defaults(conf, {
+      defaultValue: () => null,
       enabled: true,
     })
     this.properties.push({
