@@ -11,6 +11,7 @@ import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 interface VideoRendererParam {
   source: ParamType.Asset
   offsetTime: ParamType.Number
+  playbackRate: ParamType.Float
   loop: ParamType.Bool
   x: ParamType.Number
   y: ParamType.Number
@@ -39,6 +40,11 @@ export class VideoRenderer implements IRenderer<VideoRendererParam> {
         label: 'Start time',
         animatable: false,
         defaultValue: 0,
+      })
+      .float('playbackRate', {
+        label: 'Play speed (%)',
+        defaultValue: 100,
+        animatable: false,
       })
       .bool('loop', {
         label: 'Loop',
@@ -123,7 +129,7 @@ export class VideoRenderer implements IRenderer<VideoRendererParam> {
       video.addEventListener('seeked', waiter, { once: true } as any)
       setTimeout(waiter, 1000)
 
-      const time = param.offsetTime + context.timeOnClip
+      const time = param.offsetTime + context.timeOnClip * (param.playbackRate / 100)
       video.currentTime = param.loop ? time % video.duration : time
     })
 
