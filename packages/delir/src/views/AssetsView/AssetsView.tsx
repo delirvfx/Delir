@@ -211,7 +211,7 @@ class AssetsView extends React.Component<Props, State> {
                       doubleClickToEdit
                     />
                   </td>
-                  <td>{asset.fileType}</td>
+                  <td className={s.assetType}>{asset.fileType}</td>
                 </tr>
               ))}
             </tbody>
