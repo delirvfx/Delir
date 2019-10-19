@@ -234,9 +234,7 @@ function calcKeyframe(
       // 0  10  20
       // |   |   |
       // -> if keyframes empty use defaultValue
-      table[frame] = (propDesc as {
-        defaultValue: KeyframeValueTypes
-      }).defaultValue
+      table[frame] = propDesc.defaultValue?.() ?? null
       continue
     }
 

@@ -11,7 +11,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
    * Provide usable parameters
    */
   public static provideParameters() {
-    return Type.float('opacity', { label: 'Opacity', defaultValue: 100, animatable: true })
+    return Type.float('opacity', { label: 'Opacity', defaultValue: () => 100, animatable: true })
   }
 
   private canvas: HTMLCanvasElement

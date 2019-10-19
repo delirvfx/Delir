@@ -22,10 +22,10 @@ export class SolidRenderer implements IRenderer<SolidRendererParam> {
   }
 
   public static provideParameters() {
-    return Type.colorRgb('color', { label: 'Color', animatable: true, defaultValue: new ColorRGB(0, 0, 0) })
-      .number('x', { label: 'Position X', animatable: true, defaultValue: 0 })
-      .number('y', { label: 'Position Y', animatable: true, defaultValue: 0 })
-      .float('scale', { label: 'Scale', animatable: true, defaultValue: 100 })
+    return Type.colorRgb('color', { label: 'Color', animatable: true, defaultValue: () => new ColorRGB(0, 0, 0) })
+      .number('x', { label: 'Position X', animatable: true, defaultValue: () => 0 })
+      .number('y', { label: 'Position Y', animatable: true, defaultValue: () => 0 })
+      .float('scale', { label: 'Scale', animatable: true, defaultValue: () => 100 })
   }
 
   public async beforeRender(context: ClipPreRenderContext<SolidRendererParam>) {}

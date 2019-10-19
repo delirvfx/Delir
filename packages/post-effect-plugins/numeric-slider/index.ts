@@ -9,7 +9,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
    * Provide usable parameters
    */
   public static provideParameters() {
-    return Type.float('value', { label: 'Value', defaultValue: 0, animatable: true })
+    return Type.float('value', { label: 'Value', defaultValue: () => 0, animatable: true })
   }
 
   /**

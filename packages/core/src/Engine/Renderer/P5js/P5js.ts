@@ -31,11 +31,11 @@ export class P5jsRenderer implements IRenderer<Params> {
     return Type.code('sketch', {
       label: 'Sketch',
       langType: 'javascript',
-      defaultValue: new Expression('javascript', 'function setup() {\n    \n}\n\nfunction draw() {\n    \n}\n'),
+      defaultValue: () => new Expression('javascript', 'function setup() {\n    \n}\n\nfunction draw() {\n    \n}\n'),
     }).number('opacity', {
       label: 'Opacity',
       animatable: true,
-      defaultValue: 100,
+      defaultValue: () => 100,
     })
   }
 

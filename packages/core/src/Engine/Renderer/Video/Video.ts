@@ -39,11 +39,11 @@ export class VideoRenderer implements IRenderer<VideoRendererParam> {
       .number('offsetTime', {
         label: 'Start time',
         animatable: false,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
       .float('playbackRate', {
         label: 'Play speed (%)',
-        defaultValue: 100,
+        defaultValue: () => 100,
         animatable: false,
       })
       .bool('loop', {
@@ -61,17 +61,17 @@ export class VideoRenderer implements IRenderer<VideoRendererParam> {
       .float('scale', {
         label: 'Scale',
         animatable: true,
-        defaultValue: 100,
+        defaultValue: () => 100,
       })
       .float('rotate', {
         label: 'Rotation',
         animatable: true,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
       .float('opacity', {
         label: 'Opacity',
         animatable: true,
-        defaultValue: 100,
+        defaultValue: () => 100,
       })
   }
 

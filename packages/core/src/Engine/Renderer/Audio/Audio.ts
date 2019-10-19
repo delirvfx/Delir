@@ -37,13 +37,13 @@ export class AudioRenderer implements IRenderer<AudioRendererParam> {
     })
       .float('volume', {
         label: 'Volume',
-        defaultValue: 100,
+        defaultValue: () => 100,
         animatable: true,
       })
       .float('startTime', {
         label: 'Start time(sec)',
         animatable: false,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
   }
 

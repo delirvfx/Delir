@@ -23,7 +23,7 @@ export class AdjustmentRenderer implements IRenderer<Param> {
   public static provideParameters(): TypeDescriptor {
     return Type.number('opacity', {
       label: 'Opacity',
-      defaultValue: 100,
+      defaultValue: () => 100,
       animatable: true,
     })
   }

@@ -59,37 +59,40 @@ export class TextRenderer implements IRenderer<TextRendererParam> {
         })
         .enum('weight', {
           label: 'weight',
-          defaultValue: '400',
+          defaultValue: () => '400',
           selection: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
         })
         .number('size', {
           label: 'Font size',
-          defaultValue: 14,
+          defaultValue: () => 14,
         })
         .number('lineHeight', {
           label: 'Line height (%)',
-          defaultValue: 100,
+          defaultValue: () => 100,
         })
         .colorRgba('color', {
           label: 'Color',
-          defaultValue: new ColorRGBA(0, 0, 0, 1),
+          defaultValue: () => new ColorRGBA(0, 0, 0, 1),
         })
         .number('x', {
           label: 'Position X',
+          defaultValue: () => 0,
           animatable: true,
         })
         .number('y', {
           label: 'Position Y',
+          defaultValue: () => 0,
           animatable: true,
         })
         .float('rotate', {
           label: 'Rotation',
+          defaultValue: () => 0,
           animatable: true,
         })
         .float('opacity', {
           label: 'Opacity',
           animatable: true,
-          defaultValue: 100,
+          defaultValue: () => 100,
         })
     },
   )
