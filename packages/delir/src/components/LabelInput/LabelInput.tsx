@@ -1,5 +1,7 @@
+import { cssVars } from 'assets/styles/cssVars'
 import classnames from 'classnames'
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import styled from 'styled-components'
 import { propsToDataset, propsToDatasetArray } from '../../utils/propsToDataset'
 
 interface Props {
@@ -15,9 +17,33 @@ interface LabelInputHandles {
   enableAndFocus(): void
 }
 
+const Input = styled.input`
+  display: inline-block;
+  min-width: 1rem;
+  min-height: 1em;
+  color: inherit;
+  font-family: inherit;
+  background-color: transparent;
+  font-size: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--color-theming);
+  outline: none;
+  transition: border-bottom-color 0.1s;
+
+  &[readonly] {
+    border-bottom: 1px solid transparent;
+    cursor: default;
+    user-select: none;
+
+    &:focus {
+      border-bottom: 1px solid rgba(${cssVars.colors.theming}, 0.3);
+    }
+  }
+`
+
 export type LabelInput = LabelInputHandles
 
-export const LabelInput = React.forwardRef<LabelInputHandles, Props>((props: Props, ref) => {
+export const LabelInput = forwardRef<LabelInputHandles, Props>((props: Props, ref) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [value, setValue] = useState(props.defaultValue)
   const [readonly, setReadonly] = useState(true)
@@ -102,7 +128,7 @@ export const LabelInput = React.forwardRef<LabelInputHandles, Props>((props: Pro
   }, [readonly])
 
   return (
-    <input
+    <Input
       ref={inputRef}
       type="text"
       tabIndex={-1}
