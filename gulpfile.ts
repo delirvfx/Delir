@@ -352,6 +352,7 @@ export async function compilePlugins(done) {
         'numeric-slider/index': './numeric-slider/index',
         'color-slider/index': './color-slider/index',
         'chromakey/index': './chromakey/index',
+        'webgl/index': './webgl/index',
         ...contribPEP,
         ...(__DEV__
           ? {
