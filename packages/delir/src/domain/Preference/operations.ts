@@ -74,7 +74,7 @@ export const savePreferences = (() => {
 export const setDevPluginDirectories = operation(async ({ executeOperation, dispatch }, dirs: string[]) => {
   await executeOperation(RendererOps.watchDevelopmentPlugins.dispose)
   dispatch(PreferenceActions.changeDevelopPluginDirs, { dirs: [...new Set(dirs)] })
-  await executeOperation(RendererOps.watchDevelopmentPlugins, { silentSuccess: true })
+  await executeOperation(RendererOps.watchDevelopmentPlugins)
 })
 
 export const setAudioVolume = operation(async (context, volume: number) => {
