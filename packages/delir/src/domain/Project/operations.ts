@@ -1,7 +1,6 @@
 import * as Delir from '@delirvfx/core'
 import { operation } from '@fleur/fleur'
 import _ from 'lodash'
-import uuid from 'uuid'
 import { safeAssign } from '../../utils/safeAssign'
 import { SpreadType } from '../../utils/Spread'
 
@@ -339,7 +338,7 @@ export const createOrModifyClipKeyframe = operation(
   },
 )
 
-export const createOrModifyKeyframeForEffect = operation(
+export const createOrModifyEffectKeyframe = operation(
   async (
     context,
     {

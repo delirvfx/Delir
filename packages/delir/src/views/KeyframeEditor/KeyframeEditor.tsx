@@ -26,7 +26,7 @@ import { EffectList, EffectListItem, EffectSortHandle } from './EffectList'
 import ExpressionEditor from './ExpressionEditor'
 import { KeyframePatch } from './KeyframeGraph'
 import { KeyframeMediator } from './KeyframeMediator'
-import ScriptParamEditor from './ScriptParamEditor'
+import { ScriptParamEditor } from './ScriptParamEditor'
 
 import { SortEndHandler } from 'react-sortable-hoc'
 import { PX_PER_SEC } from '../Timeline/Timeline'
@@ -177,20 +177,21 @@ export const KeyframeEditor = withFleurContext(
                   activeParamDescriptor &&
                   activeParamDescriptor.type === 'CODE' &&
                   (() => {
-                    const value = activeClip
-                      ? Delir.KeyframeCalcurator.calcKeyframeAt(
-                          editor.currentPreviewFrame,
-                          activeClip.placedFrame,
-                          activeParamDescriptor,
-                          activeClip.keyframes[activeParam.paramName] || [],
-                        )
-                      : new Delir.Values.Expression('javascript', '')
+                    if (!activeClip || !this.activeEntityObject) return null
+
+                    const value: Delir.Values.Expression = Delir.KeyframeCalcurator.calcKeyframeAt(
+                      editor.currentPreviewFrame,
+                      activeClip.placedFrame,
+                      activeParamDescriptor,
+                      this.activeEntityObject.keyframes[activeParam.paramName] || [],
+                    )
 
                     return (
                       <ScriptParamEditor
                         title={activeParamDescriptor.label}
                         target={activeParam}
-                        code={(value as Delir.Values.Expression).code}
+                        langType={value.language}
+                        code={value.code}
                         onClose={this.handleCloseScriptParamEditor}
                       />
                     )
@@ -311,9 +312,11 @@ export const KeyframeEditor = withFleurContext(
               <span className={s.paramItemName}>{desc.label}</span>
               <div className={s.paramItemInput}>
                 {desc.type === 'CODE' ? (
-                  <Button kind="normal" onClick={this.handleOpenScriptParamEditor}>
-                    {t(t.k.editScriptParam)}
-                  </Button>
+                  <div>
+                    <Button kind="normal" onClick={this.handleOpenScriptParamEditor}>
+                      {t(t.k.editScriptParam)}
+                    </Button>
+                  </div>
                 ) : (
                   <PropertyInput
                     assets={project ? project.assets : null}
@@ -481,13 +484,21 @@ export const KeyframeEditor = withFleurContext(
                     </span>
                     <span className={s.paramItemName}>{desc.label}</span>
                     <div className={s.paramItemInput}>
-                      <PropertyInput
-                        key={desc.paramName}
-                        assets={project ? project.assets : null}
-                        descriptor={desc}
-                        value={value!}
-                        onChange={this.effectValueChanged.bind(null, effect.id)}
-                      />
+                      {desc.type === 'CODE' ? (
+                        <div>
+                          <Button kind="normal" onClick={this.handleOpenScriptParamEditor}>
+                            {t(t.k.editScriptParam)}
+                          </Button>
+                        </div>
+                      ) : (
+                        <PropertyInput
+                          key={desc.paramName}
+                          assets={project ? project.assets : null}
+                          descriptor={desc}
+                          value={value!}
+                          onChange={this.effectValueChanged.bind(null, effect.id)}
+                        />
+                      )}
                     </div>
                   </div>
                 )
@@ -579,14 +590,26 @@ export const KeyframeEditor = withFleurContext(
         const { activeClip } = this.props
         if (!activeClip) return
 
-        this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
-          clipId: activeClip.id,
-          frameOnClip: 0,
-          paramName: result.target.paramName,
-          patch: {
-            value: new Delir.Values.Expression('javascript', result.code!),
-          },
-        })
+        if (result.target.type === 'clip') {
+          this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
+            clipId: result.target.entityId,
+            frameOnClip: 0,
+            paramName: result.target.paramName,
+            patch: {
+              value: new Delir.Values.Expression('javascript', result.code!),
+            },
+          })
+        } else if (result.target.type === 'effect') {
+          this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
+            clipId: activeClip.id,
+            effectId: result.target.entityId,
+            frameOnClip: 0,
+            paramName: result.target.paramName,
+            patch: {
+              value: new Delir.Values.Expression('javascript', result.code!),
+            },
+          })
+        }
 
         this.setState({ scriptParamEditorOpened: false })
       }
@@ -687,7 +710,7 @@ export const KeyframeEditor = withFleurContext(
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        this.props.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
+        this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
           clipId: activeClip.id,
           effectId,
           paramName: desc.paramName,
@@ -717,7 +740,7 @@ export const KeyframeEditor = withFleurContext(
           }
 
           case 'effect': {
-            this.props.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
+            this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
               clipId: parentClipId,
               effectId: activeParam.entityId,
               paramName,
