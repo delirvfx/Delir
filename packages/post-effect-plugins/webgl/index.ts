@@ -15,8 +15,7 @@ interface Params {
   uniformFactory: ParamType.Code
 }
 
-const TEMPLATE = `
-precision mediump float;
+const TEMPLATE = `precision mediump float;
 
 uniform sampler2D source;
 varying vec2 vTexCoord;
