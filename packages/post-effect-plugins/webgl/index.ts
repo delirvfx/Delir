@@ -1,11 +1,18 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type, Values } from '@delirvfx/core'
+import {
+  EffectPreRenderContext,
+  EffectRenderContext,
+  Engine,
+  Exceptions,
+  ParamType,
+  PostEffectBase,
+  Type,
+  Values,
+} from '@delirvfx/core'
 import vm from 'vm'
 
-import clamp from 'lodash/clamp'
-
 interface Params {
-  fragment: Values.Expression
-  uniformFactory: Values.Expression
+  fragment: ParamType.Code
+  uniformFactory: ParamType.Code
 }
 
 const TEMPLATE = `
@@ -20,19 +27,32 @@ void main(void) {
 }
 `
 
-const TEMPLATE_JS = {}
+const TEMPLATE_JS = `// Here is able to use Expression API
+// SEE: http://delir.studio/docs/usage/expression.html
+//
+// And expect to return key-value pair of uniforms.
+// SEE: http://delir.studio/docs/plugin/posteffect/webgl.html
 
-const VERT_SHADER = require('./vertex.vert').default
+// It returns as uniform key-value pair.
+{
+  // someUniform: gl.uni1v(255),
+}
+`
 
-export default class TheWorldPostEffect extends PostEffectBase {
+export default class WebGLPostEffect extends PostEffectBase {
   /**
    * Provide usable parameters
    */
   public static provideParameters() {
-    return Type.code('fragment', { label: 'fragment shader', langType: 'glsl', defaultValue: TEMPLATE }).code(
-      'uniforms',
-      { label: 'Uniforms', langType: 'javascript', defaultValue: TEMPLATE_JS },
-    )
+    return Type.code('uniformFactory', {
+      label: 'Uniforms',
+      langType: 'typescript',
+      defaultValue: () => new Values.Expression('typescript', TEMPLATE_JS),
+    }).code('fragment', {
+      label: 'Fragment shader',
+      langType: 'glsl',
+      defaultValue: () => new Values.Expression('glsl', TEMPLATE),
+    })
   }
 
   private program: WebGLProgram
@@ -45,8 +65,8 @@ export default class TheWorldPostEffect extends PostEffectBase {
    * Do it in this method.
    */
   public async initialize(context: EffectPreRenderContext<Params>) {
-    this.program = context.gl.getProgram(context.parameters.fragment.code, VERT_SHADER)
-    this.uniformFactoryCode = `(function () { ${context.parameters.uniformFactory.code} })()`
+    this.program = context.gl.getProgram(context.parameters.fragment.code)
+    this.uniformFactoryCode = Engine.ExpressionSupport.compileTypeScript(context.parameters.uniformFactory.code)
   }
 
   /**
@@ -55,31 +75,24 @@ export default class TheWorldPostEffect extends PostEffectBase {
    */
   public async render(context: EffectRenderContext<Params>) {
     const { gl, srcCanvas, destCanvas } = context
-    const uniforms = vm.runInNewContext(this.uniformFactoryCode, { gl, ...this.makeVmExposeVariables(context) })
-    gl.applyProgram(this.program, uniforms, srcCanvas, destCanvas)
-  }
 
-  private makeVmExposeVariables(context: EffectRenderContext<Params>) {
-    return {
-      thisComp: {
-        width: context.width,
-        height: context.height,
-        time: context.timeOnComposition,
-        frame: context.frameOnComposition,
-        duration: context.durationFrames / context.framerate,
-        durationFrames: context.durationFrames,
-        audioBuffer: context.srcAudioBuffer,
-      },
-      thisClip: {
-        time: context.timeOnClip,
-        frame: context.frameOnClip,
-        params: null,
-        effect: (referenceName: string) => {
-          const targetEffect = (context as ClipRenderContext<Params>).clipEffectParams[referenceName]
-          if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
-          return { params: proxyDeepFreeze(targetEffect) }
+    let uniforms: any
+    try {
+      uniforms = vm.runInNewContext(this.uniformFactoryCode, {
+        gl,
+        ...Engine.ExpressionSupport.createExpressionContext(context),
+      })
+
+      gl.applyProgram(this.program, uniforms, srcCanvas, destCanvas)
+    } catch (e) {
+      throw new Exceptions.UserCodeException(`[posteffect-webgl] Shader error: ${e.message}`, {
+        sourceError: e,
+        location: {
+          type: 'effect',
+          paramName: 'Uniforms',
+          entityId: context.effect.id,
         },
-      },
+      })
     }
   }
 }
