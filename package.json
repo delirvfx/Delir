@@ -46,7 +46,7 @@
     "prettier": "1.18.2",
     "prettier-stylelint": "0.4.2",
     "raw-loader": "3.1.0",
-    "react-test-renderer": "16.9.0",
+    "react-test-renderer": "16.10.2",
     "sass": "1.22.12",
     "sass-lint": "1.13.1",
     "sass-lint-auto-fix": "0.18.0",
