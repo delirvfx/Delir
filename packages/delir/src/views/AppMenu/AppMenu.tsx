@@ -241,7 +241,6 @@ export default withFleurContext(
             {
               label: previewPlaying ? t(t.k.preview.pause) : t(t.k.preview.play),
               enabled: !!activeComp,
-              accelerator: 'space',
               click: () => {
                 previewPlaying
                   ? executeOperation(RendererOps.stopPreview)
