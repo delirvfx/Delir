@@ -18,7 +18,7 @@ const path = require('path')
 const { join, parse: pathParse } = require('path')
 const { spawn } = require('child_process')
 
-const NATIVE_MODULES = ['font-manager']
+const NATIVE_MODULES = ['fontmanager-redux']
 
 const paths = {
   src: {
@@ -113,7 +113,7 @@ export async function buildPublishPackageJSON(done) {
   delete json.devDependencies
   json.dependencies = {
     // install only native modules
-    'font-manager': '0.3.0',
+    'fontmanager-redux': '0.4.0',
   }
 
   const newJson = JSON.stringify(json, null, '  ')

@@ -187,7 +187,7 @@ export const dependencies = [
         "url": "https://github.com/webpack-contrib/file-loader"
     },
     {
-        "name": "font-manager",
+        "name": "fontmanager-redux",
         "url": "https://github.com/devongovett/font-manager"
     },
     {

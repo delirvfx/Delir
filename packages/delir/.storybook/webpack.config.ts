@@ -12,7 +12,7 @@ module.exports = ({ config }: { config: Configuration }) => {
 
   config.plugins!.push(
     new DefinePlugin({ __DEV__: true }),
-    new (webpack as any).ExternalsPlugin('commonjs', ['font-manager']),
+    new (webpack as any).ExternalsPlugin('commonjs', ['fontmanager-redux']),
   )
 
   config.module!.rules.push(

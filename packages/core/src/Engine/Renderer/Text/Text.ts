@@ -32,7 +32,7 @@ export class TextRenderer implements IRenderer<TextRendererParam> {
       // Delay loading for testing
       let FontManager: any
       try {
-        FontManager = require('font-manager')
+        FontManager = require('fontmanager-redux')
       } catch (e) {
         FontManager = { getAvailableFontsSync: () => [] }
       }

@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "bezier-easing": "2.1.0",
-    "font-manager": "0.3.0",
+    "fontmanager-redux": "0.4.0",
     "joi-browser": "^13.4.0",
     "lodash": "4.17.15",
     "p5": "0.9.0",

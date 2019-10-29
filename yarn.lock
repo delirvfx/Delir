@@ -6985,12 +6985,10 @@ focus-lock@^0.6.3:
   resolved "https://registry.yarnpkg.com/focus-lock/-/focus-lock-0.6.5.tgz#f6eb37832a9b1b205406175f5277396a28c0fce1"
   integrity sha512-i/mVBOoa9o+tl+u9owOJUF8k8L85odZNIsctB+JAK2HFT8jckiBwmk+3uydlm6FN8czgnkIwQtBv6yyAbrzXjw==
 
-font-manager@0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/font-manager/-/font-manager-0.3.0.tgz#9efdc13e521a3d8752e7ab56c3938818043a311f"
-  integrity sha512-6N3pzO+9kxE3yD9c4VN7reg5fqgFvjcUdxZmwauRzsExaeKRu0APfEi3DOISFakokybgKlZcLFQHawwc2TMpQQ==
-  dependencies:
-    nan ">=2.10.0"
+fontmanager-redux@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/fontmanager-redux/-/fontmanager-redux-0.4.0.tgz#f4c8232a2e2adc6e996a9d4516ab522d1a5da067"
+  integrity sha512-ZXo6KsOfU0+kvyKz49fpe1T+XIvFuWliQSSjLhMnDDlWIBCpIKN1fwTRIgY9guwzKMVym6uKXbeeqwpqVU1+Vg==
 
 for-each@^0.3.2:
   version "0.3.2"
