@@ -226,6 +226,12 @@ export function compileRendererJs(done) {
       entry: {
         main: ['./src/main'],
       },
+      optimization: {
+        splitChunks: {
+          name: 'vendor',
+          chunks: 'initial',
+        },
+      },
       output: {
         filename: '[name].js',
         sourceMapFilename: 'map/[file].map',
