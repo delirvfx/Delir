@@ -570,7 +570,8 @@ export function watch() {
 }
 
 export function runStorybook(done) {
-  spawn('yarn', ['storybook', '--ci', '--quiet'], { stdio: 'inherit', cwd: paths.src.frontend })
+  const yarnBin = isWindows ? 'yarn.cmd' : 'yarn'
+  spawn(yarnBin, ['storybook', '--ci', '--quiet'], { stdio: 'inherit', cwd: paths.src.frontend })
   done()
 }
 
