@@ -34,6 +34,8 @@ export class TextRenderer implements IRenderer<TextRendererParam> {
       try {
         FontManager = require('fontmanager-redux')
       } catch (e) {
+        // tslint:disable-next-line no-console
+        console.warn('[delirvfx/core:Text renderer]', e)
         FontManager = { getAvailableFontsSync: () => [] }
       }
 
