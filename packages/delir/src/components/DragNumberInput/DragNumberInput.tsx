@@ -133,11 +133,6 @@ export default class DragNumberInput extends React.Component<Props, State> {
       weight = 2
     }
 
-    if (Platform.isWindows) {
-      // in Windows, movementX is coming with big value
-      weight *= .5
-    }
-
     const value = this.parseValue(this.input.current!.value) + e.nativeEvent.movementX * weight
     this.setState({ value: this.parseValue(value) })
   }
