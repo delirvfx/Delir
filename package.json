@@ -42,6 +42,7 @@
     "jsdom-global": "3.0.2",
     "lint-staged": "9.2.1",
     "monaco-editor-webpack-plugin": "1.7.0",
+    "nan": "2.14.0",
     "node-notifier": "6.0.0",
     "prettier": "1.18.2",
     "prettier-stylelint": "0.4.2",

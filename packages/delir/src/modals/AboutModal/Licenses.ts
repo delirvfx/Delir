@@ -267,6 +267,10 @@ export const dependencies = [
         "url": "https://github.com/mcollina/msgpack5"
     },
     {
+        "name": "nan",
+        "url": "https://www.npmjs.com/package/nan"
+    },
+    {
         "name": "node-notifier",
         "url": "https://github.com/mikaelbr/node-notifier#readme"
     },
