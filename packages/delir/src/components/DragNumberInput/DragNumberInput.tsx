@@ -59,7 +59,6 @@ export default class DragNumberInput extends React.Component<Props, State> {
         type="text"
         className={classnames(s.DragNumberInput, this.props.className)}
         value={this.state.value}
-        onFocus={this.handleFocus}
         onBlur={this.handleBlur}
         onChange={this.handleChangeValue}
         onKeyDown={this.handleKeyDown}
@@ -98,20 +97,6 @@ export default class DragNumberInput extends React.Component<Props, State> {
       const value = this.parseValue(e.currentTarget.value) - (e.altKey ? 0.1 : 1)
       this.setState({ value })
     }
-  }
-
-  private handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-
-    const input = this.input.current!
-
-    // Cursor position to clicked position unless setTimeout
-    setTimeout(() => {
-      input.selectionDirection = 'forward'
-      input.selectionStart = 0
-      input.selectionEnd = input.value.length
-    }, 200)
   }
 
   private handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
