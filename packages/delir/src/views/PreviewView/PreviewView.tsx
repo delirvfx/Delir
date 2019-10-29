@@ -18,6 +18,8 @@ type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 interface State {
   scale: number
   scaleListShown: boolean
+  positionX: number
+  positionY: number
 }
 
 const mapStoresToProps = (getStore: StoreGetter) => {
@@ -37,6 +39,8 @@ export default withFleurContext(
       public state = {
         scale: 1,
         scaleListShown: false,
+        positionX: 0,
+        positionY: 0,
       }
 
       private scaleListRef = React.createRef<Dropdown>()
@@ -46,11 +50,22 @@ export default withFleurContext(
         this.props.executeOperation(RendererOps.setPreviewCanvas, {
           canvas: this.canvasRef.current!,
         })
+
+        window.addEventListener('wheel', e => {
+          this.setState(state =>
+            e.ctrlKey
+              ? { scale: Math.max(0.05, state.scale - e.deltaY * 0.01) }
+              : {
+                  positionX: state.positionX - e.deltaX * 2,
+                  positionY: state.positionY - e.deltaY * 2,
+                },
+          )
+        })
       }
 
       public render() {
         const { activeComp, currentPreviewFrame, previewPlaying, lastRenderState } = this.props
-        const { scale, scaleListShown } = this.state
+        const { scale, positionX, positionY, scaleListShown } = this.state
         const currentScale = Math.round(scale * 100)
         const width = activeComp ? activeComp.width : 640
         const height = activeComp ? activeComp.height : 360
@@ -68,7 +83,8 @@ export default withFleurContext(
                   width={width}
                   height={height}
                   style={{
-                    transform: `scale(${this.state.scale})`,
+                    transform: `scale(${this.state.scale}) translateX(${positionX}px)
+                      translateY(${positionY}px)`,
                   }}
                 />
               </div>
