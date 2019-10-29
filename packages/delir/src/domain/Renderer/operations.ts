@@ -118,7 +118,7 @@ export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch,
       })
     }
 
-    if (updatedPackages.length && !silentSuccess) {
+    if (updatedPackages.length) {
       await executeOperation(EditorOps.notify, {
         level: 'info',
         title: 'Dev: Plugins has been reloaded',
