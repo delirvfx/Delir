@@ -63,7 +63,6 @@ export default class DragNumberInput extends React.Component<Props, State> {
         onBlur={this.handleBlur}
         onChange={this.handleChangeValue}
         onKeyDown={this.handleKeyDown}
-        onMouseDown={this.handleMouseDown}
         onMouseMove={this.handleMouseMove}
         onMouseUp={this.handleMouseUp}
       />
@@ -129,15 +128,7 @@ export default class DragNumberInput extends React.Component<Props, State> {
     })
   }
 
-  private handleMouseDown = (e: React.MouseEvent<HTMLSpanElement>) => {
-    // MouseEvent#movement is buggy on Windows. Disable modification by drag.
-    if (Platform.isWindows) return
-  }
-
   private handleMouseMove = (e: React.MouseEvent<HTMLSpanElement>) => {
-    // MouseEvent#movement is buggy on Windows. Disable modification by drag.
-    if (Platform.isWindows) return
-
     if (e.nativeEvent.which !== 1) return // not mouse left pressed
 
     // requestPointerLock() on input element brokes input cursor behaviour
@@ -145,6 +136,8 @@ export default class DragNumberInput extends React.Component<Props, State> {
     if (Math.abs(e.nativeEvent.movementX) > 1) {
       e.currentTarget.requestPointerLock()
       this.pointerLocked = true
+    } else {
+      return
     }
 
     let weight = 0.3
@@ -155,19 +148,21 @@ export default class DragNumberInput extends React.Component<Props, State> {
       weight = 2
     }
 
+    if (Platform.isWindows) {
+      // in Windows, movementX is coming with big value
+      weight *= .5
+    }
+
     const value = this.parseValue(this.input.current!.value) + e.nativeEvent.movementX * weight
     this.setState({ value: this.parseValue(value) })
   }
 
   private handleMouseUp = (e: React.MouseEvent<HTMLInputElement>) => {
-    // MouseEvent#movement is buggy on Windows. Disable modification by drag.
-    if (Platform.isWindows) return
-
     const input = this.input.current!
 
-    document.exitPointerLock()
 
     if (this.pointerLocked) {
+      document.exitPointerLock()
       input.blur()
     }
 
