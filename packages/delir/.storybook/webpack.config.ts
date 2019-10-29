@@ -10,6 +10,8 @@ module.exports = ({ config }: { config: Configuration }) => {
     }),
   ]
 
+  config.resolve!.alias!['@delirvfx/core'] = join(__dirname, '../../core/src/index.ts')
+
   config.plugins!.push(
     new DefinePlugin({ __DEV__: true }),
     new (webpack as any).ExternalsPlugin('commonjs', ['fontmanager-redux']),
