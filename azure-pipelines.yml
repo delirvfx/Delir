@@ -18,10 +18,6 @@ jobs:
 - job: Windows
   pool:
     vmImage: 'windows-2019'
-    
-  strategy:
-    node_12:
-      node_version: 12.x
    
   steps:
   - task: NodeTool@0
