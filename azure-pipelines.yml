@@ -5,9 +5,9 @@ jobs:
 
   steps:
   - task: NodeTool@0
-    inputs:
-      versionSpec: '12.x'
     displayName: 'Install Node.js'
+    inputs:
+      versionSpec: '11.x'
 
   - script: |
       npm i -g yarn
@@ -21,10 +21,11 @@ jobs:
    
   steps:
   - task: NodeTool@0
+    displayName: 'Install Node.js'
     inputs:
-      versionSpec: '12.x'
+      versionSpec: '11.x'
   
-  - script: |
+  - pwsh: |
       npm i -g yarn
       yarn install
       yarn build
