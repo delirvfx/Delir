@@ -23,6 +23,7 @@ import { ClipDragMediator } from './ClipDragMediator'
 import { Gradations } from './Gradations'
 import { LayerLabelList } from './LayerLabelList'
 
+import { Platform } from 'utils/platform'
 import t from './Timeline.i18n'
 import s from './Timeline.sass'
 
@@ -165,7 +166,7 @@ export default withFleurContext(
                     </div>
                   </Pane>
                   {/* Layer Panel */}
-                  <Pane className={s.timelineContainer} onWheel={this.handleScaleTimeline}>
+                  <Pane className={s.timelineContainer} onWheel={this.handleWheelTimeline}>
                     <Gradations
                       activeComposition={activeComp}
                       measures={measures}
@@ -278,11 +279,15 @@ export default withFleurContext(
         if (e.keyCode === 32) e.preventDefault()
       }
 
-      private handleScaleTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
+      private handleWheelTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
+        if (Platform.isMacOS && e.ctrlKey) {
+          this.setState({ scale: Math.max(this.state.scale - e.deltaY * 0.1, 0.1) })
+          return
+        }
+
         if (e.altKey) {
           const newScale = this.state.scale + e.deltaY * 0.05
           this.setState({ scale: Math.max(newScale, 0.1) })
-          e.preventDefault()
         }
       }
 
