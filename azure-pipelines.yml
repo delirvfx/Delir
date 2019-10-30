@@ -7,7 +7,7 @@ jobs:
   - task: NodeTool@0
     displayName: 'Install Node.js'
     inputs:
-      versionSpec: '11.x'
+      versionSpec: '12.x'
 
   - script: |
       npm i -g yarn
@@ -23,7 +23,7 @@ jobs:
   - task: NodeTool@0
     displayName: 'Install Node.js'
     inputs:
-      versionSpec: '11.x'
+      versionSpec: '12.x'
   
   - pwsh: |
       npm i -g yarn
