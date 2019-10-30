@@ -5,33 +5,32 @@ import { clipboard } from 'electron'
 import _ from 'lodash'
 import mouseWheel from 'mouse-wheel'
 import React from 'react'
+import { Platform } from 'utils/platform'
 import { SpreadType } from '../../utils/Spread'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
-import { ParameterTarget } from '../../domain/Editor/types'
-import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
-import RendererStore from '../../domain/Renderer/RendererStore'
-
 import { PropertyInput } from 'components/PropertyInput/PropertyInput'
+import { SortEndHandler } from 'react-sortable-hoc'
 import { Button } from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
 import { LabelInput } from '../../components/LabelInput'
 import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import { ParameterTarget } from '../../domain/Editor/types'
+import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
+import RendererStore from '../../domain/Renderer/RendererStore'
+import { PX_PER_SEC } from '../Timeline/Timeline'
 import { EffectList, EffectListItem, EffectSortHandle } from './EffectList'
 import ExpressionEditor from './ExpressionEditor'
+import t from './KeyframeEditor.i18n'
+import s from './KeyframeEditor.sass'
 import { KeyframePatch } from './KeyframeGraph'
 import { KeyframeMediator } from './KeyframeMediator'
 import { ScriptParamEditor } from './ScriptParamEditor'
-
-import { SortEndHandler } from 'react-sortable-hoc'
-import { PX_PER_SEC } from '../Timeline/Timeline'
-import t from './KeyframeEditor.i18n'
-import s from './KeyframeEditor.sass'
 
 export interface EditorResult {
   code: string | null
@@ -660,6 +659,11 @@ export const KeyframeEditor = withFleurContext(
       }
 
       private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
+        if (Platform.isMacOS && e.ctrlKey) {
+          this.props.onScaled(Math.max(this.props.scale - e.deltaY * 0.1, 0.1))
+          return
+        }
+
         if (e.altKey) {
           const newScale = this.props.scale + e.deltaY * 0.05
           this.props.onScaled(Math.max(newScale, 0.1))
