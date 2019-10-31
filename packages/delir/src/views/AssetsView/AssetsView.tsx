@@ -16,6 +16,7 @@ import ProjectStore from '../../domain/Project/ProjectStore'
 import { getAssetById } from '../../domain/Project/selectors'
 import {CompositionSettingModal, CompositionSettingResult} from '../../modals/CompositionSettingModal'
 
+import { Droppable } from 'components/Droppable/Droppable'
 import { ModalMounterProps, withModalMounter } from 'components/ModalOwner/ModalOwner'
 import { decorate } from 'utils/decorate'
 import t from './AssetsView.i18n'
@@ -53,6 +54,7 @@ interface State {
   settingCompositionQuery: { [name: string]: string | number } | null
   selectedCompositionId: string | null
   selectedAssetId: string | null
+  dragover: boolean
 }
 
 type Props = ConnectedProps & ModalMounterProps & ContextProp
@@ -69,6 +71,7 @@ class AssetsView extends React.Component<Props, State> {
     settingCompositionQuery: null,
     selectedCompositionId: null,
     selectedAssetId: null,
+    dragover: false
   }
 
   private compositionInputRefs: { [assetId: string]: LabelInput } = {}
@@ -155,7 +158,7 @@ class AssetsView extends React.Component<Props, State> {
             <input type="file" style={{ display: 'none' }} onChange={this.handleSelectAsset} multiple />
           </label>
         </h1>
-        <div className={s.assetsTableContainer} onDrop={this.handleDropAsset}>
+        <Droppable className={s.assetsTableContainer} onDrop={this.handleDropAsset}>
           <table className={s.assetList}>
             <thead>
               <tr>
@@ -216,7 +219,7 @@ class AssetsView extends React.Component<Props, State> {
               ))}
             </tbody>
           </table>
-        </div>
+        </Droppable>
       </Pane>
     )
   }

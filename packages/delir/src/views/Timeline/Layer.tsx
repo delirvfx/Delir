@@ -1,9 +1,9 @@
 import * as Delir from '@delirvfx/core'
-import { ContextProp, useFleurContext, useStore } from '@fleur/react'
+import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
-import React, { useCallback, useRef, useState } from 'react'
-import { useImmer } from 'use-immer'
+import React, { useCallback } from 'react'
+import { useObjectState } from 'utils/hooks'
 import { SpreadType } from '../../utils/Spread'
 
 import * as EditorOps from '../../domain/Editor/operations'
@@ -38,7 +38,7 @@ interface State {
 }
 
 export const Layer = (props: Props) => {
-  const [{ dragovered }, setState] = useImmer<State>({ dragovered: false })
+  const [{ dragovered }, setState] = useObjectState<State>({ dragovered: false })
   const { executeOperation, getStore } = useFleurContext()
 
   const { selectedClipIds, activeLayerId, postEffectPlugins, userCodeException } = useStore(
@@ -70,6 +70,18 @@ export const Layer = (props: Props) => {
     GlobalEvents.off(GlobalEvent.pasteViaApplicationMenu, handleGlobalPaste)
   }, [])
 
+  const handleDragOver = useCallback(() => {
+    const { dragEntity } = getStore(EditorStore)
+    if (!dragEntity || dragEntity.type !== 'asset') return
+    setState({ dragovered: true })
+  }, [])
+
+  const handleDragLeave = useCallback(() => {
+    const { dragEntity } = getStore(EditorStore)
+    if (!dragEntity || dragEntity.type !== 'asset') return
+    setState({ dragovered: false })
+  }, [])
+
   const handleOnDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
       const { dragEntity } = getStore(EditorStore)
@@ -95,9 +107,7 @@ export const Layer = (props: Props) => {
       }
 
       executeOperation(EditorOps.clearDragEntity)
-      setState(draft => {
-        draft.dragovered = false
-      })
+      setState({ dragovered: false })
 
       e.preventDefault()
       e.stopPropagation()
@@ -166,6 +176,8 @@ export const Layer = (props: Props) => {
         [s.dragover]: dragovered,
         [s.active]: activeLayerId === layer.id,
       })}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleOnDrop}
       onMouseUp={handleMouseUp}
       onFocus={handleFocus}

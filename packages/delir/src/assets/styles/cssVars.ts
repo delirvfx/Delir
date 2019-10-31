@@ -14,7 +14,8 @@ export const cssVars = {
     appBg: '#353535',
     popupBg: lighten(0.08, '#353535'),
     listArea: rgba('#000', 0.2),
-    listItemHovered: rgba('#fff', 0.1),
+    listItemHovered: rgba('#fff', 0.08),
+    dragover: rgba('#fff', 0.08),
   },
   style: {
     activeBoxShadow: `0 0 0 3px ${rgba('#aa5bff', 0.4)}`,
