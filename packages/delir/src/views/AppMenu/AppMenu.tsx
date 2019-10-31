@@ -136,7 +136,7 @@ export default withFleurContext(
                       ],
                     })
 
-                    if (!result.canceled) return
+                    if (result.canceled) return
                     path = result.filePath!
                   }
 
@@ -159,7 +159,7 @@ export default withFleurContext(
                   })
 
                   // cancelled
-                  if (!path.canceled) return
+                  if (path.canceled) return
 
                   executeOperation(EditorOps.saveProject, { path: path.filePath! })
                 },
