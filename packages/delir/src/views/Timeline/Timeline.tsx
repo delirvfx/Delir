@@ -1,13 +1,14 @@
 import * as Delir from '@delirvfx/core'
 import { StoreGetter } from '@fleur/fleur'
-import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
+import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
-import React, { createRef } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import ReactDOM from 'react-dom'
 import { SortEndHandler } from 'react-sortable-hoc'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
+import { useObjectState } from 'utils/hooks'
 import { Dropdown } from '../../components/Dropdown'
 import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
@@ -23,11 +24,12 @@ import { ClipDragMediator } from './ClipDragMediator'
 import { Gradations } from './Gradations'
 import { LayerLabelList } from './LayerLabelList'
 
+import { useRef } from 'react'
+import { useEffect } from 'react'
+import { useLayoutEffect } from 'react'
 import { Platform } from 'utils/platform'
 import t from './Timeline.i18n'
 import s from './Timeline.sass'
-
-type Props = ReturnType<typeof mapStoresToProps> & ContextProp
 
 interface State {
   timelineScrollTop: number
@@ -35,326 +37,319 @@ interface State {
   timelineScrollWidth: number
   cursorHeight: number
   scale: number
-  clipDragOffset: { x: number }
 }
 
 export const PX_PER_SEC = 30
 
-const mapStoresToProps = (getStore: StoreGetter) => ({
-  activeComp: getStore(EditorStore).activeComp,
-  activeClips: getSelectedClips(getStore),
-  currentPointFrame: getStore(EditorStore).currentPointFrame,
-  previewPlayed: getStore(RendererStore).previewPlaying,
-})
+export const Timeline = () => {
+  const {executeOperation, getStore} = useFleurContext()
+  const { activeComp, activeClips, currentPointFrame, previewPlayed } = useStore(
+    [EditorStore, ProjectStore, RendererStore],
+    getStore => ({
+      activeComp: getStore(EditorStore).activeComp,
+      activeClips: getSelectedClips(getStore),
+      currentPointFrame: getStore(EditorStore).currentPointFrame,
+      previewPlayed: getStore(RendererStore).previewPlaying,
+    }),
+  )
 
-export default withFleurContext(
-  connectToStores([EditorStore, ProjectStore, RendererStore], mapStoresToProps)(
-    class Timeline extends React.Component<Props, State> {
-      public state: State = {
-        timelineScrollTop: 0,
-        timelineScrollLeft: 0,
-        timelineScrollWidth: 0,
-        cursorHeight: 0,
-        scale: 1,
-        clipDragOffset: { x: 0 },
-      }
+  const [{
+    timelineScrollTop,
+    timelineScrollLeft,
+    timelineScrollWidth,
+    cursorHeight,
+    scale
+  }, setState] = useObjectState<State>({
+    timelineScrollTop: 0,
+    timelineScrollLeft: 0,
+    timelineScrollWidth: 0,
+    cursorHeight: 0,
+    scale: 1,
+  })
 
-      private scaleList = createRef<Dropdown>()
-      private timelineContainer = createRef<HTMLDivElement>()
-      private labelContainer = createRef<HTMLDivElement>()
-      private keyframeView = createRef<InstanceType<typeof KeyframeEditor>>()
-      private mousetrap: MousetrapInstance
+  const mousetrap = useRef<MousetrapInstance|null>(null)
+  const scaleList = useRef<Dropdown | null>(null)
+  const timelineContainer = useRef<HTMLDivElement | null>(null)
+  const labelContainer = useRef<HTMLDivElement | null>(null)
+  const keyframeView = useRef<React.Component | null>(null)
 
-      public componentDidMount() {
-        this.syncCursorHeight()
+  const handleGlobalCopy = useCallback(() => {
+    executeOperation(EditorOps.copyClips)
+  }, [])
 
-        this.mousetrap = new Mousetrap(this.timelineContainer.current!)
-        this.mousetrap.bind('del', this.handleShortcutDel)
+  const handleGlobalCut = useCallback(() => {
+    executeOperation(EditorOps.cutClips)
+  }, [])
 
-        this.timelineContainer.current!.addEventListener('focusin', () => {
-          GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
-          GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
+  const handleShortcutDel = useCallback(() => {
+    executeOperation(ProjectOps.removeClips, {
+      clipIds: getSelectedClipIds(getStore),
+    })
+  }, [])
+
+  const handleResizeWindow = useCallback(_.debounce(() => {
+    const timelineHeight = timelineContainer.current!.getBoundingClientRect().height
+    const keyFrameViewHeight = (ReactDOM.findDOMNode(keyframeView.current!) as Element).getBoundingClientRect().height
+
+    setState({
+      cursorHeight: timelineHeight + keyFrameViewHeight + 1,
+    })
+  }, 1000 /30), [])
+
+  const handleScrollLayerLabel = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    setState({
+      timelineScrollTop: e.currentTarget.scrollTop,
+    })
+  }, [])
+
+  const handleScrollTimeline = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    setState({
+      timelineScrollTop: e.currentTarget.scrollTop,
+      timelineScrollLeft: e.currentTarget.scrollLeft,
+    })
+  }, [])
+
+  const onLayerSelect = useCallback((layerId: string) => {
+    executeOperation(EditorOps.changeActiveLayer, layerId)
+  }, [])
+
+  const onLayerSort: SortEndHandler = useCallback(({ oldIndex, newIndex }) => {
+    if (!activeComp) return
+
+    const layer = activeComp.layers[oldIndex]
+    executeOperation(ProjectOps.moveLayerOrder, {
+      layerId: layer.id,
+      newIndex,
+    })
+  }, [activeComp])
+
+  const handleAddLayer = useCallback(() => {
+    if (!activeComp) return
+
+    executeOperation(ProjectOps.addLayer, {
+      targetCompositionId: activeComp.id,
+    })
+  }, [activeComp])
+
+  const onLayerRemove = useCallback((layerId: string) => {
+    if (!activeComp) return
+    executeOperation(ProjectOps.removeLayer, {
+      layerId,
+    })
+  }, [activeComp])
+
+  const handleKeydownTimeline = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    // Prevent scrolling by space key
+    if (e.keyCode === 32) e.preventDefault()
+  }, [])
+
+  const handleWheelTimeline = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    if (Platform.isMacOS && e.ctrlKey) {
+      setState({ scale: Math.max(scale - e.deltaY * 0.1, 0.1) })
+      return
+    }
+
+    if (e.altKey) {
+      const newScale = scale + e.deltaY * 0.05
+      setState({ scale: Math.max(newScale, 0.1) })
+    }
+  }, [scale])
+
+  const handleScaleKeyframeEditor = useCallback((scale: number) => {
+    setState({ scale })
+  }, [])
+
+  const handleScrollKeyframeEditor = useCallback((dx: number, dy: number) => {
+    timelineContainer.current!.scrollLeft += dx
+    // Set scrollLeft normalized by DOM
+    setState({ timelineScrollLeft: timelineContainer.current!.scrollLeft })
+  }, [])
+
+  const handleClickOpenScaleList = useCallback(() => {
+    scaleList.current!.show()
+  }, [])
+
+  const handleSelectScale = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+
+    const scale = +(e.target as HTMLLIElement).dataset.value! / 100
+    scaleList.current!.hide()
+    setState({ scale })
+  }, [])
+
+  const handleDropAsset = useCallback((e: React.DragEvent<HTMLElement>) => {
+    const { dragEntity } = getStore(EditorStore).getState()
+
+    if (!activeComp) {
+      executeOperation(EditorOps.notify, {
+        message: t(t.k.errors.compositionNotSelected),
+        title: 'Woops',
+        level: 'info',
+        timeout: 4000,
+      })
+
+      return
+    }
+
+    if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
+    const { asset } = dragEntity
+    executeOperation(ProjectOps.addLayerWithAsset, {
+      targetComposition: activeComp,
+      asset,
+    })
+  }, [activeComp])
+
+  const handleGradationSeeked = useCallback((frame: number) => {
+    executeOperation(EditorOps.seekPreviewFrame, { frame })
+  }, [])
+
+  useEffect(() => {
+    handleResizeWindow()
+
+    mousetrap.current = new Mousetrap(timelineContainer.current!)
+    mousetrap.current.bind('del', handleShortcutDel)
+
+    timelineContainer.current!.addEventListener('focusin', () => {
+      GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, handleGlobalCopy)
+      GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, handleGlobalCut)
+    })
+
+    timelineContainer.current!.addEventListener('focusout', () => {
+      GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, handleGlobalCopy)
+      GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, handleGlobalCut)
+    })
+
+    window.addEventListener('resize', handleResizeWindow)
+
+    return () => {
+      window.removeEventListener('resize', handleResizeWindow)
+      mousetrap.current?.reset()
+    }
+  }, [])
+
+  useLayoutEffect(() => {
+    labelContainer.current!.scrollTop = timelineContainer.current!.scrollTop = timelineScrollTop
+
+    if (activeComp) {
+      const { durationFrames, framerate } = activeComp
+      const scrollWidth = TimePixelConversion.framesToPixel({
+        pxPerSec: PX_PER_SEC,
+        durationFrames: durationFrames + framerate * 2,
+        framerate: framerate,
+        scale,
+      })
+
+      if (timelineScrollWidth !== scrollWidth) {
+        setState({
+          timelineScrollWidth: scrollWidth,
         })
-
-        this.timelineContainer.current!.addEventListener('focusout', () => {
-          GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
-          GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
-        })
-
-        window.addEventListener('resize', _.debounce(this.syncCursorHeight, 1000 / 30))
       }
+    }
+  }, [activeComp?.durationFrames, activeComp?.framerate, scale, timelineScrollTop])
 
-      public componentDidUpdate() {
-        const { activeComp } = this.props
-        const { scale } = this.state
-        this.labelContainer.current!.scrollTop = this.timelineContainer.current!.scrollTop = this.state.timelineScrollTop
+  const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
-        if (activeComp) {
-          const { durationFrames, framerate } = activeComp
-          const scrollWidth = TimePixelConversion.framesToPixel({
-            pxPerSec: PX_PER_SEC,
-            durationFrames: durationFrames + framerate * 2,
-            framerate: framerate,
-            scale,
-          })
+  const measures = useMemo(() => activeComp ? TimePixelConversion.buildMeasures({
+      durationFrames: activeComp.durationFrames,
+      pxPerSec: PX_PER_SEC,
+      framerate: activeComp.framerate,
+      scale,
+      placeIntervalWidth: 20,
+      maxMeasures: activeComp.durationFrames,
+    }) : [],
+    [scale, activeComp?.durationFrames, activeComp?.framerate]
+  )
 
-          if (this.state.timelineScrollWidth !== scrollWidth) {
-            this.setState({
-              timelineScrollWidth: scrollWidth,
-            })
-          }
-        }
-      }
-
-      public componentWillMount() {
-        if (this.mousetrap) this.mousetrap.reset()
-      }
-
-      public render() {
-        const { scale, timelineScrollLeft, timelineScrollWidth } = this.state
-        const { previewPlayed, activeComp, activeClips, currentPointFrame } = this.props
-        const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
-
-        const measures = !activeComp
-          ? []
-          : TimePixelConversion.buildMeasures({
-              durationFrames: activeComp.durationFrames,
-              pxPerSec: PX_PER_SEC,
-              framerate: activeComp.framerate,
-              scale,
-              placeIntervalWidth: 20,
-              maxMeasures: activeComp.durationFrames,
-            })
-
-        return (
-          <Pane className={s.Timeline} allowFocus>
-            <Workspace direction="vertical">
-              <Pane className={s.timelineRegion}>
-                <Workspace direction="horizontal" onDrop={this._dropAsset}>
-                  {/* Layer Panel */}
-                  <Pane className={s.labelsContainer}>
-                    <div className={s.labelsHeader}>
-                      <div className={s.columnName}>
-                        {t(t.k.layers)}
-                        <i
-                          className={classnames('twa twa-heavy-plus-sign', s.addLayerIcon)}
-                          onClick={this.handleAddLayer}
-                        />
-                      </div>
-                      <div className={s.scaleLabel} onClick={this.handleClickOpenScaleList}>
-                        <Dropdown ref={this.scaleList} className={s.scaleList}>
-                          <div data-value="50" onClick={this.handleSelectScale}>
-                            50%
-                          </div>
-                          <div data-value="100" onClick={this.handleSelectScale}>
-                            100%
-                          </div>
-                          <div data-value="300" onClick={this.handleSelectScale}>
-                            300%
-                          </div>
-                          <div data-value="1000" onClick={this.handleSelectScale}>
-                            1000%
-                          </div>
-                        </Dropdown>
-                        <i className="fa fa-search-plus" />
-                        <span className={s.currentScale}>{(scale * 100) | 0}%</span>
-                      </div>
+  return (
+    <Pane className={s.Timeline} allowFocus>
+      <Workspace direction="vertical">
+        <Pane className={s.timelineRegion}>
+          <Workspace direction="horizontal" onDrop={handleDropAsset}>
+            {/* Layer Panel */}
+            <Pane className={s.labelsContainer}>
+              <div className={s.labelsHeader}>
+                <div className={s.columnName}>
+                  {t(t.k.layers)}
+                  <i
+                    className={classnames('twa twa-heavy-plus-sign', s.addLayerIcon)}
+                    onClick={handleAddLayer}
+                  />
+                </div>
+                <div className={s.scaleLabel} onClick={handleClickOpenScaleList}>
+                  <Dropdown ref={scaleList} className={s.scaleList}>
+                    <div data-value="50" onClick={handleSelectScale}>
+                      50%
                     </div>
-
-                    <div ref={this.labelContainer} className={s.labels} onScroll={this.handleScrollLayerLabel}>
-                      {activeComp && (
-                        <LayerLabelList
-                          layers={layers}
-                          useDragHandle={true}
-                          onSortEnd={this.onLayerSort}
-                          onLayerSelect={this.onLayerSelect}
-                          onLayerRemove={this.onLayerRemove}
-                        />
-                      )}
+                    <div data-value="100" onClick={handleSelectScale}>
+                      100%
                     </div>
-                  </Pane>
-                  {/* Layer Panel */}
-                  <Pane className={s.timelineContainer} onWheel={this.handleWheelTimeline}>
-                    <Gradations
-                      activeComposition={activeComp}
-                      measures={measures}
-                      previewPlaying={previewPlayed}
-                      currentFrame={currentPointFrame}
-                      cursorHeight={this.state.cursorHeight}
-                      scale={this.state.scale}
-                      pxPerSec={PX_PER_SEC}
+                    <div data-value="300" onClick={handleSelectScale}>
+                      300%
+                    </div>
+                    <div data-value="1000" onClick={handleSelectScale}>
+                      1000%
+                    </div>
+                  </Dropdown>
+                  <i className="fa fa-search-plus" />
+                  <span className={s.currentScale}>{(scale * 100) | 0}%</span>
+                </div>
+              </div>
+
+              <div ref={labelContainer} className={s.labels} onScroll={handleScrollLayerLabel}>
+                {activeComp && (
+                  <LayerLabelList
+                    layers={layers}
+                    useDragHandle={true}
+                    onSortEnd={onLayerSort}
+                    onLayerSelect={onLayerSelect}
+                    onLayerRemove={onLayerRemove}
+                  />
+                )}
+              </div>
+            </Pane>
+            {/* Layer Panel */}
+            <Pane className={s.timelineContainer} onWheel={handleWheelTimeline}>
+              <Gradations
+                activeComposition={activeComp}
+                measures={measures}
+                previewPlaying={previewPlayed}
+                currentFrame={currentPointFrame}
+                cursorHeight={cursorHeight}
+                scale={scale}
+                pxPerSec={PX_PER_SEC}
+                scrollLeft={timelineScrollLeft}
+                onSeeked={handleGradationSeeked}
+              />
+
+              <div ref={timelineContainer} className={s.layerContainer} onScroll={handleScrollTimeline}>
+                <div style={{ display: 'flex', height: '100%' }} onKeyDown={handleKeydownTimeline}>
+                  {activeComp && (
+                    <ClipDragMediator
+                      comp={activeComp}
+                      scale={scale}
                       scrollLeft={timelineScrollLeft}
-                      onSeeked={this._onSeeked}
+                      scrollWidth={timelineScrollWidth}
                     />
-
-                    <div ref={this.timelineContainer} className={s.layerContainer} onScroll={this.handleScrollTimeline}>
-                      <div style={{ display: 'flex', height: '100%' }} onKeyDown={this.handleKeydownTimeline}>
-                        {activeComp && (
-                          <ClipDragMediator
-                            comp={activeComp}
-                            scale={scale}
-                            scrollLeft={timelineScrollLeft}
-                            scrollWidth={timelineScrollWidth}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </Pane>
-                </Workspace>
-              </Pane>
-              <Pane className={s.keyframeGraphRegion}>
-                <KeyframeEditor
-                  ref={this.keyframeView}
-                  activeComposition={activeComp}
-                  activeClip={activeClips.length === 1 ? activeClips[0] : null}
-                  pxPerSec={PX_PER_SEC}
-                  scale={scale}
-                  scrollLeft={timelineScrollLeft}
-                  measures={measures}
-                  onScroll={this.handleScrollKeyframeEditor}
-                  onScaled={this.handleScaleKeyframeEditor}
-                />
-              </Pane>
-            </Workspace>
-          </Pane>
-        )
-      }
-
-      private handleGlobalCopy = () => {
-        this.props.executeOperation(EditorOps.copyClips)
-      }
-
-      private handleGlobalCut = () => {
-        this.props.executeOperation(EditorOps.cutClips)
-      }
-
-      private handleShortcutDel = () => {
-        this.props.executeOperation(ProjectOps.removeClips, {
-          clipIds: getSelectedClipIds(this.props.getStore),
-        })
-      }
-
-      private syncCursorHeight = () => {
-        const timelineHeight = this.timelineContainer.current!.getBoundingClientRect().height
-        const keyFrameViewHeight = (ReactDOM.findDOMNode(this.keyframeView.current!) as Element).getBoundingClientRect()
-          .height
-
-        this.setState({
-          cursorHeight: timelineHeight + keyFrameViewHeight + 1,
-        })
-      }
-
-      private handleScrollLayerLabel = (e: React.UIEvent<HTMLDivElement>) => {
-        this.setState({
-          timelineScrollTop: e.currentTarget.scrollTop,
-        })
-      }
-
-      private handleScrollTimeline = (e: React.UIEvent<HTMLDivElement>) => {
-        this.setState({
-          timelineScrollTop: e.currentTarget.scrollTop,
-          timelineScrollLeft: e.currentTarget.scrollLeft,
-        })
-      }
-
-      private onLayerSelect = (layerId: string) => {
-        this.props.executeOperation(EditorOps.changeActiveLayer, layerId)
-      }
-
-      private onLayerSort: SortEndHandler = ({ oldIndex, newIndex }) => {
-        const { activeComp } = this.props
-        if (!activeComp) return
-
-        const layer = activeComp.layers[oldIndex]
-        this.props.executeOperation(ProjectOps.moveLayerOrder, {
-          layerId: layer.id,
-          newIndex,
-        })
-      }
-
-      private handleAddLayer = () => {
-        const { activeComp } = this.props
-
-        if (!activeComp) return
-        this.props.executeOperation(ProjectOps.addLayer, {
-          targetCompositionId: activeComp.id,
-        })
-      }
-
-      private onLayerRemove = (layerId: string) => {
-        if (!this.props.activeComp) return
-        this.props.executeOperation(ProjectOps.removeLayer, {
-          layerId,
-        })
-      }
-
-      private handleKeydownTimeline = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        // Prevent scrolling by space key
-        if (e.keyCode === 32) e.preventDefault()
-      }
-
-      private handleWheelTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
-        if (Platform.isMacOS && e.ctrlKey) {
-          this.setState({ scale: Math.max(this.state.scale - e.deltaY * 0.1, 0.1) })
-          return
-        }
-
-        if (e.altKey) {
-          const newScale = this.state.scale + e.deltaY * 0.05
-          this.setState({ scale: Math.max(newScale, 0.1) })
-        }
-      }
-
-      private handleScaleKeyframeEditor = (scale: number) => {
-        this.setState({ scale })
-      }
-
-      private handleScrollKeyframeEditor = (dx: number, dy: number) => {
-        this.timelineContainer.current!.scrollLeft += dx
-        // Set scrollLeft normalized by DOM
-        this.setState({ timelineScrollLeft: this.timelineContainer.current!.scrollLeft })
-      }
-
-      private handleClickOpenScaleList = () => {
-        this.scaleList.current!.show()
-      }
-
-      private handleSelectScale = (e: React.MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation()
-
-        const scale = +(e.target as HTMLLIElement).dataset.value! / 100
-        this.scaleList.current!.hide()
-        this.setState({ scale: scale })
-      }
-
-      private _dropAsset = (e: React.DragEvent<HTMLElement>) => {
-        const { activeComp } = this.props
-        const { dragEntity } = this.props.getStore(EditorStore).getState()
-
-        if (!activeComp) {
-          this.props.executeOperation(EditorOps.notify, {
-            message: t(t.k.errors.compositionNotSelected),
-            title: 'Woops',
-            level: 'info',
-            timeout: 4000,
-          })
-
-          return
-        }
-
-        if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
-        const { asset } = dragEntity
-        this.props.executeOperation(ProjectOps.addLayerWithAsset, {
-          targetComposition: activeComp,
-          asset,
-        })
-      }
-
-      private _onSeeked = (frame: number) => {
-        this.props.executeOperation(EditorOps.seekPreviewFrame, {
-          frame,
-        })
-      }
-    },
-  ),
-)
+                  )}
+                </div>
+              </div>
+            </Pane>
+          </Workspace>
+        </Pane>
+        <Pane className={s.keyframeGraphRegion}>
+          <KeyframeEditor
+            ref={keyframeView}
+            activeComposition={activeComp}
+            activeClip={activeClips.length === 1 ? activeClips[0] : null}
+            pxPerSec={PX_PER_SEC}
+            scale={scale}
+            scrollLeft={timelineScrollLeft}
+            measures={measures}
+            onScroll={handleScrollKeyframeEditor}
+            onScaled={handleScaleKeyframeEditor}
+          />
+        </Pane>
+      </Workspace>
+    </Pane>
+  )
+}
