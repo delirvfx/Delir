@@ -84,7 +84,7 @@ export const Gradations = ({
     }
 
     intervalId.current = requestAnimationFrame(updateCursor)
-  }, [previewPlaying, scrollLeft, lastRenderState])
+  }, [activeComposition, previewPlaying, currentFrame, scrollLeft, lastRenderState])
 
   const handleSeeking = useCallback(
     ({ nativeEvent: e }: React.MouseEvent<HTMLDivElement>) => {
