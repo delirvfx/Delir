@@ -101,8 +101,8 @@ export default decorate<OwnProps>(
                         />
                       ))
                     ) : (
-                        <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
-                      )}
+                      <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
+                    )}
                   </MenuItem>
                   {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
                   <MenuItem type="separator" />
@@ -193,6 +193,13 @@ export default decorate<OwnProps>(
 
     private handleResize: RndResizeCallback = (e, dir, ref, delta, pos) => {
       const { clip } = this.props
+
+      // Enable dragging from unselected state
+      if (!this.props.active) {
+        this.props.executeOperation(EditorOps.changeSelectClip, {
+          clipIds: [this.props.clip.id],
+        })
+      }
 
       this.props.emitClipResize({
         nextX: pos.x,
