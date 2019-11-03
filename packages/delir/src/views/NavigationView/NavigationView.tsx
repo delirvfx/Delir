@@ -1,12 +1,11 @@
 import { useFleurContext, useStore } from '@fleur/react'
 import { remote } from 'electron'
 import path from 'path'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { useModalMounter } from 'components/ModalOwner/ModalOwner'
 import { Pane } from 'components/Pane'
 import EditorStore from 'domain/Editor/EditorStore'
-import * as EditorOps from 'domain/Editor/operations'
 import * as PreferenceOps from 'domain/Preference/operations'
 import PreferenceStore from 'domain/Preference/PreferenceStore'
 import { getAudioVolume } from 'domain/Preference/selectors'
@@ -29,9 +28,9 @@ export const NavigationView = () => {
     audioVolume: getAudioVolume(getStore),
   }))
 
-  const projectName = project ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project') : 'Delir'
+  const projectName = project ? (projectPath ? path.parse(projectPath).name : 'New Project') + ' - Delir' : 'Delir'
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = projectName
   }, [projectName])
 
