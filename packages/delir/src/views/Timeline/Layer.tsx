@@ -131,11 +131,20 @@ export const Layer = (props: Props) => {
 
         const droppedLayerId = droppedLayerDom.dataset.layerId!
 
-        executeOperation(ProjectOps.moveClipToLayer, {
-          baseClipId: dragEntity.baseClipId,
-          clipIds,
-          moveDestLayerId: droppedLayerId,
-        })
+        if (e.altKey) {
+          executeOperation(ProjectOps.copyClipsIntoLayer, {
+            baseClipId: dragEntity.baseClipId,
+            clipIds,
+            destLayerId: droppedLayerId,
+          })
+        } else {
+          executeOperation(ProjectOps.moveClipToLayer, {
+            baseClipId: dragEntity.baseClipId,
+            clipIds,
+            moveDestLayerId: droppedLayerId,
+          })
+        }
+
         executeOperation(EditorOps.changeActiveLayer, droppedLayerId)
         executeOperation(EditorOps.clearDragEntity)
       }
