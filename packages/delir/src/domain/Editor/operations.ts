@@ -162,10 +162,9 @@ export const openProject = operation(async (context, { path }: { path: string })
   const project = Delir.Exporter.deserializeProject(projectJson)
   const migrated = migrateProject(Delir.ProjectMigrator.migrate(project))
 
-
   await context.executeOperation(setActiveProject, {
     project: migrated,
-    path: path[0],
+    path,
   })
 })
 
