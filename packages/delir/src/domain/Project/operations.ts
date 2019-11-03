@@ -175,12 +175,12 @@ export const addClip = operation(
       layerId,
       clipRendererId,
       placedFrame,
-      durationFrames = 100,
+      durationFrames,
     }: {
       layerId: string
       clipRendererId: string
       placedFrame?: number
-      durationFrames: number
+      durationFrames?: number
     },
   ) => {
     const project = context.getStore(ProjectStore).getProject()!
@@ -190,7 +190,7 @@ export const addClip = operation(
     const newClip = new Delir.Entity.Clip({
       renderer: clipRendererId as any,
       placedFrame: placedFrame ? placedFrame : currentPreviewFrame,
-      durationFrames: durationFrames,
+      durationFrames: durationFrames ?? composition.framerate,
     })
 
     await context.executeOperation(HistoryOps.pushHistory, {

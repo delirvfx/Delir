@@ -154,7 +154,6 @@ export const Layer = (props: Props) => {
       executeOperation(ProjectOps.addClip, {
         layerId: layer.id!,
         clipRendererId: dataset.rendererId,
-        durationFrames: 100,
       })
     },
     [layer],
