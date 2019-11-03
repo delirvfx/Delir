@@ -35,6 +35,7 @@ const mapStoresToProps = (getStore: StoreGetter) => {
 
 const RenderStatusIcon = styled(Icon)`
   margin-left: 8px;
+  opacity: 0.5;
   animation: ${keyframes`
     0% {
       transform: rotate(0deg);
@@ -141,10 +142,7 @@ export const PreviewView = (props: Props) => {
   return (
     <Pane className={s.Preview} allowFocus>
       <div className={s.Preview_Inner}>
-        <div className={s.Preview_Header}>
-          {activeComp && activeComp.name}
-          {isInRendering && <RenderStatusIcon kind="circle-o-notch" />}
-        </div>
+        <div className={s.Preview_Header}>{activeComp && activeComp.name}</div>
         <div
           className={s.Preview_View}
           onWheel={handleWheelPreviewView}
@@ -188,6 +186,7 @@ export const PreviewView = (props: Props) => {
             </Dropdown>
           </label>
           <div className={s.FooterItem}>{timecode}</div>
+          <div>{isInRendering && <RenderStatusIcon kind="circle-o-notch" />}</div>
         </div>
       </div>
     </Pane>
