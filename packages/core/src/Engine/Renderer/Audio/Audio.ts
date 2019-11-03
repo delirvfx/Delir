@@ -110,7 +110,7 @@ export class AudioRenderer implements IRenderer<AudioRendererParam> {
         slices[ch].fill(0, 0, Math.abs(sourceBegin))
         sourceBegin = 0
       }
-      slices[ch].set(buffer.slice(sourceBegin, sourceBegin + slicingSamples), destOffset)
+      slices[ch].set(buffer.slice(sourceBegin, Math.floor(sourceBegin + slicingSamples)), destOffset)
     }
 
     // Resampling & gaining
