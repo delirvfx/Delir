@@ -69,14 +69,13 @@ export class AudioRenderer implements IRenderer<AudioRendererParam> {
     const audioCtx = new OfflineAudioContext(1, context.audioChannels, context.samplingRate)
     const content = await (await fetch(params.source.path)).arrayBuffer()
     const audioBuffer = await audioCtx.decodeAudioData(content)
-    const buffers = _.times(audioBuffer.numberOfChannels, ch => audioBuffer.getChannelData(ch))
-
-    await resampling(audioBuffer.sampleRate, context.samplingRate, buffers)
+    const inputBuffers = _.times(audioBuffer.numberOfChannels, ch => audioBuffer.getChannelData(ch))
+    const resampledBuffers = await resampling(audioBuffer.sampleRate, context.samplingRate, inputBuffers)
 
     this.audio = {
       sourcePath: params.source.path,
       numberOfChannels: audioBuffer.numberOfChannels,
-      buffers,
+      buffers: resampledBuffers,
     }
   }
 
