@@ -14,6 +14,7 @@ import { MountTransition } from '../../components/MountTransition'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
+import { getSelectedClipIds } from 'domain/Editor/selectors'
 import t from './Clip.i18n'
 import s from './Clip.sass'
 import { ClipDragProps, withClipDragContext } from './ClipDragContext'
@@ -227,9 +228,15 @@ export default decorate<OwnProps>(
     }
 
     private handleRemoveClip = ({ dataset }: MenuItemOption<{ clipId: string }>) => {
-      this.props.executeOperation(ProjectOps.removeClips, {
-        clipIds: [dataset.clipId],
-      })
+      if (this.props.active) {
+        this.props.executeOperation(ProjectOps.removeClips, {
+          clipIds: getSelectedClipIds(this.props.getStore),
+        })
+      } else {
+        this.props.executeOperation(ProjectOps.removeClips, {
+          clipIds: [dataset.clipId],
+        })
+      }
     }
 
     private handleSeekToHeadOfClip = () => {
