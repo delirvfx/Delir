@@ -12,6 +12,7 @@ import { getAudioVolume } from 'domain/Preference/selectors'
 import * as RendererOps from 'domain/Renderer/operations'
 import RendererStore from 'domain/Renderer/RendererStore'
 import { RenderingOption, RenderingSettingModal } from 'modals/RenderingSettingModal/RenderingSettingModal'
+import t from './NavigationView.i18n'
 import s from './NavigationView.sass'
 
 export const NavigationView = () => {
@@ -75,16 +76,16 @@ export const NavigationView = () => {
       </ul>
       <ul className={s.navigationList}>
         {previewPlaying ? (
-          <li className={s.icon} onClick={onClickPause}>
+          <li className={s.icon} onClick={onClickPause} title={t(t.k.preview)}>
             <i className="fa fa-pause" />
           </li>
         ) : (
-          <li className={s.icon} onClick={onClickPlay}>
+          <li className={s.icon} onClick={onClickPlay} title={t(t.k.preview)}>
             <i className="fa fa-play" />
           </li>
         )}
         <li onClick={onClickDest}>
-          <i className="fa fa-film" />
+          <i className="fa fa-film" title={t(t.k.rendering)} />
         </li>
         <li className={s.volume}>
           <i className="fa fa-volume-up" />
