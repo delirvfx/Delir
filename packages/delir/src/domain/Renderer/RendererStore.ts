@@ -12,6 +12,7 @@ interface State {
   previewPlaying: boolean
   previewRenderState: RenderState | null
   isInRendering: boolean
+  framePreviewWaiting: boolean
   exportRenderState: RenderingProgress | null
   exception: Delir.Exceptions.UserCodeException | null
 }
@@ -31,6 +32,10 @@ export default class RendererStore extends Store<State> {
     return this.state.previewPlaying
   }
 
+  public get framePreviewWaiting() {
+    return this.state.framePreviewWaiting
+  }
+
   public static storeName = 'RendererStore'
 
   public state: State = {
@@ -40,6 +45,7 @@ export default class RendererStore extends Store<State> {
     previewPlaying: false,
     previewRenderState: null,
     isInRendering: false,
+    framePreviewWaiting: false,
     exportRenderState: null,
     exception: null,
   }
@@ -204,14 +210,14 @@ export default class RendererStore extends Store<State> {
       onFrame: canvas => this.destCanvasCtx!.drawImage(canvas, 0, 0),
     })
 
-    this.updateWith(state => (state.isInRendering = true))
+    this.updateWith(state => (state.framePreviewWaiting = true))
 
     await this.engine!.renderFrame(targetComposition.id, frame).catch(e => {
       // tslint:disable-next-line
       console.error(e)
     })
 
-    this.updateWith(state => (state.isInRendering = false))
+    this.updateWith(state => (state.framePreviewWaiting = false))
   })
 
   private handleSetInRenderingStatus = listen(RendererActions.setInRenderingStatus, ({ isInRendering }) => {

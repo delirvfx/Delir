@@ -49,13 +49,13 @@ const RenderStatusIcon = styled(Icon)`
 
 export const PreviewView = (props: Props) => {
   const { executeOperation } = useFleurContext()
-  const { activeComp, isInRendering, currentPreviewFrame, previewPlaying, lastRenderState } = useStore(
+  const { activeComp, currentPreviewFrame, previewPlaying, framePreviewWaiting, lastRenderState } = useStore(
     [EditorStore, RendererStore],
     getStore => ({
       activeComp: getActiveComp(getStore),
       currentPreviewFrame: getCurrentPreviewFrame(getStore),
-      isInRendering: getStore(RendererStore).isInRendering(),
       previewPlaying: getStore(RendererStore).previewPlaying,
+      framePreviewWaiting: getStore(RendererStore).framePreviewWaiting,
       lastRenderState: getStore(RendererStore).getLastRenderState(),
     }),
   )
@@ -186,7 +186,7 @@ export const PreviewView = (props: Props) => {
             </Dropdown>
           </label>
           <div className={s.FooterItem}>{timecode}</div>
-          <div>{isInRendering && <RenderStatusIcon kind="circle-o-notch" />}</div>
+          <div>{framePreviewWaiting && <RenderStatusIcon kind="circle-o-notch" />}</div>
         </div>
       </div>
     </Pane>
