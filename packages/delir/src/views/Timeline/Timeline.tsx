@@ -13,7 +13,7 @@ import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
-import { getSelectedClips } from '../../domain/Editor/selectors'
+import { getSelectedClipIds, getSelectedClips } from '../../domain/Editor/selectors'
 import * as ProjectOps from '../../domain/Project/operations'
 import ProjectStore from '../../domain/Project/ProjectStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
@@ -63,9 +63,13 @@ export default withFleurContext(
       private timelineContainer = createRef<HTMLDivElement>()
       private labelContainer = createRef<HTMLDivElement>()
       private keyframeView = createRef<InstanceType<typeof KeyframeEditor>>()
+      private mousetrap: MousetrapInstance
 
       public componentDidMount() {
         this.syncCursorHeight()
+
+        this.mousetrap = new Mousetrap(this.timelineContainer.current!)
+        this.mousetrap.bind('del', this.handleShortcutDel)
 
         this.timelineContainer.current!.addEventListener('focusin', () => {
           GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
@@ -100,6 +104,10 @@ export default withFleurContext(
             })
           }
         }
+      }
+
+      public componentWillMount() {
+        if (this.mousetrap) this.mousetrap.reset()
       }
 
       public render() {
@@ -218,6 +226,12 @@ export default withFleurContext(
 
       private handleGlobalCut = () => {
         this.props.executeOperation(EditorOps.cutClips)
+      }
+
+      private handleShortcutDel = () => {
+        this.props.executeOperation(ProjectOps.removeClips, {
+          clipIds: getSelectedClipIds(this.props.getStore),
+        })
       }
 
       private syncCursorHeight = () => {
