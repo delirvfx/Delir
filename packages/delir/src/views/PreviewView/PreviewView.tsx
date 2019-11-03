@@ -1,8 +1,10 @@
 import { StoreGetter } from '@fleur/fleur'
 import { ContextProp, useFleurContext, useStore } from '@fleur/react'
-import React, { MouseEvent, useCallback, useRef } from 'react'
+import React, { MouseEvent, useCallback, useEffect, useRef, WheelEvent } from 'react'
+import styled, { keyframes } from 'styled-components'
 import { frameToTimeCode } from '../../utils/Timecode'
 
+import { Icon } from 'components/Icon/Icon'
 import { Dropdown } from '../../components/Dropdown'
 import { Pane } from '../../components/Pane'
 
@@ -11,8 +13,6 @@ import EditorStore from '../../domain/Editor/EditorStore'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
-import { useEffect } from 'react'
-import { WheelEvent } from 'react'
 import { useObjectState } from 'utils/hooks'
 import { Platform } from 'utils/platform'
 import t from './PreviewView.i18n'
@@ -33,13 +33,27 @@ const mapStoresToProps = (getStore: StoreGetter) => {
   return
 }
 
+const RenderStatusIcon = styled(Icon)`
+  margin-left: 8px;
+  animation: ${keyframes`
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(359deg);
+    }
+  `} 0.5s infinite linear;
+`
+
 export const PreviewView = (props: Props) => {
   const { executeOperation } = useFleurContext()
-  const { activeComp, currentPreviewFrame, previewPlaying, lastRenderState } = useStore(
+  const { activeComp, isInRendering, currentPreviewFrame, previewPlaying, lastRenderState } = useStore(
     [EditorStore, RendererStore],
     getStore => ({
       activeComp: getActiveComp(getStore),
       currentPreviewFrame: getCurrentPreviewFrame(getStore),
+      isInRendering: getStore(RendererStore).isInRendering(),
       previewPlaying: getStore(RendererStore).previewPlaying,
       lastRenderState: getStore(RendererStore).getLastRenderState(),
     }),
@@ -127,7 +141,10 @@ export const PreviewView = (props: Props) => {
   return (
     <Pane className={s.Preview} allowFocus>
       <div className={s.Preview_Inner}>
-        <div className={s.Preview_Header}>{activeComp && activeComp.name}</div>
+        <div className={s.Preview_Header}>
+          {activeComp && activeComp.name}
+          {isInRendering && <RenderStatusIcon kind="circle-o-notch" />}
+        </div>
         <div
           className={s.Preview_View}
           onWheel={handleWheelPreviewView}

@@ -196,7 +196,7 @@ export default class RendererStore extends Store<State> {
     this.updateWith(s => (s.previewPlaying = false))
   })
 
-  private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrame, payload => {
+  private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrame, async payload => {
     const { frame } = payload
     const targetComposition = this.state.composition!
 
@@ -204,10 +204,14 @@ export default class RendererStore extends Store<State> {
       onFrame: canvas => this.destCanvasCtx!.drawImage(canvas, 0, 0),
     })
 
-    this.engine!.renderFrame(targetComposition.id, frame).catch(e => {
+    this.updateWith(state => (state.isInRendering = true))
+
+    await this.engine!.renderFrame(targetComposition.id, frame).catch(e => {
       // tslint:disable-next-line
       console.error(e)
     })
+
+    this.updateWith(state => (state.isInRendering = false))
   })
 
   private handleSetInRenderingStatus = listen(RendererActions.setInRenderingStatus, ({ isInRendering }) => {
