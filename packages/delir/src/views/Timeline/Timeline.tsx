@@ -1,5 +1,4 @@
 import * as Delir from '@delirvfx/core'
-import { StoreGetter } from '@fleur/fleur'
 import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
@@ -310,7 +309,6 @@ export const Timeline = () => {
             {/* Layer Panel */}
             <Pane className={s.timelineContainer} onWheel={handleWheelTimeline}>
               <Gradations
-                activeComposition={activeComp}
                 measures={measures}
                 previewPlaying={previewPlayed}
                 currentFrame={currentPointFrame}

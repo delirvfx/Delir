@@ -18,7 +18,7 @@ import { Preference } from '../Preference'
 import { PreviewView } from '../PreviewView/'
 import { RenderingWaiter } from '../RenderingWaiter'
 import { StatusBar } from '../StatusBar'
-import Timeline from '../Timeline'
+import { Timeline } from '../Timeline'
 import { ShortcutHandler } from './ShortcutHandler'
 
 import s from './AppView.sass'
