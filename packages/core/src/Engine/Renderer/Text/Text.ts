@@ -14,6 +14,7 @@ interface TextRendererParam {
   weight: ParamType.Enum
   size: ParamType.Number
   lineHeight: ParamType.Number
+  align: ParamType.Enum
   color: ParamType.ColorRGBA
   x: ParamType.Number
   y: ParamType.Number
@@ -72,6 +73,11 @@ export class TextRenderer implements IRenderer<TextRendererParam> {
           label: 'Line height (%)',
           defaultValue: () => 100,
         })
+        .enum('align', {
+          label: 'Align',
+          selection: ['left', 'center', 'right'],
+          defaultValue: () => 'left',
+        })
         .colorRgba('color', {
           label: 'Color',
           defaultValue: () => new ColorRGBA(0, 0, 0, 1),
@@ -123,8 +129,9 @@ export class TextRenderer implements IRenderer<TextRendererParam> {
     const lines = param.text.split('\n')
     const height = lines.length * lineHeight
     const width = lines.reduce((mostLongWidth, line) => Math.max(mostLongWidth, ctx.measureText(line).width), 0)
+    const alignOffsetX = param.align === 'center' ? -width / 2 : param.align === 'right' ? -width : 0
 
-    ctx.translate(param.x, param.y)
+    ctx.translate(param.x + alignOffsetX, param.y)
     ctx.translate(width / 2, height / 2)
     ctx.rotate(rad)
     ctx.translate(-width / 2, -height / 2)
