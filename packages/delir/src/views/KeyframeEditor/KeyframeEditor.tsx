@@ -14,6 +14,7 @@ import * as ProjectOps from '../../domain/Project/operations'
 
 import { PropertyInput } from 'components/PropertyInput/PropertyInput'
 import { getActiveComp } from 'domain/Editor/selectors'
+import { memo } from 'react'
 import { SortEndHandler } from 'react-sortable-hoc'
 import { Button } from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
@@ -67,32 +68,30 @@ interface State {
 
 type Props = OwnProps & ConnectedProps & ContextProp
 
-const Measures = ({ measures }: { measures: MeasurePoint[] }) => {
+const Measures = memo(({ measures }: { measures: MeasurePoint[] }) => {
   const { activeComp } = useStore([EditorStore, ProjectStore], getStore => ({
     activeComp: getActiveComp(getStore),
   }))
 
-  const components = useMemo(
-    () =>
-      !activeComp
-        ? []
-        : measures.map(point => (
-            <div
-              key={point.index}
-              className={classnames(s.measureLine, {
-                [s['--grid']]: point.frameNumber % 10 === 0,
-                [s['--endFrame']]: point.frameNumber === activeComp.durationFrames,
-              })}
-              style={{ left: point.left }}
-            >
-              {point.frameNumber}
-            </div>
-          )),
-    [measures],
-  )
+  if (!activeComp) return null
 
-  return <>{components}</>
-}
+  return (
+    <>
+      {measures.map(point => (
+        <div
+          key={point.index}
+          className={classnames(s.measureLine, {
+            [s['--grid']]: point.frameNumber % 10 === 0,
+            [s['--endFrame']]: point.frameNumber === activeComp.durationFrames,
+          })}
+          style={{ left: point.left }}
+        >
+          {point.frameNumber}
+        </div>
+      ))}
+    </>
+  )
+})
 
 export const KeyframeEditor = withFleurContext(
   connectToStores(
