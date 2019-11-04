@@ -183,6 +183,7 @@ export default class RendererStore extends Store<State> {
         e => {
           if (e instanceof Delir.Exceptions.RenderingAbortedException) {
           } else if (e instanceof Delir.Exceptions.UserCodeException) {
+            this.updateWith(s => (s.exception = e))
           } else {
             // tslint:disable-next-line:no-console
             console.log(e)

@@ -77,6 +77,7 @@ export const notify = operation(
   (
     context,
     arg: {
+      id?: string,
       message?: string
       title?: string
       level: 'info' | 'error'
@@ -84,7 +85,7 @@ export const notify = operation(
       detail?: string
     },
   ) => {
-    const id = _.uniqueId('notify')
+    const id = arg.id || _.uniqueId('notify')
 
     context.dispatch(EditorActions.addMessage, {
       id,

@@ -63,13 +63,16 @@ export const Notifications = () => {
   }))
 
   useEffect(() => {
-    if (!userCodeException) return
+    if (!userCodeException) {
+      context.executeOperation(EditorOps.removeNotification, { id: 'user-code-exception' })
+      return
+    }
 
     context.executeOperation(EditorOps.notify, {
+      id: 'user-code-exception',
       title: t(t.k.userCodeError),
-      detail: `In ${userCodeException.location.type}#${userCodeException.location.entityId.slice(0, 4)}\n${
-        userCodeException.message
-      }`,
+      message: `In ${userCodeException.location.type}#${userCodeException.location.entityId.slice(0, 4)}`,
+      detail: userCodeException.message,
       level: 'error',
     })
   }, [userCodeException])
