@@ -17,7 +17,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
-import Clip from './Clip'
+import { Clip } from './Clip'
 
 import t from './Layer.i18n'
 import s from './Layer.sass'
