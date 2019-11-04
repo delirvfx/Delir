@@ -128,12 +128,6 @@ export const changeActiveParam = operation((context, { target }: { target: Param
   context.dispatch(EditorActions.changeActiveParam, { target })
 })
 
-export const updateProcessingState = operation((context, arg: { stateText: string }) => {
-  context.dispatch(EditorActions.updateProcessingState, {
-    stateText: arg.stateText,
-  })
-})
-
 export const seekPreviewFrame = operation((context, { frame = undefined }: { frame?: number }) => {
   const state = context.getStore(EditorStore).getState()
 

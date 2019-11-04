@@ -17,7 +17,6 @@ import { Notifications } from '../Notifications/Notifications'
 import { Preference } from '../Preference'
 import { PreviewView } from '../PreviewView/'
 import { RenderingWaiter } from '../RenderingWaiter'
-import { StatusBar } from '../StatusBar'
 import { Timeline } from '../Timeline'
 import { ShortcutHandler } from './ShortcutHandler'
 
@@ -58,7 +57,6 @@ export default withFleurContext(
               </Pane>
               <Timeline />
             </Workspace>
-            <StatusBar />
             <Notifications />
             <RenderingWaiter />
             <Transition

@@ -23,7 +23,6 @@ export interface EditorState {
   selectClipIds: string[]
   activeParam: ParameterTarget | null
   dragEntity: DragEntity | null
-  processingState: string | null
   currentPreviewFrame: number
   preferenceOpened: boolean
   clipboard: ClipboardEntry | null
@@ -41,7 +40,6 @@ export default class EditorStore extends Store<EditorState> {
     selectClipIds: [],
     activeParam: null,
     dragEntity: null,
-    processingState: null,
     currentPreviewFrame: 0,
     preferenceOpened: false,
     clipboard: null,
@@ -188,10 +186,6 @@ export default class EditorStore extends Store<EditorState> {
 
       d.activeParam = target
     })
-  })
-
-  private handleupdateProcessingState = listen(EditorActions.updateProcessingState, payload => {
-    this.updateWith(d => (d.processingState = payload.stateText))
   })
 
   private handleseekPreviewFrame = listen(EditorActions.seekPreviewFrame, payload => {

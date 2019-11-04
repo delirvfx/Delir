@@ -18,7 +18,6 @@ export const EditorActions = actions('Editor', {
   changeSelectClip: action<{ clipIds: string[] }>(),
   addOrRemoveSelectClip: action<{ clipIds: string[] }>(),
   changeActiveParam: action<{ target: ParameterTarget | null }>(),
-  updateProcessingState: action<{ stateText: string }>(),
   addMessage: action<NotificationEntry>(),
   removeMessage: action<{ id: string }>(),
   seekPreviewFrame: action<{ frame: number }>(),
