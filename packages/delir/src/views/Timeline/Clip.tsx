@@ -73,6 +73,7 @@ export default decorate<OwnProps>(
               tabIndex={-1}
               data-clip-id={clip.id}
               dragGrid={[1, 24]}
+              style={{ zIndex: active ? 1 : undefined }}
             >
               <animated.div
                 className={classnames(s.inner, {
