@@ -140,7 +140,6 @@ export default class DragNumberInput extends React.Component<Props, State> {
   private handleMouseUp = (e: React.MouseEvent<HTMLInputElement>) => {
     const input = this.input.current!
 
-
     if (this.pointerLocked) {
       document.exitPointerLock()
       input.blur()
@@ -151,7 +150,8 @@ export default class DragNumberInput extends React.Component<Props, State> {
 
   // TODO: parse and calculate expression
   private handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ value: e.currentTarget.value })
+    const value = e.currentTarget.value.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
+    this.setState({ value })
   }
 
   private parseValue(rawValue: number | string): number {
