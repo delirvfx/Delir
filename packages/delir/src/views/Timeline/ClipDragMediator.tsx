@@ -49,7 +49,7 @@ export const ClipDragMediator = ({ comp, scale, scrollLeft, scrollWidth }: Props
         }) - originalFrameLength
       )
     },
-    [comp, scale],
+    [comp.framerate, scale],
   )
 
   const handleClipDragging: EmitClipDragHandler = useCallback(
@@ -66,7 +66,7 @@ export const ClipDragMediator = ({ comp, scale, scrollLeft, scrollWidth }: Props
         draft.clipDragOffset = { x: offsetX, y: nextY, width: 0 }
       })
     },
-    [calcMovementFrame, comp, scale],
+    [calcMovementFrame, comp.framerate, scale],
   )
 
   const handleClipDragEnd: EmitClipDragHandler = useCallback(
@@ -113,7 +113,7 @@ export const ClipDragMediator = ({ comp, scale, scrollLeft, scrollWidth }: Props
         draft.clipDragOffset = { x: offsetX, y: 0, width: offsetWidth }
       })
     },
-    [calcMovementFrame, comp, scale],
+    [calcMovementFrame, comp.framerate, scale],
   )
 
   const handleClipResizeEnd: EmitClipResizeHandler = useCallback(
