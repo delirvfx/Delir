@@ -1,10 +1,10 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
+import { connectToStores, ContextProp, useStore, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import { clipboard } from 'electron'
 import _ from 'lodash'
 import mouseWheel from 'mouse-wheel'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Platform } from 'utils/platform'
 import { SpreadType } from '../../utils/Spread'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
@@ -13,6 +13,7 @@ import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
 import { PropertyInput } from 'components/PropertyInput/PropertyInput'
+import { getActiveComp } from 'domain/Editor/selectors'
 import { SortEndHandler } from 'react-sortable-hoc'
 import { Button } from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
@@ -66,6 +67,33 @@ interface State {
 
 type Props = OwnProps & ConnectedProps & ContextProp
 
+const Measures = ({ measures }: { measures: MeasurePoint[] }) => {
+  const { activeComp } = useStore([EditorStore, ProjectStore], getStore => ({
+    activeComp: getActiveComp(getStore),
+  }))
+
+  const components = useMemo(
+    () =>
+      !activeComp
+        ? []
+        : measures.map(point => (
+            <div
+              key={point.index}
+              className={classnames(s.measureLine, {
+                [s['--grid']]: point.frameNumber % 10 === 0,
+                [s['--endFrame']]: point.frameNumber === activeComp.durationFrames,
+              })}
+              style={{ left: point.left }}
+            >
+              {point.frameNumber}
+            </div>
+          )),
+    [measures],
+  )
+
+  return <>{components}</>
+}
+
 export const KeyframeEditor = withFleurContext(
   connectToStores(
     [EditorStore, ProjectStore, RendererStore],
@@ -110,7 +138,7 @@ export const KeyframeEditor = withFleurContext(
       }
 
       public render() {
-        const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins, scale } = this.props
+        const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins, scale, measures } = this.props
         const { keyframeViewViewBox, graphWidth, graphHeight, editorOpened, scriptParamEditorOpened } = this.state
         const activeEntityObject = this.activeEntityObject
 
@@ -203,7 +231,7 @@ export const KeyframeEditor = withFleurContext(
                       transform: `translateX(-${scrollLeft}px)`,
                     }}
                   >
-                    {...this._renderMeasure()}
+                    <Measures measures={measures} />
                   </div>
                 </div>
                 {activeClip && activeParamDescriptor && activeParam && keyframes && (
@@ -505,31 +533,6 @@ export const KeyframeEditor = withFleurContext(
             </EffectListItem>
           )
         })
-      }
-
-      private _renderMeasure = (): JSX.Element[] => {
-        const { activeComposition } = this.props
-        if (!activeComposition) return []
-
-        const { measures } = this.props
-        const components: JSX.Element[] = []
-
-        for (const point of measures) {
-          components.push(
-            <div
-              key={point.index}
-              className={classnames(s.measureLine, {
-                [s['--grid']]: point.frameNumber % 10 === 0,
-                [s['--endFrame']]: point.frameNumber === activeComposition.durationFrames,
-              })}
-              style={{ left: point.left }}
-            >
-              {point.frameNumber}
-            </div>,
-          )
-        }
-
-        return components
       }
 
       private get clipParamDescriptors() {
