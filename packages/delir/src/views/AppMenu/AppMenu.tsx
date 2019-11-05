@@ -30,7 +30,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 })
 
 export default withFleurContext(
-  connectToStores([EditorStore, RendererStore], mapStoresToProps)(
+  connectToStores(mapStoresToProps)(
     withModalMounter(
     class AppMenu extends React.Component<Props, State> {
       public state: State = {

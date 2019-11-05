@@ -23,7 +23,7 @@ export const NavigationView = () => {
     audioVolume,
     previewPlaying,
     editor: { activeComp, project, projectPath },
-  } = useStore([EditorStore, RendererStore, PreferenceStore], getStore => ({
+  } = useStore(getStore => ({
     editor: getStore(EditorStore).getState(),
     previewPlaying: getStore(RendererStore).previewPlaying,
     audioVolume: getAudioVolume(getStore),

@@ -57,7 +57,7 @@ const Entry = ({ entry, style }: { entry: NotificationEntry; style: CSSPropertie
 export const Notifications = () => {
   const context = useFleurContext()
 
-  const { entries, userCodeException } = useStore([EditorStore, RendererStore], getStore => ({
+  const { entries, userCodeException } = useStore(getStore => ({
     entries: getStore(EditorStore).getState().notifications,
     userCodeException: getStore(RendererStore).getUserCodeException(),
   }))

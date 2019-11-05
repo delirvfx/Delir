@@ -29,7 +29,7 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 })
 
 export default withFleurContext(
-  connectToStores([EditorStore, RendererStore], mapStoresToProps)(
+  connectToStores(mapStoresToProps)(
     class AppView extends React.PureComponent<Props> {
       public root = React.createRef<HTMLDivElement>()
 

@@ -369,4 +369,4 @@ class AssetsView extends React.Component<Props, State> {
   }
 }
 
-export default decorate([ withModalMounter, withFleurContext, connectToStores([EditorStore, ProjectStore], mapStateToProps)], AssetsView)
+export default decorate([ withModalMounter, withFleurContext, connectToStores(mapStateToProps)], AssetsView)

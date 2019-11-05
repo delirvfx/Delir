@@ -50,7 +50,6 @@ const RenderStatusIcon = styled(Icon)`
 export const PreviewView = (props: Props) => {
   const { executeOperation } = useFleurContext()
   const { activeComp, currentPreviewFrame, previewPlaying, framePreviewWaiting, lastRenderState } = useStore(
-    [EditorStore, RendererStore],
     getStore => ({
       activeComp: getActiveComp(getStore),
       currentPreviewFrame: getCurrentPreviewFrame(getStore),

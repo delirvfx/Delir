@@ -41,15 +41,12 @@ export const Layer = (props: Props) => {
   const [{ dragovered }, setState] = useObjectState<State>({ dragovered: false })
   const { executeOperation, getStore } = useFleurContext()
 
-  const { selectedClipIds, activeLayerId, postEffectPlugins, userCodeException } = useStore(
-    [EditorStore, RendererStore],
-    getStore => ({
-      activeLayerId: getActiveLayerId(getStore),
-      selectedClipIds: getSelectedClipIds(getStore),
-      postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
-      userCodeException: getStore(RendererStore).getUserCodeException(),
-    }),
-  )
+  const { selectedClipIds, activeLayerId, postEffectPlugins, userCodeException } = useStore(getStore => ({
+    activeLayerId: getActiveLayerId(getStore),
+    selectedClipIds: getSelectedClipIds(getStore),
+    postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
+    userCodeException: getStore(RendererStore).getUserCodeException(),
+  }))
 
   const { layer, framerate, pxPerSec, scale, scrollLeft, clipOffset, scrollWidth, layerIndex } = props
 

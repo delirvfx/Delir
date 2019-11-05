@@ -1209,10 +1209,10 @@
     immer "^4.0.0"
     invariant "^2.2.4"
 
-"@fleur/react@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@fleur/react/-/react-2.0.0.tgz#8ad05627f5882463cdbade201168043e4f81b23b"
-  integrity sha512-SYcywQimzWQuv8uhmUp4TwsmwdAywolLPf3PA3FXCYRQ9LRPgqBMdTre/DZouCLfeBjjU2x+FLQLo5W1U/hxmg==
+"@fleur/react@3.0.0-pre":
+  version "3.0.0-pre"
+  resolved "https://registry.yarnpkg.com/@fleur/react/-/react-3.0.0-pre.tgz#06f4676604f6d92d8b16fc79ba2b2eba723979bc"
+  integrity sha512-bUgtXvJyGlvLggO8+aX2LDSv3w7gxv8yOshV68yz20hDlgDQitlrvMMhS22KDLU9GZQwb0e1cOGNuMphd/28NA==
 
 "@icons/material@^0.2.4":
   version "0.2.4"

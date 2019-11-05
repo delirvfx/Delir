@@ -43,7 +43,6 @@ export const PX_PER_SEC = 30
 export const Timeline = () => {
   const {executeOperation, getStore} = useFleurContext()
   const { activeComp, activeClips, currentPointFrame, previewPlayed } = useStore(
-    [EditorStore, ProjectStore, RendererStore],
     getStore => ({
       activeComp: getStore(EditorStore).activeComp,
       activeClips: getSelectedClips(getStore),

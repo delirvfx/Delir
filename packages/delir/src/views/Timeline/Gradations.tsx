@@ -41,7 +41,7 @@ export const Gradations = ({
   pxPerSec,
   onSeeked,
 }: Props) => {
-  const { lastRenderState, activeComposition } = useStore([EditorStore, RendererStore], getStore => ({
+  const { lastRenderState, activeComposition } = useStore(getStore => ({
     lastRenderState: getStore(RendererStore).getLastRenderState(),
     activeComposition: getActiveComp(getStore),
   }))

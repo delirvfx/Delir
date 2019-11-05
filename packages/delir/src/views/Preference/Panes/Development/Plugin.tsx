@@ -52,7 +52,7 @@ const DirEntry = ({ path, onRemove }: { path: string; onRemove: (path: string) =
 
 export const DevelopmentPlguinPane = () => {
   const { executeOperation } = useFleurContext()
-  const { currentDirs } = useStore([PreferenceStore], getStore => ({
+  const { currentDirs } = useStore(getStore => ({
     currentDirs: getDevPluginDirs(getStore),
   }))
   const [{ dirs }, update] = useImmer({ dirs: currentDirs })

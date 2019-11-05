@@ -69,7 +69,7 @@ interface State {
 type Props = OwnProps & ConnectedProps & ContextProp
 
 const Measures = memo(({ measures }: { measures: MeasurePoint[] }) => {
-  const { activeComp } = useStore([EditorStore, ProjectStore], getStore => ({
+  const { activeComp } = useStore(getStore => ({
     activeComp: getActiveComp(getStore),
   }))
 
@@ -95,7 +95,6 @@ const Measures = memo(({ measures }: { measures: MeasurePoint[] }) => {
 
 export const KeyframeEditor = withFleurContext(
   connectToStores(
-    [EditorStore, ProjectStore, RendererStore],
     (getStore): ConnectedProps => ({
       editor: getStore(EditorStore).getState(),
       activeParam: getStore(EditorStore).getActiveParam(),

@@ -31,7 +31,7 @@ const SortHandle = SortableHandle(() => <i className="fa fa-bars" />)
 
 const LayerLabelComponent = ({ layer, layerIndex, onSelect, onRemove }: Props) => {
   const { executeOperation } = useFleurContext()
-  const { activeComp, activeLayerId } = useStore([EditorStore], getStore => ({
+  const { activeComp, activeLayerId } = useStore(getStore => ({
     activeComp: getActiveComp(getStore),
     activeLayerId: getActiveLayerId(getStore),
   }))
