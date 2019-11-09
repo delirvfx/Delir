@@ -33,7 +33,7 @@ jobs:
       - pwsh: |
           npm i -g yarn
           yarn install
-          yarn build
+          node --max-old-space-size=4096 ./node_modules/.bin/cross-env.cmd NODE_ENV=production ./node_modules/.bin/gulp publish
         displayName: 'Building'
 
       - task: PublishBuildArtifacts@1
