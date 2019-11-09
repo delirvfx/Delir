@@ -13,8 +13,10 @@ import { MountTransition } from '../../components/MountTransition'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
+import { cssVars } from 'assets/styles/cssVars'
 import { getSelectedClipIds } from 'domain/Editor/selectors'
 import { memo } from 'react'
+import { useMountTransition } from 'utils/hooks'
 import t from './Clip.i18n'
 import s from './Clip.sass'
 import { ClipDragProps, useClipDragContext } from './ClipDragContext'
@@ -38,6 +40,11 @@ type Props = OwnProps & ConnectedProps & ContextProp & ClipDragProps
 export const Clip = memo(({ clip, active, postEffectPlugins, width, left, top, hasError }: OwnProps) => {
   const { executeOperation, getStore } = useFleurContext()
   const { emitClipDrag, emitClipDragEnd, emitClipResize, emitClipResizeEnd } = useClipDragContext()
+  const { style } = useMountTransition({
+    config: { duration: cssVars.animate.clipAppearDuration },
+    from: { transform: 'scaleX(0)', transformOrigin: 'left center' },
+    enter: { transform: 'scaleX(1)' },
+  })
 
   const isDragMoved = useRef<boolean>(false)
 
@@ -178,73 +185,66 @@ export const Clip = memo(({ clip, active, postEffectPlugins, width, left, top, h
   }, [clip])
 
   return (
-    <MountTransition
-      from={{ transform: 'scaleX(0)', transformOrigin: 'left center' }}
-      enter={{ transform: 'scaleX(1)' }}
+    <Rnd
+      className={s.clip}
+      dragAxis="both"
+      position={{ x: left, y: 2 + top }}
+      size={{ width, height: 'auto' }}
+      enableResizing={{
+        left: true,
+        right: true,
+        top: false,
+        bottom: false,
+      }}
+      onDragStart={handleDragStart}
+      onDrag={handleDrag}
+      onDragStop={handleDragEnd}
+      onResize={handleResize}
+      onResizeStop={handleResizeEnd}
+      tabIndex={-1}
+      data-clip-id={clip.id}
+      dragGrid={[1, 24]}
+      style={{ zIndex: active ? 1 : undefined }}
     >
-      {style => (
-        <Rnd
-          className={s.clip}
-          dragAxis="both"
-          position={{ x: left, y: 2 + top }}
-          size={{ width, height: 'auto' }}
-          enableResizing={{
-            left: true,
-            right: true,
-            top: false,
-            bottom: false,
-          }}
-          onDragStart={handleDragStart}
-          onDrag={handleDrag}
-          onDragStop={handleDragEnd}
-          onResize={handleResize}
-          onResizeStop={handleResizeEnd}
-          tabIndex={-1}
-          data-clip-id={clip.id}
-          dragGrid={[1, 24]}
-          style={{ zIndex: active ? 1 : undefined }}
-        >
-          <animated.div
-            className={classnames(s.inner, {
-              [s.active]: active,
-              [s.video]: clip.renderer === 'video',
-              [s.audio]: clip.renderer === 'audio',
-              [s.text]: clip.renderer === 'text',
-              [s.image]: clip.renderer === 'image',
-              [s.adjustment]: clip.renderer === 'adjustment',
-              [s.p5js]: clip.renderer === 'p5js',
-              [s.solid]: clip.renderer === 'solid',
-              [s.hasError]: hasError,
-            })}
-            style={style}
-          >
-            <ContextMenu>
-              <MenuItem label={t(t.k.contextMenu.seekToHeadOfClip)} onClick={handleSeekToHeadOfClip} />
-              <MenuItem label={t(t.k.contextMenu.effect)}>
-                {postEffectPlugins.length ? (
-                  postEffectPlugins.map(entry => (
-                    <MenuItem
-                      key={entry.id}
-                      label={entry.name}
-                      data-clip-id={clip.id}
-                      data-effect-id={entry.id}
-                      onClick={handleAddEffect}
-                    />
-                  ))
-                ) : (
-                  <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
-                )}
-              </MenuItem>
-              {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
-              <MenuItem type="separator" />
-              <MenuItem label={t(t.k.contextMenu.remove)} data-clip-id={clip.id} onClick={handleRemoveClip} />
-              <MenuItem type="separator" />
-            </ContextMenu>
-            <span className={s.nameLabel}>{t(['renderers', clip.renderer])}</span>
-            <span className={s.idLabel}>#{clip.id.substring(0, 4)}</span>
-          </animated.div>
-        </Rnd>
-      )}
-    </MountTransition>
+      <animated.div
+        className={classnames(s.inner, {
+          [s.active]: active,
+          [s.video]: clip.renderer === 'video',
+          [s.audio]: clip.renderer === 'audio',
+          [s.text]: clip.renderer === 'text',
+          [s.image]: clip.renderer === 'image',
+          [s.adjustment]: clip.renderer === 'adjustment',
+          [s.p5js]: clip.renderer === 'p5js',
+          [s.solid]: clip.renderer === 'solid',
+          [s.hasError]: hasError,
+        })}
+        style={style}
+      >
+        <ContextMenu>
+          <MenuItem label={t(t.k.contextMenu.seekToHeadOfClip)} onClick={handleSeekToHeadOfClip} />
+          <MenuItem label={t(t.k.contextMenu.effect)}>
+            {postEffectPlugins.length ? (
+              postEffectPlugins.map(entry => (
+                <MenuItem
+                  key={entry.id}
+                  label={entry.name}
+                  data-clip-id={clip.id}
+                  data-effect-id={entry.id}
+                  onClick={handleAddEffect}
+                />
+              ))
+            ) : (
+              <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
+            )}
+          </MenuItem>
+          {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
+          <MenuItem type="separator" />
+          <MenuItem label={t(t.k.contextMenu.remove)} data-clip-id={clip.id} onClick={handleRemoveClip} />
+          <MenuItem type="separator" />
+        </ContextMenu>
+        <span className={s.nameLabel}>{t(['renderers', clip.renderer])}</span>
+        <span className={s.idLabel}>#{clip.id.substring(0, 4)}</span>
+      </animated.div>
+    </Rnd>
   )
 })
