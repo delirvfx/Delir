@@ -5,7 +5,7 @@ const webpack: typeof import('webpack') = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const builder = require('electron-builder')
+const builder: typeof import('electron-builder') = require('electron-builder')
 const notifier = require('node-notifier')
 const download = require('download')
 const zipDir = require('zip-dir')
@@ -481,6 +481,7 @@ export async function pack(done) {
     await builder.build({
       // targets: builder.Platform.MAC.createTarget(),
       targets: target,
+      publish: 'never',
       config: {
         appId: 'studio.delir',
         copyright: '© 2017 Ragg',
