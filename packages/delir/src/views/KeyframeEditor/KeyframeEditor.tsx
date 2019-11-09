@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import { clipboard } from 'electron'
 import _ from 'lodash'
 import mouseWheel from 'mouse-wheel'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Platform } from 'utils/platform'
 import { SpreadType } from '../../utils/Spread'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
@@ -92,6 +92,68 @@ const Measures = memo(({ measures }: { measures: MeasurePoint[] }) => {
     </>
   )
 })
+
+// const EffectList = styled.div<{ opened: boolean }>`
+//   position: absolute;
+//   bottom: calc(100% + 4px);
+//   z-index: 1;
+//   width: 100%;
+//   background-color: ${cssVars.colors.popupBg};
+//   visibility: hidden;
+//   pointer-events: none;
+//   transition-property: visibility ${cssVars.animate.bgColorDuration} ${cssVars.animate.function};
+//   border-radius: ${cssVars.size.radius};
+//   box-shadow: ${cssVars.style.popupDropshadow};
+
+//   ${({ opened }) =>
+//     opened &&
+//     `
+//       visibility: visible;
+//       pointer-events: all;
+//   `}
+// `
+
+// const EffectEntry = styled.div`
+//   padding: 4px;
+//   transition: background-color ${cssVars.animate.bgColorDuration} ${cssVars.animate.function};
+
+//   &:hover {
+//     background-color: ${cssVars.colors.listItemHovered};
+//   }
+// `
+
+// const AddEffectButton = ({ clipId }: { clipId: string }) => {
+//   const { executeOperation } = useFleurContext()
+//   const [opened, setOpened] = useState(false)
+//   const effects = useStore(getStore => getStore(RendererStore).getPostEffectPlugins())
+
+//   const handleClickOpen = useCallback(() => {
+//     setOpened(opened => !opened)
+//   }, [])
+
+//   const handleClickEntry = useCallback(({ currentTarget }: MouseEvent<HTMLDivElement>) => {
+//     setOpened(false)
+//     executeOperation(ProjectOps.addEffectIntoClip, { clipId, processorId: currentTarget.dataset.processorId! })
+//   }, [])
+
+//   return (
+//     <div style={{ position: 'relative' }}>
+//       <Button blocked style={{ margin: '8px 0' }} onClick={handleClickOpen}>
+//         <span style={{ marginRight: '8px' }}>
+//           <Icon kind="plus" />
+//         </span>
+//         Add Effect
+//       </Button>
+//       <EffectList opened={opened}>
+//         {effects.map(entry => (
+//           <EffectEntry data-processor-id={entry.id} onClick={handleClickEntry}>
+//             {entry.name}
+//           </EffectEntry>
+//         ))}
+//       </EffectList>
+//     </div>
+//   )
+// }
 
 export const KeyframeEditor = withFleurContext(
   connectToStores(
@@ -186,6 +248,7 @@ export const KeyframeEditor = withFleurContext(
               <EffectList useDragHandle onSortEnd={this.handleSortEffect}>
                 {this.renderEffectProperties()}
               </EffectList>
+              {/* {activeClip && <AddEffectButton clipId={activeClip.id} />} */}
             </Pane>
             <Pane>
               <div ref="svgParent" className={s.keyframeContainer} tabIndex={-1} onWheel={this._scaleTimeline}>
