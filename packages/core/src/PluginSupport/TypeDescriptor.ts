@@ -425,7 +425,7 @@ export class TypeDescriptor {
     },
   ) {
     const { defaultValue, label, enabled, langType } = defaults(conf, {
-      defaultValue: () => null,
+      defaultValue: () => new Expression(langType, ''),
       enabled: true,
     })
     this.properties.push({

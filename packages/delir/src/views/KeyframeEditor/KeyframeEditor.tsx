@@ -267,12 +267,12 @@ export const KeyframeEditor = withFleurContext(
                   (() => {
                     if (!activeClip || !this.activeEntityObject) return null
 
-                    const value: Delir.Values.Expression = Delir.KeyframeCalcurator.calcKeyframeAt(
+                    const value = Delir.KeyframeCalcurator.calcKeyframeAt(
                       editor.currentPreviewFrame,
                       activeClip.placedFrame,
                       activeParamDescriptor,
                       this.activeEntityObject.keyframes[activeParam.paramName] || [],
-                    )
+                    )!
 
                     return (
                       <ScriptParamEditor
