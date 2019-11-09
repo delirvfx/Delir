@@ -1,32 +1,42 @@
 jobs:
-- job: Linux
-  pool:
-    vmImage: 'ubuntu-latest'
+  - job: Linux
+    pool:
+      vmImage: 'ubuntu-latest'
 
-  steps:
-  - task: NodeTool@0
-    displayName: 'Install Node.js'
-    inputs:
-      versionSpec: '12.x'
+    steps:
+      - task: NodeTool@0
+        displayName: 'Install Node.js'
+        inputs:
+          versionSpec: '12.x'
 
-  - script: |
-      npm i -g yarn
-      yarn install
-      yarn build
-    displayName: 'Building'
+      - script: |
+          npm i -g yarn
+          yarn install
+          yarn build
+        displayName: 'Building'
 
-- job: Windows
-  pool:
-    vmImage: 'windows-2019'
-   
-  steps:
-  - task: NodeTool@0
-    displayName: 'Install Node.js'
-    inputs:
-      versionSpec: '12.x'
-  
-  - pwsh: |
-      npm i -g yarn
-      yarn install
-      yarn build
-    displayName: 'Building'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathToPublish: ./release/
+          artifactName: MyBuildOutputs
+
+  - job: Windows
+    pool:
+      vmImage: 'windows-2019'
+
+    steps:
+      - task: NodeTool@0
+        displayName: 'Install Node.js'
+        inputs:
+          versionSpec: '12.x'
+
+      - pwsh: |
+          npm i -g yarn
+          yarn install
+          yarn build
+        displayName: 'Building'
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathToPublish: ./release/
+          artifactName: MyBuildOutputs
