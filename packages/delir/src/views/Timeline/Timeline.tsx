@@ -41,23 +41,18 @@ interface State {
 export const PX_PER_SEC = 30
 
 export const Timeline = () => {
-  const {executeOperation, getStore} = useFleurContext()
-  const { activeComp, activeClips, currentPointFrame, previewPlayed } = useStore(
-    getStore => ({
-      activeComp: getStore(EditorStore).activeComp,
-      activeClips: getSelectedClips(getStore),
-      currentPointFrame: getStore(EditorStore).currentPointFrame,
-      previewPlayed: getStore(RendererStore).previewPlaying,
-    }),
-  )
+  const { executeOperation, getStore } = useFleurContext()
+  const { activeComp, activeClips, currentPointFrame, previewPlayed } = useStore(getStore => ({
+    activeComp: getStore(EditorStore).activeComp,
+    activeClips: getSelectedClips(getStore),
+    currentPointFrame: getStore(EditorStore).currentPointFrame,
+    previewPlayed: getStore(RendererStore).previewPlaying,
+  }))
 
-  const [{
-    timelineScrollTop,
-    timelineScrollLeft,
-    timelineScrollWidth,
-    cursorHeight,
-    scale
-  }, setState] = useObjectState<State>({
+  const [
+    { timelineScrollTop, timelineScrollLeft, timelineScrollWidth, cursorHeight, scale },
+    setState,
+  ] = useObjectState<State>({
     timelineScrollTop: 0,
     timelineScrollLeft: 0,
     timelineScrollWidth: 0,
@@ -65,7 +60,7 @@ export const Timeline = () => {
     scale: 1,
   })
 
-  const mousetrap = useRef<MousetrapInstance|null>(null)
+  const mousetrap = useRef<MousetrapInstance | null>(null)
   const scaleList = useRef<Dropdown | null>(null)
   const timelineContainer = useRef<HTMLDivElement | null>(null)
   const labelContainer = useRef<HTMLDivElement | null>(null)
@@ -85,14 +80,17 @@ export const Timeline = () => {
     })
   }, [])
 
-  const handleResizeWindow = useCallback(_.debounce(() => {
-    const timelineHeight = timelineContainer.current!.getBoundingClientRect().height
-    const keyFrameViewHeight = (ReactDOM.findDOMNode(keyframeView.current!) as Element).getBoundingClientRect().height
+  const handleResizeWindow = useCallback(
+    _.debounce(() => {
+      const timelineHeight = timelineContainer.current!.getBoundingClientRect().height
+      const keyFrameViewHeight = (ReactDOM.findDOMNode(keyframeView.current!) as Element).getBoundingClientRect().height
 
-    setState({
-      cursorHeight: timelineHeight + keyFrameViewHeight + 1,
-    })
-  }, 1000 /30), [])
+      setState({
+        cursorHeight: timelineHeight + keyFrameViewHeight + 1,
+      })
+    }, 1000 / 30),
+    [],
+  )
 
   const handleScrollLayerLabel = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     setState({
@@ -111,15 +109,18 @@ export const Timeline = () => {
     executeOperation(EditorOps.changeActiveLayer, layerId)
   }, [])
 
-  const onLayerSort: SortEndHandler = useCallback(({ oldIndex, newIndex }) => {
-    if (!activeComp) return
+  const onLayerSort: SortEndHandler = useCallback(
+    ({ oldIndex, newIndex }) => {
+      if (!activeComp) return
 
-    const layer = activeComp.layers[oldIndex]
-    executeOperation(ProjectOps.moveLayerOrder, {
-      layerId: layer.id,
-      newIndex,
-    })
-  }, [activeComp])
+      const layer = activeComp.layers[oldIndex]
+      executeOperation(ProjectOps.moveLayerOrder, {
+        layerId: layer.id,
+        newIndex,
+      })
+    },
+    [activeComp],
+  )
 
   const handleAddLayer = useCallback(() => {
     if (!activeComp) return
@@ -129,29 +130,35 @@ export const Timeline = () => {
     })
   }, [activeComp])
 
-  const onLayerRemove = useCallback((layerId: string) => {
-    if (!activeComp) return
-    executeOperation(ProjectOps.removeLayer, {
-      layerId,
-    })
-  }, [activeComp])
+  const onLayerRemove = useCallback(
+    (layerId: string) => {
+      if (!activeComp) return
+      executeOperation(ProjectOps.removeLayer, {
+        layerId,
+      })
+    },
+    [activeComp],
+  )
 
   const handleKeydownTimeline = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     // Prevent scrolling by space key
     if (e.keyCode === 32) e.preventDefault()
   }, [])
 
-  const handleWheelTimeline = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-    if (Platform.isMacOS && e.ctrlKey) {
-      setState({ scale: Math.max(scale - e.deltaY * 0.1, 0.1) })
-      return
-    }
+  const handleWheelTimeline = useCallback(
+    (e: React.WheelEvent<HTMLDivElement>) => {
+      if (Platform.isMacOS && e.ctrlKey) {
+        setState({ scale: Math.max(scale - e.deltaY * 0.1, 0.1) })
+        return
+      }
 
-    if (e.altKey) {
-      const newScale = scale + e.deltaY * 0.05
-      setState({ scale: Math.max(newScale, 0.1) })
-    }
-  }, [scale])
+      if (e.altKey) {
+        const newScale = scale + e.deltaY * 0.05
+        setState({ scale: Math.max(newScale, 0.1) })
+      }
+    },
+    [scale],
+  )
 
   const handleScaleKeyframeEditor = useCallback((scale: number) => {
     setState({ scale })
@@ -175,27 +182,30 @@ export const Timeline = () => {
     setState({ scale })
   }, [])
 
-  const handleDropAsset = useCallback((e: React.DragEvent<HTMLElement>) => {
-    const { dragEntity } = getStore(EditorStore).getState()
+  const handleDropAsset = useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      const { dragEntity } = getStore(EditorStore).getState()
 
-    if (!activeComp) {
-      executeOperation(EditorOps.notify, {
-        message: t(t.k.errors.compositionNotSelected),
-        title: 'Woops',
-        level: 'info',
-        timeout: 4000,
+      if (!activeComp) {
+        executeOperation(EditorOps.notify, {
+          message: t(t.k.errors.compositionNotSelected),
+          title: 'Woops',
+          level: 'info',
+          timeout: 4000,
+        })
+
+        return
+      }
+
+      if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
+      const { asset } = dragEntity
+      executeOperation(ProjectOps.addLayerWithAsset, {
+        targetComposition: activeComp,
+        asset,
       })
-
-      return
-    }
-
-    if (!activeComp || !dragEntity || dragEntity.type !== 'asset') return
-    const { asset } = dragEntity
-    executeOperation(ProjectOps.addLayerWithAsset, {
-      targetComposition: activeComp,
-      asset,
-    })
-  }, [activeComp])
+    },
+    [activeComp],
+  )
 
   const handleGradationSeeked = useCallback((frame: number) => {
     executeOperation(EditorOps.seekPreviewFrame, { frame })
@@ -247,15 +257,19 @@ export const Timeline = () => {
 
   const layers: Delir.Entity.Layer[] = activeComp ? Array.from(activeComp.layers) : []
 
-  const measures = useMemo(() => activeComp ? TimePixelConversion.buildMeasures({
-      durationFrames: activeComp.durationFrames,
-      pxPerSec: PX_PER_SEC,
-      framerate: activeComp.framerate,
-      scale,
-      placeIntervalWidth: 20,
-      maxMeasures: activeComp.durationFrames,
-    }) : [],
-    [scale, activeComp?.durationFrames, activeComp?.framerate]
+  const measures = useMemo(
+    () =>
+      activeComp
+        ? TimePixelConversion.buildMeasures({
+            durationFrames: activeComp.durationFrames,
+            pxPerSec: PX_PER_SEC,
+            framerate: activeComp.framerate,
+            scale,
+            placeIntervalWidth: 20,
+            maxMeasures: activeComp.durationFrames,
+          })
+        : [],
+    [scale, activeComp?.durationFrames, activeComp?.framerate],
   )
 
   return (
@@ -268,10 +282,7 @@ export const Timeline = () => {
               <div className={s.labelsHeader}>
                 <div className={s.columnName}>
                   {t(t.k.layers)}
-                  <i
-                    className={classnames('twa twa-heavy-plus-sign', s.addLayerIcon)}
-                    onClick={handleAddLayer}
-                  />
+                  <i className={classnames('twa twa-heavy-plus-sign', s.addLayerIcon)} onClick={handleAddLayer} />
                 </div>
                 <div className={s.scaleLabel} onClick={handleClickOpenScaleList}>
                   <Dropdown ref={scaleList} className={s.scaleList}>

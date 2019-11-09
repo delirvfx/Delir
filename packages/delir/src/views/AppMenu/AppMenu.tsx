@@ -14,7 +14,7 @@ import * as EditorOps from '../../domain/Editor/operations'
 import { getProject } from '../../domain/Project/selectors'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
-import {AboutModal} from '../../modals/AboutModal'
+import { AboutModal } from '../../modals/AboutModal'
 import { ImportPackModal, ImportPackResponse } from '../../modals/ImportPackModal/ImportPackModal'
 import t from './AppMenu.i18n'
 
@@ -32,100 +32,122 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 export default withFleurContext(
   connectToStores(mapStoresToProps)(
     withModalMounter(
-    class AppMenu extends React.Component<Props, State> {
-      public state: State = {
-        devToolsFocused: false,
-      }
+      class AppMenu extends React.Component<Props, State> {
+        public state: State = {
+          devToolsFocused: false,
+        }
 
-      public componentDidMount() {
-        const { webContents } = Electron.remote.getCurrentWindow()
+        public componentDidMount() {
+          const { webContents } = Electron.remote.getCurrentWindow()
 
-        window.addEventListener('focus', () => {
-          this.setState({ devToolsFocused: false })
-        })
+          window.addEventListener('focus', () => {
+            this.setState({ devToolsFocused: false })
+          })
 
-        webContents.on('devtools-focused', () => {
-          this.setState({ devToolsFocused: true })
-        })
+          webContents.on('devtools-focused', () => {
+            this.setState({ devToolsFocused: true })
+          })
 
-        this.setApplicationMenu()
-      }
+          this.setApplicationMenu()
+        }
 
-      public componentDidUpdate() {
-        this.setApplicationMenu()
-      }
+        public componentDidUpdate() {
+          this.setApplicationMenu()
+        }
 
-      public shouldComponentUpdate(nextProps: Props, nextState: State) {
-        return (
-          nextProps.previewPlaying !== this.props.previewPlaying ||
-          nextProps.editor.activeComp !== this.props.editor.activeComp ||
-          nextState.devToolsFocused !== this.state.devToolsFocused
-        )
-      }
+        public shouldComponentUpdate(nextProps: Props, nextState: State) {
+          return (
+            nextProps.previewPlaying !== this.props.previewPlaying ||
+            nextProps.editor.activeComp !== this.props.editor.activeComp ||
+            nextState.devToolsFocused !== this.state.devToolsFocused
+          )
+        }
 
-      public render() {
-        return null
-      }
+        public render() {
+          return null
+        }
 
-      private setApplicationMenu() {
-        const { previewPlaying, executeOperation, getStore } = this.props
-        const { devToolsFocused } = this.state
-        const { activeComp } = this.props.editor
-        const menu: Electron.MenuItemConstructorOptions[] = []
+        private setApplicationMenu() {
+          const { previewPlaying, executeOperation, getStore } = this.props
+          const { devToolsFocused } = this.state
+          const { activeComp } = this.props.editor
+          const menu: Electron.MenuItemConstructorOptions[] = []
 
-        menu.push({
-          label: 'Delir',
-          submenu: [
-            {
-              label: t(t.k.appMenu.about),
-              click: this.handleOpenAbout,
-            },
-            { type: 'separator' },
-            {
-              label: t(t.k.appMenu.preference),
-              accelerator: 'CmdOrCtrl+,',
-              acceleratorWorksWhenHidden: false,
-              click: this.handleOpenPreference,
-            },
-            { type: 'separator' },
-            {
-              label: t(t.k.appMenu.openPluginDir),
-              click: () => executeOperation(EditorOps.openPluginDirectory),
-            },
-            { type: 'separator' },
-            {
-              label: t(t.k.appMenu.quit),
-              accelerator: 'CmdOrCtrl+Q',
-              role: 'quit',
-            },
-          ],
-        })
-
-        menu.push(
-          {
-            label: t(t.k.file.label),
+          menu.push({
+            label: 'Delir',
             submenu: [
               {
-                label: t(t.k.file.newProject),
-                accelerator: 'CmdOrCtrl+N',
-                click: this.handleNewProject,
+                label: t(t.k.appMenu.about),
+                click: this.handleOpenAbout,
               },
               { type: 'separator' },
               {
-                label: t(t.k.file.openProject),
-                accelerator: 'CmdOrCtrl+O',
-                click: this.handleOpenProject,
+                label: t(t.k.appMenu.preference),
+                accelerator: 'CmdOrCtrl+,',
+                acceleratorWorksWhenHidden: false,
+                click: this.handleOpenPreference,
               },
               { type: 'separator' },
               {
-                label: t(t.k.file.save),
-                accelerator: 'CmdOrCtrl+S',
-                click: async () => {
-                  const { projectPath } = getStore(EditorStore).getState()
-                  let path: string | null = projectPath
+                label: t(t.k.appMenu.openPluginDir),
+                click: () => executeOperation(EditorOps.openPluginDirectory),
+              },
+              { type: 'separator' },
+              {
+                label: t(t.k.appMenu.quit),
+                accelerator: 'CmdOrCtrl+Q',
+                role: 'quit',
+              },
+            ],
+          })
 
-                  if (!path) {
-                    let result = await remote.dialog.showSaveDialog({
+          menu.push(
+            {
+              label: t(t.k.file.label),
+              submenu: [
+                {
+                  label: t(t.k.file.newProject),
+                  accelerator: 'CmdOrCtrl+N',
+                  click: this.handleNewProject,
+                },
+                { type: 'separator' },
+                {
+                  label: t(t.k.file.openProject),
+                  accelerator: 'CmdOrCtrl+O',
+                  click: this.handleOpenProject,
+                },
+                { type: 'separator' },
+                {
+                  label: t(t.k.file.save),
+                  accelerator: 'CmdOrCtrl+S',
+                  click: async () => {
+                    const { projectPath } = getStore(EditorStore).getState()
+                    let path: string | null = projectPath
+
+                    if (!path) {
+                      let result = await remote.dialog.showSaveDialog({
+                        title: t(t.k.modals.saveAs.title),
+                        buttonLabel: t(t.k.modals.saveAs.save),
+                        filters: [
+                          {
+                            name: 'Delir Project File',
+                            extensions: ['delir'],
+                          },
+                        ],
+                      })
+
+                      if (result.canceled) return
+                      path = result.filePath!
+                    }
+
+                    executeOperation(EditorOps.saveProject, { path })
+                  },
+                },
+                {
+                  label: t(t.k.file.saveAs),
+                  accelerator: 'CmdOrCtrl+Shift+S',
+                  click: async () => {
+                    const path = await remote.dialog.showSaveDialog({
                       title: t(t.k.modals.saveAs.title),
                       buttonLabel: t(t.k.modals.saveAs.save),
                       filters: [
@@ -136,271 +158,254 @@ export default withFleurContext(
                       ],
                     })
 
-                    if (result.canceled) return
-                    path = result.filePath!
-                  }
+                    // cancelled
+                    if (path.canceled) return
 
-                  executeOperation(EditorOps.saveProject, { path })
+                    executeOperation(EditorOps.saveProject, { path: path.filePath! })
+                  },
                 },
-              },
-              {
-                label: t(t.k.file.saveAs),
-                accelerator: 'CmdOrCtrl+Shift+S',
-                click: async () => {
-                  const path = await remote.dialog.showSaveDialog({
-                    title: t(t.k.modals.saveAs.title),
-                    buttonLabel: t(t.k.modals.saveAs.save),
-                    filters: [
+                { type: 'separator' },
+                {
+                  label: t(t.k.file.importProjectPack),
+                  click: this.handleImportProjectPack,
+                },
+                {
+                  label: t(t.k.file.exportProjectPack),
+                  click: this.handleExportProjectPack,
+                },
+                { type: 'separator' },
+                {
+                  label: t(t.k.file.rendering),
+                  accelerator: 'CmdOrCtrl+Shift+R',
+                  click: this.handleRenderDestinate,
+                },
+                ...(Platform.isWindows
+                  ? [
+                      { type: 'separator' } as any,
                       {
-                        name: 'Delir Project File',
-                        extensions: ['delir'],
+                        label: t(t.k.appMenu.quit),
+                        accelerator: 'CmdOrCtrl+Q',
+                        role: 'quit',
                       },
-                    ],
-                  })
-
-                  // cancelled
-                  if (path.canceled) return
-
-                  executeOperation(EditorOps.saveProject, { path: path.filePath! })
+                    ]
+                  : []),
+              ],
+            },
+            {
+              label: t(t.k.edit.label),
+              submenu: [
+                {
+                  label: t(t.k.edit.undo),
+                  accelerator: 'CmdOrCtrl+Z',
+                  click: this.handleUndo,
+                  ...(devToolsFocused ? { role: 'undo' as const } : {}),
                 },
-              },
-              { type: 'separator' },
-              {
-                label: t(t.k.file.importProjectPack),
-                click: this.handleImportProjectPack,
-              },
-              {
-                label: t(t.k.file.exportProjectPack),
-                click: this.handleExportProjectPack,
-              },
-              { type: 'separator' },
-              {
-                label: t(t.k.file.rendering),
-                accelerator: 'CmdOrCtrl+Shift+R',
-                click: this.handleRenderDestinate,
-              },
-              ...(Platform.isWindows
-                ? [
-                    { type: 'separator' } as any,
-                    {
-                      label: t(t.k.appMenu.quit),
-                      accelerator: 'CmdOrCtrl+Q',
-                      role: 'quit',
-                    },
-                  ]
-                : []),
-            ],
-          },
-          {
-            label: t(t.k.edit.label),
+                {
+                  label: t(t.k.edit.redo),
+                  accelerator: Platform.isMacOS ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
+                  click: this.handleRedo,
+                  ...(devToolsFocused ? { role: 'redo' as const } : {}),
+                },
+                {
+                  type: 'separator' as const,
+                },
+                {
+                  label: t(t.k.edit.cut),
+                  accelerator: 'CmdOrCtrl+X',
+                  click: this.handleCut,
+                  ...(devToolsFocused ? { role: 'cut' as const } : {}),
+                },
+                {
+                  label: t(t.k.edit.copy),
+                  accelerator: 'CmdOrCtrl+C',
+                  click: this.handleCopy,
+                  ...(devToolsFocused ? { role: 'copy' as const } : {}),
+                },
+                {
+                  label: t(t.k.edit.paste),
+                  accelerator: 'CmdOrCtrl+V',
+                  click: this.handlePaste,
+                  ...(devToolsFocused ? { role: 'paste' as const } : {}),
+                },
+                {
+                  label: t(t.k.edit.selectAll),
+                  role: 'selectAll' as const,
+                },
+              ],
+            },
+          )
+
+          menu.push({
+            label: t(t.k.preview.label),
             submenu: [
               {
-                label: t(t.k.edit.undo),
-                accelerator: 'CmdOrCtrl+Z',
-                click: this.handleUndo,
-                ...(devToolsFocused ? { role: 'undo' as const } : {}),
-              },
-              {
-                label: t(t.k.edit.redo),
-                accelerator: Platform.isMacOS ? 'CmdOrCtrl+Shift+Z' : 'CmdOrCtrl+Y',
-                click: this.handleRedo,
-                ...(devToolsFocused ? { role: 'redo' as const } : {}),
-              },
-              {
-                type: 'separator' as const,
-              },
-              {
-                label: t(t.k.edit.cut),
-                accelerator: 'CmdOrCtrl+X',
-                click: this.handleCut,
-                ...(devToolsFocused ? { role: 'cut' as const } : {}),
-              },
-              {
-                label: t(t.k.edit.copy),
-                accelerator: 'CmdOrCtrl+C',
-                click: this.handleCopy,
-                ...(devToolsFocused ? { role: 'copy' as const } : {}),
-              },
-              {
-                label: t(t.k.edit.paste),
-                accelerator: 'CmdOrCtrl+V',
-                click: this.handlePaste,
-                ...(devToolsFocused ? { role: 'paste' as const } : {}),
-              },
-              {
-                label: t(t.k.edit.selectAll),
-                role: 'selectAll' as const,
+                label: previewPlaying ? t(t.k.preview.pause) : t(t.k.preview.play),
+                enabled: !!activeComp,
+                click: () => {
+                  previewPlaying
+                    ? executeOperation(RendererOps.stopPreview)
+                    : executeOperation(RendererOps.startPreview, {
+                        compositionId: activeComp!.id,
+                        // Delayed get for rendering performance
+                        beginFrame: getStore(EditorStore).getState().currentPreviewFrame,
+                      })
+                },
               },
             ],
-          },
-        )
-
-        menu.push({
-          label: t(t.k.preview.label),
-          submenu: [
-            {
-              label: previewPlaying ? t(t.k.preview.pause) : t(t.k.preview.play),
-              enabled: !!activeComp,
-              click: () => {
-                previewPlaying
-                  ? executeOperation(RendererOps.stopPreview)
-                  : executeOperation(RendererOps.startPreview, {
-                      compositionId: activeComp!.id,
-                      // Delayed get for rendering performance
-                      beginFrame: getStore(EditorStore).getState().currentPreviewFrame,
-                    })
-              },
-            },
-          ],
-        })
-
-        menu.push({
-          label: t(t.k.develop.label),
-          submenu: [
-            {
-              label: t(t.k.develop.reload),
-              accelerator: 'CmdOrCtrl+R',
-              click(item, focusedWindow) {
-                if (focusedWindow) focusedWindow.reload()
-              },
-            },
-            {
-              label: t(t.k.develop.toggleDevTool),
-              accelerator: 'CmdOrCtrl+Alt+I',
-              click(item, focusedWindow) {
-                if (focusedWindow) focusedWindow.webContents.toggleDevTools()
-              },
-            },
-          ],
-        })
-
-        remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(menu))
-      }
-
-      private handleOpenAbout = async() => {
-        await this.props.mountModal<void>((resolve)=> <AboutModal onClose={resolve} />)
-      }
-
-      private handleNewProject = async () => {
-        const project = this.props.getStore(EditorStore).getState().project
-
-        if (project) {
-          const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-            type: 'question',
-            message: t(t.k.modals.newProject.confirm),
-            buttons: [t(t.k.modals.newProject.continue), t(t.k.modals.newProject.cancel)],
           })
 
-          if (acceptDiscard.response === 1) {
-            return
-          }
-        }
-
-        this.props.executeOperation(EditorOps.newProject)
-      }
-
-      private handleOpenProject = async () => {
-        const { project } = this.props.getStore(EditorStore)
-
-        if (project) {
-          const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-            type: 'question',
-            message: t(t.k.modals.openProject.confirm),
-            buttons: [t(t.k.modals.openProject.continue), t(t.k.modals.openProject.cancel)],
-            defaultId: 0,
+          menu.push({
+            label: t(t.k.develop.label),
+            submenu: [
+              {
+                label: t(t.k.develop.reload),
+                accelerator: 'CmdOrCtrl+R',
+                click(item, focusedWindow) {
+                  if (focusedWindow) focusedWindow.reload()
+                },
+              },
+              {
+                label: t(t.k.develop.toggleDevTool),
+                accelerator: 'CmdOrCtrl+Alt+I',
+                click(item, focusedWindow) {
+                  if (focusedWindow) focusedWindow.webContents.toggleDevTools()
+                },
+              },
+            ],
           })
 
-          if (acceptDiscard.response === 1) {
-            return
-          }
+          remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(menu))
         }
 
-        const path = await remote.dialog.showOpenDialog({
-          title: t(t.k.modals.openProject.title),
-          filters: [{ name: 'Delir project', extensions: ['delir'] }],
-          properties: ['openFile'],
-        })
+        private handleOpenAbout = async () => {
+          await this.props.mountModal<void>(resolve => <AboutModal onClose={resolve} />)
+        }
 
-        if (!path.filePaths?.[0]) return
+        private handleNewProject = async () => {
+          const project = this.props.getStore(EditorStore).getState().project
 
-        this.props.executeOperation(EditorOps.openProject, { path: path.filePaths[0] })
-      }
+          if (project) {
+            const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+              type: 'question',
+              message: t(t.k.modals.newProject.confirm),
+              buttons: [t(t.k.modals.newProject.continue), t(t.k.modals.newProject.cancel)],
+            })
 
-      private handleImportProjectPack = async () => {
-        const project = getProject(this.props.getStore)
+            if (acceptDiscard.response === 1) {
+              return
+            }
+          }
 
-        if (project) {
-          const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
-            type: 'question',
-            message: t(t.k.modals.openProject.confirm),
-            buttons: [t(t.k.modals.openProject.continue), t(t.k.modals.openProject.cancel)],
-            defaultId: 0,
+          this.props.executeOperation(EditorOps.newProject)
+        }
+
+        private handleOpenProject = async () => {
+          const { project } = this.props.getStore(EditorStore)
+
+          if (project) {
+            const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+              type: 'question',
+              message: t(t.k.modals.openProject.confirm),
+              buttons: [t(t.k.modals.openProject.continue), t(t.k.modals.openProject.cancel)],
+              defaultId: 0,
+            })
+
+            if (acceptDiscard.response === 1) {
+              return
+            }
+          }
+
+          const path = await remote.dialog.showOpenDialog({
+            title: t(t.k.modals.openProject.title),
+            filters: [{ name: 'Delir project', extensions: ['delir'] }],
+            properties: ['openFile'],
           })
 
-          if (acceptDiscard.response === 1) {
-            return
-          }
+          if (!path.filePaths?.[0]) return
+
+          this.props.executeOperation(EditorOps.openProject, { path: path.filePaths[0] })
         }
 
-        const result = await this.props.mountModal<ImportPackResponse>(resolve => <ImportPackModal onClose={resolve} />)
-        if (result.cancelled) return
-        this.props.executeOperation(EditorOps.importProjectPack, { src: result.src, dist: result.dist })
-      }
+        private handleImportProjectPack = async () => {
+          const project = getProject(this.props.getStore)
 
-      private handleExportProjectPack = async () => {
-        const path = await remote.dialog.showSaveDialog({
-          title: t(t.k.modals.exportProject.title),
-          buttonLabel: t(t.k.modals.exportProject.save),
-          filters: [
-            {
-              name: 'Delir project package',
-              extensions: ['delirpp'],
-            },
-          ],
-        })
+          if (project) {
+            const acceptDiscard = await remote.dialog.showMessageBox(remote.getCurrentWindow(), {
+              type: 'question',
+              message: t(t.k.modals.openProject.confirm),
+              buttons: [t(t.k.modals.openProject.continue), t(t.k.modals.openProject.cancel)],
+              defaultId: 0,
+            })
 
-        if (path.canceled) return
+            if (acceptDiscard.response === 1) {
+              return
+            }
+          }
 
-        this.props.executeOperation(EditorOps.exportProjectPack, { dist: path.filePath! })
-      }
+          const result = await this.props.mountModal<ImportPackResponse>(resolve => (
+            <ImportPackModal onClose={resolve} />
+          ))
+          if (result.cancelled) return
+          this.props.executeOperation(EditorOps.importProjectPack, { src: result.src, dist: result.dist })
+        }
 
-      private handleRenderDestinate = async () =>{
-        const comp = getActiveComp(this.props.getStore)
-        if (!comp) return
+        private handleExportProjectPack = async () => {
+          const path = await remote.dialog.showSaveDialog({
+            title: t(t.k.modals.exportProject.title),
+            buttonLabel: t(t.k.modals.exportProject.save),
+            filters: [
+              {
+                name: 'Delir project package',
+                extensions: ['delirpp'],
+              },
+            ],
+          })
 
-        const result = await this.props.mountModal<RenderingOption | false>(resolve => <RenderingSettingModal onClose={resolve} />)
-        if (!result) return
+          if (path.canceled) return
 
-        this.props.executeOperation(RendererOps.renderDestinate, {
-          compositionId: comp.id!,
-          destPath: result.destination,
-          encodingOption: result.encodingOption
-        })
-      }
+          this.props.executeOperation(EditorOps.exportProjectPack, { dist: path.filePath! })
+        }
 
-      private handleOpenPreference = () => {
-        this.props.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
-      }
+        private handleRenderDestinate = async () => {
+          const comp = getActiveComp(this.props.getStore)
+          if (!comp) return
 
-      private handleCopy = () => {
-        uiActionCopy()
-      }
+          const result = await this.props.mountModal<RenderingOption | false>(resolve => (
+            <RenderingSettingModal onClose={resolve} />
+          ))
+          if (!result) return
 
-      private handleCut = () => {
-        uiActionCut()
-      }
+          this.props.executeOperation(RendererOps.renderDestinate, {
+            compositionId: comp.id!,
+            destPath: result.destination,
+            encodingOption: result.encodingOption,
+          })
+        }
 
-      private handlePaste = () => {
-        uiActionPaste()
-      }
+        private handleOpenPreference = () => {
+          this.props.executeOperation(EditorOps.changePreferenceOpenState, { open: true })
+        }
 
-      private handleUndo = () => {
-        uiActionUndo(this.props.executeOperation)
-      }
+        private handleCopy = () => {
+          uiActionCopy()
+        }
 
-      private handleRedo = () => {
-        uiActionRedo(this.props.executeOperation)
-      }
-    },
-  )
-))
+        private handleCut = () => {
+          uiActionCut()
+        }
+
+        private handlePaste = () => {
+          uiActionPaste()
+        }
+
+        private handleUndo = () => {
+          uiActionUndo(this.props.executeOperation)
+        }
+
+        private handleRedo = () => {
+          uiActionRedo(this.props.executeOperation)
+        }
+      },
+    ),
+  ),
+)

@@ -1,7 +1,7 @@
 import { StoreGetter } from '@fleur/fleur'
 import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
-import {clipboard, remote } from 'electron'
+import { clipboard, remote } from 'electron'
 import _ from 'lodash'
 import path from 'path'
 import React from 'react'
@@ -14,7 +14,7 @@ import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 import ProjectStore from '../../domain/Project/ProjectStore'
 import { getAssetById } from '../../domain/Project/selectors'
-import {CompositionSettingModal, CompositionSettingResult} from '../../modals/CompositionSettingModal'
+import { CompositionSettingModal, CompositionSettingResult } from '../../modals/CompositionSettingModal'
 
 import { Droppable } from 'components/Droppable/Droppable'
 import { ModalMounterProps, withModalMounter } from 'components/ModalOwner/ModalOwner'
@@ -59,7 +59,6 @@ interface State {
 
 type Props = ConnectedProps & ModalMounterProps & ContextProp
 
-
 const mapStateToProps = (getStore: StoreGetter) => ({
   editor: getStore(EditorStore).getState(),
 })
@@ -71,7 +70,7 @@ class AssetsView extends React.Component<Props, State> {
     settingCompositionQuery: null,
     selectedCompositionId: null,
     selectedAssetId: null,
-    dragover: false
+    dragover: false,
   }
 
   private compositionInputRefs: { [assetId: string]: LabelInput } = {}
@@ -252,22 +251,22 @@ class AssetsView extends React.Component<Props, State> {
     this.assetInputRefs[dataset.assetId].enableAndFocus()
   }
 
-  private handleClickReplaceAsset = async({dataset}: MenuItemOption<{assetId: string}>) => {
-    const {assetId} = dataset
+  private handleClickReplaceAsset = async ({ dataset }: MenuItemOption<{ assetId: string }>) => {
+    const { assetId } = dataset
     const asset = getAssetById(this.props.getStore, assetId)!
 
-    const {filePaths} = await remote.dialog.showOpenDialog({
-      filters: [{name: asset.fileType, extensions: [asset.fileType] }],
+    const { filePaths } = await remote.dialog.showOpenDialog({
+      filters: [{ name: asset.fileType, extensions: [asset.fileType] }],
       properties: ['openFile'],
     })
 
     if (!filePaths?.[0]) return
 
     const [filePath] = filePaths
-    const {ext} = path.parse(filePaths[0])
+    const { ext } = path.parse(filePaths[0])
     this.props.executeOperation(ProjectOps.modifyAsset, {
       assetId: assetId,
-      patch: {fileType: ext.slice(1), path: filePath}
+      patch: { fileType: ext.slice(1), path: filePath },
     })
   }
 
@@ -333,17 +332,21 @@ class AssetsView extends React.Component<Props, State> {
     const { compositionId } = dataset
 
     const comp = this.props.editor.project.findComposition(compositionId)!
-    const req = await this.props.mountModal<CompositionSettingResult | false>(resolve => <CompositionSettingModal composition={comp} onClose={resolve} />)
+    const req = await this.props.mountModal<CompositionSettingResult | false>(resolve => (
+      <CompositionSettingModal composition={comp} onClose={resolve} />
+    ))
 
     if (!req) return
     this.props.executeOperation(ProjectOps.modifyComposition, {
       compositionId: compositionId,
-      patch: req
+      patch: req,
     })
   }
 
   private openNewCompositionWindow = async () => {
-    const req = await this.props.mountModal<CompositionSettingResult | false>(resolve => <CompositionSettingModal onClose={resolve} />)
+    const req = await this.props.mountModal<CompositionSettingResult | false>(resolve => (
+      <CompositionSettingModal onClose={resolve} />
+    ))
 
     if (!req) return
     this.props.executeOperation(ProjectOps.createComposition, req)
@@ -369,4 +372,4 @@ class AssetsView extends React.Component<Props, State> {
   }
 }
 
-export default decorate([ withModalMounter, withFleurContext, connectToStores(mapStateToProps)], AssetsView)
+export default decorate([withModalMounter, withFleurContext, connectToStores(mapStateToProps)], AssetsView)

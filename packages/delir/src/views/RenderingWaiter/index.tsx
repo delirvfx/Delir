@@ -30,7 +30,7 @@ const statusToText = (progress: RenderingProgress) => {
 export const RenderingWaiter = () => {
   const [show, setShow] = useState(true)
 
-  const { inRendering, status } = useStore( getStore => ({
+  const { inRendering, status } = useStore(getStore => ({
     inRendering: getStore(RendererStore).isInRendering(),
     status: getStore(RendererStore).getExportingState(),
   }))

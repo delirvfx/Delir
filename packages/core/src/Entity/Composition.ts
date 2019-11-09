@@ -39,9 +39,12 @@ class Composition implements CompositionProps {
 
   constructor(props: CompositionProps) {
     this.id = uuid.v4() as Composition.Id
-    safeAssign<Composition>(this, props as CompositionProps & {
-      id: Composition.Id
-    })
+    safeAssign<Composition>(
+      this,
+      props as CompositionProps & {
+        id: Composition.Id
+      },
+    )
   }
 
   public patch(props: Partial<CompositionProps>) {

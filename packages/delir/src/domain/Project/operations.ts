@@ -466,43 +466,48 @@ export const removeAsset = operation(async (context, { assetId }: { assetId: str
   })
 })
 
-export const copyClipsIntoLayer = operation(async (context, {
-  baseClipId,
-  clipIds,
-  destLayerId
-}: {
-  baseClipId: string,
-  clipIds: string[],
-  destLayerId: string
-}) => {
-  const project = context.getStore(ProjectStore).getProject()!
-  const composition = project.findLayerOwnerComposition(destLayerId)!
-  const { layers } = composition
+export const copyClipsIntoLayer = operation(
+  async (
+    context,
+    {
+      baseClipId,
+      clipIds,
+      destLayerId,
+    }: {
+      baseClipId: string
+      clipIds: string[]
+      destLayerId: string
+    },
+  ) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const composition = project.findLayerOwnerComposition(destLayerId)!
+    const { layers } = composition
 
-  const baseLayerIndex = layers.findIndex(layer => !!layer.findClip(baseClipId))
-  const moveDestLayerIndex = layers.findIndex(layer => layer.id === destLayerId)
-  const layerMovement = moveDestLayerIndex - baseLayerIndex
+    const baseLayerIndex = layers.findIndex(layer => !!layer.findClip(baseClipId))
+    const moveDestLayerIndex = layers.findIndex(layer => layer.id === destLayerId)
+    const layerMovement = moveDestLayerIndex - baseLayerIndex
 
-  if (layerMovement === 0) return
+    if (layerMovement === 0) return
 
-  const commands: Command[] = []
-  for (const clipId of clipIds) {
-    const sourceLayer = project.findClipOwnerLayer(clipId)!
-    const sourceLayerIndex = layers.findIndex(layer => layer.id === sourceLayer.id)
-    const destLayer = layers[Math.max(0, Math.min(sourceLayerIndex + layerMovement, layers.length - 1))]
-    const clonedClip = sourceLayer.findClip(clipId)!.clone()
+    const commands: Command[] = []
+    for (const clipId of clipIds) {
+      const sourceLayer = project.findClipOwnerLayer(clipId)!
+      const sourceLayerIndex = layers.findIndex(layer => layer.id === sourceLayer.id)
+      const destLayer = layers[Math.max(0, Math.min(sourceLayerIndex + layerMovement, layers.length - 1))]
+      const clonedClip = sourceLayer.findClip(clipId)!.clone()
 
-    commands.push(new AddClipCommand(composition.id, destLayer.id, clonedClip))
+      commands.push(new AddClipCommand(composition.id, destLayer.id, clonedClip))
 
-    context.dispatch(ProjectActions.addClip, {
-      targetLayerId: destLayer.id,
-      newClip: clonedClip
-    })
-  }
+      context.dispatch(ProjectActions.addClip, {
+        targetLayerId: destLayer.id,
+        newClip: clonedClip,
+      })
+    }
 
-  await context.executeOperation(HistoryOps.pushHistory, { command: new HistoryGroup(commands) })
-  await context.executeOperation(EditorOps.seekPreviewFrame, {})
-})
+    await context.executeOperation(HistoryOps.pushHistory, { command: new HistoryGroup(commands) })
+    await context.executeOperation(EditorOps.seekPreviewFrame, {})
+  },
+)
 
 export const moveClipToLayer = operation(
   async (
