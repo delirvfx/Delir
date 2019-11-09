@@ -1,3 +1,4 @@
+import * as Delir from '@delirvfx/core'
 import { StoreGetter } from '@fleur/fleur'
 import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
@@ -349,7 +350,7 @@ class AssetsView extends React.Component<Props, State> {
     ))
 
     if (!req) return
-    this.props.executeOperation(ProjectOps.createComposition, req)
+    this.props.executeOperation(ProjectOps.createComposition, req as Delir.Entity.Composition)
   }
 
   private onAssetsDragStart = ({ currentTarget }: React.DragEvent<HTMLTableRowElement>) => {

@@ -475,7 +475,7 @@ export default withFleurContext(
     /**
      * Calculate keyframe place points
      */
-    private buildKeyframePoints = (keyframes: ReadonlyArray<Delir.Entity.Keyframe>): KeyframePoint[] => {
+    private buildKeyframePoints = (keyframes: ReadonlyArray<Delir.Entity.Keyframe>) => {
       const { parentClip, descriptor, height, scrollLeft } = this.props
 
       if (!descriptor || descriptor.animatable === false) return []

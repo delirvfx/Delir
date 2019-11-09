@@ -80,7 +80,6 @@ const install = async () => {
         nodeIntegration: true,
         webgl: true,
         experimentalFeatures: true,
-        experimentalCanvasFeatures: true,
       },
     })
 
@@ -91,7 +90,6 @@ const install = async () => {
           nodeIntegration: true,
           webgl: true,
           experimentalFeatures: true,
-          experimentalCanvasFeatures: true,
         },
       })
 

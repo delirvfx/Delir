@@ -104,7 +104,7 @@ export const Gradations = ({
           pxPerSec,
           framerate: activeComposition.framerate,
           scale,
-          pixel: (e as MouseEvent).layerX + scrollLeft,
+          pixel: (e as any).layerX + scrollLeft,
         }) | 0
 
       onSeeked(frame)

@@ -33,7 +33,7 @@ export const useModalMounter = () => {
   return { mountModal }
 }
 
-export const withModalMounter = function<P>(Component: ComponentClass<P>): FC<P> {
+export const withModalMounter = function<P>(Component: ComponentClass<P>): FC<Pick<P, Exclude<keyof P, 'mountModal'>>> {
   return (props: any) => {
     const { mountModal } = useModalMounter()
     return <Component mountModal={mountModal} {...props} />

@@ -2,7 +2,7 @@ import * as Delir from '@delirvfx/core'
 import { useStore } from '@fleur/react'
 import React from 'react'
 
-import { getActiveComp, getActiveParam } from '../../domain/Editor/selectors'
+import { getActiveComp } from '../../domain/Editor/selectors'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import { SpreadType } from '../../utils/Spread'

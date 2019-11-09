@@ -83,8 +83,8 @@ export default class RendererStore extends Store<State> {
     // renderer.stop()
   })
 
-  private handleUnregisterPlugin = listen(RendererActions.unregisterPlugins, ({ id }) => {
-    this.pluginRegistry.unregisterPlugin(id)
+  private handleUnregisterPlugin = listen(RendererActions.unregisterPlugins, ({ ids }) => {
+    ids.forEach(id => this.pluginRegistry.unregisterPlugin(id))
   })
 
   private handleAddPlugins = listen(RendererActions.registerPlugins, payload => {

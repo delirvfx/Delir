@@ -210,7 +210,11 @@ export default class EditorStore extends Store<EditorState> {
   })
 
   private handleSetClipboardEntry = listen(EditorActions.setClipboardEntry, payload => {
-    this.updateWith(draft => (draft.clipboard = payload.entry))
+    this.updateWith(
+      draft =>
+        // WTF. TypeScript recognize draft.clipboard and payload.entry as different types.
+        (draft.clipboard = payload.entry as any),
+    )
   })
 
   public get currentPointFrame() {

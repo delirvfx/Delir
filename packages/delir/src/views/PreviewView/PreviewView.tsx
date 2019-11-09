@@ -1,5 +1,4 @@
-import { StoreGetter } from '@fleur/fleur'
-import { ContextProp, useFleurContext, useStore } from '@fleur/react'
+import { useFleurContext, useStore } from '@fleur/react'
 import React, { MouseEvent, useCallback, useEffect, useRef, WheelEvent } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { frameToTimeCode } from '../../utils/Timecode'
@@ -9,7 +8,6 @@ import { Dropdown } from '../../components/Dropdown'
 import { Pane } from '../../components/Pane'
 
 import { getActiveComp, getCurrentPreviewFrame } from 'domain/Editor/selectors'
-import EditorStore from '../../domain/Editor/EditorStore'
 import * as RendererOps from '../../domain/Renderer/operations'
 import RendererStore from '../../domain/Renderer/RendererStore'
 
@@ -18,19 +16,11 @@ import { Platform } from 'utils/platform'
 import t from './PreviewView.i18n'
 import s from './PreviewView.sass'
 
-type Props = ReturnType<typeof mapStoresToProps> & ContextProp
-
 interface State {
   scale: number
   scaleListShown: boolean
   positionX: number
   positionY: number
-}
-
-const mapStoresToProps = (getStore: StoreGetter) => {
-  const editorStore = getStore(EditorStore)
-
-  return
 }
 
 const RenderStatusIcon = styled(Icon)`
@@ -47,7 +37,7 @@ const RenderStatusIcon = styled(Icon)`
   `} 0.5s infinite linear;
 `
 
-export const PreviewView = (props: Props) => {
+export const PreviewView = () => {
   const { executeOperation } = useFleurContext()
   const { activeComp, currentPreviewFrame, previewPlaying, framePreviewWaiting, lastRenderState } = useStore(
     getStore => ({
