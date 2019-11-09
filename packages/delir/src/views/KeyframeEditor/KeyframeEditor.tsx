@@ -272,7 +272,7 @@ export const KeyframeEditor = withFleurContext(
                       activeClip.placedFrame,
                       activeParamDescriptor,
                       this.activeEntityObject.keyframes[activeParam.paramName] || [],
-                    )!
+                    ) as Delir.Values.Expression
 
                     return (
                       <ScriptParamEditor
