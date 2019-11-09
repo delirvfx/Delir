@@ -10,7 +10,7 @@ export const proxyDeepFreeze = <T extends any>(obj: T): DeepReadonly<T> => {
   }
 
   if (typeof obj === 'object') {
-    return new Proxy<T>(obj, {
+    return new Proxy(obj as any, {
       get(target: T, property: string) {
         return proxyDeepFreeze((target as any)[property])
       },
