@@ -2,7 +2,7 @@ import * as Delir from '@delirvfx/core'
 import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useObjectState } from 'utils/hooks'
 import { SpreadType } from '../../utils/Spread'
 
@@ -47,6 +47,8 @@ export const Layer = (props: Props) => {
     postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
     userCodeException: getStore(RendererStore).getUserCodeException(),
   }))
+
+  const postEffectPluginsMemo = useMemo(() => postEffectPlugins, [postEffectPlugins.length])
 
   const { layer, framerate, pxPerSec, scale, scrollLeft, clipOffset, scrollWidth, layerIndex } = props
 
@@ -226,12 +228,12 @@ export const Layer = (props: Props) => {
           return (
             <Clip
               key={clip.id!}
-              clip={{ ...clip }}
+              clip={clip}
               width={active ? width + clipOffset.width : width}
               top={active ? clipOffset.y : 0}
               left={active ? left + clipOffset.x : left}
               active={active}
-              postEffectPlugins={postEffectPlugins}
+              postEffectPlugins={postEffectPluginsMemo}
               hasError={hasError}
             />
           )
