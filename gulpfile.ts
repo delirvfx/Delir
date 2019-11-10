@@ -360,6 +360,7 @@ export async function compilePlugins(done) {
         'chromakey/index': './chromakey/index',
         'webgl/index': './webgl/index',
         'time-posterization/index': './time-posterization/index',
+        'repeat-tile/index': './repeat-tile/index',
         ...contribPEP,
         ...(__DEV__
           ? {
