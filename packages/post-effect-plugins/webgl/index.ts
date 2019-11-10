@@ -64,7 +64,18 @@ export default class WebGLPostEffect extends PostEffectBase {
    * Do it in this method.
    */
   public async initialize(context: EffectPreRenderContext<Params>) {
-    this.program = context.gl.getProgram(context.parameters.fragment.code)
+    try {
+      this.program = context.gl.getProgram(context.parameters.fragment.code)
+    } catch (e) {
+      throw new Exceptions.UserCodeException(`[posteffect-webgl] Shader error: ${e.message}`, {
+        sourceError: e,
+        location: {
+          type: 'effect',
+          paramName: 'fragment',
+          entityId: context.effect.id,
+        },
+      })
+    }
     this.uniformFactoryCode = Engine.ExpressionSupport.compileTypeScript(context.parameters.uniformFactory.code)
   }
 
@@ -88,7 +99,7 @@ export default class WebGLPostEffect extends PostEffectBase {
         sourceError: e,
         location: {
           type: 'effect',
-          paramName: 'Uniforms',
+          paramName: 'uniforms',
           entityId: context.effect.id,
         },
       })
