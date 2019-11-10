@@ -93,7 +93,7 @@ interface ClipAttributes {
     time: number
     frame: number
     params: Readonly<{ [paramName: string]: any }>
-    effect(referenceName: string): EffectAttributes
+    effect(referenceName: string): EffectProxy
 }
 
 interface EffectProxy {
