@@ -267,7 +267,7 @@ class AssetsView extends React.Component<Props, State> {
     const { ext } = path.parse(filePaths[0])
     this.props.executeOperation(ProjectOps.modifyAsset, {
       assetId: assetId,
-      patch: { fileType: ext.slice(1), path: filePath },
+      patch: { fileType: ext.slice(1), path: `file://${filePath}` },
     })
   }
 

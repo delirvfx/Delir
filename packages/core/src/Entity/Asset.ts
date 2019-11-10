@@ -26,6 +26,10 @@ class Asset implements AssetProps {
   }
 
   public patch(props: Partial<AssetProps>) {
+    if (props.path && !/^.+:\/\//.test(props.path)) {
+      throw new Error('Invalid asset path, path must be start with schema')
+    }
+
     safeAssign(this, props)
   }
 }

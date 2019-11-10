@@ -265,13 +265,10 @@ export const exportProjectPack = operation(async ({ getStore, executeOperation }
       const ext = path.extname(assetPath)
       const tmpName = `${uuid.v4()}${ext}`
       assetMap[asset.id] = { fileName: distFileName, tmpName }
-      asset.patch({ path: tmpName })
+      asset.patch({ path: `file:///__DELIR_TEMPORARY_/${tmpName}` })
       await fs.copyFile(assetPath, path.join(tmpDir, tmpName))
     }),
   )
-
-  // Erase privacy data (path)
-  project.assets.forEach(asset => asset.patch({ path: '' }))
 
   await fs.writeFile(
     path.join(tmpDir, 'project.msgpack'),
@@ -313,7 +310,7 @@ export const importProjectPack = operation(
       Object.entries(assets as ProjectPackAssetMap).map(async ([id, { fileName, tmpName }]) => {
         const asset = project.findAsset(id)!
         await fs.rename(path.join(tmpDir, tmpName), path.join(tmpDir, fileName))
-        asset.patch({ path: path.join(/* Target to finalized dir */ distDir, fileName) })
+        asset.patch({ path: 'file://' + path.join(/* Target to finalized dir */ distDir, fileName) })
       }),
     )
 
