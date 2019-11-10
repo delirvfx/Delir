@@ -1,0 +1,14 @@
+{
+  "name": "@delirvfx/time-posterization",
+  "version": "0.1.0",
+  "author": "Hanakla (https://twitter.com/@_ragg_)",
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "@delirvfx/core": "0.11.x"
+  },
+  "delir": {
+    "name": "Time posterization",
+    "type": "post-effect"
+  }
+}
