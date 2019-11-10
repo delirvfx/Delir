@@ -55,7 +55,7 @@ export const ColorTypeInput = ({
     const { r, g, b, a } = currentColor
     onChange(alpha ? new Delir.Values.ColorRGBA(r, g, b, a!) : new Delir.Values.ColorRGB(r, g, b))
     setOpened(false)
-  }, [onChange, currentColor])
+  }, [onChange, alpha, currentColor])
 
   const handleClickDiscard = useCallback(() => {
     setColor(soruceValue)
@@ -71,7 +71,11 @@ export const ColorTypeInput = ({
       <ValuePreview ref={parentRef as any} bgColor={soruceValue.toCSSColor()} onClick={handleClickOpenColorPicker} />
       <Portal>
         <EditorWrapper opened={opened} ref={poppingRef as any}>
-          <ChromePicker color={currentColor} disableAlpha={!alpha} onChange={handleChangeColor} />
+          <ChromePicker
+            color={{ r: currentColor.r, g: currentColor.g, b: currentColor.b, a: currentColor.a ?? 1 }}
+            disableAlpha={!alpha}
+            onChange={handleChangeColor}
+          />
           <div style={{ marginTop: '4px' }}>
             <Button kind="primary" onClick={handleClickOk}>
               {t(t.k.ok)}
