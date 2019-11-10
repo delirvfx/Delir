@@ -454,21 +454,6 @@ export default class Engine {
         const timeOnClip = baseContext.time - clipTask.clipPlacedFrame / baseContext.framerate
         const frameOnClip = baseContext.frame - clipTask.clipPlacedFrame
 
-        const clipRenderContext = baseContext.toClipRenderContext({
-          clip: clipTask.clipEntity,
-          timeOnClip,
-          frameOnClip,
-
-          beforeExpressionParameters: {},
-          parameters: {},
-          clipEffectParams: {},
-
-          srcCanvas: null,
-          destCanvas: clipBufferCanvas,
-          srcAudioBuffer: null,
-          destAudioBuffer: clipTask.audioBuffer,
-        })
-
         // Lookup before apply expression referenceable effect params expression
         const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
 
@@ -480,15 +465,27 @@ export default class Engine {
         })
 
         const beforeClipExpressionParams = clipTask.keyframeTable.getParametersAt(baseContext.frame)
-        const afterExpressionParams = clipTask.keyframeTable.getParameterWithExpressionAt(baseContext.frame, {
+
+        const clipRenderContext = baseContext.toClipRenderContext({
+          clip: clipTask.clipEntity,
+          timeOnClip,
+          frameOnClip,
+
+          beforeExpressionParameters: beforeClipExpressionParams,
+          parameters: {},
+          clipEffectParams: referenceableEffectParams,
+
+          srcCanvas: null,
+          destCanvas: clipBufferCanvas,
+          srcAudioBuffer: null,
+          destAudioBuffer: clipTask.audioBuffer,
+        })
+
+        clipRenderContext.parameters = clipTask.keyframeTable.getParameterWithExpressionAt(baseContext.frame, {
           context: clipRenderContext,
           clipParams: beforeClipExpressionParams,
           referenceableEffectParams,
         })
-
-        clipRenderContext.beforeExpressionParameters = beforeClipExpressionParams
-        clipRenderContext.parameters = afterExpressionParams
-        clipRenderContext.clipEffectParams = referenceableEffectParams
 
         if (clipTask.rendererType === 'audio') {
           audioTaskGroup.push({ context: clipRenderContext, task: clipTask })
@@ -523,6 +520,7 @@ export default class Engine {
               srcCanvas: clipContext.destCanvas,
               destCanvas: clipContext.destCanvas,
               parameters: {},
+              clipEffectParams: clipContext.clipEffectParams,
             })
 
             effectRenderContext.parameters = effectTask.keyframeTable.getParameterWithExpressionAt(baseContext.frame, {

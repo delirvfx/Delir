@@ -23,7 +23,9 @@ export const createExpressionContext = (
       frame: (context as ClipRenderContext<any>).frameOnClip,
       params: null,
       effect: (referenceName: string) => {
-        const targetEffect = (context as ClipRenderContext<any>).clipEffectParams[referenceName]
+        const targetEffect = (context as ClipRenderContext<any> | EffectRenderContext<any>).clipEffectParams[
+          referenceName
+        ]
         if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
         return { params: proxyDeepFreeze(targetEffect) } as EffectProxy
       },
