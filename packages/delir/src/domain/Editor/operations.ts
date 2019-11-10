@@ -130,12 +130,13 @@ export const changeActiveParam = operation((context, { target }: { target: Param
 })
 
 export const seekPreviewFrame = operation((context, { frame = undefined }: { frame?: number }) => {
-  const state = context.getStore(EditorStore).getState()
+  const currentPreviewFrame = getCurrentPreviewFrame(context.getStore)
+  const activeComp = getActiveComp(context.getStore)
+  const { previewPlaying } = context.getStore(RendererStore)
 
-  const { activeComp } = state
-  if (!activeComp) return
+  if (!activeComp || previewPlaying) return
 
-  frame = _.isNumber(frame) ? frame : state.currentPreviewFrame
+  frame = _.isNumber(frame) ? frame : currentPreviewFrame
   const overloadGuardedFrame = _.clamp(frame, 0, activeComp.durationFrames)
   context.dispatch(EditorActions.seekPreviewFrame, {
     frame: overloadGuardedFrame,
