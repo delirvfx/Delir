@@ -31,8 +31,8 @@ export default class Chromakey extends PostEffectBase {
   public static provideParameters() {
     // prettier-ignore
     return Type
-      .number('xRepeat', { label: 'X repeat', defaultValue: () => 2, animatable: true })
-      .number('yRepeat', { label: 'Y repeat', defaultValue: () => 2, animatable: true })
+      .float('xRepeat', { label: 'X repeat', defaultValue: () => 2, animatable: true })
+      .float('yRepeat', { label: 'Y repeat', defaultValue: () => 2, animatable: true })
       .float('xOffset', { label: 'Offset X(px)', defaultValue: () => 0, animatable: true})
       .float('yOffset', { label: 'Offset Y(px)', defaultValue: () => 0, animatable: true})
   }
