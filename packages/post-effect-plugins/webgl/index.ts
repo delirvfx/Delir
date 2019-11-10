@@ -86,23 +86,23 @@ export default class WebGLPostEffect extends PostEffectBase {
   public async render(context: EffectRenderContext<Params>) {
     const { gl, srcCanvas, destCanvas } = context
 
-    let uniforms: any
+    let uniforms: any = {}
     try {
       uniforms = vm.runInNewContext(this.uniformFactoryCode, {
         gl,
         ...Engine.ExpressionSupport.createExpressionContext(context),
       })
-
-      gl.applyProgram(this.program, uniforms, srcCanvas, destCanvas)
     } catch (e) {
-      throw new Exceptions.UserCodeException(`[posteffect-webgl] Shader error: ${e.message}`, {
+      throw new Exceptions.UserCodeException(`[posteffect-webgl] Uniform error: ${e.message}`, {
         sourceError: e,
         location: {
           type: 'effect',
-          paramName: 'uniforms',
+          paramName: 'uniformFactory',
           entityId: context.effect.id,
         },
       })
     }
+
+    gl.applyProgram(this.program, uniforms, srcCanvas, destCanvas)
   }
 }
