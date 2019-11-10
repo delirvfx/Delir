@@ -98,7 +98,7 @@ const LayerLabelComponent = ({ layer, layerIndex, onSelect, onRemove }: Props) =
         <LabelInput
           ref={layerNameInputRef}
           defaultValue={layer.name}
-          placeholder="Layer name"
+          placeholder={`Layer ${layerIndex + 1}`}
           onChange={handleChangeLayerName}
         />
       </li>
