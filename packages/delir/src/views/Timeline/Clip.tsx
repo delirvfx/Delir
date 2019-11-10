@@ -184,6 +184,12 @@ export const Clip = memo(({ clip, active, postEffectPlugins, width, left, top, h
     })
   }, [clip])
 
+  const handleSeekToTailOfClip = useCallback(() => {
+    executeOperation(EditorOps.seekPreviewFrame, {
+      frame: clip.placedFrame + clip.durationFrames,
+    })
+  }, [clip])
+
   return (
     <Rnd
       className={s.clip}
@@ -222,6 +228,7 @@ export const Clip = memo(({ clip, active, postEffectPlugins, width, left, top, h
       >
         <ContextMenu>
           <MenuItem label={t(t.k.contextMenu.seekToHeadOfClip)} onClick={handleSeekToHeadOfClip} />
+          <MenuItem label={t(t.k.contextMenu.seekToTailOfClip)} onClick={handleSeekToTailOfClip} />
           <MenuItem label={t(t.k.contextMenu.effect)}>
             {postEffectPlugins.length ? (
               postEffectPlugins.map(entry => (
