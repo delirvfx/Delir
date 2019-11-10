@@ -13,6 +13,7 @@ interface Props {
 }
 
 const TextareaWrapper = styled.div`
+  z-index: ${cssVars.zIndex.popup};
   padding: 4px;
   background-color: ${cssVars.colors.popupBg};
   border-radius: ${cssVars.size.radius};

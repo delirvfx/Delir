@@ -25,4 +25,7 @@ export const cssVars = {
   size: {
     radius: '4px',
   },
+  zIndex: {
+    popup: 1000,
+  },
 }

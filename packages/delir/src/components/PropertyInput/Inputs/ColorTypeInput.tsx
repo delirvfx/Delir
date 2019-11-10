@@ -17,6 +17,7 @@ const ValuePreview = styled.div<{ bgColor: string }>`
 `
 
 const EditorWrapper = styled.div<{ opened: boolean }>`
+  z-index: ${cssVars.zIndex.popup};
   padding: 4px;
   visibility: ${({ opened }) => (opened ? 'visible' : 'hidden')};
   pointer-events: ${({ opened }) => (opened ? 'all' : 'none')};
