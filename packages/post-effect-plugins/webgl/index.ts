@@ -33,7 +33,7 @@ const TEMPLATE_JS = `// Here is able to use Expression API
 // SEE: http://delir.studio/docs/plugin/posteffect/webgl.html
 
 // It returns as uniform key-value pair.
-({
+;({
   // someUniform: gl.uni1v(255),
 })
 `
