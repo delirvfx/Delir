@@ -60,9 +60,9 @@ vec3 hsl2rgb( in vec3 c )
 
 void main(void) {
     vec4 color = texture2D(source, vTexCoord);
-    vec3 hsl = rgb2hsl(color.rgb)
-    vec3 dest = hsl2rgb(vec3(hsl.x + hueShift, hsl.y + saturation, hsl.z + lightness))
-    gl_FragColor = vec4(dest.rgb, color.a)
+    vec3 hsl = rgb2hsl(color.rgb);
+    vec3 dest = hsl2rgb(vec3(hsl.x + hueShift, hsl.y + saturation, hsl.z * lightness));
+    gl_FragColor = vec4(dest.rgb, color.a);
 }
 `
 
