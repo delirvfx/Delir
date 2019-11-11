@@ -11,7 +11,7 @@ precision mediump float;
 
 varying vec2 vTexCoord;
 uniform sampler2D source;
-uniform float hue;
+uniform float hueShift;
 uniform float saturation;
 uniform float lightness;
 
@@ -61,7 +61,7 @@ vec3 hsl2rgb( in vec3 c )
 void main(void) {
     vec4 color = texture2D(source, vTexCoord);
     vec3 hsl = rgb2hsl(color.rgb)
-    vec3 dest = hsl2rgb(vec3(hsl.x, hsl.y + saturation, hsl.z + lightness))
+    vec3 dest = hsl2rgb(vec3(hsl.x + hueShift, hsl.y + saturation, hsl.z + lightness))
     gl_FragColor = vec4(dest.rgb, color.a)
 }
 `
@@ -108,7 +108,7 @@ export default class ColorCollectionPostEffect extends PostEffectBase {
     gl.applyProgram(
       this.program,
       {
-        hue: gl.uni1f(parameters.hueShift),
+        hueShift: gl.uni1f(parameters.hueShift),
         saturation: gl.uni1f(Math.max(0, Math.min(parameters.saturation, 100) / 100)),
         lightness: gl.uni1f(Math.max(0, Math.min(parameters.lightness, 100) / 100)),
       },
