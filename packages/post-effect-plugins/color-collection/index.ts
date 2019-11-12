@@ -61,7 +61,7 @@ vec3 hsl2rgb( in vec3 c )
 void main(void) {
     vec4 color = texture2D(source, vTexCoord);
     vec3 hsl = rgb2hsl(color.rgb);
-    vec3 dest = hsl2rgb(vec3(hsl.x + hueShift, hsl.y + saturation, hsl.z * lightness));
+    vec3 dest = hsl2rgb(vec3(hsl.x + hueShift, hsl.y + saturation, hsl.z + lightness));
     gl_FragColor = vec4(dest.rgb, color.a);
 }
 `
@@ -80,7 +80,7 @@ export default class ColorCollectionPostEffect extends PostEffectBase {
         defaultValue: () => 0,
       })
       .float('lightness', {
-        label: 'Brightness (%)',
+        label: 'Lightness (%)',
         defaultValue: () => 50,
       })
   }
@@ -110,7 +110,7 @@ export default class ColorCollectionPostEffect extends PostEffectBase {
       {
         hueShift: gl.uni1f(parameters.hueShift),
         saturation: gl.uni1f(Math.max(0, Math.min(parameters.saturation, 100) / 100)),
-        lightness: gl.uni1f(Math.max(0, Math.min(parameters.lightness, 100) / 100)),
+        lightness: gl.uni1f((Math.max(0, Math.min(parameters.lightness, 100)) - 50) / 50),
       },
       srcCanvas,
       destCanvas,
