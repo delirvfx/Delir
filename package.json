@@ -10,7 +10,7 @@
   "scripts": {
     "start": "cross-env electron-rebuild && cross-env NODE_ENV=development gulp",
     "rebuild": "cross-env electron-rebuild",
-    "build": "cross-env NODE_ENV=production node --max-old-space-size=2048 ./node_modules/.bin/gulp publish",
+    "build": "cross-env NODE_ENV=production node --max-old-space-size=4096 ./node_modules/.bin/gulp publish",
     "declare": "cross-env tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "clean-modules": "rm -rf node_modules/ packages/delir/node_modules packages/delir-core/node_modules",
     "test-core": "jest -c packages/core/jest.config.js",
