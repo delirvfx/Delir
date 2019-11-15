@@ -41,7 +41,7 @@ export interface KeyframePatch {
   frameOnClip?: number
 }
 
-const EASING_HANDLER_SIZE = 3
+const EASING_HANDLER_SIZE = 2.5
 
 export default withFleurContext(
   class KeyframeGraph extends React.Component<Props, State> {
