@@ -8,7 +8,7 @@ export const createExpressionContext = (
   context: ClipPreRenderContext<any> | ClipRenderContext<any> | EffectPreRenderContext<any> | EffectRenderContext<any>,
 ) => {
   return {
-    console: globalThis.console,
+    console: window.console,
     thisComp: {
       width: context.width,
       height: context.height,
