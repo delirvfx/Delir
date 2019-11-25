@@ -57,7 +57,6 @@ vec3 hsl2rgb( in vec3 c )
     return c.z + c.y * (rgb-0.5)*(1.0-abs(2.0*c.z-1.0));
 }
 
-
 void main(void) {
     vec4 color = texture2D(source, vTexCoord);
     vec3 hsl = rgb2hsl(color.rgb);
