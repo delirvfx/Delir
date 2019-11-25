@@ -68,7 +68,7 @@ const optionToFfmpegArgs = (option: EncodingOption & { videoInput: string; audio
     '-pix_fmt',
     option.useAlpha ? 'rgba' : 'yuv420p',
     ...(option.aCodec === ACodecs.aacLow ? ['-profile:a', 'aac_low', '-c:a', 'aac'] : []),
-    ... (option.aCodec !== ACodecs.pcm ? ['-b:a', option.aBitrate ? option.aBitrate : '256k',] : []),
+    ...(option.aCodec !== ACodecs.pcm ? ['-b:a', option.aBitrate ? option.aBitrate : '256k'] : []),
     option.destPath,
   ]
 }
@@ -112,7 +112,7 @@ export default async (options: ExportOptions): Promise<void> => {
     '-pix_fmt',
     'rgba',
     // 'yuva420p',
-    tmpMovieFilePath
+    tmpMovieFilePath,
   ])
 
   // tslint:disable-next-line:no-console

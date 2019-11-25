@@ -1,37 +1,38 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
+import { connectToStores, ContextProp, useStore, withFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import { clipboard } from 'electron'
 import _ from 'lodash'
 import mouseWheel from 'mouse-wheel'
 import React from 'react'
+import { Platform } from 'utils/platform'
 import { SpreadType } from '../../utils/Spread'
 import { MeasurePoint } from '../../utils/TimePixelConversion'
 
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
-import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
-import { ParameterTarget } from '../../domain/Editor/types'
-import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
-import RendererStore from '../../domain/Renderer/RendererStore'
-
 import { PropertyInput } from 'components/PropertyInput/PropertyInput'
+import { getActiveComp } from 'domain/Editor/selectors'
+import { memo } from 'react'
+import { SortEndHandler } from 'react-sortable-hoc'
 import { Button } from '../../components/Button'
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu'
 import { LabelInput } from '../../components/LabelInput'
 import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
+import EditorStore, { EditorState } from '../../domain/Editor/EditorStore'
+import { ParameterTarget } from '../../domain/Editor/types'
+import ProjectStore, { ProjectStoreState } from '../../domain/Project/ProjectStore'
+import RendererStore from '../../domain/Renderer/RendererStore'
+import { PX_PER_SEC } from '../Timeline/Timeline'
 import { EffectList, EffectListItem, EffectSortHandle } from './EffectList'
 import ExpressionEditor from './ExpressionEditor'
-import { KeyframePatch } from './KeyframeGraph'
-import { KeyframeMediator } from './KeyframeMediator'
-import ScriptParamEditor from './ScriptParamEditor'
-
-import { SortEndHandler } from 'react-sortable-hoc'
-import { PX_PER_SEC } from '../Timeline/Timeline'
 import t from './KeyframeEditor.i18n'
 import s from './KeyframeEditor.sass'
+import { KeyframePatch } from './KeyframeGraph'
+import { KeyframeMediator } from './KeyframeMediator'
+import { ScriptParamEditor } from './ScriptParamEditor'
 
 export interface EditorResult {
   code: string | null
@@ -67,9 +68,95 @@ interface State {
 
 type Props = OwnProps & ConnectedProps & ContextProp
 
+const Measures = memo(({ measures }: { measures: MeasurePoint[] }) => {
+  const { activeComp } = useStore(getStore => ({
+    activeComp: getActiveComp(getStore),
+  }))
+
+  if (!activeComp) return null
+
+  return (
+    <>
+      {measures.map(point => (
+        <div
+          key={point.index}
+          className={classnames(s.measureLine, {
+            [s['--grid']]: point.frameNumber % 10 === 0,
+            [s['--endFrame']]: point.frameNumber === activeComp.durationFrames,
+          })}
+          style={{ left: point.left }}
+        >
+          {point.frameNumber}
+        </div>
+      ))}
+    </>
+  )
+})
+
+// const EffectList = styled.div<{ opened: boolean }>`
+//   position: absolute;
+//   bottom: calc(100% + 4px);
+//   z-index: 1;
+//   width: 100%;
+//   background-color: ${cssVars.colors.popupBg};
+//   visibility: hidden;
+//   pointer-events: none;
+//   transition-property: visibility ${cssVars.animate.bgColorDuration} ${cssVars.animate.function};
+//   border-radius: ${cssVars.size.radius};
+//   box-shadow: ${cssVars.style.popupDropshadow};
+
+//   ${({ opened }) =>
+//     opened &&
+//     `
+//       visibility: visible;
+//       pointer-events: all;
+//   `}
+// `
+
+// const EffectEntry = styled.div`
+//   padding: 4px;
+//   transition: background-color ${cssVars.animate.bgColorDuration} ${cssVars.animate.function};
+
+//   &:hover {
+//     background-color: ${cssVars.colors.listItemHovered};
+//   }
+// `
+
+// const AddEffectButton = ({ clipId }: { clipId: string }) => {
+//   const { executeOperation } = useFleurContext()
+//   const [opened, setOpened] = useState(false)
+//   const effects = useStore(getStore => getStore(RendererStore).getPostEffectPlugins())
+
+//   const handleClickOpen = useCallback(() => {
+//     setOpened(opened => !opened)
+//   }, [])
+
+//   const handleClickEntry = useCallback(({ currentTarget }: MouseEvent<HTMLDivElement>) => {
+//     setOpened(false)
+//     executeOperation(ProjectOps.addEffectIntoClip, { clipId, processorId: currentTarget.dataset.processorId! })
+//   }, [])
+
+//   return (
+//     <div style={{ position: 'relative' }}>
+//       <Button blocked style={{ margin: '8px 0' }} onClick={handleClickOpen}>
+//         <span style={{ marginRight: '8px' }}>
+//           <Icon kind="plus" />
+//         </span>
+//         Add Effect
+//       </Button>
+//       <EffectList opened={opened}>
+//         {effects.map(entry => (
+//           <EffectEntry data-processor-id={entry.id} onClick={handleClickEntry}>
+//             {entry.name}
+//           </EffectEntry>
+//         ))}
+//       </EffectList>
+//     </div>
+//   )
+// }
+
 export const KeyframeEditor = withFleurContext(
   connectToStores(
-    [EditorStore, ProjectStore, RendererStore],
     (getStore): ConnectedProps => ({
       editor: getStore(EditorStore).getState(),
       activeParam: getStore(EditorStore).getActiveParam(),
@@ -111,7 +198,7 @@ export const KeyframeEditor = withFleurContext(
       }
 
       public render() {
-        const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins, scale } = this.props
+        const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins, scale, measures } = this.props
         const { keyframeViewViewBox, graphWidth, graphHeight, editorOpened, scriptParamEditorOpened } = this.state
         const activeEntityObject = this.activeEntityObject
 
@@ -161,6 +248,7 @@ export const KeyframeEditor = withFleurContext(
               <EffectList useDragHandle onSortEnd={this.handleSortEffect}>
                 {this.renderEffectProperties()}
               </EffectList>
+              {/* {activeClip && <AddEffectButton clipId={activeClip.id} />} */}
             </Pane>
             <Pane>
               <div ref="svgParent" className={s.keyframeContainer} tabIndex={-1} onWheel={this._scaleTimeline}>
@@ -177,20 +265,21 @@ export const KeyframeEditor = withFleurContext(
                   activeParamDescriptor &&
                   activeParamDescriptor.type === 'CODE' &&
                   (() => {
-                    const value = activeClip
-                      ? Delir.KeyframeCalcurator.calcKeyframeAt(
-                          editor.currentPreviewFrame,
-                          activeClip.placedFrame,
-                          activeParamDescriptor,
-                          activeClip.keyframes[activeParam.paramName] || [],
-                        )
-                      : new Delir.Values.Expression('javascript', '')
+                    if (!activeClip || !this.activeEntityObject) return null
+
+                    const value = Delir.KeyframeCalcurator.calcKeyframeAt(
+                      editor.currentPreviewFrame,
+                      activeClip.placedFrame,
+                      activeParamDescriptor,
+                      this.activeEntityObject.keyframes[activeParam.paramName] || [],
+                    ) as Delir.Values.Expression
 
                     return (
                       <ScriptParamEditor
                         title={activeParamDescriptor.label}
                         target={activeParam}
-                        code={(value as Delir.Values.Expression).code}
+                        langType={value.language}
+                        code={value.code}
                         onClose={this.handleCloseScriptParamEditor}
                       />
                     )
@@ -203,7 +292,7 @@ export const KeyframeEditor = withFleurContext(
                       transform: `translateX(-${scrollLeft}px)`,
                     }}
                   >
-                    {...this._renderMeasure()}
+                    <Measures measures={measures} />
                   </div>
                 </div>
                 {activeClip && activeParamDescriptor && activeParam && keyframes && (
@@ -311,9 +400,11 @@ export const KeyframeEditor = withFleurContext(
               <span className={s.paramItemName}>{desc.label}</span>
               <div className={s.paramItemInput}>
                 {desc.type === 'CODE' ? (
-                  <Button kind="normal" onClick={this.handleOpenScriptParamEditor}>
-                    {t(t.k.editScriptParam)}
-                  </Button>
+                  <div>
+                    <Button kind="normal" onClick={this.handleOpenScriptParamEditor}>
+                      {t(t.k.editScriptParam)}
+                    </Button>
+                  </div>
                 ) : (
                   <PropertyInput
                     assets={project ? project.assets : null}
@@ -481,13 +572,21 @@ export const KeyframeEditor = withFleurContext(
                     </span>
                     <span className={s.paramItemName}>{desc.label}</span>
                     <div className={s.paramItemInput}>
-                      <PropertyInput
-                        key={desc.paramName}
-                        assets={project ? project.assets : null}
-                        descriptor={desc}
-                        value={value!}
-                        onChange={this.effectValueChanged.bind(null, effect.id)}
-                      />
+                      {desc.type === 'CODE' ? (
+                        <div>
+                          <Button kind="normal" onClick={this.handleOpenScriptParamEditor}>
+                            {t(t.k.editScriptParam)}
+                          </Button>
+                        </div>
+                      ) : (
+                        <PropertyInput
+                          key={desc.paramName}
+                          assets={project ? project.assets : null}
+                          descriptor={desc}
+                          value={value!}
+                          onChange={this.effectValueChanged.bind(null, effect.id)}
+                        />
+                      )}
                     </div>
                   </div>
                 )
@@ -495,31 +594,6 @@ export const KeyframeEditor = withFleurContext(
             </EffectListItem>
           )
         })
-      }
-
-      private _renderMeasure = (): JSX.Element[] => {
-        const { activeComposition } = this.props
-        if (!activeComposition) return []
-
-        const { measures } = this.props
-        const components: JSX.Element[] = []
-
-        for (const point of measures) {
-          components.push(
-            <div
-              key={point.index}
-              className={classnames(s.measureLine, {
-                [s['--grid']]: point.frameNumber % 10 === 0,
-                [s['--endFrame']]: point.frameNumber === activeComposition.durationFrames,
-              })}
-              style={{ left: point.left }}
-            >
-              {point.frameNumber}
-            </div>,
-          )
-        }
-
-        return components
       }
 
       private get clipParamDescriptors() {
@@ -579,14 +653,26 @@ export const KeyframeEditor = withFleurContext(
         const { activeClip } = this.props
         if (!activeClip) return
 
-        this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
-          clipId: activeClip.id,
-          frameOnClip: 0,
-          paramName: result.target.paramName,
-          patch: {
-            value: new Delir.Values.Expression('javascript', result.code!),
-          },
-        })
+        if (result.target.type === 'clip') {
+          this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
+            clipId: result.target.entityId,
+            frameOnClip: 0,
+            paramName: result.target.paramName,
+            patch: {
+              value: new Delir.Values.Expression('javascript', result.code!),
+            },
+          })
+        } else if (result.target.type === 'effect') {
+          this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
+            clipId: activeClip.id,
+            effectId: result.target.entityId,
+            frameOnClip: 0,
+            paramName: result.target.paramName,
+            patch: {
+              value: new Delir.Values.Expression('javascript', result.code!),
+            },
+          })
+        }
 
         this.setState({ scriptParamEditorOpened: false })
       }
@@ -637,6 +723,11 @@ export const KeyframeEditor = withFleurContext(
       }
 
       private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
+        if (Platform.isMacOS && e.ctrlKey) {
+          this.props.onScaled(Math.max(this.props.scale - e.deltaY * 0.1, 0.1))
+          return
+        }
+
         if (e.altKey) {
           const newScale = this.props.scale + e.deltaY * 0.05
           this.props.onScaled(Math.max(newScale, 0.1))
@@ -687,7 +778,7 @@ export const KeyframeEditor = withFleurContext(
         if (!activeClip) return
 
         const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-        this.props.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
+        this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
           clipId: activeClip.id,
           effectId,
           paramName: desc.paramName,
@@ -717,7 +808,7 @@ export const KeyframeEditor = withFleurContext(
           }
 
           case 'effect': {
-            this.props.executeOperation(ProjectOps.createOrModifyKeyframeForEffect, {
+            this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
               clipId: parentClipId,
               effectId: activeParam.entityId,
               paramName,

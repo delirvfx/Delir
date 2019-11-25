@@ -1,6 +1,5 @@
 import { operation, OperationContext } from '@fleur/fleur'
 import { remote } from 'electron'
-import glob from 'fast-glob'
 import { existsSync, readFileSync, writeFile } from 'fs'
 import _ from 'lodash'
 import path from 'path'
@@ -8,6 +7,7 @@ import path from 'path'
 import { NotificationTimeouts } from 'domain/Editor/models'
 import * as EditorOps from '../Editor/operations'
 import { RendererActions } from '../Renderer/actions'
+import * as RendererOps from '../Renderer/operations'
 import { PreferenceActions } from './actions'
 import { validateSchema } from './models'
 import { defaultPreferance, Preference } from './PreferenceStore'
@@ -26,16 +26,6 @@ export const restoreApplicationPreference = operation(async context => {
   let preference: Preference
   try {
     preference = _.defaultsDeep(JSON.parse(json), defaultPreferance)
-
-    if (__DEV__) {
-      preference.develop.pluginDirs.push(
-        ...(await glob('*', {
-          cwd: path.join(process.cwd(), 'prepublish/plugins'),
-          onlyDirectories: true,
-          absolute: true,
-        })),
-      )
-    }
   } catch {
     context.executeOperation(EditorOps.notify, {
       title: 'App preference loading failed',
@@ -81,8 +71,10 @@ export const savePreferences = (() => {
   })
 })()
 
-export const setPluginDirectories = operation(async ({ dispatch }, dirs: string[]) => {
-  dispatch(PreferenceActions.changeDevelopPluginDirs, { dirs })
+export const setDevPluginDirectories = operation(async ({ executeOperation, dispatch }, dirs: string[]) => {
+  await executeOperation(RendererOps.watchDevelopmentPlugins.dispose)
+  dispatch(PreferenceActions.changeDevelopPluginDirs, { dirs: [...new Set(dirs)] })
+  await executeOperation(RendererOps.watchDevelopmentPlugins)
 })
 
 export const setAudioVolume = operation(async (context, volume: number) => {

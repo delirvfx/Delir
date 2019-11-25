@@ -44,37 +44,38 @@ export interface ParameterTypeDescriptor<T extends ParameterType> {
 //     defaultValue?: Size3D
 // }
 export interface ColorRGBTypeDescripter extends ParameterTypeDescriptor<'COLOR_RGB'> {
-  defaultValue?: ColorRGB
+  defaultValue: () => ColorRGB
 }
 export interface ColorRGBATypeDescripter extends ParameterTypeDescriptor<'COLOR_RGBA'> {
-  defaultValue?: ColorRGBA
+  defaultValue: () => ColorRGBA
 }
 export interface BoolTypeDescripter extends ParameterTypeDescriptor<'BOOL'> {
-  defaultValue?: boolean
+  defaultValue: () => boolean
 }
 export interface StringTypeDescripter extends ParameterTypeDescriptor<'STRING'> {
-  defaultValue?: string
+  defaultValue: () => string
 }
 export interface NumberTypeDescripter extends ParameterTypeDescriptor<'NUMBER'> {
-  defaultValue?: number
+  defaultValue: () => number
 }
 export interface FloatTypeDescripter extends ParameterTypeDescriptor<'FLOAT'> {
-  defaultValue?: number
+  defaultValue: () => number
 }
 // export interface PulseTypeDescripter extends ParameterTypeDescriptor<'PULSE'> {
-//     defaultValue?: true,
+//     defaultValue: () => true,
 // }
 export interface EnumTypeDescripter extends ParameterTypeDescriptor<'ENUM'> {
   selection: string[]
-  defaultValue?: string
+  defaultValue: () => string | null
 }
 // export interface ClipTypeDescripter extends ParameterTypeDescriptor<'CLIP'> {}
 export interface AssetTypeDescripter extends ParameterTypeDescriptor<'ASSET'> {
   extensions: string[]
+  defaultValue: () => null
 }
 export interface CodeTypeDescripter extends ParameterTypeDescriptor<'CODE'> {
   langType: string
-  defaultValue?: Expression
+  defaultValue: () => Expression
 }
 // export interface ArrayOfTypeDescripter extends ParameterTypeDescriptor<'ARRAY'> {
 //     subType: TypeDescriptor
@@ -177,13 +178,13 @@ export class TypeDescriptor {
     paramName: string,
     conf: {
       label: string
-      defaultValue?: ColorRGB
+      defaultValue?: () => ColorRGB
       enabled?: boolean
       animatable?: boolean
     },
   ) {
     const { defaultValue, label, enabled, animatable } = defaults(conf, {
-      defaultValue: new ColorRGB(0, 0, 0),
+      defaultValue: () => new ColorRGB(0, 0, 0),
       enabled: true,
       animatable: true,
     })
@@ -203,13 +204,13 @@ export class TypeDescriptor {
     paramName: string,
     conf: {
       label: string
-      defaultValue?: ColorRGBA
+      defaultValue?: () => ColorRGBA
       enabled?: boolean
       animatable?: boolean
     },
   ) {
     const { defaultValue, label, enabled, animatable } = defaults(conf, {
-      defaultValue: new ColorRGBA(0, 0, 0, 1),
+      defaultValue: () => new ColorRGBA(0, 0, 0, 1),
       enabled: true,
       animatable: true,
     })
@@ -229,13 +230,13 @@ export class TypeDescriptor {
     paramName: string,
     conf: {
       label: string
-      defaultValue?: boolean
+      defaultValue?: () => boolean
       enabled?: boolean
       animatable?: boolean
     },
   ) {
     const { defaultValue, label, enabled, animatable } = defaults(conf, {
-      defaultValue: false,
+      defaultValue: () => false,
       enabled: true,
       animatable: true,
     })
@@ -255,13 +256,13 @@ export class TypeDescriptor {
     paramName: string,
     conf: {
       label: string
-      defaultValue?: string
+      defaultValue?: () => string
       enabled?: boolean
       animatable?: boolean
     },
   ) {
     const { defaultValue, label, enabled, animatable } = defaults(conf, {
-      defaultValue: '',
+      defaultValue: () => '',
       enabled: true,
       animatable: true,
     })
@@ -281,13 +282,13 @@ export class TypeDescriptor {
     paramName: string,
     conf: {
       label: string
-      defaultValue?: number
+      defaultValue?: () => number
       enabled?: boolean
       animatable?: boolean
     },
   ) {
     const { defaultValue, label, enabled, animatable } = defaults(conf, {
-      defaultValue: 0,
+      defaultValue: () => 0,
       enabled: true,
       animatable: true,
     })
@@ -307,13 +308,13 @@ export class TypeDescriptor {
     paramName: string,
     conf: {
       label: string
-      defaultValue?: number
+      defaultValue?: () => number
       enabled?: boolean
       animatable?: boolean
     },
   ) {
     const { defaultValue, label, enabled, animatable } = defaults(conf, {
-      defaultValue: 0,
+      defaultValue: () => 0,
       enabled: true,
       animatable: true,
     })
@@ -344,13 +345,14 @@ export class TypeDescriptor {
     paramName: string,
     conf: {
       label: string
-      defaultValue?: string
+      defaultValue?: () => string
       enabled?: boolean
       selection: string[]
     },
   ) {
     const { defaultValue, label, enabled, selection } = defaults(conf, {
       enabled: true,
+      defaultValue: () => null,
       selection: [],
     })
 
@@ -361,7 +363,8 @@ export class TypeDescriptor {
       throw new PluginLoadFailException('`selection` must be an array of string')
     }
 
-    if (defaultValue != null && !selection.includes(defaultValue)) {
+    const realDefaultValue = defaultValue()
+    if (realDefaultValue != null && !selection.includes(realDefaultValue)) {
       throw new PluginLoadFailException('Default value not included in selection')
     }
 
@@ -406,6 +409,7 @@ export class TypeDescriptor {
       label,
       enabled,
       animatable: false,
+      defaultValue: () => null,
       extensions,
     })
     return this
@@ -417,10 +421,11 @@ export class TypeDescriptor {
       label: string
       enabled?: boolean
       langType: string
-      defaultValue?: Expression
+      defaultValue?: () => Expression
     },
   ) {
     const { defaultValue, label, enabled, langType } = defaults(conf, {
+      defaultValue: () => new Expression(langType, ''),
       enabled: true,
     })
     this.properties.push({
@@ -481,7 +486,7 @@ export default class Type {
     paramName: string,
     option: {
       label: string
-      defaultValue?: ColorRGB
+      defaultValue?: () => ColorRGB
       enabled?: boolean
       animatable?: boolean
     },
@@ -493,7 +498,7 @@ export default class Type {
     paramName: string,
     option: {
       label: string
-      defaultValue?: ColorRGBA
+      defaultValue?: () => ColorRGBA
       enabled?: boolean
       animatable?: boolean
     },
@@ -505,7 +510,7 @@ export default class Type {
     paramName: string,
     option: {
       label: string
-      defaultValue?: boolean
+      defaultValue?: () => boolean
       enabled?: boolean
       animatable?: boolean
     },
@@ -517,7 +522,7 @@ export default class Type {
     paramName: string,
     option: {
       label: string
-      defaultValue?: string
+      defaultValue?: () => string
       enabled?: boolean
       animatable?: boolean
     },
@@ -529,7 +534,7 @@ export default class Type {
     paramName: string,
     option: {
       label: string
-      defaultValue?: number
+      defaultValue?: () => number
       enabled?: boolean
       animatable?: boolean
     },
@@ -541,7 +546,7 @@ export default class Type {
     paramName: string,
     option: {
       label: string
-      defaultValue?: number
+      defaultValue?: () => number
       enabled?: boolean
       animatable?: boolean
     },
@@ -572,7 +577,7 @@ export default class Type {
     paramName: string,
     option: {
       label: string
-      defaultValue?: Expression
+      defaultValue?: () => Expression
       enabled?: boolean
       langType: string
     },

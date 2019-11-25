@@ -1,3 +1,4 @@
+import { Draft } from 'immer'
 import Popper from 'popper.js'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useCallback } from 'react'
@@ -52,9 +53,13 @@ export const useValidation = (validator: Validator, deps: any[]) => {
 export const useObjectState = <T>(initialState: T) => {
   const [state, update] = useImmer<T>(initialState)
 
-  const updater = useCallback((part: Partial<T>) => {
+  const updater = useCallback((part: Partial<T> | ((draft: Draft<T>) => Partial<T>)) => {
     update(draft => {
-      Object.assign(draft, part)
+      if (typeof part === 'function') {
+        Object.assign(draft, part(draft))
+      } else {
+        Object.assign(draft, part)
+      }
     })
   }, [])
 

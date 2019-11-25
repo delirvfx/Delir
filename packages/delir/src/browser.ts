@@ -75,25 +75,21 @@ const install = async () => {
 
   const run = () => {
     const window = new BrowserWindow({
-      titleBarStyle: process.env.NODE_ENV === 'development' ? 'default' : 'hidden',
-      tabbingIdentifier: process.env.NODE_ENV === 'development' ? 'main' : undefined,
+      titleBarStyle: 'hidden',
       webPreferences: {
         nodeIntegration: true,
         webgl: true,
         experimentalFeatures: true,
-        experimentalCanvasFeatures: true,
       },
     })
 
     if (process.env.NODE_ENV === 'development') {
       const storybookWindow = new BrowserWindow({
         titleBarStyle: 'default',
-        tabbingIdentifier: 'main',
         webPreferences: {
           nodeIntegration: true,
           webgl: true,
           experimentalFeatures: true,
-          experimentalCanvasFeatures: true,
         },
       })
 

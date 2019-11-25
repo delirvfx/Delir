@@ -2,168 +2,141 @@
 
 exports[`Export Should correct serialize / desrialize project 1`] = `
 Object {
-  "__type": "entity:Project",
-  "__value": Object {
-    "assets": Array [
-      Object {
-        "__type": "entity:Asset",
+  "assets": Array [
+    Object {
+      "fileType": "png",
+      "id": "uuid-asset",
+      "name": "mock.png",
+      "path": "file:///mocked/mock.png",
+    },
+  ],
+  "compositions": Array [
+    Object {
+      "audioChannels": 2,
+      "backgroundColor": Object {
+        "__type": "value:ColorRGB",
         "__value": Object {
-          "fileType": "png",
-          "id": "uuid-asset",
-          "name": "mock.png",
-          "path": "file:///mocked/mock.png",
+          "_blue": 0,
+          "_green": 0,
+          "_red": 0,
         },
       },
-    ],
-    "compositions": Array [
-      Object {
-        "__type": "entity:Composition",
-        "__value": Object {
-          "audioChannels": 2,
-          "backgroundColor": Object {
-            "__type": "value:ColorRGB",
-            "__value": Object {
-              "_blue": 0,
-              "_green": 0,
-              "_red": 0,
-            },
-          },
-          "durationFrames": 100,
-          "framerate": 30,
-          "height": 100,
-          "id": "uuid-composition",
-          "layers": Array [
+      "durationFrames": 100,
+      "framerate": 30,
+      "height": 100,
+      "id": "uuid-composition",
+      "layers": Array [
+        Object {
+          "clips": Array [
             Object {
-              "__type": "entity:Layer",
-              "__value": Object {
-                "clips": Array [
-                  Object {
-                    "__type": "entity:Clip",
-                    "__value": Object {
-                      "durationFrames": 100,
-                      "effects": Array [
-                        Object {
-                          "__type": "entity:Effect",
-                          "__value": Object {
-                            "expressions": Object {
-                              "param": Object {
-                                "__type": "value:Expression",
-                                "__value": Object {
-                                  "code": "1",
-                                  "language": "javascript",
-                                },
-                              },
-                            },
-                            "id": "uuid-effect",
-                            "keyframes": Object {
-                              "param": Array [
-                                Object {
-                                  "__type": "entity:Keyframe",
-                                  "__value": Object {
-                                    "easeInParam": Array [
-                                      1,
-                                      1,
-                                    ],
-                                    "easeOutParam": Array [
-                                      0,
-                                      0,
-                                    ],
-                                    "frameOnClip": 0,
-                                    "id": "uuid-effect-kf-1",
-                                    "value": Object {
-                                      "__type": "value:ColorRGB",
-                                      "__value": Object {
-                                        "_blue": 0,
-                                        "_green": 0,
-                                        "_red": 0,
-                                      },
-                                    },
-                                  },
-                                },
-                              ],
-                              "param2": Array [
-                                Object {
-                                  "__type": "entity:Keyframe",
-                                  "__value": Object {
-                                    "easeInParam": Array [
-                                      1,
-                                      1,
-                                    ],
-                                    "easeOutParam": Array [
-                                      0,
-                                      0,
-                                    ],
-                                    "frameOnClip": 0,
-                                    "id": "uuid-effect-kf-2",
-                                    "value": Object {
-                                      "__type": "value:AssetPointer",
-                                      "__value": Object {
-                                        "assetId": "uuid-asset",
-                                      },
-                                    },
-                                  },
-                                },
-                              ],
-                            },
-                            "processor": "mock",
-                            "referenceName": null,
-                          },
-                        },
-                      ],
-                      "expressions": Object {
-                        "param": Object {
-                          "__type": "value:Expression",
-                          "__value": Object {
-                            "code": "1",
-                            "language": "javascript",
-                          },
-                        },
+              "durationFrames": 100,
+              "effects": Array [
+                Object {
+                  "expressions": Object {
+                    "param": Object {
+                      "__type": "value:Expression",
+                      "__value": Object {
+                        "code": "1",
+                        "language": "javascript",
                       },
-                      "id": "uuid-clip",
-                      "keyframes": Object {
-                        "param": Array [
-                          Object {
-                            "__type": "entity:Keyframe",
-                            "__value": Object {
-                              "easeInParam": Array [
-                                1,
-                                1,
-                              ],
-                              "easeOutParam": Array [
-                                0,
-                                0,
-                              ],
-                              "frameOnClip": 0,
-                              "id": "uuid-clip-kf-1",
-                              "value": Object {
-                                "__type": "value:ColorRGB",
-                                "__value": Object {
-                                  "_blue": 0,
-                                  "_green": 0,
-                                  "_red": 0,
-                                },
-                              },
-                            },
-                          },
+                    },
+                  },
+                  "id": "uuid-effect",
+                  "keyframes": Object {
+                    "param": Array [
+                      Object {
+                        "easeInParam": Array [
+                          1,
+                          1,
                         ],
+                        "easeOutParam": Array [
+                          0,
+                          0,
+                        ],
+                        "frameOnClip": 0,
+                        "id": "uuid-effect-kf-1",
+                        "value": Object {
+                          "__type": "value:ColorRGB",
+                          "__value": Object {
+                            "_blue": 0,
+                            "_green": 0,
+                            "_red": 0,
+                          },
+                        },
                       },
-                      "placedFrame": 0,
-                      "renderer": "video",
+                    ],
+                    "param2": Array [
+                      Object {
+                        "easeInParam": Array [
+                          1,
+                          1,
+                        ],
+                        "easeOutParam": Array [
+                          0,
+                          0,
+                        ],
+                        "frameOnClip": 0,
+                        "id": "uuid-effect-kf-2",
+                        "value": Object {
+                          "__type": "value:AssetPointer",
+                          "__value": Object {
+                            "assetId": "uuid-asset",
+                          },
+                        },
+                      },
+                    ],
+                  },
+                  "processor": "mock",
+                  "referenceName": null,
+                },
+              ],
+              "expressions": Object {
+                "param": Object {
+                  "__type": "value:Expression",
+                  "__value": Object {
+                    "code": "1",
+                    "language": "javascript",
+                  },
+                },
+              },
+              "id": "uuid-clip",
+              "keyframes": Object {
+                "param": Array [
+                  Object {
+                    "easeInParam": Array [
+                      1,
+                      1,
+                    ],
+                    "easeOutParam": Array [
+                      0,
+                      0,
+                    ],
+                    "frameOnClip": 0,
+                    "id": "uuid-clip-kf-1",
+                    "value": Object {
+                      "__type": "value:ColorRGB",
+                      "__value": Object {
+                        "_blue": 0,
+                        "_green": 0,
+                        "_red": 0,
+                      },
                     },
                   },
                 ],
-                "id": "uuid-layer",
-                "name": "mocked-layer",
               },
+              "placedFrame": 0,
+              "renderer": "video",
             },
           ],
-          "name": "mocked-composition",
-          "samplingRate": 48000,
-          "width": 100,
+          "id": "uuid-layer",
+          "name": "mocked-layer",
         },
-      },
-    ],
-    "formatVersion": "2019052601",
-  },
+      ],
+      "name": "mocked-composition",
+      "samplingRate": 48000,
+      "width": 100,
+    },
+  ],
+  "formatVersion": "2019052601",
 }
 `;

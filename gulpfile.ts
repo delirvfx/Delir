@@ -1,11 +1,11 @@
 // tslint:disable:no-console
 
 const g = require('gulp')
-const webpack = require('webpack')
+const webpack: typeof import('webpack') = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const builder = require('electron-builder')
+const builder: typeof import('electron-builder') = require('electron-builder')
 const notifier = require('node-notifier')
 const download = require('download')
 const zipDir = require('zip-dir')
@@ -18,7 +18,7 @@ const path = require('path')
 const { join, parse: pathParse } = require('path')
 const { spawn } = require('child_process')
 
-const NATIVE_MODULES = ['font-manager']
+const NATIVE_MODULES = ['fontmanager-redux']
 
 const paths = {
   src: {
@@ -60,7 +60,7 @@ export function buildBrowserJs(done) {
         sourceMapFilename: 'map/[file].map',
         path: paths.compiled.frontend,
       },
-      devtool: __DEV__ ? '#source-map' : 'none',
+      devtool: __DEV__ ? '#source-map' : false,
       resolve: {
         extensions: ['.js', '.ts'],
       },
@@ -88,7 +88,7 @@ export function buildBrowserJs(done) {
       },
       plugins: [
         ...(__DEV__
-          ? [new webpack.ExternalsPlugin('commonjs', ['devtron', 'electron-devtools-installer'])]
+          ? [new (webpack as any).ExternalsPlugin('commonjs', ['devtron', 'electron-devtools-installer'])]
           : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
@@ -113,7 +113,7 @@ export async function buildPublishPackageJSON(done) {
   delete json.devDependencies
   json.dependencies = {
     // install only native modules
-    'font-manager': '0.3.0',
+    'fontmanager-redux': '0.4.0',
   }
 
   const newJson = JSON.stringify(json, null, '  ')
@@ -226,12 +226,18 @@ export function compileRendererJs(done) {
       entry: {
         main: ['./src/main'],
       },
+      optimization: {
+        splitChunks: {
+          name: 'vendor',
+          chunks: 'initial',
+        },
+      },
       output: {
         filename: '[name].js',
         sourceMapFilename: 'map/[file].map',
         path: paths.compiled.frontend,
       },
-      devtool: 'none',
+      devtool: false,
       resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
         modules: ['node_modules'],
@@ -307,7 +313,7 @@ export function compileRendererJs(done) {
       plugins: [
         new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
         // preserve require() for native modules
-        new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
+        new (webpack as any).ExternalsPlugin('commonjs', NATIVE_MODULES),
         new MonacoEditorWebpackPlugin(),
         new HtmlWebpackPlugin({
           template: join(paths.src.frontend, 'src/index.html'),
@@ -352,6 +358,10 @@ export async function compilePlugins(done) {
         'numeric-slider/index': './numeric-slider/index',
         'color-slider/index': './color-slider/index',
         'chromakey/index': './chromakey/index',
+        'webgl/index': './webgl/index',
+        'time-posterization/index': './time-posterization/index',
+        'repeat-tile/index': './repeat-tile/index',
+        // 'color-collection/index': './color-collection/index',
         ...contribPEP,
         ...(__DEV__
           ? {
@@ -367,9 +377,9 @@ export async function compilePlugins(done) {
       output: {
         filename: '[name].js',
         path: paths.compiled.plugins,
-        libraryTarget: 'commonjs-module',
+        libraryTarget: 'commonjs-module' as any,
       },
-      devtool: __DEV__ ? '#source-map' : 'none',
+      devtool: __DEV__ ? '#source-map' : false,
       resolve: {
         extensions: ['.js', '.ts'],
         modules: ['node_modules'],
@@ -396,7 +406,7 @@ export async function compilePlugins(done) {
       },
       plugins: [
         new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
-        new webpack.ExternalsPlugin('commonjs', ['@delirvfx/core']),
+        new (webpack as any).ExternalsPlugin('commonjs', ['@delirvfx/core']),
         ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
@@ -474,6 +484,7 @@ export async function pack(done) {
     await builder.build({
       // targets: builder.Platform.MAC.createTarget(),
       targets: target,
+      publish: 'never',
       config: {
         appId: 'studio.delir',
         copyright: '© 2017 Ragg',
@@ -563,8 +574,8 @@ export function watch() {
 }
 
 export function runStorybook(done) {
-  console.log(paths.src.frontend)
-  spawn('yarn', ['storybook', '--ci'], { stdio: 'inherit', cwd: paths.src.frontend })
+  const yarnBin = isWindows ? 'yarn.cmd' : 'yarn'
+  spawn(yarnBin, ['storybook', '--ci', '--quiet'], { stdio: 'inherit', cwd: paths.src.frontend })
   done()
 }
 

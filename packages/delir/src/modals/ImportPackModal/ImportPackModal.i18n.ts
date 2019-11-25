@@ -15,7 +15,7 @@ export default I18n({
     },
   },
   en: {
-    title: 'Import　project package',
+    title: 'Import project package',
     importing: 'Select importing project package (.delirpp)',
     extracting: 'Select where to extract the project',
     buttons: {

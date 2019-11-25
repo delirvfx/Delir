@@ -2,7 +2,7 @@ import React from 'react'
 import { LabelInput } from './LabelInput'
 
 export default {
-  title: 'LabelInput',
+  title: 'Components|LabelInput',
 }
 
 export const normal = () => <LabelInput defaultValue="aaa" />

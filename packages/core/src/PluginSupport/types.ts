@@ -1,3 +1,4 @@
+import { DeepReadonly } from '../helper/proxyFreeze'
 import PluginBase from './PluginBase'
 
 export type PluginTypes = 'post-effect'
@@ -32,5 +33,5 @@ export interface PluginSummary {
   id: string
   name: string
   type: PluginTypes
-  package: DelirPluginPackageJson
+  package: DeepReadonly<DelirPluginPackageJson>
 }

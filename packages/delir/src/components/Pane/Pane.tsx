@@ -19,7 +19,7 @@ export const Pane: FunctionComponent<Props> = props => {
       {...rest}
     >
       {resizable ? <div className="_workspace-pane-handle" /> : null}
-      {React.Children.map(children, child => child)}
+      {children}
     </div>
   )
 }

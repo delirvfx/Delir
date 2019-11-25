@@ -38,27 +38,27 @@ export class ImageRenderer implements IRenderer<ImageRendererParams> {
       .number('x', {
         label: 'Position X',
         animatable: true,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
       .number('y', {
         label: 'Position Y',
         animatable: true,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
       .float('scale', {
         label: 'Scale',
         animatable: true,
-        defaultValue: 100,
+        defaultValue: () => 100,
       })
       .float('rotate', {
         label: 'Rotation',
         animatable: true,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
       .float('opacity', {
         label: 'Opacity',
         animatable: true,
-        defaultValue: 100,
+        defaultValue: () => 100,
       })
   }
 

@@ -1,4 +1,5 @@
 import classnames from 'classnames'
+import { Portal } from 'components/Portal/Portal'
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import s from './Dropdown.sass'
@@ -21,7 +22,7 @@ export type Dropdown = DropdownHandles
 export const Dropdown = React.forwardRef<DropdownHandles, Props>(
   ({ children, className, shownInitial, hideOnClickOutside }: Props, ref) => {
     const inspector = useRef<HTMLDivElement | null>(null)
-    const dropdownRoot = useRef<HTMLUListElement | null>(null)
+    const dropdownRoot = useRef<HTMLDivElement | null>(null)
     const [position, setPosition] = useState({ left: 0, top: 0 })
     const [show, setShow] = useState(shownInitial)
 
@@ -58,7 +59,7 @@ export const Dropdown = React.forwardRef<DropdownHandles, Props>(
     return (
       <>
         <div ref={inspector} className={s.dropdownInspector} />
-        {createPortal(
+        <Portal>
           <div
             ref={dropdownRoot}
             className={classnames(s.dropdown, className, {
@@ -67,9 +68,8 @@ export const Dropdown = React.forwardRef<DropdownHandles, Props>(
             style={{ left: position.left, top: position.top }}
           >
             {children}
-          </div>,
-          document.body,
-        )}
+          </div>
+        </Portal>
       </>
     )
   },
