@@ -64,6 +64,7 @@ export const createComposition = operation(
     await context.executeOperation(HistoryOps.pushHistory, {
       command: new CreateCompositionCommand(composition),
     })
+
     context.dispatch(ProjectActions.createComposition, {
       composition,
     })

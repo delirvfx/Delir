@@ -11,7 +11,7 @@ import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
 
 import AppMenu from '../AppMenu'
-import AssetsView from '../AssetsView'
+import { AssetsView } from '../AssetsView'
 import { NavigationView } from '../NavigationView'
 import { Notifications } from '../Notifications/Notifications'
 import { Preference } from '../Preference'
