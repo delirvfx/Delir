@@ -108,7 +108,7 @@ export default class ColorCollectionPostEffect extends PostEffectBase {
     gl.applyProgram(
       this.program,
       {
-        hueShift: gl.uni1f(parameters.hueShift),
+        hueShift: gl.uni1f((parameters.hueShift % 360) / 360),
         saturation: gl.uni1f(Math.max(0, Math.min(parameters.saturation, 100) / 100)),
         lightness: gl.uni1f((Math.max(0, Math.min(parameters.lightness, 100)) - 50) / 50),
       },
