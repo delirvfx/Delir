@@ -361,7 +361,7 @@ export async function compilePlugins(done) {
         'webgl/index': './webgl/index',
         'time-posterization/index': './time-posterization/index',
         'repeat-tile/index': './repeat-tile/index',
-        'color-collection/index': './color-collection/index',
+        // 'color-collection/index': './color-collection/index',
         ...contribPEP,
         ...(__DEV__
           ? {
