@@ -10,6 +10,7 @@ interface SolidRendererParam {
   x: ParamType.Number
   y: ParamType.Number
   scale: ParamType.Float
+  opacity: ParamType.Float
 }
 
 export class SolidRenderer implements IRenderer<SolidRendererParam> {
@@ -26,18 +27,20 @@ export class SolidRenderer implements IRenderer<SolidRendererParam> {
       .number('x', { label: 'Position X', animatable: true, defaultValue: () => 0 })
       .number('y', { label: 'Position Y', animatable: true, defaultValue: () => 0 })
       .float('scale', { label: 'Scale', animatable: true, defaultValue: () => 100 })
+      .float('opacity', { label: 'Opacity', animatable: true, defaultValue: () => 100 })
   }
 
   public async beforeRender(context: ClipPreRenderContext<SolidRendererParam>) {}
 
   public async render(context: ClipRenderContext<SolidRendererParam>) {
     const ctx = context.destCanvas.getContext('2d')!
-    const { color, x, y, scale } = context.parameters
+    const { color, x, y, scale, opacity } = context.parameters
     const normalScale = scale / 100
     const width = context.width * normalScale
     const height = context.height * normalScale
+    const { r, g, b } = color
 
-    ctx.fillStyle = color.toCSSColor()
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity / 100})`
     ctx.fillRect(x, y, width, height)
   }
 }
