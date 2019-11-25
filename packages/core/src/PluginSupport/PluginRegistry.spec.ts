@@ -44,7 +44,7 @@ describe('PluginRegistry', () => {
         "hasError": true,
         "reason": Array [
           [ValidationError: child "delir" fails because [child "type" fails because ["type" must be one of [post-effect]]]],
-          "Plugin not compatible to current @delirvfx/core version (you expected: 0.0.0 current: 0.11.0)",
+          "Plugin not compatible to current @delirvfx/core version (you expected: 0.0.0 current: 0.12.0)",
         ],
       }
     `)
