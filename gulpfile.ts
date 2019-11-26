@@ -313,7 +313,7 @@ export function compileRendererJs(done) {
       plugins: [
         new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
         // preserve require() for native modules
-        new (webpack as any).ExternalsPlugin('commonjs', NATIVE_MODULES),
+        new (webpack as any).ExternalsPlugin('commonjs', [...NATIVE_MODULES, 'aws-sdk']),
         new MonacoEditorWebpackPlugin(),
         new HtmlWebpackPlugin({
           template: join(paths.src.frontend, 'src/index.html'),
