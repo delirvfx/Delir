@@ -27,12 +27,8 @@ jobs:
       run: |
         npm i -g yarn
         yarn install
-    - name: Build on UNIX
-      if: startsWith(matrix.os, 'windows') == false
+    - name: Build
       run: yarn build
-    - name: Build on Windows
-      if: startsWith(matrix.os, 'windows')
-      run: yarn build:windows
     - uses: actions/upload-artifact@master
       with:
         name: build-${{ matrix.os }}
