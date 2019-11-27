@@ -8,11 +8,16 @@ export interface Props extends React.DOMAttributes<HTMLDivElement> {
   direction: 'vertical' | 'horizontal'
 }
 
-export const Workspace: FunctionComponent<Props> = props => {
-  const miscProps = _.omit(props, ['children', 'className', 'acceptPaneDragIn', 'direction'])
+export const Workspace: FunctionComponent<Props> = ({
+  children,
+  className,
+  acceptPaneDragIn,
+  direction,
+  ...misc
+}: Props) => {
   return (
-    <div className={classnames('_workspace', `_workspace--${props.direction}`, props.className)} {...miscProps}>
-      {props.children}
+    <div className={classnames('_workspace', `_workspace--${direction}`, className)} {...misc}>
+      {children}
     </div>
   )
 }

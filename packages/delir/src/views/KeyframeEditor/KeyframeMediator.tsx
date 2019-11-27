@@ -1,10 +1,8 @@
 import * as Delir from '@delirvfx/core'
-import { connectToStores, useStore, withFleurContext } from '@fleur/react'
-import Selection from '@simonwep/selection-js'
+import { useStore } from '@fleur/react'
 import React from 'react'
-import { decorate } from '../../utils/decorate'
 
-import { getActiveComp, getActiveParam } from '../../domain/Editor/selectors'
+import { getActiveComp } from '../../domain/Editor/selectors'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import { SpreadType } from '../../utils/Spread'
@@ -47,7 +45,7 @@ export const KeyframeMediator = ({
   onRemoveKeyframe,
   onModifyKeyframe,
 }: OwnProps) => {
-  const { activeComp } = useStore([EditorStore], getStore => ({
+  const { activeComp } = useStore(getStore => ({
     activeComp: getActiveComp(getStore),
   }))
 

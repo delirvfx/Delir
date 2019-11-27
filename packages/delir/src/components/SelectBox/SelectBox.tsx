@@ -1,6 +1,5 @@
 import { cssVars } from 'assets/styles/cssVars'
 import { Icon } from 'components/Icon/Icon'
-import { rgba } from 'polished'
 import React, { ReactNode, useCallback } from 'react'
 import { ChangeEvent } from 'react'
 import styled, { css } from 'styled-components'

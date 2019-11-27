@@ -7,6 +7,7 @@ import { AnyParameterTypeDescriptor } from './TypeDescriptor'
 import { DelirPluginPackageJson, PluginEntry, PluginSummary } from './types'
 
 import { PluginAssertionFailedException, PluginLoadFailException, UnknownPluginReferenceException } from '../Exceptions'
+import { proxyDeepFreeze } from '../helper/proxyFreeze'
 
 const { version: engineVersion } = require('../../package.json')
 
@@ -131,12 +132,12 @@ export default class PluginRegistry {
    * get registered plugins as array
    */
   public getPostEffectPlugins(): PluginSummary[] {
-    return _.map(this._plugins['post-effect'], (entry, id) => {
+    return Object.values(this._plugins['post-effect']).map(entry => {
       return {
         id: entry.id,
         name: entry.packageJson.delir.name,
         type: entry.packageJson.delir.type,
-        package: _.cloneDeep(entry.packageJson),
+        package: proxyDeepFreeze(entry.packageJson),
       }
     })
   }

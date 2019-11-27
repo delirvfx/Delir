@@ -113,8 +113,8 @@ export const RenderingSettingModal = ({ onClose }: Props) => {
       videoCodec: value as any,
       ...(value === 'utvideo' ? { videoBitrate: '' } : {}),
       audioCodec:
-        AVAILABLE_ACODEC_FOR_VCODEC[value].filter(({value}) => value === audioCodec)?.[0]?.value
-          ?? AVAILABLE_ACODEC_FOR_VCODEC[value][0].value,
+        AVAILABLE_ACODEC_FOR_VCODEC[value].filter(({ value }) => value === audioCodec)?.[0]?.value ??
+        AVAILABLE_ACODEC_FOR_VCODEC[value][0].value,
     })
   }, [])
 

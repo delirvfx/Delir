@@ -187,7 +187,7 @@ export const dependencies = [
         "url": "https://github.com/webpack-contrib/file-loader"
     },
     {
-        "name": "font-manager",
+        "name": "fontmanager-redux",
         "url": "https://github.com/devongovett/font-manager"
     },
     {
@@ -265,6 +265,10 @@ export const dependencies = [
     {
         "name": "msgpack5",
         "url": "https://github.com/mcollina/msgpack5"
+    },
+    {
+        "name": "nan",
+        "url": "https://www.npmjs.com/package/nan"
     },
     {
         "name": "node-notifier",

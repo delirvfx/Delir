@@ -18,8 +18,8 @@ export default class Chromakey extends PostEffectBase {
   public static provideParameters() {
     // prettier-ignore
     return Type
-            .float('threshold', { label: 'Threshold', defaultValue: 1, animatable: true })
-            .colorRgb('keyColor', { label: 'Key color', defaultValue: new Values.ColorRGB(0, 0, 0), animatable: true })
+            .float('threshold', { label: 'Threshold', defaultValue: () => 1, animatable: true })
+            .colorRgb('keyColor', { label: 'Key color', defaultValue: () => new Values.ColorRGB(0, 0, 0), animatable: true })
   }
 
   private static FRAGMENT_SHADER: string = require('./fragment.frag').default

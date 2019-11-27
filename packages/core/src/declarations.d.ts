@@ -36,7 +36,7 @@ declare module 'av' {
   }
 }
 
-declare module 'font-manager' {
+declare module 'fontmanager-redux' {
   const getAvailableFontsSync: () => {
     family: string
   }[]

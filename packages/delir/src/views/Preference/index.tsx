@@ -27,7 +27,7 @@ interface State {
 const RendererGeneralPane = () => {
   const context = useFleurContext()
 
-  const { preference } = useStore([PreferenceStore], getStore => ({
+  const { preference } = useStore(getStore => ({
     preference: getAllPreferences(getStore),
   }))
 

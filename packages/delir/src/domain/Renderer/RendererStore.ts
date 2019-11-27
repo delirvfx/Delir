@@ -12,6 +12,7 @@ interface State {
   previewPlaying: boolean
   previewRenderState: RenderState | null
   isInRendering: boolean
+  framePreviewWaiting: boolean
   exportRenderState: RenderingProgress | null
   exception: Delir.Exceptions.UserCodeException | null
 }
@@ -31,6 +32,10 @@ export default class RendererStore extends Store<State> {
     return this.state.previewPlaying
   }
 
+  public get framePreviewWaiting() {
+    return this.state.framePreviewWaiting
+  }
+
   public static storeName = 'RendererStore'
 
   public state: State = {
@@ -40,6 +45,7 @@ export default class RendererStore extends Store<State> {
     previewPlaying: false,
     previewRenderState: null,
     isInRendering: false,
+    framePreviewWaiting: false,
     exportRenderState: null,
     exception: null,
   }
@@ -77,8 +83,8 @@ export default class RendererStore extends Store<State> {
     // renderer.stop()
   })
 
-  private handleUnregisterPlugin = listen(RendererActions.unregisterPlugins, ({ id }) => {
-    this.pluginRegistry.unregisterPlugin(id)
+  private handleUnregisterPlugin = listen(RendererActions.unregisterPlugins, ({ ids }) => {
+    ids.forEach(id => this.pluginRegistry.unregisterPlugin(id))
   })
 
   private handleAddPlugins = listen(RendererActions.registerPlugins, payload => {
@@ -177,11 +183,15 @@ export default class RendererStore extends Store<State> {
         e => {
           if (e instanceof Delir.Exceptions.RenderingAbortedException) {
           } else if (e instanceof Delir.Exceptions.UserCodeException) {
+            this.updateWith(s => (s.exception = e))
           } else {
             // tslint:disable-next-line:no-console
             console.log(e)
           }
-          this.updateWith(s => (s.previewPlaying = false))
+          this.updateWith(s => {
+            s.previewPlaying = false
+            s.previewRenderState = null
+          })
         },
       )
     },
@@ -193,7 +203,7 @@ export default class RendererStore extends Store<State> {
     this.updateWith(s => (s.previewPlaying = false))
   })
 
-  private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrame, payload => {
+  private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrame, async payload => {
     const { frame } = payload
     const targetComposition = this.state.composition!
 
@@ -201,10 +211,14 @@ export default class RendererStore extends Store<State> {
       onFrame: canvas => this.destCanvasCtx!.drawImage(canvas, 0, 0),
     })
 
-    this.engine!.renderFrame(targetComposition.id, frame).catch(e => {
+    this.updateWith(state => (state.framePreviewWaiting = true))
+
+    await this.engine!.renderFrame(targetComposition.id, frame).catch(e => {
       // tslint:disable-next-line
       console.error(e)
     })
+
+    this.updateWith(state => (state.framePreviewWaiting = false))
   })
 
   private handleSetInRenderingStatus = listen(RendererActions.setInRenderingStatus, ({ isInRendering }) => {

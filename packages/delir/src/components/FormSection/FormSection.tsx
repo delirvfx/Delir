@@ -4,6 +4,7 @@ import { cssVars } from '../../assets/styles/cssVars'
 
 interface Props {
   label: ReactNode
+  labelType?: keyof JSX.IntrinsicElements
   error?: string | null
   children?: ReactNode
 }
@@ -32,8 +33,8 @@ const Error = styled.div`
   color: ${cssVars.colors.error};
 `
 
-export const FormSection = ({ label, error, children }: Props) => (
-  <Container>
+export const FormSection = ({ label, labelType, error, children }: Props) => (
+  <Container as={labelType ?? 'label'}>
     <Label>{label}</Label>
     <Content>{children}</Content>
     {error && <Error>{error}</Error>}

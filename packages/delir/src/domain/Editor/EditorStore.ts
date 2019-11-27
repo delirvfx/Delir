@@ -12,6 +12,7 @@ export interface NotificationEntry {
   message?: string
   level: 'info' | 'error'
   detail?: string
+  timeout: number | undefined
 }
 
 export interface EditorState {
@@ -22,7 +23,6 @@ export interface EditorState {
   selectClipIds: string[]
   activeParam: ParameterTarget | null
   dragEntity: DragEntity | null
-  processingState: string | null
   currentPreviewFrame: number
   preferenceOpened: boolean
   clipboard: ClipboardEntry | null
@@ -40,7 +40,6 @@ export default class EditorStore extends Store<EditorState> {
     selectClipIds: [],
     activeParam: null,
     dragEntity: null,
-    processingState: null,
     currentPreviewFrame: 0,
     preferenceOpened: false,
     clipboard: null,
@@ -189,23 +188,13 @@ export default class EditorStore extends Store<EditorState> {
     })
   })
 
-  private handleupdateProcessingState = listen(EditorActions.updateProcessingState, payload => {
-    this.updateWith(d => (d.processingState = payload.stateText))
-  })
-
   private handleseekPreviewFrame = listen(EditorActions.seekPreviewFrame, payload => {
     this.updateWith(d => (d.currentPreviewFrame = Math.round(payload.frame)))
   })
 
   private handleAddMessage = listen(EditorActions.addMessage, payload => {
     this.updateWith(d => {
-      d.notifications.push({
-        id: payload.id,
-        title: payload.title,
-        message: payload.message!,
-        level: payload.level,
-        detail: payload.detail,
-      })
+      d.notifications.push(payload)
     })
   })
 
@@ -221,7 +210,11 @@ export default class EditorStore extends Store<EditorState> {
   })
 
   private handleSetClipboardEntry = listen(EditorActions.setClipboardEntry, payload => {
-    this.updateWith(draft => (draft.clipboard = payload.entry))
+    this.updateWith(
+      draft =>
+        // WTF. TypeScript recognize draft.clipboard and payload.entry as different types.
+        (draft.clipboard = payload.entry as any),
+    )
   })
 
   public get currentPointFrame() {

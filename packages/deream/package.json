@@ -24,7 +24,7 @@
     "homepage": "https://github.com/Ragg-/deream-stream#readme",
     "devDependencies": {
         "@types/duplexer3": "0.1.0",
-        "@types/mz": "0.0.32"
+        "@types/mz": "2.7.0"
     },
     "dependencies": {
         "arraybuffer-to-buffer": "0.0.7",

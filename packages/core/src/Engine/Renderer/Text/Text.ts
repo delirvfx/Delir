@@ -14,6 +14,7 @@ interface TextRendererParam {
   weight: ParamType.Enum
   size: ParamType.Number
   lineHeight: ParamType.Number
+  align: ParamType.Enum
   color: ParamType.ColorRGBA
   x: ParamType.Number
   y: ParamType.Number
@@ -32,8 +33,10 @@ export class TextRenderer implements IRenderer<TextRendererParam> {
       // Delay loading for testing
       let FontManager: any
       try {
-        FontManager = require('font-manager')
+        FontManager = require('fontmanager-redux')
       } catch (e) {
+        // tslint:disable-next-line no-console
+        console.warn('[delirvfx/core:Text renderer]', e)
         FontManager = { getAvailableFontsSync: () => [] }
       }
 
@@ -59,37 +62,45 @@ export class TextRenderer implements IRenderer<TextRendererParam> {
         })
         .enum('weight', {
           label: 'weight',
-          defaultValue: '400',
+          defaultValue: () => '400',
           selection: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
         })
         .number('size', {
           label: 'Font size',
-          defaultValue: 14,
+          defaultValue: () => 14,
         })
         .number('lineHeight', {
           label: 'Line height (%)',
-          defaultValue: 100,
+          defaultValue: () => 100,
+        })
+        .enum('align', {
+          label: 'Align',
+          selection: ['left', 'center', 'right'],
+          defaultValue: () => 'left',
         })
         .colorRgba('color', {
           label: 'Color',
-          defaultValue: new ColorRGBA(0, 0, 0, 1),
+          defaultValue: () => new ColorRGBA(0, 0, 0, 1),
         })
         .number('x', {
           label: 'Position X',
+          defaultValue: () => 0,
           animatable: true,
         })
         .number('y', {
           label: 'Position Y',
+          defaultValue: () => 0,
           animatable: true,
         })
         .float('rotate', {
           label: 'Rotation',
+          defaultValue: () => 0,
           animatable: true,
         })
         .float('opacity', {
           label: 'Opacity',
           animatable: true,
-          defaultValue: 100,
+          defaultValue: () => 100,
         })
     },
   )
@@ -118,8 +129,9 @@ export class TextRenderer implements IRenderer<TextRendererParam> {
     const lines = param.text.split('\n')
     const height = lines.length * lineHeight
     const width = lines.reduce((mostLongWidth, line) => Math.max(mostLongWidth, ctx.measureText(line).width), 0)
+    const alignOffsetX = param.align === 'center' ? -width / 2 : param.align === 'right' ? -width : 0
 
-    ctx.translate(param.x, param.y)
+    ctx.translate(param.x + alignOffsetX, param.y)
     ctx.translate(width / 2, height / 2)
     ctx.rotate(rad)
     ctx.translate(-width / 2, -height / 2)

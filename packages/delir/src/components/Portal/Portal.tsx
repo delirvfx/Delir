@@ -6,7 +6,9 @@ export const Portal = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     document.body.appendChild(root)
-    return () => document.body.removeChild(root)
+    return () => {
+      document.body.removeChild(root)
+    }
   }, [])
 
   return <>{createPortal(children, root)}</>

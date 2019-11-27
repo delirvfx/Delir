@@ -11,14 +11,13 @@ import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
 
 import AppMenu from '../AppMenu'
-import AssetsView from '../AssetsView'
+import { AssetsView } from '../AssetsView'
 import { NavigationView } from '../NavigationView'
 import { Notifications } from '../Notifications/Notifications'
 import { Preference } from '../Preference'
-import PreviewView from '../PreviewView/'
+import { PreviewView } from '../PreviewView/'
 import { RenderingWaiter } from '../RenderingWaiter'
-import { StatusBar } from '../StatusBar'
-import Timeline from '../Timeline'
+import { Timeline } from '../Timeline'
 import { ShortcutHandler } from './ShortcutHandler'
 
 import s from './AppView.sass'
@@ -30,10 +29,9 @@ const mapStoresToProps = (getStore: StoreGetter) => ({
 })
 
 export default withFleurContext(
-  connectToStores([EditorStore, RendererStore], mapStoresToProps)(
+  connectToStores(mapStoresToProps)(
     class AppView extends React.PureComponent<Props> {
       public root = React.createRef<HTMLDivElement>()
-      public trap: InstanceType<typeof Mousetrap>
 
       public componentDidMount() {
         window.addEventListener('dragenter', this.prevent, false)
@@ -59,7 +57,6 @@ export default withFleurContext(
               </Pane>
               <Timeline />
             </Workspace>
-            <StatusBar />
             <Notifications />
             <RenderingWaiter />
             <Transition

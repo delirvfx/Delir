@@ -2,7 +2,7 @@ import * as Delir from '@delirvfx/core'
 import { selector } from '@fleur/fleur'
 import ProjectStore from './ProjectStore'
 
-export const getProject = selector((getState) => getState(ProjectStore).project as Delir.Entity.Project | null)
+export const getProject = selector(getState => getState(ProjectStore).project as Delir.Entity.Project | null)
 
 export const getAssetById = selector([getProject], ([project], assetId: string) => {
   return project ? project.findAsset(assetId) : null

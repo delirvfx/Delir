@@ -1,9 +1,9 @@
 import * as Delir from '@delirvfx/core'
-import { ContextProp, useFleurContext, useStore } from '@fleur/react'
+import { useFleurContext, useStore } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
-import React, { useCallback, useRef, useState } from 'react'
-import { useImmer } from 'use-immer'
+import React, { useCallback, useMemo } from 'react'
+import { useObjectState } from 'utils/hooks'
 import { SpreadType } from '../../utils/Spread'
 
 import * as EditorOps from '../../domain/Editor/operations'
@@ -17,7 +17,7 @@ import RendererStore from '../../domain/Renderer/RendererStore'
 import TimePixelConversion from '../../utils/TimePixelConversion'
 
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
-import Clip from './Clip'
+import { Clip } from './Clip'
 
 import t from './Layer.i18n'
 import s from './Layer.sass'
@@ -38,18 +38,17 @@ interface State {
 }
 
 export const Layer = (props: Props) => {
-  const [{ dragovered }, setState] = useImmer<State>({ dragovered: false })
+  const [{ dragovered }, setState] = useObjectState<State>({ dragovered: false })
   const { executeOperation, getStore } = useFleurContext()
 
-  const { selectedClipIds, activeLayerId, postEffectPlugins, userCodeException } = useStore(
-    [EditorStore, RendererStore],
-    getStore => ({
-      activeLayerId: getActiveLayerId(getStore),
-      selectedClipIds: getSelectedClipIds(getStore),
-      postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
-      userCodeException: getStore(RendererStore).getUserCodeException(),
-    }),
-  )
+  const { selectedClipIds, activeLayerId, postEffectPlugins, userCodeException } = useStore(getStore => ({
+    activeLayerId: getActiveLayerId(getStore),
+    selectedClipIds: getSelectedClipIds(getStore),
+    postEffectPlugins: getStore(RendererStore).getPostEffectPlugins(),
+    userCodeException: getStore(RendererStore).getUserCodeException(),
+  }))
+
+  const postEffectPluginsMemo = useMemo(() => postEffectPlugins, [postEffectPlugins.length])
 
   const { layer, framerate, pxPerSec, scale, scrollLeft, clipOffset, scrollWidth, layerIndex } = props
 
@@ -68,6 +67,18 @@ export const Layer = (props: Props) => {
 
   const handleBlur = useCallback(() => {
     GlobalEvents.off(GlobalEvent.pasteViaApplicationMenu, handleGlobalPaste)
+  }, [])
+
+  const handleDragOver = useCallback(() => {
+    const { dragEntity } = getStore(EditorStore)
+    if (!dragEntity || dragEntity.type !== 'asset') return
+    setState({ dragovered: true })
+  }, [])
+
+  const handleDragLeave = useCallback(() => {
+    const { dragEntity } = getStore(EditorStore)
+    if (!dragEntity || dragEntity.type !== 'asset') return
+    setState({ dragovered: false })
   }, [])
 
   const handleOnDrop = useCallback(
@@ -95,9 +106,7 @@ export const Layer = (props: Props) => {
       }
 
       executeOperation(EditorOps.clearDragEntity)
-      setState(draft => {
-        draft.dragovered = false
-      })
+      setState({ dragovered: false })
 
       e.preventDefault()
       e.stopPropagation()
@@ -121,11 +130,20 @@ export const Layer = (props: Props) => {
 
         const droppedLayerId = droppedLayerDom.dataset.layerId!
 
-        executeOperation(ProjectOps.moveClipToLayer, {
-          baseClipId: dragEntity.baseClipId,
-          clipIds,
-          moveDestLayerId: droppedLayerId,
-        })
+        if (e.altKey) {
+          executeOperation(ProjectOps.copyClipsIntoLayer, {
+            baseClipId: dragEntity.baseClipId,
+            clipIds,
+            destLayerId: droppedLayerId,
+          })
+        } else {
+          executeOperation(ProjectOps.moveClipToLayer, {
+            baseClipId: dragEntity.baseClipId,
+            clipIds,
+            moveDestLayerId: droppedLayerId,
+          })
+        }
+
         executeOperation(EditorOps.changeActiveLayer, droppedLayerId)
         executeOperation(EditorOps.clearDragEntity)
       }
@@ -144,7 +162,6 @@ export const Layer = (props: Props) => {
       executeOperation(ProjectOps.addClip, {
         layerId: layer.id!,
         clipRendererId: dataset.rendererId,
-        durationFrames: 100,
       })
     },
     [layer],
@@ -166,6 +183,8 @@ export const Layer = (props: Props) => {
         [s.dragover]: dragovered,
         [s.active]: activeLayerId === layer.id,
       })}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
       onDrop={handleOnDrop}
       onMouseUp={handleMouseUp}
       onFocus={handleFocus}
@@ -209,12 +228,12 @@ export const Layer = (props: Props) => {
           return (
             <Clip
               key={clip.id!}
-              clip={{ ...clip }}
+              clip={clip}
               width={active ? width + clipOffset.width : width}
               top={active ? clipOffset.y : 0}
               left={active ? left + clipOffset.x : left}
               active={active}
-              postEffectPlugins={postEffectPlugins}
+              postEffectPlugins={postEffectPluginsMemo}
               hasError={hasError}
             />
           )

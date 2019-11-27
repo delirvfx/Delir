@@ -1,3 +1,20 @@
+### 0.12.0
+- [#392](https://github.com/ra-gg/Delir/pull/392) `defaultValue` at Post effect parameter definition, now requires wrap by function for safe from unexpected default value mutation.
+- [#392](https://github.com/ra-gg/Delir/pull/392) Use fontmanager-redux instead of font-manager for upgrade Node to 12
+- [#392](https://github.com/ra-gg/Delir/pull/392) Upgrade Expression transpiler to TypeScript 3.7
+- [#392](https://github.com/ra-gg/Delir/pull/392) Expose ColorRGB and ColorRGBA class to Expression global scope
+- [#392](https://github.com/ra-gg/Delir/pull/392) Add `Engine.ExpressionSupport.createExpressionContext()` for execute expression in your post effect
+- [#392](https://github.com/ra-gg/Delir/pull/392) Add `Engine.ExpressionSupport.compileTypeScript()` for compile post effect side Expression adjust to Delir-level syntax support
+- [#392](https://github.com/ra-gg/Delir/pull/392) Fix out of range in Audio clip by clip placed frame
+- [#392](https://github.com/ra-gg/Delir/pull/392) Fix no resampled audio to composition sampling rate
+- [#392](https://github.com/ra-gg/Delir/pull/392) Add `align` parameter in Text clip
+- [#392](https://github.com/ra-gg/Delir/pull/392) Add `playbackRate` parameter in Video clip
+- [#392](https://github.com/ra-gg/Delir/pull/392) Add `opacity` parameter in Solid clip
+- [#392](https://github.com/ra-gg/Delir/pull/392) Fix `Clip#clone()` not rehashing it keyframe entities ID
+- [#392](https://github.com/ra-gg/Delir/pull/392) Improve FPS rating algorithm for no downrate on starting rendering
+- [#392](https://github.com/ra-gg/Delir/pull/392) Set default value for Code parameter
+
+
 ### 0.11.0
 - [#296](https://github.com/ra-gg/Delir/pull/296) Add `solid` clip
 

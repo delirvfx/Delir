@@ -68,7 +68,6 @@
 .layerContainer
   +thin-scrollbar
   flex: 1
-  padding-bottom: 20px
   overflow: auto
 
 .currentScale
@@ -85,3 +84,10 @@
   border: 1px solid $color-dropdown-border
   background-color: $color-dropdown-bg
   transform: translateY(6px)
+
+  > div
+    padding: 4px 2px
+    font-size: 12px
+
+    &:hover
+      background-color: rgba(#fff, .2)

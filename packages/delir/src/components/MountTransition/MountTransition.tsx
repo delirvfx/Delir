@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AnimatedValue, useTransition } from 'react-spring'
 
 type TransionOption = Parameters<typeof useTransition>[2]
@@ -11,7 +11,7 @@ export const MountTransition = (props: Props): JSX.Element | null => {
   const [mounted, setState] = React.useState(false)
   const transitions = useTransition(mounted, null, props)
 
-  React.useEffect(() => {
+  useEffect(() => {
     setState(true)
     return () => setState(false)
   })

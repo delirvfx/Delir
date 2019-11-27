@@ -1,7 +1,6 @@
 import * as Delir from '@delirvfx/core'
 import { operation } from '@fleur/fleur'
 import _ from 'lodash'
-import uuid from 'uuid'
 import { safeAssign } from '../../utils/safeAssign'
 import { SpreadType } from '../../utils/Spread'
 
@@ -65,6 +64,7 @@ export const createComposition = operation(
     await context.executeOperation(HistoryOps.pushHistory, {
       command: new CreateCompositionCommand(composition),
     })
+
     context.dispatch(ProjectActions.createComposition, {
       composition,
     })
@@ -176,12 +176,12 @@ export const addClip = operation(
       layerId,
       clipRendererId,
       placedFrame,
-      durationFrames = 100,
+      durationFrames,
     }: {
       layerId: string
       clipRendererId: string
       placedFrame?: number
-      durationFrames: number
+      durationFrames?: number
     },
   ) => {
     const project = context.getStore(ProjectStore).getProject()!
@@ -191,7 +191,7 @@ export const addClip = operation(
     const newClip = new Delir.Entity.Clip({
       renderer: clipRendererId as any,
       placedFrame: placedFrame ? placedFrame : currentPreviewFrame,
-      durationFrames: durationFrames,
+      durationFrames: durationFrames ?? composition.framerate,
     })
 
     await context.executeOperation(HistoryOps.pushHistory, {
@@ -339,7 +339,7 @@ export const createOrModifyClipKeyframe = operation(
   },
 )
 
-export const createOrModifyKeyframeForEffect = operation(
+export const createOrModifyEffectKeyframe = operation(
   async (
     context,
     {
@@ -466,6 +466,49 @@ export const removeAsset = operation(async (context, { assetId }: { assetId: str
     targetAssetId: assetId,
   })
 })
+
+export const copyClipsIntoLayer = operation(
+  async (
+    context,
+    {
+      baseClipId,
+      clipIds,
+      destLayerId,
+    }: {
+      baseClipId: string
+      clipIds: string[]
+      destLayerId: string
+    },
+  ) => {
+    const project = context.getStore(ProjectStore).getProject()!
+    const composition = project.findLayerOwnerComposition(destLayerId)!
+    const { layers } = composition
+
+    const baseLayerIndex = layers.findIndex(layer => !!layer.findClip(baseClipId))
+    const moveDestLayerIndex = layers.findIndex(layer => layer.id === destLayerId)
+    const layerMovement = moveDestLayerIndex - baseLayerIndex
+
+    if (layerMovement === 0) return
+
+    const commands: Command[] = []
+    for (const clipId of clipIds) {
+      const sourceLayer = project.findClipOwnerLayer(clipId)!
+      const sourceLayerIndex = layers.findIndex(layer => layer.id === sourceLayer.id)
+      const destLayer = layers[Math.max(0, Math.min(sourceLayerIndex + layerMovement, layers.length - 1))]
+      const clonedClip = sourceLayer.findClip(clipId)!.clone()
+
+      commands.push(new AddClipCommand(composition.id, destLayer.id, clonedClip))
+
+      context.dispatch(ProjectActions.addClip, {
+        targetLayerId: destLayer.id,
+        newClip: clonedClip,
+      })
+    }
+
+    await context.executeOperation(HistoryOps.pushHistory, { command: new HistoryGroup(commands) })
+    await context.executeOperation(EditorOps.seekPreviewFrame, {})
+  },
+)
 
 export const moveClipToLayer = operation(
   async (

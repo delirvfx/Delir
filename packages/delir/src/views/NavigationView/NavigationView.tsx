@@ -1,18 +1,18 @@
 import { useFleurContext, useStore } from '@fleur/react'
 import { remote } from 'electron'
 import path from 'path'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { useModalMounter } from 'components/ModalOwner/ModalOwner'
 import { Pane } from 'components/Pane'
 import EditorStore from 'domain/Editor/EditorStore'
-import * as EditorOps from 'domain/Editor/operations'
 import * as PreferenceOps from 'domain/Preference/operations'
 import PreferenceStore from 'domain/Preference/PreferenceStore'
 import { getAudioVolume } from 'domain/Preference/selectors'
 import * as RendererOps from 'domain/Renderer/operations'
 import RendererStore from 'domain/Renderer/RendererStore'
 import { RenderingOption, RenderingSettingModal } from 'modals/RenderingSettingModal/RenderingSettingModal'
+import t from './NavigationView.i18n'
 import s from './NavigationView.sass'
 
 export const NavigationView = () => {
@@ -23,15 +23,15 @@ export const NavigationView = () => {
     audioVolume,
     previewPlaying,
     editor: { activeComp, project, projectPath },
-  } = useStore([EditorStore, RendererStore, PreferenceStore], getStore => ({
+  } = useStore(getStore => ({
     editor: getStore(EditorStore).getState(),
     previewPlaying: getStore(RendererStore).previewPlaying,
     audioVolume: getAudioVolume(getStore),
   }))
 
-  const projectName = project ? 'Delir - ' + (projectPath ? path.basename(projectPath) : 'New Project') : 'Delir'
+  const projectName = project ? (projectPath ? path.parse(projectPath).name : 'New Project') + ' - Delir' : 'Delir'
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = projectName
   }, [projectName])
 
@@ -76,16 +76,16 @@ export const NavigationView = () => {
       </ul>
       <ul className={s.navigationList}>
         {previewPlaying ? (
-          <li className={s.icon} onClick={onClickPause}>
+          <li className={s.icon} onClick={onClickPause} title={t(t.k.preview)}>
             <i className="fa fa-pause" />
           </li>
         ) : (
-          <li className={s.icon} onClick={onClickPlay}>
+          <li className={s.icon} onClick={onClickPlay} title={t(t.k.preview)}>
             <i className="fa fa-play" />
           </li>
         )}
         <li onClick={onClickDest}>
-          <i className="fa fa-film" />
+          <i className="fa fa-film" title={t(t.k.rendering)} />
         </li>
         <li className={s.volume}>
           <i className="fa fa-volume-up" />

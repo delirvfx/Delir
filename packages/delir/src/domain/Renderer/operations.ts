@@ -11,7 +11,7 @@ import { Platform } from 'utils/platform'
 
 import { NotificationTimeouts } from 'domain/Editor/models'
 import { getActiveComp } from 'domain/Editor/selectors'
-import { getAllPreferences, getDevelopPluginDirs } from 'domain/Preference/selectors'
+import { getAllPreferences, getDevPluginDirs } from 'domain/Preference/selectors'
 import { getProject } from 'domain/Project/selectors'
 import { keepAliveOperation } from 'utils/keepAliveOperation'
 import EditorStore from '../Editor/EditorStore'
@@ -62,21 +62,24 @@ export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch,
     reasons: string[]
   }
 
-  const developmentPluginDirs = getDevelopPluginDirs(getStore)
+  const devPluginDirs = getDevPluginDirs(getStore)
 
-  const wp = new Watchpack({
-    aggregateTimeout: 1000,
-  })
-  wp.watch([], developmentPluginDirs, Date.now())
-
-  wp.on('aggregated', async (changes: string[]) => {
+  const handleChanges = async (changedDirs: string[]) => {
     const updatedPackages: any[] = []
     const failedPackages: ErrorEntry[] = []
 
-    for (const packageDir of changes) {
+    for (const packageDir of changedDirs) {
       try {
         const packageJsonPath = join(packageDir, 'package.json')
-        if (!(await (exists as any)(packageJsonPath))) return
+
+        if (!(await (exists as any)(packageJsonPath))) {
+          failedPackages.push({
+            package: packageDir,
+            reasons: [`package.json not found`],
+          })
+
+          continue
+        }
 
         const packageInfo = await FSPluginLoader.loadPackage(packageDir)
 
@@ -99,6 +102,7 @@ export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch,
     }
 
     const updatedIds = updatedPackages.map((packageInfo: any) => packageInfo.id)
+    await executeOperation(stopPreview)
     dispatch(RendererActions.unregisterPlugins, { ids: updatedIds })
     dispatch(RendererActions.registerPlugins, { plugins: updatedPackages })
     dispatch(RendererActions.clearCache, {})
@@ -122,7 +126,16 @@ export const watchDevelopmentPlugins = keepAliveOperation(({ getStore, dispatch,
         timeout: NotificationTimeouts.verbose,
       })
     }
+  }
+
+  const wp = new Watchpack({
+    aggregateTimeout: 1000,
   })
+  wp.watch([], devPluginDirs, Date.now())
+  wp.on('aggregated', handleChanges)
+
+  // Load plugins
+  handleChanges(devPluginDirs)
 
   return () => wp.close()
 })

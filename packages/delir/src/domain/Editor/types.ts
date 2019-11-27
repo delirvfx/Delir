@@ -8,8 +8,10 @@ export interface ParameterTarget {
 
 export interface ClipboardEntryClip {
   type: 'clip'
-  /** layer -> clipId */
-  entities: { offset: number; clips: Delir.Entity.Clip[] }[]
+  entities: {
+    offset: number
+    clips: Delir.Entity.Clip[]
+  }[]
 }
 
 export type ClipboardEntry = ClipboardEntryClip

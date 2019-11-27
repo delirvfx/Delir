@@ -3,7 +3,7 @@ Web Technology driven VFX Application.
 
 Runs on Windows, macOS, Linux.
 
-![screenshot](https://user-images.githubusercontent.com/8597982/51431908-d5c7c780-1c72-11e9-9f2a-4bee09200ffc.png)
+![screenshot](./assets/screenshot.png)
 
 ## Concept
 

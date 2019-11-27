@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react'
 import React from 'react'
 import { Button } from './Button'
 
-storiesOf('Button', module)
+storiesOf('Components|Button', module)
   .addDecorator(withKnobs)
   .add('Button', () => {
     const label = text('label', 'Hello!')
