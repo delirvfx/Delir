@@ -20,7 +20,7 @@ jobs:
       uses: actions/cache@v1.0.0
       with:
         path: ~/.cache/yarn
-        key: ${{ matrix.os }}-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock') }}
+        key: ${{ matrix.os }}-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
         restore-keys: |
           ${{ matrix.os }}-
     - name: Install deps
