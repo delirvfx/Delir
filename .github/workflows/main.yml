@@ -2,9 +2,13 @@ name: CI
 
 on: [push]
 
-jobs:
-  linux-build:
-    runs-on: ubuntu-latest
+jobs: 
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macOS-10.14, windows-2016, ubuntu-18.04]
 
     steps:
     - uses: actions/checkout@v1
@@ -16,9 +20,9 @@ jobs:
       uses: actions/cache@v1.0.0
       with:
         path: node_modules
-        key: ${{ runner.OS }}-${{ hashFiles('yarn.lock') }}
+        key: ${{ matrix.os }}-${{ hashFiles('yarn.lock') }}
         restore-keys: |
-          ${{ runner.OS }}-${{ hashFiles('yarn.lock') }}
+          ${{ matrix.os }}-${{ hashFiles('yarn.lock') }}
     - name: Building
       run: |
         npm i -g yarn
@@ -26,68 +30,5 @@ jobs:
         yarn build
     - uses: actions/upload-artifact@master
       with:
-        name: linux-build
+        name: build-${{ matrix.os }}
         path: release
-  
-  macos-build:
-    runs-on: macOS-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Setup Node.js for use with actions
-      uses: actions/setup-node@v1.1.0
-      with:
-        node-version: '11.x'
-    - name: Cache
-      uses: actions/cache@v1.0.0
-      with:
-        path: node_modules
-        key: ${{ runner.OS }}-${{ hashFiles('yarn.lock') }}
-        restore-keys: |
-          ${{ runner.OS }}-${{ hashFiles('yarn.lock') }}
-    - name: Building
-      run: |
-        npm i -g yarn
-        yarn install
-        yarn build
-    - uses: actions/upload-artifact@master
-      with:
-        name: macos-build
-        path: release
-
-  windows-build:
-    runs-on: windows-latest
-    
-    steps:
-    - uses: actions/checkout@v1
-    - name: Setup Node.js for use with actions
-      uses: actions/setup-node@v1.1.0
-      with:
-        node-version: '11.x'
-    # See: https://medium.com/@johnjjung/building-an-electron-app-on-github-actions-windows-and-macos-53ab69703f7c
-    - name: install node tools
-      run: npm install --global --production windows-build-tools@4.0.0
-    - name: install node-gyp
-      run: npm install --global node-gyp@latest
-    - name: Set node config to use python2.7
-      run: npm config set python python2.7
-    - name: Set node config to set msvs_version to 2015
-      run: npm config set msvs_version 2015
-    - name: Work around for Windows Server 2019
-      run: set path=%path%;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin
-    - name: Cache
-      uses: actions/cache@v1.0.0
-      with:
-        path: node_modules
-        key: ${{ runner.OS }}-${{ hashFiles('yarn.lock') }}
-        restore-keys: |
-          ${{ runner.OS }}-${{ hashFiles('yarn.lock') }}
-    - name: Building
-      run: |
-        npm i -g yarn
-        yarn install
-        yarn build
-    - uses: actions/upload-artifact@master
-      with:
-        name: windows-build
-        path: release
-      
