@@ -23,11 +23,16 @@ jobs:
         key: ${{ matrix.os }}-${{ hashFiles('yarn.lock') }}
         restore-keys: |
           ${{ matrix.os }}-${{ hashFiles('yarn.lock') }}
-    - name: Building
+    - name: Install deps
       run: |
         npm i -g yarn
         yarn install
-        yarn build
+    - name: Build on UNIX
+      if: startsWith(matrix.os, 'windows') == false
+      run: yarn buld
+    - name: Build on Windows
+      if: startsWith(matrix.os, 'windows')
+      run: yarn build:windows
     - uses: actions/upload-artifact@master
       with:
         name: build-${{ matrix.os }}
