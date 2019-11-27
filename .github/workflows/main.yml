@@ -28,6 +28,31 @@ jobs:
       with:
         name: linux-build
         path: release
+  
+  macos-build:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Node.js for use with actions
+      uses: actions/setup-node@v1.1.0
+      with:
+        node-version: '11.x'
+    - name: Cache
+      uses: actions/cache@v1.0.0
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          ${{ runner.OS }}-${{ hashFiles('yarn.lock') }}
+    - name: Building
+      run: |
+        npm i -g yarn
+        yarn install
+        yarn build
+    - uses: actions/upload-artifact@master
+      with:
+        name: macos-build
+        path: release
 
   windows-build:
     runs-on: windows-latest
