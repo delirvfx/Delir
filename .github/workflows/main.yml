@@ -28,8 +28,6 @@ jobs:
       with:
         name: linux-build
         path: release
-    - name: Cache
-      uses: actions/cache@v1.0.0
 
   windows-build:
     runs-on: windows-latest
@@ -54,6 +52,6 @@ jobs:
         yarn build
     - uses: actions/upload-artifact@master
       with:
-        name: linux-build
+        name: windows-build
         path: release
       
