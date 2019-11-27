@@ -1529,10 +1529,10 @@
     "@sentry/types" "5.7.0"
     tslib "^1.9.3"
 
-"@simonwep/selection-js@1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-1.3.0.tgz#d647592ed7b4c5377b8e83d7baedbf294c5162ce"
-  integrity sha512-yCPQLvm7S1lAXaQjf6cI5f+yWTcY/ks+A5/gvRhhg0AFIOYQn8VRnot2LsOlaD22hJ44IOkwQY1g1wJZgGZmnQ==
+"@simonwep/selection-js@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@simonwep/selection-js/-/selection-js-1.4.0.tgz#119662b6c8ff7702c352d5dd97699fd2d2631374"
+  integrity sha512-9dXzxCmVQ0Sg7ZKmPc37xqupvOpCLAIK2glmf0ZcUQMJUrq9Ebx+PCmXJYZxAHxv8ujq/UADvdh7KZrOqRg2yA==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
