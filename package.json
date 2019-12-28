@@ -59,7 +59,7 @@
     "tslint": "5.20.0",
     "tslint-config-prettier": "1.18.0",
     "tslint-loader": "3.6.0",
-    "typescript": "3.7.0-beta",
+    "typescript": "3.7.4",
     "webpack": "4.41.2",
     "zip-dir": "1.0.2"
   },
