@@ -14,7 +14,7 @@
     "@delirvfx/core-test-helper": "*",
     "@types/audiobuffer-to-wav": "1.0.0",
     "@types/jest": "24.0.18",
-    "@types/joi": "14.3.3",
+    "@types/joi": "14.3.4",
     "@types/lodash": "4.14.123",
     "@types/semver": "6.0.2",
     "@types/uuid": "3.4.5",
