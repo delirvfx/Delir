@@ -2443,10 +2443,10 @@
   dependencies:
     source-map "^0.6.1"
 
-"@types/unzipper@0.10.0":
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/@types/unzipper/-/unzipper-0.10.0.tgz#ae051eed1ec6735ff5adfac235d9bb17471b2901"
-  integrity sha512-GZL5vt0o9ZAST+7ge1Sirzc14EEJFbq6kib24nS0UglY6BHX8ERhA8cBq4XsYWcGK212FtMBZyJz6AwPvrhGLQ==
+"@types/unzipper@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@types/unzipper/-/unzipper-0.10.1.tgz#660b9c6489140e0a9c62233108bf9519f63d1be4"
+  integrity sha512-I53zUuPGMR/ry/s61qdlk/NkJHwhekycCqI7IXWFcJHOK+oIFUhnCPT26Wbf4UYNLpFjeujFioXGH+SWY4yUUQ==
   dependencies:
     "@types/node" "*"
 

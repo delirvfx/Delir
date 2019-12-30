@@ -30,7 +30,7 @@
     "@types/simonwep__selection-js": "1.2.0",
     "@types/styled-components": "4.4.0",
     "@types/typescript": "2.0.0",
-    "@types/unzipper": "0.10.0",
+    "@types/unzipper": "0.10.1",
     "@types/uuid": "3.4.5",
     "@types/watchpack": "1.1.5",
     "devtron": "1.4.0",
