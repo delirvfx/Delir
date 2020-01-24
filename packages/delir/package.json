@@ -40,7 +40,7 @@
   "dependencies": {
     "@delirvfx/core": "*",
     "@fleur/fleur": "^1.2.3",
-    "@fleur/react": "3.0.0-pre",
+    "@fleur/react": "3.2.0",
     "@ragg/deream": "*",
     "@simonwep/selection-js": "1.4.0",
     "archiver": "3.1.1",
