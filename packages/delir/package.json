@@ -34,7 +34,7 @@
     "@types/uuid": "3.4.5",
     "@types/watchpack": "1.1.5",
     "devtron": "1.4.0",
-    "jest": "24.9.0",
+    "jest": "25.2.7",
     "ts-jest": "24.2.0"
   },
   "dependencies": {
