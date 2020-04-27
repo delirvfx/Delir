@@ -7,7 +7,7 @@
     },
     "devDependencies": {
         "glob-promise": "^3.4.0",
-        "jest": "24.9.0",
+        "jest": "25.4.0",
         "semver": "6.3.0"
     }
 }

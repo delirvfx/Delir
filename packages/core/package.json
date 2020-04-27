@@ -18,7 +18,7 @@
     "@types/lodash": "4.14.123",
     "@types/semver": "6.0.2",
     "@types/uuid": "3.4.5",
-    "jest": "24.9.0",
+    "jest": "25.4.0",
     "ts-jest": "24.2.0"
   },
   "dependencies": {
