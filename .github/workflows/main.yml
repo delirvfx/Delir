@@ -57,8 +57,9 @@ jobs:
           restore-keys: |
             yarn-
       - name: Install apt deps
-        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt-get install g++-4.8 libfontconfig1-dev
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - name: Install yarn deps
         run: |
           yarn install
