@@ -38,7 +38,7 @@ jobs:
           yarn install
           yarn install -s --no-optional
           # Remove problem optional module
-          rm -rf ./node_modules/speaker
+          yarn rimraf ./node_modules/speaker
       - name: Build @delirvfx/core
         run: yarn build:core
       - name: Build storybook
