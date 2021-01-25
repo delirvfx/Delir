@@ -8,7 +8,9 @@
   "license": "MIT",
   "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
   "scripts": {
-    "prepublishOnly": "rm -rf ./{typings,lib} && tsc --emitDeclarationOnly --declaration --outDir ./lib && tsc --outDir lib"
+    "test": "jest",
+    "build": "rm -rf ./{typings,lib} && tsc --declaration --outDir ./lib",
+    "prepublishOnly": "yarn build"
   },
   "devDependencies": {
     "@delirvfx/core-test-helper": "*",
@@ -30,5 +32,8 @@
     "semver": "6.3.0",
     "typescript": "3.7.4",
     "uuid": "3.3.3"
+  },
+  "optionalDependencies": {
+    "fontmanager-redux": "0.4.0"
   }
 }
