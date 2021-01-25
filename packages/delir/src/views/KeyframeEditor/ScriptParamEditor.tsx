@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor'
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import MonacoUtil from '../../utils/Monaco'
 
@@ -14,70 +14,66 @@ import s from './ScriptParamEditor.sass'
 interface Props {
   title: string
   code: string
+  langType: string
   target: ParameterTarget
   onClose: (result: EditorResult) => void
 }
 
-export default class ScriptParamEditor extends React.Component<Props> {
-  private editor: monaco.editor.IStandaloneCodeEditor
-  private editorElement = React.createRef<HTMLDivElement>()
-  private disposables: monaco.IDisposable[] = []
+export const ScriptParamEditor = ({ title, code, langType, target, onClose }: Props) => {
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
+  const editorContainerRef = useRef<HTMLDivElement | null>(null)
+  const disposables = useRef<monaco.IDisposable[]>([])
 
-  public componentDidMount() {
-    this.editor = monaco.editor.create(this.editorElement.current!, {
-      language: 'javascript',
+  const handleClose = useCallback(() => {
+    onClose({
+      code: editorRef.current!.getValue(),
+      target: target,
+    })
+  }, [target, onClose])
+
+  useEffect(() => {
+    const editor = monaco.editor.create(editorContainerRef.current!, {
+      language: langType,
       codeLens: true,
       automaticLayout: true,
       theme: 'vs-dark',
       minimap: { enabled: false },
-      value: this.props.code ? this.props.code : '',
+      value: code ? code : '',
     })
 
-    this.editor.createContextKey('cond1', true)
-    this.editor.createContextKey('cond2', true)
-    this.disposables.push(this.editor.onDidFocusEditorText(this.handleFocusEditor))
-    this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClose, 'cond1')
-    this.editor.focus()
-  }
-
-  public shouldComponentUpdate(nextProps: Props) {
-    // Only update contents on target entity changed
-    // (Guard from parent component controll to reset content)
-    return (
-      nextProps.target.entityId !== this.props.target.entityId ||
-      nextProps.target.paramName !== this.props.target.paramName
+    editor.createContextKey('cond1', true)
+    editor.createContextKey('cond2', true)
+    disposables.current.push(
+      editor.onDidFocusEditorText(() => {
+        MonacoUtil.activateLibrarySet('scriptEditor')
+      }),
     )
-  }
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, handleClose, 'cond1')
+    editor.focus()
 
-  public componentWillUnmount() {
-    this.disposables.forEach(d => d.dispose())
-    this.editor.dispose()
-  }
+    editorRef.current = editor
 
-  public render() {
-    const { title } = this.props
+    return () => {
+      disposables.current.forEach(d => d.dispose())
+      disposables.current = []
+      editorRef.current!.dispose()
+    }
+  }, [target.entityId, target.paramName])
 
-    return (
-      <div className={s.ScriptParamEditor}>
-        <div className={s.toolbar}>
-          <span className={s.title}>Code: {title}</span>
-          <Button type="primary" onClick={this.handleClose}>
-            {t(t.k.save)}
-          </Button>
-        </div>
-        <div ref={this.editorElement} className={s.editor} />
+  useEffect(() => {
+    if (!editorRef.current) return
+    editorRef.current.setValue(code)
+  }, [code])
+
+  return (
+    <div className={s.ScriptParamEditor}>
+      <div className={s.toolbar}>
+        <span className={s.title}>Code: {title}</span>
+        <Button kind="primary" onClick={handleClose}>
+          {t(t.k.save)}
+        </Button>
       </div>
-    )
-  }
-
-  private handleFocusEditor = () => {
-    MonacoUtil.activateLibrarySet('scriptEditor')
-  }
-
-  private handleClose = () => {
-    this.props.onClose({
-      code: this.editor.getValue(),
-      target: this.props.target,
-    })
-  }
+      <div ref={editorContainerRef} className={s.editor} />
+    </div>
+  )
 }

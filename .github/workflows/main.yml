@@ -1,0 +1,35 @@
+name: CI
+
+on: [push]
+
+jobs: 
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macOS-10.14, windows-2016, ubuntu-18.04]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup Node.js for use with actions
+      uses: actions/setup-node@v1.1.0
+      with:
+        node-version: '11.x'
+    - name: Cache
+      uses: actions/cache@v1.0.0
+      with:
+        path: ~/.cache/yarn
+        key: ${{ matrix.os }}-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+        restore-keys: |
+          ${{ matrix.os }}-
+    - name: Install deps
+      run: |
+        npm i -g yarn
+        yarn install
+    - name: Build
+      run: yarn build
+    - uses: actions/upload-artifact@master
+      with:
+        name: build-${{ matrix.os }}
+        path: release

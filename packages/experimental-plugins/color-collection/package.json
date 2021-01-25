@@ -1,0 +1,14 @@
+{
+  "name": "@delirvfx/posteffect-color-collection",
+  "version": "0.1.0",
+  "author": "Hanakla (https://twitter.com/@_ragg_)",
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "@delirvfx/core": "0.11.x"
+  },
+  "delir": {
+    "name": "Color collection",
+    "type": "post-effect"
+  }
+}

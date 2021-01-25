@@ -1,7 +1,7 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type, Values } from '@delirvfx/core'
+import { EffectPreRenderContext, EffectRenderContext, ParamType, PostEffectBase, Type, Values } from '@delirvfx/core'
 
 interface Params {
-  value: number
+  value: ParamType.ColorRGBA
 }
 
 export default class TheWorldPostEffect extends PostEffectBase {
@@ -11,7 +11,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
   public static provideParameters() {
     return Type.colorRgba('value', {
       label: 'Value',
-      defaultValue: new Values.ColorRGBA(0, 0, 0, 255),
+      defaultValue: () => new Values.ColorRGBA(0, 0, 0, 255),
       animatable: true,
     })
   }

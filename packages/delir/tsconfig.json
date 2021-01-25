@@ -1,15 +1,8 @@
 {
-    "extends": "../../tsconfig.base.json",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "jsx": "react",
-        "lib": [
-            "dom",
-            "dom.iterable",
-            "es2015",
-            "es2016",
-            "es2017",
-            "es2018"
-        ]
-    }
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "jsx": "react",
+    "outDir": "dist"
+  }
 }

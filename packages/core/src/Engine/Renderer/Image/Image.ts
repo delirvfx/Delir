@@ -1,21 +1,21 @@
 import _ from 'lodash'
-import Type from '../../../PluginSupport/type-descriptor'
+import Type from '../../../PluginSupport/TypeDescriptor'
 import { IRenderer } from '../RendererBase'
 
-import { Asset } from '../../../Entity'
+import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface ImageRendererParams {
-  source: Asset
-  x: number
-  y: number
-  scale: number
-  rotate: number
-  opacity: number
+  source: ParamType.Asset
+  x: ParamType.Number
+  y: ParamType.Number
+  scale: ParamType.Float
+  rotate: ParamType.Float
+  opacity: ParamType.Float
 }
 
-export default class ImageLayer implements IRenderer<ImageRendererParams> {
+export class ImageRenderer implements IRenderer<ImageRendererParams> {
   public static get rendererId(): string {
     return 'image'
   }
@@ -38,27 +38,27 @@ export default class ImageLayer implements IRenderer<ImageRendererParams> {
       .number('x', {
         label: 'Position X',
         animatable: true,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
       .number('y', {
         label: 'Position Y',
         animatable: true,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
       .float('scale', {
         label: 'Scale',
         animatable: true,
-        defaultValue: 100,
+        defaultValue: () => 100,
       })
       .float('rotate', {
         label: 'Rotation',
         animatable: true,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
       .float('opacity', {
         label: 'Opacity',
         animatable: true,
-        defaultValue: 100,
+        defaultValue: () => 100,
       })
   }
 

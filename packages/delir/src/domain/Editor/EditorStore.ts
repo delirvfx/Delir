@@ -12,16 +12,17 @@ export interface NotificationEntry {
   message?: string
   level: 'info' | 'error'
   detail?: string
+  timeout: number | undefined
 }
 
 export interface EditorState {
   project: Delir.Entity.Project | null
   projectPath: string | null
   activeComp: Delir.Entity.Composition | null
+  activeLayerId: string | null
   selectClipIds: string[]
   activeParam: ParameterTarget | null
   dragEntity: DragEntity | null
-  processingState: string | null
   currentPreviewFrame: number
   preferenceOpened: boolean
   clipboard: ClipboardEntry | null
@@ -35,10 +36,10 @@ export default class EditorStore extends Store<EditorState> {
     project: null,
     projectPath: null,
     activeComp: null,
+    activeLayerId: null,
     selectClipIds: [],
     activeParam: null,
     dragEntity: null,
-    processingState: null,
     currentPreviewFrame: 0,
     preferenceOpened: false,
     clipboard: null,
@@ -57,6 +58,7 @@ export default class EditorStore extends Store<EditorState> {
       if (payload.project !== this.state.project) {
         draft.activeComp = null
         draft.activeParam = null
+        draft.clipboard = null
       }
     })
   })
@@ -72,23 +74,26 @@ export default class EditorStore extends Store<EditorState> {
 
   private handleRemoveLayer = listen(ProjectActions.removeLayer, ({ targetLayerId }) => {
     const { selectClipIds, project } = this.state
-    if (!selectClipIds.length) return
     if (!project) return
 
     this.updateWith(d => {
-      const ids = [...d.selectClipIds]
+      // Remove clip from selection if removed layer contains selected clip
+      if (selectClipIds.length) {
+        d.selectClipIds.forEach((clipId, idx) => {
+          const clipOwnedLayer = project!.findClipOwnerLayer(clipId)
+          if (!clipOwnedLayer || clipOwnedLayer.id !== targetLayerId) return
 
-      ids.forEach((clipId, idx) => {
-        const clipOwnedLayer = project!.findClipOwnerLayer(clipId)
-        if (!clipOwnedLayer || clipOwnedLayer.id !== targetLayerId) return
+          d.selectClipIds.splice(idx, 1)
 
-        // Reset selected clip if removed layer contains selected clip
-        d.selectClipIds.splice(idx, 1)
+          if (d.activeParam && d.activeParam.entityId === clipId) {
+            d.activeParam = null
+          }
+        })
+      }
 
-        if (d.activeParam && d.activeParam.entityId === clipId) {
-          d.activeParam = null
-        }
-      })
+      if (targetLayerId === d.activeLayerId) {
+        d.activeLayerId = null
+      }
     })
   })
 
@@ -136,6 +141,10 @@ export default class EditorStore extends Store<EditorState> {
     })
   })
 
+  private handleChangeActiveLayer = listen(EditorActions.changeActiveLayer, ({ layerId }) => {
+    this.updateWith(d => (d.activeLayerId = layerId))
+  })
+
   private handleAddOrRemoveSelectClip = listen(EditorActions.addOrRemoveSelectClip, payload => {
     const { project } = this.state
     if (project == null) return
@@ -179,23 +188,13 @@ export default class EditorStore extends Store<EditorState> {
     })
   })
 
-  private handleupdateProcessingState = listen(EditorActions.updateProcessingState, payload => {
-    this.updateWith(d => (d.processingState = payload.stateText))
-  })
-
   private handleseekPreviewFrame = listen(EditorActions.seekPreviewFrame, payload => {
     this.updateWith(d => (d.currentPreviewFrame = Math.round(payload.frame)))
   })
 
-  private handleaddMessage = listen(EditorActions.addMessage, payload => {
+  private handleAddMessage = listen(EditorActions.addMessage, payload => {
     this.updateWith(d => {
-      d.notifications.push({
-        id: payload.id,
-        title: payload.title,
-        message: payload.message!,
-        level: payload.level,
-        detail: payload.detail,
-      })
+      d.notifications.push(payload)
     })
   })
 
@@ -211,7 +210,11 @@ export default class EditorStore extends Store<EditorState> {
   })
 
   private handleSetClipboardEntry = listen(EditorActions.setClipboardEntry, payload => {
-    this.updateWith(draft => (draft.clipboard = payload.entry))
+    this.updateWith(
+      draft =>
+        // WTF. TypeScript recognize draft.clipboard and payload.entry as different types.
+        (draft.clipboard = payload.entry as any),
+    )
   })
 
   public get currentPointFrame() {

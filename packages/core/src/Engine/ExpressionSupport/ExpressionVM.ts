@@ -1,4 +1,5 @@
 import { createContext, runInNewContext } from 'vm'
+import { ColorRGB, ColorRGBA } from '../../Values'
 
 interface ExpressionVMOption {
   filename?: string
@@ -26,6 +27,8 @@ interface EffectAttributes {
 }
 
 export interface ExpressionContext {
+  ColorRGB: typeof ColorRGB
+  ColorRGBA: typeof ColorRGBA
   currentValue: any
   thisComp: CompositionAttributes
   thisClip: ClipAttributes

@@ -1,12 +1,11 @@
 import * as Delir from '@delirvfx/core'
-import { ContextProp, withFleurContext } from '@fleur/react'
+import { ContextProp, useFleurContext } from '@fleur/react'
 import classnames from 'classnames'
 import _ from 'lodash'
-import React from 'react'
+import React, { useCallback, useRef } from 'react'
 import { DraggableEventHandler } from 'react-draggable'
 import { Rnd, RndResizeCallback } from 'react-rnd'
 import { animated } from 'react-spring'
-import { decorate } from '../../utils/decorate'
 import { SpreadType } from '../../utils/Spread'
 
 import { ContextMenu, MenuItem, MenuItemOption } from '../../components/ContextMenu/ContextMenu'
@@ -14,13 +13,17 @@ import { MountTransition } from '../../components/MountTransition'
 import * as EditorOps from '../../domain/Editor/operations'
 import * as ProjectOps from '../../domain/Project/operations'
 
-import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
+import { cssVars } from 'assets/styles/cssVars'
+import { getSelectedClipIds } from 'domain/Editor/selectors'
+import { memo } from 'react'
+import { useMountTransition } from 'utils/hooks'
 import t from './Clip.i18n'
 import s from './Clip.sass'
-import { ClipDragProps, withClipDragContext } from './ClipDragContext'
+import { ClipDragProps, useClipDragContext } from './ClipDragContext'
 
 interface OwnProps {
   clip: SpreadType<Delir.Entity.Clip>
+  top: number
   left: number
   width: number
   active: boolean
@@ -34,186 +37,221 @@ interface ConnectedProps {
 
 type Props = OwnProps & ConnectedProps & ContextProp & ClipDragProps
 
-export default decorate<OwnProps>(
-  [withFleurContext, withClipDragContext],
-  class Clip extends React.Component<Props> {
-    public shouldComponentUpdate(nextProps: Props) {
-      const { props } = this
-      return !_.isEqual(props, nextProps)
-    }
+export const Clip = memo(({ clip, active, postEffectPlugins, width, left, top, hasError }: OwnProps) => {
+  const { executeOperation, getStore } = useFleurContext()
+  const { emitClipDrag, emitClipDragEnd, emitClipResize, emitClipResizeEnd } = useClipDragContext()
+  const { style } = useMountTransition({
+    config: { duration: cssVars.animate.clipAppearDuration },
+    from: { transform: 'scaleX(0)', transformOrigin: 'left center' },
+    enter: { transform: 'scaleX(1)' },
+  })
 
-    public render() {
-      const { clip, active, postEffectPlugins, width, left, hasError } = this.props
+  const isDragMoved = useRef<boolean>(false)
 
-      return (
-        <MountTransition
-          from={{ transform: 'scaleX(0)', transformOrigin: 'left center' }}
-          enter={{ transform: 'scaleX(1)' }}
-        >
-          {style => (
-            <Rnd
-              className={s.clip}
-              dragAxis="x"
-              position={{ x: left, y: 2 }}
-              size={{ width, height: 'auto' }}
-              enableResizing={{
-                left: true,
-                right: true,
-                top: false,
-                bottom: false,
-              }}
-              onDragStart={this.handleDragStart}
-              onDrag={this.handleDrag}
-              onDragStop={this.handleDragEnd}
-              onResize={this.handleResize}
-              onResizeStop={this.handleResizeEnd}
-              onMouseDown={this.handleClick}
-              tabIndex={-1}
-              data-clip-id={clip.id}
-            >
-              <animated.div
-                className={classnames(s.inner, {
-                  [s.active]: active,
-                  [s.video]: clip.renderer === 'video',
-                  [s.audio]: clip.renderer === 'audio',
-                  [s.text]: clip.renderer === 'text',
-                  [s.image]: clip.renderer === 'image',
-                  [s.adjustment]: clip.renderer === 'adjustment',
-                  [s.p5js]: clip.renderer === 'p5js',
-                  [s.hasError]: hasError,
-                })}
-                style={style}
-                onMouseUp={this.handleMouseUp}
-              >
-                <ContextMenu>
-                  <MenuItem label={t(t.k.contextMenu.seekToHeadOfClip)} onClick={this.handleSeekToHeadOfClip} />
-                  <MenuItem label={t(t.k.contextMenu.effect)}>
-                    {postEffectPlugins.length ? (
-                      postEffectPlugins.map(entry => (
-                        <MenuItem
-                          key={entry.id}
-                          label={entry.name}
-                          data-clip-id={clip.id}
-                          data-effect-id={entry.id}
-                          onClick={this.handleAddEffect}
-                        />
-                      ))
-                    ) : (
-                      <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
-                    )}
-                  </MenuItem>
-                  {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
-                  <MenuItem type="separator" />
-                  <MenuItem label={t(t.k.contextMenu.remove)} data-clip-id={clip.id} onClick={this.handleRemoveClip} />
-                  <MenuItem type="separator" />
-                </ContextMenu>
-                <span className={s.nameLabel}>{t(['renderers', clip.renderer])}</span>
-                <span className={s.idLabel}>#{clip.id.substring(0, 4)}</span>
-              </animated.div>
-            </Rnd>
-          )}
-        </MountTransition>
-      )
-    }
+  const handleDragStart: DraggableEventHandler = useCallback(
+    e => {
+      // When click with shift-key, Expects raise selection/deselection behaviour
+      // (Prevent clip selection clearing)
+      if (e.shiftKey) return
 
-    private handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-      if (this.props.active) return
-      e.preventDefault()
-      e.stopPropagation()
-
-      GlobalEvents.on(GlobalEvent.copyViaApplicationMenu, this.handleGlobalCopy)
-      GlobalEvents.on(GlobalEvent.cutViaApplicationMenu, this.handleGlobalCut)
-
-      if (e.shiftKey) {
-        this.props.executeOperation(EditorOps.addOrRemoveSelectClip, {
-          clipIds: [this.props.clip.id],
-        })
-      } else {
-        this.props.executeOperation(EditorOps.changeSelectClip, {
-          clipIds: [this.props.clip.id!],
+      // Enable dragging from unselected state
+      if (!active) {
+        executeOperation(EditorOps.changeSelectClip, {
+          clipIds: [clip.id],
         })
       }
-    }
 
-    private handleDragStart: DraggableEventHandler = e => {
-      this.props.executeOperation(EditorOps.setDragEntity, {
-        entity: { type: 'clip', clip: this.props.clip },
+      executeOperation(EditorOps.setDragEntity, {
+        entity: { type: 'clip', baseClipId: clip.id! },
       })
-    }
+    },
+    [active, clip],
+  )
 
-    private handleDrag: DraggableEventHandler = (e, drag) => {
-      const { clip } = this.props
+  const handleDrag: DraggableEventHandler = useCallback(
+    (e, drag) => {
+      if (drag.deltaX !== 0 || drag.deltaY !== 0) {
+        isDragMoved.current = true
+      }
 
-      this.props.emitClipDrag({
+      emitClipDrag({
         nextX: drag.x,
+        nextY: drag.y,
         originalPlacedFrame: clip.placedFrame,
       })
-    }
+    },
+    [clip, emitClipDrag],
+  )
 
-    private handleDragEnd: DraggableEventHandler = (e, drag) => {
-      const { clip } = this.props
-      this.props.emitClipDragEnd({
-        nextX: drag.x,
-        originalPlacedFrame: clip.placedFrame,
-      })
-    }
+  const handleDragEnd: DraggableEventHandler = useCallback(
+    (e, drag) => {
+      onClick: {
+        // Prevent clip deselection after drag
+        if (isDragMoved.current) {
+          break onClick
+        }
 
-    private handleResize: RndResizeCallback = (e, dir, ref, delta, pos) => {
-      const { clip } = this.props
+        if (active) return
 
-      this.props.emitClipResize({
+        if (e.shiftKey) {
+          executeOperation(EditorOps.addOrRemoveSelectClip, {
+            clipIds: [clip.id],
+          })
+        } else {
+          executeOperation(EditorOps.changeSelectClip, {
+            clipIds: [clip.id!],
+          })
+        }
+      }
+
+      dragEnd: {
+        if (!isDragMoved.current) {
+          break dragEnd
+        }
+
+        // Delay clearing for drag handling in Layer component
+        setTimeout(() => {
+          executeOperation(EditorOps.clearDragEntity)
+        })
+
+        emitClipDragEnd({
+          nextX: drag.x,
+          nextY: drag.y,
+          originalPlacedFrame: clip.placedFrame,
+        })
+      }
+
+      isDragMoved.current = false
+    },
+    [clip, emitClipDragEnd],
+  )
+
+  const handleResize: RndResizeCallback = useCallback(
+    (e, dir, ref, delta, pos) => {
+      // Enable dragging from unselected state
+      if (!active) {
+        executeOperation(EditorOps.changeSelectClip, {
+          clipIds: [clip.id],
+        })
+      }
+
+      emitClipResize({
         nextX: pos.x,
         originalPlacedFrame: clip.placedFrame,
         deltaWidth: delta.width,
       })
-    }
+    },
+    [active, clip, emitClipResize],
+  )
 
-    private handleResizeEnd: RndResizeCallback = (e, direction, ref, delta, pos) => {
-      const { clip, width } = this.props
-
-      this.props.emitClipResizeEnd({
+  const handleResizeEnd: RndResizeCallback = useCallback(
+    (e, direction, ref, delta, pos) => {
+      emitClipResizeEnd({
         nextX: pos.x,
         originalPlacedFrame: clip.placedFrame,
         deltaWidth: delta.width,
       })
-    }
+    },
+    [clip, emitClipResizeEnd],
+  )
 
-    private handleAddEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
-      this.props.executeOperation(ProjectOps.addEffectIntoClip, {
-        clipId: dataset.clipId,
-        processorId: dataset.effectId,
-      })
-      this.props.executeOperation(EditorOps.seekPreviewFrame, {})
-    }
+  const handleAddEffect = useCallback(({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
+    executeOperation(ProjectOps.addEffectIntoClip, {
+      clipId: dataset.clipId,
+      processorId: dataset.effectId,
+    })
+    executeOperation(EditorOps.seekPreviewFrame, {})
+  }, [])
 
-    private handleRemoveClip = ({ dataset }: MenuItemOption<{ clipId: string }>) => {
-      this.props.executeOperation(ProjectOps.removeClip, {
-        clipId: dataset.clipId,
-      })
-    }
+  const handleRemoveClip = useCallback(
+    ({ dataset }: MenuItemOption<{ clipId: string }>) => {
+      if (active) {
+        executeOperation(ProjectOps.removeClips, {
+          clipIds: getSelectedClipIds(getStore),
+        })
+      } else {
+        executeOperation(ProjectOps.removeClips, {
+          clipIds: [dataset.clipId],
+        })
+      }
+    },
+    [active],
+  )
 
-    private handleSeekToHeadOfClip = () => {
-      const { clip } = this.props
-      this.props.executeOperation(EditorOps.seekPreviewFrame, {
-        frame: clip.placedFrame,
-      })
-    }
+  const handleSeekToHeadOfClip = useCallback(() => {
+    executeOperation(EditorOps.seekPreviewFrame, {
+      frame: clip.placedFrame,
+    })
+  }, [clip])
 
-    private handleGlobalCopy = () => {
-      this.props.executeOperation(EditorOps.copyEntity, {
-        type: 'clip',
-        entity: this.props.clip,
-      })
-    }
+  const handleSeekToTailOfClip = useCallback(() => {
+    executeOperation(EditorOps.seekPreviewFrame, {
+      frame: clip.placedFrame + clip.durationFrames,
+    })
+  }, [clip])
 
-    private handleGlobalCut = () => {
-      this.props.executeOperation(EditorOps.copyEntity, {
-        type: 'clip',
-        entity: this.props.clip,
-      })
-      this.props.executeOperation(ProjectOps.removeClip, {
-        clipId: this.props.clip.id,
-      })
-    }
-  },
-)
+  return (
+    <Rnd
+      className={s.clip}
+      dragAxis="both"
+      position={{ x: left, y: 2 + top }}
+      size={{ width, height: 'auto' }}
+      enableResizing={{
+        left: true,
+        right: true,
+        top: false,
+        bottom: false,
+      }}
+      onDragStart={handleDragStart}
+      onDrag={handleDrag}
+      onDragStop={handleDragEnd}
+      onResize={handleResize}
+      onResizeStop={handleResizeEnd}
+      tabIndex={-1}
+      data-clip-id={clip.id}
+      dragGrid={[1, 24]}
+      style={{ zIndex: active ? 1 : undefined }}
+    >
+      <animated.div
+        className={classnames(s.inner, {
+          [s.active]: active,
+          [s.video]: clip.renderer === 'video',
+          [s.audio]: clip.renderer === 'audio',
+          [s.text]: clip.renderer === 'text',
+          [s.image]: clip.renderer === 'image',
+          [s.adjustment]: clip.renderer === 'adjustment',
+          [s.p5js]: clip.renderer === 'p5js',
+          [s.solid]: clip.renderer === 'solid',
+          [s.hasError]: hasError,
+        })}
+        style={style}
+      >
+        <ContextMenu>
+          <MenuItem label={t(t.k.contextMenu.seekToHeadOfClip)} onClick={handleSeekToHeadOfClip} />
+          <MenuItem label={t(t.k.contextMenu.seekToTailOfClip)} onClick={handleSeekToTailOfClip} />
+          <MenuItem label={t(t.k.contextMenu.effect)}>
+            {postEffectPlugins.length ? (
+              postEffectPlugins.map(entry => (
+                <MenuItem
+                  key={entry.id}
+                  label={entry.name}
+                  data-clip-id={clip.id}
+                  data-effect-id={entry.id}
+                  onClick={handleAddEffect}
+                />
+              ))
+            ) : (
+              <MenuItem label={t(t.k.contextMenu.pluginUnavailable)} enabled={false} />
+            )}
+          </MenuItem>
+          {/* <MenuItem label='Make alias ' onClick={this.makeAlias.bind(null, clip.id)} /> */}
+          <MenuItem type="separator" />
+          <MenuItem label={t(t.k.contextMenu.remove)} data-clip-id={clip.id} onClick={handleRemoveClip} />
+          <MenuItem type="separator" />
+        </ContextMenu>
+        <span className={s.nameLabel}>{t(['renderers', clip.renderer])}</span>
+        <span className={s.idLabel}>#{clip.id.substring(0, 4)}</span>
+      </animated.div>
+    </Rnd>
+  )
+})

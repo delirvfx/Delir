@@ -1,27 +1,30 @@
 // tslint:disable:no-console
 
 const g = require('gulp')
-const webpack = require('webpack')
+const webpack: typeof import('webpack') = require('webpack')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const builder = require('electron-builder')
+const builder: typeof import('electron-builder') = require('electron-builder')
 const notifier = require('node-notifier')
 const download = require('download')
 const zipDir = require('zip-dir')
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
+const glob: typeof import('fast-glob') = require('fast-glob')
 
 const os = require('os')
 const fs = require('fs-extra')
 const path = require('path')
-const { join } = require('path')
+const { join, parse: pathParse } = require('path')
 const { spawn } = require('child_process')
 
-const NATIVE_MODULES = ['font-manager']
+const NATIVE_MODULES = ['fontmanager-redux']
 
 const paths = {
   src: {
     root: join(__dirname, './packages/'),
     plugins: join(__dirname, './packages/post-effect-plugins'),
+    contribPEP: join(__dirname, './packages/contrib-posteffect'),
     frontend: join(__dirname, './packages/delir/'),
     core: join(__dirname, './packages/core/'),
   },
@@ -57,7 +60,7 @@ export function buildBrowserJs(done) {
         sourceMapFilename: 'map/[file].map',
         path: paths.compiled.frontend,
       },
-      devtool: __DEV__ ? '#source-map' : 'none',
+      devtool: __DEV__ ? '#source-map' : false,
       resolve: {
         extensions: ['.js', '.ts'],
       },
@@ -85,7 +88,7 @@ export function buildBrowserJs(done) {
       },
       plugins: [
         ...(__DEV__
-          ? [new webpack.ExternalsPlugin('commonjs', ['devtron', 'electron-devtools-installer'])]
+          ? [new (webpack as any).ExternalsPlugin('commonjs', ['devtron', 'electron-devtools-installer'])]
           : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
@@ -110,7 +113,7 @@ export async function buildPublishPackageJSON(done) {
   delete json.devDependencies
   json.dependencies = {
     // install only native modules
-    'font-manager': '0.3.0',
+    'fontmanager-redux': '0.4.0',
   }
 
   const newJson = JSON.stringify(json, null, '  ')
@@ -223,12 +226,18 @@ export function compileRendererJs(done) {
       entry: {
         main: ['./src/main'],
       },
+      optimization: {
+        splitChunks: {
+          name: 'vendor',
+          chunks: 'initial',
+        },
+      },
       output: {
         filename: '[name].js',
         sourceMapFilename: 'map/[file].map',
         path: paths.compiled.frontend,
       },
-      devtool: 'none',
+      devtool: false,
       resolve: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
         modules: ['node_modules'],
@@ -239,6 +248,11 @@ export function compileRendererJs(done) {
           // Using fresh development packages always
           '@delirvfx/core': join(paths.src.core, 'src/index.ts'),
         },
+        plugins: [
+          new TsconfigPathsPlugin({
+            configFile: join(paths.src.frontend, 'tsconfig.json'),
+          }),
+        ],
       },
       module: {
         rules: [
@@ -269,8 +283,9 @@ export function compileRendererJs(done) {
               {
                 loader: 'css-loader',
                 options: {
-                  modules: true,
-                  localIdentName: __DEV__ ? '[path][name]__[local]--[emoji:4]' : '[local]--[hash:base64:5]',
+                  modules: {
+                    localIdentName: __DEV__ ? '[path][name]__[local]--[hash:base64:5]' : '[local]--[hash:base64:5]',
+                  },
                 },
               },
               {
@@ -298,7 +313,7 @@ export function compileRendererJs(done) {
       plugins: [
         new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
         // preserve require() for native modules
-        new webpack.ExternalsPlugin('commonjs', NATIVE_MODULES),
+        new (webpack as any).ExternalsPlugin('commonjs', [...NATIVE_MODULES, 'aws-sdk']),
         new MonacoEditorWebpackPlugin(),
         new HtmlWebpackPlugin({
           template: join(paths.src.frontend, 'src/index.html'),
@@ -306,6 +321,7 @@ export function compileRendererJs(done) {
         new ForkTsCheckerWebpackPlugin({
           tsconfig: join(paths.src.frontend, 'tsconfig.json'),
         }),
+        new webpack.IgnorePlugin({ resourceRegExp: /@microsoft\/typescript-etw/, contextRegExp: /typescript/ }),
         ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
@@ -324,7 +340,13 @@ export function compileRendererJs(done) {
   )
 }
 
-export function compilePlugins(done) {
+export async function compilePlugins(done) {
+  const contribPEP = (await glob.sync('*/index.ts', { cwd: paths.src.contribPEP })).reduce((memo, entry) => {
+    const { dir, name } = pathParse(entry)
+    memo[`${dir}/${name}`] = join(paths.src.contribPEP, entry)
+    return memo
+  }, {})
+
   webpack(
     {
       mode: __DEV__ ? 'development' : 'production',
@@ -336,9 +358,14 @@ export function compilePlugins(done) {
         'numeric-slider/index': './numeric-slider/index',
         'color-slider/index': './color-slider/index',
         'chromakey/index': './chromakey/index',
+        'webgl/index': './webgl/index',
+        'time-posterization/index': './time-posterization/index',
+        'repeat-tile/index': './repeat-tile/index',
+        // 'color-collection/index': './color-collection/index',
+        ...contribPEP,
         ...(__DEV__
           ? {
-              'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
+              // 'gaussian-blur/index': '../experimental-plugins/gaussian-blur/index',
               // 'filler/index': '../experimental-plugins/filler/index',
               // 'mmd/index': '../experimental-plugins/mmd/index',
               // 'composition-layer/composition-layer': '../experimental-plugins/composition-layer/composition-layer',
@@ -350,9 +377,9 @@ export function compilePlugins(done) {
       output: {
         filename: '[name].js',
         path: paths.compiled.plugins,
-        libraryTarget: 'commonjs-module',
+        libraryTarget: 'commonjs-module' as any,
       },
-      devtool: __DEV__ ? '#source-map' : 'none',
+      devtool: __DEV__ ? '#source-map' : false,
       resolve: {
         extensions: ['.js', '.ts'],
         modules: ['node_modules'],
@@ -379,7 +406,7 @@ export function compilePlugins(done) {
       },
       plugins: [
         new webpack.DefinePlugin({ __DEV__: JSON.stringify(__DEV__) }),
-        new webpack.ExternalsPlugin('commonjs', ['@delirvfx/core']),
+        new (webpack as any).ExternalsPlugin('commonjs', ['@delirvfx/core']),
         ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
@@ -401,6 +428,12 @@ export function compilePlugins(done) {
 export function copyPluginsPackageJson() {
   return g
     .src(join(paths.src.plugins, '*/package.json'), { base: join(paths.src.plugins) })
+    .pipe(g.dest(paths.compiled.plugins))
+}
+
+export function copyContribPEPPackageJson() {
+  return g
+    .src(join(paths.src.contribPEP, '*/package.json'), { base: join(paths.src.contribPEP) })
     .pipe(g.dest(paths.compiled.plugins))
 }
 
@@ -436,7 +469,7 @@ export async function pack(done) {
   await fs.remove(join(paths.build, 'node_modules'))
 
   await new Promise((resolve, reject) => {
-    spawn(yarnBin, ['install'], { cwd: paths.build })
+    spawn(yarnBin, ['install'], { cwd: paths.build, stdio: 'inherit' })
       .on('error', err => reject(err))
       .on('close', (code, signal) => (code === 0 ? resolve() : reject(new Error(code))))
   })
@@ -451,6 +484,7 @@ export async function pack(done) {
     await builder.build({
       // targets: builder.Platform.MAC.createTarget(),
       targets: target,
+      publish: 'never',
       config: {
         appId: 'studio.delir',
         copyright: '© 2017 Ragg',
@@ -534,14 +568,14 @@ export function watch() {
   g.watch(join(paths.src.frontend, '**/*'), buildRendererWithoutJs)
   g.watch(
     join(paths.src.root, '**/package.json'),
-    g.parallel(copyPluginsPackageJson, copyExperimentalPluginsPackageJson),
+    g.parallel(copyPluginsPackageJson, copyContribPEPPackageJson, copyExperimentalPluginsPackageJson),
   )
   g.watch(join(__dirname, 'node_modules'), symlinkNativeModules)
 }
 
 export function runStorybook(done) {
-  console.log(paths.src.frontend)
-  spawn('yarn', ['storybook', '--ci'], { stdio: 'inherit', cwd: paths.src.frontend })
+  const yarnBin = isWindows ? 'yarn.cmd' : 'yarn'
+  spawn(yarnBin, ['storybook', '--ci', '--quiet'], { stdio: 'inherit', cwd: paths.src.frontend })
   done()
 }
 
@@ -550,14 +584,14 @@ const buildRenderer = g.parallel(
   g.series(
     generateLicenses,
     compileRendererJs,
-    g.parallel(compilePlugins, copyPluginsPackageJson, copyExperimentalPluginsPackageJson),
+    g.parallel(compilePlugins, copyPluginsPackageJson, copyContribPEPPackageJson, copyExperimentalPluginsPackageJson),
   ),
   copyImage,
 )
 
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules))
 const build = g.parallel(buildRenderer, buildBrowser)
-const buildAndWatch = g.series(clean, build, run, runStorybook, watch)
+const buildAndWatch = g.series(clean, g.parallel(runStorybook, build), run, watch)
 const publish = g.series(clean, generateLicenses, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage)
 
 export { publish, build }

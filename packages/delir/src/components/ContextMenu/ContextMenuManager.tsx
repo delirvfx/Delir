@@ -15,10 +15,9 @@ export default class ContextMenuManager {
       e.preventDefault()
       e.stopPropagation()
 
-      const menu = Electron.remote.Menu.buildFromTemplate(this.buildMenu(
-        (e as any).path,
-        this.menus,
-      ) as Electron.MenuItemConstructorOptions[])
+      const menu = Electron.remote.Menu.buildFromTemplate(
+        this.buildMenu((e as any).path, this.menus) as Electron.MenuItemConstructorOptions[],
+      )
       menu.popup({ window: Electron.remote.getCurrentWindow() })
     })
   }

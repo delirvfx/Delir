@@ -1,5 +1,6 @@
 import { proxyDeepFreeze } from '../../helper/proxyFreeze'
-import { ParameterValueTypes } from '../../PluginSupport/type-descriptor'
+import { ParameterValueTypes } from '../../PluginSupport/TypeDescriptor'
+import { ColorRGB, ColorRGBA } from '../../Values'
 import { ClipRenderContext } from '../RenderContext/ClipRenderContext'
 import { EffectRenderContext } from '../RenderContext/EffectRenderContext'
 import { ExpressionContext } from './ExpressionVM'
@@ -21,6 +22,8 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
   const clipParamProxy = proxyDeepFreeze(contextSource.clipParams)
 
   return {
+    ColorRGB,
+    ColorRGBA,
     currentValue: contextSource.currentValue,
     thisComp: {
       width: contextSource.context.width,
@@ -45,6 +48,37 @@ export const buildContext = (contextSource: ContextSource): ExpressionContext =>
 }
 
 export const expressionContextTypeDefinition = `
+interface ColorRGB {
+  /**
+   * @param red Red value between 0 to 255
+   * @param green Green value between 0 to 255
+   * @param blue Blue value between 0 to 255
+   */
+  new (red: number, green: number, blue: number): ColorRGB;
+
+  readonly red: number
+  readonly green: number
+  readonly blue: number
+}
+
+interface ColorRGBA {
+  /**
+   * @param red Red value between 0 to 255
+   * @param green Green value between 0 to 255
+   * @param blue Blue value between 0 to 255
+   * @param alpha Alpha value between 0 to 1
+   */
+  new (red: number, green: number, blue: number, alpha: number): ColorRGBA()
+
+  readonly red: number
+  readonly green: number
+  readonly blue: number
+  readonly alpha: number
+}
+
+declare const ColorRGB: ColorRGB;
+declare const ColorRGBA: ColorRGBA;
+
 interface CompositionAttributes {
     width: number
     height: number
@@ -59,10 +93,10 @@ interface ClipAttributes {
     time: number
     frame: number
     params: Readonly<{ [paramName: string]: any }>
-    effect(referenceName: string): EffectAttributes
+    effect(referenceName: string): EffectProxy
 }
 
-interface EffectAttributes {
+interface EffectProxy {
     params: { [paramName: string]: any }
 }
 

@@ -101,6 +101,6 @@ export class ContextMenu extends React.Component<ContextMenuProps> {
 
   public render() {
     const Element = this.props.elementType!
-    return <Element {...{ ref: this.root, style: { display: 'none' } } as any} />
+    return <Element {...({ ref: this.root } as any)} style={{ display: 'none' }} />
   }
 }

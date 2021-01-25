@@ -1,22 +1,21 @@
-import fs from 'fs'
 import _ from 'lodash'
 
 import { resampling } from '../../../helper/Audio'
-import Type from '../../../PluginSupport/type-descriptor'
-import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
+import Type from '../../../PluginSupport/TypeDescriptor'
+import { TypeDescriptor } from '../../../PluginSupport/TypeDescriptor'
+import { ParamType } from '../../ParamType'
 import { IRenderer } from '../RendererBase'
 
-import { Asset } from '../../../Entity'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 
 interface AudioRendererParam {
-  source: Asset
-  volume: number
-  startTime: number
+  source: ParamType.Asset
+  volume: ParamType.Float
+  startTime: ParamType.Float
 }
 
-export default class AudioRenderer implements IRenderer<AudioRendererParam> {
+export class AudioRenderer implements IRenderer<AudioRendererParam> {
   public static get rendererId(): string {
     return 'audio'
   }
@@ -38,13 +37,13 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
     })
       .float('volume', {
         label: 'Volume',
-        defaultValue: 100,
+        defaultValue: () => 100,
         animatable: true,
       })
       .float('startTime', {
         label: 'Start time(sec)',
         animatable: false,
-        defaultValue: 0,
+        defaultValue: () => 0,
       })
   }
 
@@ -70,14 +69,13 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
     const audioCtx = new OfflineAudioContext(1, context.audioChannels, context.samplingRate)
     const content = await (await fetch(params.source.path)).arrayBuffer()
     const audioBuffer = await audioCtx.decodeAudioData(content)
-    const buffers = _.times(audioBuffer.numberOfChannels, ch => audioBuffer.getChannelData(ch))
-
-    await resampling(audioBuffer.sampleRate, context.samplingRate, buffers)
+    const inputBuffers = _.times(audioBuffer.numberOfChannels, ch => audioBuffer.getChannelData(ch))
+    const resampledBuffers = await resampling(audioBuffer.sampleRate, context.samplingRate, inputBuffers)
 
     this.audio = {
       sourcePath: params.source.path,
       numberOfChannels: audioBuffer.numberOfChannels,
-      buffers,
+      buffers: resampledBuffers,
     }
   }
 
@@ -94,53 +92,32 @@ export default class AudioRenderer implements IRenderer<AudioRendererParam> {
     const source = this.audio
     const destBuffers = context.destAudioBuffer
 
-    // Placement offset
-    const isClipHead = context.timeOnClip <= 0
-    const bufferSizeTime = context.neededSamples / context.samplingRate
-    const offsetTimeInBuffer = (context.clip.placedFrame / context.framerate) % bufferSizeTime
-    const startInBufferOffsetSamples = Math.floor(offsetTimeInBuffer * context.samplingRate)
+    // Placement pos in Dest
+    const bufferSizeSecond = context.neededSamples / context.samplingRate
+    const offsetSecondInBuffer =
+      context.frameOnClip < 0 ? (context.frameOnClip / context.framerate) % bufferSizeSecond : 0
+    const destOffset = Math.abs(offsetSecondInBuffer * context.samplingRate)
 
-    // Cutting position
-    const clipEndTime = (context.clip.placedFrame + context.clip.durationFrames) / context.framerate
-    const isClipEnd = clipEndTime < context.timeOnComposition + bufferSizeTime
-    const clipEndTimeInBuffer = clipEndTime % bufferSizeTime
-    const clipEndPosSamples = Math.floor(clipEndTimeInBuffer * context.samplingRate)
-
-    // Slice position
-    const startTimeSamples = Math.max(0, context.parameters.startTime) * context.samplingRate
-    const elapsedSamples = Math.round(context.timeOnClip * context.samplingRate)
-
-    // Slice from source
-    // (Rewind by amount of bufferOffsetSamples)
-    const begin = Math.floor(startTimeSamples + elapsedSamples - startInBufferOffsetSamples)
-    const end = begin + context.neededSamples
+    // Slicing pos/size in source
+    let sourceBegin = (context.timeOnClip + context.parameters.startTime) * context.samplingRate
+    const slicingSamples = context.neededSamples - Math.abs(destOffset)
 
     const slices: Float32Array[] = []
-
-    for (let ch = 0, l = source.numberOfChannels; ch < l; ch++) {
+    for (let ch = 0, l = context.audioChannels; ch < l; ch++) {
       const buffer = source.buffers[ch]
-
-      if (begin < 0) {
-        slices[ch] = new Float32Array(context.neededSamples)
-        slices[ch].set(buffer.slice(Math.max(0, begin), end), startInBufferOffsetSamples)
-      } else {
-        slices[ch] = buffer.slice(begin, end)
+      slices[ch] = new Float32Array(context.neededSamples)
+      if (sourceBegin < 0) {
+        slices[ch].fill(0, 0, Math.abs(sourceBegin))
+        sourceBegin = 0
       }
-
-      if (isClipHead) {
-        slices[ch] = slices[ch].fill(0, 0, startInBufferOffsetSamples) // Fill rewinded samples
-      }
-
-      if (isClipEnd) {
-        slices[ch].fill(0, clipEndPosSamples)
-      }
+      slices[ch].set(buffer.slice(sourceBegin, Math.floor(sourceBegin + slicingSamples)), destOffset)
     }
 
     // Resampling & gaining
     const audioCtx = new OfflineAudioContext(context.audioChannels, context.neededSamples, context.samplingRate)
 
     const inputBuffer = audioCtx.createBuffer(source.numberOfChannels, context.neededSamples, context.samplingRate)
-    _.times(source.numberOfChannels, ch => inputBuffer.copyToChannel(slices[ch], ch))
+    _.times(context.audioChannels, ch => inputBuffer.copyToChannel(slices[ch], ch))
 
     const gain = audioCtx.createGain()
     gain.gain.value = volume

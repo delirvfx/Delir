@@ -1,14 +1,11 @@
+import * as Delir from '@delirvfx/core'
 import arrayBufferToBuffer = require('arraybuffer-to-buffer')
 import audioBufferToWave = require('audiobuffer-to-wav')
 import { spawn } from 'child_process'
+import duplexer3 from 'duplexer3'
 import { nativeImage } from 'electron'
 import fs from 'mz/fs'
 import path from 'path'
-
-import * as Delir from '@delirvfx/core'
-
-// import PromiseQueue from './utils/PromiseQueue'
-import * as Exporter from './exporter'
 
 export enum RenderingStep {
   Started = 'started',
@@ -24,15 +21,56 @@ export interface RenderingProgress {
   progression: number
 }
 
+export enum VCodecs {
+  libx264 = 'libx264',
+  libx265 = 'libx265',
+  utvideo = 'utvideo',
+  libvpxVp9 = 'libvpx-vp9',
+}
+
+export enum ACodecs {
+  aacLow = 'aac_low',
+  pcm = 'pcm',
+  opus = 'libopus',
+}
+
+export interface EncodingOption {
+  vCodec: VCodecs
+  vBitrate: string | null
+  aCodec: ACodecs
+  aBitrate: string | null
+  useAlpha: boolean
+}
+
 interface ExportOptions {
   project: Delir.Entity.Project
   rootCompId: string
   temporaryDir: string
   exportPath: string
   pluginRegistry: Delir.PluginRegistry
+  encoding: EncodingOption
   ignoreMissingEffect?: boolean
   onProgress?: (progress: RenderingProgress) => void
   ffmpegBin?: string
+}
+
+const optionToFfmpegArgs = (option: EncodingOption & { videoInput: string; audioInput: string; destPath: string }) => {
+  return [
+    '-y',
+    '-i',
+    option.videoInput,
+    '-i',
+    option.audioInput,
+    '-c:v',
+    option.vCodec,
+
+    ...(option.vCodec !== VCodecs.utvideo ? ['-b:v', option.vBitrate ?? '1024k'] : []),
+    '-pix_fmt',
+    option.useAlpha ? 'rgba' : 'yuv420p',
+    ...(option.aCodec === ACodecs.aacLow ? ['-profile:a', 'aac_low', '-c:a', 'aac'] : []),
+    ...(option.aCodec !== ACodecs.pcm ? ['-b:a', option.aBitrate ? option.aBitrate : '256k'] : []),
+    option.destPath,
+  ]
 }
 
 export default async (options: ExportOptions): Promise<void> => {
@@ -61,31 +99,26 @@ export default async (options: ExportOptions): Promise<void> => {
       new Float32Array(new ArrayBuffer(4 /* bytes */ * comp.samplingRate * Math.ceil(durationFrames / comp.framerate))),
   )
 
-  const exporter = Exporter.video({
-    args: {
-      'c:v': 'utvideo',
-      // 'b:v': '1024k',
-      // 'pix_fmt': 'yuv420p',
-      // 'r': rootComp.framerate,
-      // 'an': ''
-      // 'f': 'mp4',
-    },
-    inputFramerate: comp.framerate,
-    dest: tmpMovieFilePath,
-    ffmpegBin: ffmpegBin || 'ffmpeg',
-  })
+  const sourceFFmpegProcess = spawn(ffmpegBin || 'ffmpeg', [
+    '-y',
+    '-framerate',
+    `${comp.framerate}`,
+    '-i',
+    'pipe:0',
+    '-c:v',
+    'png_pipe',
+    '-c:v',
+    'utvideo',
+    '-pix_fmt',
+    'rgba',
+    // 'yuva420p',
+    tmpMovieFilePath,
+  ])
 
-  // const progPromise = Renderer.render({
-  //     project: this._project,
-  //     pluginRegistry: this._pluginRegistry,
-  //     rootCompId: req.targetCompositionId,
-  //     beginFrame: 0,
-  //     destinationCanvas: canvas,
-  //     destinationAudioBuffers: audioBuffer,
-  //     requestAnimationFrame: window.requestAnimationFrame.bind(window),
-  // })
+  // tslint:disable-next-line:no-console
+  sourceFFmpegProcess.stderr.on('data', chunk => console.log('ffmpeg:', chunk.toString()))
 
-  // const queue = new PromiseQueue()
+  const sourceFFmpegStream = duplexer3(sourceFFmpegProcess.stdin, sourceFFmpegProcess.stdout)
 
   const pipeline = new Delir.Engine.Engine()
   pipeline.setProject(project)
@@ -108,7 +141,7 @@ export default async (options: ExportOptions): Promise<void> => {
       // })
 
       const png = nativeImage.createFromDataURL(canvas.toDataURL('image/png'))
-      exporter.write(png.toPNG())
+      sourceFFmpegStream.write(png.toPNG())
     },
     onAudioBuffered: buffers => {
       for (let ch = 0, l = comp.audioChannels; ch < l; ch++) {
@@ -127,13 +160,14 @@ export default async (options: ExportOptions): Promise<void> => {
   await pipeline.renderSequencial(rootCompId, {
     loop: false,
     ignoreMissingEffect: options.ignoreMissingEffect,
+    enableAlpha: options.encoding.useAlpha,
     realtime: false,
     audioBufferSizeSecond: 1,
   })
   // await queue.waitEmpty()
 
   // queue.stop()
-  exporter.end()
+  sourceFFmpegStream.end()
 
   onProgress({ step: RenderingStep.Encoding, progression: 0 })
 
@@ -143,49 +177,38 @@ export default async (options: ExportOptions): Promise<void> => {
         {
           sampleRate: comp.samplingRate,
           numberOfChannels: pcmAudioData.length,
-          getChannelData: ch => pcmAudioData[ch],
-        },
+          getChannelData: (ch: number) => pcmAudioData[ch],
+        } as any,
         { float32: true },
       )
 
       return fs.writeFile(tmpAudioFilePath, arrayBufferToBuffer(wav))
     })(),
     (async () => {
-      await new Promise(resolve => exporter.ffmpeg.on('exit', resolve))
+      await new Promise(resolve => {
+        if ((sourceFFmpegProcess as any).exitCode != null) {
+          resolve()
+        } else {
+          sourceFFmpegProcess.on('exit', resolve)
+        }
+      })
     })(),
   ])
 
   onProgress({ step: RenderingStep.Concat, progression: 0 })
 
   await new Promise((resolve, reject) => {
-    const ffmpeg = spawn(ffmpegBin || 'ffmpeg', [
-      '-y',
-      // '-f',
-      // 'utvideo',
-      '-i',
-      tmpMovieFilePath,
-      '-i',
-      tmpAudioFilePath,
-      // '-c:a',
-      // 'pcm_f32be',
-      '-c:v',
-      'libx264',
-      '-pix_fmt',
-      'yuv420p',
-      // '-profile:v',
-      // 'baseline',
-      // '-level:v',
-      // '3.1',
-      '-b:v',
-      '1024k',
-      '-profile:a',
-      'aac_low',
-      // '-c:a',
-      // 'libfaac',
-      // '-b:a',
-      // '320k',
-      exportPath,
-    ])
+    const args = optionToFfmpegArgs({
+      ...options.encoding,
+      videoInput: tmpMovieFilePath,
+      audioInput: tmpAudioFilePath,
+      destPath: exportPath,
+    })
+
+    // tslint:disable-next-line
+    console.info(`🤜🤛 Mixing started with \`ffmpeg ${args.join(' ')}\``)
+
+    const ffmpeg = spawn(ffmpegBin || 'ffmpeg', args)
 
     let lastMessage: string
     ffmpeg.stderr.on('data', (buffer: Buffer) => {

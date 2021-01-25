@@ -4,19 +4,21 @@ import { existsSync, readFileSync, writeFile } from 'fs'
 import _ from 'lodash'
 import path from 'path'
 
+import { NotificationTimeouts } from 'domain/Editor/models'
 import * as EditorOps from '../Editor/operations'
 import { RendererActions } from '../Renderer/actions'
+import * as RendererOps from '../Renderer/operations'
 import { PreferenceActions } from './actions'
-
-import PreferenceStore, { defaultPreferance, Preference } from './PreferenceStore'
-import { validateSchema } from './validation'
+import { validateSchema } from './models'
+import { defaultPreferance, Preference } from './PreferenceStore'
+import { getAllPreferences } from './selectors'
 
 const userDir = remote.app.getPath('userData')
 const preferencePath = path.join(userDir, 'preferences.json')
 
-export const restoreApplicationPreference = operation(context => {
+export const restoreApplicationPreference = operation(async context => {
   if (!existsSync(preferencePath)) {
-    return
+    await context.executeOperation(savePreferences)
   }
 
   const json = readFileSync(preferencePath, { encoding: 'UTF-8' })
@@ -29,7 +31,7 @@ export const restoreApplicationPreference = operation(context => {
       title: 'App preference loading failed',
       message: 'preferences.json invalid. Use initial preference instead.',
       level: 'error',
-      timeout: 5000,
+      timeout: NotificationTimeouts.error,
     })
 
     return
@@ -42,7 +44,7 @@ export const restoreApplicationPreference = operation(context => {
       title: 'App preference loading failed',
       message: 'preferences.json invalid. Use initial preference instead.\n' + error.message,
       level: 'error',
-      timeout: 5000,
+      timeout: NotificationTimeouts.error,
     })
 
     return
@@ -56,7 +58,7 @@ export const savePreferences = (() => {
   let timeout: number = -1
 
   const executeSave = async (context: OperationContext) => {
-    const preference = context.getStore(PreferenceStore).dehydrate()
+    const preference = getAllPreferences(context.getStore)
     writeFile(preferencePath, JSON.stringify(preference, null, 2), err => {
       // tslint:disable-next-line:no-console
       err && console.error(err)
@@ -68,6 +70,12 @@ export const savePreferences = (() => {
     timeout = (setTimeout(executeSave, 1000, context) as unknown) as number
   })
 })()
+
+export const setDevPluginDirectories = operation(async ({ executeOperation, dispatch }, dirs: string[]) => {
+  await executeOperation(RendererOps.watchDevelopmentPlugins.dispose)
+  dispatch(PreferenceActions.changeDevelopPluginDirs, { dirs: [...new Set(dirs)] })
+  await executeOperation(RendererOps.watchDevelopmentPlugins)
+})
 
 export const setAudioVolume = operation(async (context, volume: number) => {
   context.dispatch(PreferenceActions.changePreference, {

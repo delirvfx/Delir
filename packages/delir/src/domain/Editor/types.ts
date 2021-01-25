@@ -6,7 +6,12 @@ export interface ParameterTarget {
   paramName: string
 }
 
-export interface ClipboardEntry {
+export interface ClipboardEntryClip {
   type: 'clip'
-  entityClone: any
+  entities: {
+    offset: number
+    clips: Delir.Entity.Clip[]
+  }[]
 }
+
+export type ClipboardEntry = ClipboardEntryClip

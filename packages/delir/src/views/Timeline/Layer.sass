@@ -1,10 +1,17 @@
+@import '../../assets/styles/variables'
+
 .Layer
   min-width: 100%
   border-bottom: 1px solid rgba(#fff, .1)
 
-  &:focus,
-  &.dragover
+  &.active
     background-color: rgba(#fff, .1)
+
+  &.dragover
+    background-color: rgba(#fff, .08)
+
+  &.active.dragover
+    background-color: rgba(#fff, .16)
 
 .clipsContainer
   position: relative

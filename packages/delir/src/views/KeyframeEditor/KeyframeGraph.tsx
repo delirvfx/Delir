@@ -41,7 +41,7 @@ export interface KeyframePatch {
   frameOnClip?: number
 }
 
-const EASING_HANDLER_SIZE = 3
+const EASING_HANDLER_SIZE = 2.5
 
 export default withFleurContext(
   class KeyframeGraph extends React.Component<Props, State> {
@@ -475,7 +475,7 @@ export default withFleurContext(
     /**
      * Calculate keyframe place points
      */
-    private buildKeyframePoints = (keyframes: ReadonlyArray<Delir.Entity.Keyframe>): KeyframePoint[] => {
+    private buildKeyframePoints = (keyframes: ReadonlyArray<Delir.Entity.Keyframe>) => {
       const { parentClip, descriptor, height, scrollLeft } = this.props
 
       if (!descriptor || descriptor.animatable === false) return []

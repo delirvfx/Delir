@@ -3,14 +3,14 @@ import timecodes from 'node-timecodes'
 
 import { Clip, Effect, Project } from '../Entity'
 import EffectPluginBase from '../PluginSupport/PostEffectBase'
-import { ParameterValueTypes } from '../PluginSupport/type-descriptor'
+import { ParameterValueTypes } from '../PluginSupport/TypeDescriptor'
 
 import { IRenderingStreamObserver, RenderingStatus } from './IRenderingStreamObserver'
 import { IRenderer } from './Renderer/RendererBase'
 
-import PluginRegistry from '../PluginSupport/plugin-registry'
+import PluginRegistry from '../PluginSupport/PluginRegistry'
 
-import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions/'
+import { EffectPluginMissingException, RenderingAbortedException, RenderingFailedException } from '../Exceptions'
 import { mergeInto as mergeAudioBufferInto } from '../helper/Audio'
 import defaults from '../helper/defaults'
 import FPSCounter from '../helper/FPSCounter'
@@ -37,6 +37,7 @@ interface RenderingOption {
   ignoreMissingEffect: boolean
   realtime: boolean
   audioBufferSizeSecond: number
+  enableAlpha: boolean
 }
 
 interface RenderProgression {
@@ -62,6 +63,7 @@ export default class Engine {
   private _clipRendererCache: WeakMap<Clip, IRenderer<any>> = new WeakMap()
   private _effectCache: WeakMap<Effect, EffectPluginBase> = new WeakMap()
   private _streamObserver: IRenderingStreamObserver | null = null
+  private glContext: WebGLContext = new WebGLContext(1, 1)
   // private _gl: WebGL2RenderingContext
 
   get pluginRegistry() {
@@ -94,7 +96,16 @@ export default class Engine {
     }
   }
 
-  public renderFrame(compositionId: string, beginFrame: number): ProgressPromise<void> {
+  public clearCache() {
+    this._clipRendererCache = new WeakMap()
+    this._effectCache = new WeakMap()
+  }
+
+  public renderFrame(
+    compositionId: string,
+    beginFrame: number,
+    options: Partial<RenderingOption> = {},
+  ): ProgressPromise<void> {
     return new ProgressPromise<void>(async (resolve, reject, onAbort, notifier) => {
       let aborted = false
       onAbort(() => (aborted = true))
@@ -106,6 +117,8 @@ export default class Engine {
         loop: false,
         realtime: false,
         audioBufferSizeSecond: 1,
+        enableAlpha: false,
+        ...options,
       }
 
       const request = this._initStage(compositionId, renderingOption)
@@ -144,6 +157,7 @@ export default class Engine {
       ignoreMissingEffect: false,
       realtime: false,
       audioBufferSizeSecond: 1,
+      enableAlpha: false,
     })
 
     this.stopCurrentRendering()
@@ -313,6 +327,8 @@ export default class Engine {
     const currentFrame = option.beginFrame
     const currentTime = currentFrame / rootComposition.framerate
 
+    this.glContext.setSize(rootComposition.width, rootComposition.height)
+
     return new RenderContextBase({
       time: currentTime,
       timeOnComposition: currentTime,
@@ -332,10 +348,11 @@ export default class Engine {
       neededSamples: rootComposition.samplingRate * option.audioBufferSizeSecond,
       audioChannels: rootComposition.audioChannels,
       isAudioBufferingNeeded: false,
+      transparentBackground: !!option.enableAlpha,
 
       rootComposition,
       resolver,
-      gl: new WebGLContext(rootComposition.width, rootComposition.height),
+      gl: this.glContext,
     })
   }
 
@@ -408,8 +425,12 @@ export default class Engine {
     const destBufferCanvas = baseContext.destCanvas
     const destBufferCtx = destBufferCanvas.getContext('2d')!
 
-    destBufferCtx.fillStyle = baseContext.rootComposition.backgroundColor.toString()
-    destBufferCtx.fillRect(0, 0, baseContext.width, baseContext.height)
+    if (baseContext.transparentBackground) {
+      destBufferCtx.clearRect(0, 0, baseContext.width, baseContext.height)
+    } else {
+      destBufferCtx.fillStyle = baseContext.rootComposition.backgroundColor.toString()
+      destBufferCtx.fillRect(0, 0, baseContext.width, baseContext.height)
+    }
 
     const taskGroupChunks: TaskGroup[] = []
     const audioTaskGroup: TaskGroup = []
@@ -433,21 +454,6 @@ export default class Engine {
         const timeOnClip = baseContext.time - clipTask.clipPlacedFrame / baseContext.framerate
         const frameOnClip = baseContext.frame - clipTask.clipPlacedFrame
 
-        const clipRenderContext = baseContext.toClipRenderContext({
-          clip: clipTask.clipEntity,
-          timeOnClip,
-          frameOnClip,
-
-          beforeExpressionParameters: {},
-          parameters: {},
-          clipEffectParams: {},
-
-          srcCanvas: null,
-          destCanvas: clipBufferCanvas,
-          srcAudioBuffer: null,
-          destAudioBuffer: clipTask.audioBuffer,
-        })
-
         // Lookup before apply expression referenceable effect params expression
         const referenceableEffectParams: ExpressionContext.ReferenceableEffectsParams = Object.create(null)
 
@@ -459,15 +465,27 @@ export default class Engine {
         })
 
         const beforeClipExpressionParams = clipTask.keyframeTable.getParametersAt(baseContext.frame)
-        const afterExpressionParams = clipTask.keyframeTable.getParameterWithExpressionAt(baseContext.frame, {
+
+        const clipRenderContext = baseContext.toClipRenderContext({
+          clip: clipTask.clipEntity,
+          timeOnClip,
+          frameOnClip,
+
+          beforeExpressionParameters: beforeClipExpressionParams,
+          parameters: {},
+          clipEffectParams: referenceableEffectParams,
+
+          srcCanvas: null,
+          destCanvas: clipBufferCanvas,
+          srcAudioBuffer: null,
+          destAudioBuffer: clipTask.audioBuffer,
+        })
+
+        clipRenderContext.parameters = clipTask.keyframeTable.getParameterWithExpressionAt(baseContext.frame, {
           context: clipRenderContext,
           clipParams: beforeClipExpressionParams,
           referenceableEffectParams,
         })
-
-        clipRenderContext.beforeExpressionParameters = beforeClipExpressionParams
-        clipRenderContext.parameters = afterExpressionParams
-        clipRenderContext.clipEffectParams = referenceableEffectParams
 
         if (clipTask.rendererType === 'audio') {
           audioTaskGroup.push({ context: clipRenderContext, task: clipTask })
@@ -502,6 +520,7 @@ export default class Engine {
               srcCanvas: clipContext.destCanvas,
               destCanvas: clipContext.destCanvas,
               parameters: {},
+              clipEffectParams: clipContext.clipEffectParams,
             })
 
             effectRenderContext.parameters = effectTask.keyframeTable.getParameterWithExpressionAt(baseContext.frame, {

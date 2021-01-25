@@ -3,70 +3,79 @@
   "name": "delir",
   "productName": "delir",
   "description": "Video production with JavaScript",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "author": "Ragg <ragg.devpr@gmail.com>",
   "license": "MIT",
   "main": "browser/main.js",
   "scripts": {
     "start": "cross-env electron-rebuild && cross-env NODE_ENV=development gulp",
     "rebuild": "cross-env electron-rebuild",
-    "build": "cross-env NODE_ENV=production gulp publish",
+    "build": "cross-env NODE_ENV=production gulp --max-old-space-size=4096 publish",
     "declare": "cross-env tsc -p src/delir-core -d --declarationDir src/delir-core/types",
     "clean-modules": "rm -rf node_modules/ packages/delir/node_modules packages/delir-core/node_modules",
     "test-core": "jest -c packages/core/jest.config.js",
     "test-front": "jest -c packages/delir/jest.config.js",
-    "test-plugins": "jest -c packages/post-effect-plugins/jest.config.js"
+    "test-plugins": "jest -c packages/post-effect-plugins/jest.config.js",
+    "test-contrib-pep": "jest -c packages/contrib-posteffect/jest.config.js"
   },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
-    "cross-env": "5.2.0",
-    "css-loader": "2.1.1",
+    "cross-env": "6.0.3",
+    "css-loader": "3.2.0",
     "css-modules-require-hook": "4.2.3",
     "download": "7.1.0",
-    "electron": "6.0.7",
-    "electron-builder": "21.1.5",
+    "electron": "7.1.1",
+    "electron-builder": "21.2.0",
     "electron-devtools-installer": "2.2.4",
     "electron-icon-maker": "0.0.4",
-    "electron-rebuild": "1.8.5",
-    "file-loader": "4.1.0",
-    "fork-ts-checker-webpack-plugin": "1.5.0",
+    "electron-rebuild": "1.8.6",
+    "fast-glob": "3.1.0",
+    "file-loader": "5.0.2",
+    "fork-ts-checker-webpack-plugin": "3.0.1",
     "fs-extra": "8.1.0",
     "gulp": "4.0.2",
     "html-webpack-plugin": "3.2.0",
-    "husky": "3.0.5",
+    "husky": "3.0.8",
     "jsdom": "15.1.1",
     "jsdom-global": "3.0.2",
     "lint-staged": "9.2.1",
     "monaco-editor-webpack-plugin": "1.7.0",
-    "node-notifier": "5.4.1",
-    "prettier": "1.17.0",
+    "nan": "2.14.0",
+    "node-notifier": "6.0.0",
+    "prettier": "1.19.0",
     "prettier-stylelint": "0.4.2",
     "raw-loader": "3.1.0",
-    "react-test-renderer": "16.9.0",
-    "sass": "1.22.9",
-    "sass-loader": "7.2.0",
-    "style-loader": "0.23.1",
-    "stylelint": "10.1.0",
-    "stylelint-config-rational-order": "0.1.2",
-    "stylelint-config-standard": "18.3.0",
-    "ts-loader": "6.0.4",
-    "ts-node": "8.1.0",
-    "tslint": "5.19.0",
+    "react-test-renderer": "16.11.0",
+    "sass": "1.23.7",
+    "sass-lint": "1.13.1",
+    "sass-lint-auto-fix": "0.18.0",
+    "sass-loader": "8.0.0",
+    "style-loader": "1.1.1",
+    "ts-loader": "6.2.0",
+    "ts-node": "8.5.4",
+    "tsconfig-paths-webpack-plugin": "3.2.0",
+    "tslint": "5.20.1",
     "tslint-config-prettier": "1.18.0",
     "tslint-loader": "3.6.0",
-    "typescript": "3.5.2",
-    "webpack": "4.39.2",
+    "typescript": "3.7.4",
+    "webpack": "4.41.5",
     "zip-dir": "1.0.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "fontmanager-redux": "0.4.0"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ],
     "*.{ts,tsx}": [
       "prettier --write",
       "tslint --fix",
@@ -77,8 +86,9 @@
       "tslint --fix",
       "git add"
     ],
-    "*.{sass,scss,css}": [
-      "stylelint",
+    "*.{sass,scss}": [
+      "sass-lint-auto-fix",
+      "sass-lint -vq",
       "git add"
     ]
   },

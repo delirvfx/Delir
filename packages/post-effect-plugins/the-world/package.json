@@ -1,14 +1,14 @@
 {
-    "name": "@delirvfx/posteffect-the-world",
-    "version": "0.1.0",
-    "author": "ragg (https://twitter.com/@_ragg_)",
-    "license": "MIT",
-    "main": "index.js",
-    "engines": {
-        "@delirvfx/core": "0.8.x"
-    },
-    "delir": {
-        "name": "The world",
-        "type": "post-effect"
-    }
+  "name": "@delirvfx/posteffect-the-world",
+  "version": "0.1.0",
+  "author": "ragg (https://twitter.com/@_ragg_)",
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "@delirvfx/core": "0.12.x"
+  },
+  "delir": {
+    "name": "The world",
+    "type": "post-effect"
+  }
 }

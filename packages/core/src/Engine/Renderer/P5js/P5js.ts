@@ -1,23 +1,24 @@
 import _ from 'lodash'
 import VM from 'vm'
-import P5Hooks from './P5Hooks'
+import { P5Hooks } from './P5Hooks'
 
-import { UserCodeException } from '../../../Exceptions/UserCodeException'
-import { proxyDeepFreeze } from '../../../helper/proxyFreeze'
-import Type from '../../../PluginSupport/type-descriptor'
+import { UserCodeException } from '../../../Exceptions'
+import Type from '../../../PluginSupport/TypeDescriptor'
 import Expression from '../../../Values/Expression'
+import { createExpressionContext } from '../../ExpressionSupport/createExpressionContext'
+import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 interface Params {
-  sketch: Expression
-  opacity: number
+  sketch: ParamType.Code
+  opacity: ParamType.Number
 }
 
 const VM_GLOBAL_WHITELIST = ['Array', 'Math', 'Date']
 
-export default class P5jsRenderer implements IRenderer<Params> {
+export class P5jsRenderer implements IRenderer<Params> {
   public static get rendererId(): string {
     return 'p5js'
   }
@@ -30,11 +31,11 @@ export default class P5jsRenderer implements IRenderer<Params> {
     return Type.code('sketch', {
       label: 'Sketch',
       langType: 'javascript',
-      defaultValue: new Expression('javascript', 'function setup() {\n    \n}\n\nfunction draw() {\n    \n}\n'),
+      defaultValue: () => new Expression('javascript', 'function setup() {\n    \n}\n\nfunction draw() {\n    \n}\n'),
     }).number('opacity', {
       label: 'Opacity',
       animatable: true,
-      defaultValue: 100,
+      defaultValue: () => 100,
     })
   }
 
@@ -131,26 +132,6 @@ export default class P5jsRenderer implements IRenderer<Params> {
   }
 
   private makeVmExposeVariables(context: ClipPreRenderContext<Params> | ClipRenderContext<Params>) {
-    return {
-      thisComp: {
-        width: context.width,
-        height: context.height,
-        time: context.timeOnComposition,
-        frame: context.frameOnComposition,
-        duration: context.durationFrames / context.framerate,
-        durationFrames: context.durationFrames,
-        audioBuffer: (context as ClipRenderContext<Params>).srcAudioBuffer,
-      },
-      thisClip: {
-        time: (context as ClipRenderContext<Params>).timeOnClip,
-        frame: (context as ClipRenderContext<Params>).frameOnClip,
-        params: null,
-        effect: (referenceName: string) => {
-          const targetEffect = (context as ClipRenderContext<Params>).clipEffectParams[referenceName]
-          if (!targetEffect) throw new Error(`Referenced effect ${referenceName} not found`)
-          return { params: proxyDeepFreeze(targetEffect) }
-        },
-      },
-    }
+    return createExpressionContext(context)
   }
 }

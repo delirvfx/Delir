@@ -35,6 +35,10 @@ export const dependencies = [
         "url": "https://github.com/storybookjs/storybook/tree/master/app/react"
     },
     {
+        "name": "@types/archiver",
+        "url": "https://www.npmjs.com/package/@types/archiver"
+    },
+    {
         "name": "@types/audiobuffer-to-wav",
         "url": "https://www.npmjs.com/package/@types/audiobuffer-to-wav"
     },
@@ -103,24 +107,28 @@ export const dependencies = [
         "url": "https://www.npmjs.com/package/@types/simonwep__selection-js"
     },
     {
-        "name": "@types/storybook__addon-knobs",
-        "url": "https://www.npmjs.com/package/@types/storybook__addon-knobs"
-    },
-    {
-        "name": "@types/storybook__react",
-        "url": "https://www.npmjs.com/package/@types/storybook__react"
+        "name": "@types/styled-components",
+        "url": "https://www.npmjs.com/package/@types/styled-components"
     },
     {
         "name": "@types/typescript",
         "url": "https://www.npmjs.com/package/@types/typescript"
     },
     {
+        "name": "@types/unzipper",
+        "url": "https://www.npmjs.com/package/@types/unzipper"
+    },
+    {
         "name": "@types/uuid",
         "url": "https://www.npmjs.com/package/@types/uuid"
     },
     {
-        "name": "@types/webgl2",
-        "url": "https://www.npmjs.com/package/@types/webgl2"
+        "name": "@types/watchpack",
+        "url": "https://www.npmjs.com/package/@types/watchpack"
+    },
+    {
+        "name": "archiver",
+        "url": "https://github.com/archiverjs/node-archiver"
     },
     {
         "name": "bezier-easing",
@@ -171,11 +179,15 @@ export const dependencies = [
         "url": "https://github.com/electron/electron-rebuild"
     },
     {
+        "name": "fast-glob",
+        "url": "https://www.npmjs.com/package/fast-glob"
+    },
+    {
         "name": "file-loader",
         "url": "https://github.com/webpack-contrib/file-loader"
     },
     {
-        "name": "font-manager",
+        "name": "fontmanager-redux",
         "url": "https://github.com/devongovett/font-manager"
     },
     {
@@ -255,6 +267,10 @@ export const dependencies = [
         "url": "https://github.com/mcollina/msgpack5"
     },
     {
+        "name": "nan",
+        "url": "https://www.npmjs.com/package/nan"
+    },
+    {
         "name": "node-notifier",
         "url": "https://github.com/mikaelbr/node-notifier#readme"
     },
@@ -269,6 +285,14 @@ export const dependencies = [
     {
         "name": "parse-color",
         "url": "https://github.com/substack/parse-color"
+    },
+    {
+        "name": "polished",
+        "url": "https://polished.js.org"
+    },
+    {
+        "name": "popper.js",
+        "url": "https://popper.js.org"
     },
     {
         "name": "prettier",
@@ -319,6 +343,14 @@ export const dependencies = [
         "url": "https://github.com/sass/dart-sass"
     },
     {
+        "name": "sass-lint",
+        "url": "https://github.com/sasstools/sass-lint"
+    },
+    {
+        "name": "sass-lint-auto-fix",
+        "url": "https://github.com/srowhani/sass-lint-auto-fix#README.md"
+    },
+    {
         "name": "sass-loader",
         "url": "https://github.com/webpack-contrib/sass-loader"
     },
@@ -328,19 +360,11 @@ export const dependencies = [
     },
     {
         "name": "style-loader",
-        "url": "https://github.com/webpack-contrib/style-loader#readme"
+        "url": "https://github.com/webpack-contrib/style-loader"
     },
     {
-        "name": "stylelint",
-        "url": "https://stylelint.io"
-    },
-    {
-        "name": "stylelint-config-rational-order",
-        "url": "https://github.com/constverum/stylelint-config-rational-order"
-    },
-    {
-        "name": "stylelint-config-standard",
-        "url": "https://www.npmjs.com/package/stylelint-config-standard"
+        "name": "styled-components",
+        "url": "https://styled-components.com"
     },
     {
         "name": "ts-jest",
@@ -353,6 +377,10 @@ export const dependencies = [
     {
         "name": "ts-node",
         "url": "https://github.com/TypeStrong/ts-node"
+    },
+    {
+        "name": "tsconfig-paths-webpack-plugin",
+        "url": "https://www.npmjs.com/package/tsconfig-paths-webpack-plugin"
     },
     {
         "name": "tslint",
@@ -371,8 +399,20 @@ export const dependencies = [
         "url": "https://www.typescriptlang.org/"
     },
     {
+        "name": "unzipper",
+        "url": "https://www.npmjs.com/package/unzipper"
+    },
+    {
+        "name": "use-immer",
+        "url": "https://github.com/mweststrate/use-immer#readme"
+    },
+    {
         "name": "uuid",
         "url": "https://www.npmjs.com/package/uuid"
+    },
+    {
+        "name": "watchpack",
+        "url": "https://github.com/webpack/watchpack"
     },
     {
         "name": "webpack",

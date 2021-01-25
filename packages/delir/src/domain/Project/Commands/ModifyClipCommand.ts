@@ -21,18 +21,21 @@ export class ModifyClipCommand implements Command {
   public undo(context: OperationContext) {
     this.focusToParentComposition(context)
 
-    context.dispatch(ProjectActions.modifyClip, {
-      targetClipId: this.targetClipId,
-      patch: this.toPreviousPatch,
+    context.dispatch(ProjectActions.modifyClips, {
+      patches: [
+        {
+          clipId: this.targetClipId,
+          patch: this.toPreviousPatch,
+        },
+      ],
     })
   }
 
   public redo(context: OperationContext) {
     this.focusToParentComposition(context)
 
-    context.dispatch(ProjectActions.modifyClip, {
-      targetClipId: this.targetClipId,
-      patch: this.patch,
+    context.dispatch(ProjectActions.modifyClips, {
+      patches: [{ clipId: this.targetClipId, patch: this.patch }],
     })
   }
 

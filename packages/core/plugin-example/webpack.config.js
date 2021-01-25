@@ -5,7 +5,7 @@ const sourceDir = path.join(__dirname, 'src')
 const distDir = path.join(__dirname, 'dist')
 
 module.exports = {
-  target: 'electron',
+  target: 'web',
   context: sourceDir,
   entry: {
     index: './index.ts',
@@ -23,7 +23,7 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'awesome-typescript-loader',
+        loader: 'ts-loader',
         options: {
           // If you want to type checking, please set 'false' to this option.
           transpileOnly: true,

@@ -10,10 +10,12 @@ export default I18n({
     },
     file: {
       label: 'ファイル',
-      openProject: 'プロジェクトを開く',
       newProject: '新規プロジェクト',
+      openProject: 'プロジェクトを開く',
       save: '保存',
       saveAs: '別名で保存',
+      importProjectPack: 'プロジェクトパッケージを開く',
+      exportProjectPack: 'プロジェクトをパッケージに保存',
       rendering: 'レンダリング',
     },
     edit: {
@@ -43,6 +45,10 @@ export default I18n({
         title: '新しいファイルに保存',
         save: '保存',
       },
+      exportProject: {
+        title: 'プロジェクトパッケージを保存',
+        save: '保存',
+      },
       openProject: {
         title: 'プロジェクトを開く',
         confirm: '現在のプロジェクトを破棄してプロジェクトを開きますか？',
@@ -51,7 +57,7 @@ export default I18n({
       },
       newProject: {
         confirm: '現在のプロジェクトを破棄してプロジェクトを開きますか？',
-        continue: '続ける',
+        continue: '破棄して開く',
         cancel: 'キャンセル',
       },
     },
@@ -65,10 +71,12 @@ export default I18n({
     },
     file: {
       label: 'File',
-      openProject: 'Open',
       newProject: 'New Project',
+      openProject: 'Open',
       save: 'Save',
       saveAs: 'Save as ...',
+      importProjectPack: 'Import project from .delirpp',
+      exportProjectPack: 'Export project as package',
       rendering: 'Rendering',
     },
     edit: {
@@ -98,15 +106,19 @@ export default I18n({
         title: 'Save as ...',
         save: 'Save',
       },
+      exportProject: {
+        title: 'Save project package',
+        save: 'Save',
+      },
       openProject: {
         title: 'Open Project',
-        confirm: 'Do you want to destroy the current project and open the project?',
-        continue: 'Continue',
+        confirm: 'Are you want to discard the current project and open the project?',
+        continue: 'Discard and open',
         cancel: 'Cancel',
       },
       newProject: {
-        confirm: 'Do you want to destroy the current project and open the project?',
-        continue: 'Continue',
+        confirm: 'Are you want to discard the current project and open the project?',
+        continue: 'Discard and open',
         cancel: 'Cancel',
       },
     },

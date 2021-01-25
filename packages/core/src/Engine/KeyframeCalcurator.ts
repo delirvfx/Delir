@@ -4,7 +4,7 @@ import { Keyframe, KeyframeValueTypes } from '../Entity'
 import ColorRGB from '../Values/ColorRGB'
 import ColorRGBA from '../Values/ColorRGBA'
 
-import { AnyParameterTypeDescriptor, TypeDescriptor } from '../PluginSupport/type-descriptor'
+import { AnyParameterTypeDescriptor, TypeDescriptor } from '../PluginSupport/TypeDescriptor'
 import { AssetPointer } from '../Values'
 
 interface KeyFrameLink<T extends KeyframeValueTypes> {
@@ -234,9 +234,7 @@ function calcKeyframe(
       // 0  10  20
       // |   |   |
       // -> if keyframes empty use defaultValue
-      table[frame] = (propDesc as {
-        defaultValue: KeyframeValueTypes
-      }).defaultValue
+      table[frame] = propDesc.defaultValue?.() ?? null
       continue
     }
 
@@ -260,7 +258,7 @@ function calcKeyframe(
     const nextKeyEaseIn = activeKeyFrame.next ? activeKeyFrame.next.easeInParam || [1, 1] : [1, 2]
 
     // TODO: Cache Bezier instance between change active keyframe
-    const bezier = bezierEasing(...currentKeyEaseOut, ...nextKeyEaseIn)
+    const bezier = bezierEasing(currentKeyEaseOut[0], currentKeyEaseOut[1], nextKeyEaseIn[0], nextKeyEaseIn[1])
 
     const progressRate = activeKeyFrame.next
       ? (frame - (clipPlacedFrame + activeKeyFrame.active.frameOnClip)) /

@@ -1,9 +1,9 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@delirvfx/core'
+import { EffectPreRenderContext, EffectRenderContext, ParamType, PostEffectBase, Type } from '@delirvfx/core'
 
 import clamp from 'lodash/clamp'
 
 interface Params {
-  opacity: number
+  opacity: ParamType.Float
 }
 
 export default class TheWorldPostEffect extends PostEffectBase {
@@ -11,7 +11,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
    * Provide usable parameters
    */
   public static provideParameters() {
-    return Type.float('opacity', { label: 'Opacity', defaultValue: 100, animatable: true })
+    return Type.float('opacity', { label: 'Opacity', defaultValue: () => 100, animatable: true })
   }
 
   private canvas: HTMLCanvasElement

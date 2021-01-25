@@ -1,16 +1,17 @@
 import _ from 'lodash'
 
-import Type from '../../../PluginSupport/type-descriptor'
-import { TypeDescriptor } from '../../../PluginSupport/type-descriptor'
+import Type from '../../../PluginSupport/TypeDescriptor'
+import { TypeDescriptor } from '../../../PluginSupport/TypeDescriptor'
+import { ParamType } from '../../ParamType'
 import { ClipPreRenderContext } from '../../RenderContext/ClipPreRenderContext'
 import { ClipRenderContext } from '../../RenderContext/ClipRenderContext'
 import { IRenderer } from '../RendererBase'
 
 interface Param {
-  opacity: number
+  opacity: ParamType.Number
 }
 
-export default class AdjustmentRenderer implements IRenderer<Param> {
+export class AdjustmentRenderer implements IRenderer<Param> {
   public static get rendererId(): string {
     return 'adjustment'
   }
@@ -22,7 +23,7 @@ export default class AdjustmentRenderer implements IRenderer<Param> {
   public static provideParameters(): TypeDescriptor {
     return Type.number('opacity', {
       label: 'Opacity',
-      defaultValue: 100,
+      defaultValue: () => 100,
       animatable: true,
     })
   }

@@ -3,12 +3,12 @@ import { storiesOf } from '@storybook/react'
 import React from 'react'
 import { Button } from './Button'
 
-storiesOf('Button', module)
+storiesOf('Components|Button', module)
   .addDecorator(withKnobs)
   .add('Button', () => {
     const label = text('label', 'Hello!')
     return (
-      <Button type={select('type', { normal: 'normal', primary: 'primary' }, 'normal')} onClick={() => {}}>
+      <Button kind={select('kind', { normal: 'normal', primary: 'primary' }, 'normal')} onClick={() => {}}>
         {label}
       </Button>
     )

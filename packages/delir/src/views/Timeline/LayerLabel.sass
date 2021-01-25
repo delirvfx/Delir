@@ -1,14 +1,17 @@
 @import '../../assets/styles/variables'
 
-.LaneLabel
+.LayerLabel
   display: flex
   flex-wrap: wrap
   width: 100%
-  height: 24px
+  height: 25px
   padding: 0 4px
   border-bottom: 1px solid rgba(#fff, .1)
   line-height: 1.6
   vertical-align: middle
+
+  &.active
+    background-color: rgba(#fff, .1)
 
   &.--expand
     height: auto
@@ -36,7 +39,7 @@
       .separator
         width: 1rem
 
-  .LaneLabel_Col
+  .LayerLabel_Col
     // display: table-cell
     display: inline-block
     padding: 2px 0
@@ -46,19 +49,19 @@
     &:last-child
       padding-right: 2px
 
-    &.LaneLabel_Col--Handle
+    &.LayerLabel_Col--Handle
       margin-top: 1px
       margin-right: 4px
       opacity: .2
 
-    &.LaneLabel_Col--col-name
+    &.LayerLabel_Col--col-name
       // width: 100px
       flex: 1
       overflow: hidden
       white-space: normal
       text-overflow: ellipsis
 
-    &.LaneLabel_Col--col-visibility,
-    &.LaneLabel_Col--col-lock
+    &.LayerLabel_Col--col-visibility,
+    &.LayerLabel_Col--col-lock
       width: 16px
       opacity: 0

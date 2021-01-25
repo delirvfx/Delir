@@ -10,30 +10,28 @@ import { uiActionCopy, uiActionCut, uiActionPaste, uiActionRedo, uiActionUndo } 
 export const ShortcutHandler = () => {
   const context = useFleurContext()
 
-  const trap = useMemo(() => new Mousetrap(document.body), [])
+  const trap = useMemo(() => new Mousetrap((window as unknown) as Element), [])
 
-  const handleShortCutPreviewToggle = useCallback((e: KeyboardEvent) => {
-    if (
-      e.target instanceof HTMLTextAreaElement ||
-      e.target instanceof HTMLInputElement ||
-      e.target instanceof HTMLSelectElement
-    ) {
-      return
-    }
+  const handleShortCutPreviewToggle = useCallback(
+    makeMousetrapIgnoreInputHandler((e: KeyboardEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
 
-    const activeComp = context.getStore(EditorStore).getActiveComposition()
-    const { previewPlaying } = context.getStore(RendererStore)
+      const activeComp = context.getStore(EditorStore).getActiveComposition()
+      const { previewPlaying } = context.getStore(RendererStore)
 
-    if (!activeComp) return
+      if (!activeComp) return
 
-    if (previewPlaying) {
-      context.executeOperation(RendererOps.stopPreview)
-    } else {
-      context.executeOperation(RendererOps.startPreview, {
-        compositionId: activeComp.id,
-      })
-    }
-  }, [])
+      if (previewPlaying) {
+        context.executeOperation(RendererOps.stopPreview)
+      } else {
+        context.executeOperation(RendererOps.startPreview, {
+          compositionId: activeComp.id,
+        })
+      }
+    }),
+    [],
+  )
 
   const handleShortCutCopy = useCallback((e: KeyboardEvent) => {
     e.preventDefault()

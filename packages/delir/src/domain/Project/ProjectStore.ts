@@ -26,20 +26,17 @@ export default class ProjectStore extends Store<ProjectStoreState> {
   })
 
   private handleCreateComposition = listen(ProjectActions.createComposition, payload => {
-    const { project } = this.state
-    project!.addComposition(payload.composition)
+    this.updateWith(({ project }) => project!.addComposition(payload.composition))
     this.updateLastModified()
   })
 
   private handleAddLayer = listen(ProjectActions.addLayer, ({ targetCompositionId, layer, index }) => {
-    const { project } = this.state
-    project!.findComposition(targetCompositionId)!.addLayer(layer, index)
+    this.updateWith(({ project }) => project!.findComposition(targetCompositionId)!.addLayer(layer, index))
     this.updateLastModified()
   })
 
   private handleAddClip = listen(ProjectActions.addClip, ({ targetLayerId, newClip }) => {
-    const { project } = this.state
-    project!.findLayer(targetLayerId)!.addClip(newClip)
+    this.updateWith(({ project }) => project!.findLayer(targetLayerId)!.addClip(newClip))
     this.updateLastModified()
   })
 
@@ -56,87 +53,95 @@ export default class ProjectStore extends Store<ProjectStoreState> {
         value: { assetId: asset.id },
       })
 
-      clip.addKeyframe(paramName, keyframe)
-      layer.addClip(clip)
-      project!.findComposition(targetCompositionId)!.addLayer(layer)
+      this.updateWith(({ project }) => {
+        clip.addKeyframe(paramName, keyframe)
+        layer.addClip(clip)
+        project!.findComposition(targetCompositionId)!.addLayer(layer)
+      })
       this.updateLastModified()
     },
   )
 
   private handleAddAsset = listen(ProjectActions.addAsset, ({ asset }) => {
-    const { project } = this.state
-    project!.addAsset(asset)
+    this.updateWith(({ project }) => project!.addAsset(asset))
     this.updateLastModified()
   })
 
   private handleAddKeyframe = listen(ProjectActions.addKeyframe, ({ targetClipId, paramName, keyframe }) => {
-    const { project } = this.state
-    project!.findClip(targetClipId)!.addKeyframe(paramName, keyframe)
+    this.updateWith(({ project }) => project!.findClip(targetClipId)!.addKeyframe(paramName, keyframe))
     this.updateLastModified()
   })
 
   private handleAddEffectIntoClipPayload = listen(ProjectActions.addEffectIntoClip, ({ clipId, effect, index }) => {
-    const { project } = this.state
-    project!.findClip(clipId)!.addEffect(effect, index)
+    this.updateWith(({ project }) => project!.findClip(clipId)!.addEffect(effect, index))
     this.updateLastModified()
   })
 
   private handleAddEffectKeyframe = listen(
     ProjectActions.addEffectKeyframe,
     ({ targetClipId, targetEffectId, paramName, keyframe }) => {
-      const { project } = this.state
-      project!
-        .findClip(targetClipId)!
-        .findEffect(targetEffectId)!
-        .addKeyframe(paramName, keyframe)
+      this.updateWith(({ project }) => {
+        project!
+          .findClip(targetClipId)!
+          .findEffect(targetEffectId)!
+          .addKeyframe(paramName, keyframe)
+      })
       this.updateLastModified()
     },
   )
 
   private handleMoveClipToLayer = listen(ProjectActions.moveClipToLayer, ({ clipId, destLayerId }) => {
-    const { project } = this.state
-    const sourceLayer = project!.findClipOwnerLayer(clipId)
-    const destLayer = project!.findLayer(destLayerId)
-    sourceLayer!.moveClipIntoLayer(clipId, destLayer!)
+    this.updateWith(({ project }) => {
+      const sourceLayer = project!.findClipOwnerLayer(clipId)
+      const destLayer = project!.findLayer(destLayerId)
+      sourceLayer!.moveClipIntoLayer(clipId, destLayer!)
+    })
+    this.updateLastModified()
+  })
+
+  private modifyAsset = listen(ProjectActions.modifyAsset, ({ assetId, patch }) => {
+    this.updateWith(({ project }) => {
+      project!.findAsset(assetId)!.patch(patch)
+    })
     this.updateLastModified()
   })
 
   private handleModifyComposition = listen(ProjectActions.modifyComposition, ({ targetCompositionId, patch }) => {
-    const { project } = this.state
-    project!.findComposition(targetCompositionId)!.patch(patch)
+    this.updateWith(({ project }) => {
+      project!.findComposition(targetCompositionId)!.patch(patch)
+    })
     this.updateLastModified()
   })
 
   private handleModifyLayer = listen(ProjectActions.modifyLayer, ({ targetLayerId, patch }) => {
-    const { project } = this.state
-    project!.findLayer(targetLayerId)!.patch(patch)
+    this.updateWith(({ project }) => project!.findLayer(targetLayerId)!.patch(patch))
     this.updateLastModified()
   })
 
   private handleModifyClips = listen(ProjectActions.modifyClips, ({ patches }) => {
-    const { project } = this.state
-
-    patches.forEach(({ clipId, patch }) => {
-      project!.findClip(clipId)!.patch(patch)
+    this.updateWith(({ project }) => {
+      patches.forEach(({ clipId, patch }) => {
+        project!.findClip(clipId)!.patch(patch)
+      })
     })
 
     this.updateLastModified()
   })
 
   private handleModifyEffect = listen(ProjectActions.modifyEffect, ({ parentClipId, targetEffectId, patch }) => {
-    const { project } = this.state
-    project!
-      .findClip(parentClipId)!
-      .findEffect(targetEffectId)!
-      .patch(patch)
+    this.updateWith(({ project }) => {
+      project!
+        .findClip(parentClipId)!
+        .findEffect(targetEffectId)!
+        .patch(patch)
+    })
     this.updateLastModified()
   })
 
   private handleModifyClipExpression = listen(
     ProjectActions.modifyClipExpression,
     ({ targetClipId, targetParamName, expression }) => {
-      const { project } = this.state
-      project!.findClip(targetClipId)!.setExpression(targetParamName, expression)
+      this.updateWith(({ project }) => project!.findClip(targetClipId)!.setExpression(targetParamName, expression))
       this.updateLastModified()
     },
   )
@@ -144,33 +149,36 @@ export default class ProjectStore extends Store<ProjectStoreState> {
   private handleModifyEffectExpression = listen(
     ProjectActions.modifyEffectExpression,
     ({ targetClipId, targetEffectId, paramName, expression }) => {
-      const { project } = this.state
-      project!
-        .findClip(targetClipId)!
-        .findEffect(targetEffectId)!
-        .setExpression(paramName, expression)
+      this.updateWith(({ project }) => {
+        project!
+          .findClip(targetClipId)!
+          .findEffect(targetEffectId)!
+          .setExpression(paramName, expression)
+      })
       this.updateLastModified()
     },
   )
 
   private handleModifyKeyframe = listen(ProjectActions.modifyKeyframe, ({ parentClipId, targetKeyframeId, patch }) => {
-    const { project } = this.state
-    project!
-      .findClip(parentClipId)!
-      .findKeyframe(targetKeyframeId)!
-      .patch(patch)
+    this.updateWith(({ project }) => {
+      project!
+        .findClip(parentClipId)!
+        .findKeyframe(targetKeyframeId)!
+        .patch(patch)
+    })
     this.updateLastModified()
   })
 
   private handleModifyEffectKeyframe = listen(
     ProjectActions.modifyEffectKeyframe,
     ({ targetClipId, effectId, targetKeyframeId, patch }) => {
-      const { project } = this.state
-      project!
-        .findClip(targetClipId)!
-        .findEffect(effectId)!
-        .findKeyframe(targetKeyframeId)!
-        .patch(patch)
+      this.updateWith(({ project }) => {
+        project!
+          .findClip(targetClipId)!
+          .findEffect(effectId)!
+          .findKeyframe(targetKeyframeId)!
+          .patch(patch)
+      })
       this.updateLastModified()
     },
   )
@@ -178,8 +186,9 @@ export default class ProjectStore extends Store<ProjectStoreState> {
   private handleMoveLayerOrder = listen(
     ProjectActions.moveLayerOrder,
     ({ parentCompositionId, targetLayerId, newIndex }) => {
-      const { project } = this.state
-      project!.findComposition(parentCompositionId)!.moveLayerIndex(targetLayerId, newIndex)
+      this.updateWith(({ project }) =>
+        project!.findComposition(parentCompositionId)!.moveLayerIndex(targetLayerId, newIndex),
+      )
       this.updateLastModified()
     },
   )
@@ -187,41 +196,35 @@ export default class ProjectStore extends Store<ProjectStoreState> {
   private handleMoveEffectOrder = listen(
     ProjectActions.moveEffectOrder,
     ({ parentClipId, subjectEffectId, newIndex }) => {
-      const { project } = this.state
-      project!.findClip(parentClipId)!.moveEffectIndex(subjectEffectId, newIndex)
+      this.updateWith(({ project }) => project!.findClip(parentClipId)!.moveEffectIndex(subjectEffectId, newIndex))
       this.updateLastModified()
     },
   )
 
   private handleRemoveComposition = listen(ProjectActions.removeComposition, ({ targetCompositionId }) => {
-    const { project } = this.state
-    project!.removeComposition(targetCompositionId)
+    this.updateWith(({ project }) => project!.removeComposition(targetCompositionId))
     this.updateLastModified()
   })
 
   private handleRemoveLayer = listen(ProjectActions.removeLayer, ({ targetLayerId }) => {
-    const { project } = this.state
-    project!.findLayerOwnerComposition(targetLayerId)!.removeLayer(targetLayerId)
+    this.updateWith(({ project }) => project!.findLayerOwnerComposition(targetLayerId)!.removeLayer(targetLayerId))
     this.updateLastModified()
   })
 
   private handleRemoveClip = listen(ProjectActions.removeClip, ({ targetClipId }) => {
-    const { project } = this.state
-    project!.findClipOwnerLayer(targetClipId)!.removeClip(targetClipId)
+    this.updateWith(({ project }) => project!.findClipOwnerLayer(targetClipId)!.removeClip(targetClipId))
     this.updateLastModified()
   })
 
   private handleRemoveAsset = listen(ProjectActions.removeAsset, ({ targetAssetId }) => {
-    const { project } = this.state
-    project!.removeAsset(targetAssetId)
+    this.updateWith(({ project }) => project!.removeAsset(targetAssetId))
     this.updateLastModified()
   })
 
   private handleRemoveKeyframe = listen(
     ProjectActions.removeKeyframe,
     ({ parentClipId, paramName, targetKeyframeId }) => {
-      const { project } = this.state
-      project!.findClip(parentClipId)!.removeKeyframe(paramName, targetKeyframeId)
+      this.updateWith(({ project }) => project!.findClip(parentClipId)!.removeKeyframe(paramName, targetKeyframeId))
       this.updateLastModified()
     },
   )
@@ -229,11 +232,12 @@ export default class ProjectStore extends Store<ProjectStoreState> {
   private handleRemoveEffectKeyframe = listen(
     ProjectActions.removeEffectKeyframe,
     ({ clipId, effectId, paramName, targetKeyframeId }) => {
-      const { project } = this.state
-      project!
-        .findClip(clipId)!
-        .findEffect(effectId)!
-        .removeKeyframe(paramName, targetKeyframeId)
+      this.updateWith(({ project }) => {
+        project!
+          .findClip(clipId)!
+          .findEffect(effectId)!
+          .removeKeyframe(paramName, targetKeyframeId)
+      })
       this.updateLastModified()
     },
   )
@@ -241,8 +245,7 @@ export default class ProjectStore extends Store<ProjectStoreState> {
   private handleRemoveEffectFromClip = listen(
     ProjectActions.removeEffectFromClip,
     ({ holderClipId, targetEffectId }) => {
-      const { project } = this.state
-      project!.findClip(holderClipId)!.removeEffect(targetEffectId)
+      this.updateWith(({ project }) => project!.findClip(holderClipId)!.removeEffect(targetEffectId))
       this.updateLastModified()
     },
   )

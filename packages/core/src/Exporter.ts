@@ -65,6 +65,6 @@ export const serializeProject = (project: Project) => {
   return serializeEntity(project)
 }
 
-export const deserializeProject = (project: any) => {
+export const deserializeProject = (project: any): Project => {
   return deserializeEntity(project)
 }

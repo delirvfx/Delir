@@ -1,21 +1,23 @@
-import { TypeDescriptor } from '../../PluginSupport/type-descriptor'
+import { TypeDescriptor } from '../../PluginSupport/TypeDescriptor'
 import { IRenderer, IRendererStatic } from './RendererBase'
 
 import _ from 'lodash'
-import UnknownPluginReferenceException from '../../Exceptions/unknown-plugin-reference-exception'
+import { UnknownPluginReferenceException } from '../../Exceptions'
 
-import AdjustmentRenderer from './Adjustment/Adjustment'
-import AudioRenderer from './Audio/Audio'
-import ImageRenderer from './Image/Image'
-import P5jsRenderer from './P5js/P5js'
-import TextRenderer from './Text/Text'
-import VideoRenderer from './Video/Video'
+import { AdjustmentRenderer } from './Adjustment/Adjustment'
+import { AudioRenderer } from './Audio/Audio'
+import { ImageRenderer } from './Image/Image'
+import { P5jsRenderer } from './P5js/P5js'
+import { SolidRenderer } from './Solid/Solid'
+import { TextRenderer } from './Text/Text'
+import { VideoRenderer } from './Video/Video'
 
-export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment' | 'p5js'
+export type AvailableRenderer = 'audio' | 'image' | 'video' | 'text' | 'adjustment' | 'p5js' | 'solid'
 
 export const RENDERERS: { [name: string]: IRendererStatic } = {
-  audio: AudioRenderer,
+  solid: SolidRenderer,
   video: VideoRenderer,
+  audio: AudioRenderer,
   image: ImageRenderer,
   text: TextRenderer,
   adjustment: AdjustmentRenderer,

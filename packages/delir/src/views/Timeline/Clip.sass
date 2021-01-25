@@ -7,8 +7,8 @@
   width: 300px
   height: 20px
   border-radius: 2px
-  filter: saturate(90%)
   user-select: none !important
+  line-height: 1
 
   transition-property: background-color, box-shadow
   transition-duration: $animate-bgcolor-duration
@@ -55,7 +55,10 @@
     background-color: #2f7a42
 
   &.p5js
-    background-color: #c1158e
+    background-color: #902e73
+
+  &.solid
+    background-color: #595959
 
   &.active
     &.video
@@ -75,6 +78,9 @@
 
     &.p5js
       background-color: #e212a5
+
+    &.solid
+      background-color: #8c8c8c
 
 .inner
   padding: 4px

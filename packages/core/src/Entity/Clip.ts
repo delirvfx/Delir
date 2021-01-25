@@ -64,6 +64,16 @@ class Clip extends Animatable implements ClipProps {
     return true
   }
 
+  /** Clone clip with different Id */
+  public clone(): Clip {
+    const { expressions, keyframes } = super.cloneKeyframes()
+    const clip = new Clip({ ...this, id: uuid.v4() })
+    clip.effects = clip.effects.map(effect => effect.clone())
+    clip.keyframes = keyframes
+    clip.expressions = expressions
+    return clip
+  }
+
   private normalize() {
     this.placedFrame = Math.round(this.placedFrame)
     this.durationFrames = Math.round(this.durationFrames)

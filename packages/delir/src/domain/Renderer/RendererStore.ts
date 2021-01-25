@@ -1,13 +1,9 @@
 import * as Delir from '@delirvfx/core'
-import { listen, Store } from '@fleur/fleur'
-import deream, { RenderingProgress } from '@ragg/deream'
-import { remote } from 'electron'
-import { dirname } from 'path'
+import { listen, Store, StoreContext } from '@fleur/fleur'
+import { RenderingProgress } from '@ragg/deream'
 
 import { EditorActions } from '../Editor/actions'
 import { RendererActions } from './actions'
-
-import * as Platform from '../../utils/platform'
 
 interface State {
   project: Delir.Entity.Project | null
@@ -16,6 +12,7 @@ interface State {
   previewPlaying: boolean
   previewRenderState: RenderState | null
   isInRendering: boolean
+  framePreviewWaiting: boolean
   exportRenderState: RenderingProgress | null
   exception: Delir.Exceptions.UserCodeException | null
 }
@@ -31,6 +28,14 @@ export interface RenderState {
 const AUDIO_BUFFER_SIZE_SECONDS = 1
 
 export default class RendererStore extends Store<State> {
+  public get previewPlaying() {
+    return this.state.previewPlaying
+  }
+
+  public get framePreviewWaiting() {
+    return this.state.framePreviewWaiting
+  }
+
   public static storeName = 'RendererStore'
 
   public state: State = {
@@ -40,12 +45,13 @@ export default class RendererStore extends Store<State> {
     previewPlaying: false,
     previewRenderState: null,
     isInRendering: false,
+    framePreviewWaiting: false,
     exportRenderState: null,
     exception: null,
   }
 
-  private pipeline = new Delir.Engine.Engine()
-  private pluginRegistry = this.pipeline.pluginRegistry
+  public pluginRegistry: Delir.PluginRegistry
+  public engine = new Delir.Engine.Engine()
 
   private destCanvas: HTMLCanvasElement | null = null
   private destCanvasCtx: CanvasRenderingContext2D | null = null
@@ -60,7 +66,7 @@ export default class RendererStore extends Store<State> {
   }
 
   private handleSetActiveProject = listen(EditorActions.setActiveProject, ({ project }) => {
-    this.pipeline.setProject(project)
+    this.engine.setProject(project)
     this.updateWith(d => {
       ;((d.project as any) as Delir.Entity.Project | null) = project
     })
@@ -77,8 +83,16 @@ export default class RendererStore extends Store<State> {
     // renderer.stop()
   })
 
-  private handleAddPlugins = listen(RendererActions.addPlugins, payload => {
+  private handleUnregisterPlugin = listen(RendererActions.unregisterPlugins, ({ ids }) => {
+    ids.forEach(id => this.pluginRegistry.unregisterPlugin(id))
+  })
+
+  private handleAddPlugins = listen(RendererActions.registerPlugins, payload => {
     this.pluginRegistry.registerPlugin(payload.plugins)
+  })
+
+  private handleClearCache = listen(RendererActions.clearCache, () => {
+    this.engine.clearCache()
   })
 
   private handleSetPreviewCanvas = listen(RendererActions.setPreviewCanvas, payload => {
@@ -91,7 +105,7 @@ export default class RendererStore extends Store<State> {
     this.gainNode && (this.gainNode.gain.value = volume / 100)
   })
 
-  private handleStartPreveiew = listen(
+  private handleStartPreview = listen(
     RendererActions.startPreview,
     async ({ compositionId, beginFrame, ignoreMissingEffect }) => {
       if (!this.state.project || !this.state.composition || !this.destCanvas || !this.destCanvasCtx) return
@@ -121,7 +135,7 @@ export default class RendererStore extends Store<State> {
       )
 
       let playbackRate: number = 1
-      this.pipeline.setStreamObserver({
+      this.engine.setStreamObserver({
         onFrame: (canvas, status) => {
           this.updateWith(d => {
             d.previewRenderState = {
@@ -149,7 +163,7 @@ export default class RendererStore extends Store<State> {
         },
       })
 
-      const promise = this.pipeline.renderSequencial(targetComposition.id, {
+      const promise = this.engine.renderSequencial(targetComposition.id, {
         beginFrame: beginFrame,
         loop: true,
         ignoreMissingEffect: ignoreMissingEffect,
@@ -169,91 +183,56 @@ export default class RendererStore extends Store<State> {
         e => {
           if (e instanceof Delir.Exceptions.RenderingAbortedException) {
           } else if (e instanceof Delir.Exceptions.UserCodeException) {
+            this.updateWith(s => (s.exception = e))
           } else {
             // tslint:disable-next-line:no-console
             console.log(e)
           }
-          this.updateWith(s => (s.previewPlaying = false))
+          this.updateWith(s => {
+            s.previewPlaying = false
+            s.previewRenderState = null
+          })
         },
       )
     },
   )
 
   private handleStopPreview = listen(RendererActions.stopPreview, () => {
-    this.pipeline.stopCurrentRendering()
+    this.engine.stopCurrentRendering()
     this.audioBufferSource && this.audioBufferSource.stop()
     this.updateWith(s => (s.previewPlaying = false))
   })
 
-  private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrame, payload => {
+  private handleSeekPreviewFrame = listen(EditorActions.seekPreviewFrame, async payload => {
     const { frame } = payload
     const targetComposition = this.state.composition!
 
-    this.pipeline.setStreamObserver({
+    this.engine.setStreamObserver({
       onFrame: canvas => this.destCanvasCtx!.drawImage(canvas, 0, 0),
     })
 
-    this.pipeline!.renderFrame(targetComposition.id, frame).catch(e => {
+    this.updateWith(state => (state.framePreviewWaiting = true))
+
+    await this.engine!.renderFrame(targetComposition.id, frame).catch(e => {
       // tslint:disable-next-line
       console.error(e)
     })
+
+    this.updateWith(state => (state.framePreviewWaiting = false))
   })
 
-  private handleRenderDestinate = listen(EditorActions.renderDestinate, async payload => {
-    const appPath = dirname(remote.app.getPath('exe'))
-    const ffmpegBin =
-      __DEV__ || Platform.isLinux()
-        ? 'ffmpeg'
-        : require('path').resolve(appPath, Platform.isMacOS() ? '../Resources/ffmpeg' : './ffmpeg.exe')
-
-    // TODO: View側で聞いてくれ
-    const file = remote.dialog.showSaveDialog({
-      title: 'Destinate',
-      buttonLabel: 'Render',
-      filters: [
-        {
-          name: 'mp4',
-          extensions: ['mp4'],
-        },
-      ],
-    })
-
-    if (!file) return
-    if (!this.state.project || !this.state.composition || !this.pluginRegistry) return
-
-    // deream() の前に一瞬待たないとフリーズしてしまうので
-    // awaitを噛ませてステータスを確実に出す
-    // await new Promise(resolve => {
-    //     setImmediate(() => {
-    //         EditorOps.autoSaveProject()
-    //         EditorOps.updateProcessingState('Rendering: Initializing')
-    //         resolve()
-    //     })
-    // })
-
-    this.updateWith(d => (d.isInRendering = true))
-
-    try {
-      await deream({
-        project: this.state.project,
-        rootCompId: this.state.composition.id,
-        exportPath: file,
-        pluginRegistry: this.pluginRegistry,
-        ignoreMissingEffect: payload.ignoreMissingEffect,
-        temporaryDir: remote.app.getPath('temp'),
-        ffmpegBin,
-        onProgress: progress => {
-          setTimeout(() => {
-            this.updateWith(draft => (draft.exportRenderState = progress))
-          }, 0)
-        },
-      })
-    } catch (e) {
-      throw e
-    } finally {
-      this.updateWith(d => (d.isInRendering = false))
-    }
+  private handleSetInRenderingStatus = listen(RendererActions.setInRenderingStatus, ({ isInRendering }) => {
+    this.updateWith(draft => (draft.isInRendering = isInRendering))
   })
+
+  private setSetRenderingProgress = listen(RendererActions.setRenderingProgress, ({ progress }) => {
+    this.updateWith(draft => (draft.exportRenderState = progress))
+  })
+
+  constructor(context: StoreContext) {
+    super(context)
+    this.pluginRegistry = this.engine.pluginRegistry
+  }
 
   public getPostEffectPlugins() {
     return this.pluginRegistry.getPostEffectPlugins()
@@ -273,10 +252,6 @@ export default class RendererStore extends Store<State> {
 
   public getUserCodeException() {
     return this.state.exception
-  }
-
-  public get previewPlaying() {
-    return this.state.previewPlaying
   }
 
   public isInRendering() {

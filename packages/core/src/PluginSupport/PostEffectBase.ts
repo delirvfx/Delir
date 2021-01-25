@@ -1,6 +1,6 @@
 import { EffectPreRenderContext, EffectRenderContext } from '..'
-import PluginBase from './plugin-base'
-import { TypeDescriptor } from './type-descriptor'
+import PluginBase from './PluginBase'
+import { TypeDescriptor } from './TypeDescriptor'
 
 export interface EffectPluginClass {
   new (): EffectPluginBase

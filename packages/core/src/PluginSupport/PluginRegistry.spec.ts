@@ -1,4 +1,5 @@
-import PluginRegistry from './plugin-registry'
+import PluginRegistry from './PluginRegistry'
+const { version } = require('../../package.json')
 
 describe('PluginRegistry', () => {
   it('Shold pass validation with valid package.json', () => {
@@ -9,7 +10,7 @@ describe('PluginRegistry', () => {
         author: 'ragg <ragg.devpr@gmail.com>',
         main: 'index.js',
         engines: {
-          '@delirvfx/core': '0.0.0',
+          '@delirvfx/core': version,
           node: '10.0.0',
         },
         delir: {
@@ -18,7 +19,7 @@ describe('PluginRegistry', () => {
         },
         extraField: {},
       }),
-    ).toBe(true)
+    ).toMatchObject({ hasError: false, reason: [] })
   })
 
   it('Should failed validation with invalid package.json', () => {
@@ -38,6 +39,14 @@ describe('PluginRegistry', () => {
           type: 'post-effect-lol',
         },
       }),
-    ).toBe(false)
+    ).toMatchInlineSnapshot(`
+      Object {
+        "hasError": true,
+        "reason": Array [
+          [ValidationError: child "delir" fails because [child "type" fails because ["type" must be one of [post-effect]]]],
+          "Plugin not compatible to current @delirvfx/core version (you expected: 0.0.0 current: 0.12.0)",
+        ],
+      }
+    `)
   })
 })

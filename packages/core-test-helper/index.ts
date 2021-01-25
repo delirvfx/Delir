@@ -1,4 +1,4 @@
-import { Entity, Values } from '../core/src/index'
+import { Entity, Values } from '@delirvfx/core'
 
 const safeAssign = <T extends object>(dest: T, ...source: Partial<T>[]): T => {
   return Object.assign(dest, ...source)

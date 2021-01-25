@@ -4,6 +4,7 @@ export default I18n({
   ja: {
     contextMenu: {
       seekToHeadOfClip: '⏪クリップの先頭にシーク',
+      seekToTailOfClip: '⏩クリップの後ろにシーク',
       effect: '✨エフェクト',
       remove: '🚯 削除',
       pluginUnavailable: '利用可能なポストエフェクトがありません',
@@ -15,11 +16,13 @@ export default I18n({
       text: 'text',
       adjustment: 'adjust',
       p5js: 'p5.js',
+      solid: 'solid',
     },
   },
   en: {
     contextMenu: {
       seekToHeadOfClip: '⏪Seek to clip head',
+      seekToTailOfClip: '⏩Seek to clip tail',
       effect: '✨Effect',
       remove: '🚯 Remove',
       pluginUnavailable: 'No available post-effect',
@@ -31,6 +34,7 @@ export default I18n({
       text: 'text',
       adjustment: 'adjust',
       p5js: 'p5.js',
+      solid: 'solid',
     },
   },
 })

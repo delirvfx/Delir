@@ -23,6 +23,7 @@ export class RenderContextBase implements IRenderContextBase {
   public audioChannels: number
   public neededSamples: number
   public isAudioBufferingNeeded: boolean
+  public transparentBackground: boolean
 
   public rootComposition: Readonly<Composition>
   public resolver: DependencyResolver

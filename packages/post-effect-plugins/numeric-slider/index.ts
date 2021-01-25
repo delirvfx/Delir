@@ -1,7 +1,7 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type } from '@delirvfx/core'
+import { EffectPreRenderContext, EffectRenderContext, ParamType, PostEffectBase, Type } from '@delirvfx/core'
 
 interface Params {
-  value: number
+  value: ParamType.Float
 }
 
 export default class TheWorldPostEffect extends PostEffectBase {
@@ -9,7 +9,7 @@ export default class TheWorldPostEffect extends PostEffectBase {
    * Provide usable parameters
    */
   public static provideParameters() {
-    return Type.float('value', { label: 'Value', defaultValue: 0, animatable: true })
+    return Type.float('value', { label: 'Value', defaultValue: () => 0, animatable: true })
   }
 
   /**

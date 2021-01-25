@@ -1,14 +1,14 @@
 {
-    "name": "@delirvfx/posteffect-chromakey",
-    "version": "0.0.0",
-    "author": "ragg (https://twitter.com/@_ragg_)",
-    "license": "MIT",
-    "main": "index.js",
-    "engines": {
-        "@delirvfx/core": "0.8.x"
-    },
-    "delir": {
-        "name": "Chroma key",
-        "type": "post-effect"
-    }
+  "name": "@delirvfx/posteffect-chromakey",
+  "version": "0.0.0",
+  "author": "ragg (https://twitter.com/@_ragg_)",
+  "license": "MIT",
+  "main": "index.js",
+  "engines": {
+    "@delirvfx/core": "0.12.x"
+  },
+  "delir": {
+    "name": "Chroma key",
+    "type": "post-effect"
+  }
 }

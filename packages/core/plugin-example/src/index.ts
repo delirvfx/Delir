@@ -1,11 +1,11 @@
-import { EffectPreRenderContext, EffectRenderContext, PostEffectBase, Type, Values } from '@delirvfx/core'
+import { EffectPreRenderContext, EffectRenderContext, ParamType, PostEffectBase, Type, Values } from '@delirvfx/core'
 
 interface Params {
-  x: number
-  y: number
-  width: number
-  height: number
-  color: Values.ColorRGBA
+  x: ParamType.Number
+  y: ParamType.Number
+  width: ParamType.Number
+  height: ParamType.Number
+  color: ParamType.ColorRGBA
 }
 
 export default class ExamplePlugin extends PostEffectBase {
@@ -15,27 +15,27 @@ export default class ExamplePlugin extends PostEffectBase {
   public static provideParameters() {
     return Type.number('x', {
       label: 'Position X',
-      defaultValue: 0,
+      defaultValue: () => 0,
       animatable: true,
     })
       .number('y', {
         label: 'Position Y',
-        defaultValue: 0,
+        defaultValue: () => 0,
         animatable: true,
       })
       .number('width', {
         label: 'Width',
-        defaultValue: 100,
+        defaultValue: () => 100,
         animatable: true,
       })
       .number('height', {
         label: 'Height',
-        defaultValue: 100,
+        defaultValue: () => 100,
         animatable: true,
       })
       .colorRgba('color', {
         label: 'Fill color',
-        defaultValue: new Values.ColorRGBA(0, 0, 0, 1),
+        defaultValue: () => new Values.ColorRGBA(0, 0, 0, 1),
         animatable: true,
       })
   }
