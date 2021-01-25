@@ -27,6 +27,12 @@ jobs:
       - name: Install apt deps
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt-get install g++-4.8 libfontconfig1-dev
+      - name: Install g++
+        if: ${{ matrix.os == 'macOS-10.14' }}
+        run: |
+          brew install gcc@4.9
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
       - name: Install yarn deps
         run: |
           yarn install
@@ -58,15 +64,15 @@ jobs:
             yarn-
       - name: Install apt deps
         run: sudo apt-get install g++-4.8 libfontconfig1-dev
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
       - name: Install yarn deps
         run: |
           yarn install
           yarn install -s --no-optional
           # Remove problem optional module
           rm -rf ./node_modules/speaker
-      - name: testing @delirvfx/core
+      - name: Build @delirvfx/core
+        run: yarn build:core
+      - name: testing
         run: |
           yarn test:core
           yarn test:front
