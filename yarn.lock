@@ -7139,10 +7139,12 @@ focus-lock@^0.6.3:
   resolved "https://registry.yarnpkg.com/focus-lock/-/focus-lock-0.6.5.tgz#f6eb37832a9b1b205406175f5277396a28c0fce1"
   integrity sha512-i/mVBOoa9o+tl+u9owOJUF8k8L85odZNIsctB+JAK2HFT8jckiBwmk+3uydlm6FN8czgnkIwQtBv6yyAbrzXjw==
 
-fontmanager-redux@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/fontmanager-redux/-/fontmanager-redux-0.4.0.tgz#f4c8232a2e2adc6e996a9d4516ab522d1a5da067"
-  integrity sha512-ZXo6KsOfU0+kvyKz49fpe1T+XIvFuWliQSSjLhMnDDlWIBCpIKN1fwTRIgY9guwzKMVym6uKXbeeqwpqVU1+Vg==
+fontmanager-redux@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fontmanager-redux/-/fontmanager-redux-1.0.0.tgz#270ae5f1ce08efec0e36cf0f046ee1aafbe34d26"
+  integrity sha512-kXZel+PAWxS+bgFIlycUYWkmVpvN3SUodDeNaFNW7BloU5pqibBR395Ww+gLBnt51S9KnmHT2/+DzCMGbag0aw==
+  dependencies:
+    node-addon-api "^3.0.2"
 
 for-each@^0.3.2:
   version "0.3.2"
@@ -11110,6 +11112,11 @@ node-abi@^2.9.0:
   integrity sha512-VhPBXCIcvmo/5K8HPmnWJyyhvgKxnHTUMXR/XwGHV68+wrgkzST4UmQrY/XszSWA5dtnXpNp528zkcyJ/pzVcw==
   dependencies:
     semver "^5.4.1"
+
+node-addon-api@^3.0.2:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.1.0.tgz#98b21931557466c6729e51cb77cd39c965f42239"
+  integrity sha512-flmrDNB06LIl5lywUz7YlNGZH/5p0M7W28k8hzd9Lshtdh1wshD2Y+U4h9LD6KObOy1f+fEVdgprPrEymjM5uw==
 
 node-dir@^0.1.10:
   version "0.1.17"
