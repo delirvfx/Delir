@@ -6,18 +6,17 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [macOS-10.14, windows-2016, ubuntu-latest]
 
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - uses: actions/checkout@v1
-      - name: Setup Node.js for use with actions
-        uses: actions/setup-node@v1.1.0
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: '11.x'
+          node-version: '15.6'
       - name: Cache
         uses: actions/cache@v1.0.0
         with:
@@ -44,9 +43,10 @@ jobs:
           path: |
             packages/delir/storybook-static
   testing:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1.1.0
+      - uses: actions/setup-node@v2
         with:
           node-version: '15.6'
       - name: Cache
