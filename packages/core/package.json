@@ -9,7 +9,7 @@
   "homepage": "https://github.com/Ragg-/Delir/tree/master/src/delir-core",
   "scripts": {
     "test": "jest",
-    "build": "rm -rf ./{typings,lib} && tsc --declaration --outDir ./lib",
+    "build": "rimraf ./{typings,lib} && tsc --declaration --outDir ./lib",
     "prepublishOnly": "yarn build"
   },
   "devDependencies": {
