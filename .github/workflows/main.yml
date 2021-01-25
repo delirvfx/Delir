@@ -34,7 +34,7 @@ jobs:
           # Remove problem optional module
           rm -rf ./node_modules/speaker
       - name: Build @delirvfx/core
-        run: yarn prepublishOnly
+        run: yarn build:core
       - name: Build storybook
         run: yarn build:sb
       - uses: actions/upload-artifact@master
