@@ -45,7 +45,7 @@ jobs:
         run: yarn build:sb
       - uses: actions/upload-artifact@master
         with:
-          name: build-${{ matrix.os }}
+          name: storybook-${{ matrix.os }}
           path: |
             packages/delir/storybook-static
   testing:
