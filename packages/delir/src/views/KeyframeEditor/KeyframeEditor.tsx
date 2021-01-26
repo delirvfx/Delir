@@ -43,11 +43,9 @@ export interface EditorResult {
 }
 
 interface Props {
-  activeComposition: SpreadType<Delir.Entity.Composition> | null
   activeClip: SpreadType<Delir.Entity.Clip> | null
   scrollLeft: number
   scale: number
-  pxPerSec: number
   measures: MeasurePoint[]
   onScroll: (dx: number, dy: number) => void
   onScaled: (scale: number) => void
@@ -147,16 +145,7 @@ const Measures = memo(({ measures }: { measures: MeasurePoint[] }) => {
 //   )
 // }
 
-export function KeyframeEditor({
-  activeClip,
-  activeComposition,
-  measures,
-  onScaled,
-  onScroll,
-  pxPerSec,
-  scale,
-  scrollLeft = 0,
-}: Props) {
+export function KeyframeEditor({ activeClip, measures, onScaled, onScroll, scale, scrollLeft = 0 }: Props) {
   const { getStore, executeOperation } = useFleurContext()
 
   const svgParent = useRef<HTMLDivElement | null>(null)
@@ -806,7 +795,7 @@ export function KeyframeEditor({
         {/* {activeClip && <AddEffectButton clipId={activeClip.id} />} */}
       </Pane>
       <Pane>
-        <div ref="svgParent" className={s.keyframeContainer} tabIndex={-1} onWheel={_scaleTimeline}>
+        <div ref={svgParent} className={s.keyframeContainer} tabIndex={-1} onWheel={_scaleTimeline}>
           {activeParam && editorOpened && activeParamDescriptor && (
             <ExpressionEditor
               title={activeParamDescriptor.label}
@@ -841,7 +830,6 @@ export function KeyframeEditor({
             })()}
           <div className={s.measureContainer}>
             <div
-              ref="mesures"
               className={s.measureLayer}
               style={{
                 transform: `translateX(-${scrollLeft}px)`,
@@ -872,263 +860,3 @@ export function KeyframeEditor({
     </Workspace>
   )
 }
-
-// export const KeyframeEditor = withFleurContext(
-// connectToStores()(
-// (getStore): ConnectedProps => ,
-// class KeyframeEditor extends React.Component<Props, State> {
-//   public static defaultProps: Partial<Props> = {
-//     scrollLeft: 0,
-//   }
-
-// public state: State =
-
-// public refs: {
-//   svgParent: HTMLDivElement
-// }
-
-// public componentDidMount() {}
-
-// public componentDidUpdate(prevProps: Props) {
-
-// }
-
-// public render() {
-//   const { activeClip, editor, activeParam, scrollLeft, postEffectPlugins, scale, measures } = this.props
-//   const { keyframeViewViewBox, graphWidth, graphHeight, editorOpened, scriptParamEditorOpened } = this.state
-// }
-
-// private get clipParamDescriptors() {
-//   const { activeClip } = this.props
-//   return activeClip ? Delir.Engine.Renderers.getInfo(activeClip.renderer).parameter.properties || [] : []
-// }
-
-// private get activeEntityObject(): SpreadType<Delir.Entity.Clip> | SpreadType<Delir.Entity.Effect> | null {
-//   const { activeClip, activeParam } = this.props
-// }
-
-// private handleClickExpressionIndicator = ({ currentTarget }: React.MouseEvent<HTMLSpanElement>) => {
-//   const { entityType, entityId, paramName } = currentTarget.dataset
-
-//   this.props.executeOperation(EditorOps.changeActiveParam, {
-//     target: {
-//       type: entityType as 'clip' | 'effect',
-//       entityId: entityId!,
-//       paramName: paramName!,
-//     },
-//   })
-
-//   this.setState({ editorOpened: true })
-// }
-
-// private handleSortEffect: SortEndHandler = ({ oldIndex, newIndex }) => {
-//   const { activeClip } = this.props
-//   if (!activeClip) return
-
-//   const effectId = activeClip.effects[oldIndex].id
-//   this.props.executeOperation(ProjectOps.moveEffectOrder, { effectId, newIndex })
-// }
-
-// private handleCopyReferenceName = ({ dataset: { referenceName } }: MenuItemOption<{ referenceName: string }>) => {
-//   clipboard.writeText(referenceName)
-// }
-
-// private handleCopyParamName = ({ dataset: { paramName } }: MenuItemOption<{ paramName: string }>) => {
-//   clipboard.writeText(paramName)
-// }
-
-// private handleOpenScriptParamEditor = () => {
-//   this.setState({ scriptParamEditorOpened: true })
-// }
-
-// private handleCloseScriptParamEditor = (result: EditorResult) => {
-//   const { activeClip } = this.props
-//   if (!activeClip) return
-
-//   if (result.target.type === 'clip') {
-//     this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
-//       clipId: result.target.entityId,
-//       frameOnClip: 0,
-//       paramName: result.target.paramName,
-//       patch: {
-//         value: new Delir.Values.Expression('javascript', result.code!),
-//       },
-//     })
-//   } else if (result.target.type === 'effect') {
-//     this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
-//       clipId: activeClip.id,
-//       effectId: result.target.entityId,
-//       frameOnClip: 0,
-//       paramName: result.target.paramName,
-//       patch: {
-//         value: new Delir.Values.Expression('javascript', result.code!),
-//       },
-//     })
-//   }
-
-//   this.setState({ scriptParamEditorOpened: false })
-// }
-
-// private handleCloseExpressionEditor = (result: EditorResult) => {
-//   const { activeClip } = this.props
-//   if (!activeClip) return
-
-//   if (result.target.type === 'clip') {
-//     this.props.executeOperation(ProjectOps.modifyClipExpression, {
-//       clipId: activeClip.id,
-//       paramName: result.target.paramName,
-//       expr: {
-//         language: 'typescript',
-//         code: result.code!,
-//       },
-//     })
-//   } else {
-//     this.props.executeOperation(ProjectOps.modifyEffectExpression, {
-//       clipId: activeClip.id,
-//       effectId: result.target.entityId,
-//       paramName: result.target.paramName,
-//       expr: {
-//         language: 'typescript',
-//         code: result.code!,
-//       },
-//     })
-//   }
-
-//   this.setState({ editorOpened: false })
-// }
-
-// private handleAddEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
-//   this.props.executeOperation(ProjectOps.addEffectIntoClip, {
-//     clipId: dataset.clipId,
-//     processorId: dataset.effectId,
-//   })
-// }
-// private _scaleTimeline = (e: React.WheelEvent<HTMLDivElement>) => {
-//   if (Platform.isMacOS && e.ctrlKey) {
-//     this.props.onScaled(Math.max(this.props.scale - e.deltaY * 0.1, 0.1))
-//     return
-//   }
-
-//   if (e.altKey) {
-//     const newScale = this.props.scale + e.deltaY * 0.05
-//     this.props.onScaled(Math.max(newScale, 0.1))
-//     e.preventDefault()
-//   }
-// }
-
-// private handleScrolling = (dx: number, dy: number) => {
-//   this.props.onScroll(dx, dy)
-// }
-
-// private valueChanged = (desc: Delir.AnyParameterTypeDescriptor, value: any) => {
-//   const {
-//     activeClip,
-//     editor: { currentPreviewFrame },
-//   } = this.props
-//   if (!activeClip) return
-
-//   const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-
-//   this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
-//     clipId: activeClip.id!,
-//     paramName: desc.paramName,
-//     frameOnClip,
-//     patch: { value },
-//   })
-// }
-
-// private effectValueChanged = (effectId: string, desc: Delir.AnyParameterTypeDescriptor, value: any) => {
-//   const {
-//     activeClip,
-//     editor: { currentPreviewFrame },
-//   } = this.props
-//   if (!activeClip) return
-
-//   const frameOnClip = currentPreviewFrame - activeClip.placedFrame
-//   this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
-//     clipId: activeClip.id,
-//     effectId,
-//     paramName: desc.paramName,
-//     frameOnClip,
-//     patch: { value },
-//   })
-// }
-
-// private handleModifyKeyframe = (
-//   parentClipId: string,
-//   paramName: string,
-//   frameOnClip: number,
-//   patch: KeyframePatch,
-// ) => {
-//   const { activeParam } = this.props
-//   if (!activeParam) return
-
-//   switch (activeParam.type) {
-//     case 'clip': {
-//       this.props.executeOperation(ProjectOps.createOrModifyClipKeyframe, {
-//         clipId: parentClipId,
-//         paramName,
-//         frameOnClip,
-//         patch,
-//       })
-//       break
-//     }
-
-//     case 'effect': {
-//       this.props.executeOperation(ProjectOps.createOrModifyEffectKeyframe, {
-//         clipId: parentClipId,
-//         effectId: activeParam.entityId,
-//         paramName,
-//         frameOnClip,
-//         patch,
-//       })
-//       break
-//     }
-
-//     default: {
-//       throw new Error('unreachable')
-//     }
-//   }
-// }
-
-// private handleRemoveKeyframe = (parentClipId: string, keyframeId: string) => {
-//   const { activeParam } = this.props
-//   if (!activeParam) return
-
-//   if (activeParam.type === 'clip') {
-//     this.props.executeOperation(ProjectOps.removeKeyframe, {
-//       clipId: parentClipId,
-//       paramName: activeParam.paramName,
-//       keyframeId,
-//     })
-//   } else {
-//     this.props.executeOperation(ProjectOps.removeEffectKeyframe, {
-//       clipId: parentClipId,
-//       effectId: activeParam.entityId,
-//       paramName: activeParam.paramName,
-//       keyframeId,
-//     })
-//   }
-// }
-
-// private removeEffect = ({ dataset }: MenuItemOption<{ clipId: string; effectId: string }>) => {
-//   this.setState({ editorOpened: false }, () => {
-//     this.props.executeOperation(ProjectOps.removeEffect, {
-//       holderClipId: dataset.clipId,
-//       effectId: dataset.effectId,
-//     })
-//   })
-// }
-
-// private handleChangeEffectReferenceName = (referenceName: string, { effectId }: { effectId: string }) => {
-//   this.props.executeOperation(ProjectOps.modifyEffect, {
-//     clipId: this.props.activeClip!.id,
-//     effectId,
-//     patch: { referenceName: referenceName !== '' ? referenceName : null },
-//   })
-// }
-
-// private _getDescriptorByParamName(paramName: string | null) {}
-// }
-//   ),
-// )

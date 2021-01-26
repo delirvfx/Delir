@@ -12,11 +12,19 @@ export const dependencies = [
     },
     {
         "name": "@fleur/fleur",
-        "url": "https://github.com/ra-gg/fleur/tree/master/packages/fleur"
+        "url": "https://github.com/fleur-js/fleur/tree/master/packages/fleur"
+    },
+    {
+        "name": "@fleur/lys",
+        "url": "https://www.npmjs.com/package/@fleur/lys"
     },
     {
         "name": "@fleur/react",
         "url": "https://www.npmjs.com/package/@fleur/react"
+    },
+    {
+        "name": "@hanakla/arma",
+        "url": "https://www.npmjs.com/package/@hanakla/arma"
     },
     {
         "name": "@ragg/deream",
@@ -339,6 +347,10 @@ export const dependencies = [
         "url": "https://reactjs.org/"
     },
     {
+        "name": "rmfr",
+        "url": "https://www.npmjs.com/package/rmfr"
+    },
+    {
         "name": "sass",
         "url": "https://github.com/sass/dart-sass"
     },
@@ -417,6 +429,10 @@ export const dependencies = [
     {
         "name": "webpack",
         "url": "https://github.com/webpack/webpack"
+    },
+    {
+        "name": "wsrun",
+        "url": "https://www.npmjs.com/package/wsrun"
     },
     {
         "name": "yargs",

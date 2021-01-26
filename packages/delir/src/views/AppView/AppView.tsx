@@ -1,11 +1,9 @@
-import { StoreGetter } from '@fleur/fleur'
-import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
-import React from 'react'
+import { useFleurContext, useStore } from '@fleur/react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { animated, Transition } from 'react-spring/renderprops'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
-import RendererStore from '../../domain/Renderer/RendererStore'
 
 import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
@@ -43,10 +41,10 @@ export default function AppView() {
   }, [])
 
   useEffect(() => {
-    window.addEventListener('dragenter', this.prevent, false)
-    window.addEventListener('dragover', this.prevent, false)
+    window.addEventListener('dragenter', prevent, false)
+    window.addEventListener('dragover', prevent, false)
 
-    window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
+    window.setInterval(projectAutoSaveTimer, 3 * 60 * 1000) // 3min
   }, [])
 
   return (
@@ -75,7 +73,7 @@ export default function AppView() {
           opened &&
           ((style) => (
             <animated.div className={s.preference} style={style}>
-              <Preference onClose={this.handlePreferenceClose} />
+              <Preference onClose={handlePreferenceClose} />
             </animated.div>
           ))
         }

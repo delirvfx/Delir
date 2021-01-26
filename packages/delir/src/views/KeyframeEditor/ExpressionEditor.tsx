@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import * as monaco from 'monaco-editor'
 import MonacoUtil from '../../utils/Monaco'
@@ -8,6 +8,7 @@ import { Button } from '../../components/Button'
 import { ParameterTarget } from '../../domain/Editor/types'
 import { EditorResult } from './KeyframeEditor'
 
+import { useChangedEffect } from '@hanakla/arma'
 import s from './ExpressionEditor.sass'
 import t from './KeyframeEditor.i18n'
 
@@ -18,69 +19,56 @@ interface Props {
   onClose: (result: EditorResult) => void
 }
 
-export default class ExpressionEditor extends React.Component<Props> {
-  private editor: monaco.editor.IStandaloneCodeEditor
-  private editorElement: HTMLDivElement
-  private disposables: monaco.IDisposable[] = []
+export default function ExpressionEditor({ code, onClose, target, title }: Props) {
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
+  const editorElementRef = useRef<HTMLDivElement | null>(null)
+  const disposables = useRef<monaco.IDisposable[]>([])
 
-  public componentDidMount() {
-    this.editor = monaco.editor.create(this.editorElement, {
+  const onFocusEditor = useCallback(() => {
+    MonacoUtil.activateLibrarySet('expressionEditor')
+  }, [])
+
+  const handleClickClose = useCallback(() => {
+    onClose({
+      code: editorRef.current!.getValue(),
+      target,
+    })
+  }, [target])
+
+  useEffect(() => {
+    const editor = (editorRef.current = monaco.editor.create(editorElementRef.current!, {
       language: 'javascript',
       codeLens: true,
       automaticLayout: true,
       theme: 'vs-dark',
       minimap: { enabled: false },
-      value: this.props.code ? this.props.code : '',
-    })
+      value: code ?? '',
+    }))
 
-    this.editor.createContextKey('cond1', true)
-    this.editor.createContextKey('cond2', true)
-    this.disposables.push(this.editor.onDidFocusEditorText(this.onFocusEditor))
-    this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, this.handleClickClose, 'cond1')
-    this.editor.focus()
-  }
+    editor.createContextKey('cond1', true)
+    editor.createContextKey('cond2', true)
+    disposables.current.push(editor.onDidFocusEditorText(onFocusEditor))
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, handleClickClose, 'cond1')
+    editor.focus()
 
-  public shouldComponentUpdate(nextProps: Props) {
-    // Only update contents on target entity changed
-    // (Guard from parent component controll to reset content)
-    return (
-      nextProps.target.entityId !== this.props.target.entityId ||
-      nextProps.target.paramName !== this.props.target.paramName
-    )
-  }
+    return () => {
+      disposables.current.forEach((d) => d.dispose())
+    }
+  }, [])
 
-  public componentDidUpdate() {
-    this.editor.setValue(this.props.code ? this.props.code : '')
-  }
+  useChangedEffect(() => {
+    editorRef.current!.setValue(code ?? '')
+  }, [code])
 
-  public render() {
-    const { title } = this.props
-
-    return (
-      <div className={s.ExpressionEditor}>
-        <div className={s.ExpressionEditor__Toolbar}>
-          <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
-          <Button kind="primary" onClick={this.handleClickClose}>
-            {t(t.k.save)}
-          </Button>
-        </div>
-        <div ref={this.bindEditorElement} className={s.ExpressionEditor__Editor} />
+  return (
+    <div className={s.ExpressionEditor}>
+      <div className={s.ExpressionEditor__Toolbar}>
+        <span className={s.ExpressionEditor__Title}>Expression: {title}</span>
+        <Button kind="primary" onClick={handleClickClose}>
+          {t(t.k.save)}
+        </Button>
       </div>
-    )
-  }
-
-  private bindEditorElement = (el: HTMLDivElement) => {
-    this.editorElement = el
-  }
-
-  private onFocusEditor = () => {
-    MonacoUtil.activateLibrarySet('expressionEditor')
-  }
-
-  private handleClickClose = () => {
-    this.props.onClose({
-      code: this.editor.getValue(),
-      target: this.props.target,
-    })
-  }
+      <div ref={editorElementRef} className={s.ExpressionEditor__Editor} />
+    </div>
+  )
 }
