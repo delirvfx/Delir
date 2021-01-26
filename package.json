@@ -45,7 +45,7 @@
     "monaco-editor-webpack-plugin": "1.7.0",
     "nan": "2.14.0",
     "node-notifier": "6.0.0",
-    "prettier": "1.19.0",
+    "prettier": "2.2.1",
     "prettier-stylelint": "0.4.2",
     "raw-loader": "3.1.0",
     "react-test-renderer": "16.11.0",
