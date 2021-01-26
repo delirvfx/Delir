@@ -10,13 +10,14 @@
   "scripts": {
     "start": "cross-env electron-rebuild && cross-env NODE_ENV=development gulp",
     "rebuild": "cross-env electron-rebuild",
-    "build": "cross-env NODE_ENV=production gulp --max-old-space-size=4096 publish",
-    "declare": "cross-env tsc -p src/delir-core -d --declarationDir src/delir-core/types",
+    "build:app": "cross-env NODE_ENV=production gulp --max-old-space-size=4096 publish",
+    "build:core": "wsrun -p @delirvfx/core -c build",
+    "build:app-sb": "wsrun -p @delirvfx/delir -c build:sb",
     "clean-modules": "rm -rf node_modules/ packages/delir/node_modules packages/delir-core/node_modules",
-    "test-core": "jest -c packages/core/jest.config.js",
-    "test-front": "jest -c packages/delir/jest.config.js",
-    "test-plugins": "jest -c packages/post-effect-plugins/jest.config.js",
-    "test-contrib-pep": "jest -c packages/contrib-posteffect/jest.config.js"
+    "test:core": "jest -c packages/core/jest.config.js",
+    "test:front": "jest -c packages/delir/jest.config.js",
+    "test:plugins": "jest -c packages/post-effect-plugins/jest.config.js",
+    "test:contrib-pep": "jest -c packages/contrib-posteffect/jest.config.js"
   },
   "workspaces": [
     "packages/*"
@@ -48,6 +49,7 @@
     "prettier-stylelint": "0.4.2",
     "raw-loader": "3.1.0",
     "react-test-renderer": "16.11.0",
+    "rmfr": "2.0.0",
     "sass": "1.23.7",
     "sass-lint": "1.13.1",
     "sass-lint-auto-fix": "0.18.0",
@@ -61,10 +63,11 @@
     "tslint-loader": "3.6.0",
     "typescript": "3.7.4",
     "webpack": "4.41.5",
+    "wsrun": "5.2.4",
     "zip-dir": "1.0.2"
   },
   "dependencies": {
-    "fontmanager-redux": "0.4.0"
+    "fontmanager-redux": "1.0.0"
   },
   "husky": {
     "hooks": {

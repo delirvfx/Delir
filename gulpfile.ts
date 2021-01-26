@@ -113,7 +113,7 @@ export async function buildPublishPackageJSON(done) {
   delete json.devDependencies
   json.dependencies = {
     // install only native modules
-    'fontmanager-redux': '0.4.0',
+    'fontmanager-redux': '1.0.0',
   }
 
   const newJson = JSON.stringify(json, null, '  ')
