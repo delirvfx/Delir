@@ -27,10 +27,13 @@ jobs:
       - name: Install apt deps
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt-get install g++-4.8 libfontconfig1-dev
+      - name: MacPorts
+        if: ${{ matrix.os == 'macOS-10.14' }}
+        uses: keepitsimpletech/actions/setup-macports@releases/v1
       - name: Install g++
         if: ${{ matrix.os == 'macOS-10.14' }}
         run: |
-          brew install gcc@4.9
+          sudo port install gcc48
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
       - name: Setup tmate session
