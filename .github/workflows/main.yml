@@ -29,7 +29,7 @@ jobs:
         run: sudo apt-get install g++-4.8 libfontconfig1-dev
       - name: MacPorts
         if: ${{ matrix.os == 'macOS-10.14' }}
-        uses: keepitsimpletech/actions/setup-macports@releases/v1
+        uses: keepitsimpletech/actions/setup-macports@94bf6fe
       - name: Install g++
         if: ${{ matrix.os == 'macOS-10.14' }}
         run: |
