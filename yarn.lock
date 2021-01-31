@@ -1275,11 +1275,6 @@
   dependencies:
     immer "^7.0.14"
 
-"@fleur/mordred@0.1.0-pre.3":
-  version "0.1.0-pre.3"
-  resolved "https://registry.yarnpkg.com/@fleur/mordred/-/mordred-0.1.0-pre.3.tgz#12ca0fa40b985b6ad9263fa73f3eeb765d214f7c"
-  integrity sha512-l+Ck8VGAMfYnJ9wSZC00xyvTC/Gx5W10bNJifnHhsGtQClGMzhoJyEgk7W+WdFm9w0C84Lw5CnJS6aPpVCQEbg==
-
 "@fleur/react@5.0.0":
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/@fleur/react/-/react-5.0.0.tgz#e6127a55958a3878c1d07ab510a2dc9d567371a9"
