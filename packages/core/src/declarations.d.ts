@@ -28,7 +28,9 @@ declare module 'av/node' {
 }
 
 declare module 'av' {
-  export class Asset extends NodeJS.EventEmitter {
+  import { EventEmitter } from 'events'
+
+  export class Asset extends EventEmitter {
     public static fromBuffer(buffer: Buffer): Asset
 
     public format: { channelsPerFrame: number }
