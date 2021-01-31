@@ -39,7 +39,7 @@ type ProjectPackAssetMap = Record<string, { fileName: string; tmpName: string }>
 // App services
 //
 
-export const openPluginDirectory = operation(context => {
+export const openPluginDirectory = operation((context) => {
   const userDir = remote.app.getPath('appData')
   const pluginsDir = path.join(userDir, 'delir/plugins')
   remote.shell.openItem(pluginsDir)
@@ -69,7 +69,7 @@ export const setDragEntity = operation((context, arg: { entity: DragEntity }) =>
   context.dispatch(EditorActions.setDragEntity, arg.entity)
 })
 
-export const clearDragEntity = operation(context => {
+export const clearDragEntity = operation((context) => {
   context.dispatch(EditorActions.clearDragEntity, {})
 })
 
@@ -146,7 +146,7 @@ export const seekPreviewFrame = operation((context, { frame = undefined }: { fra
 //
 // Import & Export
 //
-export const newProject = operation(async context => {
+export const newProject = operation(async (context) => {
   await context.executeOperation(setActiveProject, {
     project: new Delir.Entity.Project({}),
   })
@@ -196,7 +196,7 @@ export const saveProject = operation(
   },
 )
 
-export const autoSaveProject = operation(async context => {
+export const autoSaveProject = operation(async (context) => {
   const { project, projectPath } = context.getStore(EditorStore).getState()
   const isInRendering = context.getStore(RendererStore).isInRendering()
 
@@ -246,7 +246,7 @@ export const exportProjectPack = operation(async ({ getStore, executeOperation }
   const assetMap: ProjectPackAssetMap = {}
   await fs.mkdirp(tmpDir)
   await Promise.all(
-    (project.assets as Delir.Entity.Asset[]).map(async asset => {
+    (project.assets as Delir.Entity.Asset[]).map(async (asset) => {
       const assetPath = /^file:\/\/(.*)$/.exec(asset.path)?.[1]
       if (!assetPath) return
 
@@ -295,7 +295,7 @@ export const importProjectPack = operation(
     const tmpDir = path.join(remote.app.getPath('temp'), `delirpp-import-${uuid.v4()}`)
     await fs.mkdirp(tmpDir)
 
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       fs.createReadStream(src)
         .pipe(unzipper.Extract({ path: tmpDir }))
         .once('close', resolve)
@@ -330,7 +330,7 @@ export const importProjectPack = operation(
     await fs.remove(packProjectPath)
     const files = await glob(`**`, { cwd: tmpDir, absolute: true })
     await Promise.all(
-      files.map(async file => {
+      files.map(async (file) => {
         const distName = path.relative(tmpDir, file)
         await fs.move(file, path.join(distDir, distName))
       }),
@@ -353,7 +353,7 @@ export const changePreferenceOpenState = operation((context, { open }: { open: b
 export const copyClips = operation(({ getStore, dispatch }) => {
   const clipIds = getSelectedClipIds(getStore)
   const comp = getActiveComp(getStore)!
-  const firstLayerIndexOfSelection = comp.layers.findIndex(layer => !!layer.findClip(clipIds[0]))
+  const firstLayerIndexOfSelection = comp.layers.findIndex((layer) => !!layer.findClip(clipIds[0]))
 
   const entities: ClipboardEntryClip['entities'] = []
   let offset = 0
@@ -362,7 +362,7 @@ export const copyClips = operation(({ getStore, dispatch }) => {
 
     // find clips in current layer
     const containedClips = clipIds
-      .map(clipId => layer.findClip(clipId))
+      .map((clipId) => layer.findClip(clipId))
       .filter((clip): clip is Delir.Entity.Clip => !!clip)
 
     entities[offset] = { offset, clips: containedClips }
@@ -387,7 +387,7 @@ export const pasteClipIntoLayer = operation(async (context, { layerId }: { layer
   const project = getProject(context.getStore)!
   const placedFrame = getCurrentPreviewFrame(context.getStore)
   const composition = project.findLayerOwnerComposition(layerId)!
-  const firstLayerIdxOfEntity = composition.layers.findIndex(layer => layer.id === layerId)
+  const firstLayerIdxOfEntity = composition.layers.findIndex((layer) => layer.id === layerId)
   const headClipPlacedFrame = entities
     .flatMap(({ clips }) => clips)
     .reduce((headPlacedFrame: number, next) => Math.min(headPlacedFrame, next.placedFrame), Infinity)

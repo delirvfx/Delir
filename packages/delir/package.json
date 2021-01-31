@@ -6,7 +6,15 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "test": "jest",
+    "build:sb": "build-storybook",
     "storybook": "start-storybook -p 6123"
+  },
+  "workspaces": {
+    "nohoist": [
+      "@storybook/react",
+      "@storybook/react/**"
+    ]
   },
   "devDependencies": {
     "@delirvfx/core-test-helper": "*",
@@ -14,7 +22,6 @@
     "@storybook/react": "5.2.5",
     "@types/archiver": "3.0.0",
     "@types/classnames": "2.2.9",
-    "@types/electron": "1.6.10",
     "@types/fs-extra": "8.0.0",
     "@types/jest": "24.0.25",
     "@types/joi": "14.3.4",
@@ -22,9 +29,9 @@
     "@types/lodash": "4.14.123",
     "@types/mousetrap": "1.6.3",
     "@types/msgpack5": "3.4.1",
-    "@types/react": "16.9.17",
+    "@types/react": "17.0.0",
     "@types/react-color": "3.0.1",
-    "@types/react-dom": "16.9.4",
+    "@types/react-dom": "17.0.0",
     "@types/react-sortable-hoc": "0.7.1",
     "@types/react-tabs": "2.3.1",
     "@types/simonwep__selection-js": "1.2.0",
@@ -39,8 +46,10 @@
   },
   "dependencies": {
     "@delirvfx/core": "*",
-    "@fleur/fleur": "^1.2.3",
-    "@fleur/react": "3.2.0",
+    "@fleur/fleur": "3.0.0",
+    "@fleur/lys": "2.0.1",
+    "@fleur/react": "5.0.0",
+    "@hanakla/arma": "0.1.5",
     "@ragg/deream": "*",
     "@simonwep/selection-js": "1.4.0",
     "archiver": "3.1.1",
@@ -59,9 +68,9 @@
     "parse-color": "1.0.0",
     "polished": "3.4.2",
     "popper.js": "1.16.0",
-    "react": "16.12.0",
+    "react": "17.0.1",
     "react-color": "2.17.3",
-    "react-dom": "16.11.0",
+    "react-dom": "17.0.1",
     "react-rnd": "10.1.1",
     "react-sortable-hoc": "1.10.1",
     "react-spring": "8.0.27",

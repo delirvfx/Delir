@@ -1,4 +1,4 @@
-process.on('uncaughtException', e => {
+process.on('uncaughtException', (e) => {
   e = e || {}
   const appRoot = new RegExp(path.join(__dirname, '../../'), 'g')
 
@@ -61,8 +61,8 @@ const install = async () => {
     console.log('Run as develop mode')
 
     // install devtools
-    const devtron = require('devtron')
-    devtron.install()
+    // const devtron = require('devtron')
+    // devtron.install()
 
     const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer')
 
@@ -80,6 +80,7 @@ const install = async () => {
         nodeIntegration: true,
         webgl: true,
         experimentalFeatures: true,
+        enableRemoteModule: true,
       },
     })
 
@@ -104,7 +105,7 @@ const install = async () => {
   }
 
   app.isReady() ? run() : app.on('ready', run)
-})().catch(e => {
+})().catch((e) => {
   // tslint:disable-next-line:no-console
   console.log(e)
 })

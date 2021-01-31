@@ -1,35 +1,84 @@
 name: CI
 
 on: [push]
+env:
+  CXX: g++-4.8
 
-jobs: 
+jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
-        os: [macOS-10.14, windows-2016, ubuntu-18.04]
+        os: [macOS-10.14, windows-2016, ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup Node.js for use with actions
-      uses: actions/setup-node@v1.1.0
-      with:
-        node-version: '11.x'
-    - name: Cache
-      uses: actions/cache@v1.0.0
-      with:
-        path: ~/.cache/yarn
-        key: ${{ matrix.os }}-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
-        restore-keys: |
-          ${{ matrix.os }}-
-    - name: Install deps
-      run: |
-        npm i -g yarn
-        yarn install
-    - name: Build
-      run: yarn build
-    - uses: actions/upload-artifact@master
-      with:
-        name: build-${{ matrix.os }}
-        path: release
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '15.6'
+      - name: Cache
+        uses: actions/cache@v1.0.0
+        with:
+          path: ~/.cache/yarn
+          key: yarn-${{ matrix.os }}-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            yarn-${{ matrix.os }}-
+      - name: Install apt deps
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: sudo apt-get install g++-4.8 libfontconfig1-dev
+      - name: MacPorts
+        if: ${{ matrix.os == 'macOS-10.14' }}
+        uses: keepitsimpletech/actions/setup-macports@94bf6fe
+      - name: Install g++
+        if: ${{ matrix.os == 'macOS-10.14' }}
+        run: |
+          sudo port install gcc48
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+      - name: Install yarn deps
+        run: |
+          yarn install
+          yarn install -s --no-optional
+          # Remove problem optional module
+          yarn rimraf ./node_modules/speaker
+      - name: Build @delirvfx/core
+        run: yarn build:core
+      - name: Build storybook
+        run: yarn build:app-sb
+      - uses: actions/upload-artifact@master
+        with:
+          name: storybook-${{ matrix.os }}
+          path: |
+            packages/delir/storybook-static
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '15.6'
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/yarn
+          key: yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            yarn-
+      - name: Install apt deps
+        run: sudo apt-get install g++-4.8 libfontconfig1-dev
+      - name: Install yarn deps
+        run: |
+          yarn install -s --no-optional
+          # Remove problem optional module
+          rm -rf ./node_modules/speaker
+      - name: Build @delirvfx/core
+        run: yarn build:core
+      - name: testing
+        run: |
+          yarn test:core
+          yarn test:front
+          yarn test:plugins
+          yarn test:contrib-pep

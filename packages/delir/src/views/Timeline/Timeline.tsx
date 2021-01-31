@@ -15,7 +15,6 @@ import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
 import { getSelectedClipIds, getSelectedClips } from '../../domain/Editor/selectors'
 import * as ProjectOps from '../../domain/Project/operations'
-import ProjectStore from '../../domain/Project/ProjectStore'
 import RendererStore from '../../domain/Renderer/RendererStore'
 import { GlobalEvent, GlobalEvents } from '../AppView/GlobalEvents'
 import { KeyframeEditor } from '../KeyframeEditor'
@@ -42,7 +41,7 @@ export const PX_PER_SEC = 30
 
 export const Timeline = () => {
   const { executeOperation, getStore } = useFleurContext()
-  const { activeComp, activeClips, currentPointFrame, previewPlayed } = useStore(getStore => ({
+  const { activeComp, activeClips, currentPointFrame, previewPlayed } = useStore((getStore) => ({
     activeComp: getStore(EditorStore).activeComp,
     activeClips: getSelectedClips(getStore),
     currentPointFrame: getStore(EditorStore).currentPointFrame,

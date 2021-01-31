@@ -1,11 +1,9 @@
-import { StoreGetter } from '@fleur/fleur'
-import { connectToStores, ContextProp, withFleurContext } from '@fleur/react'
-import React from 'react'
+import { useFleurContext, useStore } from '@fleur/react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { animated, Transition } from 'react-spring/renderprops'
 
 import EditorStore from '../../domain/Editor/EditorStore'
 import * as EditorOps from '../../domain/Editor/operations'
-import RendererStore from '../../domain/Renderer/RendererStore'
 
 import { Pane } from '../../components/Pane'
 import { Workspace } from '../../components/Workspace'
@@ -22,73 +20,64 @@ import { ShortcutHandler } from './ShortcutHandler'
 
 import s from './AppView.sass'
 
-type Props = ReturnType<typeof mapStoresToProps> & ContextProp
+export default function AppView() {
+  const { executeOperation } = useFleurContext()
+  const root = useRef<HTMLDivElement | null>(null)
 
-const mapStoresToProps = (getStore: StoreGetter) => ({
-  preferenceOpened: getStore(EditorStore).getState().preferenceOpened,
-})
+  const { preferenceOpened } = useStore((get) => ({
+    preferenceOpened: get(EditorStore).getState().preferenceOpened,
+  }))
 
-export default withFleurContext(
-  connectToStores(mapStoresToProps)(
-    class AppView extends React.PureComponent<Props> {
-      public root = React.createRef<HTMLDivElement>()
+  const prevent = useCallback((e: any) => {
+    e.preventDefault()
+  }, [])
 
-      public componentDidMount() {
-        window.addEventListener('dragenter', this.prevent, false)
-        window.addEventListener('dragover', this.prevent, false)
+  const projectAutoSaveTimer = useCallback(() => {
+    executeOperation(EditorOps.autoSaveProject)
+  }, [])
 
-        window.setInterval(this.projectAutoSaveTimer, 3 * 60 * 1000) // 3min
-      }
+  const handlePreferenceClose = useCallback(() => {
+    executeOperation(EditorOps.changePreferenceOpenState, { open: false })
+  }, [])
 
-      public render() {
-        const { preferenceOpened } = this.props
+  useEffect(() => {
+    window.addEventListener('dragenter', prevent, false)
+    window.addEventListener('dragover', prevent, false)
 
-        return (
-          <div ref={this.root} className="_container" onDrop={this.prevent}>
-            <ShortcutHandler />
-            <AppMenu />
-            <NavigationView />
-            <Workspace className="app-body" direction="vertical">
-              <Pane className="body-pane">
-                <Workspace direction="horizontal">
-                  <AssetsView />
-                  <PreviewView />
-                </Workspace>
-              </Pane>
-              <Timeline />
-            </Workspace>
-            <Notifications />
-            <RenderingWaiter />
-            <Transition
-              items={preferenceOpened}
-              from={{ opacity: 0, transform: 'scale(1.2)' }}
-              enter={{ opacity: 1, transform: 'scale(1)' }}
-              leave={{ opacity: 0, transform: 'scale(1.2)' }}
-            >
-              {opened =>
-                opened &&
-                (style => (
-                  <animated.div className={s.preference} style={style}>
-                    <Preference onClose={this.handlePreferenceClose} />
-                  </animated.div>
-                ))
-              }
-            </Transition>
-          </div>
-        )
-      }
+    window.setInterval(projectAutoSaveTimer, 3 * 60 * 1000) // 3min
+  }, [])
 
-      private prevent = (e: any) => {
-        e.preventDefault()
-      }
-
-      private projectAutoSaveTimer = () => {
-        this.props.executeOperation(EditorOps.autoSaveProject)
-      }
-
-      private handlePreferenceClose = () => {
-        this.props.executeOperation(EditorOps.changePreferenceOpenState, { open: false })
-      }
-    },
-  ),
-)
+  return (
+    <div ref={root} className="_container" onDrop={prevent}>
+      <ShortcutHandler />
+      <AppMenu />
+      <NavigationView />
+      <Workspace className="app-body" direction="vertical">
+        <Pane className="body-pane">
+          <Workspace direction="horizontal">
+            <AssetsView />
+            <PreviewView />
+          </Workspace>
+        </Pane>
+        <Timeline />
+      </Workspace>
+      <Notifications />
+      <RenderingWaiter />
+      <Transition
+        items={preferenceOpened}
+        from={{ opacity: 0, transform: 'scale(1.2)' }}
+        enter={{ opacity: 1, transform: 'scale(1)' }}
+        leave={{ opacity: 0, transform: 'scale(1.2)' }}
+      >
+        {(opened) =>
+          opened &&
+          ((style) => (
+            <animated.div className={s.preference} style={style}>
+              <Preference onClose={handlePreferenceClose} />
+            </animated.div>
+          ))
+        }
+      </Transition>
+    </div>
+  )
+}

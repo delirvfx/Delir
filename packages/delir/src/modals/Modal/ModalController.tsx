@@ -41,13 +41,13 @@ export class ModalController {
   }
 
   public show() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.modal!.toggleShow({ show: true, onTransitionEnd: resolve })
     })
   }
 
   public hide(): Promise<void> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.modal!.toggleShow({ show: false, onTransitionEnd: resolve })
     })
   }

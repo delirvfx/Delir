@@ -1,18 +1,14 @@
 import classnames from 'classnames'
-import _ from 'lodash'
-import React from 'react'
+import React, { forwardRef, ReactNode, useImperativeHandle, useRef, useState } from 'react'
 import s from './Modal.sass'
 import { ModalController } from './ModalController'
 
 export interface Props {
   show?: boolean
   closable?: boolean
+  children?: ReactNode
   query?: { [name: string]: string | number }
   onHide?: () => any
-}
-
-interface State {
-  show: boolean
 }
 
 export const show = <T extends JSX.Element = any>(component: T, props: Props = { show: true }): ModalController => {
@@ -21,41 +17,29 @@ export const show = <T extends JSX.Element = any>(component: T, props: Props = {
   return controller
 }
 
-export class Modal extends React.Component<Props, State> {
-  public static defaultProps = {
-    show: false,
-    url: 'about:blank',
-    closable: true,
-  }
+export const Modal = forwardRef(({ closable = true, onHide, query, show = false, children }: Props, ref) => {
+  const rootRef = useRef<HTMLDivElement | null>(null)
+  const [shown, setShown] = useState(show)
 
-  private rootRef = React.createRef<HTMLDivElement>()
+  useImperativeHandle(
+    ref,
+    () => ({
+      toggleShow({ show, onTransitionEnd }: { show: boolean; onTransitionEnd: () => void }) {
+        setShown(show)
+        rootRef.current!.addEventListener('transitionend', () => onTransitionEnd(), { once: true })
+      },
+    }),
+    [],
+  )
 
-  constructor(props: Props) {
-    super(props)
-
-    this.state = {
-      show: this.props.show || false,
-    }
-  }
-
-  public toggleShow({ show, onTransitionEnd }: { show: boolean; onTransitionEnd: () => void }) {
-    this.setState({ show }, () => {
-      this.rootRef.current!.addEventListener('transitionend', () => onTransitionEnd(), { once: true })
-    })
-  }
-
-  public render() {
-    const { children } = this.props
-
-    return (
-      <div
-        ref={this.rootRef}
-        className={classnames(s.root, {
-          [s['--show']]: this.state.show,
-        })}
-      >
-        {children}
-      </div>
-    )
-  }
-}
+  return (
+    <div
+      ref={rootRef}
+      className={classnames(s.root, {
+        [s['--show']]: shown,
+      })}
+    >
+      {children}
+    </div>
+  )
+})

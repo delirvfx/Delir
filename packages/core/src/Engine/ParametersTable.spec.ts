@@ -1,6 +1,6 @@
-import { mockClip, mockKeyframe } from '@delirvfx/core-test-helper'
 import { Clip } from '../Entity'
 import { UserCodeException } from '../Exceptions'
+import { mockClip, mockKeyframe } from '../SpecHelper'
 import { Expression } from '../Values'
 import { ParametersTable } from './ParametersTable'
 import { IRenderContextBase } from './RenderContext/IRenderContextBase'

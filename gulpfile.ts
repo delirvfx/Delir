@@ -92,10 +92,10 @@ export function buildBrowserJs(done) {
           : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
-    function(err, stats) {
+    function (err, stats) {
       err && console.error(err)
       stats.compilation.errors.length &&
-        stats.compilation.errors.forEach(e => {
+        stats.compilation.errors.forEach((e) => {
           console.error(e.message)
           e.module && console.error(e.module.userRequest)
         })
@@ -113,7 +113,7 @@ export async function buildPublishPackageJSON(done) {
   delete json.devDependencies
   json.dependencies = {
     // install only native modules
-    'fontmanager-redux': '0.4.0',
+    'fontmanager-redux': '1.0.0',
   }
 
   const newJson = JSON.stringify(json, null, '  ')
@@ -325,10 +325,10 @@ export function compileRendererJs(done) {
         ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
-    function(err, stats) {
+    function (err, stats) {
       err && console.error(err)
       stats.compilation.errors.length &&
-        stats.compilation.errors.forEach(e => {
+        stats.compilation.errors.forEach((e) => {
           console.error(e.message)
           e.module && console.error(e.module.userRequest)
         })
@@ -410,10 +410,10 @@ export async function compilePlugins(done) {
         ...(__DEV__ ? [] : [new webpack.optimize.AggressiveMergingPlugin()]),
       ],
     },
-    function(err, stats) {
+    function (err, stats) {
       err && console.error(err)
       stats.compilation.errors.length &&
-        stats.compilation.errors.forEach(e => {
+        stats.compilation.errors.forEach((e) => {
           console.error('Plugin compilation: ', e.message)
           e.module && console.error(e.module.userRequest)
         })
@@ -450,14 +450,14 @@ export function copyImage() {
 }
 
 export function makeIcon() {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const binName = isWindows ? 'electron-icon-maker.cmd' : 'electron-icon-maker'
     const binPath = join(__dirname, 'node_modules/.bin/', binName)
     const source = join(__dirname, 'build-assets/icon.png')
 
     const iconMaker = spawn(binPath, [`--input=${source}`, `--output=./build-assets`])
     iconMaker
-      .on('error', err => reject(err))
+      .on('error', (err) => reject(err))
       .on('close', (code, signal) => (code === 0 ? resolve() : reject(new Error(signal))))
   })
 }
@@ -468,9 +468,9 @@ export async function pack(done) {
 
   await fs.remove(join(paths.build, 'node_modules'))
 
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     spawn(yarnBin, ['install'], { cwd: paths.build, stdio: 'inherit' })
-      .on('error', err => reject(err))
+      .on('error', (err) => reject(err))
       .on('close', (code, signal) => (code === 0 ? resolve() : reject(new Error(code))))
   })
 
@@ -525,15 +525,19 @@ export async function zipPackage() {
   const version = require('./package.json').version
 
   await Promise.all([
-    new Promise((resolve, reject) =>
-      zipDir(join(paths.release, 'mac'), { saveTo: join(paths.release, `Delir-${version}-mac.zip`) }, err => {
+    new Promise<void>((resolve, reject) =>
+      zipDir(join(paths.release, 'mac'), { saveTo: join(paths.release, `Delir-${version}-mac.zip`) }, (err) => {
         err ? reject(err) : resolve()
       }),
     ),
-    new Promise((resolve, reject) =>
-      zipDir(join(paths.release, 'win-unpacked'), { saveTo: join(paths.release, `Delir-${version}-win.zip`) }, err => {
-        err ? reject(err) : resolve()
-      }),
+    new Promise<void>((resolve, reject) =>
+      zipDir(
+        join(paths.release, 'win-unpacked'),
+        { saveTo: join(paths.release, `Delir-${version}-win.zip`) },
+        (err) => {
+          err ? reject(err) : resolve()
+        },
+      ),
     ),
   ])
 }
@@ -558,7 +562,7 @@ export async function cleanRendererScripts(done) {
 
 export function run(done) {
   const electron = spawn(require('electron'), [join(paths.compiled.frontend, 'browser.js')], { stdio: 'inherit' })
-  electron.on('close', code => {
+  electron.on('close', (code) => {
     code === 0 && run(() => {})
   })
   done()
@@ -591,7 +595,7 @@ const buildRenderer = g.parallel(
 
 const buildBrowser = g.parallel(buildBrowserJs, g.series(buildPublishPackageJSON, symlinkNativeModules))
 const build = g.parallel(buildRenderer, buildBrowser)
-const buildAndWatch = g.series(clean, g.parallel(runStorybook, build), run, watch)
+const buildAndWatch = g.series(clean, g.parallel(/* runStorybook ,*/ build), run, watch)
 const publish = g.series(clean, generateLicenses, build, makeIcon, pack, downloadAndDeployFFmpeg, zipPackage)
 
 export { publish, build }
