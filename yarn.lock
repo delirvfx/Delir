@@ -2397,10 +2397,10 @@
   dependencies:
     "@types/bl" "*"
 
-"@types/mz@2.7.0":
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/@types/mz/-/mz-2.7.0.tgz#3ef27f457c4c3e8b197ca2670ee41d6f4effddf2"
-  integrity sha512-Q5TZYMKnH0hdV5fNstmMWL2LLw5eRRtTd73KNtsZxoQ2gtCQyET5X79uERUEwGneuxPglg441I7OSY00+9CkSw==
+"@types/mz@2.7.3":
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/@types/mz/-/mz-2.7.3.tgz#e42a21e73f5f9340fe4a176981fafb1eb8cc6c12"
+  integrity sha512-Zp1NUJ4Alh3gaun0a5rkF3DL7b2j1WB6rPPI5h+CJ98sQnxe9qwskClvupz/4bqChGR3L/BRhTjlaOwR+uiZJg==
   dependencies:
     "@types/node" "*"
 
