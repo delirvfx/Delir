@@ -1,0 +1,36 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  allow:
+  - dependency-type: direct
+  ignore:
+  - dependency-name: monaco-editor
+    versions:
+    - 0.21.2
+    - 0.22.3
+  - dependency-name: monaco-editor-webpack-plugin
+    versions:
+    - 2.1.0
+    - 3.0.0
+  - dependency-name: "@storybook/react"
+    versions:
+    - 6.1.11
+  - dependency-name: "@types/react-dom"
+    versions:
+    - 17.0.0
+  - dependency-name: lint-staged
+    versions:
+    - 10.5.3
+  - dependency-name: lodash
+    versions:
+    - 4.17.20
+  - dependency-name: elliptic
+    versions:
+    - 6.5.3
+  - dependency-name: handlebars
+    versions:
+    - 4.7.6
